@@ -107,22 +107,25 @@ function renderCartesStatistiques(
   }
 
   return (
-    <div
-      className="fr-mb-4w"
-      style={{ display: 'flex', flex: 1, gap: '16px' }}
-    >
-      <CarteStatistiqueMediateurs
-        nombre={viewModel.mediateurs.nombre}
-        sousTexte={viewModel.mediateurs.sousTexte}
-      />
-      <CarteStatistiqueConseillersNumeriques
-        nombre={viewModel.conseillersNumeriques.nombre}
-        sousTexte={viewModel.conseillersNumeriques.sousTexte}
-      />
-      <CarteStatistiqueAidantsConnect
-        nombre={viewModel.aidantsConnect.nombre}
-        sousTexte={viewModel.aidantsConnect.sousTexte}
-      />
+    <div className="fr-grid-row fr-grid-row--gutters fr-mb-4w">
+      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+        <CarteStatistiqueMediateurs
+          nombre={viewModel.mediateurs.nombre}
+          sousTexte={viewModel.mediateurs.sousTexte}
+        />
+      </div>
+      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+        <CarteStatistiqueConseillersNumeriques
+          nombre={viewModel.conseillersNumeriques.nombre}
+          sousTexte={viewModel.conseillersNumeriques.sousTexte}
+        />
+      </div>
+      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+        <CarteStatistiqueAidantsConnect
+          nombre={viewModel.aidantsConnect.nombre}
+          sousTexte={viewModel.aidantsConnect.sousTexte}
+        />
+      </div>
     </div>
   )
 }

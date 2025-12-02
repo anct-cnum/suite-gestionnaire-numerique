@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './GouvernancePref.module.css'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
@@ -38,8 +39,8 @@ export default function GouvernancePref({
             </Link>
           )}
         </div>
-        <div className="fr-grid-row">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+        <div className={styles.cartesContainer}>
+          <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
               <TitleIcon
                 background="white"
@@ -57,7 +58,7 @@ export default function GouvernancePref({
               Erreur lors du chargement des données
             </div>
           </div>
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+          <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
               <TitleIcon
                 background="white"
@@ -72,7 +73,7 @@ export default function GouvernancePref({
               Erreur lors du chargement des données
             </div>
           </div>
-          <div className="fr-col background-blue-france fr-p-4w">
+          <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
               <TitleIcon
                 background="white"
@@ -118,8 +119,8 @@ export default function GouvernancePref({
           </Link>
         )}
       </div>
-      <div className="fr-grid-row">
-        <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+      <div className={styles.cartesContainer}>
+        <div className={`${styles.carte} background-blue-france fr-p-4w`}>
           <div className="fr-h1 fr-m-0">
             <TitleIcon
               background="white"
@@ -143,7 +144,7 @@ export default function GouvernancePref({
             </span>
           </div>
         </div>
-        <div className="fr-col background-blue-france fr-p-4w">
+        <div className={`${styles.carte} background-blue-france fr-p-4w`}>
           <div className="fr-h1 fr-m-0">
             <TitleIcon
               background="white"

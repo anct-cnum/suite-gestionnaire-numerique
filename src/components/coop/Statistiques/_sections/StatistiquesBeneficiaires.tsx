@@ -9,6 +9,7 @@ import {
   statusColors,
   tranchesAgeColors,
 } from '../colors'
+import styles from './StatistiquesBeneficiaires.module.css'
 import type { BeneficiairesStatsWithCommunes, BeneficiaireStats } from '../types'
 import Information from '@/components/shared/Information/Information'
 
@@ -50,21 +51,14 @@ export function StatistiquesBeneficiaires({
           </span>
           <Information label="Bénéficiaires suivis et anonymes dont le genre a été complété." />
         </h3>
-        <div
-          style={{
-            alignItems: 'center',
-            alignSelf: 'stretch',
-            display: 'flex',
-            gap: '64px',
-          }}
-        >
-          <div style={{ flex: 1 }}>
+        <div className={styles.genresContainer}>
+          <div className={styles.genresItem}>
             <QuantifiedShareLegend
               colors={genresColors}
               quantifiedShares={beneficiaires.genres}
             />
           </div>
-          <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
+          <div className={styles.genresPieContainer}>
             <AccompagnementPieChart
               colors={genresColors}
               data={beneficiaires.genres}
@@ -74,24 +68,8 @@ export function StatistiquesBeneficiaires({
         </div>
       </div>
       <hr className="fr-separator-1px fr-my-5w" />
-      <div
-        style={{
-          alignItems: 'flex-start',
-          alignSelf: 'stretch',
-          display: 'flex',
-          gap: '64px',
-          justifyContent: 'center',
-        }}
-      >
-        <div
-          style={{
-            alignItems: 'flex-start',
-            display: 'flex',
-            flex: '1 0 0',
-            flexDirection: 'column',
-            gap: '16px',
-          }}
-        >
+      <div className={styles.tranchesStatutsContainer}>
+        <div className={styles.tranchesStatutsItem}>
           <h3 className="fr-text--lg fr-mb-0">
             <span>
               Tranches d'âge
@@ -109,15 +87,7 @@ export function StatistiquesBeneficiaires({
             quantifiedShares={beneficiaires.trancheAges}
           />
         </div>
-        <div
-          style={{
-            alignItems: 'flex-start',
-            display: 'flex',
-            flex: '1 0 0',
-            flexDirection: 'column',
-            gap: '16px',
-          }}
-        >
+        <div className={styles.tranchesStatutsItem}>
           <h3 className="fr-text--lg fr-mb-0">
             <span>
               Statuts

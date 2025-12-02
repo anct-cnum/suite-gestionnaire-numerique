@@ -10,7 +10,7 @@ import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNum
 
 export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElement {
   return (
-    <div className="fr-pr-10w">
+    <div className="fr-pr-lg-10w">
       <div className="fr-mb-10w">
         <div className="fr-mb-1w">
           <div style={{ alignItems: 'center', display: 'flex', gap: '10px', justifyContent: 'center', minHeight: '40px' }}>

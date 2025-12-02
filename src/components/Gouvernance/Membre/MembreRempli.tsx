@@ -3,6 +3,7 @@
 import { Fragment, ReactElement, useId, useState } from 'react'
 
 import Membre from './Membre'
+import styles from './MembreRempli.module.css'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import Icon from '@/components/shared/Icon/Icon'
@@ -18,45 +19,46 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
 
   return (
     <>
-      <Table
-        enTetes={['Logo', 'Nom', 'Type', 'Rôle']}
-        isHeadHidden={true}
-        titre="Membres"
-      >
+      <div className={styles.responsiveTable}>
+        <Table
+          enTetes={['Logo', 'Nom', 'Type', 'Rôle']}
+          isHeadHidden={true}
+          titre="Membres"
+        >
         {
-          coporteurs.map((membre) => (
-            <tr key={`${membre.nom}_${membre.type}`} >
-              <td className="color-blue-france">
-                <Icon icon={membre.logo} />
-              </td>
-              <td>
-                <button
-                  aria-controls={drawerId}
-                  className="primary font-weight-700 fr-px-0 no-hover"
-                  data-fr-opened="false"
-                  onClick={() => {
-                    setMembreDetails(membre)
-                    setIsDrawerOpen(true)
-                  }}
-                  style={{
-                    display: 'block',
-                    maxWidth: '300px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                  type="button"
-                >
-                  {membre.nom}
-                </button>
-              </td>
-              <td className="color-grey">
-                {membre.type}
-              </td>
-              <td>
-                {membre.roles
-                  .filter(role => role.nom !== 'Observateur' )
-                  .map((role) => (
+          coporteurs.map((membre) => {
+            const rolesAffiches = membre.roles.filter(role => role.nom !== 'Observateur')
+            return (
+              <tr key={`${membre.nom}_${membre.type}`} >
+                <td className="color-blue-france">
+                  <Icon icon={membre.logo} />
+                </td>
+                <td>
+                  <button
+                    aria-controls={drawerId}
+                    className="primary font-weight-700 fr-px-0 no-hover"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setMembreDetails(membre)
+                      setIsDrawerOpen(true)
+                    }}
+                    style={{
+                      display: 'block',
+                      maxWidth: '300px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                    type="button"
+                  >
+                    {membre.nom}
+                  </button>
+                </td>
+                <td className="color-grey">
+                  {membre.type}
+                </td>
+                <td>
+                  {rolesAffiches.length > 0 && rolesAffiches.map((role) => (
                     <Fragment key={role.nom}>
                       <Badge color={role.color}>
                         {role.nom}
@@ -64,11 +66,13 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
                       {' '}
                     </Fragment>
                   ))}
-              </td>
-            </tr>
-          ))
+                </td>
+              </tr>
+            )
+          })
         }
       </Table>
+      </div>
       <Drawer
         boutonFermeture={`Fermer les détails du membre : ${membreDetails.nom}`}
         closeDrawer={() => {
