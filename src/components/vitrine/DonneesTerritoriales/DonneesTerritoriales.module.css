@@ -1,0 +1,13 @@
+.carteColonne {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+@media (width >= 62rem) {
+  .carteColonne {
+    height: auto;
+    overflow: visible;
+    visibility: visible;
+  }
+}
