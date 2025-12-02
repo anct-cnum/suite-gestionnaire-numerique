@@ -226,7 +226,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     }
 
     map.current = new Map({
+      attributionControl: false,
       container: mapContainer.current,
+      maplibreLogo: false,
       maxZoom: 11,
       minZoom: 6,
       style: EMPTY_STYLE,

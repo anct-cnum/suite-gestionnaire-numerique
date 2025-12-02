@@ -202,12 +202,14 @@ export default function CarteFranceAvecInsets(
 
     // Initialiser la carte principale
     mainMap.current = new Map({
+      attributionControl: false,
       boxZoom: false,
       container: mainMapContainer.current,
       doubleClickZoom: false,
       dragPan: false,
       dragRotate: false,
       keyboard: false,
+      maplibreLogo: false,
       maxZoom: 7,
       minZoom: 4,
       scrollZoom: false,
@@ -236,6 +238,7 @@ export default function CarteFranceAvecInsets(
         dragRotate: false,
         interactive: true, // Garder pour les survols/popups
         keyboard: false,
+        maplibreLogo: false,
         maxZoom: 10,
         minZoom: 3,
         scrollZoom: false,
