@@ -41,7 +41,7 @@ export default function CarteIndicesFrance({
   if (isFragiliteError) {
     return (
       <div
-        className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
+        className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`}
         ref={containerRef}
       >
         <div
@@ -86,7 +86,7 @@ export default function CarteIndicesFrance({
 
   return (
     <div
-      className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
+      className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`}
       ref={containerRef}
     >
       <div
