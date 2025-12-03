@@ -11,6 +11,10 @@
   width: 20rem;
 }
 
+.navigationFixed :global(.fr-sidemenu__inner) {
+  box-shadow: none;
+}
+
 @media (width <= 62rem) {
   .navigationFixed {
     gap: 0;

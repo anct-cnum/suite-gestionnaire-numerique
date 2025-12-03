@@ -25,53 +25,53 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
           isHeadHidden={true}
           titre="Membres"
         >
-        {
-          coporteurs.map((membre) => {
-            const rolesAffiches = membre.roles.filter(role => role.nom !== 'Observateur')
-            return (
-              <tr key={`${membre.nom}_${membre.type}`} >
-                <td className="color-blue-france">
-                  <Icon icon={membre.logo} />
-                </td>
-                <td>
-                  <button
-                    aria-controls={drawerId}
-                    className="primary font-weight-700 fr-px-0 no-hover"
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setMembreDetails(membre)
-                      setIsDrawerOpen(true)
-                    }}
-                    style={{
-                      display: 'block',
-                      maxWidth: '300px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                    type="button"
-                  >
-                    {membre.nom}
-                  </button>
-                </td>
-                <td className="color-grey">
-                  {membre.type}
-                </td>
-                <td>
-                  {rolesAffiches.length > 0 && rolesAffiches.map((role) => (
-                    <Fragment key={role.nom}>
-                      <Badge color={role.color}>
-                        {role.nom}
-                      </Badge>
-                      {' '}
-                    </Fragment>
-                  ))}
-                </td>
-              </tr>
-            )
-          })
-        }
-      </Table>
+          {
+            coporteurs.map((membre) => {
+              const rolesAffiches = membre.roles.filter(role => role.nom !== 'Observateur')
+              return (
+                <tr key={`${membre.nom}_${membre.type}`} >
+                  <td className="color-blue-france">
+                    <Icon icon={membre.logo} />
+                  </td>
+                  <td>
+                    <button
+                      aria-controls={drawerId}
+                      className="primary font-weight-700 fr-px-0 no-hover"
+                      data-fr-opened="false"
+                      onClick={() => {
+                        setMembreDetails(membre)
+                        setIsDrawerOpen(true)
+                      }}
+                      style={{
+                        display: 'block',
+                        maxWidth: '300px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                      type="button"
+                    >
+                      {membre.nom}
+                    </button>
+                  </td>
+                  <td className="color-grey">
+                    {membre.type}
+                  </td>
+                  <td>
+                    {rolesAffiches.length > 0 && rolesAffiches.map((role) => (
+                      <Fragment key={role.nom}>
+                        <Badge color={role.color}>
+                          {role.nom}
+                        </Badge>
+                        {' '}
+                      </Fragment>
+                    ))}
+                  </td>
+                </tr>
+              )
+            })
+          }
+        </Table>
       </div>
       <Drawer
         boutonFermeture={`Fermer les détails du membre : ${membreDetails.nom}`}

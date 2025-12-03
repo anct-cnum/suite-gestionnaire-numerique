@@ -1,3 +1,21 @@
+.heroTitle {
+  color: var(--text-title-blue-france);
+  font-family: Marianne, sans-serif;
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 4.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (width <= 48rem) {
+  .heroTitle {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+
 .imageLeft {
   order: 1;
 }

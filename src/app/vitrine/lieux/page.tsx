@@ -183,16 +183,7 @@ export default function LieuxPage(): ReactElement {
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2
-            className="fr-mb-8w"
-            style={{
-              color: '#000091',
-              fontSize: '2.5rem',
-              fontWeight: 700,
-              lineHeight: '3rem',
-              textAlign: 'center',
-            }}
-          >
+          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>
             Exemples d&apos;intégration de la cartographie
           </h2>
 
@@ -379,16 +370,7 @@ export default function LieuxPage(): ReactElement {
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2
-            className="fr-mb-8w"
-            style={{
-              color: '#000091',
-              fontSize: '2.5rem',
-              fontWeight: 700,
-              lineHeight: '3rem',
-              textAlign: 'center',
-            }}
-          >
+          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>
             Les avantages de cet outil
           </h2>
 
@@ -596,16 +578,7 @@ export default function LieuxPage(): ReactElement {
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2
-            className="fr-mb-2w"
-            style={{
-              color: '#000091',
-              fontSize: '2.5rem',
-              fontWeight: 700,
-              lineHeight: '3rem',
-              textAlign: 'center',
-            }}
-          >
+          <h2 className={`fr-mb-2w ${styles.sectionTitle}`}>
             Découvrez nos ressources sur Les Bases
           </h2>
           <p
