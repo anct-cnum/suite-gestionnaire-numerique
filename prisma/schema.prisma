@@ -661,7 +661,6 @@ model main_structure {
   presentation_detail                 String?
   horaires                            String?                 @db.VarChar
   prise_rdv                           String?                 @db.VarChar
-  structure_parente                   String?                 @db.Uuid
   services                            String[]
   publics_specifiquement_adresses     String[]
   prise_en_charge_specifique          String[]
