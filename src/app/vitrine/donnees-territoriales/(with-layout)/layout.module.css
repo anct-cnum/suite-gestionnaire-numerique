@@ -1,35 +1,44 @@
-.container {
-  background-color: var(--background-default-grey);
-  display: flex;
-  gap: 0;
-  width: 100%;
+.wrapper {
+  display: grid;
+  grid-template:
+    "header header" auto
+    "sidebar content" 1fr / 20rem 1fr;
+}
+
+.header {
+  grid-area: header;
 }
 
 .sidebar {
   background-color: var(--background-default-grey);
-  flex-shrink: 0;
-  width: 20rem;
+  grid-area: sidebar;
 }
 
 .content {
-  flex: 1;
+  background-color: var(--background-default-grey);
+  grid-area: content;
   padding: 2.5rem;
   padding-bottom: 5rem;
-  width: 84%;
 }
 
 @media (width <= 62rem) {
-  .container {
+  .wrapper {
+    display: flex;
     flex-direction: column;
   }
 
   .sidebar {
-    width: 100%;
+    margin-bottom: 1.5rem;
+    order: 1;
+  }
+
+  .header {
+    order: 2;
   }
 
   .content {
+    order: 3;
     padding: 1rem;
     padding-bottom: 2.5rem;
-    width: 100%;
   }
 }

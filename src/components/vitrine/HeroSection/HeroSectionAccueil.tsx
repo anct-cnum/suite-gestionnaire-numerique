@@ -32,18 +32,12 @@ export default function HeroSectionAccueil(): ReactElement {
             </div>
 
             {/* Titre principal */}
-            <h1
-              className="fr-display--lg fr-mb-2w"
-              style={{ color: '#000091', textAlign: 'center' }}
-            >
+            <h1 className={`fr-mb-2w ${styles.title}`}>
               Inclusion Numérique
             </h1>
 
             {/* Sous-titre */}
-            <p
-              className="fr-text--lead fr-mb-6w"
-              style={{ textAlign: 'center' }}
-            >
+            <p className={`fr-mb-6w ${styles.subtitle}`}>
               La plateforme des acteurs de l&apos;inclusion numérique en France
             </p>
 

@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import styles from './HeroSection.module.css'
 import { isNullishOrEmpty } from '@/shared/lang'
 
 export default function HeroSection({ backgroundColor = '#f5f5fe', backgroundImage, subtitle, title }: HeroSectionProps): ReactElement {
@@ -17,16 +18,10 @@ export default function HeroSection({ backgroundColor = '#f5f5fe', backgroundIma
       <div className="fr-container">
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12  fr-text--center">
-            <h1
-              className="fr-display--lg fr-mb-2w"
-              style={{ color: '#000091', textAlign: 'center' }}
-            >
+            <h1 className={`fr-mb-2w ${styles.title}`}>
               {title}
             </h1>
-            <p
-              className="fr-text--lead"
-              style={{ textAlign: 'center' }}
-            >
+            <p className={styles.subtitle}>
               {subtitle}
             </p>
           </div>

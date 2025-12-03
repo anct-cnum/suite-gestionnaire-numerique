@@ -117,18 +117,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   Nouvelle plateforme
                 </span>
               </div>
-              <h1
-                style={{
-                  color: '#000091',
-                  fontFamily: 'Marianne',
-                  fontSize: '64px',
-                  fontStyle: 'normal',
-                  fontWeight: 700,
-                  lineHeight: '72px',
-                  marginBottom: '24px',
-                  textAlign: 'center',
-                }}
-              >
+              <h1 className={styles.heroTitle}>
                 Mon Inclusion Numérique
               </h1>
               <p
