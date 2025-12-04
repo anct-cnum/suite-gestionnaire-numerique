@@ -1,8 +1,8 @@
 .wrapper {
   display: grid;
   grid-template:
-    "header header" auto
-    "sidebar content" 1fr / 20rem 1fr;
+    'header header' auto
+    'sidebar content' 1fr / 20rem 1fr;
 }
 
 .header {

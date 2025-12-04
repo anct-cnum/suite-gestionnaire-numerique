@@ -171,7 +171,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           label: 'Atelier collectif',
           proportion: 29.5,
           value: 'Collectif',
-        }
+        },
       ],
       typeLieu: [
         {
