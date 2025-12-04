@@ -54,7 +54,7 @@ export default function EtatDesLieux({
             </div>
             <div>
               <p className="fr-m-0 font-weight-500">
-                Données cumulées de tous les dispositifs d&apos;inclusion numériques
+                Données cumulées de tous les dispositifs d&apos;inclusion numérique
               </p>
             </div>
           </div>
