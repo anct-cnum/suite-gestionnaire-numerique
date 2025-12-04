@@ -4,8 +4,12 @@ import { ReactElement } from 'react'
 import MentionsLegales from '@/components/MentionsLegales/MentionsLegales'
 
 export const metadata: Metadata = {
-  description: 'Informations légales de la plateforme Mon inclusion numérique',
-  title: 'Mentions Légales',
+  description: 'Mentions légales de la plateforme Inclusion Numérique. Éditeur, hébergement, propriété intellectuelle et informations de contact.',
+  robots: {
+    follow: false,
+    index: false,
+  },
+  title: 'Mentions légales - Inclusion Numérique',
 }
 
 export default function MentionsLegalesController(): ReactElement {
