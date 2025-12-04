@@ -104,7 +104,7 @@ export default function DonneesTerritoriales(): ReactElement {
                       onClick={() => { router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national') }}
                       type="button"
                     >
-                      Voir les données nationale
+                      Voir les données nationales
                     </button>
                   </div>
                 </div>
