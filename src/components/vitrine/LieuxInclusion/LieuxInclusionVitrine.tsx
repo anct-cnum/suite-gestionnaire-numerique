@@ -34,17 +34,6 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             </button>
           </div>
         </div>
-        <p
-          className="fr-mb-0"
-          style={{
-            color: '#666666',
-            flex: 1,
-            fontSize: '12px',
-            lineHeight: '16px',
-          }}
-        >
-          Données mise à jour le 01/11/24
-        </p>
       </div>
 
       <LieuxInclusionCategory
