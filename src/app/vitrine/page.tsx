@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './page.module.css'
 import HeroSectionAccueil from '@/components/vitrine/HeroSection/HeroSectionAccueil'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
@@ -50,20 +51,17 @@ export default function VitrineHomePage(): ReactElement {
 
           {/* Bloc 1 : Inégalités (Image gauche / Texte droite) */}
           <div
-            className="fr-grid-row fr-mb-6w"
+            className="fr-grid-row fr-mb-0w"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
                 alt="Inégalités numériques"
                 src="/vitrine/accueil/illustration-inegalites.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <h3 className="fr-h4 fr-mb-0">
                 Des inégalités numériques persistantes dans notre société
               </h3>
@@ -111,13 +109,10 @@ export default function VitrineHomePage(): ReactElement {
         <div className="fr-container">
           {/* Bloc 2 : Approche renouvelée (Texte gauche / Image droite) */}
           <div
-            className="fr-grid-row fr-mb-6w"
+            className="fr-grid-row fr-mb-0w"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentLeft}`}>
               <h2 className="fr-h2 fr-mb-0">
                 Une approche renouvelée de l&apos;inclusion numérique
               </h2>
@@ -142,7 +137,7 @@ export default function VitrineHomePage(): ReactElement {
                 estiment que le numérique complique ou n&apos;a pas d&apos;effet sur leur vie quotidienne.
               </p>
             </div>
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageRight}`}>
               <img
                 alt="Approche renouvelée"
                 src="/vitrine/accueil/illustration-approche.png"
@@ -235,10 +230,7 @@ export default function VitrineHomePage(): ReactElement {
             className="fr-grid-row fr-mb-6w"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentLeft}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Territorialiser"
@@ -267,7 +259,7 @@ export default function VitrineHomePage(): ReactElement {
                 </Link>
               </div>
             </div>
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageRight}`}>
               <img
                 alt="Lieux d'inclusion"
                 src="/vitrine/accueil/carte-france-logos.png"
@@ -281,10 +273,7 @@ export default function VitrineHomePage(): ReactElement {
             className="fr-grid-row"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px', order: 2 }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Former acteurs"
@@ -313,10 +302,7 @@ export default function VitrineHomePage(): ReactElement {
                 </Link>
               </div>
             </div>
-            <div
-              className="fr-col-12 fr-col-md-6"
-              style={{ order: 1 }}
-            >
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
                 alt="Dispositifs"
                 src="/vitrine/accueil/illustration-dispositifs.png"
@@ -330,10 +316,7 @@ export default function VitrineHomePage(): ReactElement {
             className="fr-grid-row fr-mb-6w"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentLeft}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Évaluer"
@@ -362,7 +345,7 @@ export default function VitrineHomePage(): ReactElement {
                 </Link>
               </div>
             </div>
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageRight}`}>
               <img
                 alt="Données et études"
                 src="/vitrine/accueil/illustration-donnees.png"
@@ -376,10 +359,7 @@ export default function VitrineHomePage(): ReactElement {
             className="fr-grid-row"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '8px', order: 2 }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div style={{ marginBottom: '8px', marginTop: '2em' }}>
                 <img
                   alt="Icône Outiller"
@@ -408,10 +388,7 @@ export default function VitrineHomePage(): ReactElement {
                 </Link>
               </div>
             </div>
-            <div
-              className="fr-col-12 fr-col-md-6"
-              style={{ order: 1 }}
-            >
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
                 alt="Outils"
                 src="/vitrine/accueil/illustration-visuel-bleu.png"
@@ -432,17 +409,14 @@ export default function VitrineHomePage(): ReactElement {
             className="fr-grid-row"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
                 alt="Participer à une gouvernance"
                 src="/vitrine/accueil/illustration-participer.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <h2
                 style={{
                   color: '#000091',

@@ -2,7 +2,11 @@
     "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
     "packages": [
       "nodejs@22",
-      "minio-client"
+      "minio-client",
+      "optipng",
+      "pngquant",
+      "jpegoptim",
+      "libwebp"
     ],
     "env": {
       "DEVBOX_COREPACK_ENABLED": "true",

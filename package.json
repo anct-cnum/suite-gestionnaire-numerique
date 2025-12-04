@@ -40,6 +40,12 @@
     "minio:start": "docker compose up -d minio && yarn minio:init",
     "update-subventions": "tsx scripts/update-subvention-status.ts",
     "update-subventions:example": "tsx scripts/update-subvention-status.ts scripts/subventions_exemple.csv",
+    "optimize:images": "bash scripts/optimize-images.sh",
+    "optimize:images:webp": "bash scripts/optimize-images.sh --webp",
+    "optimize:images:dry-run": "bash scripts/optimize-images.sh --dry-run",
+    "assets:unused": "bash scripts/find-unused-assets.sh",
+    "assets:unused:delete": "bash scripts/find-unused-assets.sh --delete",
+    "assets:unused:json": "bash scripts/find-unused-assets.sh --json",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

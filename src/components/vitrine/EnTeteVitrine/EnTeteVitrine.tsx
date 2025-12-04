@@ -131,13 +131,41 @@ export default function EnTeteVitrine(): ReactElement {
                 </Link>
               </li>
               <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname === '/vitrine/etudes-et-enquetes' ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine/etudes-et-enquetes"
+                <button
+                  aria-controls="menu-etudes"
+                  aria-expanded="false"
+                  className="fr-nav__btn"
+                  type="button"
                 >
-                  Etudes et enquêtes
-                </Link>
+                  Études et enquêtes
+                </button>
+                <div
+                  className="fr-collapse fr-menu"
+                  id="menu-etudes"
+                >
+                  <ul className="fr-menu__list">
+                    <li>
+                      <a
+                        className="fr-nav__link"
+                        href="https://www.societenumerique.gouv.fr/nos-ressources/etudes"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Études
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="fr-nav__link"
+                        href="https://labo.societenumerique.gouv.fr/fr/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        Labo Société Numérique
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </li>
             </ul>
           </nav>

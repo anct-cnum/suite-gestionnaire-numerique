@@ -13,7 +13,7 @@ import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/
  */
 export default function FeuilleDeRouteVitrine({ feuillesDeRouteViewModel }: Props): ReactElement {
   return (
-    <div className="fr-pr-10w">
+    <div className="fr-pr-md-10w">
       <ul
         aria-label="Feuilles de route"
         className="fr-p-0"

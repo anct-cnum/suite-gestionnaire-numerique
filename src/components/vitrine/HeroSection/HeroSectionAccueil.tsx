@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import styles from './HeroSectionAccueil.module.css'
+import BarreLogosPartenaires from '../BarreLogosPartenaires/BarreLogosPartenaires'
 
 export default function HeroSectionAccueil(): ReactElement {
   return (
@@ -42,133 +43,7 @@ export default function HeroSectionAccueil(): ReactElement {
             </p>
 
             {/* Logos */}
-            <div
-              className="fr-mt-4w"
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  height: '50px',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="La Coop de la médiation numérique"
-                  src="/vitrine/accueil/logo-coop.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  height: '50px',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="Cartographie Nationale"
-                  src="/vitrine/accueil/logo-carto.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '6.667px',
-                  display: 'flex',
-                  height: '50px',
-                  overflow: 'hidden',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="Aidants Connect"
-                  src="/vitrine/accueil/logo-aidants-connect.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '6.667px',
-                  display: 'flex',
-                  height: '50px',
-                  overflow: 'hidden',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="Conseillers Numériques"
-                  src="/vitrine/accueil/logo-conseillers-numeriques.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  height: '50px',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="MedNum"
-                  src="/vitrine/accueil/logo-mednum.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'contain',
-                    width: '100%',
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '6.667px',
-                  display: 'flex',
-                  height: '50px',
-                  overflow: 'hidden',
-                  width: '50px',
-                }}
-              >
-                <img
-                  alt="France Numérique Ensemble"
-                  src="/vitrine/accueil/logo-data-inclusion.png"
-                  style={{
-                    height: '100%',
-                    objectFit: 'cover',
-                    width: '100%',
-                  }}
-                />
-              </div>
-            </div>
+            <BarreLogosPartenaires className="fr-mt-4w" />
           </div>
         </div>
       </div>

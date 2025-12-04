@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
@@ -14,6 +15,18 @@ import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/acc
 import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
+import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { code, niveau } = await params
+  const codeDepartement = code?.[0]
+
+  return generateTerritoireMetadata(niveau, codeDepartement, {
+    descriptionTemplate: 'Synthèse et indicateurs de l\'inclusion numérique pour {territoire}. Lieux d\'accompagnement, médiateurs numériques, accompagnements réalisés et indices de fragilité numérique.',
+    keywords: ['synthèse', 'indicateurs', 'inclusion numérique', 'fragilité numérique', 'accompagnements', 'statistiques territoriales'],
+    titleTemplate: 'Synthèse et indicateurs - {territoire} - Inclusion Numérique',
+  })
+}
 
 export default async function SyntheseEtIndicateurs({ params }: Props): Promise<ReactElement> {
   const { code, niveau } = await params

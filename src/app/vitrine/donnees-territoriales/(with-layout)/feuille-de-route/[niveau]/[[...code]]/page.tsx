@@ -1,10 +1,23 @@
+import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import FeuilleDeRouteVitrine from '@/components/vitrine/FeuilleDeRoute/FeuilleDeRouteVitrine'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
+import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { code, niveau } = await params
+  const codeDepartement = code?.[0]
+
+  return generateTerritoireMetadata(niveau, codeDepartement, {
+    descriptionTemplate: 'Découvrez les feuilles de route de l\'inclusion numérique pour {territoire}. Actions, financements et objectifs du programme France Numérique Ensemble.',
+    keywords: ['feuille de route', 'inclusion numérique', 'France Numérique Ensemble', 'actions territoriales', 'financement'],
+    titleTemplate: 'Feuilles de route - {territoire} - Inclusion Numérique',
+  })
+}
 
 /**
  * Page vitrine affichant les feuilles de route d'inclusion numérique

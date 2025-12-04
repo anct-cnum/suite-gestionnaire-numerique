@@ -1,0 +1,38 @@
+/* Bloc avec image à gauche, texte à droite - En mobile : texte d'abord, image ensuite */
+.imageLeft {
+  order: 1;
+}
+
+.contentRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  order: 2;
+}
+
+@media (width < 48rem) {
+  .imageLeft {
+    margin-top: 1.5rem;
+    order: 2;
+  }
+
+  .imageRight {
+    margin-top: 1.5rem;
+  }
+
+  .contentRight {
+    order: 1;
+  }
+}
+
+/* Bloc avec texte à gauche, image à droite - En mobile : texte d'abord, image ensuite */
+.contentLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  order: 1;
+}
+
+.imageRight {
+  order: 2;
+}

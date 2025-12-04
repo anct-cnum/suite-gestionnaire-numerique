@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement, Suspense } from 'react'
 
@@ -12,6 +13,18 @@ import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSo
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistiquesMediateursLoader'
 import { statistiquesMediateursPresenter, StatistiquesMediateursViewModel } from '@/presenters/vitrine/statistiquesMediateursPresenter'
+import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { code, niveau } = await params
+  const codeDepartement = code?.[0]
+
+  return generateTerritoireMetadata(niveau, codeDepartement, {
+    descriptionTemplate: 'Découvrez les médiateurs numériques pour {territoire}. Statistiques sur les conseillers numériques, aidants Connect et professionnels de la médiation numérique.',
+    keywords: ['médiateurs numériques', 'conseillers numériques', 'Aidants Connect', 'médiation numérique', 'accompagnement numérique'],
+    titleTemplate: 'Médiateurs numériques - {territoire} - Inclusion Numérique',
+  })
+}
 
 export default async function MediateursNumeriques({ params }: Props): Promise<ReactElement> {
   const { code, niveau } = await params

@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import styles from './OuvrirPdf.module.css'
 import DocumentVide from '../DocumentVide/DocumentVide'
 import ExternalLink from '../ExternalLink/ExternalLink'
 import Icon from '../Icon/Icon'
@@ -7,11 +8,11 @@ import { isNullishOrEmpty } from '@/shared/lang'
 
 export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): ReactElement {
   return (
-    <div className="fr-grid-row space-between">
-      <div>
+    <div className={styles.container}>
+      <div className={styles.content}>
         <header>
           <h2
-            className="fr-h6 color-blue-france fr-mb-0"
+            className={`fr-h6 color-blue-france fr-mb-0 ${styles.fileName}`}
             id="document"
           >
             {nom}

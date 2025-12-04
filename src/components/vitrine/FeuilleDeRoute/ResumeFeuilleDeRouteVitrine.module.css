@@ -1,0 +1,30 @@
+.budgetValue {
+  text-align: right;
+}
+
+.card {
+  border: 0.0625rem solid var(--border-default-grey);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 2rem;
+}
+
+.innerCard {
+  border: 0.0625rem solid var(--border-default-grey);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+@media (width <= 48rem) {
+  .budgetValue {
+    text-align: left;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .innerCard {
+    padding: 1rem;
+  }
+}

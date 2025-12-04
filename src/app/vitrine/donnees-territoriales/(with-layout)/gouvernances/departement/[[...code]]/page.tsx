@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
@@ -7,7 +8,19 @@ import GouvernancePref from '@/components/TableauDeBord/Gouvernance/GouvernanceP
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { PrismaGouvernanceTerritorialeLoader } from '@/gateways/vitrine/PrismaGouvernanceTerritorialeLoader'
 import { gouvernancesTerritorialesPresenter } from '@/presenters/vitrine/gouvernancesTerritoriales/gouvernancesTerritorialesPresenter'
+import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 import { RecupererGouvernanceTerritoriale } from '@/use-cases/queries/vitrine/RecupererGouvernanceTerritoriale'
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { code } = await params
+  const codeDepartement = code?.[0]
+
+  return generateTerritoireMetadata('departement', codeDepartement, {
+    descriptionTemplate: 'Découvrez la gouvernance de l\'inclusion numérique pour {territoire}. Membres, co-porteurs et organisation territoriale du programme France Numérique Ensemble.',
+    keywords: ['gouvernance', 'inclusion numérique', 'France Numérique Ensemble', 'co-porteurs', 'membres', 'collectivités'],
+    titleTemplate: 'Gouvernance - {territoire} - Inclusion Numérique',
+  })
+}
 
 export default async function Gouvernances({ params }: Props): Promise<ReactElement> {
   const { code } = await params
