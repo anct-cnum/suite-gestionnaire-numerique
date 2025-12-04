@@ -65,7 +65,7 @@
     "mjml": "^4.15.3",
     "mongodb": "^6.16.0",
     "nanoid": "3.3.8",
-    "next": "^15.3.1",
+    "next": "15.3.6",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "opening_hours": "^3.9.0",
