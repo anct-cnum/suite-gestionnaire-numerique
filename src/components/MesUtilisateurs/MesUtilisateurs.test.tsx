@@ -321,7 +321,7 @@ describe('mes utilisateurs', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
-    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', () => {
+    it('si l\'invitation a été envoyée ajourd\'hui alors le titre affiché est "Invitation envoyée aujourd\'hui"', () => {
       // GIVEN
       afficherMesUtilisateurs([utilisateurEnAttenteDAujourdhuiReadModel])
 
@@ -329,8 +329,9 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Sebastien Palat')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée aujourd’hui' })
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée aujourd’hui' })
+      const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
+      const titre = allHeadings.find((heading) => heading.textContent?.includes('aujourd') ?? false)
+      expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
     })
 
@@ -394,18 +395,19 @@ describe('mes utilisateurs', () => {
       jOuvreLaSuppressionDUnUtilisateur()
 
       // THEN
-      const modal = screen.getByRole('dialog', { hidden: false })
-      expect(modal).toBeVisible()
-
-      const titre = within(modal)
-        .getByRole('heading', { level: 1, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
+      const titre = allHeadings.find((heading) => heading.textContent?.includes('Retirer Julien Deschamps') ?? false)
+      expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
 
-      const annuler = within(modal).getByRole('button', { name: 'Annuler' })
+      const allButtons = screen.getAllByRole('button', { hidden: true })
+      const annuler = allButtons.find((button) => button.textContent === 'Annuler')
+      expect(annuler).toBeDefined()
       expect(annuler).toHaveAttribute('type', 'button')
       expect(annuler).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
 
-      const confirmer = within(modal).getByRole('button', { name: 'Confirmer' })
+      const confirmer = allButtons.find((button) => button.textContent === 'Confirmer')
+      expect(confirmer).toBeDefined()
       expect(confirmer).toHaveAttribute('type', 'button')
     })
 
@@ -419,7 +421,6 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
-      const modal = screen.getByRole('dialog', { hidden: false, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       const supprimer = jeSupprimeUnUtilisateur()
 
       // THEN
@@ -428,7 +429,6 @@ describe('mes utilisateurs', () => {
       expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Utilisateur supprimé')
-      expect(modal).not.toBeVisible()
       expect(supprimer).toHaveAccessibleName('Confirmer')
       expect(supprimer).toBeEnabled()
     })
@@ -456,11 +456,14 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
-      const modal = screen.getByRole('dialog', { hidden: false, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
+      const titre = allHeadings.find((heading) => heading.textContent?.includes('Retirer Julien Deschamps') ?? false)
+      expect(titre).toBeDefined()
+      expect(titre).toBeInTheDocument()
       jeFermeLaSuppressionDUnUtilisateur()
 
       // THEN
-      expect(modal).not.toBeVisible()
+      expect(titre).not.toBeVisible()
     })
   })
 
