@@ -10,6 +10,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import Menu from '@/components/shared/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
+import ConfirmationModal from '@/components/shared/Modal/ConfirmationModal'
 import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
@@ -21,6 +22,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   const router = useRouter()
   const searchParams = useSearchParams()
   const statutInitial = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
+  const [memberToDelete, setMemberToDelete] = useState<MembreViewModel>()
+  const [memberToRemoveCoPorteur, setMemberToRemoveCoPorteur] = useState<MembreViewModel>()
 
   useEffect(() => {
     if (searchParams.get('statut') === null) {
@@ -70,16 +73,16 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         iconClass="fr-icon-user-line"
         key={`ajout-${membre.uid}`}
         label="Retirer le rôle de coporteur"
-        onClick={async () => {
-          await retirerUnCoPorteur(membre)
+        onClick={() => {
+          setMemberToRemoveCoPorteur(membre)
         }}
       />,
       <MenuItem
         iconClass="fr-icon-delete-line"
         key={`delete-${membre.uid}`}
         label="Retirer ce membre"
-        onClick={async () => {
-          await supprimerUnMembreOuCandidat(membre)
+        onClick={() => {
+          setMemberToDelete(membre)
         }}
       />,
     ]
@@ -99,8 +102,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         iconClass="fr-icon-delete-line"
         key={`delete-${membre.uid}`}
         label="Retirer ce membre"
-        onClick={async () => {
-          await supprimerUnMembreOuCandidat(membre)
+        onClick={() => {
+          setMemberToDelete(membre)
         }}
       />,
     ]
@@ -120,8 +123,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         iconClass="fr-icon-delete-line"
         key={`delete-${membre.uid}`}
         label="Retirer ce candidat"
-        onClick={async () => {
-          await supprimerUnMembreOuCandidat(membre)
+        onClick={() => {
+          setMemberToDelete(membre)
         }}
       />,
     ]
@@ -171,50 +174,46 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       <div className="fr-grid-row space-between fr-grid-row--middle">
         <PageTitle>
           Gérer les membres ·
-          {' '}
           {membresViewModel.departement}
         </PageTitle>
-        {
-          gouvernanceViewModel.peutGererGouvernance ?
-            <button
-              className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
-              onClick={() => {
-                const ajouterPath = `${pathname}/ajouter`
-                router.push(ajouterPath)
-              }}
-              type="button"
-            >
-              Ajouter un candidat
-            </button>: null
-        }
+        {gouvernanceViewModel.peutGererGouvernance ? (
+          <button
+            className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
+            onClick={() => {
+              const ajouterPath = `${pathname}/ajouter`
+              router.push(ajouterPath)
+            }}
+            type="button"
+          >
+            Ajouter un candidat
+          </button>
+        ) : null}
       </div>
       <div className="fr-tabs fr-tabs__list fr-pb-0">
         <ul className="fr-nav__list">
-          {[
-            ['confirme', 'Membres'] as const,
-            ['candidat', 'Candidats'] as const,
-          ].map(([statut, libelle]) => (
-            <li
-              className="fr-nav__item"
-              key={statut}
-            >
-              <button
-                aria-current={isSelectionne(statut)}
-                className="fr-nav__link fr-nav__link"
-                onClick={() => {
-                  setStatut(statut)
-                }}
-                role="tab"
-                type="button"
+          {[['confirme', 'Membres'] as const, ['candidat', 'Candidats'] as const].map(
+            ([statut, libelle]) => (
+              <li
+                className="fr-nav__item"
+                key={statut}
               >
-                {libelle}
-                {' '}
-                ·
-                {' '}
-                {membresByStatut[statut].length}
-              </button>
-            </li>
-          ))}
+                <button
+                  aria-current={isSelectionne(statut)}
+                  className="fr-nav__link fr-nav__link"
+                  onClick={() => {
+                    setStatut(statut)
+                  }}
+                  role="tab"
+                  type="button"
+                >
+                  {libelle}
+                  {' '}
+                  ·
+                  {membresByStatut[statut].length}
+                </button>
+              </li>
+            )
+          )}
         </ul>
       </div>
       <div className="fr-grid-row space-between fr-mt-4w">
@@ -237,13 +236,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                 setFiltreRole(event.target.value)
               }}
             >
-              <option
-                value={toutRole}
-              >
+              <option value={toutRole}>
                 Rôles
               </option>
               {membresViewModel.roles
-                .filter(role => role.nom !== 'Observateur' )
+                .filter((role) => role.nom !== 'Observateur')
                 .map((role) => (
                   <option
                     key={role.color}
@@ -269,9 +266,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                 setFiltreTypologie(event.target.value)
               }}
             >
-              <option
-                value={touteTypologie}
-              >
+              <option value={touteTypologie}>
                 Typologie
               </option>
               {membresViewModel.typologies.map((typologie) => (
@@ -285,7 +280,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </select>
           </div>
         </div>
-
       </div>
       <Table
         enTetes={getEnTetes()}
@@ -297,15 +291,19 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             key={membre.uid}
           >
             <td
-              style={{ maxWidth: '50ch' ,
+              style={{
+                maxWidth: '50ch',
                 minHeight: '6em',
                 overflowWrap: 'break-word',
                 whiteSpace: 'normal',
-                wordWrap: 'break-word' }}
+                wordWrap: 'break-word',
+              }}
               tabIndex={0}
             >
               <button
-                onClick={() => { router.push(membre.link) }}
+                onClick={() => {
+                  router.push(membre.link)
+                }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     router.push(membre.link)
@@ -343,11 +341,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                   display: 'flex',
                   flexWrap: 'nowrap',
                   paddingLeft: 0,
-                  paddingRight:0,
+                  paddingRight: 0,
                 }}
               >
                 {membre.roles
-                  .filter(role => role.nom !== 'Observateur')
+                  .filter((role) => role.nom !== 'Observateur')
                   .map((role) => (
                     <Fragment key={role.color}>
                       <Badge color={role.color}>
@@ -363,6 +361,57 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         ))}
       </Table>
 
+      <ConfirmationModal
+        confirmLabel="Supprimer"
+        confirmVariant="error"
+        id="modal-supprimer-membre"
+        isOpen={Boolean(memberToDelete)}
+        onCancel={() => {
+          setMemberToDelete(undefined)
+        }}
+        onConfirm={async () => {
+          if (memberToDelete) {
+            await supprimerUnMembreOuCandidat(memberToDelete)
+            setMemberToDelete(undefined)
+          }
+        }}
+        title={`Retirer ${memberToDelete?.nom ?? ''} des membres de la gouvernance ?`}
+      >
+        <p>
+          En cliquant sur confirmer, tous les utilisateurs de la structure perdront leur
+          accès à leur espace de gestion sur Mon Inclusion Numérique.
+        </p>
+        <p>
+          Si vous souhaitez modifier le contact référent de la structure, merci de vous
+          rapprocher du support via l&apos;adresse électronique :
+          {' '}
+          <a href="mailto:moninclusionnumerique@anct.gouv.fr">
+            moninclusionnumerique@anct.gouv.fr
+          </a>
+        </p>
+      </ConfirmationModal>
+
+      <ConfirmationModal
+        confirmLabel="Confirmer"
+        confirmVariant="error"
+        id="modal-retirer-coporteur"
+        isOpen={Boolean(memberToRemoveCoPorteur)}
+        onCancel={() => {
+          setMemberToRemoveCoPorteur(undefined)
+        }}
+        onConfirm={async () => {
+          if (memberToRemoveCoPorteur) {
+            await retirerUnCoPorteur(memberToRemoveCoPorteur)
+            setMemberToRemoveCoPorteur(undefined)
+          }
+        }}
+        title={`Retirer ${memberToRemoveCoPorteur?.nom ?? ''} des membres coporteur de la gouvernance ?`}
+      >
+        <p>
+          En cliquant sur confirmer, les utilisateurs de la structure ne pourront plus éditer les
+          données de votre gouvernance.
+        </p>
+      </ConfirmationModal>
     </>
   )
 
@@ -400,9 +449,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
 
   function filtrerMembres(role: string, typologie: string): ReadonlyArray<MembreViewModel> {
     const membres = membresByStatut[membresView.statutSelectionne]
-    return membres.values()
-      .filter(({ roles }) => role === toutRole ? true : roles.map(({ nom }) => nom).includes(role))
-      .filter((membre) => typologie === touteTypologie ? true : typologie === membre.typologie.simple.value)
+    return membres
+      .values()
+      .filter(({ roles }) =>
+        role === toutRole ? true : roles.map(({ nom }) => nom).includes(role))
+      .filter((membre) =>
+        typologie === touteTypologie ? true : typologie === membre.typologie.simple.value)
       .toArray()
   }
 
@@ -416,7 +468,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajouté', title: 'Membre' })
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
     }
   }
 
@@ -430,7 +485,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     if (messages.includes('OK')) {
       Notification('success', { description: 'Défini', title: 'Rôle coporteur' })
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
     }
   }
 
@@ -443,7 +501,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     if (messages.includes('OK')) {
       Notification('success', { description: 'Retiré', title: 'Rôle coporteur' })
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
     }
   }
 
@@ -457,7 +518,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     if (messages.includes('OK')) {
       Notification('success', { description: 'supprimé', title: 'Membre' })
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
     }
   }
 }

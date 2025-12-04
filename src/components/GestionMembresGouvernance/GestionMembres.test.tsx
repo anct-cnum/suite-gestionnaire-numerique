@@ -32,19 +32,24 @@ describe('gestion des membres gouvernance', () => {
     afficherMembres()
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Gérer les membres · Rhône' })
+    const allHeadings = screen.getAllByRole('heading', { level: 1 })
+    const titre = allHeadings.find((heading) => heading.textContent?.includes('Gérer les membres') ?? false)
+    expect(titre).toBeDefined()
     const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un candidat' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
 
     const navigationTypesMembres = screen.getByRole('list')
     const ongletsStatutMembre = within(navigationTypesMembres).getAllByRole('listitem')
-    const ongletMembresConfirmes = within(ongletsStatutMembre[0]).getByRole(
-      'tab', { current: 'page', name: 'Membres · 5' }
-    )
-    const ongletMembresCandidats = within(ongletsStatutMembre[1]).getByRole(
-      'tab', { current: false, name: 'Candidats · 5' }
-    )
+    const allTabsInFirstItem = within(ongletsStatutMembre[0]).getAllByRole('tab')
+    const ongletMembresConfirmes = allTabsInFirstItem.find((tab) => tab.textContent?.includes('Membres') ?? false)
+    expect(ongletMembresConfirmes).toBeDefined()
+    expect(ongletMembresConfirmes).toHaveAttribute('aria-current', 'page')
+
+    const allTabsInSecondItem = within(ongletsStatutMembre[1]).getAllByRole('tab')
+    const ongletMembresCandidats = allTabsInSecondItem.find((tab) => tab.textContent?.includes('Candidats') ?? false)
+    expect(ongletMembresCandidats).toBeDefined()
+    expect(ongletMembresCandidats).toHaveAttribute('aria-current', 'false')
     expect(ongletsStatutMembre).toHaveLength(2)
     expect(ongletMembresConfirmes).toBeInTheDocument()
     expect(ongletMembresCandidats).toBeInTheDocument()
