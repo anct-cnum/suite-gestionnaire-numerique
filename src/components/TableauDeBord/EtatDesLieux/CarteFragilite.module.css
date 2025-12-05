@@ -3,8 +3,16 @@
   padding: 0;
 }
 
+.cardsColumn {
+  margin-top: 1.5rem;
+}
+
 @media (width > 78rem) {
   .carteContainer {
     min-height: auto;
+  }
+
+  .cardsColumn {
+    margin-top: 0;
   }
 }
