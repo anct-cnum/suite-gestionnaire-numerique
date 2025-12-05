@@ -32,10 +32,12 @@ export function statistiquesCoopToMediateursData(
         proportion: item.proportion,
         value: item.value,
       })),
-      // Non fourni par l'API - données placeholder
-      thematiquesDemarches: [
-        { count: -1, label: 'Non disponible', proportion: -1, value: 'NonDisponible' },
-      ],
+      thematiquesDemarches: readModel.activites.thematiquesDemarches.map(item => ({
+        count: item.count,
+        label: item.label,
+        proportion: item.proportion,
+        value: item.value,
+      })),
       total: readModel.activites.total,
       typeActivites: readModel.activites.typeActivites.map(item => ({
         count: item.count,

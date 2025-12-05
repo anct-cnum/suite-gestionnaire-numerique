@@ -154,6 +154,12 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
           proportion: item.proportion,
           value: item.value,
         })),
+        thematiquesDemarches: attributes.activites.thematiques_demarches.map(item => ({
+          count: item.count,
+          label: item.label,
+          proportion: item.proportion,
+          value: item.value,
+        })),
         total: attributes.activites.total,
         typeActivites: attributes.activites.type_activites.map(item => ({
           count: item.count,
@@ -260,6 +266,7 @@ type CoopStatistiquesAttributes = Readonly<{
     durees: ReadonlyArray<StatistiquesItem>
     materiels: ReadonlyArray<StatistiquesItem>
     thematiques: ReadonlyArray<StatistiquesItem>
+    thematiques_demarches: ReadonlyArray<StatistiquesItem>
     total: number
     type_activites: ReadonlyArray<StatistiquesItem>
     type_lieu: ReadonlyArray<StatistiquesItem>

@@ -158,6 +158,38 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           value: 'CultureNumerique',
         },
       ],
+      thematiquesDemarches: [
+        {
+          count: Math.round(85000 * facteur),
+          label: 'CAF',
+          proportion: 25.0,
+          value: 'Caf',
+        },
+        {
+          count: Math.round(70000 * facteur),
+          label: 'France Travail',
+          proportion: 20.6,
+          value: 'FranceTravail',
+        },
+        {
+          count: Math.round(60000 * facteur),
+          label: 'Impôts',
+          proportion: 17.6,
+          value: 'Impots',
+        },
+        {
+          count: Math.round(55000 * facteur),
+          label: 'CPAM',
+          proportion: 16.2,
+          value: 'Cpam',
+        },
+        {
+          count: Math.round(70000 * facteur),
+          label: 'Autres',
+          proportion: 20.6,
+          value: 'Autre',
+        },
+      ],
       total: Math.round(950000 * facteur),
       typeActivites: [
         {

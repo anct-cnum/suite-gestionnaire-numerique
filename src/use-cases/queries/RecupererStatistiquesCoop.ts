@@ -23,6 +23,7 @@ export type StatistiquesCoopReadModel = Readonly<{
     durees: ReadonlyArray<StatistiqueItem>
     materiels: ReadonlyArray<StatistiqueItem>
     thematiques: ReadonlyArray<StatistiqueItem>
+    thematiquesDemarches: ReadonlyArray<StatistiqueItem>
     total: number
     typeActivites: ReadonlyArray<StatistiqueItem>
     typeLieu: ReadonlyArray<StatistiqueItem>
