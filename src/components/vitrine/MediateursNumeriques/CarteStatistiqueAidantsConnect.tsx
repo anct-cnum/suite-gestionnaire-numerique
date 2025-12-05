@@ -13,7 +13,7 @@ export default function CarteStatistiqueAidantsConnect({
         {nombre}
       </div>
       <div className="font-weight-500">
-        Habilités Aidants Connect
+        Médiateurs habilités Aidants Connect
       </div>
       <div className="fr-text--xs color-blue-france fr-mb-0">
         {sousTexte}
