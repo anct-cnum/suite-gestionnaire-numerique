@@ -15,6 +15,8 @@ import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistique
 import { statistiquesMediateursPresenter, StatistiquesMediateursViewModel } from '@/presenters/vitrine/statistiquesMediateursPresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 
+const DATE_DEBUT_DISPOSITIF = '2020-11-07'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, niveau } = await params
   const codeDepartement = code?.[0]
@@ -26,8 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function MediateursNumeriques({ params }: Props): Promise<ReactElement> {
+export default async function MediateursNumeriques({ params, searchParams }: Props): Promise<ReactElement> {
   const { code, niveau } = await params
+  const { au, du } = await searchParams
 
   // Validation : niveau doit être 'national' ou 'departement'
   if (niveau !== 'national' && niveau !== 'departement') {
@@ -45,6 +48,11 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
   // Déterminer le territoire pour les loaders
   const territoire = niveau === 'national' ? 'France' : codeDepartement ?? ''
 
+  // Dates pour le filtre (par défaut : début du dispositif jusqu'à aujourd'hui)
+  const aujourdhui = new Date().toISOString().slice(0, 10)
+  const dateDebut = du ?? DATE_DEBUT_DISPOSITIF
+  const dateFin = au ?? aujourdhui
+
   // Récupérer les statistiques synchrones des médiateurs
   const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()
   const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(territoire)
@@ -54,7 +62,7 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
   )
 
   // Créer la promesse de récupération des statistiques async (Coop)
-  const statistiquesPromise = recupererStatistiques(codeDepartement)
+  const statistiquesPromise = recupererStatistiques(codeDepartement, dateDebut, dateFin)
 
   return (
     <div
@@ -94,7 +102,11 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
             </div>
           }
         >
-          <StatistiquesAsyncContent statistiquesPromise={statistiquesPromise} />
+          <StatistiquesAsyncContent
+            dateDebut={dateDebut}
+            dateFin={dateFin}
+            statistiquesPromise={statistiquesPromise}
+          />
         </Suspense>
       </AsyncLoaderErrorBoundary>
       <div className="fr-mb-4w ">
@@ -144,12 +156,29 @@ function renderCartesStatistiques(
 }
 
 async function recupererStatistiques(
-  codeDepartement?: string
+  codeDepartement?: string,
+  dateDebut?: string,
+  dateFin?: string
 ): Promise<ErrorViewModel | StatistiquesMediateursData> {
   try {
     const loader = createApiCoopStatistiquesLoader()
-    const filtres = codeDepartement === undefined ? undefined : { departements: [codeDepartement] }
-    const readModel = await loader.recupererStatistiques(filtres)
+    const filtres: {
+      au?: string
+      departements?: ReadonlyArray<string>
+      du?: string
+    } = {}
+
+    if (codeDepartement !== undefined) {
+      filtres.departements = [codeDepartement]
+    }
+    if (dateDebut !== undefined) {
+      filtres.du = dateDebut
+    }
+    if (dateFin !== undefined) {
+      filtres.au = dateFin
+    }
+
+    const readModel = await loader.recupererStatistiques(Object.keys(filtres).length > 0 ? filtres : undefined)
     return statistiquesCoopToMediateursData(readModel)
   } catch {
     return {
@@ -163,5 +192,9 @@ type Props = Readonly<{
   params: Promise<{
     code?: ReadonlyArray<string>
     niveau: string
+  }>
+  searchParams: Promise<{
+    au?: string
+    du?: string
   }>
 }>
