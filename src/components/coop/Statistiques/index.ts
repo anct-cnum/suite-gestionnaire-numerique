@@ -25,9 +25,6 @@ export * from './colors'
 // Async component
 export { default as StatistiquesAsyncContent } from './StatistiquesAsyncContent'
 
-// Selecteur de dates
-export { default as SelecteurRangeDates } from './SelecteurRangeDates'
-
 // Transformers
 export { statistiquesCoopToMediateursData } from './statistiquesCoopToMediateursData'
 

@@ -29,6 +29,9 @@ describe('apiCoopStatistiquesLoader', () => {
             thematiques: [
               { count: 200000, label: 'Prise en main d\'un ordinateur', proportion: 20.0, value: 'PriseEnMainOrdinateur' },
             ],
+            thematiques_demarches: [
+              { count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' },
+            ],
             total: 1161183,
             type_activites: [
               { count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' },
@@ -111,6 +114,9 @@ describe('apiCoopStatistiquesLoader', () => {
         ],
         thematiques: [
           { count: 200000, label: 'Prise en main d\'un ordinateur', proportion: 20.0, value: 'PriseEnMainOrdinateur' },
+        ],
+        thematiquesDemarches: [
+          { count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' },
         ],
         total: 1161183,
         typeActivites: [
