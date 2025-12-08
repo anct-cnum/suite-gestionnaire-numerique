@@ -18,7 +18,6 @@ import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
@@ -26,9 +25,10 @@ import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
+import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export default function TableauDeBord({
-  accompagnementsRealisesViewModel,
+  accompagnementsRealisesPromise,
   beneficiairesViewModel,
   departement,
   financementsViewModel,
@@ -103,7 +103,7 @@ export default function TableauDeBord({
       </section>
       <hr className="fr-hr" />
       <EtatDesLieux
-        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         carte={
           <CarteFragiliteDepartement
             communesFragilite={indicesFragilite as Array<CommuneFragilite>}
@@ -310,7 +310,7 @@ export default function TableauDeBord({
 }
 
 type Props = Readonly<{
-  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel>
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   departement: string
   financementsViewModel: ErrorViewModel | FinancementViewModel

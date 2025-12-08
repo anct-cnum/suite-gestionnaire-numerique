@@ -11,7 +11,6 @@ import GouvernanceAdmin from './Gouvernance/GouvernanceAdmin'
 import { clientContext } from '../shared/ClientContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
@@ -19,9 +18,10 @@ import { DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresente
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
+import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export default function TableauDeBordAdmin({
-  accompagnementsRealisesViewModel,
+  accompagnementsRealisesPromise,
   beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
@@ -55,7 +55,7 @@ export default function TableauDeBordAdmin({
       </PageTitle>
       <hr className="fr-hr" />
       <EtatDesLieux
-        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         carte={
           <CarteIndicesFrance
             departementsFragilite={indicesFragilite}
@@ -81,11 +81,11 @@ export default function TableauDeBordAdmin({
 }
 
 type Props = Readonly<{
-  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel>
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
-  indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
+  indicesFragilite: Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   tableauDeBordViewModel: TableauDeBordViewModel

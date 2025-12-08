@@ -253,15 +253,10 @@ describe('tableau de bord', () => {
 
     renderComponent(
       <TableauDeBord
-        accompagnementsRealisesViewModel={{
-          departement: '69',
-          graphique: {
-            backgroundColor: ['#000000'],
-            data: [48_476],
-            labels: ['2024'],
-          },
-          nombreTotal: '48476',
-        }}
+        accompagnementsRealisesPromise={Promise.resolve({
+          nombreTotal: 48_476,
+          repartitionMensuelle: [{ mois: '2024', nombre: 48_476 }],
+        })}
         beneficiairesViewModel={{
           collectivite: 42,
           details: [],
@@ -326,15 +321,10 @@ describe('tableau de bord', () => {
 
     renderComponent(
       <TableauDeBord
-        accompagnementsRealisesViewModel={{
-          departement: '69',
-          graphique: {
-            backgroundColor: ['#000000'],
-            data: [48_476],
-            labels: ['2024'],
-          },
-          nombreTotal: '48476',
-        }}
+        accompagnementsRealisesPromise={Promise.resolve({
+          nombreTotal: 48_476,
+          repartitionMensuelle: [{ mois: '2024', nombre: 48_476 }],
+        })}
         beneficiairesViewModel={{
           collectivite: 42,
           details: [

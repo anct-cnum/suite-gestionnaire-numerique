@@ -1,16 +1,11 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
-export interface AccompagnementsRealisesLoader {
-  get(territoire: string): Promise<AccompagnementsRealisesReadModel | ErrorReadModel>
+// Interface pour le loader AC uniquement (depuis la base de données)
+export interface AccompagnementsRealisesParACLoader {
+  get(territoire: string): Promise<AccompagnementsRealisesParACReadModel | ErrorReadModel>
 }
 
-export type AccompagnementsRealisesReadModel = Readonly<{
+export type AccompagnementsRealisesParACReadModel = Readonly<{
   departement: string
-  nombreTotal: number
-  repartitionMensuelle: ReadonlyArray<RepartitionMensuelleReadModel>
-}>
-
-type RepartitionMensuelleReadModel = Readonly<{
-  mois: string
-  nombre: number
+  nombreTotalAC: number
 }>

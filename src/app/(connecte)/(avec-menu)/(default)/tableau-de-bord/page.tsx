@@ -9,7 +9,6 @@ import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGa
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
 import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
 import { PrismaFinancementsAdminLoader } from '@/gateways/tableauDeBord/PrismaFinancementsAdminLoader'
 import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
@@ -17,7 +16,6 @@ import { PrismaGouvernanceAdminLoader } from '@/gateways/tableauDeBord/PrismaGou
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
-import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { beneficiairesPresenter } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { financementAdminPresenter } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
@@ -27,6 +25,7 @@ import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
+import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
@@ -62,8 +61,10 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   // Instancier les loaders communs
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
-  const accompagnementsRealisesLoader = new PrismaAccompagnementsRealisesLoader()
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
+
+  // Créer la Promise pour les accompagnements (sera résolue de manière asynchrone via Suspense)
+  const accompagnementsRealisesPromise = fetchAccompagnementsRealises(territoireCode)
 
   // Charger les données communes
   const lieuxInclusionReadModel = await lieuxInclusionLoader.get(territoireCode)
@@ -76,12 +77,6 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const mediateursEtAidantsViewModel = handleReadModelOrError(
     mediateursEtAidantsReadModel,
     mediateursEtAidantsPresenter
-  )
-
-  const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(territoireCode)
-  const accompagnementsRealisesViewModel = handleReadModelOrError(
-    accompagnementsRealisesReadModel,
-    accompagnementsRealisesPresenter
   )
 
   const beneficiairesReadModel = await beneficiairesLoader.get(territoireCode)
@@ -123,7 +118,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
     return (
       <TableauDeBordAdmin
-        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         beneficiairesViewModel={beneficiairesViewModel}
         financementsViewModel={financementsViewModel}
         gouvernanceViewModel={gouvernanceViewModel}
@@ -159,7 +154,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   return (
     <TableauDeBord
-      accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+      accompagnementsRealisesPromise={accompagnementsRealisesPromise}
       beneficiairesViewModel={beneficiairesViewModel}
       departement={territoireCode}
       financementsViewModel={financementsViewModel}

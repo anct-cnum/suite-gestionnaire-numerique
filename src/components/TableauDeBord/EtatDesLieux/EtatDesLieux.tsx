@@ -9,12 +9,12 @@ import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
+import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export default function EtatDesLieux({
-  accompagnementsRealisesViewModel,
+  accompagnementsRealisesPromise,
   afficherLienLieux = true,
   carte,
   lieuxInclusionViewModel,
@@ -63,7 +63,7 @@ export default function EtatDesLieux({
         <div className={`fr-col-12 fr-col-xl-4 ${styles.cardsColumn}`}>
           <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
           <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
-          <AccompagnementsRealises viewModel={accompagnementsRealisesViewModel} />
+          <AccompagnementsRealises accompagnementsRealisesPromise={accompagnementsRealisesPromise} />
         </div>
       </div>
     </section>
@@ -71,7 +71,7 @@ export default function EtatDesLieux({
 }
 
 type EtatDesLieuxProps = Readonly<{
-  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel>
   afficherLienLieux?: boolean
   carte: ReactElement
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
