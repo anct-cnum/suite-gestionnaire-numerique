@@ -7,15 +7,14 @@ import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
 import CarteIndicesFragilite from '@/components/vitrine/SyntheseEtIndicateurs/CarteIndicesFragilite'
 import SectionCartographie from '@/components/vitrine/SyntheseEtIndicateurs/SectionCartographie'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
-import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
-import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
+import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, niveau } = await params
@@ -50,20 +49,20 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
   // Instancier les loaders
   const lieuxLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursLoader = new PrismaMediateursEtAidantsLoader()
-  const accompagnementsLoader = new PrismaAccompagnementsRealisesLoader()
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
 
-  // Récupérer les données communes
-  const [lieuxReadModel, mediateursReadModel, accompagnementsReadModel] = await Promise.all([
+  // Créer la Promise pour les accompagnements (sera résolue de manière asynchrone via Suspense)
+  const accompagnementsRealisesPromise = fetchAccompagnementsRealises(territoire)
+
+  // Récupérer les données communes (lieux et médiateurs)
+  const [lieuxReadModel, mediateursReadModel] = await Promise.all([
     lieuxLoader.get(territoire),
     mediateursLoader.get(territoire),
-    accompagnementsLoader.get(territoire),
   ])
 
   // Transformer en ViewModels
   const lieuxViewModel = handleReadModelOrError(lieuxReadModel, lieuxInclusionNumeriquePresenter)
   const mediateursViewModel = handleReadModelOrError(mediateursReadModel, mediateursEtAidantsPresenter)
-  const accompagnementsViewModel = handleReadModelOrError(accompagnementsReadModel, accompagnementsRealisesPresenter)
 
   // Charger et transformer les indices de fragilité selon le niveau
   let indicesFragilite
@@ -83,7 +82,7 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
       style={{ display: 'flex', flexDirection: 'column' }}
     >
       <EtatDesLieux
-        accompagnementsRealisesViewModel={accompagnementsViewModel}
+        accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         afficherLienLieux={false}
         carte={
           <CarteIndicesFragilite
