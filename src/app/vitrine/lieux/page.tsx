@@ -40,7 +40,7 @@ export default function LieuxPage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
               <h2
                 className="fr-h2"
@@ -127,7 +127,7 @@ export default function LieuxPage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
               <h2
                 className="fr-h2"
@@ -380,7 +380,7 @@ export default function LieuxPage(): ReactElement {
               border: '1px solid #ddd',
               borderRadius: '1rem',
               display: 'flex',
-              gap: '1.5rem',
+              gap: '1rem',
               padding: '2.5rem',
             }}
           >
@@ -544,7 +544,7 @@ export default function LieuxPage(): ReactElement {
             </div>
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
               <h2
                 className="fr-h2"
@@ -634,8 +634,7 @@ export default function LieuxPage(): ReactElement {
                 Diffuser la cartographie nationale au sein de mon réseau
               </h3>
               <p
-                className="fr-text--sm"
-                style={{ marginBottom: 0 }}
+                className="fr-text--sm fr-mb-0"
               >
                 Vous souhaitez partager la cartographie au sein de votre réseau ? Vous êtes au bon endroit !
               </p>
@@ -686,8 +685,7 @@ export default function LieuxPage(): ReactElement {
                 Collectivité : Comment prendre en main la cartographie ?
               </h3>
               <p
-                className="fr-text--sm"
-                style={{ marginBottom: 0 }}
+                className="fr-text--sm fr-mb-0"
               >
                 Vous représentez une collectivité et souhaitez utiliser la cartographie nationale ?
               </p>
@@ -738,8 +736,7 @@ export default function LieuxPage(): ReactElement {
                 Évolution du standard national des lieux d&apos;inclusion numérique
               </h3>
               <p
-                className="fr-text--sm"
-                style={{ marginBottom: 0 }}
+                className="fr-text--sm fr-mb-0"
               >
                 Descriptif des évolutions du standard national des lieux d&apos;inclusion numérique (version 1.0.1)
               </p>

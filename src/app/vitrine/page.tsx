@@ -160,7 +160,7 @@ export default function VitrineHomePage(): ReactElement {
               className="fr-col-12 fr-col-md-5"
               style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
-              <p className="fr-text--md">
+              <p className="fr-text--md  fr-mb-0">
                 Ici réside désormais l&apos;enjeu de l&apos;inclusion numérique :
               </p>
               <h2
@@ -244,7 +244,7 @@ export default function VitrineHomePage(): ReactElement {
               >
                 Les lieux d&apos;inclusion numérique sur le territoire
               </h3>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Partout en France, des milliers de lieux accompagnent les habitants dans leurs usages du numérique :
                 médiathèques, centres sociaux, tiers-lieux, espaces France Services ou associations locales.
                 Ces structures proposent des ateliers, des permanences et un accueil de proximité pour répondre
@@ -287,7 +287,7 @@ export default function VitrineHomePage(): ReactElement {
               >
                 Les dispositifs de l&apos;inclusion numérique
               </h3>
-              <p className="fr-text--md">
+              <p className="fr-text--md  fr-mb-0">
                 Plusieurs dispositifs existent pour accompagner la population : médiateurs numériques,
                 ateliers de montée en compétences, actions d&apos;aller-vers ou encore
                 programmes locaux portés par les collectivités. Ils permettent d&apos;accompagner tous les publics
@@ -330,7 +330,7 @@ export default function VitrineHomePage(): ReactElement {
               >
                 Les données et les études de l&apos;inclusion numérique
               </h3>
-              <p className="fr-text--md">
+              <p className="fr-text--md  fr-mb-0">
                 Accédez aux données qui éclairent les dynamiques locales : actions mises en œuvre dans les feuilles
                 de route territoriales, types d&apos;accompagnements proposés, profils et besoins
                 des publics bénéficiaires. Ces analyses permettent de suivre et de mesurer les besoins
@@ -373,7 +373,7 @@ export default function VitrineHomePage(): ReactElement {
               >
                 Les outils pour les professionnels de l&apos;inclusion numérique
               </h3>
-              <p className="fr-text--md">
+              <p className="fr-text--md  fr-mb-0">
                 Plusieurs outils permettent aux acteurs de l&apos;inclusion numérique de travailler efficacement.
                 Parmi eux, Mon Inclusion Numérique constitue la suite d&apos;outil des porteurs de dispositifs
                 d&apos;inclusion numérique. La Coop de la médiation est l&apos;outil métier des médiateurs numériques

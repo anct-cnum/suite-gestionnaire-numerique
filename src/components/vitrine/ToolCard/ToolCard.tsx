@@ -41,7 +41,6 @@ export default function ToolCard({
             )}
             <h2
               className="fr-h2 fr-mb-0"
-              style={{ marginBottom: 0 }}
             >
               {title}
             </h2>
@@ -54,7 +53,7 @@ export default function ToolCard({
                 {badge}
               </Badge>
             )}
-            <p className="fr-text--md">
+            <p className="fr-text--md fr-mb-0">
               {description}
             </p>
             {link !== undefined && link !== '' && (
