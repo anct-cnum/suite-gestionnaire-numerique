@@ -6,7 +6,7 @@
 .aidantsConnectContent {
   display: flex;
   flex-direction: column;
-  gap: 1.5em;
+  gap: 1em;
   order: 2;
 }
 

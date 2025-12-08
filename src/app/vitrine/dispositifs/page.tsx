@@ -39,7 +39,7 @@ export default function DispositifsPage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
               <div>
                 <img
@@ -49,8 +49,8 @@ export default function DispositifsPage(): ReactElement {
                 />
               </div>
               <h2
-                className="fr-h2"
-                style={{ color: '#000091', marginBottom: 0 }}
+                className="fr-h2 fr-mb-0"
+                style={{ color: '#000091' }}
               >
                 Conseiller numérique
               </h2>
@@ -59,7 +59,7 @@ export default function DispositifsPage(): ReactElement {
               </p>
               {' '}
               <ul
-                className="fr-text--md"
+                className="fr-text--md fr-mb-0"
                 style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}
               >
                 <li>
@@ -127,9 +127,9 @@ export default function DispositifsPage(): ReactElement {
               >
                 Formation Aidants numériques et/ou Aidants Connect
               </h2>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Une enveloppe financière a été dédiée à la formation des professionnels du
-                territoire à l’inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de
+                territoire à l&apos;inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de
                 l&apos;outil Aidants Connect.
               </p>
               <div>
