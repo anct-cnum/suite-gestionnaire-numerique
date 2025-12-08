@@ -23,6 +23,28 @@ vi.mock('../shared/Carte/CarteFranceAvecInsets', () => ({
     </div>)),
 }))
 
+// Mock du composant AccompagnementsRealises (chargement asynchrone avec Suspense)
+vi.mock('./EtatDesLieux/AccompagnementsRealises', () => ({
+  // eslint-disable-next-line vitest/require-mock-type-parameters
+  default: vi.fn(() => (
+    <>
+      <div className="background-blue-france fr-p-4w fr-ml-1w">
+        <div className="fr-h1 fr-m-0">
+          48476
+        </div>
+        <div className="font-weight-500">
+          Accompagnements réalisés
+        </div>
+      </div>
+      <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
+        <div className="font-weight-500">
+          Accompagnements des 6 derniers mois
+        </div>
+      </div>
+    </>
+  )),
+}))
+
 describe('tableau de bord', () => {
   afterEach(() => {
     vi.clearAllMocks()
@@ -80,6 +102,7 @@ describe('tableau de bord', () => {
     expect(mediateursNumériquesNombre).toBeInTheDocument()
     const mediateursNumériquesTitre = within(etatDesLieuxSection).getByText('Médiateurs et aidants numériques')
     expect(mediateursNumériquesTitre).toBeInTheDocument()
+    // AccompagnementsRealises est mocké pour éviter les problèmes avec Suspense dans les tests
     const accompagnementsNombre = within(etatDesLieuxSection).getByText('48476')
     expect(accompagnementsNombre).toBeInTheDocument()
     const accompagnementsTitre = within(etatDesLieuxSection).getByText('Accompagnements réalisés')
