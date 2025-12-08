@@ -98,7 +98,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         reponse = await fetch(url, {
           headers: entetes,
           method: 'GET',
-          signal: AbortSignal.timeout(15000), // 15 secondes de timeout
+          signal: AbortSignal.timeout(60000), // 60 secondes de timeout
         })
 
         break
