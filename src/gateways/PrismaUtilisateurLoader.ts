@@ -63,9 +63,8 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         if (doitEtreMiseAJour) {
           throw new Error('Doit etre mis a jour')
         }
-      } else {
-        throw new Error('Utilisateur non trouvé')
       }
+      throw new Error('Utilisateur non trouvé')
     }
     return transform(utilisateurRecord as UtilisateurAvecMembresRecord)
   }
