@@ -1,9 +1,11 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ReactElement, useCallback, useId, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useId, useRef, useState } from 'react'
 
 import styles from './SelecteurRangeDates.module.css'
+
+const cx = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ')
 
 const DATE_DEBUT_DISPOSITIF = '2020-11-07'
 
@@ -12,7 +14,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const [dateDebutLocale, setDateDebutLocale] = useState(dateDebut)
   const [dateFinLocale, setDateFinLocale] = useState(dateFin)
@@ -23,15 +25,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     return `${jour}.${mois}.${annee?.slice(2)}`
   }, [])
 
-  const ouvrirDialog = useCallback(() => {
-    dialogRef.current?.showModal()
-    setIsOpen(true)
-  }, [])
-
-  const fermerDialog = useCallback(() => {
-    dialogRef.current?.close()
-    setIsOpen(false)
-  }, [])
+  const isFilled = dateDebut !== DATE_DEBUT_DISPOSITIF || dateFin !== new Date().toISOString().slice(0, 10)
 
   const appliquerFiltres = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())
@@ -51,45 +45,90 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
 
     const queryString = params.toString()
     router.push(queryString ? `${pathname}?${queryString}` : pathname)
-    fermerDialog()
-  }, [dateDebutLocale, dateFinLocale, fermerDialog, pathname, router, searchParams])
+    setIsOpen(false)
+  }, [dateDebutLocale, dateFinLocale, pathname, router, searchParams])
 
-  const reinitialiser = useCallback(() => {
+  const effacerFiltres = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('du')
+    params.delete('au')
+
     const aujourdhui = new Date().toISOString().slice(0, 10)
     setDateDebutLocale(DATE_DEBUT_DISPOSITIF)
     setDateFinLocale(aujourdhui)
-  }, [])
+
+    const queryString = params.toString()
+    router.push(queryString ? `${pathname}?${queryString}` : pathname)
+    setIsOpen(false)
+  }, [pathname, router, searchParams])
+
+  // Fermer le popover quand on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        if (isOpen) {
+          appliquerFiltres()
+        }
+      }
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        appliquerFiltres()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen, appliquerFiltres])
 
   return (
-    <div className={styles.selecteurRangeDates}>
+    <div
+      className={styles.container}
+      ref={containerRef}
+    >
       <button
         aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        className="fr-btn fr-btn--tertiary fr-btn--sm"
-        onClick={ouvrirDialog}
+        aria-haspopup="true"
+        className={cx(
+          'fr-btn',
+          isFilled ? 'fr-btn--secondary' : 'fr-btn--tertiary',
+          'fr-border-radius--4',
+          isFilled && styles.filled,
+          isOpen && styles.open
+        )}
+        onClick={() => setIsOpen(!isOpen)}
         type="button"
       >
         {formaterDateCourte(dateDebut)}
         {' - '}
         {formaterDateCourte(dateFin)}
+        <span
+          aria-hidden
+          className={cx(
+            'fr-ml-1v fr-icon--sm',
+            isOpen ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'
+          )}
+        />
       </button>
 
-      <dialog
-        className={styles.dialog}
-        id={`${id}-dialog`}
-        ref={dialogRef}
-      >
-        <div className={styles.dialogContent}>
+      {isOpen ? (
+        <div
+          className={styles.popover}
+          id={`${id}-popover`}
+        >
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-6">
-              <label
-                className="fr-label"
-                htmlFor={`${id}-debut`}
-              >
-                Du
-              </label>
+              <h4 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
+                Début
+              </h4>
               <input
-                className="fr-input"
+                className={cx('fr-input', styles.dateInput)}
                 id={`${id}-debut`}
                 max={dateFinLocale}
                 min={DATE_DEBUT_DISPOSITIF}
@@ -99,14 +138,11 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
               />
             </div>
             <div className="fr-col-6">
-              <label
-                className="fr-label"
-                htmlFor={`${id}-fin`}
-              >
-                Au
-              </label>
+              <h4 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
+                Fin
+              </h4>
               <input
-                className="fr-input"
+                className={cx('fr-input', styles.dateInput)}
                 id={`${id}-fin`}
                 max={new Date().toISOString().slice(0, 10)}
                 min={dateDebutLocale}
@@ -116,24 +152,25 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
               />
             </div>
           </div>
-          <div className="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-mt-2w">
+          <hr className="fr-separator-1px fr-my-3v" />
+          <div className="fr-flex fr-flex-gap-4v" style={{ justifyContent: 'flex-end' }}>
             <button
-              className="fr-btn fr-btn--secondary fr-btn--sm"
-              onClick={reinitialiser}
+              className="fr-btn fr-btn--secondary"
+              onClick={effacerFiltres}
               type="button"
             >
-              Réinitialiser
+              Effacer
             </button>
             <button
-              className="fr-btn fr-btn--sm"
+              className="fr-btn"
               onClick={appliquerFiltres}
               type="button"
             >
-              Appliquer
+              Valider
             </button>
           </div>
         </div>
-      </dialog>
+      ) : null}
     </div>
   )
 }

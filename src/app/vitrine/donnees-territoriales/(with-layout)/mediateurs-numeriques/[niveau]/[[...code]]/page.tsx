@@ -4,6 +4,7 @@ import { ReactElement, Suspense } from 'react'
 
 import AsyncLoaderErrorBoundary from '@/components/AidantsMediateurs/GenericErrorBoundary'
 import { StatistiquesAsyncContent, statistiquesCoopToMediateursData, StatistiquesMediateursData } from '@/components/coop/Statistiques'
+import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import CarteStatistiqueAidantsConnect from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueAidantsConnect'
@@ -92,15 +93,8 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
         }
       >
         <Suspense
-          fallback={
-            <div className="fr-py-4w">
-              <div className="fr-alert fr-alert--info">
-                <p>
-                  Récupération des données depuis la Coop
-                </p>
-              </div>
-            </div>
-          }
+          fallback={<SpinnerSimple text="Récupération des données depuis la Coop" />}
+          key={`${dateDebut}-${dateFin}`}
         >
           <StatistiquesAsyncContent
             dateDebut={dateDebut}
