@@ -72,7 +72,7 @@ export default function MentionsLegales(): ReactElement {
             Le directeur de publication est Monsieur
             {' '}
             <strong>
-              Stanislas BOURRON
+              Henri PREVOST
             </strong>
             {' '}
             , Directeur général de l&apos;ANCT.
@@ -114,31 +114,6 @@ export default function MentionsLegales(): ReactElement {
           aria-labelledby="accessibilite-title"
           className="fr-mb-4w"
         >
-          <h2
-            className="fr-h6"
-            id="accessibilite-title"
-          >
-            Accessibilité
-          </h2>
-          <p>
-            La conformité aux normes d&apos;accessibilité numérique est un objectif ultérieur
-            mais nous tâchons de rendre ce site accessible à toutes et à tous.
-          </p>
-
-          <h3 className="fr-text--md fr-mt-3w">
-            En savoir plus
-          </h3>
-          <p>
-            Pour en savoir plus sur la politique d&apos;accessibilité numérique de l&apos;État :
-            {' '}
-            <ExternalLink
-              href="https://accessibilite.numerique.gouv.fr/"
-              title="Politique d'accessibilité numérique de l'État"
-            >
-              https://accessibilite.numerique.gouv.fr/
-            </ExternalLink>
-          </p>
-
           <h3 className="fr-text--md fr-mt-3w">
             Signaler un dysfonctionnement
           </h3>
@@ -156,26 +131,6 @@ export default function MentionsLegales(): ReactElement {
           <p>
             Si vous n&apos;obtenez pas de réponse rapide de notre part, vous êtes en droit
             de faire parvenir vos doléances ou une demande de saisine au Défenseur des droits.
-          </p>
-        </section>
-
-        <section
-          aria-labelledby="securite-title"
-          className="fr-mb-4w"
-        >
-          <h2
-            className="fr-h6"
-            id="securite-title"
-          >
-            Sécurité
-          </h2>
-          <p>
-            Le site est protégé par un certificat électronique, matérialisé pour la grande majorité
-            des navigateurs par un cadenas. Cette protection participe à la confidentialité des échanges.
-          </p>
-          <p>
-            En aucun cas les services associés à la plateforme ne seront à l&apos;origine d&apos;envoi
-            d&apos;email pour demander la saisie d&apos;informations personnelles.
           </p>
         </section>
       </article>
