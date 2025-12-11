@@ -183,20 +183,37 @@ describe('prisma utilisateur query', () => {
     })
   })
 
-  //Ticket #681 : https://github.com/anct-cnum/suite-gestionnaire-numerique/issues/681
-  it('quand je cherche un utilisateur qui existe par son ssoId et dont le ssoId egale a son email, et dont le compte est actif, alors je lui demande de se reconnecter', async () => {
+  // Ticket #681 : https://github.com/anct-cnum/suite-gestionnaire-numerique/issues/681
+  // Scénario : le ssoId a changé côté ProConnect mais l'utilisateur existe avec le même email
+  it('quand le ssoId a changé mais l\'utilisateur existe avec le même email, alors on demande la mise à jour du ssoId', async () => {
     // GIVEN
-    const ssoIdVenantDuProConnect = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    const ssoIdDansLaBaeDeDonnees = 'martin.tartempion@example.net'
-    await creerUnUtilisateur({ isSupprime: false, ssoId: ssoIdDansLaBaeDeDonnees })
+    const nouveauSsoIdProConnect = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const ancienSsoId = 'ancien-sso-id-12345'
+    const emailUtilisateur = 'martin.tartempion@example.net'
+    await creerUnUtilisateur({ isSupprime: false, ssoEmail: emailUtilisateur, ssoId: ancienSsoId })
 
     // WHEN
     const utilisateurReadModel =
       async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader()
-        .findByUid(ssoIdVenantDuProConnect, ssoIdDansLaBaeDeDonnees)
+        .findByUid(nouveauSsoIdProConnect, emailUtilisateur)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('Doit etre mis a jour')
+  })
+
+  it('quand le ssoId n\'existe pas et l\'email fourni ne correspond à aucun utilisateur, alors utilisateur non trouvé', async () => {
+    // GIVEN
+    const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const emailInexistant = 'inconnu@example.net'
+    await creerUnUtilisateur({ ssoEmail: 'autre@example.net', ssoId: 'autre-sso-id' })
+
+    // WHEN
+    const utilisateurReadModel =
+      async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader()
+        .findByUid(ssoIdInexistant, emailInexistant)
+
+    // THEN
+    await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
   })
 
   describe('chercher mes utilisateurs', () => {
