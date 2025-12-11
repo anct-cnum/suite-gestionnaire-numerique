@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
+import { isNullishOrEmpty } from '@/shared/lang'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
@@ -10,63 +11,55 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
   async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
-    const utilisateurRecord = await this.#dataResource.findUnique({
-      include: {
-        relationDepartement: true,
-        relationGroupement: true,
-        relationRegion: true,
-        relationStructure: {
-          include: {
-            membres: {
-              select: {
-                gouvernanceDepartementCode: true,
-              },
-              take: 1,
-              where: {
-                statut: 'confirme',
-              },
+    const includeRelations = {
+      relationDepartement: true,
+      relationGroupement: true,
+      relationRegion: true,
+      relationStructure: {
+        include: {
+          membres: {
+            select: {
+              gouvernanceDepartementCode: true,
+            },
+            take: 1,
+            where: {
+              statut: 'confirme',
             },
           },
         },
       },
+    }
+
+    // 1. Recherche par ssoId (cas nominal)
+    const utilisateurParSsoId = await this.#dataResource.findUnique({
+      include: includeRelations,
       where: {
         isSupprime: false,
         ssoId: uid,
       },
     })
-    if (!utilisateurRecord) {
-      if (email !== undefined && email) {
-        const doitEtreMiseAJour = await this.#dataResource.findUnique({
-          include: {
-            relationDepartement: true,
-            relationGroupement: true,
-            relationRegion: true,
-            relationStructure: {
-              include: {
-                membres: {
-                  select: {
-                    gouvernanceDepartementCode: true,
-                  },
-                  take: 1,
-                  where: {
-                    statut: 'confirme',
-                  },
-                },
-              },
-            },
-          },
-          where: {
-            isSupprime: false,
-            ssoId: email,
-          },
-        })
-        if (doitEtreMiseAJour) {
-          throw new Error('Doit etre mis a jour')
-        }
-      }
-      throw new Error('Utilisateur non trouvé')
+
+    if (utilisateurParSsoId) {
+      return transform(utilisateurParSsoId as UtilisateurAvecMembresRecord)
     }
-    return transform(utilisateurRecord as UtilisateurAvecMembresRecord)
+
+    // 2. Fallback : recherche par email (ssoEmail est l'email venant de ProConnect)
+    if (!isNullishOrEmpty(email)) {
+      const utilisateurParEmail = await this.#dataResource.findUnique({
+        include: includeRelations,
+        where: {
+          isSupprime: false,
+          ssoEmail: email,
+        },
+      })
+
+      if (utilisateurParEmail) {
+        // L'utilisateur existe mais son ssoId a changé (ou première connexion)
+        throw new Error('Doit etre mis a jour')
+      }
+    }
+
+    throw new Error('Utilisateur non trouvé')
   }
 
   async mesUtilisateursEtLeTotal(

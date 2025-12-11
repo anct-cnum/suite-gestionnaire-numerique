@@ -1,42 +1,56 @@
 import { MettreAJourUidALaPremiereConnexion } from './MettreAJourUidALaPremiereConnexion'
-import { GetUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { Utilisateur } from '@/domain/Utilisateur'
 
-describe('mettre à jour l’identifiant unique à la première connexion', () => {
+describe('mettre à jour l\'identifiant unique à la première connexion', () => {
   beforeEach(() => {
-    spiedUidToFind = null
+    spiedEmailToFind = null
     spiedUtilisateurToUpdate = null
   })
 
-  it('quand l’utilisateur se connecte pour la première fois, alors l’identifiant unique est mis à jour', async () => {
+  it('quand l\'utilisateur se connecte pour la première fois, alors l\'identifiant unique est mis à jour', async () => {
     // GIVEN
-    const emailAsUid = 'martin.tartempion@example.net'
+    const email = 'martin.tartempion@example.net'
     const uid = 'fooId'
     const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await mettreAJourUidALaPremiereConnexion.handle({ emailAsUid, uid })
+    const result = await mettreAJourUidALaPremiereConnexion.handle({ email, uid })
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUidToFind).toBe('martin.tartempion@example.net')
+    expect(spiedEmailToFind).toBe('martin.tartempion@example.net')
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
       derniereConnexion: undefined,
       uid: {
-        email: emailAsUid,
+        email,
         value: uid,
       },
     }).state)
   })
+
+  it('quand l\'utilisateur n\'existe pas, alors une erreur est levée', async () => {
+    // GIVEN
+    const email = 'inconnu@example.net'
+    const uid = 'fooId'
+    const mettreAJourUidALaPremiereConnexion = 
+        new MettreAJourUidALaPremiereConnexion(new UtilisateurRepositorySpyNotFound())
+
+    // WHEN
+    const promise = mettreAJourUidALaPremiereConnexion.handle({ email, uid })
+
+    // THEN
+    await expect(promise).rejects.toThrow('Utilisateur non trouvé')
+  })
 })
 
-let spiedUidToFind: null | string
+let spiedEmailToFind: null | string
 let spiedUtilisateurToUpdate: null | Utilisateur
 
-class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurUidRepository {
-  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    spiedUidToFind = uid
+class UtilisateurRepositorySpy implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository {
+  async findByEmail(email: string): Promise<undefined | Utilisateur> {
+    spiedEmailToFind = email
     return Promise.resolve(utilisateurFactory({
       derniereConnexion: undefined,
       uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
@@ -45,6 +59,18 @@ class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilis
 
   async updateUid(utilisateur: Utilisateur): Promise<void> {
     spiedUtilisateurToUpdate = utilisateur
+    return Promise.resolve()
+  }
+}
+
+class UtilisateurRepositorySpyNotFound implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async findByEmail(_: string): Promise<undefined | Utilisateur> {
+    return Promise.resolve(undefined)
+  }
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async updateUid(_: Utilisateur): Promise<void> {
     return Promise.resolve()
   }
 }

@@ -147,7 +147,7 @@ async function recupereretMettreAJourUtilisateur(
         try {
           await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
             .handle({
-              emailAsUid: profile.email,
+              email: profile.email,
               uid: profile.sub,
             })
         } catch {

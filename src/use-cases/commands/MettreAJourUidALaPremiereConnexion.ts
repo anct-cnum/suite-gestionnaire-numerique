@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { GetUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Command> {
@@ -10,7 +10,11 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
   }
 
   async handle(command: Command): ResultAsync<never> {
-    const utilisateurCourant = await this.#utilisateurRepository.get(command.emailAsUid)
+    const utilisateurCourant = await this.#utilisateurRepository.findByEmail(command.email)
+
+    if (!utilisateurCourant) {
+      throw new Error('Utilisateur non trouvé')
+    }
 
     const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurCourant, command.uid)
     await this.#utilisateurRepository.updateUid(utilisateurAvecNouvelUid)
@@ -20,8 +24,8 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
 }
 
 type Command = Readonly<{
-  emailAsUid: string
+  email: string
   uid: string
 }>
 
-type UtilisateurRepository = GetUtilisateurRepository & UpdateUtilisateurUidRepository
+type UtilisateurRepository = FindUtilisateurByEmailRepository & UpdateUtilisateurUidRepository

@@ -164,7 +164,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ssoId: utilisateurState.uid.value,
       },
       where: {
-        ssoId: utilisateurState.uid.email,
+        ssoEmail: utilisateurState.uid.email,
       },
     })
   }
