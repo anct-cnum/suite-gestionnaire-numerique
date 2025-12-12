@@ -57,7 +57,12 @@ export default function CarteFragiliteDepartement({
                   {' '}
                   Indice de Fragilité numérique
                 </span>
-                <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+                <Information>
+                  <p className="fr-mb-0">
+                    L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
+                    2021
+                  </p>
+                </Information>
               </div>
             </div>
           </div>
@@ -98,17 +103,23 @@ export default function CarteFragiliteDepartement({
                 {' '}
                 Indice de Fragilité numérique
               </span>
-              <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+              <Information>
+                <p className="fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
+                  2021
+                </p>
+              </Information>
             </div>
           </div>
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ?
+          {isReady ? (
             <Carte
               communesFragilite={communesFragilite}
               departement={departement}
-            /> : null}
+            />
+          ) : null}
         </div>
       </div>
     </div>

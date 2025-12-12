@@ -22,10 +22,7 @@ export function StatistiquesGenerales({
   return (
     <>
       <h2 className="fr-h5 fr-text-mention--grey">
-        <span
-          aria-hidden
-          className="fr-icon-line-chart-line fr-mr-1w"
-        />
+        <span aria-hidden className="fr-icon-line-chart-line fr-mr-1w" />
         Statistiques générales sur les accompagnements
       </h2>
       <div className="fr-grid-row fr-flex-gap-6v">
@@ -52,10 +49,23 @@ export function StatistiquesGenerales({
                   Accompagnement
                   {sPluriel(totalCounts.accompagnements.total)}
                 </span>
-                <Information label="Les ateliers collectifs comptent pour 1 accompagnement par participant." />
+                <Information
+                  children={
+                    <p className="fr-mb-0">
+                      Les ateliers collectifs comptent pour 1 accompagnement par participant.
+                    </p>
+                  }
+                />
               </div>
             </div>
-            <div style={{ alignItems: 'flex-start', display: 'flex', flex: '0 0 20%', justifyContent: 'flex-end' }}>
+            <div
+              style={{
+                alignItems: 'flex-start',
+                display: 'flex',
+                flex: '0 0 20%',
+                justifyContent: 'flex-end',
+              }}
+            >
               <span
                 aria-hidden
                 className="fr-icon-service-line"
@@ -77,38 +87,32 @@ export function StatistiquesGenerales({
               <div className="fr-mt-2v">
                 <div className="fr-text--sm fr-text--bold fr-mb-4v">
                   Bénéficiaire
-                  {sPluriel(totalCounts.beneficiaires.total)}
-                  {' '}
-                  accompagné
+                  {sPluriel(totalCounts.beneficiaires.total)} accompagné
                   {sPluriel(totalCounts.beneficiaires.total)}
                 </div>
                 <div className="fr-text-mention--grey fr-text--sm fr-mb-0">
                   <div>
-                    <strong>
-                      {numberToString(totalCounts.beneficiaires.suivis)}
-                    </strong>
-                    {' '}
-                    bénéficiaire
-                    {sPluriel(totalCounts.beneficiaires.suivis)}
-                    {' '}
-                    suivi
+                    <strong>{numberToString(totalCounts.beneficiaires.suivis)}</strong> bénéficiaire
+                    {sPluriel(totalCounts.beneficiaires.suivis)} suivi
                     {sPluriel(totalCounts.beneficiaires.suivis)}
                   </div>
                   <div>
-                    <strong>
-                      {numberToString(totalCounts.beneficiaires.anonymes)}
-                    </strong>
-                    {' '}
+                    <strong>{numberToString(totalCounts.beneficiaires.anonymes)}</strong>{' '}
                     bénéficiaire
-                    {sPluriel(totalCounts.beneficiaires.anonymes)}
-                    {' '}
-                    anonyme
+                    {sPluriel(totalCounts.beneficiaires.anonymes)} anonyme
                     {sPluriel(totalCounts.beneficiaires.anonymes)}
                   </div>
                 </div>
               </div>
             </div>
-            <div style={{ alignItems: 'flex-start', display: 'flex', flex: '0 0 20%', justifyContent: 'flex-end' }}>
+            <div
+              style={{
+                alignItems: 'flex-start',
+                display: 'flex',
+                flex: '0 0 20%',
+                justifyContent: 'flex-end',
+              }}
+            >
               <span
                 aria-hidden
                 className="fr-icon-user-heart-line"
@@ -124,29 +128,31 @@ export function StatistiquesGenerales({
           <div className="fr-mb-3w">
             <div className="fr-mb-1w">
               <h3 className="fr-text--lg fr-mb-0">
-                <span>
-                  Nombre d'accompagnements
-                </span>
-                <Information label="Somme des accompagnements individuels et participations aux ateliers collectifs." />
+                <span>Nombre d'accompagnements</span>
+                <Information
+                  children={
+                    <p className="fr-mb-0">
+                      Somme des accompagnements individuels et participations aux ateliers
+                      collectifs.
+                    </p>
+                  }
+                />
               </h3>
             </div>
             <fieldset className="fr-segmented fr-segmented--sm fr-md-col fr-col-12">
-              <legend className="fr-segmented__legend sr-only">
-                Bascule entre les périodes
-              </legend>
+              <legend className="fr-segmented__legend sr-only">Bascule entre les périodes</legend>
               <div className="fr-segmented__elements">
                 <div className="fr-segmented__element">
                   <input
                     checked={isAccompagnementCountByMonth}
                     id="period-month"
                     name="period"
-                    onChange={() => { setIsAccompagnementCountByMonth(true) }}
+                    onChange={() => {
+                      setIsAccompagnementCountByMonth(true)
+                    }}
                     type="radio"
                   />
-                  <label
-                    className="fr-label"
-                    htmlFor="period-month"
-                  >
+                  <label className="fr-label" htmlFor="period-month">
                     Par mois
                   </label>
                 </div>
@@ -155,13 +161,12 @@ export function StatistiquesGenerales({
                     checked={!isAccompagnementCountByMonth}
                     id="period-day"
                     name="period"
-                    onChange={() => { setIsAccompagnementCountByMonth(false) }}
+                    onChange={() => {
+                      setIsAccompagnementCountByMonth(false)
+                    }}
                     type="radio"
                   />
-                  <label
-                    className="fr-label"
-                    htmlFor="period-day"
-                  >
+                  <label className="fr-label" htmlFor="period-day">
                     Par jour
                   </label>
                 </div>
@@ -169,11 +174,7 @@ export function StatistiquesGenerales({
             </fieldset>
           </div>
           <AccompagnementBarChart
-            data={
-              isAccompagnementCountByMonth
-                ? accompagnementsParMois
-                : accompagnementsParJour
-            }
+            data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}
           />
         </div>
       </div>

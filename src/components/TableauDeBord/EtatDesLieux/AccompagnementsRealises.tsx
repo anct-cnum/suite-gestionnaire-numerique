@@ -38,7 +38,11 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
             {' '}
             Accompagnements réalisés
           </span>
-          <Information label="Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect" />
+          <Information>
+            <p className="fr-mb-0">
+              &quot;Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect
+            </p>
+          </Information>
         </div>
       </div>
       <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
@@ -47,7 +51,11 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
             {' '}
             Accompagnements des 6 derniers mois
           </span>
-          <Information label="Accompagnements saisis sur La Coop" />
+          <Information>
+            <p className="fr-mb-0">
+              Accompagnements saisis sur La Coop
+            </p>
+          </Information>
         </div>
         <div className="fr-text--sm color-grey fr-mt-2w">
           Chargement...

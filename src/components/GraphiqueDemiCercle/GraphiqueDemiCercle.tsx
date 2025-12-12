@@ -12,9 +12,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
   const { dateGeneration, description = '',  details, graphiqueInfos,indicateur, information, label } = props
   const componentRef = useRef<HTMLDivElement>(null)
   return (
-    <section
-      className="fr-mb-3w"
-    >
+    <section className="fr-mb-3w">
       <div
         className="fr-p-4w fr-border-default--grey"
         style={{ borderRadius: '1rem' }}
@@ -23,29 +21,32 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           className="center"
           ref={componentRef}
         >
-          <div >
+          <div>
             <Doughnut
-              backgroundColor={graphiqueInfos.map(item => item.backgroundColor)}
-              data={graphiqueInfos.map(item => item.value)}
+              backgroundColor={graphiqueInfos.map((item) => item.backgroundColor)}
+              data={graphiqueInfos.map((item) => item.value)}
               isFull={false}
-              labels={graphiqueInfos.map(item => item.label)}
+              labels={graphiqueInfos.map((item) => item.label)}
             />
           </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`} >
+          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
             {indicateur}
           </div>
-          <div className="fr-text--lg font-weight-700 fr-m-0" >
+          <div className="fr-text--lg font-weight-700 fr-m-0">
             {label}
-            {information === undefined ? null :
-            // eslint-disable-next-line @stylistic/indent
-            <Information label={information} />}
-          </div>
-          { description === '' ? null :
-            (
-              <div className="color-blue-france fr-pb-1w separator" >
-                {description}
-              </div>
+            {information === undefined ? null : (
+              <Information>
+                <p className="fr-mb-0">
+                  {information}
+                </p>
+              </Information>
             )}
+          </div>
+          {description === '' ? null : (
+            <div className="color-blue-france fr-pb-1w separator">
+              {description}
+            </div>
+          )}
 
           <div className="fr-mt-4w">
             <ul>
@@ -76,22 +77,22 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
             </ul>
           </div>
         </div>
-        <hr
-          className="fr-hr fr-mt-3w"
-        />
+        <hr className="fr-hr fr-mt-3w" />
         <div
           className="fr-grid-row fr-grid-row--middle fr-mt-2w"
           style={{ alignItems: 'center' }}
         >
-          <div style={{ display: 'none' , flex: 1 }}>
+          <div style={{ display: 'none', flex: 1 }}>
             <p className="fr-text--sm fr-mb-0">
-              Données mises à jour le
+              Données mises à jour le 
               {' '}
               {dateGeneration.toLocaleDateString('fr-FR')}
             </p>
           </div>
           <DownloadButton
-            onClick={() => { void handleDownload(componentRef,label)}}
+            onClick={() => {
+              void handleDownload(componentRef, label)
+            }}
             title={label}
           />
         </div>

@@ -131,7 +131,11 @@ ${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Conne
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <p className="fr-text--sm fr-text--bold fr-mb-1v">
               Accompagnements
-              <Information label={informationLabel} />
+              <Information>
+                <p className="fr-mb-0">
+                  {informationLabel}
+                </p>
+              </Information>
             </p>
             <p className="fr-text--xs fr-mt-0">
               Dont
@@ -218,20 +222,27 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
   const labels = Array.from(statistiques?.graphique.labels ?? ['Aucune donnée'])
 
   return (
-    <div className="fr-col-12 fr-col-md-8" >
+    <div className="fr-col-12 fr-col-md-8">
       <div
         className="fr-p-3w"
-        style={{ borderColor: 'var(--grey-900-175)', borderRadius: '1rem' ,borderStyle: 'solid', borderWidth: '1px' }}
+        style={{
+          borderColor: 'var(--grey-900-175)',
+          borderRadius: '1rem',
+          borderStyle: 'solid',
+          borderWidth: '1px',
+        }}
       >
-        <div className="fr-grid-row fr-grid-row--between fr-grid-row--middle fr-mb-2w" >
+        <div className="fr-grid-row fr-grid-row--between fr-grid-row--middle fr-mb-2w">
           <h3 className="fr-h6 fr-col fr-mb-0">
             Nombre d&apos;accompagnements
-            <Information label="
-Le nombre d'accompagnements correspond à la somme des 2 types d'activités enregistrées : accompagnement individuel et atelier collectif.
-
-À noter : Les ateliers collectifs comptent pour 1 accompagnement par participant.
-Ex : Un atelier collectif avec 10 participants compte pour 10 accompagnements."
-            />
+            <Information>
+              <p className="fr-ùb-0">
+                Le nombre d&apos;accompagnements correspond à la somme des 2 types d&apos;activités
+                enregistrées : accompagnement individuel et atelier collectif. À noter : Les
+                ateliers collectifs comptent pour 1 accompagnement par participant. Ex : Un
+                atelier collectif avec 10 participants compte pour 10 accompagnements.
+              </p>
+            </Information>
           </h3>
         </div>
 

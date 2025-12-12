@@ -41,7 +41,11 @@ export default function LieuxInclusionNumerique({
         <span>
           Lieux d&apos;inclusion numérique
         </span>
-        <Information label="Lieux référencés sur la Cartographie nationale des lieux d'inclusion numérique" />
+        <Information>
+          <p className="fr-mb-0">
+            Lieux référencés sur la Cartographie nationale des lieux d&apos;inclusion numérique
+          </p>
+        </Information>
       </div>
     </div>
   )
