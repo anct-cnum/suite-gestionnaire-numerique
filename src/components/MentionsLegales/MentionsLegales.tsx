@@ -1,7 +1,6 @@
 import { ReactElement } from 'react'
 
 import styles from './MentionsLegales.module.css'
-import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
 
 export default function MentionsLegales(): ReactElement {
