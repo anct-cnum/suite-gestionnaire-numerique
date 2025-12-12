@@ -29,7 +29,7 @@ export default function NiveauDeFormation({
           backgroundColor: '#ffffff',
           scale: 2,
         })
-        
+
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob)
@@ -79,24 +79,31 @@ export default function NiveauDeFormation({
             id="niveau-de-formation"
           >
             Niveau de formation des aidants et médiateurs numériques
-            <Information label=" Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur la Coop de la médiation ainsi que les conseillers numériques de votre territoire" />
+            <Information>
+              <p className="fr-mb-0">
+                Les indicateurs sur les formations concernent les médiateurs numériques inscrits
+                sur la Coop de la médiation ainsi que les conseillers numériques de votre
+                territoire
+              </p>
+            </Information>
           </h2>
         </div>
       </div>
 
-      <div 
+      <div
         className="fr-grid-row fr-mb-4w"
         ref={componentRef}
       >
-        <div
-          className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}
-        >
+        <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
           <div>
             <Doughnut
-              backgroundColor={niveauDeFormation.formations.map(formation => formation.backgroundColor)}
-              data={niveauDeFormation.formations.map(formation => Number(formation.nombre.replace(/\s/g, '')))}
+              backgroundColor={niveauDeFormation.formations.map(
+                (formation) => formation.backgroundColor
+              )}
+              data={niveauDeFormation.formations.map((formation) =>
+                Number(formation.nombre.replace(/\s/g, '')))}
               isFull={false}
-              labels={niveauDeFormation.formations.map(formation => formation.nom)}
+              labels={niveauDeFormation.formations.map((formation) => formation.nom)}
             />
           </div>
           <div
@@ -111,7 +118,7 @@ export default function NiveauDeFormation({
             formés ou certifiés
           </div>
           <div className="color-blue-france fr-pb-4w">
-            Sur
+            Sur 
             {' '}
             <strong>
               {niveauDeFormation.totalAidantsEtMediateurs}
@@ -132,13 +139,18 @@ export default function NiveauDeFormation({
               >
                 <div className="fr-text--sm fr-grid-row fr-grid-row--middle fr-mb-1w">
                   <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                    <Dot color={formation.couleur} />
+                    <Dot color={formation.couleur} /> 
                     {' '}
                     {formation.nom}
                   </div>
-                  <div 
+                  <div
                     className="font-weight-700"
-                    style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
+                    style={{
+                      marginLeft: '1rem',
+                      marginRight: '1rem',
+                      minWidth: '3rem',
+                      textAlign: 'right',
+                    }}
                   >
                     {formation.nombre}
                   </div>
@@ -158,12 +170,12 @@ export default function NiveauDeFormation({
       <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
         <div style={{ flex: 1 }}>
           <p className="fr-text--sm fr-mb-0">
-            Données mises à jour le
+            Données mises à jour le 
             {' '}
             {dateGeneration.toLocaleDateString('fr-FR')}
           </p>
         </div>
-        <DownloadButton 
+        <DownloadButton
           onClick={handleDownload}
           title="Niveau de formation"
         />

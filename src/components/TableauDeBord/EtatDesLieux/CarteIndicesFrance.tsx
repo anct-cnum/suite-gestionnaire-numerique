@@ -60,7 +60,12 @@ export default function CarteIndicesFrance({
                   {' '}
                   Indice de Fragilité numérique
                 </span>
-                <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+                <Information>
+                  <p className="fr-mb-0">
+                    L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
+                    2021
+                  </p>
+                </Information>
               </div>
             </div>
           </div>
@@ -105,17 +110,23 @@ export default function CarteIndicesFrance({
                 {' '}
                 Indice de Fragilité numérique
               </span>
-              <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+              <Information>
+                <p className="fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
+                  2021
+                </p>
+              </Information>
             </div>
           </div>
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ?
+          {isReady ? (
             <CarteFranceAvecInsets
               donneesDepartements={departementsViewModel}
               legend={<Legend />}
-            /> : null}
+            />
+          ) : null}
         </div>
       </div>
     </div>

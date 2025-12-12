@@ -34,7 +34,7 @@ export default function AccompagnementsEtMediateurs({
           backgroundColor: '#ffffff',
           scale: 2,
         })
-        
+
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob)
@@ -84,26 +84,33 @@ export default function AccompagnementsEtMediateurs({
             id="accompagnements-et-mediateurs"
           >
             Accompagnements et Médiateurs numériques
-            <Information label=" Les indicateurs affichés concernent les médiateurs numériques inscrits sur la Coop de la médiation ainsi que les conseillers numériques de votre territoire" />
-
+            <Information>
+              <p className="fr-mb-0">
+                {' '}
+                Les indicateurs affichés concernent les médiateurs numériques inscrits sur la Coop
+                de la médiation ainsi que les conseillers numériques de votre territoire&quot;
+              </p>
+            </Information>
           </h2>
         </div>
       </div>
 
-      <div 
+      <div
         className="fr-grid-row fr-mb-4w fr-grid-row--gutters"
         ref={componentRef}
       >
         <div className={`fr-col-12 fr-col-md-6 fr-pr-4w ${styles.separator}`}>
-          <div
-            className="center"
-          >
+          <div className="center">
             <div>
               <Doughnut
-                backgroundColor={accompagnementsEtMediateurs.thematiques.map(thematique => thematique.backgroundColor)}
-                data={accompagnementsEtMediateurs.thematiques.map(thematique => thematique.pourcentage)}
+                backgroundColor={accompagnementsEtMediateurs.thematiques.map(
+                  (thematique) => thematique.backgroundColor
+                )}
+                data={accompagnementsEtMediateurs.thematiques.map(
+                  (thematique) => thematique.pourcentage
+                )}
                 isFull={false}
-                labels={accompagnementsEtMediateurs.thematiques.map(thematique => thematique.nom)}
+                labels={accompagnementsEtMediateurs.thematiques.map((thematique) => thematique.nom)}
               />
             </div>
             <div
@@ -119,12 +126,10 @@ export default function AccompagnementsEtMediateurs({
                       Bénéficiaires accompagnés
                     </div>
                     <div className="color-blue-france fr-pb-4w">
-                      Soit
+                      Soit 
                       {' '}
                       <strong>
-                        -
-                        {' '}
-                        accompagnements réalisés
+                        - accompagnements réalisés
                       </strong>
                     </div>
                   </div>
@@ -140,12 +145,10 @@ export default function AccompagnementsEtMediateurs({
                         Bénéficiaires accompagnés
                       </div>
                       <div className="color-blue-france fr-pb-4w">
-                        Soit
+                        Soit 
                         {' '}
                         <strong>
-                          ...
-                          {' '}
-                          accompagnements réalisés
+                          ... accompagnements réalisés
                         </strong>
                       </div>
                     </div>
@@ -174,8 +177,8 @@ export default function AccompagnementsEtMediateurs({
                     </span>
                     <span className={gouvernancesStyles['item-type-padding']}>
                       {thematique.nom}
-                      {thematique.nombreThematiquesRestantes !== undefined 
-                      && thematique.nombreThematiquesRestantes > 0 && (
+                      {thematique.nombreThematiquesRestantes !== undefined &&
+                        thematique.nombreThematiquesRestantes > 0 && (
                         <span>
                           {' '}
                           (
@@ -200,18 +203,19 @@ export default function AccompagnementsEtMediateurs({
           <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
             <div style={{ flex: 1 }}>
               <p className="fr-text--sm fr-mb-0">
-                Données mises à jour le
+                Données mises à jour le 
                 {' '}
                 {dateGeneration.toLocaleDateString('fr-FR')}
               </p>
-              {Boolean(accompagnementsEtMediateurs.avertissementApiCoop) && 
+              {Boolean(accompagnementsEtMediateurs.avertissementApiCoop) && (
                 <p className="fr-text--xs color-orange fr-mb-0 fr-mt-1v">
                   ⚠️ 
                   {' '}
                   {accompagnementsEtMediateurs.avertissementApiCoop}
-                </p>}
+                </p>
+              )}
             </div>
-            <DownloadButton 
+            <DownloadButton
               onClick={handleDownload}
               title="Accompagnements et Médiateurs"
             />

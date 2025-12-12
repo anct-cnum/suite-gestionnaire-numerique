@@ -21,7 +21,7 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
         ref={divCard}
       >
         <div className="fr-grid-row">
-          <div className="fr-col-12 fr-col-md-6 " >
+          <div className="fr-col-12 fr-col-md-6 ">
             <div
               className="fr-col-auto"
               style={{ alignItems: 'stretch', display: 'flex' }}
@@ -32,23 +32,24 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
               {nombreLieuxInclusion}
             </p>
             <p className="fr-text--xl fr-text--bold fr-mb-1v fr-text-default--grey">
-              Lieux d’inclusion numérique
-              <Information label="Nombre de lieux affichés sur la cartographie nationale des lieux d’inclusion numérique" />
+              Lieux d&apos;inclusion numérique
+              <Information>
+                <p className="fr-mb-0">
+                  Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion
+                  numérique
+                </p>
+              </Information>
             </p>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">
-              dont
+              dont 
               {' '}
               {nombreLieuxInclusionPublic}
               {' '}
               dans le secteur public
             </p>
           </div>
-          <div
-            className={`fr-col-12 fr-col-md-6 ${styles.graphiqueContainer}`}
-          >
-            <div
-              className="fr-text--bold  fr-mb-1w fr-text--sm"
-            >
+          <div className={`fr-col-12 fr-col-md-6 ${styles.graphiqueContainer}`}>
+            <div className="fr-text--bold  fr-mb-1w fr-text--sm">
               Dont
             </div>
             <GraphiqueBarList elements={elements} />
@@ -57,15 +58,17 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
               className="fr-grid-row fr-grid-row--middle "
               style={{ alignItems: 'center' }}
             >
-              <div style={{ display: 'none',  flex: 1  }}>
+              <div style={{ display: 'none', flex: 1 }}>
                 <p className="fr-text--sm fr-mb-0">
-                  Données mises à jour le
+                  Données mises à jour le 
                   {' '}
-                  {dateGeneration.toLocaleDateString('fr-FR') }
+                  {dateGeneration.toLocaleDateString('fr-FR')}
                 </p>
               </div>
-              <DownloadButton 
-                onClick={() => { void handleDownload(divCard,'Lieux d’inclusion numérique')}}
+              <DownloadButton
+                onClick={() => {
+                  void handleDownload(divCard, 'Lieux d’inclusion numérique')
+                }}
                 title="Lieux d’inclusion numérique"
               />
             </div>

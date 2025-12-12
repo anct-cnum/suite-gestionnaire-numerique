@@ -30,7 +30,11 @@ export default function AccompagnementsRealisesAsyncLoader({
               {' '}
               Accompagnements réalisés
             </span>
-            <Information label="Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect" />
+            <Information>
+              <p>
+                Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect
+              </p>
+            </Information>
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             {result.message}
@@ -42,7 +46,11 @@ export default function AccompagnementsRealisesAsyncLoader({
               {' '}
               Accompagnements des 6 derniers mois
             </span>
-            <Information label="Accompagnements saisis sur La Coop" />
+            <Information>
+              <p className="fr-mb-0">
+                Accompagnements saisis sur La Coop
+              </p>
+            </Information>
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             {result.message}
@@ -69,22 +77,30 @@ export default function AccompagnementsRealisesAsyncLoader({
             {' '}
             Accompagnements réalisés
           </span>
-          <Information label="Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect" />
+          <Information>
+            <p className="fr-mb-0">
+              Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect
+            </p>
+          </Information>
         </div>
       </div>
       <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
         <Bar
           backgroundColor={backgroundColor}
           data={result.repartitionMensuelle.map((item) => item.nombre)}
-          header={(
+          header={
             <div className="font-weight-500">
               <span>
                 {' '}
                 Accompagnements des 6 derniers mois
               </span>
-              <Information label="Accompagnements saisis sur La Coop" />
+              <Information>
+                <p className="fr-mb-0">
+                  Accompagnements saisis sur La Coop
+                </p>
+              </Information>
             </div>
-          )}
+          }
           labels={result.repartitionMensuelle.map((item) => item.mois)}
         />
       </div>

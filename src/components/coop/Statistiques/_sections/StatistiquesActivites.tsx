@@ -42,10 +42,7 @@ export function StatistiquesActivites({
   return (
     <>
       <h2 className="fr-h5 fr-text-mention--grey">
-        <span
-          aria-hidden
-          className="fr-icon-service-line fr-mr-1w"
-        />
+        <span aria-hidden className="fr-icon-service-line fr-mr-1w" />
         Statistiques sur les activités
       </h2>
       {/* Bloc Types d'activité */}
@@ -64,8 +61,7 @@ export function StatistiquesActivites({
                 &nbsp;·&nbsp;
                 <span className="fr-text--bold">
                   {numberToString(totalCounts.activites.collectifs.participants)}
-                </span>
-                {' '}
+                </span>{' '}
                 participant
                 {sPluriel(totalCounts.activites.collectifs.participants)}
               </span>
@@ -80,36 +76,32 @@ export function StatistiquesActivites({
         style={{ border: '1px solid var(--border-default-grey)' }}
       >
         {/* Thématiques des activités */}
-        <div
-          className={`fr-mb-4v ${styles.thematiquesHeader}`}
-        >
-          <h3
-            className="fr-text--lg fr-mb-0"
-          >
-            <span>
-              Thématiques des activités
-            </span>
-            <Information label="Thématiques sélectionnées lors de l'enregistrement d'une activité. Une activité peut avoir plusieurs thématiques." />
+        <div className={`fr-mb-4v ${styles.thematiquesHeader}`}>
+          <h3 className="fr-text--lg fr-mb-0">
+            <span>Thématiques des activités</span>
+            <Information
+              children={
+                <p className="fr-mb-0">
+                  Thématiques sélectionnées lors de l'enregistrement d'une activité. Une activité
+                  peut avoir plusieurs thématiques.
+                </p>
+              }
+            />
           </h3>
-          <fieldset
-            className="fr-segmented fr-segmented--sm"
-          >
-            <legend className="fr-segmented__legend sr-only">
-              Bascule entre les thématiques
-            </legend>
+          <fieldset className="fr-segmented fr-segmented--sm">
+            <legend className="fr-segmented__legend sr-only">Bascule entre les thématiques</legend>
             <div className="fr-segmented__elements">
               <div className="fr-segmented__element">
                 <input
                   checked={thematiqueCategory === 'thematiques'}
                   id="cat-mediation"
                   name="thematique-category"
-                  onChange={() => { setThematiqueCategory('thematiques') }}
+                  onChange={() => {
+                    setThematiqueCategory('thematiques')
+                  }}
                   type="radio"
                 />
-                <label
-                  className="fr-label"
-                  htmlFor="cat-mediation"
-                >
+                <label className="fr-label" htmlFor="cat-mediation">
                   Médiation numérique
                 </label>
               </div>
@@ -118,13 +110,12 @@ export function StatistiquesActivites({
                   checked={thematiqueCategory === 'demarches'}
                   id="cat-demarches"
                   name="thematique-category"
-                  onChange={() => { setThematiqueCategory('demarches') }}
+                  onChange={() => {
+                    setThematiqueCategory('demarches')
+                  }}
                   type="radio"
                 />
-                <label
-                  className="fr-label"
-                  htmlFor="cat-demarches"
-                >
+                <label className="fr-label" htmlFor="cat-demarches">
                   Démarches administratives
                 </label>
               </div>
@@ -152,10 +143,15 @@ export function StatistiquesActivites({
         {/* Matériel utilisé */}
         <div className="fr-mb-3w">
           <h3 className="fr-text--lg fr-mb-0">
-            <span>
-              Matériel utilisé
-            </span>
-            <Information label="Matériel utilisé lors d'une activité. Plusieurs matériels peuvent être utilisés lors d'une même activité." />
+            <span>Matériel utilisé</span>
+            <Information
+              children={
+                <p>
+                  Matériel utilisé lors d'une activité. Plusieurs matériels peuvent être utilisés
+                  lors d'une même activité.
+                </p>
+              }
+            />
           </h3>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -180,10 +176,12 @@ export function StatistiquesActivites({
         <div className={styles.canauxDureesContainer}>
           <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
-              <span>
-                Canaux des activités
-              </span>
-              <Information label="Répartition des activités enregistrées par canal." />
+              <span>Canaux des activités</span>
+              <Information
+                children={
+                  <p className="fr-mb-0">Répartition des activités enregistrées par canal.</p>
+                }
+              />
             </h3>
             <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart
@@ -200,10 +198,12 @@ export function StatistiquesActivites({
           </div>
           <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
-              <span>
-                Durées des activités
-              </span>
-              <Information label="Répartition des activités enregistrées par durée." />
+              <span>Durées des activités</span>
+              <Information
+                children={
+                  <p className="fr-mb-0">Répartition des activités enregistrées par durée.</p>
+                }
+              />
             </h3>
             <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart
