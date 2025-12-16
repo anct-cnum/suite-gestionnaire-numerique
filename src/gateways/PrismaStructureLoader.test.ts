@@ -97,11 +97,83 @@ describe('structures loader', () => {
       ])
     })
   })
+
+  describe('recherche flexible avec trigrams et unaccent', () => {
+    it('trouve une structure avec des mots non contigus', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('conseil aube')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'TROYES',
+          nom: 'Conseil départemental de l\'Aube',
+          uid: '100',
+        },
+      ])
+    })
+
+    it('trouve une structure malgré une faute de frappe grâce aux trigrams', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+
+      // WHEN - "aude" au lieu de "aube"
+      const structureReadModel = await new PrismaStructureLoader().structures('conseil aude')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'TROYES',
+          nom: 'Conseil départemental de l\'Aube',
+          uid: '100',
+        },
+      ])
+    })
+
+    it('trouve une structure sans accent dans la recherche', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+
+      // WHEN - "departemental" sans accent
+      const structureReadModel = await new PrismaStructureLoader().structures('departemental')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'TROYES',
+          nom: 'Conseil départemental de l\'Aube',
+          uid: '100',
+        },
+      ])
+    })
+
+    it('retourne un tableau vide si la recherche est vide', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('   ')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([])
+    })
+  })
 })
 
 async function createStructures(): Promise<void> {
   await creerUneRegion()
-  await creerUneRegion({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' })
+  await creerUneRegion({ code: '93', nom: 'Provence-Alpes-Côte d\'Azur' })
   await creerUnDepartement({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' })
   await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
   await creerUneStructure({ commune: 'GRASSE', departementCode: '06', id: 14, nom: 'TETRIS' })
