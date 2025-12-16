@@ -1,5 +1,5 @@
 import { PrismaStructureLoader } from './PrismaStructureLoader'
-import { creerUnDepartement, creerUneRegion, creerUneStructure } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 
 describe('structures loader', () => {
@@ -13,6 +13,7 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
@@ -24,6 +25,7 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
@@ -35,11 +37,13 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
           {
             commune: 'GRASSE',
+            isMembre: false,
             nom: 'TETRIS',
             uid: '14',
           },
@@ -49,7 +53,7 @@ describe('structures loader', () => {
       },
       {
         expected: [],
-        intention: 'aucune structure n’est trouvée s’il n’y a aucune correspondance',
+        intention: 'aucune structure n\'est trouvée s\'il n\'y a aucune correspondance',
         match: 'Solidarnum',
       },
     ])('alors $intention', async ({ expected, match }) => {
@@ -74,6 +78,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'GRASSE',
+          isMembre: false,
           nom: 'TETRIS',
           uid: '14',
         },
@@ -91,6 +96,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'GRASSE',
+          isMembre: false,
           nom: 'TETRIS',
           uid: '14',
         },
@@ -112,6 +118,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isMembre: false,
           nom: 'Conseil départemental de l\'Aube',
           uid: '100',
         },
@@ -131,6 +138,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isMembre: false,
           nom: 'Conseil départemental de l\'Aube',
           uid: '100',
         },
@@ -150,6 +158,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isMembre: false,
           nom: 'Conseil départemental de l\'Aube',
           uid: '100',
         },
@@ -167,6 +176,34 @@ describe('structures loader', () => {
 
       // THEN
       expect(structureReadModel).toStrictEqual([])
+    })
+
+    it('indique si une structure est membre d\'une gouvernance', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneGouvernance({ departementCode: '10' })
+      await creerUnContact({ email: 'contact@aube.fr' })
+      await creerUnMembre({
+        contact: 'contact@aube.fr',
+        gouvernanceDepartementCode: '10',
+        id: 'membre-100',
+        structureId: 100,
+      })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('conseil aube')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'TROYES',
+          isMembre: true,
+          nom: 'Conseil départemental de l\'Aube',
+          uid: '100',
+        },
+      ])
     })
   })
 })

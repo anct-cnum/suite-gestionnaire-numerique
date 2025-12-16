@@ -59,7 +59,11 @@ export class PrismaStructureLoader implements StructureLoader {
     const whereExtra = whereParamsAdjusted === '' ? '' : `AND ${whereParamsAdjusted}`
 
     const query = `
-      SELECT s.id, s.nom, a.nom_commune as commune
+      SELECT
+        s.id,
+        s.nom,
+        a.nom_commune as commune,
+        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = s.id) as is_membre
       FROM main.structure s
       LEFT JOIN main.adresse a ON s.adresse_id = a.id
       WHERE (${conditionsMots})
@@ -68,13 +72,14 @@ export class PrismaStructureLoader implements StructureLoader {
       LIMIT 10
     `
 
-    interface RawResult { commune: null | string; id: number; nom: string }
+    interface RawResult { commune: null | string; id: number; is_membre: boolean; nom: string }
 
     const params = [...mots, ...whereParams]
     const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...params)
 
     return results.map((row) => ({
       commune: row.commune ?? '',
+      isMembre: row.is_membre,
       nom: row.nom,
       uid: String(row.id),
     }))

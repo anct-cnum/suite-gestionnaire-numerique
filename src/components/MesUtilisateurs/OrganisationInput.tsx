@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import Select, { Options, StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
-import { makeSearchParams, StructureSearchViewModel, toStructureSearchViewModels } from '@/presenters/rechercheStructuresPresenter'
+import { makeSearchParams, toStructureSearchViewModels } from '@/presenters/rechercheStructuresPresenter'
 
 export default function OrganisationInput({
   extraSearchParams,
@@ -32,23 +32,25 @@ export default function OrganisationInput({
       </label>
       {
         options.length ?
-          <Select
+          <Select<OrganisationOption>
             components={{ DropdownIndicator }}
+            formatOptionLabel={formatOptionLabel}
             inputId="organisation"
             instanceId="organisation"
             isClearable={true}
             menuPlacement="top"
             name="organisation"
             noOptionsMessage={() => 'Pas de résultat'}
-            onChange={setOrganisation as (organisation: unknown) => void}
+            onChange={setOrganisation}
             options={options}
             placeholder={placeholder}
             required={required}
             styles={styles}
             value={organisation}
           /> :
-          <AsyncSelect
+          <AsyncSelect<OrganisationOption>
             components={{ DropdownIndicator }}
+            formatOptionLabel={formatOptionLabel}
             inputId="organisation"
             instanceId="organisation"
             isClearable={true}
@@ -57,7 +59,7 @@ export default function OrganisationInput({
             menuPlacement="top"
             name="organisation"
             noOptionsMessage={() => 'Rechercher une structure'}
-            onChange={setOrganisation as (organisation: unknown) => void}
+            onChange={setOrganisation}
             placeholder={placeholder}
             required={required}
             styles={styles}
@@ -67,7 +69,7 @@ export default function OrganisationInput({
     </div>
   )
 
-  async function onSearch(search: string): Promise<Options<StructureSearchViewModel>> {
+  async function onSearch(search: string): Promise<Options<OrganisationOption>> {
     if (search.length < 3) {
       return []
     }
@@ -77,21 +79,24 @@ export default function OrganisationInput({
   }
 }
 
+export type OrganisationOption = Readonly<{
+  isMembre?: boolean
+  label: string
+  value: string
+}>
+
 type Props = Readonly<{
   extraSearchParams?: URLSearchParams
   label: string
-  options: ReadonlyArray<{
-    label: string
-    value: string
-  }>
-  organisation: string
+  options: ReadonlyArray<OrganisationOption>
+  organisation: null | OrganisationOption
   placeholder: string
   required: boolean
-  setOrganisation(organisation: string): void
+  setOrganisation(organisation: null | OrganisationOption): void
 }>
 
 // istanbul ignore next @preserve
-const styles: StylesConfig = {
+const styles: StylesConfig<OrganisationOption> = {
   control: (styles) => ({
     ...styles,
     backgroundColor: 'var(--background-contrast-grey)',
@@ -112,6 +117,31 @@ const styles: StylesConfig = {
     color: '#222',
     cursor: 'pointer',
   }),
+}
+
+function formatOptionLabel(option: OrganisationOption): ReactElement {
+  return (
+    <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
+      {option.isMembre === true ?
+        <span
+          aria-label="Membre de la gouvernance"
+          className="fr-icon-team-line"
+          role="img"
+          style={{ color: 'var(--text-default-info)' }}
+          title="Membre de la gouvernance"
+        /> :
+        <span
+          aria-label="Structure"
+          className="fr-icon-building-line"
+          role="img"
+          style={{ color: 'var(--text-mention-grey)' }}
+          title="Structure"
+        />}
+      <span>
+        {option.label}
+      </span>
+    </span>
+  )
 }
 
 function DropdownIndicator(): ReactElement {
