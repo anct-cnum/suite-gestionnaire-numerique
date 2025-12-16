@@ -1,3 +1,4 @@
+import { GestionnaireStructure } from './GestionnaireStructure'
 import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { MembreUid } from './Membre'
 import { isGestionnaireDepartement } from './Role'
@@ -149,10 +150,30 @@ export class FeuilleDeRoute extends Entity<State> {
     return 'noteDeContextualisationInexistante'
   }
 
-  peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isSuperAdmin || utilisateur.isAdmin
-      || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
-      && isGestionnaireDepartement(utilisateur.state.role.nom)
+  peutEtreGereePar(utilisateur: Utilisateur, membresCoporteurs: Array<MembreCoporteur>): boolean {
+    // Administrateurs peuvent toujours gérer
+    if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
+      return true
+    }
+
+    // Gestionnaire département du même département peut gérer
+    if (this.#uidGouvernance.state.value === utilisateur.state.departement?.code
+      && isGestionnaireDepartement(utilisateur.state.role.nom)) {
+      return true
+    }
+
+    // Gestionnaire structure dont la structure est co-porteur peut gérer
+    if (utilisateur instanceof GestionnaireStructure) {
+      const structureUid = utilisateur.state.structureUid.value
+      const membreCoporteur = membresCoporteurs.find(membre =>
+        membre.structureUid === structureUid)
+      // isCoporteur doit être explicitement true (undefined = false par défaut)
+      if (membreCoporteur && membreCoporteur.isCoporteur === true) {
+        return true
+      }
+    }
+
+    return false
   }
 
   supprimerDocument(): void {
@@ -183,6 +204,11 @@ export class FeuilleDeRouteUid extends Uid<UidState> {
 export type Document = Readonly<{
   chemin: string
   nom: string
+}>
+
+type MembreCoporteur = Readonly<{
+  isCoporteur?: boolean
+  structureUid: number
 }>
 
 type UidState = Readonly<{ value: string }>

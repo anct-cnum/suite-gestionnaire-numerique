@@ -6,6 +6,7 @@ import { z } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerDocument } from '@/use-cases/commands/SupprimerDocument'
@@ -21,6 +22,7 @@ export async function supprimerDocumentAction(
 
   const supprimerDocument = new SupprimerDocument(
     new PrismaFeuilleDeRouteRepository(),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   )
   const result = await supprimerDocument.handle({

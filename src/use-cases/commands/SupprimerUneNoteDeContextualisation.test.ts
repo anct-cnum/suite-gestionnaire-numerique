@@ -1,8 +1,10 @@
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUneNoteDeContextualisation } from './SupprimerUneNoteDeContextextualisation'
 import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
-import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
+import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
+import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('supprimer une note de contextualisation d’une feuille de route', () => {
@@ -17,6 +19,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
     const uidEditeur = 'userFooId2'
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy()
     )
 
@@ -38,10 +41,11 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
     expect(result).toBe('OK')
   })
 
-  it('quand un note de contextualisation est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('quand un note de contextualisation est supprimée par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy()
     )
 
@@ -93,3 +97,8 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    return Promise.resolve(gouvernanceFactory({ uid: uid.state.value }))
+  }
+}

@@ -8,6 +8,7 @@ import prisma from '../../../../prisma/prismaClient'
 import { sanitizeDefaultOptions } from '@/app/shared/sanitizeDefaultOptions'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUneNoteDeContextualisation } from '@/use-cases/commands/AjouterUneNoteDeContextualisation'
@@ -23,6 +24,7 @@ export async function ajouterUneNoteDeContextualisationAction(
 
   const ajouterUneNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
     new PrismaFeuilleDeRouteRepository(),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )

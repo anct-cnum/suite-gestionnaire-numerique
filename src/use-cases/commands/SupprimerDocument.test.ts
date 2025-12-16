@@ -1,8 +1,10 @@
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerDocument } from './SupprimerDocument'
 import { Document, FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
-import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
+import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
+import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
@@ -18,6 +20,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     const uidEditeur = 'userFooId2'
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy()
     )
 
@@ -35,10 +38,11 @@ describe('supprimer un document d‘une feuille de route', () => {
     expect(result).toBe('OK')
   })
 
-  it('quand un document est supprimé par un gestionnaire qui n‘a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('quand un document est supprimé par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy()
     )
 
@@ -92,5 +96,11 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    return Promise.resolve(gouvernanceFactory({ uid: uid.state.value }))
   }
 }

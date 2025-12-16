@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { isNullish } from '@/shared/lang'
 import { AjouterDocument } from '@/use-cases/commands/AjouterDocument'
@@ -128,6 +129,7 @@ async function televerseVersS3(file: File, uidFeuilleDeRoute: string): Promise<s
 async function appelUseCase(params: UseCaseParams): Promise<string> {
   const ajouterDocument = new AjouterDocument(
     new PrismaFeuilleDeRouteRepository(),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   )
 

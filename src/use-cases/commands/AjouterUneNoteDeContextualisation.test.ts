@@ -1,8 +1,10 @@
 import { AjouterUneNoteDeContextualisation } from './AjouterUneNoteDeContextualisation'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
-import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
+import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
+import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
@@ -17,6 +19,7 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     // GIVEN
     const ajouterNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -46,6 +49,7 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     // GIVEN
     const ajouterNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
       epochTime
     )
@@ -62,6 +66,7 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     // GIVEN
     const ajouterNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
       new FeuilleDeRouteAvecNoteDeContextualisationRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -124,5 +129,11 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    return Promise.resolve(gouvernanceFactory({ uid: uid.state.value }))
   }
 }
