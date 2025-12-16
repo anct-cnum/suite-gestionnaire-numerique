@@ -6,7 +6,7 @@ import Select from 'react-select/dist/declarations/src/Select'
 
 import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
-import OrganisationInput from './OrganisationInput'
+import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
@@ -23,7 +23,7 @@ export default function FiltrerMesUtilisateurs({
   const ref = useRef<Select>(null)
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
   const [structuresSearchParams, setStructuresSearchParams] = useState<URLSearchParams>(new URLSearchParams())
-  const [structure, setStructure] = useState('')
+  const [structure, setStructure] = useState<null | OrganisationOption>(null)
 
   return (
     <>
@@ -79,14 +79,14 @@ export default function FiltrerMesUtilisateurs({
   )
 
   function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
-    setStructure('')
+    setStructure(null)
     setStructuresSearchParams(zoneGeographiqueToURLSearchParams(zoneGeographique))
   }
 
   function reinitialiser(): void {
     // Stryker disable next-line OptionalChaining
     ref.current?.setValue(toutesLesRegions, 'select-option')
-    setStructure('')
+    setStructure(null)
     router.push('/mes-utilisateurs')
     resetSearch()
   }

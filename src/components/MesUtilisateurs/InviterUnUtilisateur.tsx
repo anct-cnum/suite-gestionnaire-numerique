@@ -2,7 +2,7 @@
 
 import { FormEvent, ReactElement, ReactNode, RefObject, useContext, useId, useState } from 'react'
 
-import OrganisationInput from './OrganisationInput'
+import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -22,7 +22,7 @@ export default function InviterUnUtilisateur({
   const [emailDejaExistant, setEmailDejaExistant] = useState<Erreur>()
   const { inviterUnUtilisateurAction, pathname, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
-  const [organisation, setOrganisation] = useState<string>('')
+  const [organisation, setOrganisation] = useState<null | OrganisationOption>(null)
   const [isDisabled, setIsDisabled] = useState(false)
   const nomId = useId()
   const prenomId = useId()
@@ -105,7 +105,7 @@ export default function InviterUnUtilisateur({
                 nomGroupe="attributionRole"
                 onChange={(event) => {
                   setRoleSelectionne(event.target.value)
-                  setOrganisation('')
+                  setOrganisation(null)
                 }}
                 options={rolesGerables}
                 value={roleSelectionne}

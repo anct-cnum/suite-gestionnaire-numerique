@@ -15,17 +15,20 @@ export function toStructureSearchViewModels(structures: StructuresReadModel): Re
   return structures.map(toStructureSearchViewModel)
 }
 
-export type StructureSearchViewModel = Readonly<{
+type StructureSearchViewModel = Readonly<{
+  isMembre: boolean
   label: string
   value: string
 }>
 
 function toStructureSearchViewModel({
   commune,
+  isMembre,
   nom,
   uid,
 }: UneStructureReadModel): StructureSearchViewModel {
   return {
+    isMembre,
     label: nom + (commune ? ` — ${commune}` : ''),
     value: uid,
   }
