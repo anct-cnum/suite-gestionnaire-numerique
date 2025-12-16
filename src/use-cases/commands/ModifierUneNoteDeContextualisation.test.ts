@@ -1,8 +1,10 @@
 import { ModifierUneNoteDeContextualisation } from './ModifierUneNoteDeContextualisation'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
-import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
+import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
+import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
@@ -17,6 +19,7 @@ describe('modifier une note de contextualisation', () => {
     // GIVEN
     const modifierUneNoteDeContextualisationDemandesDeSubvention = new ModifierUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -44,6 +47,7 @@ describe('modifier une note de contextualisation', () => {
     // GIVEN
     const modifierUneNoteDeContextualisationDemandesDeSubvention = new ModifierUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
       epochTime
     )
@@ -62,6 +66,7 @@ describe('modifier une note de contextualisation', () => {
     // GIVEN
     const modifierUneNoteDeContextualisationDemandesDeSubvention = new ModifierUneNoteDeContextualisation(
       new FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -80,6 +85,7 @@ describe('modifier une note de contextualisation', () => {
     // GIVEN
     const modifierUneNoteDeContextualisationDemandesDeSubvention = new ModifierUneNoteDeContextualisation(
       new FeuilleDeRouteSansNoteDeContextualisationRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -174,5 +180,11 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    return Promise.resolve(gouvernanceFactory({ uid: uid.state.value }))
   }
 }
