@@ -140,7 +140,6 @@ BEGIN
     presentation_detail = COALESCE(w.presentation_detail, l.presentation_detail),
     horaires            = COALESCE(w.horaires, l.horaires),
     prise_rdv           = COALESCE(w.prise_rdv, l.prise_rdv),
-    structure_parente   = COALESCE(w.structure_parente, l.structure_parente),
     services            = COALESCE(w.services, l.services),
     publics_specifiquement_adresses = COALESCE(w.publics_specifiquement_adresses, l.publics_specifiquement_adresses),
     prise_en_charge_specifique      = COALESCE(w.prise_en_charge_specifique, l.prise_en_charge_specifique),
@@ -476,14 +475,6 @@ BEGIN
     SET structure_id = v_winner
     WHERE structure_id = v_loser;
 
-  ---------------------------------------------------------------------------
-  -- 5) Hiérarchie (structure_parente = UUID COOP) – sécurité
-  ---------------------------------------------------------------------------
-  IF v_loser_coop IS NOT NULL AND v_winner_coop IS NOT NULL THEN
-    UPDATE main.structure
-    SET structure_parente = v_winner_coop
-    WHERE structure_parente = v_loser_coop;
-  END IF;
 
   ---------------------------------------------------------------------------
   -- 6) Supprimer le loser
@@ -1029,7 +1020,6 @@ CREATE TABLE main.structure (
     presentation_detail text,
     horaires character varying,
     prise_rdv character varying,
-    structure_parente uuid,
     services text[],
     publics_specifiquement_adresses text[],
     prise_en_charge_specifique text[],

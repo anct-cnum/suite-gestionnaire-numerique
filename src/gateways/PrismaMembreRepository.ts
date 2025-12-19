@@ -71,7 +71,6 @@ export class PrismaMembreRepository implements MembreRepository {
         gouvernanceDepartementCode: membre.state.uidGouvernance.value,
         id: membre.state.uid.value,
         isCoporteur: membre.state.roles.includes('coporteur'),
-        nom: membre.state.nom,
         oldUUID: crypto.randomUUID(),
         siretRidet: entrepriseData.siret,
         statut: membre.state.statut,
@@ -89,10 +88,6 @@ export class PrismaMembreRepository implements MembreRepository {
         id: uid,
       },
     })
-
-    if (record.structureId === null) {
-      throw new Error(`Membre ${uid} n'a pas de structure associée`)
-    }
 
     const membre = toMembre(record)
 

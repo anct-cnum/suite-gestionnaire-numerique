@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaUneFeuilleDeRouteLoader } from './PrismaUneFeuilleDeRouteLoader'
-import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
+import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
@@ -354,13 +354,20 @@ async function creerAction(uidAction: number, withSubvention: boolean): Promise<
   await creerUnCoFinancement({ actionId: uidAction, memberId: uidCoFinancement, montant: 15_000 })
 }
 
+let structureIdCounter = 100
+
 async function creerMembre(uid: string, nom = 'Métropole de Lyon'): Promise<void> {
+  structureIdCounter += 1
+  const structureId = structureIdCounter
+  // Utiliser un siret unique pour éviter les conflits d'unicité
+  const siret = `${structureId}`.padStart(14, '0')
+  await creerUneStructure({ departementCode: codeDepartement, id: structureId, nom, siret })
   await creerUnContact({ email: `${uid}@example.com` })
   await creerUnMembre({
     contact: `${uid}@example.com`,
     gouvernanceDepartementCode: codeDepartement,
     id: uid,
-    nom,
+    structureId,
   })
 }
 
