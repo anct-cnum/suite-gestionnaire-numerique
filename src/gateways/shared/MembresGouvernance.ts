@@ -17,7 +17,7 @@ export type Membre = Readonly<{
   nom: string
   roles: ReadonlyArray<Role>
   statut: string
-  structureId?: number
+  structureId: number
   type: string
 }>
 
@@ -36,6 +36,7 @@ export const membreInclude = {
   CoFinancementRecord: true,
   relationContact: true,
   relationContactTechnique: true,
+  relationStructure: true,
 }
 
 function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
@@ -80,31 +81,7 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
 }
 
 function determinerNomMembre(membre: MembreRecord): string {
-  // Utiliser le nom stocké en base de données s'il existe
-  if (membre.nom !== null) {
-    return membre.nom
-  }
-
-  // Fallback : nom générique basé sur la catégorie
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  const nomFallback = (() => {
-    switch (membre.categorieMembre) {
-      case 'commune':
-        return 'Commune'
-      case 'departement':
-        return 'Département'
-      case 'epci':
-        return 'EPCI'
-      case 'sgar':
-        return 'SGAR'
-      case 'structure':
-        return 'Structure'
-      default:
-        return 'Membre'
-    }
-  })()
-
-  return nomFallback
+  return membre.relationStructure.nom
 }
 
 function toMembre(membre: MembreRecord): Membre {
@@ -118,7 +95,7 @@ function toMembre(membre: MembreRecord): Membre {
     nom: nomMembre,
     roles,
     statut: membre.statut,
-    structureId: membre.structureId ?? undefined,
+    structureId: membre.structureId,
     type: membre.type ?? '',
   }
 

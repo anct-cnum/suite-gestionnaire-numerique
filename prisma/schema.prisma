@@ -200,18 +200,17 @@ model MembreRecord {
   statut                     String
   isCoporteur                Boolean   @default(false) @map("is_coporteur")
   categorieMembre            String?   @map("categorie_membre")
-  nom                        String?   @map("nom")
   siretRidet                 String?   @map("siret_ridet")
   dateSuppression            DateTime? @map("date_suppression")
   oldStructureId             Int?      @map("old_structure_id")
-  structureId                Int?      @map("structure_id")
+  structureId                Int       @map("structure_id")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
   relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
-  relationStructure        main_structure?                 @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
+  relationStructure        main_structure                  @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]

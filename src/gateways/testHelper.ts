@@ -268,14 +268,34 @@ export async function creerUnBeneficiaireSubvention(
   })
 }
 
+let autoStructureIdCounter = 1000
+
 export async function creerUnMembre(
   override?: Partial<Prisma.MembreRecordUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
 ): Promise<void> {
   const client = tx ?? prisma
-  await client.membreRecord.create({
-    data: membreRecordFactory(override),
-  })
+
+  // Si aucun structureId n'est fourni, créer automatiquement une structure
+  if (override?.structureId === undefined) {
+    const structureId = autoStructureIdCounter++
+    const siret = `${structureId}`.padStart(14, '0')
+
+    await creerUneStructure({
+      departementCode: override?.gouvernanceDepartementCode ?? '69',
+      id: structureId,
+      nom: 'Structure auto-générée',
+      siret,
+    }, tx)
+
+    await client.membreRecord.create({
+      data: membreRecordFactory({ ...override, structureId }),
+    })
+  } else {
+    await client.membreRecord.create({
+      data: membreRecordFactory(override),
+    })
+  }
 }
 
 export async function creerUnContact(
@@ -295,104 +315,63 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     nom: 'Tartempion',
     prenom: 'Michel',
   })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-blabla-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'Trévérien',
-    type: 'Commune',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-94028-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'Créteil',
-    type: 'Collectivité, commune',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `epci-241927201-${gouvernanceDepartementCode}`,
-    nom: 'CA Tulle Agglo',
-    type: 'Collectivité, EPCI',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `epci-200072056-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'CC Porte du Jura',
-    type: 'Collectivité, EPCI',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `structure-38012986643097-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'Orange',
-    type: 'Entreprise privée',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `prefecture-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'Rhône',
-    type: 'Préfecture départementale',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `departement-69-${gouvernanceDepartementCode}`,
-    nom: 'Rhône',
-    type: 'Conseil départemental',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `region-53-${gouvernanceDepartementCode}`,
-    isCoporteur: true,
-    nom: 'Bretagne',
-    type: 'Préfecture régionale',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `region-11-${gouvernanceDepartementCode}`,
-    nom: 'Île-de-France',
-    type: 'Préfecture régionale',
-  })
-  await creerUnCandidat({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-110-${gouvernanceDepartementCode}`,
-    nom: 'Pipriac',
-    type: 'Préfecture régionale',
-  })
-  await creerUnCandidat({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-112-${gouvernanceDepartementCode}`,
-    nom: 'Rennes',
-    type: 'Préfecture régionale',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-111-${gouvernanceDepartementCode}`,
-    nom: 'Rennes',
-    type: 'Préfecture régionale',
-  })
-  await creerUnMembre({
-    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    gouvernanceDepartementCode,
-    id: `commune-113-${gouvernanceDepartementCode}`,
-    isCoporteur: false,
-    nom: 'Pipriac',
-    type: 'Préfecture régionale',
-  })
+
+  // Helper pour créer structure + membre avec un nom spécifique
+  const creerMembreAvecNom = async (
+    id: string,
+    nom: string,
+    type: string,
+    isCoporteur = false
+  ): Promise<void> => {
+    const structureId = autoStructureIdCounter++
+    const siret = `${structureId}`.padStart(14, '0')
+    await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
+    await prisma.membreRecord.create({
+      data: membreRecordFactory({
+        contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
+        gouvernanceDepartementCode,
+        id,
+        isCoporteur,
+        structureId,
+        type,
+      }),
+    })
+  }
+
+  // Helper pour créer structure + candidat avec un nom spécifique
+  const creerCandidatAvecNom = async (
+    id: string,
+    nom: string,
+    type: string
+  ): Promise<void> => {
+    const structureId = autoStructureIdCounter++
+    const siret = `${structureId}`.padStart(14, '0')
+    await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
+    await prisma.membreRecord.create({
+      data: membreRecordFactory({
+        contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
+        gouvernanceDepartementCode,
+        id,
+        statut: 'candidat',
+        structureId,
+        type,
+      }),
+    })
+  }
+
+  await creerMembreAvecNom(`commune-blabla-${gouvernanceDepartementCode}`, 'Trévérien', 'Commune', true)
+  await creerMembreAvecNom(`commune-94028-${gouvernanceDepartementCode}`, 'Créteil', 'Collectivité, commune', true)
+  await creerMembreAvecNom(`epci-241927201-${gouvernanceDepartementCode}`, 'CA Tulle Agglo', 'Collectivité, EPCI')
+  await creerMembreAvecNom(`epci-200072056-${gouvernanceDepartementCode}`, 'CC Porte du Jura', 'Collectivité, EPCI', true)
+  await creerMembreAvecNom(`structure-38012986643097-${gouvernanceDepartementCode}`, 'Orange', 'Entreprise privée', true)
+  await creerMembreAvecNom(`prefecture-${gouvernanceDepartementCode}`, 'Rhône', 'Préfecture départementale', true)
+  await creerMembreAvecNom(`departement-69-${gouvernanceDepartementCode}`, 'Rhône', 'Conseil départemental')
+  await creerMembreAvecNom(`region-53-${gouvernanceDepartementCode}`, 'Bretagne', 'Préfecture régionale', true)
+  await creerMembreAvecNom(`region-11-${gouvernanceDepartementCode}`, 'Île-de-France', 'Préfecture régionale')
+  await creerCandidatAvecNom(`commune-110-${gouvernanceDepartementCode}`, 'Pipriac', 'Préfecture régionale')
+  await creerCandidatAvecNom(`commune-112-${gouvernanceDepartementCode}`, 'Rennes', 'Préfecture régionale')
+  await creerMembreAvecNom(`commune-111-${gouvernanceDepartementCode}`, 'Rennes', 'Préfecture régionale')
+  await creerMembreAvecNom(`commune-113-${gouvernanceDepartementCode}`, 'Pipriac', 'Préfecture régionale', false)
 }
 
 export async function creerUneEnveloppeFinancement(
@@ -532,9 +511,9 @@ function membreRecordFactory(
     gouvernanceDepartementCode: '69',
     id: 'prefecture-69',
     isCoporteur: false,
-    nom: 'Rhône',
     oldUUID: '30CA3FA5-76B8-471D-A811-D96074B18EB1',
     statut: 'confirme',
+    structureId: 10,
     type: 'Préfecture départementale',
     ...override,
   }
@@ -553,12 +532,33 @@ function contactRecordFactory(
 }
 
 async function creerUnCandidat(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-  await prisma.membreRecord.create({
-    data: membreRecordFactory({
-      statut: 'candidat',
-      ...override,
-    }),
-  })
+  // Si aucun structureId n'est fourni, créer automatiquement une structure
+  if (override?.structureId === undefined) {
+    const structureId = autoStructureIdCounter++
+    const siret = `${structureId}`.padStart(14, '0')
+
+    await creerUneStructure({
+      departementCode: override?.gouvernanceDepartementCode ?? '69',
+      id: structureId,
+      nom: 'Structure auto-générée',
+      siret,
+    })
+
+    await prisma.membreRecord.create({
+      data: membreRecordFactory({
+        statut: 'candidat',
+        ...override,
+        structureId,
+      }),
+    })
+  } else {
+    await prisma.membreRecord.create({
+      data: membreRecordFactory({
+        statut: 'candidat',
+        ...override,
+      }),
+    })
+  }
 }
 
 // async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {

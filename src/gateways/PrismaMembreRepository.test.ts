@@ -35,9 +35,9 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ departementCode: '69', id: 1, nom: 'Structure Lyon' })
+    await creerUneStructure({ departementCode: '69', id: 1, nom: 'Lyon' })
     await creerUneStructure({ departementCode: '93', id: 2, nom: 'Structure 93' })
-    await creerUnMembre({ id: 'departement-69-69', nom: 'Lyon', statut: 'confirme', structureId: 1 })
+    await creerUnMembre({ id: 'departement-69-69', statut: 'confirme', structureId: 1 })
     await creerUnMembre({ id: 'departement-93-93', statut: 'confirme', structureId: 2 })
 
     // WHEN
@@ -68,10 +68,10 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ departementCode: '69', id: 3, nom: 'Structure SGAR' })
+    await creerUneStructure({ departementCode: '69', id: 3, nom: 'Auvergne-Rhône-Alpes' })
     await creerUneStructure({ departementCode: '93', id: 4, nom: 'Structure SGAR 93' })
-    await creerUnMembre({ id: 'sgar-69-69', nom:'Auvergne-Rhône-Alpes', statut: 'confirme', structureId: 3 })
-    await creerUnMembre({ id: 'sgar-93-93', nom:'93', statut: 'confirme', structureId: 4 })
+    await creerUnMembre({ id: 'sgar-69-69', statut: 'confirme', structureId: 3 })
+    await creerUnMembre({ id: 'sgar-93-93', statut: 'confirme', structureId: 4 })
 
     // WHEN
     const membre = await new PrismaMembreRepository().get(new MembreUid('sgar-69-69').state.value)
@@ -101,9 +101,9 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ departementCode: '69', id: 5, nom: 'Structure Paris' })
+    await creerUneStructure({ departementCode: '69', id: 5, nom: 'Paris' })
     await creerUneStructure({ departementCode: '93', id: 6, nom: 'Structure 93' })
-    await creerUnMembre({ id: 'commune-69-69', nom: 'Paris', statut: 'confirme', structureId: 5 })
+    await creerUnMembre({ id: 'commune-69-69', statut: 'confirme', structureId: 5 })
     await creerUnMembre({ id: 'commune-93-93', statut: 'confirme', structureId: 6 })
 
     // WHEN
@@ -134,9 +134,9 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ departementCode: '69', id: 7, nom: 'Structure Bordeaux Métropole' })
+    await creerUneStructure({ departementCode: '69', id: 7, nom: 'Bordeaux Métropole' })
     await creerUneStructure({ departementCode: '93', id: 8, nom: 'Structure EPCI 93' })
-    await creerUnMembre({ id: 'epci-69-69', nom: 'Bordeaux Métropole', statut: 'confirme', structureId: 7 })
+    await creerUnMembre({ id: 'epci-69-69', statut: 'confirme', structureId: 7 })
     await creerUnMembre({ id: 'epci-93-93', statut: 'confirme', structureId: 8 })
 
     // WHEN
@@ -169,7 +169,7 @@ describe('membre repository', () => {
     await creerUnContact()
     await creerUneStructure({ departementCode: '69', id: 9, nom: 'HUBIKOOP' })
     await creerUneStructure({ departementCode: '93', id: 10, nom: 'Structure 93' })
-    await creerUnMembre({ id: 'structure-69-69', nom: 'HUBIKOOP', statut: 'candidat', structureId: 9 })
+    await creerUnMembre({ id: 'structure-69-69', statut: 'candidat', structureId: 9 })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme', structureId: 10 })
 
     // WHEN
@@ -199,12 +199,13 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '69', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
+    await creerUneStructure({ departementCode: '69', id: 11, nom: 'HUBIKOOP' })
     await creerUnMembre({
       categorieMembre: 'Préfecture départementale',
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',
-      nom: 'HUBIKOOP',
       statut: 'candidat',
+      structureId: 11,
       type: 'Préfecture départementale',
 
     })
@@ -231,12 +232,11 @@ describe('membre repository', () => {
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',
       isCoporteur: false,
-      nom: 'HUBIKOOP',
       oldStructureId: null,
       oldUUID: '30ca3fa5-76b8-471d-a811-d96074b18eb1',
       siretRidet: null,
       statut: 'confirme',
-      structureId: null,
+      structureId: 11,
       type: 'Préfecture départementale',
     })
   })
