@@ -278,7 +278,8 @@ export async function creerUnMembre(
 
   // Si aucun structureId n'est fourni, créer automatiquement une structure
   if (override?.structureId === undefined) {
-    const structureId = autoStructureIdCounter++
+    autoStructureIdCounter += 1
+    const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
 
     await creerUneStructure({
@@ -317,13 +318,15 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   })
 
   // Helper pour créer structure + membre avec un nom spécifique
-  const creerMembreAvecNom = async (
+  async function creerMembreAvecNom(
     id: string,
     nom: string,
     type: string,
     isCoporteur = false
-  ): Promise<void> => {
-    const structureId = autoStructureIdCounter++
+  ): Promise<void>
+  {
+    autoStructureIdCounter += 1
+    const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
     await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
     await prisma.membreRecord.create({
@@ -339,12 +342,14 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   }
 
   // Helper pour créer structure + candidat avec un nom spécifique
-  const creerCandidatAvecNom = async (
+  async function creerCandidatAvecNom(
     id: string,
     nom: string,
     type: string
-  ): Promise<void> => {
-    const structureId = autoStructureIdCounter++
+  ): Promise<void>
+  {
+    autoStructureIdCounter += 1
+    const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
     await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
     await prisma.membreRecord.create({
@@ -530,45 +535,6 @@ function contactRecordFactory(
     ...override,
   }
 }
-
-async function creerUnCandidat(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-  // Si aucun structureId n'est fourni, créer automatiquement une structure
-  if (override?.structureId === undefined) {
-    const structureId = autoStructureIdCounter++
-    const siret = `${structureId}`.padStart(14, '0')
-
-    await creerUneStructure({
-      departementCode: override?.gouvernanceDepartementCode ?? '69',
-      id: structureId,
-      nom: 'Structure auto-générée',
-      siret,
-    })
-
-    await prisma.membreRecord.create({
-      data: membreRecordFactory({
-        statut: 'candidat',
-        ...override,
-        structureId,
-      }),
-    })
-  } else {
-    await prisma.membreRecord.create({
-      data: membreRecordFactory({
-        statut: 'candidat',
-        ...override,
-      }),
-    })
-  }
-}
-
-// async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-//   await prisma.membreRecord.create({
-//     data: membreRecordFactory({
-//       statut: 'suggere',
-//       ...override,
-//     }),
-//   })
-// }
 
 function coFinancementRecordFactory(
   override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>

@@ -79,9 +79,9 @@ describe('menu lateral', () => {
     { itemIndex: 0, listIndex: 2, name: 'Membres', pathname: '/gouvernance/93/membres' },
     { itemIndex: 1, listIndex: 2, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
     { itemIndex: 3, listIndex: 1, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
-    { itemIndex: 6, listIndex: 1, name: 'Lieux d\'inclusion', pathname: '/lieux-inclusion' },
-    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+    { itemIndex: 4, listIndex: 1, name: 'Lieux d\'inclusion', pathname: '/lieux-inclusion' },
+    { itemIndex: 0, listIndex: 3, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 3, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])('étant un utilisateur, quand j\'accède à l\'URL $pathname, alors l\'item $name du menu a le focus', ({ itemIndex, listIndex, name, pathname }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement(pathname)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Prisma } from '@prisma/client'
 
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'

@@ -31,15 +31,13 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
             <p className="fr-display--lg fr-text--bold fr-mb-1v">
               {nombreLieuxInclusion}
             </p>
-            <p className="fr-text--xl fr-text--bold fr-mb-1v fr-text-default--grey">
-              Lieux d&apos;inclusion numérique
-              <Information>
-                <p className="fr-mb-0">
-                  Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion
-                  numérique
-                </p>
-              </Information>
-            </p>
+            Lieux d&apos;inclusion numérique
+            <Information>
+              <p className="fr-mb-0">
+                Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion
+                numérique
+              </p>
+            </Information>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">
               dont 
               {' '}
