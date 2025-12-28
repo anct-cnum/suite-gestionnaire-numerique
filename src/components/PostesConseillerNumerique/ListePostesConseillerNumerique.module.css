@@ -1,0 +1,24 @@
+.badgeStatut {
+  align-items: center;
+  border-radius: 0.25rem;
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.badgeOccupe {
+  background-color: var(--green-emeraude-950-100);
+  color: var(--green-emeraude-sun-425-moon-753);
+}
+
+.badgeRendu {
+  background-color: var(--red-marianne-950-100);
+  color: var(--red-marianne-main-472);
+}
+
+.badgeVacant {
+  background-color: var(--green-tilleul-verveine-950-100);
+  color: var(--green-tilleul-verveine-sun-418-moon-817);
+}

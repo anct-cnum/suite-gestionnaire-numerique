@@ -28,6 +28,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
     },
+    {
+      customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
+      label: 'Suivi des postes CoNum',
+      url: '/postes-conseiller-numerique',
+    },
   ]
 
   const menusPilotage = [
@@ -47,6 +52,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'map-pin-2-line',
       label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
+    },
+    {
+      customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
+      label: 'Suivi des postes CoNum',
+      url: '/postes-conseiller-numerique',
     },
   ]
 
@@ -87,10 +97,20 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                     className="fr-sidemenu__link"
                     href={menu.url}
                   >
-                    <Icon
-                      classname="fr-mr-1w"
-                      icon={menu.icon}
-                    />
+                    {'customIcon' in menu ? (
+                      <img
+                        alt=""
+                        className="fr-mr-1w"
+                        height={24}
+                        src={menu.customIcon}
+                        width={24}
+                      />
+                    ) : (
+                      <Icon
+                        classname="fr-mr-1w"
+                        icon={menu.icon}
+                      />
+                    )}
                     {menu.label}
                   </Link>
                 </li>
@@ -115,19 +135,29 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                 <Fragment key={menu.url}>
                   <li className={`fr-sidemenu__item ${activeClass}`}>
                     <Link
-                      aria-controls={menu.ariaControls}
+                      aria-controls={'ariaControls' in menu ? menu.ariaControls : undefined}
                       aria-current={pathname === menu.url ? 'page' : false}
-                      aria-expanded={menu.ariaExpanded}
+                      aria-expanded={'ariaExpanded' in menu ? menu.ariaExpanded : undefined}
                       className="fr-sidemenu__link"
                       href={menu.url}
                     >
-                      <Icon
-                        classname="fr-mr-1w"
-                        icon={menu.icon}
-                      />
+                      {'customIcon' in menu ? (
+                        <img
+                          alt=""
+                          className="fr-mr-1w"
+                          height={24}
+                          src={menu.customIcon}
+                          width={24}
+                        />
+                      ) : (
+                        <Icon
+                          classname="fr-mr-1w"
+                          icon={menu.icon}
+                        />
+                      )}
                       {menu.label}
                     </Link>
-                    {children}
+                    {'ariaControls' in menu ? children : null}
                   </li>
                 </Fragment>
               )
