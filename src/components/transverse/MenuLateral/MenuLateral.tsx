@@ -52,12 +52,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'map-pin-2-line',
       label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
-    },
-    {
-      customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
-      label: 'Suivi des postes CoNum',
-      url: '/postes-conseiller-numerique',
-    },
+    }
   ]
 
   const menusAVenir = [
