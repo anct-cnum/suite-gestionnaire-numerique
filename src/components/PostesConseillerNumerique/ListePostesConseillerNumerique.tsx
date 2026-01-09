@@ -59,7 +59,7 @@ const PosteRow = memo(({
         </span>
       </td>
       <td>
-        {poste.typeConvention}
+        {poste.sourcesFinancement}
       </td>
       <td>
         {poste.dateFinConvention}

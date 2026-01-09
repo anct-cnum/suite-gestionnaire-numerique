@@ -4,7 +4,6 @@ import {
   EtatPoste,
   PosteConseillerNumeriqueReadModel,
   PostesConseillerNumeriqueReadModel,
-  TypeConvention,
 } from '@/use-cases/queries/RecupererLesPostesConseillerNumerique'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
@@ -17,12 +16,12 @@ export type PosteConseillerNumeriqueViewModel = Readonly<{
   idPoste: number
   nomStructure: string
   posteConumId: number
+  sourcesFinancement: string
   statut: EtatPoste
   statutBadgeVariant: BadgeVariant
   statutLabel: string
   totalConventionne: string
   totalVerse: string
-  typeConvention: string
 }>
 
 export type PostesConseillerNumeriqueStatistiquesViewModel = Readonly<{
@@ -91,11 +90,18 @@ function getStatutBadgeVariant(statut: EtatPoste): BadgeVariant {
   return variants[statut]
 }
 
-function getTypeConventionLabel(typeConvention: null | TypeConvention): string {
-  if (typeConvention === null) {
+function formaterEnveloppes(enveloppes: null | string): string {
+  if (enveloppes === null) {
     return '-'
   }
-  return typeConvention
+  if (enveloppes.includes(',')) {
+    return 'Renouvellement'
+  }
+  const mapping: Record<string, string> = {
+    V1: 'Initiale',
+    V2: 'Renouvellement',
+  }
+  return mapping[enveloppes] ?? enveloppes
 }
 
 function transformerPoste(poste: PosteConseillerNumeriqueReadModel): PosteConseillerNumeriqueViewModel {
@@ -108,11 +114,11 @@ function transformerPoste(poste: PosteConseillerNumeriqueReadModel): PosteConsei
     idPoste: poste.idPoste,
     nomStructure: poste.nomStructure,
     posteConumId: poste.posteConumId,
+    sourcesFinancement: formaterEnveloppes(poste.sourcesFinancement),
     statut: poste.statut,
     statutBadgeVariant: getStatutBadgeVariant(poste.statut),
     statutLabel: getStatutLabel(poste.statut),
     totalConventionne: poste.totalConventionne > 0 ? formatMontant(poste.totalConventionne) : '-',
     totalVerse: poste.totalVerse > 0 ? formatMontant(poste.totalVerse) : '-',
-    typeConvention: getTypeConventionLabel(poste.typeConvention),
   }
 }
