@@ -2,8 +2,6 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export type EtatPoste = 'occupe' | 'rendu' | 'vacant'
 
-export type TypeConvention = 'DGCL' | 'DGE' | 'DITP'
-
 export type PosteConseillerNumeriqueReadModel = Readonly<{
   bonification: boolean
   codeDepartement: string
@@ -13,10 +11,11 @@ export type PosteConseillerNumeriqueReadModel = Readonly<{
   idPoste: number
   nomStructure: string
   posteConumId: number
+  // Sources de financement cumulées (ex: "DGE, DITP")
+  sourcesFinancement: null | string
   statut: EtatPoste
   totalConventionne: number
   totalVerse: number
-  typeConvention: null | TypeConvention
 }>
 
 export type PostesConseillerNumeriqueStatistiquesReadModel = Readonly<{
