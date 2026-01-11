@@ -73,7 +73,7 @@
     "nanoid": "3.3.8",
     "next": "15.3.8",
     "next-auth": "^4.24.11",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "^7.0.11",
     "opening_hours": "^3.9.0",
     "prisma-json-types-generator": "^3.2.3",
     "react": "^19.1.0",
