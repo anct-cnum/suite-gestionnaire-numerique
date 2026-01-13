@@ -109,8 +109,8 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
   }
 }
 
-function fromMembre({ id, nom }: Membre): NonNullable<UneFeuilleDeRouteReadModel['porteur']> {
-  return { nom, uid: id }
+function fromMembre({ id, nom, structureId }: Membre): NonNullable<UneFeuilleDeRouteReadModel['porteur']> {
+  return { nom, structureId, uid: id }
 }
 
 function isSubventionFormation(action: Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>['action'][number]): boolean {

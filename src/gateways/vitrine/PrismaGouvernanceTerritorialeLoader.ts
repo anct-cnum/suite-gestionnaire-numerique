@@ -62,9 +62,7 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
       ],
       id: membre.id,
       nom: membre.nom,
-      // Filtrer les rôles 'observateur' et mapper au type RoleMembre
-      roles: membre.roles.filter((role): role is RoleMembre =>
-        role !== 'observateur'),
+      roles: membre.roles as ReadonlyArray<RoleMembre>,
       type: membre.type,
     }))
   }

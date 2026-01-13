@@ -1,5 +1,5 @@
-export function membreLink(uidGouvernance: string, uidMembre: string): string {
-  return `/gouvernance/${uidGouvernance}/membre/${uidMembre}`
+export function membreLink(structureId: number): string {
+  return `/structure/${structureId}`
 }
 
 export function feuilleDeRouteLink(uidGouvernance: string, uidFeuilleDeRoute: string): string {

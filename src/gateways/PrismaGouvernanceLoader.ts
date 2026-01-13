@@ -245,6 +245,7 @@ function beneficiairesSubventionAccordee(
 function fromMembre(membre: Membre): MembreReadModel {
   return {
     nom: membre.nom,
+    structureId: membre.structureId,
     uid: membre.id,
   }
 }
@@ -296,9 +297,9 @@ const include = {
 }
 
 function fromMembreAvecRoles(
-  { id, nom, roles, type }: Membre
+  { id, nom, roles, structureId, type }: Membre
 ): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, type, uid: id }
+  return { nom, roles, structureId, type, uid: id }
 }
 
 type Totaux = Readonly<{

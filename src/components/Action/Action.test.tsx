@@ -210,12 +210,12 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       afficherFormulaireDeModificationAction(undefined, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  },
-          { nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' },
-          { nom: 'Budget prévisionnel 2024' , roles: [] , uid: 'budget_id' },
-          { nom: 'Subvention de prestation' , roles: [] , uid: 'subvention_id' },
-          { nom: 'CC des Monts du Lyonnais' , roles: [] , uid: 'cc_id' },
-          { nom: 'Croix Rouge Française' , roles: [] , uid: 'croix_id' },
+          { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'membreFooId2'  },
+          { nom: 'Rhône (69)', roles : [], structureId: 69, uid: 'id_rhone69' },
+          { nom: 'Budget prévisionnel 2024' , roles: [] , structureId: 201, uid: 'budget_id' },
+          { nom: 'Subvention de prestation' , roles: [] , structureId: 202, uid: 'subvention_id' },
+          { nom: 'CC des Monts du Lyonnais' , roles: [] , structureId: 200, uid: 'cc_id' },
+          { nom: 'Croix Rouge Française' , roles: [] , structureId: 203, uid: 'croix_id' },
         ],
       },{
         cofinancements: [
@@ -283,7 +283,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       // GIVEN
       afficherFormulaireDeCreationAction(undefined,  {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+          { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
         ],
       })
 
@@ -557,8 +557,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       // GIVEN
       afficherFormulaireDeCreationAction(undefined, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom : 'porteur1', roles: [], uid: '88438c43-e143-4792-b968-07875ebc96b0' },
-          { nom : 'porteur2', roles: [], uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
+          { nom : 'porteur1', roles: [], structureId: 300, uid: '88438c43-e143-4792-b968-07875ebc96b0' },
+          { nom : 'porteur2', roles: [], structureId: 301, uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
         ],
       })
 

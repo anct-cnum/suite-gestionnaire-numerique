@@ -104,7 +104,7 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
       },
       porteur: feuilleDeRoute.structureCoPorteuse ? {
         label: feuilleDeRoute.structureCoPorteuse.nom,
-        link: membreLink(uidGouvernance, feuilleDeRoute.structureCoPorteuse.uid),
+        link: membreLink(feuilleDeRoute.structureCoPorteuse.structureId),
       } : undefined,
       totaux: {
         budget: formatMontant(feuilleDeRoute.totaux.budget),
@@ -120,9 +120,9 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
-    beneficiaires: action.beneficiaires.map(({ nom, uid }) => ({
+    beneficiaires: action.beneficiaires.map(({ nom, structureId }) => ({
       label: nom,
-      link: membreLink(uidGouvernance, uid),
+      link: membreLink(structureId),
     })),
     besoins: action.besoins.reduce((acc, besoin) => ({
       ...acc,
@@ -153,9 +153,9 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
     libellePorteurs: formatlibellePorteurs(action.porteurs),
     lienPourModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
     nom: action.nom,
-    porteurs: action.porteurs.map(({ nom, uid }) => ({
+    porteurs: action.porteurs.map(({ nom, structureId }) => ({
       label: nom,
-      link: membreLink(uidGouvernance, uid),
+      link: membreLink(structureId),
     })),
     statut: actionStatutViewModelByStatut[action.subvention?.statut ?? 'nonSubventionnee'],
     uid: action.uid,

@@ -24,6 +24,7 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
     nom: string
     porteurs: ReadonlyArray<{
       nom: string
+      structureId: number
       uid: string
     }>
     statut: 'nonSubventionnee' | StatutSubvention
@@ -49,6 +50,7 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
   perimetre: string
   porteur?: Readonly<{
     nom: string
+    structureId: number
     uid: string
   }>
   uid: string

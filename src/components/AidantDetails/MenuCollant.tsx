@@ -13,7 +13,7 @@ export default function MenuCollant(props: Props): ReactElement {
 
   return (
     <AnchorNavigation
-      className="fr-ml-10w"
+      className="fr-ml-10w fr-p-0"
       sections={sections}
       sticky={true}
       style={{ top: topPosition }}

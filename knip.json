@@ -3,6 +3,8 @@
   "ignore": [
     "scripts/*",
     "src/components/shared/AlerteConstruction/AlerteConstruction.tsx",
+    "src/components/shared/MenuLateral/MenuLateral.tsx",
+    "src/components/shared/Notice/Notice.tsx",
     ".next/**"
   ],
   "rules": {

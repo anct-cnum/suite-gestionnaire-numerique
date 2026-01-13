@@ -42,8 +42,8 @@ describe('ajout des bénéficiaires', () => {
       ],
     }, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-        { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
-        { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
+        { nom: 'Rhône (69) Co-porteur', roles: [], structureId: 69, uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
+        { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], structureId: 200, uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
       ],
     })
 
@@ -74,7 +74,7 @@ describe('ajout des bénéficiaires', () => {
     expect(enregistrer).toHaveAttribute('type', 'button')
     fireEvent.click(enregistrer)
     const beneficiaireTag = screen.getByRole('link', { name: 'Rhône (69) Co-porteur' })
-    expect(beneficiaireTag).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/rhone_69_id')
+    expect(beneficiaireTag).toHaveAttribute('href', '/structure/69')
     expect(beneficiaireTag).toHaveAttribute('target', '_blank')
   })
 
@@ -93,8 +93,8 @@ describe('ajout des bénéficiaires', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
-          { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'Rhône (69) Co-porteur', roles: [], structureId: 69, uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], structureId: 200, uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
 
@@ -141,7 +141,7 @@ describe('ajout des bénéficiaires', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
 
@@ -170,7 +170,7 @@ describe('ajout des bénéficiaires', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
       // WHEN
