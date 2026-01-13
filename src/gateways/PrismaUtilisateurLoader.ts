@@ -253,35 +253,22 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       return []
     }
 
-    // Pour chaque mot, construire la condition appropriée :
-    // - Si c'est un email (@), utiliser ILIKE pour une recherche exacte
-    // - Sinon, utiliser word_similarity pour une recherche fuzzy sur nom/prénom
+    // Pour chaque mot, il doit matcher dans au moins un des champs (nom, prenom, email)
     const conditionsMots = mots
-      .map((mot, index) => {
-        if (mot.includes('@')) {
-          // Recherche exacte pour les emails
-          return `(lower(u.email_de_contact) LIKE '%' || lower($${index + 1}) || '%')`
-        }
-        // Recherche fuzzy pour les noms/prénoms
-        return `(
-          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))) > 0.4
-          OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))) > 0.4
-        )`
-      })
+      .map((_, index) => `(
+        public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))) > 0.4
+        OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))) > 0.4
+        OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.email_de_contact))) > 0.4
+      )`)
       .join(' AND ')
 
-    // Score = meilleure similarité parmi les champs pour chaque mot (hors emails)
+    // Score = meilleure similarité parmi les 3 champs pour chaque mot, puis moyenne
     const scoreCalcul = mots
-      .map((mot, index) => {
-        if (mot.includes('@')) {
-          // Score fixe pour les emails (correspondance exacte)
-          return '1.0'
-        }
-        return `GREATEST(
-          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))),
-          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom)))
-        )`
-      })
+      .map((_, index) => `GREATEST(
+        public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))),
+        public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))),
+        public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.email_de_contact)))
+      )`)
       .join(' + ')
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
 

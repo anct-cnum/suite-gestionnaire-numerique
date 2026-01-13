@@ -740,7 +740,7 @@ describe('prisma utilisateur query', () => {
     const codeDepartement = '0'
     const codeRegion = '0'
 
-    it('quand je cherche un utilisateur par son email alors je le trouve', async () => {
+    it('quand je cherche un utilisateur par son email alors je le trouve en premier', async () => {
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'gregory.logeais@example.net'
@@ -759,10 +759,11 @@ describe('prisma utilisateur query', () => {
       )
 
       // THEN
-      expect(result.total).toBe(1)
+      expect(result.total).toBeGreaterThanOrEqual(1)
+      expect(result.utilisateursCourants[0].email).toBe('gregory.logeais@example.net')
     })
 
-    it('quand je cherche un utilisateur par son email de contact et qu‘un autre utilisateur a le même email de contact alors je les trouve', async () => {
+    it('quand je cherche un utilisateur par son email de contact et qu\'un autre utilisateur a le même email de contact alors je les trouve en premier', async () => {
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'structure@example.net'
@@ -781,7 +782,9 @@ describe('prisma utilisateur query', () => {
       )
 
       // THEN
-      expect(result.total).toBe(2)
+      expect(result.total).toBeGreaterThanOrEqual(2)
+      const emailsDeContact = result.utilisateursCourants.slice(0, 2).map((user) => user.email)
+      expect(emailsDeContact).toContain('structure@example.net')
     })
 
     it('quand je cherche un utilisateur par son prénom alors je le trouve', async () => {
