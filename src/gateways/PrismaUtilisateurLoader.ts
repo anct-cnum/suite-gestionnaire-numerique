@@ -73,76 +73,24 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     idStructure?: number,
     prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
-    const departementInexistant = '0'
-    const regionInexistante = '0'
-    let where: Prisma.UtilisateurRecordWhereInput = {}
-
+    // Recherche flexible par nom/prénom/email avec word_similarity
+    let ssoIdsFromSearch: ReadonlyArray<string> | undefined
     if (prenomOuNomOuEmail !== undefined) {
-      where.OR = [
-        { nom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
-        { prenom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
-        { emailDeContact: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
-      ]
+      ssoIdsFromSearch = await this.#rechercheFlexibleUtilisateurs(prenomOuNomOuEmail)
+      if (ssoIdsFromSearch.length === 0) {
+        return { total: 0, utilisateursCourants: [] }
+      }
     }
 
-    if (utilisateurCourant.role.nom === 'Gestionnaire structure') {
-      where = { role: 'gestionnaire_structure' as RoleUtilisateur, structureId: utilisateurCourant.structureId }
-    } else if (utilisateurCourant.role.nom === 'Gestionnaire département') {
-      where = { departementCode: utilisateurCourant.departementCode, role: 'gestionnaire_departement' as RoleUtilisateur }
-    } else if (utilisateurCourant.role.nom === 'Gestionnaire groupement') {
-      where = { groupementId: utilisateurCourant.groupementId, role: 'gestionnaire_groupement' as RoleUtilisateur }
-    } else if (utilisateurCourant.role.nom === 'Gestionnaire région') {
-      where = { regionCode: utilisateurCourant.regionCode, role: 'gestionnaire_region' as RoleUtilisateur }
-    } else {
-      if (utilisateursActives) {
-        where.NOT = { derniereConnexion: null }
-      }
-
-      if (roles.length > 0) {
-        where.role = { in: roles as Array<RoleUtilisateur> }
-      }
-
-      if (codeDepartement !== departementInexistant) {
-        where.OR = [
-          {
-            departementCode: codeDepartement,
-          },
-          {
-            relationStructure: {
-              adresse: {
-                departement: codeDepartement,
-              },
-            },
-          },
-        ]
-      } else if (codeRegion !== regionInexistante) {
-        where.OR = [
-          {
-            relationDepartement: {
-              relationRegion: {
-                code: codeRegion,
-              },
-            },
-          },
-          {
-            relationStructure: {
-              adresse: {
-                departement: {
-                  in: await this.#getDepartementsInRegion(codeRegion),
-                },
-              },
-            },
-          },
-          { regionCode: codeRegion },
-        ]
-      }
-
-      where.AND = [
-        {
-          structureId: idStructure,
-        },
-      ]
-    }
+    const where = await this.#construireFiltreWhere(
+      utilisateurCourant,
+      utilisateursActives,
+      roles,
+      codeDepartement,
+      codeRegion,
+      idStructure,
+      ssoIdsFromSearch
+    )
 
     const total = await this.#dataResource.count({
       where: {
@@ -151,26 +99,53 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       },
     })
 
-    const utilisateursRecord = await this.#dataResource.findMany({
-      include: {
-        relationDepartement: true,
-        relationGroupement: true,
-        relationRegion: true,
-        relationStructure: {
-          include: {
-            adresse: true,
-            membres: {
-              select: {
-                gouvernanceDepartementCode: true,
-              },
-              take: 1,
-              where: {
-                statut: 'confirme',
-              },
+    const includeRelations = {
+      relationDepartement: true,
+      relationGroupement: true,
+      relationRegion: true,
+      relationStructure: {
+        include: {
+          adresse: true,
+          membres: {
+            select: {
+              gouvernanceDepartementCode: true,
+            },
+            take: 1,
+            where: {
+              statut: 'confirme',
             },
           },
         },
       },
+    } as const
+
+    // Si recherche flexible, pagination et tri gérés via les IDs pré-triés par pertinence
+    if (ssoIdsFromSearch !== undefined) {
+      const ssoIdsPagines = ssoIdsFromSearch.slice(
+        utilisateursParPage * pageCourante,
+        utilisateursParPage * (pageCourante + 1)
+      )
+
+      const utilisateursRecord = await this.#dataResource.findMany({
+        include: includeRelations,
+        where: {
+          ...where,
+          isSupprime: false,
+          ssoId: { in: [...ssoIdsPagines] },
+        },
+      })
+
+      // Réordonner selon l'ordre de pertinence
+      const utilisateursTries = this.#trierParPertinence(utilisateursRecord, ssoIdsFromSearch)
+
+      return {
+        total,
+        utilisateursCourants: utilisateursTries.map(transform),
+      }
+    }
+
+    const utilisateursRecord = await this.#dataResource.findMany({
+      include: includeRelations,
       orderBy: {
         nom: 'asc',
       },
@@ -188,6 +163,74 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     }
   }
 
+  async #construireFiltreWhere(
+    utilisateurCourant: UnUtilisateurReadModel,
+    utilisateursActives: boolean,
+    roles: ReadonlyArray<string>,
+    codeDepartement: string,
+    codeRegion: string,
+    idStructure?: number,
+    ssoIdsFromSearch?: ReadonlyArray<string>
+  ): Promise<Prisma.UtilisateurRecordWhereInput> {
+    const departementInexistant = '0'
+    const regionInexistante = '0'
+    const where: Prisma.UtilisateurRecordWhereInput = {}
+
+    if (ssoIdsFromSearch !== undefined) {
+      where.ssoId = { in: [...ssoIdsFromSearch] }
+    }
+
+    if (utilisateurCourant.role.nom === 'Gestionnaire structure') {
+      where.role = 'gestionnaire_structure' as RoleUtilisateur
+      where.structureId = utilisateurCourant.structureId
+      return where
+    }
+
+    if (utilisateurCourant.role.nom === 'Gestionnaire département') {
+      where.departementCode = utilisateurCourant.departementCode
+      where.role = 'gestionnaire_departement' as RoleUtilisateur
+      return where
+    }
+
+    if (utilisateurCourant.role.nom === 'Gestionnaire groupement') {
+      where.groupementId = utilisateurCourant.groupementId
+      where.role = 'gestionnaire_groupement' as RoleUtilisateur
+      return where
+    }
+
+    if (utilisateurCourant.role.nom === 'Gestionnaire région') {
+      where.regionCode = utilisateurCourant.regionCode
+      where.role = 'gestionnaire_region' as RoleUtilisateur
+      return where
+    }
+
+    // Admin ou autre rôle : filtres avancés
+    if (utilisateursActives) {
+      where.NOT = { derniereConnexion: null }
+    }
+
+    if (roles.length > 0) {
+      where.role = { in: roles as Array<RoleUtilisateur> }
+    }
+
+    if (codeDepartement !== departementInexistant) {
+      where.OR = [
+        { departementCode: codeDepartement },
+        { relationStructure: { adresse: { departement: codeDepartement } } },
+      ]
+    } else if (codeRegion !== regionInexistante) {
+      where.OR = [
+        { relationDepartement: { relationRegion: { code: codeRegion } } },
+        { relationStructure: { adresse: { departement: { in: await this.#getDepartementsInRegion(codeRegion) } } } },
+        { regionCode: codeRegion },
+      ]
+    }
+
+    where.AND = [{ structureId: idStructure }]
+
+    return where
+  }
+
   async #getDepartementsInRegion(codeRegion: string): Promise<Array<string>> {
     const departements = await prisma.departementRecord.findMany({
       select: {
@@ -198,6 +241,74 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       },
     })
     return departements.map((departement) => departement.code)
+  }
+
+  async #rechercheFlexibleUtilisateurs(match: string): Promise<ReadonlyArray<string>> {
+    const mots = match
+      .trim()
+      .split(/\s+/)
+      .filter((mot) => mot.length > 0)
+
+    if (mots.length === 0) {
+      return []
+    }
+
+    // Pour chaque mot, construire la condition appropriée :
+    // - Si c'est un email (@), utiliser ILIKE pour une recherche exacte
+    // - Sinon, utiliser word_similarity pour une recherche fuzzy sur nom/prénom
+    const conditionsMots = mots
+      .map((mot, index) => {
+        if (mot.includes('@')) {
+          // Recherche exacte pour les emails
+          return `(lower(u.email_de_contact) LIKE '%' || lower($${index + 1}) || '%')`
+        }
+        // Recherche fuzzy pour les noms/prénoms
+        return `(
+          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))) > 0.4
+          OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))) > 0.4
+        )`
+      })
+      .join(' AND ')
+
+    // Score = meilleure similarité parmi les champs pour chaque mot (hors emails)
+    const scoreCalcul = mots
+      .map((mot, index) => {
+        if (mot.includes('@')) {
+          // Score fixe pour les emails (correspondance exacte)
+          return '1.0'
+        }
+        return `GREATEST(
+          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))),
+          public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom)))
+        )`
+      })
+      .join(' + ')
+    const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
+
+    const query = `
+      SELECT u.sso_id
+      FROM min.utilisateur u
+      WHERE (${conditionsMots})
+        AND u.is_supprime = false
+      ORDER BY ${scoreMoyen} DESC, u.nom ASC
+    `
+
+    interface RawResult { sso_id: string }
+    const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...mots)
+
+    return results.map((row) => row.sso_id)
+  }
+
+  #trierParPertinence<T extends { ssoId: string }>(
+    utilisateurs: Array<T>,
+    ordreParPertinence: ReadonlyArray<string>
+  ): Array<T> {
+    const indexParSsoId = new Map(ordreParPertinence.map((ssoId, index) => [ssoId, index]))
+    return [...utilisateurs].sort((utilisateurA, utilisateurB) => {
+      const indexA = indexParSsoId.get(utilisateurA.ssoId) ?? Number.MAX_SAFE_INTEGER
+      const indexB = indexParSsoId.get(utilisateurB.ssoId) ?? Number.MAX_SAFE_INTEGER
+      return indexA - indexB
+    })
   }
 }
 
