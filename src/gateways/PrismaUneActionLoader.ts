@@ -3,32 +3,34 @@ import { Prisma } from '@prisma/client'
 import {  membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
+// eslint-disable-next-line import/no-restricted-paths
+import { membreLink } from '@/presenters/shared/link'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
 
   static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>,
-    nomFeuilleDeRoute :string, uidGouvernance: string): UneActionReadModel {
+    nomFeuilleDeRoute :string): UneActionReadModel {
     const coFinancements = actionRecord.coFinancement.map(cf => ({
       id: cf.membre.id,
       montant: cf.montant,
     }))
-    
+
     const porteursAvecNom = actionRecord.porteurAction.map(pa => toMembre(pa.membre))
-    
+
     const porteurs = porteursAvecNom.map(pa => ({
       id: pa.id,
-      lien: membreLink(uidGouvernance, pa.id),
+      lien: membreLink(pa.structureId),
       nom: pa.nom,
     }))
 
     const destinatairesAvecNom = actionRecord.demandesDeSubvention.flatMap(ds =>
       ds.beneficiaire.map(beneficiaire => toMembre(beneficiaire.membre)))
-      
+
     const destinataires = destinatairesAvecNom.map(pa => ({
       id: pa.id,
-      lien: membreLink(uidGouvernance, pa.id),
+      lien: membreLink(pa.structureId),
       nom: pa.nom,
     }))
 
@@ -71,7 +73,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(actionRecord.feuilleDeRouteId),
       },
     })
-    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
+    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom)
   }
 }
 
@@ -102,8 +104,4 @@ const include = {
       },
     },
   },
-}
-
-function membreLink(uidGouvernance: string, uidMembre: string): string {
-  return `/gouvernance/${uidGouvernance}/membre/${uidMembre}`
 }

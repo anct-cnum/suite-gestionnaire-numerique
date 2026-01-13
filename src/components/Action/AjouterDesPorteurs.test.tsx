@@ -31,8 +31,8 @@ describe('ajout des porteurs', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'id_Lyonnais'  },
-          { nom: 'Rhône (69)', roles: [], uid: 'id_Rhône' },
+          { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'id_Lyonnais'  },
+          { nom: 'Rhône (69)', roles: [], structureId: 69, uid: 'id_Rhône' },
         ],
       })
 
@@ -72,7 +72,7 @@ describe('ajout des porteurs', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
 
@@ -94,7 +94,7 @@ describe('ajout des porteurs', () => {
         ],
       }, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
 

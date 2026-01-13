@@ -132,9 +132,9 @@ ${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Conne
             <p className="fr-text--sm fr-text--bold fr-mb-1v">
               Accompagnements
               <Information>
-                <p className="fr-mb-0">
+                <div className="fr-mb-0">
                   {informationLabel}
-                </p>
+                </div>
               </Information>
             </p>
             <p className="fr-text--xs fr-mt-0">
@@ -236,12 +236,12 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
           <h3 className="fr-h6 fr-col fr-mb-0">
             Nombre d&apos;accompagnements
             <Information>
-              <p className="fr-ùb-0">
+              <div className="fr-mb-0">
                 Le nombre d&apos;accompagnements correspond à la somme des 2 types d&apos;activités
                 enregistrées : accompagnement individuel et atelier collectif. À noter : Les
                 ateliers collectifs comptent pour 1 accompagnement par participant. Ex : Un
                 atelier collectif avec 10 participants compte pour 10 accompagnements.
-              </p>
+              </div>
             </Information>
           </h3>
         </div>

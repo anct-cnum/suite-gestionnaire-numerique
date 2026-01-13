@@ -74,7 +74,9 @@ function toMembreViewModel(membre: MembreReadModel, uidGouvernance: string): Mem
       intituleCourt: nomComplet,
     },
     isDeletable: membre.isDeletable,
-    link: membreLink(uidGouvernance, membre.uid),
+    link: membre.structureId === undefined
+      ? `/gouvernance/${uidGouvernance}/membre/${membre.uid}`
+      : membreLink(membre.structureId),
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),

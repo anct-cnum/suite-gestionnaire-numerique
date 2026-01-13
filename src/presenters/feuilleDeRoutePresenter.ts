@@ -73,7 +73,7 @@ export function feuilleDeRoutePresenter(
     perimetre: readModel.perimetre,
     porteur: readModel.porteur ? {
       label: readModel.porteur.nom,
-      link: membreLink(readModel.uidGouvernance, readModel.porteur.uid),
+      link: membreLink(readModel.porteur.structureId),
     } : undefined,
     uidFeuilleDeRoute: readModel.uid,
     uidGouvernance: readModel.uidGouvernance,
@@ -155,7 +155,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       nom: action.nom,
       porteurs: action.porteurs.map((porteur) => ({
         label: porteur.nom,
-        link: membreLink(uidGouvernance, porteur.uid),
+        link: membreLink(porteur.structureId),
       })),
       statut: actionStatutViewModelByStatut[action.statut],
       supprimable : action.modifiable,

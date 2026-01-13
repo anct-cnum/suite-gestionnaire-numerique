@@ -28,7 +28,7 @@ export function gouvernancePresenter(
         .porteursPotentielsNouvellesFeuillesDeRouteOuActions
         .map(porteur => ({
           id: porteur.uid,
-          link: membreLink(gouvernanceReadModel.uid, porteur.uid),
+          link: membreLink(porteur.structureId),
           nom: porteur.nom,
           roles: porteur.roles.map( role=> toRoleViewModel(role)),
           type:  porteur.type,
@@ -214,13 +214,13 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
-      beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel(uidGouvernance)),
+      beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel()),
       beneficiairesSubventionAccordee:
-             feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel(uidGouvernance)),
+             feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel()),
       beneficiairesSubventionFormation:
-        feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel(uidGouvernance)),
+        feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel()),
       beneficiairesSubventionFormationAccordee:
-        feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel(uidGouvernance)),
+        feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel()),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
       budgetSubventionDemandee: feuilleDeRoute.montantSubventionDemandee,
       lien: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
@@ -236,7 +236,7 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       },
       porteur: feuilleDeRoute.porteur ? {
         label: feuilleDeRoute.porteur.nom,
-        link: membreLink(uidGouvernance, feuilleDeRoute.porteur.uid),
+        link: membreLink(feuilleDeRoute.porteur.structureId),
       } : undefined,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
@@ -247,10 +247,10 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   }
 }
 
-function toMembresViewModel(uidGouvernance: string) {
+function toMembresViewModel() {
   return (membre: MembreReadModel): HyperLink => ({
     label: membre.nom,
-    link: membreLink(uidGouvernance, membre.uid),
+    link: membreLink(membre.structureId),
   })
 }
 

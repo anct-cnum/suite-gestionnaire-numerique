@@ -21,7 +21,7 @@ export type Membre = Readonly<{
   type: string
 }>
 
-type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'
+type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'recipiendaire'
 
 export const membreInclude = {
   BeneficiaireSubventionRecord: {
@@ -41,11 +41,6 @@ export const membreInclude = {
 
 function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   const roles: Array<Role> = []
-
-  // Observateur : si statut = 'confirme'
-  if (membre.statut === 'confirme') {
-    roles.push('observateur')
-  }
 
   if (membre.isCoporteur) {
     roles.push('coporteur')

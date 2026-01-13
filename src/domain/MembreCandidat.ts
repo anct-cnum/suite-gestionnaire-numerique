@@ -11,13 +11,13 @@ export class MembreCandidat extends Membre {
     uidGouvernance: GouvernanceUid,
     statut: Statut,
     uidStructure: StructureUid) {
-    super(uid, nom, [new Role('observateur')], uidGouvernance, statut, undefined, uidStructure)
+    super(uid, nom, [], uidGouvernance, statut, undefined, uidStructure)
   }
 
   confirmer(): Result<MembreFailure, Membre> {
     return membreFactory({
       nom: this.nom,
-      roles: ['observateur'],
+      roles: [],
       statut: 'confirme',
       uid: this.uid.state,
       uidGouvernance: this.uidGouvernance.state,

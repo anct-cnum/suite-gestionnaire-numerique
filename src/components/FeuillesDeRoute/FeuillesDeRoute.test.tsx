@@ -62,7 +62,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const lientVoirDetails = within(premiereFeuilleDeRoute).getByRole('link', { name: 'Voir le détail' })
     expect(lientVoirDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1')
     const lienPorteurDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getAllByRole('link', { name: 'CC des Monts du Lyonnais' })[0]
-    expect(lienPorteurDeLaFeuilleDeRoute).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/coPorteuseFooId')
+    expect(lienPorteurDeLaFeuilleDeRoute).toHaveAttribute('href', '/structure/200')
     const wordingNombreCofinanceursEtBeneficiaires = within(premiereFeuilleDeRoute).getByText(matchWithoutMarkup('5 bénéficiaires, 3 co-financeurs'))
     expect(wordingNombreCofinanceursEtBeneficiaires).toBeInTheDocument()
     const nombreDactions = within(premiereFeuilleDeRoute).getByText('2 actions attachées à cette feuille de route', { selector: 'p' })
@@ -78,7 +78,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const typeDeLaPremiereAction = within(premiereAction).getByRole('button', { name: 'Structurer une filière de reconditionnement locale 1' })
     expect(typeDeLaPremiereAction).toHaveAttribute('type', 'button')
     const porteurDeLaPremiereAction = within(premiereAction).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-    expect(porteurDeLaPremiereAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/coPorteuseFooId')
+    expect(porteurDeLaPremiereAction).toHaveAttribute('href', '/structure/200')
     const badgeDeStatutDeLaPremiereAction = within(premiereAction).getByText('Subvention validée', { selector: 'p' })
     expect(badgeDeStatutDeLaPremiereAction).toBeInTheDocument()
     const labelBudgetTotalDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getByText('Budget total de la feuille de route', { selector: 'p' })

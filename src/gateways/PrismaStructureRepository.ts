@@ -2,9 +2,10 @@ import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
+import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
 import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
 
-export class PrismaStructureRepository implements StructureRepository {
+export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
   async create(data: StructureData, tx?: Prisma.TransactionClient): Promise<Structure> {
     // Si pas de transaction fournie, en créer une pour garantir l'atomicité
     if (!tx) {
@@ -60,6 +61,32 @@ export class PrismaStructureRepository implements StructureRepository {
       identifiantEtablissement: structure.siret ?? '',
       nom: structure.nom,
       uid: { value: structure.id },
+    })
+  }
+
+  async updateContactReferent(
+    structureId: number,
+    contactReferent: {
+      email: string
+      fonction: string
+      nom: string
+      prenom: string
+      telephone: string
+    }
+  ): Promise<void> {
+    await prisma.main_structure.update({
+      data: {
+        contact: {
+          courriels: contactReferent.email,
+          fonction: contactReferent.fonction,
+          nom: contactReferent.nom,
+          prenom: contactReferent.prenom,
+          telephone: contactReferent.telephone,
+        },
+      },
+      where: {
+        id: structureId,
+      },
     })
   }
 

@@ -157,6 +157,7 @@ describe('modifier une feuille de route', () => {
   ): void {
     const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ porteur:{
       nom: 'La Poste',
+      structureId: 1,
       uid: 'membre2FooId',
     },
     uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
@@ -164,11 +165,13 @@ describe('modifier une feuille de route', () => {
         {
           nom: 'Croix Rouge Française',
           roles: ['porteur'],
+          structureId: 203,
           uid: 'membre1FooId',
         },
         {
           nom: 'La Poste',
           roles: ['porteur'],
+          structureId: 300,
           uid: 'membre2FooId',
         },
       ],

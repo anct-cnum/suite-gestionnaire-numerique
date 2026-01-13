@@ -107,6 +107,7 @@ export type FeuilleDeRouteReadModel = Readonly<{
 
 export type MembreReadModel = Readonly<{
   nom: string
+  structureId: number
   uid: string
 }>
 
@@ -183,7 +184,6 @@ function createMembresCoporteurs(membres: ReadonlyArray<Membre>):
 Array<{ isCoporteur: boolean; structureUid: number }> {
   return membres
     .filter(isCoporteur)
-    .filter((membre): membre is { structureId: number } & Membre => membre.structureId !== undefined)
     .map(membre => ({
       isCoporteur: true,
       structureUid: membre.structureId,

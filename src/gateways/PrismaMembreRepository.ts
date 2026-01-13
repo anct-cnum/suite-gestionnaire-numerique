@@ -101,7 +101,7 @@ export class PrismaMembreRepository implements MembreRepository {
       uidGouvernance: {
         value: record.gouvernanceDepartementCode,
       },
-      uidStructure: { value: record.structureId },
+      uidStructure: { value: record.structureId  },
     }) as Membre
   }
 

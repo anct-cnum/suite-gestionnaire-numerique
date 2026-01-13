@@ -7,9 +7,9 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     // GIVEN
     afficherFormulaireDeCreationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom: 'CC des Monts du Lyonnais', roles: [] , uid: 'cc_id' },
-        { nom: 'Croix Rouge Française', roles: [] , uid: 'croix_id' },
-        { nom: 'La Poste', roles: [] , uid: 'post_id' },
+        { nom: 'CC des Monts du Lyonnais', roles: [] , structureId: 200, uid: 'cc_id' },
+        { nom: 'Croix Rouge Française', roles: [] , structureId: 203, uid: 'croix_id' },
+        { nom: 'La Poste', roles: [] , structureId: 300, uid: 'post_id' },
       ],
     })
 
@@ -45,7 +45,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     // GIVEN
     afficherFormulaireDeCreationAction(undefined,  {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+        { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
       ],
     })
 
@@ -71,7 +71,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     // GIVEN
     afficherFormulaireDeModificationAction(undefined,  {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+        { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
       ],
     })
 

@@ -87,32 +87,38 @@ export function gouvernanceReadModelFactory(
         beneficiairesSubvention: [
           {
             nom: 'Structure 1',
+            structureId: 1,
             uid: '0',
           },
           {
             nom: 'Département du Rhône',
+            structureId: 2,
             uid: '1',
           },
         ],
         beneficiairesSubventionAccordee: [
           {
             nom: 'Structure 1',
+            structureId: 1,
             uid: '0',
           },
         ],
         beneficiairesSubventionFormation: [
           {
             nom: 'Structure 1',
+            structureId: 1,
             uid: '0',
           },
           {
             nom: 'Structure 2',
+            structureId: 3,
             uid: '3',
           },
         ],
         beneficiairesSubventionFormationAccordee: [
           {
             nom: 'Structure 1',
+            structureId: 1,
             uid: '0',
           },
         ],
@@ -131,7 +137,7 @@ export function gouvernanceReadModelFactory(
           },
           nom: 'user/1234/feuille-de-route-fake.pdf',
         },
-        porteur: { nom: 'Préfecture du Rhône', uid: '4' },
+        porteur: { nom: 'Préfecture du Rhône', structureId: 4, uid: '4' },
         totalActions: 3,
         uid: 'feuilleDeRouteFooId',
       },
@@ -208,14 +214,17 @@ export function feuillesDeRouteReadModelFactory(
             beneficiaires: [
               {
                 nom: 'CAF DE LA CHARENTE',
+                structureId: 1,
                 uid: '1',
               },
               {
                 nom: 'HUBIKOOP',
+                structureId: 2,
                 uid: '2',
               },
               {
                 nom: 'HYPRA',
+                structureId: 3,
                 uid: '3',
               },
             ],
@@ -223,15 +232,15 @@ export function feuillesDeRouteReadModelFactory(
             budgetGlobal: 70_000,
             coFinancements: [
               {
-                coFinanceur: { nom: 'Co-financeur 1', uid: 'coFinanceurId' },
+                coFinanceur: { nom: 'Co-financeur 1', structureId: 100, uid: 'coFinanceurId' },
                 montant: 20_000,
               },
               {
-                coFinanceur: { nom: 'Co-financeur Orange', uid: 'coFinanceurOrangeId' },
+                coFinanceur: { nom: 'Co-financeur Orange', structureId: 101, uid: 'coFinanceurOrangeId' },
                 montant: 10_000,
               },
               {
-                coFinanceur: { nom: 'Co-financeur 1', uid: 'coFinanceurId' },
+                coFinanceur: { nom: 'Co-financeur 1', structureId: 100, uid: 'coFinanceurId' },
                 montant: 10_000,
               },
             ],
@@ -241,6 +250,7 @@ export function feuillesDeRouteReadModelFactory(
             porteurs: [
               {
                 nom: 'CC des Monts du Lyonnais',
+                structureId: 200,
                 uid: 'coPorteuseFooId',
               },
             ],
@@ -262,10 +272,12 @@ export function feuillesDeRouteReadModelFactory(
             beneficiaires: [
               {
                 nom: 'CAF DE LA CHARENTE',
+                structureId: 1,
                 uid: '1',
               },
               {
                 nom: 'Kocoya THinkLab',
+                structureId: 5,
                 uid: '5',
               },
             ],
@@ -288,6 +300,7 @@ export function feuillesDeRouteReadModelFactory(
         nom: 'Feuille de route 1',
         structureCoPorteuse: {
           nom: 'CC des Monts du Lyonnais',
+          structureId: 200,
           uid: 'coPorteuseFooId',
         },
         totaux: {
@@ -303,6 +316,7 @@ export function feuillesDeRouteReadModelFactory(
             beneficiaires: [
               {
                 nom: 'CAF DE LA CHARENTE',
+                structureId: 1,
                 uid: '1',
               },
             ],
@@ -310,7 +324,7 @@ export function feuillesDeRouteReadModelFactory(
             budgetGlobal: 60_000,
             coFinancements: [
               {
-                coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
+                coFinanceur: { nom: 'Co-financeur 2', structureId: 102, uid: 'coFinanceurId2' },
                 montant: 20_000,
               },
             ],
@@ -320,10 +334,12 @@ export function feuillesDeRouteReadModelFactory(
             porteurs: [
               {
                 nom: 'Emmaüs Connect',
+                structureId: 201,
                 uid: 'porteurId1',
               },
               {
                 nom: 'Orange',
+                structureId: 202,
                 uid: 'porteurId2',
               },
             ],
@@ -339,6 +355,7 @@ export function feuillesDeRouteReadModelFactory(
         nom: 'Feuille de route 2',
         structureCoPorteuse: {
           nom: 'Croix Rouge Française',
+          structureId: 203,
           uid: 'coPorteuseFooId2',
         },
         totaux: {
@@ -356,7 +373,7 @@ export function feuillesDeRouteReadModelFactory(
             budgetGlobal: 13_000,
             coFinancements: [
               {
-                coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
+                coFinanceur: { nom: 'Co-financeur 2', structureId: 102, uid: 'coFinanceurId2' },
                 montant: 6_000,
               },
             ],
@@ -395,16 +412,19 @@ export function feuillesDeRouteReadModelFactory(
       {
         nom: 'Meetkap',
         roles: ['coporteur'],
+        structureId: 300,
         uid: 'structure-95351745500010-44',
       },
       {
         nom: 'Emmaüs Connect',
         roles: ['coporteur', 'recipiendaire'],
+        structureId: 201,
         uid: 'porteurId1',
       },
       {
         nom: 'Orange',
         roles: ['observateur'],
+        structureId: 202,
         uid: 'porteurId2',
       },
     ],
@@ -442,6 +462,7 @@ export function feuilleDeRouteReadModelFactory(
         porteurs: [
           {
             nom: 'CC des Monts du Lyonnais',
+            structureId: 6,
             uid: 'membreFooId',
           },
         ],
@@ -490,6 +511,7 @@ export function feuilleDeRouteReadModelFactory(
     perimetre: 'departemental',
     porteur: {
       nom: 'Orange',
+      structureId: 5,
       uid: 'membreFooId',
     },
     uid: 'feuilleDeRouteFooId',

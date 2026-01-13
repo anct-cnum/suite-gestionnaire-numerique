@@ -47,7 +47,7 @@ describe('membre repository', () => {
     expect(membre.state).toStrictEqual({
       dateSuppression: undefined,
       nom: 'Lyon',
-      roles: ['observateur'],
+      roles: [],
       statut: 'confirme',
       uid: {
         value: 'departement-69-69',
@@ -80,7 +80,7 @@ describe('membre repository', () => {
     expect(membre.state).toStrictEqual({
       dateSuppression: undefined,
       nom: 'Auvergne-Rhône-Alpes',
-      roles: ['observateur'],
+      roles: [],
       statut: 'confirme',
       uid: {
         value: 'sgar-69-69',
@@ -113,7 +113,7 @@ describe('membre repository', () => {
     expect(membre.state).toStrictEqual({
       dateSuppression: undefined,
       nom: 'Paris',
-      roles: ['observateur'],
+      roles: [],
       statut: 'confirme',
       uid: {
         value: 'commune-69-69',
@@ -146,7 +146,7 @@ describe('membre repository', () => {
     expect(membre.state).toStrictEqual({
       dateSuppression: undefined,
       nom: 'Bordeaux Métropole',
-      roles: ['observateur'],
+      roles: [],
       statut: 'confirme',
       uid: {
         value: 'epci-69-69',
@@ -179,7 +179,7 @@ describe('membre repository', () => {
     expect(membre.state).toStrictEqual({
       dateSuppression: undefined,
       nom: 'HUBIKOOP',
-      roles: ['observateur'],
+      roles: [],
       statut: 'candidat',
       uid: {
         value: 'structure-69-69',

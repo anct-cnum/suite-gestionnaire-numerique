@@ -38,7 +38,7 @@ describe('accepter un membre', () => {
     expect(spiedMembrePotentielToUpdate?.state).toStrictEqual(
       membreConfirmeFactory({
         nom: 'La Poste',
-        roles: ['observateur'],
+        roles: [],
         statut: 'confirme',
         uid: {
           value: uidMembrePotentiel,

@@ -29,7 +29,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       url: '/lieux-inclusion',
     },
     {
-      customIcon: `${process.env.NEXT_PUBLIC_HOST ?? ''}/conum-full.svg`,
+      customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
       label: 'Suivi des postes CoNum',
       url: '/postes-conseiller-numerique',
     },
@@ -52,11 +52,6 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'map-pin-2-line',
       label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
-    },
-    {
-      customIcon: `${process.env.NEXT_PUBLIC_HOST ?? ''}/conum-full.svg`,
-      label: 'Suivi des postes CoNum',
-      url: '/postes-conseiller-numerique',
     },
   ]
 
@@ -146,7 +141,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                           alt=""
                           className="fr-mr-1w"
                           height={24}
-                          src={menu.customIcon}
+                          src={menu.customIcon as string}
                           width={24}
                         />
                       ) : (

@@ -35,6 +35,7 @@ export function renderComponent(
     changerMonRoleAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
+    modifierContactReferentStructureAction: vi.fn(),
     modifierLieuInclusionDescriptionAction: vi.fn(),
     modifierLieuInclusionInformationsPratiquesAction: vi.fn(),
     modifierLieuInclusionServicesModaliteAction: vi.fn(),

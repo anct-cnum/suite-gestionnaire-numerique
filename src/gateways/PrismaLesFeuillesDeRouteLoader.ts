@@ -148,15 +148,15 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
 }
 
 function fromMembre(
-  { id, nom }: Membre
+  { id, nom, structureId }: Membre
 ): NonNullable<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['structureCoPorteuse']> {
-  return { nom, uid: id }
+  return { nom, structureId, uid: id }
 }
 
 function fromMembreAvecRoles(
-  { id, nom, roles }: Membre
+  { id, nom, roles, structureId }: Membre
 ): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, uid: id }
+  return { nom, roles, structureId, uid: id }
 }
 
 const include = {

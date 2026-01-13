@@ -10,7 +10,10 @@ import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
-  beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
+  beforeEach(async () => {
+    structureIdCounter = 100
+    await prisma.$queryRaw`START TRANSACTION`
+  })
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
@@ -67,6 +70,7 @@ describe('récupérer une feuille de route loader', () => {
           porteurs: [
             {
               nom: 'La Poste',
+              structureId: 102,
               uid: 'epci-2419272011-93',
             },
           ],
@@ -115,6 +119,7 @@ describe('récupérer une feuille de route loader', () => {
       perimetre: 'departemental',
       porteur: {
         nom: 'Emmaüs Connect',
+        structureId: 101,
         uid: uidPorteur,
       },
       uid: uidFeuilleDeRoute,
@@ -175,6 +180,7 @@ describe('récupérer une feuille de route loader', () => {
           porteurs: [
             {
               nom: 'La Poste',
+              structureId: 102,
               uid: 'epci-2419272011-93',
             },
           ],
@@ -223,6 +229,7 @@ describe('récupérer une feuille de route loader', () => {
       perimetre: 'departemental',
       porteur: {
         nom: 'Emmaüs Connect',
+        structureId: 101,
         uid: uidPorteur,
       },
       uid: uidFeuilleDeRoute,

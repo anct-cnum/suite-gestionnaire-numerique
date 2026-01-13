@@ -73,5 +73,6 @@ type ActionReadModel = Readonly<{
 
 type Membre = Readonly<{
   nom: string
+  structureId: number
   uid: string
 }>
