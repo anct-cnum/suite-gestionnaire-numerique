@@ -63,7 +63,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
             className="fr-text-md fr-link fr-icon-team-line fr-link--icon-left"
             href="/mes-utilisateurs"
           >
-            Mes utilisateurs
+            Mon équipe
           </Link>
         </li>
       </ul>
