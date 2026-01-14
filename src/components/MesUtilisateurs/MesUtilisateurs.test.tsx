@@ -39,7 +39,7 @@ describe('mes utilisateurs', () => {
     afficherMesUtilisateurs()
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
+    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mon équipe' })
     expect(titre).toBeInTheDocument()
     const rechercher = screen.getByRole('searchbox', { name: 'Rechercher par nom ou adresse électronique' })
     expect(rechercher).toHaveAttribute('placeholder', 'Rechercher par nom ou adresse électronique')
@@ -123,7 +123,7 @@ describe('mes utilisateurs', () => {
     )
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Utilisateurs · Rhône' })
+    const titre = screen.getByRole('heading', { level: 1, name: 'Mon équipe · Rhône' })
     expect(titre).toBeInTheDocument()
 
     const rechercher = screen.queryByLabelText('Rechercher par nom ou adresse électronique')
