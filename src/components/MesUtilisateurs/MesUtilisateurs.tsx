@@ -65,7 +65,7 @@ export default function MesUtilisateurs(
         <div style={{ flex: '1 1 auto', minWidth: 0 }}>
           <PageTitle>
             <TitleIcon icon="team-line" />
-            {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
+            {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mon équipe' : `Mon équipe · ${sessionUtilisateurViewModel.role.libelle}`}
           </PageTitle>
         </div>
         <button
