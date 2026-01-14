@@ -105,6 +105,10 @@ export default function ListePostesConseillerNumerique({
 
   const viewModel = postesConseillerNumeriqueViewModel
 
+  function handleExportCSV(): void {
+    window.open('/api/export/postes-conseiller-numerique-csv', '_blank')
+  }
+
   return (
     <>
       <div className="fr-grid-row fr-grid-row--middle">
@@ -118,7 +122,7 @@ export default function ListePostesConseillerNumerique({
           <div className="fr-col-auto">
             <button
               className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
-              disabled={true}
+              onClick={handleExportCSV}
               type="button"
             >
               Exporter
