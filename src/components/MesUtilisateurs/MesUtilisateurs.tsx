@@ -56,6 +56,40 @@ export default function MesUtilisateurs(
   const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
   const labelRenvoyerInvitationId = useId()
 
+  function handleExportCSV(): void {
+    const currentParams = new URLSearchParams(window.location.search)
+
+    const exportParams = new URLSearchParams()
+
+    const codeDepartement = currentParams.get('codeDepartement')
+    const codeRegion = currentParams.get('codeRegion')
+    const roles = currentParams.get('roles')
+    const utilisateursActives = currentParams.get('utilisateursActives')
+    const prenomOuNomOuEmail = currentParams.get('prenomOuNomOuEmail')
+    const idStructure = currentParams.get('idStructure')
+
+    if (codeDepartement !== null && codeDepartement !== '') {
+      exportParams.set('codeDepartement', codeDepartement)
+    }
+    if (codeRegion !== null && codeRegion !== '') {
+      exportParams.set('codeRegion', codeRegion)
+    }
+    if (roles !== null && roles !== '') {
+      exportParams.set('roles', roles)
+    }
+    if (utilisateursActives !== null && utilisateursActives !== '') {
+      exportParams.set('utilisateursActives', utilisateursActives)
+    }
+    if (prenomOuNomOuEmail !== null && prenomOuNomOuEmail !== '') {
+      exportParams.set('prenomOuNomOuEmail', prenomOuNomOuEmail)
+    }
+    if (idStructure !== null && idStructure !== '') {
+      exportParams.set('idStructure', idStructure)
+    }
+
+    window.open(`/api/export/utilisateurs-csv?${exportParams.toString()}`, '_blank')
+  }
+
   return (
     <>
       <div
@@ -155,6 +189,7 @@ export default function MesUtilisateurs(
                 </button>
                 <button
                   className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
+                  onClick={handleExportCSV}
                   type="button"
                 >
                   Exporter

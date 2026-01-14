@@ -56,7 +56,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(mesParametres).toHaveAttribute('href', '/mes-parametres')
     expect(mesParametres).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
-    const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mes utilisateurs' })
+    const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mon équipe' })
     expect(mesUtilisateurs).toHaveAttribute('href', '/mes-utilisateurs')
     expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
