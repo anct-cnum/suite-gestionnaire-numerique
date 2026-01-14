@@ -26,7 +26,7 @@ export default function QuiSommesNous(): ReactElement {
               {' '}
               <a
                 className="fr-link"
-                href="https://societenumerique.gouv.fr/fr/"
+                href="https://societenumerique.gouv.fr/"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -37,7 +37,7 @@ export default function QuiSommesNous(): ReactElement {
               {' '}
               <a
                 className="fr-link"
-                href="https://societenumerique.gouv.fr/documents/84/Feuille_route_23-27_-_engagements_mis_%C3%A0_jour.pdf"
+                href="https://www.societenumerique.gouv.fr/nos-missions/france-numerique-ensemble"
                 rel="noopener noreferrer"
                 target="_blank"
               >
