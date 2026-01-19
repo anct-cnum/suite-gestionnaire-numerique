@@ -9,6 +9,7 @@ import StructureHeader from './StructureHeader'
 import StructureIdentite from './StructureIdentite'
 import StructureRole from './StructureRole'
 import MenuCollant, { type MenuCollantSection } from '../AidantDetails/MenuCollant'
+import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function Structure({ viewModel }: Props): ReactElement {
@@ -31,7 +32,7 @@ export default function Structure({ viewModel }: Props): ReactElement {
         /> */}
 
         <StructureRole role={viewModel.role} />
-
+        <AlerteConstruction />
         <StructureConventions conventionsEtFinancements={viewModel.conventionsEtFinancements} />
 
         <StructureContratsRattaches contratsRattaches={viewModel.contratsRattaches} />
@@ -51,10 +52,10 @@ const sections: ReadonlyArray<MenuCollantSection> = [
     id: 'identite',
     label: 'Identité',
   },
-  {
-    id: 'contact',
-    label: 'Contact référent',
-  },
+  // {
+  //   id: 'contact',
+  //   label: 'Contact référent',
+  // },
   {
     id: 'role',
     label: 'Rôle',

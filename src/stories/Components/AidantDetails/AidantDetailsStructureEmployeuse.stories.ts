@@ -1,4 +1,3 @@
-import { createDefaultStructureEmployeuseData } from './AidantDetailsTestData'
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
@@ -6,9 +5,6 @@ const meta: Meta<typeof AidantDetailsStructureEmployeuse> = {
   argTypes: {
     data: {
       description: 'Données de la structure employeuse',
-    },
-    onEdit: {
-      description: 'Callback pour éditer la structure',
     },
   },
   component: AidantDetailsStructureEmployeuse,
@@ -38,15 +34,6 @@ export const Default: Story = {
       region: 'Île-de-France',
       siret: '21750001600019',
       type: 'Collectivité territoriale',
-    },
-  },
-}
-
-export const AvecCallbackEdit: Story = {
-  args: {
-    data: createDefaultStructureEmployeuseData(),
-    onEdit(): void {
-      // Mock callback pour édition
     },
   },
 }

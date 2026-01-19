@@ -132,9 +132,9 @@ ${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Conne
             <p className="fr-text--sm fr-text--bold fr-mb-1v">
               Accompagnements
               <Information>
-                <div className="fr-mb-0">
+                <span>
                   {informationLabel}
-                </div>
+                </span>
               </Information>
             </p>
             <p className="fr-text--xs fr-mt-0">

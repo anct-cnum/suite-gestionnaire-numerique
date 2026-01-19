@@ -182,9 +182,9 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (personne.is_active_ac === true) {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/aidant-numerique.svg`)
     }
-    if (personne.is_mediateur === true) {
-      logos.push(`${process.env.NEXT_PUBLIC_HOST}/mednum.svg`)
-    }
+    // if (personne.is_mediateur === true) {
+    //   logos.push(`${process.env.NEXT_PUBLIC_HOST}/mednum.svg`)
+    // }
 
     return {
       fonction: fonctions.join(', '),

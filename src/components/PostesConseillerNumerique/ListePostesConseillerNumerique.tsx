@@ -9,6 +9,7 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { PosteConseillerNumeriqueViewModel, PostesConseillerNumeriqueViewModel } from '@/presenters/postesConseillerNumeriquePresenter'
 
@@ -77,11 +78,10 @@ const PosteRow = memo(({
         {poste.totalVerse}
       </td>
       <td>
-        <button
+        <a
           className="fr-btn fr-btn--tertiary-no-outline fr-icon-eye-line"
-          disabled={true}
+          href={`/poste/${poste.idPoste}`}
           title="Voir le détail du poste"
-          type="button"
         />
       </td>
     </tr>
@@ -139,13 +139,7 @@ export default function ListePostesConseillerNumerique({
           </div>
         </div>
       </div>
-
-      <div className="fr-alert fr-alert--warning fr-mb-3w">
-        <p>
-          Cette page est en cours de développement. Les données affichées peuvent ne pas être correctes.
-        </p>
-      </div>
-
+      <AlerteConstruction />
       <div className="fr-callout fr-callout--blue-ecume fr-mb-3w">
         <p className="fr-callout__text fr-text--sm fr-mb-0">
           <span className="fr-icon-information-fill fr-mr-1w" />
@@ -159,7 +153,6 @@ export default function ListePostesConseillerNumerique({
             {'Tableau de pilotage Conseiller Numérique '}
             <span
               aria-hidden="true"
-              className="fr-icon-external-link-line fr-icon--sm"
             />
           </a>
         </p>

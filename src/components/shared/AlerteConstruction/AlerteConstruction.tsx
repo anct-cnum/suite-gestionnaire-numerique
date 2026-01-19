@@ -8,8 +8,8 @@ export default function AlerteConstruction({ className = '' }: Props): ReactElem
           🚧 Page en construction
         </p>
         <p>
-          Cette page est actuellement en développement. Les données présentées ne correspondent pas à la
-          réalité et sont uniquement à des fins de démonstration.
+          Cette page est en cours de développement. Les données affichées peuvent ne pas être
+          correctes.
         </p>
       </div>
     </div>
