@@ -47,24 +47,6 @@ export function createDefaultStatistiquesActivitesData(): StatistiquesActivitesD
   }
 }
 
-export function createDefaultStructureEmployeuseData(): StructureEmployeuseData {
-  return {
-    adresse: '123 Rue de la République, 75001 Paris',
-    departement: 'Paris',
-    nom: 'Mairie de Paris 1er',
-    referent: {
-      email: 'marie.dupont@paris.fr',
-      nom: 'Dupont',
-      post: 'Responsable numérique',
-      prenom: 'Marie',
-      telephone: '01 42 76 40 40',
-    },
-    region: 'Île-de-France',
-    siret: '12345678901234',
-    type: 'Collectivité territoriale',
-  }
-}
-
 export function createDefaultLieuxActiviteData(): ReadonlyArray<LieuActiviteData> {
   return [
     {
@@ -95,5 +77,23 @@ export function createDefaultAidantDetailsData(): AidantDetailsData {
     lieuxActivite: createDefaultLieuxActiviteData(),
     statistiquesActivites: createDefaultStatistiquesActivitesData(),
     structuresEmployeuses: [createDefaultStructureEmployeuseData()],
+  }
+}
+
+function createDefaultStructureEmployeuseData(): StructureEmployeuseData {
+  return {
+    adresse: '123 Rue de la République, 75001 Paris',
+    departement: 'Paris',
+    nom: 'Mairie de Paris 1er',
+    referent: {
+      email: 'marie.dupont@paris.fr',
+      nom: 'Dupont',
+      post: 'Responsable numérique',
+      prenom: 'Marie',
+      telephone: '01 42 76 40 40',
+    },
+    region: 'Île-de-France',
+    siret: '12345678901234',
+    type: 'Collectivité territoriale',
   }
 }
