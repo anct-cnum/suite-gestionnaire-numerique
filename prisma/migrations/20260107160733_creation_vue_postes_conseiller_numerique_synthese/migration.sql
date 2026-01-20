@@ -130,7 +130,7 @@ SELECT
   -- Indicateur
   COALESCE(cc.nb_contrats_en_cours, 0) as nb_contrats_en_cours
 FROM poste_par_structure pp
-LEFT JOIN subventions_cumulees sc ON sc.poste_id = pp.poste_conum_id
-LEFT JOIN versements_cumules vc ON vc.poste_id = pp.poste_conum_id
+LEFT JOIN subventions_cumulees sc ON sc.poste_id = pp.id
+LEFT JOIN versements_cumules vc ON vc.poste_id = pp.id
 LEFT JOIN dernier_contrat dc ON dc.personne_id = pp.personne_id AND dc.structure_id = pp.structure_id
 LEFT JOIN contrats_en_cours_par_poste cc ON cc.poste_conum_id = pp.poste_conum_id AND cc.structure_id = pp.structure_id;
