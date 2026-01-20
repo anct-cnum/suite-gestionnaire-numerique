@@ -2,7 +2,7 @@
 -- Il existe une documentation technique dans le fichier docs/postes-conseiller-numerique.md qui décrit la vue et les données en base.
 -- Cette vue agrège les données des postes et subventions avec la logique métier suivante :
 -- - Une ligne par tuple (poste_conum_id, structure_id) pour gérer les transferts de poste
--- - Pour chaque tuple, sélection par état (occupe > vacant > rendu), puis created_at
+-- - Pour chaque tuple, sélection de la ligne la plus récente (created_at DESC)
 -- - Cumul des subventions par enveloppe de financement (V1=DGCL, V2=DGE/DITP) sans doublon intra-enveloppe
 -- - Détail par enveloppe : subvention, bonification, versement
 -- - Nombre de contrats de travail en cours pour les personnes associées au poste
@@ -12,9 +12,7 @@ DROP VIEW IF EXISTS min.postes_conseiller_numerique_synthese;
 
 CREATE VIEW min.postes_conseiller_numerique_synthese AS
 WITH poste_par_structure AS (
-  -- Pour chaque tuple (poste_conum_id, structure_id), sélectionner une seule ligne selon cette priorité :
-  -- 1. etat='occupe' en priorité, puis 'vacant', puis 'rendu'
-  -- 2. En cas d'égalité : la ligne créée le plus récemment
+  -- Pour chaque tuple (poste_conum_id, structure_id), sélectionner la ligne la plus récente
   -- Cela permet d'avoir plusieurs lignes si un poste a été transféré entre structures
   SELECT DISTINCT ON (p.poste_conum_id, p.structure_id)
     p.id,
@@ -24,11 +22,7 @@ WITH poste_par_structure AS (
     p.etat,
     p.typologie
   FROM main.poste p
-  WHERE p.etat IN ('occupe', 'vacant', 'rendu')
-  ORDER BY p.poste_conum_id,
-           p.structure_id,
-           (CASE WHEN p.etat = 'occupe' THEN 0 WHEN p.etat = 'vacant' THEN 1 ELSE 2 END),
-           p.created_at DESC
+  ORDER BY p.poste_conum_id, p.structure_id, p.created_at DESC
 ),
 contrats_en_cours_par_poste AS (
   -- Pour chaque tuple (poste_conum_id, structure_id), compter les contrats de travail en cours
@@ -39,8 +33,7 @@ contrats_en_cours_par_poste AS (
     COUNT(DISTINCT c.id) as nb_contrats_en_cours
   FROM main.poste p
   INNER JOIN main.contrat c ON c.personne_id = p.personne_id AND c.structure_id = p.structure_id
-  WHERE p.etat IN ('occupe', 'vacant', 'rendu')
-    AND c.date_debut <= CURRENT_DATE
+  WHERE c.date_debut <= CURRENT_DATE
     AND (c.date_fin IS NULL OR c.date_fin >= CURRENT_DATE)
     AND c.date_rupture IS NULL
   GROUP BY p.poste_conum_id, p.structure_id

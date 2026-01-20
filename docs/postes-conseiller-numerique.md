@@ -58,6 +58,23 @@ Pour simplifier la manipulation de ces données, pour centraliser les règles m�
 
 ---
 
+## Qualité des données et limites connues
+
+### Incohérence état du poste / contrats associés
+
+L'état d'un poste (`occupe`, `vacant`, `rendu`) provient de la plateforme idPoste et peut être incohérent avec les données de contrat :
+
+| Situation observée                                       | Explication                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------- |
+| Poste `vacant` mais personne associée avec contrat actif | La date de rupture n'est pas systématiquement déclarée dans idPoste |
+| Poste `occupe` mais aucun contrat actif                  | Délai de mise à jour entre les systèmes                             |
+
+**Origine du problème** : La date de rupture d'un poste n'est pas remontée de manière rapide et systématique depuis idPoste. Les données de contrat (visibles via `date_rupture` dans le CSV ou `suppression` dans `personne_affectation` de l'entrepôt) peuvent donc ne pas correspondre à l'état déclaré du poste.
+
+**Conséquence** : On ne doit pas chercher une cohérence stricte entre l'état d'un poste et l'état des contrats associés. La colonne `nb_contrats_en_cours` de la vue est un indicateur complémentaire, pas une vérification de cohérence.
+
+---
+
 ## Vue de synthèse : `min.postes_conseiller_numerique_synthese`
 
 Cette vue simplifie l'accès aux données en appliquant toutes les règles métier.
@@ -97,7 +114,7 @@ Pour afficher **une seule ligne par tuple (poste_conum_id, structure_id)**, on s
 ORDER BY p.poste_conum_id, p.structure_id, p.created_at DESC
 ```
 
-> **Note** : Toutes les lignes d'un même `poste_conum_id` ont le même état. La modification d'état est faite globalement par `poste_conum_id`.
+> **Note** : Toutes les lignes d'un même `poste_conum_id` ont le même état (même si le poste a changé de structure). La modification d'état est faite globalement par `poste_conum_id`, pas par tuple.
 
 > **Note importante** : `subvention.poste_id` correspond à `poste.id` (la clé technique, pas `poste_conum_id`).
 
@@ -161,17 +178,18 @@ Un contrat est considéré "en cours" si :
 - `date_fin >= aujourd'hui` (ou `NULL`)
 - `date_rupture IS NULL`
 
-#### Détection des incohérences
+#### Interprétation
 
-Cette colonne permet de détecter des incohérences dans les données :
+Cette colonne est un **indicateur complémentaire**, pas une vérification de cohérence (voir section "Qualité des données et limites connues").
 
-| État   | nb_contrats | Statut                                     |
-| ------ | ----------- | ------------------------------------------ |
-| occupe | 0           | ⚠️ Incohérence : occupé sans contrat actif |
-| occupe | 1           | ✅ Normal                                  |
-| vacant | 0           | ✅ Normal                                  |
-| rendu  | 0           | ✅ Normal                                  |
-| rendu  | 1           | ⚠️ Incohérence : rendu avec contrat actif  |
+| État   | nb_contrats | Interprétation                                                  |
+| ------ | ----------- | --------------------------------------------------------------- |
+| occupe | 1           | Situation normale                                               |
+| occupe | 0           | Contrat non remonté ou délai de synchronisation                 |
+| vacant | 0           | Situation normale                                               |
+| vacant | 1+          | Date de rupture non déclarée dans idPoste (situation fréquente) |
+| rendu  | 0           | Situation normale                                               |
+| rendu  | 1+          | Date de rupture non déclarée dans idPoste                       |
 
 ---
 
