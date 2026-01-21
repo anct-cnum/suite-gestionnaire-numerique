@@ -6,7 +6,7 @@
 -- - Cumul des subventions par enveloppe de financement (V1=DGCL, V2=DGE/DITP) sans doublon intra-enveloppe
 -- - Détail par enveloppe : subvention, bonification, versement
 -- - Nombre de contrats de travail en cours pour les personnes associées au poste
--- Note : subvention.poste_id correspond à poste.poste_conum_id (pas à poste.id)
+-- Note : subvention.poste_id correspond à poste.id (la clé technique)
 
 DROP VIEW IF EXISTS min.postes_conseiller_numerique_synthese;
 
@@ -49,7 +49,7 @@ subventions_par_enveloppe AS (
   -- Pour chaque poste et enveloppe, prendre UN SEUL montant (pas de cumul intra-enveloppe)
   -- Enveloppe V1 = DGCL (Initial - Plan France Relance)
   -- Enveloppe V2 = DGE ou DITP (Renouvellement)
-  -- Note : s.poste_id = poste.poste_conum_id
+  -- Note : s.poste_id = poste.id
   SELECT DISTINCT ON (s.poste_id, CASE WHEN s.source_financement = 'DGCL' THEN 'V1' ELSE 'V2' END)
     s.poste_id,
     CASE WHEN s.source_financement = 'DGCL' THEN 'V1' ELSE 'V2' END as enveloppe,
@@ -82,7 +82,7 @@ subventions_cumulees AS (
 ),
 versements_cumules AS (
   -- Cumuler les versements par enveloppe (V1/V2)
-  -- Note : s.poste_id = poste.poste_conum_id
+  -- Note : s.poste_id = poste.id
   SELECT
     poste_id,
     SUM(COALESCE(versement_1, 0) + COALESCE(versement_2, 0) + COALESCE(versement_3, 0)) as montant_versement_cumule,

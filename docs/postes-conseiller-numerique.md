@@ -108,8 +108,7 @@ ORDER BY p.poste_conum_id,
          p.created_at DESC
 ```
 
-> **Note importante** : `subvention.poste_id` correspond à `poste.poste_conum_id` (pas à `poste.id`).
-> Les données de subvention sont donc partagées entre toutes les lignes d'un même `poste_conum_id`.
+> **Note importante** : `subvention.poste_id` correspond à `poste.id` (la clé technique, pas `poste_conum_id`).
 
 ---
 
@@ -285,9 +284,9 @@ Le schéma actuel utilise une table `poste` qui mélange plusieurs concepts :
 ┌─────────────────────┐         ┌─────────────────────┐
 │       poste         │         │     subvention      │
 ├─────────────────────┤         ├─────────────────────┤
-│ id (PK)             │         │ id (PK)             │
-│ poste_conum_id      │◄────────│ poste_id (FK)       │
-│ structure_id (FK)   │   1..n  │ source_financement  │
+│ id (PK)             │◄────────│ poste_id (FK)       │
+│ poste_conum_id      │   1..n  │ id (PK)             │
+│ structure_id (FK)   │         │ source_financement  │
 │ personne_id (FK)    │         │ montant_subvention  │
 │ etat                │         │ ...                 │
 │ typologie           │         └─────────────────────┘
@@ -301,12 +300,12 @@ Le schéma actuel utilise une table `poste` qui mélange plusieurs concepts :
 └─────────────┘  └─────────────┘
 ```
 
-Attention : `subvention.poste_id` référence `poste.poste_conum_id` (pas `poste.id`), ce qui est contre-intuitif
+La FK `subvention.poste_id` référence `poste.id` (la clé technique)
 
 **Problèmes du schéma actuel** :
 
 1. La table `poste` est une **table d'association ternaire** implicite entre un poste logique (`poste_conum_id`), une structure et une personne
-2. Le champ `etat` (`occupe`, `vacant`, `rendu`) dont on peut imaginer qu'il stocke l'état du d'occupation du poste par la personne concernée sur la ligne mais en fait ce n'est pas le cas : on stocke le dernier état du poste et on met à jour toutes les lignes du tuple (poste_id, structure_id).
+2. Le champ `etat` (`occupe`, `vacant`, `rendu`) dont on peut imaginer qu'il stocke l'état d'occupation du poste par la personne concernée sur la ligne mais en fait ce n'est pas le cas : on stocke le dernier état du poste et on met à jour **toutes les lignes du même `poste_conum_id`** (y compris celles d'autres structures si le poste a été transféré).
 
 ### Proposition d'architecture cible
 
