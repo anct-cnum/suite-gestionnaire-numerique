@@ -70,7 +70,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
         v.montant_subvention_cumule AS total_conventionne,
         v.montant_versement_cumule AS total_verse
       FROM min.postes_conseiller_numerique_synthese v
-      INNER JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.structure st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       WHERE 1=1 ${departementFilter}
       ORDER BY st.nom, v.poste_conum_id
@@ -94,7 +94,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
         COALESCE(SUM(v.montant_subvention_cumule), 0) AS budget_total_conventionne,
         COALESCE(SUM(v.montant_versement_cumule), 0) AS budget_total_verse
       FROM min.postes_conseiller_numerique_synthese v
-      INNER JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.structure st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       WHERE 1=1 ${departementFilter}
     `
