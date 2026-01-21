@@ -172,11 +172,9 @@ GROUP BY poste_id
 
 La colonne `nb_contrats_en_cours` compte le nombre de contrats de travail actifs pour toutes les personnes associées au tuple (poste_conum_id, structure_id).
 
-Un contrat est considéré "en cours" si :
+Un contrat est considéré "en cours" si `date_rupture IS NULL`.
 
-- `date_debut <= aujourd'hui`
-- `date_fin >= aujourd'hui` (ou `NULL`)
-- `date_rupture IS NULL`
+> **Note** : Cette logique est alignée avec celle du [Tableau de pilotage Conseiller Numérique](https://pilotage.conseiller-numerique.gouv.fr).
 
 #### Interprétation
 

@@ -26,16 +26,14 @@ WITH poste_par_structure AS (
 ),
 contrats_en_cours_par_poste AS (
   -- Pour chaque tuple (poste_conum_id, structure_id), compter les contrats de travail en cours
-  -- Un contrat est en cours si : date_debut <= aujourd'hui, date_fin >= aujourd'hui (ou null), date_rupture IS NULL
+  -- Un contrat est en cours si date_rupture IS NULL (même logique que le tableau de pilotage CoNum)
   SELECT
     p.poste_conum_id,
     p.structure_id,
     COUNT(DISTINCT c.id) as nb_contrats_en_cours
   FROM main.poste p
   INNER JOIN main.contrat c ON c.personne_id = p.personne_id AND c.structure_id = p.structure_id
-  WHERE c.date_debut <= CURRENT_DATE
-    AND (c.date_fin IS NULL OR c.date_fin >= CURRENT_DATE)
-    AND c.date_rupture IS NULL
+  WHERE c.date_rupture IS NULL
   GROUP BY p.poste_conum_id, p.structure_id
 ),
 subventions_par_enveloppe AS (
