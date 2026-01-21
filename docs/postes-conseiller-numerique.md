@@ -91,22 +91,13 @@ Cette vue simplifie l'accès aux données en appliquant toutes les règles méti
 
 ## Logique de sélection : 1 ligne par (poste_conum_id, structure_id)
 
-On doit grouper par le tuple (poste_conum_id, structure_id). Et pour chacun des
-résultats, on doit appliquer les règles sur les postes comme suivant :
-
-Pour afficher **une seule ligne par poste CoNum**, on sélectionne la ligne selon cette priorité :
-
-1. **La ligne avec `etat='occupe'`** en priorité.
-2. Sinon : **la ligne avec `etat='vacant'`**
-3. Sinon : **la ligne avec `etat='rendu'`**
-4. En dernier recours : **la ligne créée le plus récemment** (`created_at DESC`)
+Pour afficher **une seule ligne par tuple (poste_conum_id, structure_id)**, on sélectionne simplement **la ligne la plus récente** (`created_at DESC`).
 
 ```sql
-ORDER BY p.poste_conum_id,
-         p.structure_id,
-         (CASE WHEN p.etat = 'occupe' THEN 0 WHEN p.etat = 'vacant' THEN 1 ELSE 2 END),
-         p.created_at DESC
+ORDER BY p.poste_conum_id, p.structure_id, p.created_at DESC
 ```
+
+> **Note** : Toutes les lignes d'un même `poste_conum_id` ont le même état. La modification d'état est faite globalement par `poste_conum_id`.
 
 > **Note importante** : `subvention.poste_id` correspond à `poste.id` (la clé technique, pas `poste_conum_id`).
 
