@@ -88,9 +88,9 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
     const result = await prisma.$queryRaw<Array<StatistiquesQueryResult>>`
       SELECT
         COUNT(*) AS total_postes_pour_pagination,
-        COUNT(*) FILTER (WHERE v.etat IN ('occupe', 'vacant')) AS nombre_de_postes,
-        COUNT(*) FILTER (WHERE v.etat = 'occupe') AS nombre_de_postes_occupes,
-        COUNT(DISTINCT v.structure_id) FILTER (WHERE v.etat IN ('occupe', 'vacant')) AS nombre_de_structures_conventionnees,
+        COUNT(DISTINCT v.poste_conum_id) AS nombre_de_postes,
+        COUNT(DISTINCT v.poste_conum_id) FILTER (WHERE v.etat = 'occupe') AS nombre_de_postes_occupes,
+        COUNT(DISTINCT v.structure_id) AS nombre_de_structures_conventionnees,
         COALESCE(SUM(v.montant_subvention_cumule), 0) AS budget_total_conventionne,
         COALESCE(SUM(v.montant_versement_cumule), 0) AS budget_total_verse
       FROM min.postes_conseiller_numerique_synthese v

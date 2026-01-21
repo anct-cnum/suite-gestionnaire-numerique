@@ -255,13 +255,12 @@ Cette colonne est un **indicateur complémentaire**, pas une vérification de co
 
 ### Carte 1 : Postes occupés
 
-- **Numérateur** : Nombre de postes avec `etat='occupe'`
-- **Dénominateur** : Nombre de postes avec `etat IN ('occupe', 'vacant')`
-- **Note** : Les postes "rendu" ne sont pas comptés dans le dénominateur
+- **Numérateur** : `COUNT(DISTINCT poste_conum_id) FILTER (WHERE etat = 'occupe')`
+- **Dénominateur** : `COUNT(DISTINCT poste_conum_id)` (tous les postes, y compris rendus)
 
 ### Carte 2 : Structures conventionnées
 
-- **Valeur** : Nombre de structures distinctes (`structure_id`) ayant un poste avec `etat IN ('occupe', 'vacant')`
+- **Valeur** : `COUNT(DISTINCT structure_id)` (toutes les structures)
 - **Contexte** : "pour X postes" (même dénominateur que carte 1)
 
 ### Carte 3 : Budget total conventionné
