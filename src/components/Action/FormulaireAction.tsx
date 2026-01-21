@@ -284,7 +284,7 @@ export function FormulaireAction({
             )}
           </div>
           <p>
-            Précisez le ou les structure(s) porteuse(s) de cette action
+            Précisez la ou les structure(s) porteuse(s) de cette action
           </p>
           <hr />
           {
