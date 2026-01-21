@@ -82,13 +82,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       const contrats = await this.recupererContrats(poste.structure_id, poste.personne_id)
 
       // Construire la réponse
-      const contactJson = structure.contact as ContactJson | null
-      const referent = contactJson ? {
-        email: contactJson.courriels ?? '',
-        fonction: contactJson.fonction ?? '',
-        nom: `${contactJson.prenom ?? ''} ${contactJson.nom ?? ''}`.trim(),
-        telephone: contactJson.telephone ?? '',
-      } : null
+      const referent = this.parseContact(structure.contact)
 
       return {
         contrats,
@@ -201,6 +195,55 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
     }
 
     return `${rue}, ${codePostal} ${commune}`.trim()
+  }
+
+  private parseContact(contact: unknown): {
+    email: string
+    fonction: string
+    nom: string
+    telephone: string
+  } | null {
+    if (contact === null || contact === undefined) {
+      return null
+    }
+
+    if (typeof contact !== 'object' || Array.isArray(contact)) {
+      return null
+    }
+
+    const contactObj = contact as Record<string, unknown>
+
+    const prenom = typeof contactObj.prenom === 'string' ? contactObj.prenom : ''
+    const nom = typeof contactObj.nom === 'string' ? contactObj.nom : ''
+    const fonction = typeof contactObj.fonction === 'string' ? contactObj.fonction : ''
+    const telephone = typeof contactObj.telephone === 'string' ? contactObj.telephone : ''
+
+    // courriels peut être une string ou un objet {email: "..."}
+    let email = ''
+    if (typeof contactObj.courriels === 'string') {
+      email = contactObj.courriels
+    } else if (
+      typeof contactObj.courriels === 'object' &&
+      contactObj.courriels !== null &&
+      !Array.isArray(contactObj.courriels)
+    ) {
+      const courrielsObj = contactObj.courriels as Record<string, unknown>
+      email = typeof courrielsObj.email === 'string' ? courrielsObj.email : ''
+    }
+
+    const fullName = `${prenom} ${nom}`.trim()
+
+    // Si aucune info n'est disponible, on retourne null
+    if (fullName === '' && email === '' && fonction === '' && telephone === '') {
+      return null
+    }
+
+    return {
+      email,
+      fonction,
+      nom: fullName,
+      telephone,
+    }
   }
 
   private async recupererContrats(
@@ -327,14 +370,6 @@ interface StructureResult {
   siret: null | string
   structure_id: number
   typologies: ReadonlyArray<string>
-}
-
-interface ContactJson {
-  courriels?: string
-  fonction?: string
-  nom?: string
-  prenom?: string
-  telephone?: string
 }
 
 interface DatesConventions {
