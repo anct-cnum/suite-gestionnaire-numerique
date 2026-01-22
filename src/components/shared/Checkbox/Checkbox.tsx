@@ -14,7 +14,7 @@ export default function Checkbox({
     <div className="fr-fieldset__element">
       <div className="fr-checkbox-group">
         <input
-          defaultChecked={isSelected}
+          checked={isSelected}
           id={id}
           name={label}
           onChange={onChange}
