@@ -1,17 +1,30 @@
 'use client'
 
-import { memo, ReactElement } from 'react'
+import { useRouter } from 'next/navigation'
+import { memo, ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
 import styles from './ListePostesConseillerNumerique.module.css'
+import PostesConseillerNumeriqueFiltre from './PostesConseillerNumeriqueFiltre'
 import PostesConseillerNumeriqueInfos from './PostesConseillerNumeriqueInfos'
 import Badge from '../shared/Badge/Badge'
+import Drawer from '../shared/Drawer/Drawer'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
+import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { TypologieRole } from '@/domain/Role'
+import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { PosteConseillerNumeriqueViewModel, PostesConseillerNumeriqueViewModel } from '@/presenters/postesConseillerNumeriquePresenter'
+import {
+  buildURLSearchParamsFromPostesConseillerNumeriqueFilters,
+  getActivePostesConseillerNumeriqueFilters,
+  parseURLParamsToFiltresPostesConseillerNumeriqueInternes,
+  removePostesConseillerNumeriqueFilterFromParams,
+} from '@/shared/filtresPostesConseillerNumeriqueUtils'
 
 const statutBadgeStyles: Record<string, string> = {
   occupe: styles.badgeOccupe,
@@ -20,10 +33,8 @@ const statutBadgeStyles: Record<string, string> = {
 }
 
 const PosteRow = memo(({
-  afficherColonneDepartement,
   poste,
 }: {
-  readonly afficherColonneDepartement: boolean
   readonly poste: PosteConseillerNumeriqueViewModel
 }) => {
   return (
@@ -49,11 +60,9 @@ const PosteRow = memo(({
           </div>
         </div>
       </td>
-      {afficherColonneDepartement ? (
-        <td>
-          {poste.codeDepartement}
-        </td>
-      ) : null}
+      <td>
+        {poste.codeDepartement}
+      </td>
       <td>
         <span className={`${styles.badgeStatut} ${statutBadgeStyles[poste.statut]}`}>
           {poste.statutLabel}
@@ -92,7 +101,64 @@ PosteRow.displayName = 'PosteRow'
 
 export default function ListePostesConseillerNumerique({
   postesConseillerNumeriqueViewModel,
+  searchParams,
+  utilisateurRole,
 }: Props): ReactElement {
+  const isPageLoading = useNavigationLoading()
+  const router = useRouter()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isFilterLoading, setIsFilterLoading] = useState(false)
+  const drawerId = 'drawerFiltrePostes'
+  const labelId = useId()
+
+  // Normaliser searchParams une fois pour toute l'utilisation
+  const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
+
+  // Réinitialiser le loading quand la page se charge
+  useEffect(() => {
+    setIsFilterLoading(false)
+  }, [postesConseillerNumeriqueViewModel])
+
+  // Fonction de filtrage
+  function onFilter(params: URLSearchParams): void {
+    setIsDrawerOpen(false)
+    setIsFilterLoading(true)
+
+    const convertedParams = buildURLSearchParamsFromPostesConseillerNumeriqueFilters(params)
+
+    setTimeout(() => {
+      const url = new URL(window.location.href)
+      url.search = convertedParams.toString()
+      router.push(url.pathname + url.search)
+    }, 150)
+  }
+
+  // Fonction de réinitialisation
+  function onReset(): void {
+    setIsFilterLoading(true)
+    setIsDrawerOpen(false)
+    setTimeout(() => {
+      router.push('/postes-conseiller-numerique')
+    }, 150)
+  }
+
+  // Obtenir la liste des filtres actifs
+  function getFiltresActifs(): Array<{ label: string; paramKey: string; paramValue: string }> {
+    return getActivePostesConseillerNumeriqueFilters(normalizedSearchParams)
+  }
+
+  // Fonction pour supprimer un filtre spécifique
+  function supprimerFiltre(paramKey: string, paramValue: string): void {
+    const newParams = removePostesConseillerNumeriqueFilterFromParams(normalizedSearchParams, paramKey, paramValue)
+
+    setIsFilterLoading(true)
+    setTimeout(() => {
+      const url = new URL(window.location.href)
+      url.search = newParams.toString()
+      router.push(url.pathname + url.search)
+    }, 50)
+  }
+
   if ('type' in postesConseillerNumeriqueViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -106,7 +172,12 @@ export default function ListePostesConseillerNumerique({
   const viewModel = postesConseillerNumeriqueViewModel
 
   function handleExportCSV(): void {
-    window.open('/api/export/postes-conseiller-numerique-csv', '_blank')
+    const exportParams = new URLSearchParams(normalizedSearchParams)
+    exportParams.delete('page')
+    const queryString = exportParams.toString()
+    const baseUrl = '/api/export/postes-conseiller-numerique-csv'
+    const url = queryString === '' ? baseUrl : `${baseUrl}?${queryString}`
+    window.open(url, '_blank')
   }
 
   return (
@@ -130,8 +201,12 @@ export default function ListePostesConseillerNumerique({
           </div>
           <div className="fr-col-auto">
             <button
+              aria-controls={drawerId}
               className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
-              disabled={true}
+              data-fr-opened={isDrawerOpen}
+              onClick={() => {
+                setIsDrawerOpen(true)
+              }}
               type="button"
             >
               Filtrer
@@ -139,6 +214,55 @@ export default function ListePostesConseillerNumerique({
           </div>
         </div>
       </div>
+
+      {/* Indicateur de filtres actifs */}
+      {getFiltresActifs().length > 0 ? (
+        <div className="fr-mb-2w">
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {getFiltresActifs().map((filtre) => (
+              <div
+                className="fr-col-auto"
+                key={`${filtre.paramKey}-${filtre.paramValue}`}
+              >
+                <button
+                  aria-label={`Retirer le filtre ${filtre.label}`}
+                  className="fr-tag fr-icon-close-line fr-tag--icon-left"
+                  onClick={() => {
+                    supprimerFiltre(filtre.paramKey, filtre.paramValue)
+                  }}
+                  type="button"
+                >
+                  {filtre.label}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Overlay de loading pendant la navigation */}
+      {isPageLoading || isFilterLoading ? (
+        <div
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            left: 0,
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            zIndex: 9999,
+          }}
+        >
+          <SpinnerSimple
+            size="large"
+            text="Chargement..."
+          />
+        </div>
+      ) : null}
+
       <AlerteConstruction />
       <div className="fr-callout fr-callout--blue-ecume fr-mb-3w">
         <p className="fr-callout__text fr-text--sm fr-mb-0">
@@ -178,7 +302,7 @@ export default function ListePostesConseillerNumerique({
           <Table
             enTetes={[
               'Structure - ID poste',
-              ...viewModel.afficherColonneDepartement ? ['Dép.'] : [],
+              'Dép.',
               'Statut',
               'Convention',
               'Fin de convention',
@@ -192,7 +316,6 @@ export default function ListePostesConseillerNumerique({
           >
             {viewModel.postes.map((poste) => (
               <PosteRow
-                afficherColonneDepartement={viewModel.afficherColonneDepartement}
                 key={poste.idPoste}
                 poste={poste}
               />
@@ -209,10 +332,49 @@ export default function ListePostesConseillerNumerique({
           />
         </div>
       ) : null}
+
+      <Drawer
+        boutonFermeture="Fermer les filtres"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
+        id={drawerId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+      >
+        <DrawerTitle id={labelId}>
+          <TitleIcon icon="filter-line" />
+          <br />
+          Filtrer les postes
+        </DrawerTitle>
+        <PostesConseillerNumeriqueFiltre
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
+          currentFilters={parseURLParamsToFiltresPostesConseillerNumeriqueInternes(normalizedSearchParams)}
+          onFilterAction={onFilter}
+          onResetAction={onReset}
+          utilisateurRole={utilisateurRole}
+        />
+      </Drawer>
     </>
   )
 }
 
+// Type pour les searchParams sérialisés depuis le serveur
+type SerializedSearchParams = Array<[string, string]> | URLSearchParams
+
+// Fonction utilitaire pour normaliser les searchParams
+function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams {
+  if (params instanceof URLSearchParams) {
+    return params
+  }
+  return new URLSearchParams(params)
+}
+
 type Props = Readonly<{
   postesConseillerNumeriqueViewModel: ErrorViewModel | PostesConseillerNumeriqueViewModel
+  searchParams: SerializedSearchParams
+  utilisateurRole: TypologieRole
 }>

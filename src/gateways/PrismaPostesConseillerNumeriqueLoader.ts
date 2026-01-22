@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client'
 
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
+import departements from '../../ressources/departements.json'
 import {
   EtatPoste,
   FiltresPostesConseillerNumerique,
@@ -15,17 +16,16 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNumeriqueLoader {
   async get(filtres: FiltresPostesConseillerNumerique): Promise<ErrorReadModel | PostesConseillerNumeriqueReadModel> {
     try {
-      const { pagination, territoire } = filtres
+      const { pagination } = filtres
       const safePage = Math.max(1, pagination.page)
       const offset = (safePage - 1) * pagination.limite
 
-      const postes = await this.getPostesPagines(territoire, pagination.limite, offset)
-      const statistiques = await this.getStatistiques(territoire)
+      const postes = await this.getPostesPagines(filtres, pagination.limite, offset)
+      const statistiques = await this.getStatistiques(filtres)
       const totalCount = statistiques.totalPostesPourPagination
       const totalPages = Math.ceil(totalCount / pagination.limite)
 
       return {
-        afficherColonneDepartement: territoire === 'France',
         displayPagination: totalCount > pagination.limite,
         limite: pagination.limite,
         page: pagination.page,
@@ -46,14 +46,105 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
     }
   }
 
+  private addBonificationFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.bonification === true) {
+      conditions.push(Prisma.sql`v.bonification = true`)
+    }
+  }
+
+  private addCodeRegionFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.codeRegion === undefined) {
+      return
+    }
+    const departementsDeRegion = departements
+      .filter((dept) => dept.regionCode === filtres.codeRegion)
+      .map((dept) => dept.code)
+    if (departementsDeRegion.length > 0) {
+      conditions.push(Prisma.sql`a.departement = ANY(${departementsDeRegion})`)
+    }
+  }
+
+  private addConventionsFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.conventions === undefined || filtres.conventions.length === 0) {
+      return
+    }
+    const conventionConditions: Array<Prisma.Sql> = filtres.conventions.map((convention) => {
+      const likePattern = `%${convention}%`
+      return Prisma.sql`v.enveloppes LIKE ${likePattern}`
+    })
+    if (conventionConditions.length > 0) {
+      conditions.push(Prisma.sql`(${Prisma.join(conventionConditions, ' OR ')})`)
+    }
+  }
+
+  private addStatutFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.statut !== undefined) {
+      conditions.push(Prisma.sql`v.etat = ${filtres.statut}`)
+    }
+  }
+
+  private addTerritoireFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.territoire !== 'France') {
+      conditions.push(Prisma.sql`a.departement = ${filtres.territoire}`)
+    }
+  }
+
+  private addTypesEmployeurFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.typesEmployeur === undefined || filtres.typesEmployeur.length === 0) {
+      return
+    }
+    const employeurConditions: Array<Prisma.Sql> = []
+    if (filtres.typesEmployeur.includes('public')) {
+      employeurConditions.push(Prisma.sql`st.publique = true`)
+    }
+    if (filtres.typesEmployeur.includes('prive')) {
+      employeurConditions.push(Prisma.sql`st.publique = false`)
+    }
+    if (employeurConditions.length > 0) {
+      conditions.push(Prisma.sql`(${Prisma.join(employeurConditions, ' OR ')})`)
+    }
+  }
+
+  private addTypesPosteFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.typesPoste === undefined || filtres.typesPoste.length === 0) {
+      return
+    }
+    const typeConditions: Array<Prisma.Sql> = []
+    if (filtres.typesPoste.includes('coordinateur')) {
+      typeConditions.push(Prisma.sql`v.est_coordinateur = true`)
+    }
+    if (filtres.typesPoste.includes('conseiller')) {
+      typeConditions.push(Prisma.sql`v.est_coordinateur = false`)
+    }
+    if (typeConditions.length > 0) {
+      conditions.push(Prisma.sql`(${Prisma.join(typeConditions, ' OR ')})`)
+    }
+  }
+
+  private buildFiltersSQL(filtres: FiltresPostesConseillerNumerique): Prisma.Sql {
+    const conditions: Array<Prisma.Sql> = []
+
+    this.addBonificationFilter(filtres, conditions)
+    this.addCodeRegionFilter(filtres, conditions)
+    this.addConventionsFilter(filtres, conditions)
+    this.addStatutFilter(filtres, conditions)
+    this.addTerritoireFilter(filtres, conditions)
+    this.addTypesEmployeurFilter(filtres, conditions)
+    this.addTypesPosteFilter(filtres, conditions)
+
+    if (conditions.length === 0) {
+      return Prisma.empty
+    }
+
+    return Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}`
+  }
+
   private async getPostesPagines(
-    territoire: string,
+    filtres: FiltresPostesConseillerNumerique,
     limite: number,
     offset: number
   ): Promise<ReadonlyArray<PosteConseillerNumeriqueReadModel>> {
-    const departementFilter = territoire === 'France'
-      ? Prisma.empty
-      : Prisma.sql`AND a.departement = ${territoire}`
+    const filtersSQL = this.buildFiltersSQL(filtres)
 
     const result = await prisma.$queryRaw<Array<PosteQueryResult>>`
       SELECT
@@ -72,7 +163,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       FROM min.postes_conseiller_numerique_synthese v
       LEFT JOIN main.structure st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
-      WHERE 1=1 ${departementFilter}
+      WHERE 1=1 ${filtersSQL}
       ORDER BY st.nom, v.poste_conum_id
       LIMIT ${limite} OFFSET ${offset}
     `
@@ -80,10 +171,10 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
     return result.map((poste) => this.mapPosteResult(poste))
   }
 
-  private async getStatistiques(territoire: string): Promise<PostesConseillerNumeriqueStatistiquesReadModel> {
-    const departementFilter = territoire === 'France'
-      ? Prisma.empty
-      : Prisma.sql`AND a.departement = ${territoire}`
+  private async getStatistiques(
+    filtres: FiltresPostesConseillerNumerique
+  ): Promise<PostesConseillerNumeriqueStatistiquesReadModel> {
+    const filtersSQL = this.buildFiltersSQL(filtres)
 
     const result = await prisma.$queryRaw<Array<StatistiquesQueryResult>>`
       SELECT
@@ -96,7 +187,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       FROM min.postes_conseiller_numerique_synthese v
       LEFT JOIN main.structure st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
-      WHERE 1=1 ${departementFilter}
+      WHERE 1=1 ${filtersSQL}
     `
 
     const stats = result[0]

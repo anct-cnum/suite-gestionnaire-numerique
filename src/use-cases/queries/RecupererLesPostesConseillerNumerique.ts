@@ -28,7 +28,6 @@ export type PostesConseillerNumeriqueStatistiquesReadModel = Readonly<{
 }>
 
 export type PostesConseillerNumeriqueReadModel = Readonly<{
-  afficherColonneDepartement: boolean
   displayPagination: boolean
   limite: number
   page: number
@@ -39,11 +38,17 @@ export type PostesConseillerNumeriqueReadModel = Readonly<{
 }>
 
 export type FiltresPostesConseillerNumerique = Readonly<{
+  bonification?: boolean
+  codeRegion?: string
+  conventions?: Array<string>
   pagination: Readonly<{
     limite: number
     page: number
   }>
+  statut?: EtatPoste
   territoire: string
+  typesEmployeur?: Array<string>
+  typesPoste?: Array<string>
 }>
 
 export interface PostesConseillerNumeriqueLoader {

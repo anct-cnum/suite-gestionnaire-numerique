@@ -33,7 +33,6 @@ export type PostesConseillerNumeriqueStatistiquesViewModel = Readonly<{
 }>
 
 export type PostesConseillerNumeriqueViewModel = Readonly<{
-  afficherColonneDepartement: boolean
   displayPagination: boolean
   limite: number
   page: number
@@ -51,7 +50,6 @@ export function postesConseillerNumeriquePresenter(
   }
 
   return {
-    afficherColonneDepartement: postesReadModel.afficherColonneDepartement,
     displayPagination: postesReadModel.displayPagination,
     limite: postesReadModel.limite,
     page: postesReadModel.page,

@@ -14,7 +14,9 @@ export default function Select<Value extends number | string>({
   options,
   placeholder = 'Choisir',
   required = false,
+  value,
 }: Props<Value>): ReactElement {
+  const defaultVal = options.find(({ isSelected }) => Boolean(isSelected))?.value
   return (
     <div className="fr-select-group">
       <label
@@ -25,12 +27,13 @@ export default function Select<Value extends number | string>({
       </label>
       <select
         className="fr-select fr-mb-2w"
-        defaultValue={options.find(({ isSelected }) => Boolean(isSelected))?.value}
+        defaultValue={value === undefined ? defaultVal : undefined}
         disabled={disabled}
         id={id}
         name={name}
         onChange={onChange ?? noop}
         required={required}
+        value={value}
       >
         <option
           hidden={!isPlaceholderSelectable}
@@ -64,4 +67,5 @@ type Props<Value extends number | string> = PropsWithChildren<Readonly<{
   options: ReadonlyArray<LabelValue<Value>>
   placeholder?: string
   required?: boolean
+  value?: Value
 }>>
