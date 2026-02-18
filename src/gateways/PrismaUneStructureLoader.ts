@@ -57,7 +57,7 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
             personne: true,
           },
           where: {
-            suppression: null,
+            est_active: true,
           },
         },
       },
@@ -122,12 +122,12 @@ interface PersonneAffectation {
   personne: {
     conseiller_numerique_id: null | string
     id: number
-    is_active_ac: boolean | null
     is_coordinateur: boolean | null
     is_mediateur: boolean | null
     nom: null | string
     prenom: null | string
   }
+  source: string
 }
 
 function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneAffectation>): {
@@ -150,20 +150,25 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     affectation => affectation.personne.is_coordinateur === true
   ).length
   const totalAidant = personnesAffectations.filter(affectation =>
-    affectation.personne.is_active_ac === true ||
+    affectation.source === 'aidant-connect' ||
     affectation.personne.is_coordinateur === true ||
     affectation.personne.is_mediateur === true).length
 
-  // Dédupliquer les personnes par ID (une personne peut avoir plusieurs affectations)
+  // Dédupliquer les personnes par ID et collecter les sources par personne
   const personnesUniques = new Map<number, PersonneAffectation>()
+  const sourcesParPersonne = new Map<number, Set<string>>()
   for (const affectation of personnesAffectations) {
     if (!personnesUniques.has(affectation.personne.id)) {
       personnesUniques.set(affectation.personne.id, affectation)
     }
+    const sources = sourcesParPersonne.get(affectation.personne.id) ?? new Set<string>()
+    sources.add(affectation.source)
+    sourcesParPersonne.set(affectation.personne.id, sources)
   }
 
   const liste = Array.from(personnesUniques.values()).map(affectation => {
     const personne = affectation.personne
+    const sources = sourcesParPersonne.get(personne.id) ?? new Set<string>()
     const fonctions: Array<string> = []
     if (personne.is_coordinateur === true) {
       fonctions.push('Coordinateur')
@@ -171,7 +176,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (personne.is_mediateur === true) {
       fonctions.push('Médiateur numérique')
     }
-    if (personne.is_active_ac === true) {
+    if (sources.has('aidant-connect')) {
       fonctions.push('Aidant numérique')
     }
 
@@ -179,7 +184,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (personne.conseiller_numerique_id !== null && personne.conseiller_numerique_id !== '') {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/conum.svg`)
     }
-    if (personne.is_active_ac === true) {
+    if (sources.has('aidant-connect')) {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/aidant-numerique.svg`)
     }
     // if (personne.is_mediateur === true) {

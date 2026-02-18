@@ -82,6 +82,16 @@ CREATE SCHEMA IF NOT EXISTS reference;
 
 ALTER SCHEMA reference OWNER TO sonum;
 
+--
+-- Name: audit; Type: SCHEMA; Schema: -; Owner: sonum
+--
+
+DROP SCHEMA IF EXISTS audit CASCADE;
+CREATE SCHEMA audit;
+
+
+ALTER SCHEMA audit OWNER TO sonum;
+
 
 DROP FUNCTION IF EXISTS public.edited_by_column();
 

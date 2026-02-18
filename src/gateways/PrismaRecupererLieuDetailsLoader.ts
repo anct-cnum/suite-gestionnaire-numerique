@@ -104,7 +104,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       conseiller_numerique_id: null | string
       contact: null | Record<string, unknown>
       id: number
-      is_active_ac: boolean | null
+      is_aidant_connect: boolean | null
       is_coordinateur: boolean | null
       is_mediateur: boolean | null
       nom: string
@@ -162,7 +162,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     },
     personnes: Array<{
       conseiller_numerique_id: null | string
-      is_active_ac: boolean | null
+      is_aidant_connect: boolean | null
       is_mediateur: boolean | null
     }>
   ): Array<string> {
@@ -201,7 +201,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     // On ne compte que les aidants qui ne sont PAS conseillers numériques
     // Une personne peut être à la fois aidant et médiateur
     const hasAidantConnect = personnes.some(
-      (personne) => personne.is_active_ac === true && personne.conseiller_numerique_id === null
+      (personne) => personne.is_aidant_connect === true && personne.conseiller_numerique_id === null
     )
     if (hasAidantConnect) {
       tags.push('Aidants Connect')
@@ -241,7 +241,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     conseiller_numerique_id: null | string
     contact: null | Record<string, unknown>
     id: number
-    is_active_ac: boolean | null
+    is_aidant_connect: boolean | null
     is_coordinateur: boolean | null
     is_mediateur: boolean | null
     nom: string
@@ -264,7 +264,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       role = 'Conseiller numérique'
     } else if (personne.is_mediateur === true) {
       role = 'Médiateur'
-    } else if (personne.is_active_ac === true) {
+    } else if (personne.is_aidant_connect === true) {
       role = 'Aidant'
     } else if (personne.is_coordinateur === true) {
       role = 'Coordinateur'
@@ -285,7 +285,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       conseiller_numerique_id: null | string
       contact: null | Record<string, unknown>
       id: number
-      is_active_ac: boolean | null
+      is_aidant_connect: boolean | null
       is_coordinateur: boolean | null
       is_mediateur: boolean | null
       nom: string
@@ -294,18 +294,18 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   > {
     return prisma.$queryRaw`
       SELECT DISTINCT
-        p.id,
-        p.nom,
-        p.prenom,
-        p.contact,
-        p.is_coordinateur,
-        p.is_mediateur,
-        p.conseiller_numerique_id,
-        p.is_active_ac
+        pe.id,
+        pe.nom,
+        pe.prenom,
+        pe.contact,
+        pe.is_coordinateur,
+        pe.is_mediateur,
+        pe.conseiller_numerique_id,
+        pe.labellisation_aidant_connect as is_aidant_connect
       FROM main.personne_affectations pa
-      INNER JOIN main.personne p ON pa.personne_id = p.id
+      INNER JOIN min.personne_enrichie pe ON pa.personne_id = pe.id
       WHERE pa.structure_id = ${parseInt(id, 10)}
-        AND pa.suppression IS NULL
+        AND pa.est_active = true
     `
   }
 

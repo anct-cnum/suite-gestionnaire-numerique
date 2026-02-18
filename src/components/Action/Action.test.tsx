@@ -117,7 +117,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(editeurDeTexteDescription).toBeInTheDocument()
       const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur(s) de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
-      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Précisez le ou les structure(s) porteuse(s) de cette action', { selector: 'p' })
+      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Précisez la ou les structure(s) porteuse(s) de cette action', { selector: 'p' })
       expect(labelSectionPorteurDeLAaction).toBeInTheDocument()
       const boutonAjouterLePorteurDeLAaction = within(formulaire).getByRole('button', { description: 'Ajouter des porteurs', name: 'Ajouter' })
       expect(boutonAjouterLePorteurDeLAaction).toBeInTheDocument()

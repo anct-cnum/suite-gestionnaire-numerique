@@ -150,7 +150,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
                          ON main.adresse.id = main.structure.adresse_id
         WHERE
           main.personne_affectations.personne_id = ${personneId}
-          AND main.personne_affectations.suppression IS NULL
+          AND main.personne_affectations.est_active = true
           AND main.personne_affectations.type = 'lieu_activite'
         GROUP BY
           main.activites_coop.structure_id,

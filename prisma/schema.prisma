@@ -346,26 +346,25 @@ enum Role {
 /// Vue enrichie de la table personne avec typage des accompagnateurs
 /// Cette vue est créée par la migration 20250828071256_creation_vue_personne_enrichie
 view PersonneEnrichieView {
-  id                      Int       @unique
-  prenom                  String?   @db.VarChar(50)
-  nom                     String?   @db.VarChar(50)
-  contact                 Json?
-  structure_id            Int?
-  aidant_connect_id       Int?
-  conseiller_numerique_id String?   @db.VarChar(50)
-  cn_pg_id                Int?
-  coop_id                 String?   @db.Uuid
-  is_coordinateur         Boolean?
-  is_mediateur            Boolean?
-  is_active_ac            Boolean?
-  formation_fne_ac        Boolean?
-  profession_ac           String?   @db.VarChar
-  nb_accompagnements_ac   Int?
-  created_at              DateTime? @db.Timestamp(6)
-  updated_at              DateTime? @db.Timestamp(6)
-
-  // Colonnes calculées de la vue
-  type_accompagnateur                        String   @db.VarChar
+  id                                         Int       @unique
+  prenom                                     String?   @db.VarChar(50)
+  nom                                        String?   @db.VarChar(50)
+  contact                                    Json?
+  aidant_connect_id                          Int?
+  conseiller_numerique_id                    String?   @db.VarChar(50)
+  cn_pg_id                                   Int?
+  coop_id                                    String?   @db.Uuid
+  is_coordinateur                            Boolean?
+  is_mediateur                               Boolean?
+  formation_fne_ac                           Boolean?
+  profession_ac                              String?   @db.VarChar
+  nb_accompagnements_ac                      Int?
+  created_at                                 DateTime? @db.Timestamp(6)
+  updated_at                                 DateTime? @db.Timestamp(6)
+  edited_by                                  String?   @db.VarChar(50)
+  deleted_at                                 DateTime? @db.Timestamp(6)
+  deleted_by                                 String[]
+  type_accompagnateur                        String
   labellisation_aidant_connect               Boolean?
   est_actuellement_mediateur_en_poste        Boolean
   est_actuellement_aidant_numerique_en_poste Boolean
@@ -535,6 +534,7 @@ model activites_coop {
   @@index([lieu_code_insee])
   @@index([periode])
   @@index([personne_id])
+  @@index([structure_id], map: "idx_activites_coop_structure_id")
   @@schema("main")
 }
 
@@ -562,49 +562,47 @@ model adresse {
 
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model coordination_mediation {
-  id                                                             Int       @id @default(autoincrement())
-  coordinateur_id                                                Int
-  mediateur_id                                                   Int
-  coordinateur_coop_id                                           String    @db.Uuid
-  mediateur_coop_id                                              String    @db.Uuid
-  created_at                                                     DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                                                     DateTime? @db.Timestamp(6)
-  suppression                                                    DateTime? @db.Timestamptz(6)
-  personne_coordination_mediation_coordinateur_idTopersonne      personne  @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_coodinateur_id_fkey")
-  personne_coordination_mediation_coordinateur_coop_idTopersonne personne  @relation("coordination_mediation_coordinateur_coop_idTopersonne", fields: [coordinateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
-  personne_coordination_mediation_mediateur_coop_idTopersonne    personne  @relation("coordination_mediation_mediateur_coop_idTopersonne", fields: [mediateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
-  personne_coordination_mediation_mediateur_idTopersonne         personne  @relation("coordination_mediation_mediateur_idTopersonne", fields: [mediateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_mediateur_id_fkey")
+  id                                                        Int       @id @default(autoincrement())
+  coordinateur_id                                           Int
+  mediateur_id                                              Int
+  coordinateur_coop_id                                      String    @db.Uuid
+  mediateur_coop_id                                         String    @db.Uuid
+  created_at                                                DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                                                DateTime? @db.Timestamp(6)
+  suppression                                               DateTime? @db.Timestamptz(6)
+  personne_coordination_mediation_coordinateur_idTopersonne personne  @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_coodinateur_id_fkey")
+  personne_coordination_mediation_mediateur_idTopersonne    personne  @relation("coordination_mediation_mediateur_idTopersonne", fields: [mediateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_mediateur_id_fkey")
 
   @@schema("main")
 }
 
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model personne {
-  id                                                                           Int                      @id @default(autoincrement())
-  prenom                                                                       String?                  @db.VarChar(50)
-  nom                                                                          String?                  @db.VarChar(50)
-  contact                                                                      Json?
-  aidant_connect_id                                                            Int?                     @unique(map: "personne_aidant_connect_id_ukey")
-  conseiller_numerique_id                                                      String?                  @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
-  cn_pg_id                                                                     Int?                     @unique(map: "personne_cn_pg_id_ukey")
-  coop_id                                                                      String?                  @unique(map: "personne_coop_id_ukey") @db.Uuid
-  is_coordinateur                                                              Boolean?
-  is_mediateur                                                                 Boolean?
-  is_active_ac                                                                 Boolean?
-  formation_fne_ac                                                             Boolean?
-  profession_ac                                                                String?                  @db.VarChar
-  nb_accompagnements_ac                                                        Int?
-  created_at                                                                   DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at                                                                   DateTime?                @db.Timestamp(6)
-  edited_by                                                                    String?                  @db.VarChar(50)
-  activites_coop                                                               activites_coop[]
-  contrat                                                                      contrat[]
-  coordination_mediation_coordination_mediation_coordinateur_idTopersonne      coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
-  coordination_mediation_coordination_mediation_coordinateur_coop_idTopersonne coordination_mediation[] @relation("coordination_mediation_coordinateur_coop_idTopersonne")
-  coordination_mediation_coordination_mediation_mediateur_coop_idTopersonne    coordination_mediation[] @relation("coordination_mediation_mediateur_coop_idTopersonne")
-  coordination_mediation_coordination_mediation_mediateur_idTopersonne         coordination_mediation[] @relation("coordination_mediation_mediateur_idTopersonne")
-  formation                                                                    formation[]
-  personne_affectations                                                        personne_affectations[]
-  poste                                                                        poste[]
+  id                                                                      Int                      @id @default(autoincrement())
+  prenom                                                                  String?                  @db.VarChar(50)
+  nom                                                                     String?                  @db.VarChar(50)
+  contact                                                                 Json?
+  aidant_connect_id                                                       Int?                     @unique(map: "personne_aidant_connect_id_ukey")
+  conseiller_numerique_id                                                 String?                  @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
+  cn_pg_id                                                                Int?                     @unique(map: "personne_cn_pg_id_ukey")
+  coop_id                                                                 String?                  @unique(map: "personne_coop_id_ukey") @db.Uuid
+  is_coordinateur                                                         Boolean?
+  is_mediateur                                                            Boolean?
+  formation_fne_ac                                                        Boolean?
+  profession_ac                                                           String?                  @db.VarChar
+  nb_accompagnements_ac                                                   Int?
+  created_at                                                              DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                                                              DateTime?                @db.Timestamp(6)
+  edited_by                                                               String?                  @db.VarChar(50)
+  deleted_at                                                              DateTime?                @db.Timestamp(6)
+  deleted_by                                                              String[]
+  activites_coop                                                          activites_coop[]
+  contrat                                                                 contrat[]
+  coordination_mediation_coordination_mediation_coordinateur_idTopersonne coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_idTopersonne    coordination_mediation[] @relation("coordination_mediation_mediateur_idTopersonne")
+  formation                                                               formation[]
+  personne_affectations                                                   personne_affectations[]
+  poste                                                                   poste[]
 
   @@index([nom, prenom], map: "personne_patronyme")
   @@schema("main")
@@ -632,6 +630,7 @@ model poste {
   subvention          subvention[]
 
   @@unique([poste_conum_id, structure_id, personne_id], map: "poste_ukey")
+  @@index([structure_id], map: "idx_poste_structure_id")
   @@schema("main")
 }
 
@@ -678,6 +677,8 @@ model main_structure {
   updated_at                          DateTime?               @db.Timestamp(6)
   fiche_acces_libre                   String?                 @db.VarChar
   edited_by                           String?                 @db.VarChar(50)
+  deleted_at                          DateTime?               @db.Timestamp(6)
+  deleted_by                          String[]
   activites_coop                      activites_coop[]
   contrat                             contrat[]
   personne_affectations               personne_affectations[]
@@ -688,6 +689,7 @@ model main_structure {
   utilisateurs                        UtilisateurRecord[]
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
+  @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
   @@map("structure")
   @@schema("main")
 }
@@ -718,6 +720,7 @@ model contrat {
   personne     personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   structure    main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@index([structure_id], map: "idx_contrat_structure_id")
   @@schema("main")
 }
 
@@ -807,12 +810,15 @@ model personne_affectations {
   structure_coop_id String?         @db.Uuid
   mediateur_coop_id String?         @db.Uuid
   type              String          @db.VarChar
-  suppression       DateTime?       @db.Timestamptz(6)
   created_at        DateTime?       @default(now()) @db.Timestamp(6)
   updated_at        DateTime?       @db.Timestamp(6)
+  source            String          @db.VarChar
+  est_active        Boolean         @default(true)
   personne          personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   structure         main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([structure_coop_id, mediateur_coop_id, type], map: "personne_affectations_ukey")
+  @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
   @@index([personne_id], map: "idx_personne_affectations_personne_id")
   @@index([structure_id], map: "idx_personne_affectations_structure_id")
   @@schema("main")
