@@ -13,10 +13,18 @@ const s3Config: S3ClientConfig = {
   region: process.env.S3_REGION,
 }
 
+// Pas d'authentification requise : ces documents sont publics (exposés sur le site vitrine).
+// Les opérations d'écriture (upload, suppression) sont protégées dans leurs actions respectives.
 export async function GET(request: NextRequest,
   _response: NextResponse, s3 = new S3Client(s3Config)): Promise<NextResponse<null | object>> {
   try {
     const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
+
+    // Validation du chemin pour éviter le path traversal
+    if (!nameFile || nameFile.includes('..') || !nameFile.startsWith('user/')) {
+      return NextResponse.json({ message: 'Chemin de document invalide' }, { status: 400 })
+    }
+
     const key = nameFile
     const recuperationPdf = await s3.send(
       new GetObjectCommand({
