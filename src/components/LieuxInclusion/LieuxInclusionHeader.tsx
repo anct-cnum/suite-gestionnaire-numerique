@@ -33,7 +33,7 @@ export default function LieuxInclusionHearder(): ReactElement {
           className="fr-btn fr-icon-arrow-right-line fr-btn--icon-right"
           href="/liste-lieux-inclusion"
         >
-          Voir tous les lieux d&apos;inclusions
+          Voir tous les lieux d&apos;inclusion
         </Link>
       </div>
       <div>
