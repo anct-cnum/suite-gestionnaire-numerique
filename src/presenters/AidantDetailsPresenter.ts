@@ -13,7 +13,7 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
       tags: readModel.tags,
     },
     informationsPersonnelles: {
-      email: readModel.email || undefined,
+      emails: readModel.emails,
       nom: readModel.nom,
       prenom: readModel.prenom,
       telephone: readModel.telephone || undefined,

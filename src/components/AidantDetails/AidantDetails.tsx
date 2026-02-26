@@ -15,7 +15,7 @@ export type AidantDetailsHeaderData = Readonly<{
 }>
 
 export type InformationsPersonnellesData = Readonly<{
-  email?: string
+  emails: ReadonlyArray<string>
   nom: string
   prenom: string
   telephone?: string

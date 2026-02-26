@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     data: {
-      email: 'sophie.martin@example.com',
+      emails: ['sophie.martin@example.com'],
       nom: 'Martin',
       prenom: 'Sophie',
       telephone: '01 23 45 67 89',
@@ -45,6 +45,7 @@ export const AvecCallbackEdit: Story = {
 export const SansEmailNiTelephone: Story = {
   args: {
     data: {
+      emails: [],
       nom: 'Dupont',
       prenom: 'Jean',
     },
@@ -54,7 +55,7 @@ export const SansEmailNiTelephone: Story = {
 export const AvecEmailSeul: Story = {
   args: {
     data: {
-      email: 'marie.durand@example.com',
+      emails: ['marie.durand@example.com'],
       nom: 'Durand',
       prenom: 'Marie',
     },
@@ -64,6 +65,7 @@ export const AvecEmailSeul: Story = {
 export const AvecTelephoneSeul: Story = {
   args: {
     data: {
+      emails: [],
       nom: 'Leroy',
       prenom: 'Pierre',
       telephone: '06 12 34 56 78',

@@ -18,7 +18,7 @@ export function createDefaultHeaderData(): AidantDetailsHeaderData {
 
 export function createDefaultInformationsPersonnellesData(): InformationsPersonnellesData {
   return {
-    email: 'jean.martin@example.com',
+    emails: ['jean.martin@example.com', 'j.martin@coop.fr'],
     nom: 'Martin',
     prenom: 'Jean',
     telephone: '01 23 45 67 89',

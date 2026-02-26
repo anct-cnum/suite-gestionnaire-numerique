@@ -5,7 +5,7 @@ export interface AidantDetailsLoader {
 export type AidantDetailsReadModel = Readonly<{
   accompagnements: AccompagnementsReadModel
   coopId: string
-  email: string
+  emails: ReadonlyArray<string>
   graphiqueAccompagnements: ReadonlyArray<GraphiqueAccompagnementReadModel>
   lieuxActivite: ReadonlyArray<LieuActiviteReadModel>
   nom: string

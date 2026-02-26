@@ -7,7 +7,7 @@ export default function InformationsPersonnellesCard({
   data,
   onEdit,
 }: Readonly<InfosPersoProps>): ReactElement {
-  const { email, nom, prenom, telephone } = data
+  const { emails, nom, prenom, telephone } = data
   return (
     <section
       aria-labelledby="infos-title"
@@ -66,11 +66,24 @@ export default function InformationsPersonnellesCard({
             </p>
 
             <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-              Adresse électronique
+              {emails.length > 1 ? 'Adresses électroniques' : 'Adresse électronique'}
             </p>
-            <p className="fr-text--bold fr-mb-0">
-              {email ?? '—'}
-            </p>
+            {emails.length > 0 ? (
+              <div className="fr-text--bold fr-mb-0">
+                {emails.map((email) => (
+                  <p
+                    className="fr-mb-0"
+                    key={email}
+                  >
+                    {email}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="fr-text--bold fr-mb-0">
+                —
+              </p>
+            )}
           </div>
         </div>
       </div>
