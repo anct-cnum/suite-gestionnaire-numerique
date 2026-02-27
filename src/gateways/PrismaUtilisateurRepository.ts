@@ -19,11 +19,11 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     try {
       const utilisateurExistant = await this.#dataResource.findUnique({
         where: {
-          ssoEmail: utilisateurState.uid.email,
+          ssoEmail: utilisateurState.uid.email.toLowerCase(),
         },
       })
       if(utilisateurExistant?.isSupprime ?? false){
-        return await this.#undrop(utilisateurState.uid.email)
+        return await this.#undrop(utilisateurState.uid.email.toLowerCase())
       }
 
       await this.#dataResource.create({
@@ -39,7 +39,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           prenom: utilisateurState.prenom,
           regionCode: utilisateurState.region?.code,
           role: fromTypologieRole(utilisateurState.role.nom),
-          ssoEmail: utilisateurState.uid.email,
+          ssoEmail: utilisateurState.uid.email.toLowerCase(),
           ssoId: utilisateurState.uid.value,
           structureId: utilisateurState.structureUid?.value,
           telephone: '',
@@ -72,7 +72,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       },
       where: {
         isSupprime: false,
-        ssoEmail: email,
+        ssoEmail: email.toLowerCase(),
       },
     })
     if (!record) {
@@ -164,7 +164,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ssoId: utilisateurState.uid.value,
       },
       where: {
-        ssoEmail: utilisateurState.uid.email,
+        ssoEmail: utilisateurState.uid.email.toLowerCase(),
       },
     })
   }
