@@ -251,6 +251,16 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     // Extraire les informations de contact depuis le JSON
     const contact = (personne.aidant_contact as null | Record<string, unknown>) ?? {}
 
+    // Nouvelle structure: {"coop": {"email": "..."}, "idposte": {"mail_pro": "...", "mail_perso": "..."}}
+    const coop = (contact.coop as null | Record<string, unknown>) ?? {}
+    const idposte = (contact.idposte as null | Record<string, unknown>) ?? {}
+
+    const emails = [
+      coop.email as null | string,
+      idposte.mail_pro as null | string,
+      idposte.mail_perso as null | string,
+    ].filter((email): email is string => Boolean(email))
+
     return {
       accompagnements: {
         avecAidantsConnect: totalAccompagnementsAc,
@@ -260,8 +270,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         total: totalAccompagnementsCoop + totalAccompagnementsAc,
       },
       coopId: personne.aidant_coop_uid ?? '',
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      email: ((contact.courriels as Record<string, unknown>)?.mail_pro as string) || '',
+      emails,
       graphiqueAccompagnements: graphiqueData,
       lieuxActivite: lieuxActiviteData.map(lieu => ({
         adresse: this.formatAdresse({
@@ -291,7 +300,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         type: personne.employeur_categorie_juridique ?? '',
       },
       tags: this.generateTags(personne),
-      telephone: (contact.telephone as string) || '',
+      telephone: (coop.telephone as string) || '',
     }
   }
 
