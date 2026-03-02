@@ -53,7 +53,7 @@ describe('faire une demande de subvention', () => {
         expect(drawer).toHaveAttribute('id', 'drawerDemanderUneSubventionId')
 
         const titre = within(drawer).getByRole('heading', {
-          level: 1,
+          level: 3,
           name: 'Demander une subvention',
         })
         expect(titre).toBeInTheDocument()

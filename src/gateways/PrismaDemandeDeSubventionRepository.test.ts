@@ -58,7 +58,6 @@ describe('demande de subvention repository', () => {
     })
 
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
@@ -98,7 +97,6 @@ describe('demande de subvention repository', () => {
     })
 
     await creerUnMembre({
-      contact: 'beneficiaire1@example.com',
       gouvernanceDepartementCode: departementCode,
       id: beneficiaire1Id,
     })
@@ -111,7 +109,6 @@ describe('demande de subvention repository', () => {
     })
 
     await creerUnMembre({
-      contact: 'beneficiaire2@example.com',
       gouvernanceDepartementCode: departementCode,
       id: beneficiaire2Id,
     })

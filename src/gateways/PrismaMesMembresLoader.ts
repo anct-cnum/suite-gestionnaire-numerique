@@ -44,14 +44,9 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
 function toMesMembresReadModel(membre: Membre): MembreReadModel {
   return {
     adresse: 'Adresse bouchonnée',
-    contactReferent: {
-      email: membre.contactReferent.email,
-      fonction: membre.contactReferent.fonction,
-      nom: membre.contactReferent.nom,
-      prenom: membre.contactReferent.prenom,
-    },
     isDeletable: true,
     nom: membre.nom,
+    nombreContacts: membre.nombreContacts,
     roles: membre.roles,
     siret: 'Siret bouchonné',
     statut: membre.statut as MembreReadModel['statut'],

@@ -33,12 +33,10 @@ describe('récupérer les feuilles de route loader', () => {
     })
     await creerMembres('93')
     await creerUnMembre({
-      contact: 'contact@example.com',
       gouvernanceDepartementCode: '93',
       id: 'structure-79227291600034-93',
     })
     await creerUnMembre({
-      contact: 'contact@example.com',
       gouvernanceDepartementCode: '75',
       id: 'structure-79227291600034-75',
       isCoporteur: true,

@@ -5,7 +5,18 @@ services:
       POSTGRES_DB: min
       POSTGRES_USER: min
       POSTGRES_PASSWORD: min
-    command: ["postgres", "-c", "log_statement=all", "-c", "max_connections=30"]
+    command:
+      [
+        "postgres",
+        "-c",
+        "log_statement=all",
+        "-c",
+        "max_connections=500",
+        "-c",
+        "idle_session_timeout=300000",
+        "-c",
+        "idle_in_transaction_session_timeout=60000",
+      ]
     healthcheck:
       test: pg_isready -U min
       interval: 10s

@@ -111,14 +111,9 @@ describe('mes membres loader', () => {
       membres: [
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Rhône',
+          nombreContacts: 1,
           roles: ['coporteur'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -129,14 +124,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Bretagne',
+          nombreContacts: 1,
           roles: ['coporteur'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -147,14 +137,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'CC Porte du Jura',
+          nombreContacts: 1,
           roles: ['coporteur','beneficiaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -165,14 +150,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Créteil',
+          nombreContacts: 1,
           roles: ['coporteur'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -183,14 +163,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Orange',
+          nombreContacts: 1,
           roles: ['coporteur', 'recipiendaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -201,14 +176,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Trévérien',
+          nombreContacts: 1,
           roles: [
             'coporteur',
             'cofinanceur',
@@ -223,14 +193,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'CA Tulle Agglo',
+          nombreContacts: 1,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -241,14 +206,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Île-de-France',
+          nombreContacts: 1,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -259,14 +219,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Pipriac',
+          nombreContacts: 0,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'candidat',
@@ -277,14 +232,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Pipriac',
+          nombreContacts: 1,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -295,14 +245,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Rennes',
+          nombreContacts: 1,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'confirme',
@@ -313,14 +258,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Rennes',
+          nombreContacts: 0,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'candidat',
@@ -331,14 +271,9 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: {
-            email: 'commune-35345-69@example.com',
-            fonction: 'Directeur',
-            nom: 'Tartempion',
-            prenom: 'Michel',
-          },
           isDeletable: true,
           nom: 'Rhône',
+          nombreContacts: 1,
           roles: [],
           siret: 'Siret bouchonné',
           statut: 'confirme',

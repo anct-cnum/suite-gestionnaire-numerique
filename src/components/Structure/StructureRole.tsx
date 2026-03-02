@@ -24,33 +24,36 @@ export default function StructureRole({ role }: Props): ReactElement {
           enTetes={['Gouvernance', 'Rôle dans la gouvernance']}
           titre="Rôle de la structure dans les gouvernances"
         >
-          {role.gouvernances.map((gouvernance) => (
-            <tr key={gouvernance.code}>
-              <td>
-                <Link href={`/gouvernance/${gouvernance.code}`}>
-                  <strong>
-                    {gouvernance.nom}
-                    {' '}
-                    (
-                    {gouvernance.code}
-                    )
-                  </strong>
-                </Link>
-              </td>
-              <td>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                  {gouvernance.roles.map((roleItem) => (
-                    <Badge
-                      color={roleItem.color}
-                      key={roleItem.nom}
-                    >
-                      {roleItem.nom}
-                    </Badge>
-                  ))}
-                </div>
-              </td>
-            </tr>
-          ))}
+          {role.gouvernances.toSorted(
+            (gouvernanceA, gouvernanceB) => gouvernanceA.code.localeCompare(gouvernanceB.code)
+          )
+            .map((gouvernance) => (
+              <tr key={gouvernance.code}>
+                <td>
+                  <Link href={`/gouvernance/${gouvernance.code}`}>
+                    <strong>
+                      {gouvernance.nom}
+                      {' '}
+                      (
+                      {gouvernance.code}
+                      )
+                    </strong>
+                  </Link>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {gouvernance.roles.map((roleItem) => (
+                      <Badge
+                        color={roleItem.color}
+                        key={roleItem.nom}
+                      >
+                        {roleItem.nom}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            ))}
         </Table>
       ) : (
         <p className="color-grey">

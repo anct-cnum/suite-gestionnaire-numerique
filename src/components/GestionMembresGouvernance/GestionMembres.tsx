@@ -139,7 +139,22 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       estDansLaMemeStructure(membre) ||
       estUnePrefecture(membre)
     ){
-      return (<td />)
+      return (
+        <td style={{ verticalAlign: 'middle' }}>
+          {membre.structureId === undefined ? null : (
+            <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                aria-label="Voir la fiche structure"
+                className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-eye-line"
+                onClick={() => {
+                  router.push(membre.link)
+                }}
+                type="button"
+              />
+            </div>
+          )}
+        </td>
+      )
     }
     let menuItem
     if(membresView.statutSelectionne === 'candidat')
@@ -154,16 +169,29 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       menuItem = getMenuMembreNonCoPorteur(membre)
     }
     return  (
-      <td>
-        <Menu
-          items={menuItem}
-        />
+      <td style={{ verticalAlign: 'middle' }}>
+        <div style={{ alignItems: 'center', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+          <Menu
+            items={menuItem}
+            label="Actions"
+          />
+          {membre.structureId === undefined ? null : (
+            <button
+              aria-label="Voir la fiche structure"
+              className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-eye-line"
+              onClick={() => {
+                router.push(membre.link)
+              }}
+              type="button"
+            />
+          )}
+        </div>
       </td>
     )
   }
 
   function getEnTetes() : Array<string>{
-    const enTetes: Array<string> = ['Structure', 'Contact référent', 'Rôles']
+    const enTetes: Array<string> = ['Structure', 'Contacts', 'Rôles']
     if(gouvernanceViewModel.peutGererGouvernance)
     {return enTetes.concat([''])}
     return  enTetes
@@ -216,7 +244,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           )}
         </ul>
       </div>
-      <div className="fr-grid-row space-between fr-mt-4w">
+      <div className="fr-grid-row space-between fr-mt-4w fr-grid-row--middle">
         <div className="fr-grid-row fr-grid-row--middle">
           <div className="fr-pr-1w">
             Filtres :
@@ -280,6 +308,15 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </select>
           </div>
         </div>
+        <button
+          className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
+          onClick={() => {
+            window.open(`/api/export/contacts-membres-csv?codeDepartement=${membresViewModel.uidGouvernance}&statut=${membresView.statutSelectionne}`)
+          }}
+          type="button"
+        >
+          Exporter les contacts
+        </button>
       </div>
       <Table
         enTetes={getEnTetes()}
@@ -304,11 +341,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                 onClick={() => {
                   router.push(membre.link)
                 }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    router.push(membre.link)
-                  }
-                }}
                 style={{
                   height: '100%',
                   textAlign: 'left',
@@ -326,12 +358,17 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </td>
 
             <td>
-              <p className="fr-text--sm fr-text--bold fr-text-mention--grey">
-                {membre.contactReferent.intituleCourt}
-              </p>
-              <p className="fr-text--sm fr-text-mention--grey">
-                {membre.contactReferent.email}
-              </p>
+              <button
+                className="fr-link fr-text--sm"
+                onClick={() => {
+                  router.push(membre.structureId === undefined ? membre.link : `${membre.link}#contact`)
+                }}
+                type="button"
+              >
+                {membre.nombreContacts}
+                {' '}
+                {membre.nombreContacts <= 1 ? 'contact' : 'contacts'}
+              </button>
             </td>
             <td>
               <div

@@ -6,6 +6,29 @@ import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactR
 import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
 
 export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
+  async ajouterContact(
+    structureId: number,
+    data: ContactStructureData
+  ): Promise<void> {
+    const contact = await prisma.main_contact.create({
+      data: {
+        email: data.email,
+        est_referent_fne: data.estReferentFNE,
+        fonction: data.fonction,
+        nom: data.nom,
+        prenom: data.prenom,
+        telephone: data.telephone,
+      },
+    })
+
+    await prisma.contact_structure.create({
+      data: {
+        contact_id: contact.id,
+        structure_id: structureId,
+      },
+    })
+  }
+
   async create(data: StructureData, tx?: Prisma.TransactionClient): Promise<Structure> {
     // Si pas de transaction fournie, en créer une pour garantir l'atomicité
     if (!tx) {
@@ -61,6 +84,43 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       identifiantEtablissement: structure.siret ?? '',
       nom: structure.nom,
       uid: { value: structure.id },
+    })
+  }
+
+  async modifierContact(
+    contactId: number,
+    data: ContactStructureData
+  ): Promise<void> {
+    await prisma.main_contact.update({
+      data: {
+        email: data.email,
+        est_referent_fne: data.estReferentFNE,
+        fonction: data.fonction,
+        nom: data.nom,
+        prenom: data.prenom,
+        telephone: data.telephone,
+      },
+      where: {
+        id: contactId,
+      },
+    })
+  }
+
+  async supprimerContact(
+    structureId: number,
+    contactId: number
+  ): Promise<void> {
+    await prisma.contact_structure.deleteMany({
+      where: {
+        contact_id: contactId,
+        structure_id: structureId,
+      },
+    })
+
+    await prisma.main_contact.delete({
+      where: {
+        id: contactId,
+      },
     })
   }
 
@@ -270,3 +330,12 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     })
   }
 }
+
+type ContactStructureData = Readonly<{
+  email: string
+  estReferentFNE: boolean
+  fonction: string
+  nom: string
+  prenom: string
+  telephone: string
+}>

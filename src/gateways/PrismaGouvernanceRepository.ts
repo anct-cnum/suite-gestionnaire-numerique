@@ -45,7 +45,6 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
       } : undefined
 
     const membresCoporteurs = record.membres
-      .filter((membre): membre is { structureId: number } & typeof membre => membre.structureId !== null)
       .map(membre => ({
         isCoporteur: membre.isCoporteur,
         structureUid: membre.structureId,

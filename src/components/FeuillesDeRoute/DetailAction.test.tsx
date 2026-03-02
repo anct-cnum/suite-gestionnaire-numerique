@@ -17,7 +17,7 @@ describe('détail d’une action', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(drawer).toHaveAttribute('id', 'drawerActionIdfeuilleDeRouteFooId1')
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 1' })
+      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(titre).toBeInTheDocument()
 
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })

@@ -43,14 +43,9 @@ export type MesMembresReadModel = Readonly<{
 
 export type MembreReadModel = Readonly<{
   adresse: string
-  contactReferent: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
   isDeletable: boolean
   nom: string
+  nombreContacts: number
   roles: ReadonlyArray<Role>
   siret: string
   statut: Statut

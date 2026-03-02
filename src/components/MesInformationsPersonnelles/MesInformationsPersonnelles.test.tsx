@@ -323,7 +323,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Mes informations personnelles' })
       expect(drawer).toBeVisible()
 
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Mes informations personnelles' })
+      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Mes informations personnelles' })
       expect(titre).toBeInTheDocument()
 
       const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })

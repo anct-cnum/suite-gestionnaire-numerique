@@ -42,7 +42,7 @@ describe('ajout des porteurs', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) porteur(s)' })
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesPorteursId')
-      const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) porteur(s)' })
+      const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) porteur(s)' })
       expect(titre).toBeInTheDocument()
       const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs porteurs pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()

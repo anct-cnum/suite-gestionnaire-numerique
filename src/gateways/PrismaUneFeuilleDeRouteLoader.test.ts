@@ -371,7 +371,6 @@ async function creerMembre(uid: string, nom = 'Métropole de Lyon'): Promise<voi
   await creerUneStructure({ departementCode: codeDepartement, id: structureId, nom, siret })
   await creerUnContact({ email: `${uid}@example.com` })
   await creerUnMembre({
-    contact: `${uid}@example.com`,
     gouvernanceDepartementCode: codeDepartement,
     id: uid,
     structureId,

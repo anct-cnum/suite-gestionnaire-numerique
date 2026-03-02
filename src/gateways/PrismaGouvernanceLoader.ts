@@ -182,18 +182,19 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           .map((membre) => {
             const feuillesDeRoutePortees = feuillesDeRoute
               .filter(feuilleDeRoute => feuilleDeRoute.porteur?.uid === membre.id)
+            const premierContact = membre.contacts[0]
             return {
               contactReferent: {
                 denomination: 'Contact référent' as const,
-                mailContact: membre.contactReferent.email,
-                nom: membre.contactReferent.nom,
-                poste: membre.contactReferent.fonction,
-                prenom: membre.contactReferent.prenom,
+                mailContact: premierContact.email,
+                nom: premierContact.nom,
+                poste: premierContact.fonction,
+                prenom: premierContact.prenom,
               },
-              contactTechnique: membre.contactTechnique ? `${membre.contactTechnique.prenom} ${membre.contactTechnique.nom} (${membre.contactTechnique.email})` : undefined,
               feuillesDeRoute: feuillesDeRoutePortees.map(({ nom, uid }) => ({ nom, uid })),
               links: {},
               nom: membre.nom,
+              nombreContacts: membre.nombreContacts,
               roles: membre.roles,
               ...feuillesDeRoutePortees.reduce(calculerTotaux, {
                 totalMontantsSubventionsAccordees: 0,

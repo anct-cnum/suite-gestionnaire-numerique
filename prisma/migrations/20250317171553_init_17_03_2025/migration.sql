@@ -123,7 +123,7 @@ CREATE TABLE "contact_membre_gouvernance" (
 CREATE TABLE "membre" (
     "id" TEXT NOT NULL,
     "gouvernance_departement_code" TEXT NOT NULL,
-    "contact" TEXT NOT NULL,
+    "contact" TEXT,
     "contact_technique" TEXT,
     "type" TEXT,
     "statut" TEXT NOT NULL,
@@ -314,12 +314,6 @@ ALTER TABLE "feuille_de_route" ADD CONSTRAINT "feuille_de_route_porteur_id_fkey"
 
 -- AddForeignKey
 ALTER TABLE "membre" ADD CONSTRAINT "membre_gouvernance_departement_code_fkey" FOREIGN KEY ("gouvernance_departement_code") REFERENCES "gouvernance"("departement_code") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "membre" ADD CONSTRAINT "membre_contact_fkey" FOREIGN KEY ("contact") REFERENCES "contact_membre_gouvernance"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "membre" ADD CONSTRAINT "membre_contact_technique_fkey" FOREIGN KEY ("contact_technique") REFERENCES "contact_membre_gouvernance"("email") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "membre_gouvernance_departement" ADD CONSTRAINT "membre_gouvernance_departement_departement_code_fkey" FOREIGN KEY ("departement_code") REFERENCES "departement"("code") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -17,7 +17,7 @@ describe('filtrer mes utilisateurs', () => {
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Filtrer' })
 
-    const titre = within(drawer).getByRole('heading', { level: 1, name: 'Filtrer' })
+    const titre = within(drawer).getByRole('heading', { level: 3, name: 'Filtrer' })
     expect(titre).toBeInTheDocument()
 
     const formulaire = within(drawer).getByRole('form', { name: 'Filtrer' })

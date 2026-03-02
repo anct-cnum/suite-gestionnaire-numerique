@@ -31,14 +31,10 @@ export type MembresViewModel = Readonly<{
 
 export type MembreViewModel = Readonly<{
   adresse: string
-  contactReferent: {
-    email: string
-    intitule: string
-    intituleCourt: string
-  }
   isDeletable: boolean
   link: string
   nom: string
+  nombreContacts: number
   roles: ReadonlyArray<RoleViewModel>
   siret: string
   statut: string
@@ -64,19 +60,13 @@ function membresParStatut(membres: ReadonlyArray<MembreReadModel>, uidGouvernanc
 }
 
 function toMembreViewModel(membre: MembreReadModel, uidGouvernance: string): MembreViewModel {
-  const contactReferent = membre.contactReferent
-  const nomComplet = `${contactReferent.prenom} ${contactReferent.nom}`
   return {
     ...membre,
-    contactReferent: {
-      email: contactReferent.email,
-      intitule: `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`,
-      intituleCourt: nomComplet,
-    },
     isDeletable: membre.isDeletable,
     link: membre.structureId === undefined
       ? `/gouvernance/${uidGouvernance}/membre/${membre.uid}`
       : membreLink(membre.structureId),
+    nombreContacts: membre.nombreContacts,
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),

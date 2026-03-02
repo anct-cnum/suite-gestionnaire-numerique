@@ -86,14 +86,14 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
 
     const aidantsEtMediateurs = buildAidantsEtMediateurs(structureRecord.personne_affectations)
     const contratsRattaches = buildContratsRattaches(structureRecord.contrat)
-    const contactReferent = extractContactReferent(structureRecord.contact as ContactJson | null)
     const gouvernances = extractGouvernances(structureRecord.membres)
     const conventionsEtFinancements = await buildConventionsEtFinancements(structureId, structureRecord.membres)
     const feuillesDeRoute = extractFeuillesDeRoute(structureRecord.membres)
+    const contacts = await buildContacts(structureId)
 
     return {
       aidantsEtMediateurs,
-      contactReferent,
+      contacts,
       contratsRattaches,
       conventionsEtFinancements,
       identite: {
@@ -240,20 +240,38 @@ function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): Readonl
   }))
 }
 
-function extractContactReferent(contact: ContactJson | null): {
+async function buildContacts(structureId: number): Promise<ReadonlyArray<{
   email: string
+  estReferentFNE: boolean
   fonction: string
+  id: number
   nom: string
   prenom: string
   telephone: string
-} {
-  return {
-    email: contact?.courriels ?? '',
-    fonction: contact?.fonction ?? '',
-    nom: contact?.nom ?? '',
-    prenom: contact?.prenom ?? '',
-    telephone: contact?.telephone ?? '',
-  }
+}>> {
+  const contactStructures = await prisma.contact_structure.findMany({
+    include: {
+      contact: true,
+    },
+    orderBy: [
+      { contact: { est_referent_fne: 'desc' } },
+      { contact: { nom: 'asc' } },
+      { contact: { prenom: 'asc' } },
+    ],
+    where: {
+      structure_id: structureId,
+    },
+  })
+
+  return contactStructures.map((cs) => ({
+    email: cs.contact.email,
+    estReferentFNE: cs.contact.est_referent_fne,
+    fonction: cs.contact.fonction,
+    id: cs.contact.id,
+    nom: cs.contact.nom,
+    prenom: cs.contact.prenom,
+    telephone: cs.contact.telephone,
+  }))
 }
 
 interface MembreRecord {
@@ -407,14 +425,6 @@ function formatAdresse(adresse: {
 
   const rue = parts.join(' ')
   return `${rue}, ${adresse.code_postal} ${adresse.nom_commune}`.trim()
-}
-
-interface ContactJson {
-  courriels?: string
-  fonction?: string
-  nom?: string
-  prenom?: string
-  telephone?: string
 }
 
 function determinerEnveloppeEtLibelle(sourceFinancement: null | string): {

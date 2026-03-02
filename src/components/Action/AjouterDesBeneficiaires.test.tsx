@@ -53,7 +53,7 @@ describe('ajout des bénéficiaires', () => {
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
     expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
-    const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) bénéficiaire(s)' })
+    const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) bénéficiaire(s)' })
     expect(titre).toBeInTheDocument()
     const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
     expect(sousTitre).toBeInTheDocument()
@@ -104,7 +104,7 @@ describe('ajout des bénéficiaires', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
-      const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) bénéficiaire(s)' })
+      const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) bénéficiaire(s)' })
       expect(titre).toBeInTheDocument()
       const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()

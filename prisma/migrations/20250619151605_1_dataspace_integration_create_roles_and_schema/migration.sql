@@ -95,4 +95,3 @@ ALTER SCHEMA audit OWNER TO sonum;
 
 DROP FUNCTION IF EXISTS public.edited_by_column();
 
-DROP FUNCTION IF EXISTS public.updated_at_column();

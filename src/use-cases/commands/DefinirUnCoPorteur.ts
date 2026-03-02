@@ -11,8 +11,8 @@ import { EmailGatewayFactory } from '@/use-cases/commands/shared/EmailGateway'
 import { GetGouvernanceRepository } from '@/use-cases/commands/shared/GouvernanceRepository'
 import {
   ContactData,
-  GetMembreContactsRepository,
   GetMembreRepository,
+  GetStructureContactsRepository,
   UpdateMembreRepository,
 } from '@/use-cases/commands/shared/MembreRepository'
 import {
@@ -82,7 +82,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   }
 
   /**
-   * Invite les contacts (référent et technique) du membre en tant qu'utilisateurs de la plateforme.
+   * Invite tous les contacts de la structure du membre en tant qu'utilisateurs de la plateforme.
    *
    * Gère les scénarios suivants :
    * - Si l'utilisateur n'existe pas : le créer et l'inviter
@@ -96,13 +96,8 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   ): Promise<void> {
     const contacts = await this.membreRepository.getContacts(membreUid)
 
-    // Traiter le contact référent
-    await this.traiterContact(contacts.contact, structureId, departement, 'referent', membreUid)
-
-    // Traiter le contact technique si présent
-    if (contacts.contactTechnique) {
-      await this.traiterContact(contacts.contactTechnique, structureId, departement, 'technique', membreUid)
-    }
+    await Promise.all(contacts.map(async (contact) =>
+      this.traiterContact(contact, structureId, departement, membreUid)))
   }
 
   /**
@@ -112,7 +107,6 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
     contact: ContactData,
     structureId: number,
     departement: { code: string; nom: string },
-    typeContact: 'referent' | 'technique',
     membreUid: string
   ): Promise<void> {
     const utilisateurExistant = await this.utilisateurRepository.findByEmail(contact.email)
@@ -124,7 +118,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
       if (structureUtilisateur === structureId) {
         // Utilisateur déjà lié à la même structure → RAS
         return
-      } 
+      }
       // Utilisateur lié à une autre structure → Logger dans Sentry
       Sentry.captureMessage('Contact coporteur déjà utilisateur d\'une autre structure', {
         extra: {
@@ -134,7 +128,6 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
           membreUid,
           structureActuelle: structureUtilisateur,
           structureCible: structureId,
-          typeContact,
         },
         level: 'warning',
         tags: {
@@ -190,7 +183,8 @@ type Command = Readonly<{
   uidUtilisateurConnecte: string
 }>
 
-type MembreRepositoryForDefinirUnCoPorteur = GetMembreContactsRepository & GetMembreRepository & UpdateMembreRepository
+type MembreRepositoryForDefinirUnCoPorteur =
+  GetMembreRepository & GetStructureContactsRepository & UpdateMembreRepository
 
 type UtilisateurRepositoryForDefinirUnCoPorteur = AddUtilisateurRepository
                                                   & FindUtilisateurByEmailRepository

@@ -27,7 +27,6 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
@@ -73,7 +72,6 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
@@ -147,11 +145,10 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    
+
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       derniereEdition: epochTime,
@@ -207,7 +204,6 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
@@ -268,11 +264,10 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    
+
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       derniereEdition: epochTime,
@@ -369,11 +364,10 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    
+
     await creerUneFeuilleDeRoute({
       editeurUtilisateurId: uidEditeur,
       gouvernanceDepartementCode: '75',
@@ -434,7 +428,6 @@ describe('feuille de route repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })

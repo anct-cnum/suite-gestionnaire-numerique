@@ -20,7 +20,7 @@ describe('note de contexte', () => {
       expect(drawer).toHaveAttribute('id', 'drawerAjouterNoteDeContexteId')
       expect(drawer).toHaveAttribute('open')
       const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
-      const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Note de contexte' })
+      const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Note de contexte' })
       expect(titre).toBeInTheDocument()
       const texteDInstructions = within(drawer).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
       expect(texteDInstructions).toBeInTheDocument()

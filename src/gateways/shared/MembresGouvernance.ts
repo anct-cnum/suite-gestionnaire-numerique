@@ -1,24 +1,23 @@
 import { Prisma } from '@prisma/client'
 
 export type Membre = Readonly<{
-  contactReferent: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique: null | Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contacts: ReadonlyArray<ContactMembre>
   id: string
   nom: string
+  nombreContacts: number
   roles: ReadonlyArray<Role>
   statut: string
   structureId: number
   type: string
+}>
+
+type ContactMembre = Readonly<{
+  email: string
+  estReferentFNE: boolean
+  fonction: string
+  nom: string
+  prenom: string
+  telephone: string
 }>
 
 type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'recipiendaire'
@@ -34,9 +33,16 @@ export const membreInclude = {
     },
   },
   CoFinancementRecord: true,
-  relationContact: true,
-  relationContactTechnique: true,
-  relationStructure: true,
+  relationStructure: {
+    include: {
+      // eslint-disable-next-line camelcase
+      contact_structures: {
+        include: {
+          contact: true,
+        },
+      },
+    },
+  },
 }
 
 function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
@@ -83,11 +89,20 @@ function toMembre(membre: MembreRecord): Membre {
   const roles = deduireRoles(membre)
   const nomMembre = determinerNomMembre(membre)
 
+  const contacts = membre.relationStructure.contact_structures.map((cs) => ({
+    email: cs.contact.email,
+    estReferentFNE: cs.contact.est_referent_fne,
+    fonction: cs.contact.fonction,
+    nom: cs.contact.nom,
+    prenom: cs.contact.prenom,
+    telephone: cs.contact.telephone,
+  }))
+
   const result = {
-    contactReferent: membre.relationContact,
-    contactTechnique: membre.relationContactTechnique,
+    contacts,
     id: membre.id,
     nom: nomMembre,
+    nombreContacts: contacts.length,
     roles,
     statut: membre.statut,
     structureId: membre.structureId,

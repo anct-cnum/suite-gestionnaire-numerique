@@ -16,7 +16,7 @@ describe('ajouter des besoins', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) besoin(s)' })
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBesoinsId')
-      const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) besoin(s)' })
+      const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) besoin(s)' })
       expect(titre).toBeInTheDocument()
       const sousTitre = screen.getByText('Sélectionnez au moins un besoin.', { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()
