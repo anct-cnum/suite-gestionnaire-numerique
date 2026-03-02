@@ -17,7 +17,7 @@ describe('modifier une feuille de route', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Modifier une feuille de route' })
       expect(drawer).toHaveAttribute('id', 'drawerModifierUneFeuilleDeRouteId')
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Modifier une feuille de route' })
+      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Modifier une feuille de route' })
       expect(titre).toBeInTheDocument()
       const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
       expect(champsObligatoires).toBeInTheDocument()

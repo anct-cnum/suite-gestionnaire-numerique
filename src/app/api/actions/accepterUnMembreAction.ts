@@ -3,13 +3,16 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaContactReferentFneLoader } from '@/gateways/PrismaContactReferentFneLoader'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AccepterUnMembre } from '@/use-cases/commands/AccepterUnMembre'
+import { InviterContactsReferentsFne } from '@/use-cases/commands/InviterContactsReferentsFne'
 
 export async function accepterUnMembreAction(
   actionParams: ActionParams
@@ -20,15 +23,33 @@ export async function accepterUnMembreAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
+  const membreRepository = new PrismaMembreRepository()
+  const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const uidUtilisateurCourant = await getSessionSub()
+
   const result = await new AccepterUnMembre(
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    utilisateurRepository,
     new PrismaGouvernanceRepository(),
-    new PrismaMembreRepository()
+    membreRepository
   ).handle({
-    uidGestionnaire: await getSessionSub(),
+    uidGestionnaire: uidUtilisateurCourant,
     uidGouvernance: actionParams.uidGouvernance,
     uidMembrePotentiel: actionParams.uidMembrePotentiel,
   })
+
+  if (result === 'OK') {
+    const structureId = await membreRepository.getStructureId(actionParams.uidMembrePotentiel)
+
+    await new InviterContactsReferentsFne(
+      utilisateurRepository,
+      new PrismaContactReferentFneLoader(),
+      emailInvitationGatewayFactory,
+      new Date()
+    ).handle({
+      structureId,
+      uidUtilisateurCourant,
+    })
+  }
 
   revalidatePath(validationResult.data.path)
 

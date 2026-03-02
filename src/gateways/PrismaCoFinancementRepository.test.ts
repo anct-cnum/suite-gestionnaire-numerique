@@ -54,7 +54,6 @@ describe('co-financement repository', () => {
       prenom: 'Michel',
     })
     await creerUnMembre({
-      contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidMembre,
     })

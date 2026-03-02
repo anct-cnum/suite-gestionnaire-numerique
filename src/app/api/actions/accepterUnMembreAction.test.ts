@@ -2,7 +2,9 @@ import * as nextCache from 'next/cache'
 
 import { accepterUnMembreAction } from './accepterUnMembreAction'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { AccepterUnMembre } from '@/use-cases/commands/AccepterUnMembre'
+import { InviterContactsReferentsFne } from '@/use-cases/commands/InviterContactsReferentsFne'
 
 describe('accepter un membre action', () => {
   it('quand un candidat ou un suggéré est ajouté à une gouvernance, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
@@ -10,6 +12,8 @@ describe('accepter un membre action', () => {
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
     vi.spyOn(AccepterUnMembre.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(PrismaMembreRepository.prototype, 'getStructureId').mockResolvedValueOnce(1)
+    vi.spyOn(InviterContactsReferentsFne.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await accepterUnMembreAction({

@@ -115,7 +115,7 @@ describe('prisma utilisateur query', () => {
       await creerUnGroupement()
       await creerUneGouvernance({ departementCode: '75' })
       await creerUnContact({ email: 'contact@example.com' })
-      await creerUnMembre({ contact: 'contact@example.com', gouvernanceDepartementCode: '75', statut: 'confirme', structureId: 10 })
+      await creerUnMembre({ gouvernanceDepartementCode: '75', statut: 'confirme', structureId: 10 })
       await creerUnUtilisateur({
         departementCode: '75',
         groupementId: 10,

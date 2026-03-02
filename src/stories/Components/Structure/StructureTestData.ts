@@ -30,13 +30,17 @@ export function createDefaultStructureViewModel(): StructureViewModel {
       totalCoordinateur: 2,
       totalMediateur: 5,
     },
-    contactReferent: {
-      email: 'contact@structure-exemple.fr',
-      fonction: 'Directeur',
-      nom: 'Dupont',
-      prenom: 'Jean',
-      telephone: '01 23 45 67 89',
-    },
+    contacts: [
+      {
+        email: 'contact@structure-exemple.fr',
+        estReferentFNE: true,
+        fonction: 'Directeur',
+        id: 1,
+        nom: 'Dupont',
+        prenom: 'Jean',
+        telephone: '01 23 45 67 89',
+      },
+    ],
     contratsRattaches: [
       {
         contrat: 'CDI',
@@ -181,13 +185,7 @@ export function createStructureViewModelWithMinimalData(): StructureViewModel {
       totalCoordinateur: 0,
       totalMediateur: 0,
     },
-    contactReferent: {
-      email: '',
-      fonction: '',
-      nom: '',
-      prenom: '',
-      telephone: '',
-    },
+    contacts: [],
     contratsRattaches: [],
     conventionsEtFinancements: {
       conventions: [],

@@ -9,9 +9,9 @@ import { DefinirUnCoPorteur } from './DefinirUnCoPorteur'
 import { EmailGateway } from './shared/EmailGateway'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import {
-  GetMembreContactsRepository,
+  ContactData,
   GetMembreRepository,
-  MembreContacts,
+  GetStructureContactsRepository,
   UpdateMembreRepository,
 } from './shared/MembreRepository'
 import {
@@ -143,20 +143,20 @@ describe('définir un coporteur', () => {
         uidStructure: { value: 123 },
       })
 
-      const contacts: MembreContacts = {
-        contact: {
+      const contacts: ReadonlyArray<ContactData> = [
+        {
           email: 'referent@example.com',
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
         },
-        contactTechnique: {
+        {
           email: 'technique@example.com',
           fonction: 'Responsable IT',
           nom: 'Martin',
           prenom: 'Sophie',
         },
-      }
+      ]
 
       const membreRepository = new MembreRepositorySpy(membre, contacts)
       const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur)
@@ -215,7 +215,7 @@ describe('définir un coporteur', () => {
       })
     })
 
-    it('quand seul le contact référent existe (sans contact technique), seul le référent est créé', async () => {
+    it('quand un seul contact existe, seul celui-ci est créé', async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
       const utilisateur = utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
@@ -225,15 +225,14 @@ describe('définir un coporteur', () => {
         uidStructure: { value: 123 },
       })
 
-      const contacts: MembreContacts = {
-        contact: {
+      const contacts: ReadonlyArray<ContactData> = [
+        {
           email: 'referent@example.com',
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
         },
-        contactTechnique: undefined,
-      }
+      ]
 
       const membreRepository = new MembreRepositorySpy(membre, contacts)
       const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur)
@@ -277,20 +276,20 @@ describe('définir un coporteur', () => {
         uid: { email: 'referent@example.com', value: 'referent@example.com' },
       })
 
-      const contacts: MembreContacts = {
-        contact: {
+      const contacts: ReadonlyArray<ContactData> = [
+        {
           email: 'referent@example.com',
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
         },
-        contactTechnique: {
+        {
           email: 'technique@example.com',
           fonction: 'Responsable IT',
           nom: 'Martin',
           prenom: 'Sophie',
         },
-      }
+      ]
 
       const membreRepository = new MembreRepositorySpy(membre, contacts)
       const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur, [utilisateurExistant])
@@ -336,20 +335,20 @@ describe('définir un coporteur', () => {
         uid: { email: 'referent@example.com', value: 'referent@example.com' },
       })
 
-      const contacts: MembreContacts = {
-        contact: {
+      const contacts: ReadonlyArray<ContactData> = [
+        {
           email: 'referent@example.com',
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
         },
-        contactTechnique: {
+        {
           email: 'technique@example.com',
           fonction: 'Responsable IT',
           nom: 'Martin',
           prenom: 'Sophie',
         },
-      }
+      ]
 
       const membreRepository = new MembreRepositorySpy(membre, contacts)
       const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur, [utilisateurAutreStructure])
@@ -384,7 +383,6 @@ describe('définir un coporteur', () => {
             membreUid: 'membreUid',
             structureActuelle: 456,
             structureCible: 123,
-            typeContact: 'referent',
           }),
           level: 'warning',
           tags: expect.objectContaining({
@@ -421,20 +419,20 @@ describe('définir un coporteur', () => {
         uid: { email: 'technique@example.com', value: 'technique@example.com' },
       })
 
-      const contacts: MembreContacts = {
-        contact: {
+      const contacts: ReadonlyArray<ContactData> = [
+        {
           email: 'referent@example.com',
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
         },
-        contactTechnique: {
+        {
           email: 'technique@example.com',
           fonction: 'Responsable IT',
           nom: 'Martin',
           prenom: 'Sophie',
         },
-      }
+      ]
 
       const membreRepository = new MembreRepositorySpy(membre, contacts)
       const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur, [
@@ -473,28 +471,28 @@ let spiedUtilisateurToAdd: Array<null | Utilisateur>
 let spiedDestinataires: Array<Destinataire>
 
 class MembreRepositorySpy
-implements GetMembreContactsRepository, GetMembreRepository, UpdateMembreRepository
+implements GetMembreRepository, GetStructureContactsRepository, UpdateMembreRepository
 {
-  readonly #contacts: MembreContacts
+  readonly #contacts: ReadonlyArray<ContactData>
   readonly #membre: Membre
 
-  constructor(membre: Membre, contacts?: MembreContacts) {
+  constructor(membre: Membre, contacts?: ReadonlyArray<ContactData>) {
     this.#membre = membre
-    this.#contacts = contacts ?? {
-      contact: {
+    this.#contacts = contacts ?? [
+      {
         email: 'contact@example.com',
         fonction: 'Directeur',
         nom: 'Dupont',
         prenom: 'Jean',
       },
-    }
+    ]
   }
 
   async get(_uid: string, _tx?: Prisma.TransactionClient): Promise<Membre> {
     return Promise.resolve(this.#membre)
   }
 
-  async getContacts(_uid: MembreState['uid']['value'], _tx?: Prisma.TransactionClient): Promise<MembreContacts> {
+  async getContacts(_uid: MembreState['uid']['value'], _tx?: Prisma.TransactionClient): Promise<ReadonlyArray<ContactData>> {
     return Promise.resolve(this.#contacts)
   }
 

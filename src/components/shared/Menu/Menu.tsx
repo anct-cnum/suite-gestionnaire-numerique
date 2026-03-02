@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom'
 
 import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
 
-export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
+export default function Menu({ items, label }: Readonly<MenuProps>): ReactElement {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState<{ left: number; top: number }>({ left: 0, top: 0 })
 
@@ -79,7 +79,9 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
         aria-controls="dropdown-menu"
         aria-expanded={open}
         aria-haspopup="true"
-        className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-more-fill"
+        className={label === undefined
+          ? 'fr-btn fr-btn--sm fr-btn--tertiary fr-icon-more-fill'
+          : 'fr-btn fr-btn--sm fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-down-s-line'}
         onClick={() => {
           setOpen((prev) => !prev)
         }}
@@ -88,7 +90,9 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
           textAlign: 'center',
         }}
         type="button"
-      />
+      >
+        {label}
+      </button>
       {open
         ? createPortal(
           <div
@@ -142,4 +146,5 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
 
 type MenuProps = {
   items: Array<ReactElement<MenuItemProps, typeof MenuItem>>
+  label?: string
 }

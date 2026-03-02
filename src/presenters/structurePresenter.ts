@@ -17,7 +17,7 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       totalCoordinateur: uneStructureReadModel.aidantsEtMediateurs.totalCoordinateur,
       totalMediateur: uneStructureReadModel.aidantsEtMediateurs.totalMediateur,
     },
-    contactReferent: uneStructureReadModel.contactReferent,
+    contacts: uneStructureReadModel.contacts,
     contratsRattaches: uneStructureReadModel.contratsRattaches.map(contrat => {
       const dateFin = contrat.dateFin
       const isEnCours = dateFin ? dateFin > now : true
@@ -110,9 +110,11 @@ export type StructureViewModel = Readonly<{
     totalCoordinateur: number
     totalMediateur: number
   }>
-  contactReferent: Readonly<{
+  contacts: ReadonlyArray<{
     email: string
+    estReferentFNE: boolean
     fonction: string
+    id: number
     nom: string
     prenom: string
     telephone: string

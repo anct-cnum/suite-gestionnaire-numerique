@@ -4,8 +4,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 const meta: Meta<typeof StructureContactReferent> = {
   argTypes: {
-    contactReferent: {
-      description: 'Informations du contact référent de la structure',
+    contacts: {
+      description: 'Liste des contacts de la structure',
     },
   },
   component: StructureContactReferent,
@@ -22,24 +22,44 @@ const defaultViewModel = createDefaultStructureViewModel()
 
 export const Default: Story = {
   args: {
-    contactReferent: defaultViewModel.contactReferent,
+    contacts: defaultViewModel.contacts,
     structureId: defaultViewModel.structureId,
   },
 }
 
 export const SansInformations: Story = {
   args: {
-    contactReferent: createStructureViewModelWithMinimalData().contactReferent,
+    contacts: createStructureViewModelWithMinimalData().contacts,
     structureId: createStructureViewModelWithMinimalData().structureId,
   },
 }
 
 export const AvecFonctionLongue: Story = {
   args: {
-    contactReferent: {
-      ...defaultViewModel.contactReferent,
-      fonction: 'Directeur adjoint en charge de l\'inclusion numérique et de la médiation sociale',
-    },
+    contacts: [
+      {
+        ...defaultViewModel.contacts[0],
+        fonction: 'Directeur adjoint en charge de l\'inclusion numérique et de la médiation sociale',
+      },
+    ],
+    structureId: defaultViewModel.structureId,
+  },
+}
+
+export const PlusieursContacts: Story = {
+  args: {
+    contacts: [
+      ...defaultViewModel.contacts,
+      {
+        email: 'marie.martin@structure-exemple.fr',
+        estReferentFNE: false,
+        fonction: 'Responsable technique',
+        id: 2,
+        nom: 'Martin',
+        prenom: 'Marie',
+        telephone: '01 98 76 54 32',
+      },
+    ],
     structureId: defaultViewModel.structureId,
   },
 }

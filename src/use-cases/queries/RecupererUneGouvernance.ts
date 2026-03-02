@@ -121,7 +121,6 @@ export type CoporteurDetailReadModel = Readonly<{
     poste: string
     prenom: string
   }>
-  contactTechnique?: string
   feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
     uid: string
@@ -130,6 +129,7 @@ export type CoporteurDetailReadModel = Readonly<{
     plusDetails?: string
   }>
   nom: string
+  nombreContacts: number
   roles: ReadonlyArray<string>
   telephone?: string
   totalMontantsSubventionsAccordees?: number

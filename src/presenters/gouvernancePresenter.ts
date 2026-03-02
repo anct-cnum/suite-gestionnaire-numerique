@@ -261,10 +261,6 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
     const detailsAffichage: MembreDetailsViewModel['details'] = [
       ...coporteur.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: coporteur.contactReferent.denomination }] : [],
 
-      ...isNullishOrEmpty(coporteur.contactTechnique)
-        ? []
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        : [{ information: coporteur.contactTechnique!, intitule: 'Contact technique' }],
       ...isNaN(coporteur.totalMontantsSubventionsAccordees ?? NaN) ? [] : [
         {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

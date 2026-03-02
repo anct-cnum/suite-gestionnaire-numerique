@@ -3,6 +3,7 @@
 import { ReactElement } from 'react'
 
 import StructureAidantsMediateurs from './StructureAidantsMediateurs'
+import StructureContactReferent from './StructureContactReferent'
 import StructureContratsRattaches from './StructureContratsRattaches'
 import StructureConventions from './StructureConventions'
 import StructureHeader from './StructureHeader'
@@ -26,10 +27,10 @@ export default function Structure({ viewModel }: Props): ReactElement {
 
         <StructureIdentite identite={viewModel.identite} />
 
-        {/* <StructureContactReferent
-          contactReferent={viewModel.contactReferent}
+        <StructureContactReferent
+          contacts={viewModel.contacts}
           structureId={viewModel.structureId}
-        /> */}
+        />
 
         <StructureRole role={viewModel.role} />
         <AlerteConstruction />
@@ -52,10 +53,10 @@ const sections: ReadonlyArray<MenuCollantSection> = [
     id: 'identite',
     label: 'Identité',
   },
-  // {
-  //   id: 'contact',
-  //   label: 'Contact référent',
-  // },
+  {
+    id: 'contact',
+    label: 'Contact',
+  },
   {
     id: 'role',
     label: 'Rôle',

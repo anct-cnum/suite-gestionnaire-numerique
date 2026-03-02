@@ -17,7 +17,7 @@ describe('inviter un utilisateur', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(drawer).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const titre = await within(drawer).findByRole('heading', { level: 3, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
     expect(titre).toBeInTheDocument()
 
     const champsObligatoires = within(drawer).getByText(
@@ -189,7 +189,7 @@ describe('inviter un utilisateur', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(drawer).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const titre = await within(drawer).findByRole('heading', { level: 3, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
     expect(titre).toBeInTheDocument()
 
     const champsObligatoires = within(drawer).getByText(

@@ -300,23 +300,17 @@ export async function creerUnMembre(
 }
 
 export async function creerUnContact(
-  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>,
+  override?: Partial<Prisma.main_contactUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
-): Promise<void> {
+): Promise<number> {
   const client = tx ?? prisma
-  await client.contactMembreGouvernanceRecord.create({
+  const contact = await client.main_contact.create({
     data: contactRecordFactory(override),
   })
+  return contact.id
 }
 
 export async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
-  await creerUnContact({
-    email: `commune-35345-${gouvernanceDepartementCode}@example.com`,
-    fonction: 'Directeur',
-    nom: 'Tartempion',
-    prenom: 'Michel',
-  })
-
   // Helper pour créer structure + membre avec un nom spécifique
   async function creerMembreAvecNom(
     id: string,
@@ -329,9 +323,12 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
     await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
+    const contactId = await creerUnContact({ email: `${id}@example.com`, nom })
+    await prisma.contact_structure.create({
+      data: { contact_id: contactId, structure_id: structureId },
+    })
     await prisma.membreRecord.create({
       data: membreRecordFactory({
-        contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
         gouvernanceDepartementCode,
         id,
         isCoporteur,
@@ -354,7 +351,6 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
     await prisma.membreRecord.create({
       data: membreRecordFactory({
-        contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
         gouvernanceDepartementCode,
         id,
         statut: 'candidat',
@@ -512,7 +508,6 @@ function membreRecordFactory(
   override?: Partial<Prisma.MembreRecordUncheckedCreateInput>
 ): Prisma.MembreRecordUncheckedCreateInput {
   return {
-    contact: 'email@example.com',
     gouvernanceDepartementCode: '69',
     id: 'prefecture-69',
     isCoporteur: false,
@@ -525,10 +520,11 @@ function membreRecordFactory(
 }
 
 function contactRecordFactory(
-  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
-): Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput {
+  override?: Partial<Prisma.main_contactUncheckedCreateInput>
+): Prisma.main_contactUncheckedCreateInput {
   return {
     email: 'email@example.com',
+    est_referent_fne: true,
     fonction: 'Directeur',
     nom: 'Tartempion',
     prenom: 'Michel',

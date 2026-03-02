@@ -27,7 +27,6 @@ describe('action repository', () => {
           prenom: 'Michel',
         }, tx)
         await creerUnMembre({
-          contact: 'structure@example.com',
           gouvernanceDepartementCode: departementCode,
           id: uidPorteur,
         }, tx)

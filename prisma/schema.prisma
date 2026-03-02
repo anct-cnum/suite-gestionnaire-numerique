@@ -183,9 +183,6 @@ model ContactMembreGouvernanceRecord {
   nom      String
   fonction String
 
-  membresContact          MembreRecord[] @relation("contact")
-  membresContactTechnique MembreRecord[] @relation("contactTechnique")
-
   @@map("contact_membre_gouvernance")
   @@schema("min")
 }
@@ -194,7 +191,7 @@ model MembreRecord {
   id String @id
 
   gouvernanceDepartementCode String    @map("gouvernance_departement_code")
-  contact                    String
+  contact                    String?
   contactTechnique           String?   @map("contact_technique")
   type                       String?
   statut                     String
@@ -207,10 +204,8 @@ model MembreRecord {
 
   oldUUID String @map("old_uuid") @db.Uuid
 
-  relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
-  relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
-  relationStructure        main_structure                  @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationStructure   main_structure    @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
@@ -528,6 +523,8 @@ model activites_coop {
   created_at                          DateTime?       @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?       @db.Timestamp(6)
   periode                             DateTime?       @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
+  created_at_coop                     DateTime?       @db.Timestamp(6)
+  updated_at_coop                     DateTime?       @db.Timestamp(6)
   personne                            personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
   structure                           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -680,6 +677,7 @@ model main_structure {
   deleted_at                          DateTime?               @db.Timestamp(6)
   deleted_by                          String[]
   activites_coop                      activites_coop[]
+  contact_structures                  contact_structure[]
   contrat                             contrat[]
   personne_affectations               personne_affectations[]
   poste                               poste[]
@@ -691,6 +689,36 @@ model main_structure {
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
   @@map("structure")
+  @@schema("main")
+}
+
+model main_contact {
+  id                 Int                 @id @default(autoincrement())
+  nom                String              @db.VarChar(255)
+  prenom             String              @db.VarChar(255)
+  email              String              @db.VarChar(255)
+  telephone          String              @default("") @db.VarChar(20)
+  fonction           String              @default("") @db.VarChar(255)
+  est_referent_fne   Boolean             @default(false)
+  created_at         DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(6)
+  contact_structures contact_structure[]
+
+  @@map("contact")
+  @@schema("main")
+}
+
+model contact_structure {
+  id           Int            @id @default(autoincrement())
+  structure_id Int
+  contact_id   Int
+  created_at   DateTime?      @default(now()) @db.Timestamp(6)
+  contact      main_contact   @relation(fields: [contact_id], references: [id], onDelete: Cascade)
+  structure    main_structure @relation(fields: [structure_id], references: [id], onDelete: Cascade)
+
+  @@unique([structure_id, contact_id], map: "contact_structure_unique")
+  @@index([structure_id])
+  @@index([contact_id])
   @@schema("main")
 }
 

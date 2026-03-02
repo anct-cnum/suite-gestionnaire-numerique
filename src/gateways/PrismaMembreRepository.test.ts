@@ -224,10 +224,8 @@ describe('membre repository', () => {
 
     // THEN
     const modifiedRecord = await prisma.membreRecord.findUnique({ where: { id: 'structure-69-69' } })
-    expect(modifiedRecord).toStrictEqual({
+    expect(modifiedRecord).toMatchObject({
       categorieMembre: 'Préfecture départementale',
-      contact: 'email@example.com',
-      contactTechnique: null,
       dateSuppression: null,
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',

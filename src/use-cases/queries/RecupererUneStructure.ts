@@ -30,9 +30,11 @@ export type UneStructureReadModel = Readonly<{
     totalCoordinateur: number
     totalMediateur: number
   }>
-  contactReferent: Readonly<{
+  contacts: ReadonlyArray<{
     email: string
+    estReferentFNE: boolean
     fonction: string
+    id: number
     nom: string
     prenom: string
     telephone: string

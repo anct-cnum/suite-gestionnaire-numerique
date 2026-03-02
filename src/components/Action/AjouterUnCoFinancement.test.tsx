@@ -21,7 +21,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     expect(drawer).toBeInTheDocument()
-    const titre = within(drawer).getByRole('heading', { level: 1, name: 'Ajouter un co-financement' })
+    const titre = within(drawer).getByRole('heading', { level: 3, name: 'Ajouter un co-financement' })
     expect(titre).toBeInTheDocument()
     const texteDInstruction = within(drawer).getByText('Précisez l‘origine du financement', { selector: 'p' })
     expect(texteDInstruction).toBeInTheDocument()

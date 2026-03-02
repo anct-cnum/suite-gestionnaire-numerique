@@ -33,17 +33,17 @@ export type EntrepriseData = Readonly<{
   siret: string
 }>
 
-export interface GetMembreContactsRepository {
-  getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<MembreContacts>
+export interface GetStructureContactsRepository {
+  getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<ReadonlyArray<ContactData>>
 }
-
-export type MembreContacts = Readonly<{
-  contact: ContactData
-  contactTechnique?: ContactData
-}>
 
 export interface MembreRepository
   extends CreateMembreRepository,
-  GetMembreContactsRepository,
   GetMembreRepository,
+  GetMembreStructureIdRepository,
+  GetStructureContactsRepository,
   UpdateMembreRepository {}
+
+interface GetMembreStructureIdRepository {
+  getStructureId(uid: MembreState['uid']['value']): Promise<number>
+}

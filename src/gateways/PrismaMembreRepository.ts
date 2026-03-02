@@ -4,7 +4,7 @@ import { membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
-import { ContactData, EntrepriseData, MembreContacts, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
+import { ContactData, EntrepriseData, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
   async create(
@@ -15,59 +15,67 @@ export class PrismaMembreRepository implements MembreRepository {
     tx?: Prisma.TransactionClient
   ): Promise<void> {
     const client = tx ?? prisma
-    let email: string
-    let contactTechniqueEmail: string | undefined
+
+    const structureId = membre.state.uidStructure.value
 
     if (contactData) {
-      // Créer ou récupérer le contact principal
-      await prisma.contactMembreGouvernanceRecord.upsert({
-        create: {
+      const contact = await client.main_contact.create({
+        data: {
           email: contactData.email,
+          est_referent_fne: true,
           fonction: contactData.fonction,
           nom: contactData.nom,
           prenom: contactData.prenom,
-        },
-        update: {
-          fonction: contactData.fonction,
-          nom: contactData.nom,
-          prenom: contactData.prenom,
-        },
-        where: {
-          email: contactData.email,
         },
       })
-      email = contactData.email
+
+      await client.contact_structure.create({
+        data: {
+          contact_id: contact.id,
+          structure_id: structureId,
+        },
+      })
     } else {
-      // Fallback temporaire
-      email = `temp-${membre.state.uid.value}@example.com`
+      const contact = await client.main_contact.create({
+        data: {
+          email: `temp-${membre.state.uid.value}@example.com`,
+          est_referent_fne: true,
+          fonction: '',
+          nom: '',
+          prenom: '',
+        },
+      })
+
+      await client.contact_structure.create({
+        data: {
+          contact_id: contact.id,
+          structure_id: structureId,
+        },
+      })
     }
 
     if (contactTechniqueData) {
-      // Créer ou récupérer le contact technique
-      await prisma.contactMembreGouvernanceRecord.upsert({
-        create: {
+      const contactTechnique = await client.main_contact.create({
+        data: {
           email: contactTechniqueData.email,
+          est_referent_fne: true,
           fonction: contactTechniqueData.fonction,
           nom: contactTechniqueData.nom,
           prenom: contactTechniqueData.prenom,
-        },
-        update: {
-          fonction: contactTechniqueData.fonction,
-          nom: contactTechniqueData.nom,
-          prenom: contactTechniqueData.prenom,
-        },
-        where: {
-          email: contactTechniqueData.email,
         },
       })
-      contactTechniqueEmail = contactTechniqueData.email
+
+      await client.contact_structure.create({
+        data: {
+          contact_id: contactTechnique.id,
+          structure_id: structureId,
+        },
+      })
     }
 
     await client.membreRecord.create({
       data: {
-        categorieMembre : entrepriseData.categorieJuridiqueCode,
-        contact: email,
-        contactTechnique: contactTechniqueEmail,
+        categorieMembre: entrepriseData.categorieJuridiqueCode,
         gouvernanceDepartementCode: membre.state.uidGouvernance.value,
         id: membre.state.uid.value,
         isCoporteur: membre.state.roles.includes('coporteur'),
@@ -75,7 +83,7 @@ export class PrismaMembreRepository implements MembreRepository {
         siretRidet: entrepriseData.siret,
         statut: membre.state.statut,
         structureId: membre.state.uidStructure.value,
-        type : entrepriseData.categorieJuridiqueUniteLegale,
+        type: entrepriseData.categorieJuridiqueUniteLegale,
       },
     })
   }
@@ -101,43 +109,49 @@ export class PrismaMembreRepository implements MembreRepository {
       uidGouvernance: {
         value: record.gouvernanceDepartementCode,
       },
-      uidStructure: { value: record.structureId  },
+      uidStructure: { value: record.structureId },
     }) as Membre
   }
 
-  async getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<MembreContacts> {
+  async getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<ReadonlyArray<ContactData>> {
     const client = tx ?? prisma
     const record = await client.membreRecord.findUniqueOrThrow({
-      include: {
-        relationContact: true,
-        relationContactTechnique: true,
+      select: {
+        structureId: true,
       },
       where: {
         id: uid,
       },
     })
 
-    const contact: ContactData = {
-      email: record.relationContact.email,
-      fonction: record.relationContact.fonction,
-      nom: record.relationContact.nom,
-      prenom: record.relationContact.prenom,
-    }
+    const contactStructures = await client.contact_structure.findMany({
+      include: {
+        contact: true,
+      },
+      where: {
+        structure_id: record.structureId,
+      },
+    })
 
-    let contactTechnique: ContactData | undefined
-    if (record.relationContactTechnique) {
-      contactTechnique = {
-        email: record.relationContactTechnique.email,
-        fonction: record.relationContactTechnique.fonction,
-        nom: record.relationContactTechnique.nom,
-        prenom: record.relationContactTechnique.prenom,
-      }
-    }
+    return contactStructures.map((cs) => ({
+      email: cs.contact.email,
+      fonction: cs.contact.fonction,
+      nom: cs.contact.nom,
+      prenom: cs.contact.prenom,
+    }))
+  }
 
-    return {
-      contact,
-      contactTechnique,
-    }
+  async getStructureId(uid: MembreState['uid']['value']): Promise<number> {
+    const record = await prisma.membreRecord.findUniqueOrThrow({
+      select: {
+        structureId: true,
+      },
+      where: {
+        id: uid,
+      },
+    })
+
+    return record.structureId
   }
 
   async update(membre: Membre, tx?: Prisma.TransactionClient): Promise<void> {

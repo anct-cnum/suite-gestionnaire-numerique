@@ -186,7 +186,6 @@ describe('structures loader', () => {
       await creerUneGouvernance({ departementCode: '10' })
       await creerUnContact({ email: 'contact@aube.fr' })
       await creerUnMembre({
-        contact: 'contact@aube.fr',
         gouvernanceDepartementCode: '10',
         id: 'membre-100',
         structureId: 100,

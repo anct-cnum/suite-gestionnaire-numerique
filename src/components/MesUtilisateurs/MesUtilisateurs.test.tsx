@@ -206,7 +206,7 @@ describe('mes utilisateurs', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Martin Tartempion' })
-    const prenomEtNom = within(drawer).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
+    const prenomEtNom = within(drawer).getByRole('heading', { level: 3, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawer).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
@@ -258,7 +258,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée le 30/12/1969' })
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée le 30/12/1969' })
+      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Invitation envoyée le 30/12/1969' })
       expect(titre).toBeInTheDocument()
 
       const emailLabel = within(drawer).getByText('Adresse électronique')
@@ -329,7 +329,7 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Sebastien Palat')
 
       // THEN
-      const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
+      const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 3 })
       const titre = allHeadings.find((heading) => heading.textContent?.includes('aujourd') ?? false)
       expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
@@ -344,7 +344,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée hier' })
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée hier' })
+      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Invitation envoyée hier' })
       expect(titre).toBeInTheDocument()
     })
   })
@@ -358,7 +358,7 @@ describe('mes utilisateurs', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Paul Provost' })
-    const prenomEtNom = within(drawer).getByRole('heading', { level: 1, name: 'Paul Provost' })
+    const prenomEtNom = within(drawer).getByRole('heading', { level: 3, name: 'Paul Provost' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawer).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
