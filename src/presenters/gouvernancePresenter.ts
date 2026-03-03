@@ -256,10 +256,12 @@ function toMembresViewModel() {
 
 function toCoporteursDetailsViewModel(uidGouvernance: string) {
   return (coporteur: CoporteurDetailReadModel): MembreDetailsViewModel => {
-    const contactReferent = `${coporteur.contactReferent.prenom} ${coporteur.contactReferent.nom}, ${coporteur.contactReferent.poste} ${coporteur.contactReferent.mailContact}`
+    const contactReferent = coporteur.contactReferent
+      ? `${coporteur.contactReferent.prenom} ${coporteur.contactReferent.nom}, ${coporteur.contactReferent.poste} ${coporteur.contactReferent.mailContact}`
+      : undefined
 
     const detailsAffichage: MembreDetailsViewModel['details'] = [
-      ...coporteur.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: coporteur.contactReferent.denomination }] : [],
+      ...coporteur.contactReferent?.denomination === 'Contact politique de la collectivité' && contactReferent !== undefined ? [{ information: contactReferent, intitule: coporteur.contactReferent.denomination }] : [],
 
       ...isNaN(coporteur.totalMontantsSubventionsAccordees ?? NaN) ? [] : [
         {
@@ -275,7 +277,7 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
           intitule: 'Total subventions formations accordées',
         },
       ],
-      ...coporteur.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
+      ...coporteur.contactReferent?.denomination === 'Contact référent' && contactReferent !== undefined ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
       {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         information: isNullishOrEmpty(coporteur.telephone) ? '-' : coporteur.telephone!,

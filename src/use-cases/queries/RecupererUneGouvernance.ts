@@ -114,7 +114,7 @@ export type MembreReadModel = Readonly<{
 export type TypeDeComite = 'autre' | 'consultatif' | 'stratégique' | 'technique'
 
 export type CoporteurDetailReadModel = Readonly<{
-  contactReferent: Readonly<{
+  contactReferent?: Readonly<{
     denomination: 'Contact politique de la collectivité' | 'Contact référent'
     mailContact: string
     nom: string
@@ -169,10 +169,12 @@ function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): Cop
     : ['Contact référent' as const, { plusDetails: '/' }]
   return {
     ...membre,
-    contactReferent: {
-      ...membre.contactReferent,
-      denomination,
-    },
+    contactReferent: membre.contactReferent
+      ? {
+        ...membre.contactReferent,
+        denomination,
+      }
+      : undefined,
     links,
   }
 }
