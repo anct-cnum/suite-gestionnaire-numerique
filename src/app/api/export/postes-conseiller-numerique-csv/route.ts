@@ -76,7 +76,10 @@ function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): 
     'Total versé',
   ]
 
-  function escapeCSV(value: string): string {
+  function escapeCSV(value: null | string | undefined): string {
+    if (value === null || value === undefined) {
+      return ''
+    }
     if (value.includes(',') || value.includes('"') || value.includes('\n')) {
       return `"${value.replace(/"/g, '""')}"`
     }
@@ -98,7 +101,7 @@ function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): 
     poste.codeDepartement,
     getStatutLabel(poste.statut),
     poste.estCoordinateur ? 'Oui' : 'Non',
-    escapeCSV(poste.sourcesFinancement ?? ''),
+    escapeCSV(poste.sourcesFinancement),
     poste.dateFinConvention === null ? '' : formaterEnDateFrancaise(poste.dateFinConvention),
     poste.dateFinContrat === null ? '' : formaterEnDateFrancaise(poste.dateFinContrat),
     poste.bonification ? 'Oui' : 'Non',
