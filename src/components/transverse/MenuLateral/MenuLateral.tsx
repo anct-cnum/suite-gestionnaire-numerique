@@ -55,6 +55,19 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
     },
   ]
 
+  const menusOrganisation = [
+    ...sessionUtilisateurViewModel.role.type !== 'gestionnaire_structure' || sessionUtilisateurViewModel.structureId === null ? [] : [{
+      icon: 'building-line',
+      label: 'Ma structure',
+      url: `/structure/${sessionUtilisateurViewModel.structureId}`,
+    }],
+    {
+      icon: 'team-line',
+      label: 'Mon équipe',
+      url: '/mes-utilisateurs',
+    },
+  ]
+
   const menusAVenir = [
     {
       icon: 'pen-nib-line',
@@ -70,6 +83,40 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
   ]
 
   const activeClass = pathname === '/tableau-de-bord' ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+  function renderMenuOrganisation(): ReactElement {
+    return (
+      <>
+        <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
+          ORGANISATION
+        </p>
+        <ul className="fr-sidemenu__list">
+          {menusOrganisation.map((menu) => {
+            const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+            return (
+              <li
+                className={`fr-sidemenu__item ${activeClass}`}
+                key={menu.url}
+              >
+                <Link
+                  aria-current={pathname === menu.url ? 'page' : false}
+                  className="fr-sidemenu__link"
+                  href={menu.url}
+                >
+                  <Icon
+                    classname="fr-mr-1w"
+                    icon={menu.icon}
+                  />
+                  {menu.label}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </>
+    )
+  }
 
   function renderMenusSelonRole(): null | ReactElement {
     if (sessionUtilisateurViewModel.role.type === 'administrateur_dispositif') {
@@ -225,6 +272,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
           </Link>
         </li>
       </ul>
+      {renderMenuOrganisation()}
       {renderMenusSelonRole()}
     </nav>
   )
