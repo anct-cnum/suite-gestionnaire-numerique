@@ -98,6 +98,15 @@ export default function PiedDePage(): ReactElement {
                 Politique de confidentialité
               </Link>
             </li>
+            <li className="fr-footer__bottom-item">
+              <ExternalLink
+                className="fr-footer__bottom-link"
+                href="https://github.com/anct-cnum/suite-gestionnaire-numerique"
+                title="Code source"
+              >
+                Code source
+              </ExternalLink>
+            </li>
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
