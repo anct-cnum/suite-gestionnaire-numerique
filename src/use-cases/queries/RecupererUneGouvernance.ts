@@ -164,9 +164,9 @@ type Query = Readonly<{
 }>
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const [denomination, links] = isPrefectureDepartementale(membre)
-    ? ['Contact politique de la collectivité' as const, {}]
-    : ['Contact référent' as const, { plusDetails: '/' }]
+  const denomination = isPrefectureDepartementale(membre)
+    ? 'Contact politique de la collectivité' as const
+    : 'Contact référent' as const
   return {
     ...membre,
     contactReferent: membre.contactReferent
@@ -175,7 +175,6 @@ function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): Cop
         denomination,
       }
       : undefined,
-    links,
   }
 }
 function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolean {

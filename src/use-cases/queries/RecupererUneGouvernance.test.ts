@@ -162,9 +162,7 @@ describe('recupérer une gouvernance', () => {
             prenom: 'Durant',
           },
           feuillesDeRoute: [{  nom: 'Feuille de route inclusion', uid: '44' }],
-          links: {
-            plusDetails: '/',
-          },
+          links: {},
           nom: 'Département du Rhône',
           nombreContacts: 1,
           roles: ['coporteur', 'cofinanceur'],

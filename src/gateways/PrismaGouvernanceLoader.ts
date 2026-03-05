@@ -194,7 +194,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 }
                 : undefined,
               feuillesDeRoute: feuillesDeRoutePortees.map(({ nom, uid }) => ({ nom, uid })),
-              links: {},
+              links: { plusDetails: `/structure/${membre.structureId}` },
               nom: membre.nom,
               nombreContacts: membre.nombreContacts,
               roles: membre.roles,
