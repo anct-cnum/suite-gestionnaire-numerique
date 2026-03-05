@@ -1,3 +1,14 @@
+-- Adaptation de la vue de synthèse des postes Conseiller Numérique
+-- Suite à la refonte de la table subvention (V048)
+--
+-- Changements principaux :
+-- - Plus de source_financement (données directement dans colonnes spécifiques)
+-- - Plus de is_territoire_prioritaire (déductible de montant_bonification_v2)
+-- - Nouvelles colonnes avec suffixes _v1, _v2, _dgcl, _ditp, _dge
+
+DROP VIEW IF EXISTS min.postes_conseiller_numerique_synthese;
+
+CREATE VIEW min.postes_conseiller_numerique_synthese AS
 WITH poste_par_structure AS (
   -- Pour chaque tuple (poste_conum_id, structure_id), sélectionner la ligne la plus récente
   -- Cela permet d'avoir plusieurs lignes si un poste a été transféré entre structures

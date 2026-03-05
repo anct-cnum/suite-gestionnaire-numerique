@@ -739,20 +739,24 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
   }
 
   const datesResult = await prisma.$queryRaw<Array<{
-    date_debut: Date | null
-    date_fin: Date | null
+    date_debut_dgcl: Date | null
+    date_debut_dge: Date | null
+    date_debut_ditp: Date | null
+    date_fin_dgcl: Date | null
+    date_fin_dge: Date | null
+    date_fin_ditp: Date | null
     poste_id: number
-    source_financement: null | string
   }>>`
-    SELECT DISTINCT ON (poste_id, source_financement)
+    SELECT
       s.poste_id,
-      s.source_financement,
-      s.date_debut_convention as date_debut,
-      s.date_fin_convention as date_fin
+      s.date_debut_convention_dgcl as date_debut_dgcl,
+      s.date_fin_convention_dgcl as date_fin_dgcl,
+      s.date_debut_convention_ditp as date_debut_ditp,
+      s.date_fin_convention_ditp as date_fin_ditp,
+      s.date_debut_convention_dge as date_debut_dge,
+      s.date_fin_convention_dge as date_fin_dge
     FROM main.subvention s
     WHERE s.poste_id = ANY(${postesIds})
-      AND s.source_financement IN ('DGCL', 'DGE', 'DITP')
-    ORDER BY s.poste_id, s.source_financement, s.date_fin_convention DESC NULLS LAST
   `
 
   const datesMap = new Map<number, {
@@ -769,17 +773,26 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
   for (const date of datesResult) {
     const posteDates = datesMap.get(date.poste_id)
     if (posteDates !== undefined) {
-      if (date.source_financement === 'DGCL') {
+      // V1 : DGCL
+      if (date.date_debut_dgcl !== null || date.date_fin_dgcl !== null) {
         posteDates.v1 = {
-          dateDebut: date.date_debut,
-          dateFin: date.date_fin,
+          dateDebut: date.date_debut_dgcl,
+          dateFin: date.date_fin_dgcl,
           source: 'DGCL',
         }
-      } else if (date.source_financement === 'DGE' || date.source_financement === 'DITP') {
+      }
+      // V2 : DITP ou DGE (prendre DITP en priorité, sinon DGE)
+      if (date.date_debut_ditp !== null || date.date_fin_ditp !== null) {
         posteDates.v2 = {
-          dateDebut: date.date_debut,
-          dateFin: date.date_fin,
-          source: date.source_financement,
+          dateDebut: date.date_debut_ditp,
+          dateFin: date.date_fin_ditp,
+          source: 'DITP',
+        }
+      } else if (date.date_debut_dge !== null || date.date_fin_dge !== null) {
+        posteDates.v2 = {
+          dateDebut: date.date_debut_dge,
+          dateFin: date.date_fin_dge,
+          source: 'DGE',
         }
       }
     }

@@ -778,29 +778,43 @@ model formation {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model subvention {
-  id                                Int       @id @default(autoincrement())
-  poste_id                          Int
-  source_financement                String?   @db.VarChar(4)
-  date_debut_convention             DateTime? @db.Date
-  date_debut_financement            DateTime? @db.Date
-  date_fin_convention               DateTime? @db.Date
-  date_fin_financement              DateTime? @db.Date
-  montant_subvention                BigInt?
-  montant_bonification              BigInt?
-  versement_1                       BigInt?
-  versement_2                       BigInt?
-  versement_3                       BigInt?
-  date_versement_1                  DateTime? @db.Date
-  date_versement_2                  DateTime? @db.Date
-  date_versement_3                  DateTime? @db.Date
-  is_territoire_prioritaire         Boolean?
-  mois_utilises_periode_financement Int?      @db.SmallInt
-  mois_utilises_poste               Int?      @db.SmallInt
-  created_at                        DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                        DateTime? @db.Timestamp(6)
-  avoir                             BigInt?
-  cp_a_date                         BigInt?
-  poste                             poste     @relation(fields: [poste_id], references: [id], onDelete: Cascade)
+  id                                     Int       @id @default(autoincrement())
+  poste_id                               Int
+  // DGCL (V1)
+  date_debut_convention_dgcl             DateTime? @db.Date
+  date_debut_financement_dgcl            DateTime? @db.Date
+  date_fin_convention_dgcl               DateTime? @db.Date
+  date_fin_financement_dgcl              DateTime? @db.Date
+  mois_utilises_periode_financement_dgcl Int?      @db.SmallInt
+  montant_subvention_v1                  BigInt?
+  montant_versement_v1                   BigInt?
+  montant_avoir_v1                       BigInt?
+  // DITP (V2)
+  date_debut_convention_ditp             DateTime? @db.Date
+  date_debut_financement_ditp            DateTime? @db.Date
+  date_fin_convention_ditp               DateTime? @db.Date
+  date_fin_financement_ditp              DateTime? @db.Date
+  mois_utilises_periode_financement_ditp Int?      @db.SmallInt
+  // DGE (V2)
+  date_debut_convention_dge              DateTime? @db.Date
+  date_debut_financement_dge             DateTime? @db.Date
+  date_fin_convention_dge                DateTime? @db.Date
+  date_fin_financement_dge               DateTime? @db.Date
+  mois_utilises_periode_financement_dge  Int?      @db.SmallInt
+  // Montants V2
+  montant_subvention_v2                  BigInt?
+  montant_bonification_v2                BigInt?
+  montant_avoir_v2                       BigInt?
+  // Versements V2
+  versement_1_v2                         BigInt?
+  versement_2_v2                         BigInt?
+  versement_3_v2                         BigInt?
+  date_versement_1_v2                    DateTime? @db.Date
+  date_versement_2_v2                    DateTime? @db.Date
+  date_versement_3_v2                    DateTime? @db.Date
+  created_at                             DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                             DateTime? @db.Timestamp(6)
+  poste                                  poste     @relation(fields: [poste_id], references: [id], onDelete: Cascade)
 
   @@schema("main")
 }

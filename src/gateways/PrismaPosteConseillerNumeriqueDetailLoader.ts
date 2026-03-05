@@ -299,18 +299,22 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
 
   private async recupererDatesConventions(posteConumId: number): Promise<DatesConventions> {
     const result = await prisma.$queryRaw<Array<{
-      date_debut: Date | null
-      date_fin: Date | null
-      source_financement: null | string
+      date_debut_dgcl: Date | null
+      date_debut_dge: Date | null
+      date_debut_ditp: Date | null
+      date_fin_dgcl: Date | null
+      date_fin_dge: Date | null
+      date_fin_ditp: Date | null
     }>>`
-      SELECT DISTINCT ON (source_financement)
-        s.source_financement,
-        s.date_debut_convention as date_debut,
-        s.date_fin_convention as date_fin
+      SELECT
+        s.date_debut_convention_dgcl as date_debut_dgcl,
+        s.date_fin_convention_dgcl as date_fin_dgcl,
+        s.date_debut_convention_ditp as date_debut_ditp,
+        s.date_fin_convention_ditp as date_fin_ditp,
+        s.date_debut_convention_dge as date_debut_dge,
+        s.date_fin_convention_dge as date_fin_dge
       FROM main.subvention s
       WHERE s.poste_id = ${posteConumId}
-        AND s.source_financement IN ('DGCL', 'DGE', 'DITP')
-      ORDER BY source_financement, s.date_fin_convention DESC NULLS LAST
     `
 
     const dates: DatesConventions = {
@@ -318,16 +322,27 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       v2: null,
     }
 
-    for (const row of result) {
-      if (row.source_financement === 'DGCL') {
+    if (result.length > 0) {
+      const row = result[0]
+
+      // V1 : DGCL
+      if (row.date_debut_dgcl !== null || row.date_fin_dgcl !== null) {
         dates.v1 = {
-          dateDebut: row.date_debut,
-          dateFin: row.date_fin,
+          dateDebut: row.date_debut_dgcl,
+          dateFin: row.date_fin_dgcl,
         }
-      } else if (row.source_financement === 'DGE' || row.source_financement === 'DITP') {
+      }
+
+      // V2 : DITP ou DGE (prendre DITP en priorité, sinon DGE)
+      if (row.date_debut_ditp !== null || row.date_fin_ditp !== null) {
         dates.v2 = {
-          dateDebut: row.date_debut,
-          dateFin: row.date_fin,
+          dateDebut: row.date_debut_ditp,
+          dateFin: row.date_fin_ditp,
+        }
+      } else if (row.date_debut_dge !== null || row.date_fin_dge !== null) {
+        dates.v2 = {
+          dateDebut: row.date_debut_dge,
+          dateFin: row.date_fin_dge,
         }
       }
     }
