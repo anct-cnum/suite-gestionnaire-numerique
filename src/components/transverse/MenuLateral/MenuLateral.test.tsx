@@ -13,8 +13,8 @@ describe('menu lateral', () => {
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const menu = within(navigation).getByRole('list')
-    const menuItems = within(menu).getAllByRole('listitem')
+    const menus = within(navigation).getAllByRole('list')
+    const menuItems = within(menus[0]).getAllByRole('listitem')
     const tableauDeBord = within(menuItems[0]).getByRole('link', { current: false, name: 'Tableau de bord' })
     expect(tableauDeBord).toHaveAttribute('href', '/tableau-de-bord')
     expect(menuItems[0]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
@@ -75,13 +75,15 @@ describe('menu lateral', () => {
 
   it.each([
     { itemIndex: 0, listIndex: 0, name: 'Tableau de bord', pathname: '/tableau-de-bord' },
-    { itemIndex: 0, listIndex: 1, name: 'Gouvernance', pathname: '/gouvernance/93' },
-    { itemIndex: 0, listIndex: 2, name: 'Membres', pathname: '/gouvernance/93/membres' },
-    { itemIndex: 1, listIndex: 2, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
-    { itemIndex: 3, listIndex: 1, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
-    { itemIndex: 4, listIndex: 1, name: 'Lieux d\'inclusion', pathname: '/lieux-inclusion' },
-    { itemIndex: 0, listIndex: 3, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 3, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+    { itemIndex: 0, listIndex: 1, name: 'Ma structure', pathname: '/structure/42' },
+    { itemIndex: 1, listIndex: 1, name: 'Mon équipe', pathname: '/mes-utilisateurs' },
+    { itemIndex: 0, listIndex: 2, name: 'Gouvernance', pathname: '/gouvernance/93' },
+    { itemIndex: 0, listIndex: 3, name: 'Membres', pathname: '/gouvernance/93/membres' },
+    { itemIndex: 1, listIndex: 3, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
+    { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
+    { itemIndex: 4, listIndex: 2, name: 'Lieux d\'inclusion', pathname: '/lieux-inclusion' },
+    { itemIndex: 0, listIndex: 4, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])('étant un utilisateur, quand j\'accède à l\'URL $pathname, alors l\'item $name du menu a le focus', ({ itemIndex, listIndex, name, pathname }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement(pathname)
@@ -99,15 +101,68 @@ describe('menu lateral', () => {
     expect(element).toHaveAttribute('aria-current', 'page')
   })
 
+  it('étant n\'importe qui, quand j\'affiche le menu latéral, alors la section ORGANISATION s\'affiche avec Mon équipe', () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const organisation = within(navigation).getByText('ORGANISATION', { selector: 'p' })
+    expect(organisation).toBeInTheDocument()
+    const monEquipe = screen.getByRole('link', { name: 'Mon équipe' })
+    expect(monEquipe).toHaveAttribute('href', '/mes-utilisateurs')
+  })
+
+  it('étant un gestionnaire de structure avec une structure, quand j\'affiche le menu latéral, alors Ma structure est visible', () => {
+    // WHEN
+    afficherMenuLateralGestionnaireDepartement()
+
+    // THEN
+    const maStructure = screen.getByRole('link', { name: 'Ma structure' })
+    expect(maStructure).toHaveAttribute('href', '/structure/42')
+  })
+
+  it('étant un utilisateur sans structure, quand j\'affiche le menu latéral, alors Ma structure n\'est pas visible', () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const maStructure = screen.queryByRole('link', { name: 'Ma structure' })
+    expect(maStructure).not.toBeInTheDocument()
+  })
+
+  it('étant un utilisateur non gestionnaire de structure, quand j\'affiche le menu latéral, alors Ma structure n\'est pas visible même avec un structureId', () => {
+    // WHEN
+    renderComponent(
+      <MenuLateral />,
+      {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          role: {
+            doesItBelongToGroupeAdmin: false,
+            libelle: 'Département',
+            nom: 'Gestionnaire département',
+            pictogramme: 'compass-3-line',
+            rolesGerables: [],
+            type: 'gestionnaire_departement',
+          },
+          structureId: 42,
+        }),
+      }
+    )
+
+    // THEN
+    const maStructure = screen.queryByRole('link', { name: 'Ma structure' })
+    expect(maStructure).not.toBeInTheDocument()
+  })
+
   it('étant un utilisateur autre que gestionnaire de département, quand j\'affiche le menu latéral, alors il ne s\'affiche pas avec le lien de la gouvernance', () => {
     // WHEN
     afficherMenuLateral()
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const menu = within(navigation).getByRole('list')
-    const tableauDeBord = within(menu).queryByRole('link', { name: 'Gouvernance' })
-    expect(tableauDeBord).not.toBeInTheDocument()
+    const gouvernance = within(navigation).queryByRole('link', { name: 'Gouvernance' })
+    expect(gouvernance).not.toBeInTheDocument()
   })
 
   it('étant un utilisateur, quand les totaux sont à 0, alors je vois le menu Gouvernance sans sous menu', () => {
@@ -151,7 +206,7 @@ describe('menu lateral', () => {
 
     // THEN
     const menus = screen.getAllByRole('list')
-    const sousList = within(menus[2]).getAllByRole('listitem')
+    const sousList = within(menus[3]).getAllByRole('listitem')
     expect(sousList).toHaveLength(expectedMenus.length)
     expectedMenus.forEach((menuName, index) => {
       expect(within(sousList[index]).getByText(menuName)).toBeInTheDocument()
@@ -175,6 +230,7 @@ function afficherMenuLateralGestionnaireDepartement(pathname?: string): void {
       pathname,
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         displayLiensGouvernance: true,
+        structureId: 42,
       }),
     },
     {
