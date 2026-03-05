@@ -148,7 +148,7 @@ describe('gouvernance', () => {
             feuillesDeRoute: [
               { nom: 'Feuille de route inclusion', uid: '0' },
               { nom: 'Feuille de route numérique du Rhône', uid: '1' }],
-            links: {},
+            links: { plusDetails: '/structure/10' },
             nom: 'Préfecture du Rhône',
             nombreContacts: 2,
             roles: ['coporteur'],
@@ -167,7 +167,7 @@ describe('gouvernance', () => {
               prenom: 'Durant',
             },
             feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '2' }],
-            links: {},
+            links: { plusDetails: '/structure/20' },
             nom: 'Département du Rhône',
             nombreContacts: 1,
             roles: ['coporteur', 'cofinanceur'],
@@ -216,17 +216,15 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(4)
-    const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('button', { name: 'Préfecture du Rhône' })
-    expect(membrePrefectureDuRhone).toHaveAttribute('type', 'button')
-    expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
+    const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('link', { name: 'Préfecture du Rhône' })
+    expect(membrePrefectureDuRhone).toHaveAttribute('href', '/structure/10')
     expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
     expect(columns1Body[2].textContent).toBe('Préfecture départementale')
     expect(columns1Body[3].textContent).toBe('Co-porteur ')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(4)
-    const membreDepartementDuRhone = within(columns2Body[1]).getByRole('button', { name: 'Département du Rhône' })
-    expect(membreDepartementDuRhone).toHaveAttribute('type', 'button')
-    expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
+    const membreDepartementDuRhone = within(columns2Body[1]).getByRole('link', { name: 'Département du Rhône' })
+    expect(membreDepartementDuRhone).toHaveAttribute('href', '/structure/20')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
     expect(columns2Body[2].textContent).toBe('Conseil départemental')
     expect(columns2Body[3].textContent).toBe('Co-porteur Co-financeur ')
