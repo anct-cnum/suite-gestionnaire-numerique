@@ -4,7 +4,8 @@ import { ReactElement } from 'react'
 
 import PosteHeader from './PosteHeader'
 import PosteStructureConventionnee from './PosteStructureConventionnee'
-import MenuCollant, { type MenuCollantSection } from '../AidantDetails/MenuCollant'
+import MenuCollant, { type SideMenuItem } from '../AidantDetails/MenuCollant'
+import styles from '../AidantDetails/MenuCollant.module.css'
 import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import ContratsRattaches, {
   type ContratRattacheViewModel,
@@ -15,21 +16,29 @@ import ConventionsEtFinancements, {
 
 export default function Poste({ viewModel }: Props): ReactElement {
   return (
-    <div className="fr-grid-row">
-      <div className="fr-col-3">
-        <MenuCollant sections={sections} />
-      </div>
-      <div className="fr-col-8">
-        <PosteHeader
-          badges={viewModel.badges}
-          posteId={viewModel.posteId}
-        />
+    <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
+      <div className={styles.layout}>
+        <div className={styles.menuContainer}>
+          <MenuCollant
+            contentId="poste-content"
+            items={items}
+          />
+        </div>
+        <div
+          className={styles.contentContainer}
+          id="poste-content"
+        >
+          <PosteHeader
+            badges={viewModel.badges}
+            posteId={viewModel.posteId}
+          />
 
-        <PosteStructureConventionnee structure={viewModel.structure} />
-        <AlerteConstruction />
-        <ConventionsEtFinancements data={viewModel.conventionsEtFinancements} />
+          <PosteStructureConventionnee structure={viewModel.structure} />
+          <AlerteConstruction />
+          <ConventionsEtFinancements data={viewModel.conventionsEtFinancements} />
 
-        <ContratsRattaches contrats={viewModel.contrats} />
+          <ContratsRattaches contrats={viewModel.contrats} />
+        </div>
       </div>
     </div>
   )
@@ -64,17 +73,17 @@ type Props = Readonly<{
   viewModel: PosteViewModel
 }>
 
-const sections: ReadonlyArray<MenuCollantSection> = [
+const items: ReadonlyArray<SideMenuItem> = [
   {
-    id: 'structure-conventionnee',
-    label: 'Structure conventionnée',
+    linkProps: { href: '#structure-conventionnee' },
+    text: 'Structure conventionnée',
   },
   {
-    id: 'conventions',
-    label: 'Convention et financement',
+    linkProps: { href: '#conventions' },
+    text: 'Convention et financement',
   },
   {
-    id: 'contrats',
-    label: 'Contrats',
+    linkProps: { href: '#contrats' },
+    text: 'Contrats',
   },
 ]

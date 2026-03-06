@@ -1,0 +1,36 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fullWidth {
+  min-width: 100%;
+}
+
+.menuFixed {
+  overflow: auto;
+  position: fixed;
+  width: 16%;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.menuFixed :global(.fr-sidemenu__inner) {
+  box-shadow: none;
+}
+
+@media (width >= 48em) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .menuContainer {
+    flex-shrink: 0;
+    width: 16%;
+  }
+
+  .contentContainer {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

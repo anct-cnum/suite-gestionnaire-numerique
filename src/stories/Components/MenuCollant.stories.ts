@@ -17,35 +17,38 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    sections: [
-      { id: 'header', label: 'En-tête' },
-      { id: 'informations-personnelles', label: 'Informations personnelles' },
-      { id: 'structures-employeuses', label: 'Structures employeuses' },
-      { id: 'activites', label: 'Activités' },
-      { id: 'lieux-activite', label: 'Lieux d\'activité' },
+    contentId: 'storybook-content',
+    items: [
+      { linkProps: { href: '#header' }, text: 'En-tête' },
+      { linkProps: { href: '#informations-personnelles' }, text: 'Informations personnelles' },
+      { linkProps: { href: '#structures-employeuses' }, text: 'Structures employeuses' },
+      { linkProps: { href: '#activites' }, text: 'Activités' },
+      { linkProps: { href: '#lieux-activite' }, text: 'Lieux d\'activité' },
     ],
   },
 }
 
 export const WithFewSections: Story = {
   args: {
-    sections: [
-      { id: 'section1', label: 'Section 1' },
-      { id: 'section2', label: 'Section 2' },
+    contentId: 'storybook-content',
+    items: [
+      { linkProps: { href: '#section1' }, text: 'Section 1' },
+      { linkProps: { href: '#section2' }, text: 'Section 2' },
     ],
   },
 }
 
 export const WithManySections: Story = {
   args: {
-    sections: [
-      { id: 'section1', label: 'Section 1' },
-      { id: 'section2', label: 'Section 2' },
-      { id: 'section3', label: 'Section 3' },
-      { id: 'section4', label: 'Section 4' },
-      { id: 'section5', label: 'Section 5' },
-      { id: 'section6', label: 'Section 6' },
-      { id: 'section7', label: 'Section 7' },
+    contentId: 'storybook-content',
+    items: [
+      { linkProps: { href: '#section1' }, text: 'Section 1' },
+      { linkProps: { href: '#section2' }, text: 'Section 2' },
+      { linkProps: { href: '#section3' }, text: 'Section 3' },
+      { linkProps: { href: '#section4' }, text: 'Section 4' },
+      { linkProps: { href: '#section5' }, text: 'Section 5' },
+      { linkProps: { href: '#section6' }, text: 'Section 6' },
+      { linkProps: { href: '#section7' }, text: 'Section 7' },
     ],
   },
 }
