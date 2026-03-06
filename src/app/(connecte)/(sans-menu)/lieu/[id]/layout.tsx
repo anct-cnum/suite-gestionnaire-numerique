@@ -1,39 +1,22 @@
 import { ReactElement, ReactNode } from 'react'
 
-import MenuCollant, { MenuCollantSection } from '@/components/AidantDetails/MenuCollant'
+import MenuCollant, { type SideMenuItem } from '@/components/AidantDetails/MenuCollant'
+import styles from '@/components/AidantDetails/MenuCollant.module.css'
 
 export default function AidantLayout({ children }: Props): ReactElement {
-  const sections: ReadonlyArray<MenuCollantSection> = [
-    {
-      id: 'informations-generales',
-      label: 'Informations générales',
-
-    },
-    {
-      id: 'lieu-accueil-public',
-      label: 'Lieu accueillant du public',
-      sousMenus: [
-        { id: 'lieu-detail-description', label: 'Description de l\'activité du lieu' },
-        { id: 'lieu-information-pratique', label: 'Informations pratiques' }],
-    },
-    {
-      id: 'services-inclusion-numerique',
-      label: 'Services d\'inclusion numérique',
-      sousMenus: [
-        { id: 'lieu-detail-service-accompagnement', label: 'Services & types d\'accompagnement' },
-        { id: 'lieu-detail-service-modalite', label: 'Modalités d\'accès au service' },
-        { id: 'lieu-detail-service-public', label: 'Types de publics accueillis' },
-      ],
-    },
-  ]
-
   return (
-    <div className="fr-container fr-py-4w">
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-3">
-          <MenuCollant sections={sections} />
+    <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
+      <div className={styles.layout}>
+        <div className={styles.menuContainer}>
+          <MenuCollant
+            contentId="lieu-content"
+            items={items}
+          />
         </div>
-        <div className="fr-col-12 fr-col-md-9">
+        <div
+          className={styles.contentContainer}
+          id="lieu-content"
+        >
           {children}
         </div>
       </div>
@@ -44,3 +27,27 @@ export default function AidantLayout({ children }: Props): ReactElement {
 type Props = Readonly<{
   children: ReactNode
 }>
+
+const items: ReadonlyArray<SideMenuItem> = [
+  {
+    linkProps: { href: '#informations-generales' },
+    text: 'Informations générales',
+  },
+  {
+    items: [
+      { linkProps: { href: '#lieu-detail-description' }, text: 'Description de l\'activité du lieu' },
+      { linkProps: { href: '#lieu-information-pratique' }, text: 'Informations pratiques' },
+    ],
+    linkProps: { href: '#lieu-accueil-public' },
+    text: 'Lieu accueillant du public',
+  },
+  {
+    items: [
+      { linkProps: { href: '#lieu-detail-service-accompagnement' }, text: 'Services & types d\'accompagnement' },
+      { linkProps: { href: '#lieu-detail-service-modalite' }, text: 'Modalités d\'accès au service' },
+      { linkProps: { href: '#lieu-detail-service-public' }, text: 'Types de publics accueillis' },
+    ],
+    linkProps: { href: '#services-inclusion-numerique' },
+    text: 'Services d\'inclusion numérique',
+  },
+]

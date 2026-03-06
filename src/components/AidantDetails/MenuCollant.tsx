@@ -2,26 +2,26 @@
 
 import { ReactElement } from 'react'
 
-import AnchorNavigation, { type AnchorSection } from '../../shared/components/AnchorNavigation'
-import useStickyPosition from '../../shared/hooks/useStickyPosition'
+import styles from './MenuCollant.module.css'
+import CompactNavigationSideMenu, { type SideMenuItem } from '@/shared/components/CompactNavigationSideMenu'
+import useStickyPosition from '@/shared/hooks/useStickyPosition'
 
-export type MenuCollantSection = AnchorSection
-
-export default function MenuCollant(props: Props): ReactElement {
-  const { sections } = props
-  const { topPosition } = useStickyPosition({ enabled: true })
+export default function MenuCollant({ contentId, items }: Props): ReactElement {
+  const { maxHeight, topPosition } = useStickyPosition({ enabled: true })
 
   return (
-    <AnchorNavigation
-      className="fr-ml-10w fr-p-0"
-      sections={sections}
-      sticky={true}
-      style={{ top: topPosition }}
-      title="Sections"
+    <CompactNavigationSideMenu
+      className={styles.menuFixed}
+      contentId={contentId}
+      items={items}
+      style={{ maxHeight, top: topPosition }}
     />
   )
 }
 
 type Props = Readonly<{
-  sections: ReadonlyArray<MenuCollantSection>
+  contentId: string
+  items: ReadonlyArray<SideMenuItem>
 }>
+
+export type { SideMenuItem }

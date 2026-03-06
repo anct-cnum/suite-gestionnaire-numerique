@@ -5,7 +5,8 @@ import AidantDetailsHeader from '@/components/AidantDetails/AidantDetailsHeader'
 import InformationsPersonnellesCard from '@/components/AidantDetails/AidantDetailsInformationsPersonnelles'
 import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetailsLieuxActivite'
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
-import MenuCollant, { MenuCollantSection } from '@/components/AidantDetails/MenuCollant'
+import MenuCollant, { type SideMenuItem } from '@/components/AidantDetails/MenuCollant'
+import styles from '@/components/AidantDetails/MenuCollant.module.css'
 
 export type AidantDetailsHeaderData = Readonly<{
   modificationAutheur?: string
@@ -80,19 +81,25 @@ export default function AidantDetails(props: Props): ReactElement {
   const hasLabelisation = data.header.tags.includes('Conseiller numérique') || data.header.tags.includes('Aidant numérique')
   const shouldShowActivites = !(isMediateur && !hasLabelisation)
 
-  const sections: ReadonlyArray<MenuCollantSection> = [
-    { id: 'informations-personnelles', label: 'Informations personnelles' },
-    { id: 'structures-employeuses', label: 'Structures employeuses' },
-    ...shouldShowActivites ? [{ id: 'activites', label: 'Activités' }] : [],
-    { id: 'lieux-activite', label: 'Lieux d\'activité' },
+  const menuItems: ReadonlyArray<SideMenuItem> = [
+    { linkProps: { href: '#informations-personnelles' }, text: 'Informations personnelles' },
+    { linkProps: { href: '#structures-employeuses' }, text: 'Structures employeuses' },
+    ...shouldShowActivites ? [{ linkProps: { href: '#activites' }, text: 'Activités' }] : [],
+    { linkProps: { href: '#lieux-activite' }, text: 'Lieux d\'activité' },
   ]
   return (
-    <div className="fr-container fr-py-4w">
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-3">
-          <MenuCollant sections={sections} />
+    <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
+      <div className={styles.layout}>
+        <div className={styles.menuContainer}>
+          <MenuCollant
+            contentId="aidant-content"
+            items={menuItems}
+          />
         </div>
-        <div className="fr-col-12 fr-col-md-9">
+        <div
+          className={styles.contentContainer}
+          id="aidant-content"
+        >
           <div id="header">
             <AidantDetailsHeader data={data.header} />
           </div>

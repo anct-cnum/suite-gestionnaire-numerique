@@ -9,36 +9,45 @@ import StructureConventions from './StructureConventions'
 import StructureHeader from './StructureHeader'
 import StructureIdentite from './StructureIdentite'
 import StructureRole from './StructureRole'
-import MenuCollant, { type MenuCollantSection } from '../AidantDetails/MenuCollant'
+import MenuCollant, { type SideMenuItem } from '../AidantDetails/MenuCollant'
+import styles from '../AidantDetails/MenuCollant.module.css'
 import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function Structure({ viewModel }: Props): ReactElement {
   return (
-    <div className="fr-grid-row">
-      <div className="fr-col-3">
-        <MenuCollant sections={sections} />
-      </div>
-      <div className="fr-col-9 ">
-        <StructureHeader
-          gouvernances={viewModel.role.gouvernances}
-          identite={viewModel.identite}
-        />
+    <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
+      <div className={styles.layout}>
+        <div className={styles.menuContainer}>
+          <MenuCollant
+            contentId="structure-content"
+            items={items}
+          />
+        </div>
+        <div
+          className={styles.contentContainer}
+          id="structure-content"
+        >
+          <StructureHeader
+            gouvernances={viewModel.role.gouvernances}
+            identite={viewModel.identite}
+          />
 
-        <StructureIdentite identite={viewModel.identite} />
+          <StructureIdentite identite={viewModel.identite} />
 
-        <StructureContactReferent
-          contacts={viewModel.contacts}
-          structureId={viewModel.structureId}
-        />
+          <StructureContactReferent
+            contacts={viewModel.contacts}
+            structureId={viewModel.structureId}
+          />
 
-        <StructureRole role={viewModel.role} />
-        <AlerteConstruction />
-        <StructureConventions conventionsEtFinancements={viewModel.conventionsEtFinancements} />
+          <StructureRole role={viewModel.role} />
+          <AlerteConstruction />
+          <StructureConventions conventionsEtFinancements={viewModel.conventionsEtFinancements} />
 
-        <StructureContratsRattaches contratsRattaches={viewModel.contratsRattaches} />
+          <StructureContratsRattaches contratsRattaches={viewModel.contratsRattaches} />
 
-        <StructureAidantsMediateurs aidantsEtMediateurs={viewModel.aidantsEtMediateurs} />
+          <StructureAidantsMediateurs aidantsEtMediateurs={viewModel.aidantsEtMediateurs} />
+        </div>
       </div>
     </div>
   )
@@ -48,25 +57,25 @@ type Props = Readonly<{
   viewModel: StructureViewModel
 }>
 
-const sections: ReadonlyArray<MenuCollantSection> = [
+const items: ReadonlyArray<SideMenuItem> = [
   {
-    id: 'identite',
-    label: 'Identité',
+    linkProps: { href: '#identite' },
+    text: 'Identité',
   },
   {
-    id: 'contact',
-    label: 'Contact',
+    linkProps: { href: '#contact' },
+    text: 'Contact',
   },
   {
-    id: 'role',
-    label: 'Rôle',
+    linkProps: { href: '#role' },
+    text: 'Rôle',
   },
   {
-    id: 'conventions',
-    label: 'Convention et financement',
+    linkProps: { href: '#conventions' },
+    text: 'Convention et financement',
   },
   {
-    id: 'aidants',
-    label: 'Aidants et médiateurs',
+    linkProps: { href: '#aidants' },
+    text: 'Aidants et médiateurs',
   },
 ]

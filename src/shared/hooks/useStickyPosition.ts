@@ -1,18 +1,18 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-export type StickyPositionOptions = Readonly<{
-  enabled?: boolean
-  headerSelectors?: ReadonlyArray<string>
-}>
-
-export default function useStickyPosition(options: StickyPositionOptions = {}): { topPosition: string } {
+export default function useStickyPosition(options: StickyPositionOptions = {}): Readonly<{
+  maxHeight: string
+  topPosition: string
+}> {
   const {
     enabled = true,
+    footerSelector = '.fr-footer',
     headerSelectors = ['.fr-header'],
   } = options
 
   const [topPosition, setTopPosition] = useState<string>('30px')
+  const [maxHeight, setMaxHeight] = useState<string>('none')
 
   useEffect(() => {
     if (!enabled) {
@@ -29,6 +29,17 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
 
       const newTopPosition = Math.max(0, totalHeaderHeight - scrollPosition) + 40
       setTopPosition(`${newTopPosition}px`)
+
+      const footer: HTMLElement | null = document.querySelector(footerSelector)
+      if (footer !== null) {
+        const footerTop = footer.getBoundingClientRect().top
+        const availableHeight = footerTop - newTopPosition
+        if (availableHeight < window.innerHeight - newTopPosition) {
+          setMaxHeight(`${Math.max(0, availableHeight)}px`)
+        } else {
+          setMaxHeight('none')
+        }
+      }
     }
 
     window.addEventListener('scroll', handleScrollAndResize)
@@ -39,9 +50,16 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
       window.removeEventListener('scroll', handleScrollAndResize)
       window.removeEventListener('resize', handleScrollAndResize)
     }
-  }, [headerSelectors, enabled])
+  }, [headerSelectors, footerSelector, enabled])
 
   return {
+    maxHeight,
     topPosition,
   }
 }
+
+type StickyPositionOptions = Readonly<{
+  enabled?: boolean
+  footerSelector?: string
+  headerSelectors?: ReadonlyArray<string>
+}>
