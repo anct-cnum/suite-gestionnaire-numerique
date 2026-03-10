@@ -159,7 +159,8 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
         v.date_fin_contrat,
         v.bonification,
         v.montant_subvention_cumule AS total_conventionne,
-        v.montant_versement_cumule AS total_verse
+        v.montant_versement_cumule AS total_verse,
+        st.structure_tp_id
       FROM min.postes_conseiller_numerique_synthese v
       LEFT JOIN main.structure st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
@@ -213,6 +214,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       posteConumId: poste.poste_conum_id,
       sourcesFinancement: poste.enveloppes,
       statut: poste.statut as EtatPoste,
+      structureTpId: poste.structure_tp_id,
       totalConventionne: Number(poste.total_conventionne),
       totalVerse: Number(poste.total_verse),
     }
@@ -230,6 +232,7 @@ interface PosteQueryResult {
   nom_structure: string
   poste_conum_id: number
   statut: string
+  structure_tp_id: null | number
   total_conventionne: bigint
   total_verse: bigint
 }

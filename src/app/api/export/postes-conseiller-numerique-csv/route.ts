@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaPostesConseillerNumeriqueLoader } from '@/gateways/PrismaPostesConseillerNumeriqueLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { buildFiltresPostesConseillerNumerique } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 import { PosteConseillerNumeriqueReadModel } from '@/use-cases/queries/RecupererLesPostesConseillerNumerique'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const session = await getSession()
     if (!session) {
@@ -30,13 +31,43 @@ export async function GET(): Promise<NextResponse> {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
+    const { searchParams } = request.nextUrl
+    const filtres = buildFiltresPostesConseillerNumerique(
+      {
+        bonification: searchParams.get('bonification') ?? undefined,
+        codeDepartement: searchParams.get('codeDepartement') ?? undefined,
+        codeRegion: searchParams.get('codeRegion') ?? undefined,
+        conventions: searchParams.get('conventions') ?? undefined,
+        statut: searchParams.get('statut') ?? undefined,
+        typesEmployeur: searchParams.get('typesEmployeur') ?? undefined,
+        typesPoste: searchParams.get('typesPoste') ?? undefined,
+      },
+      territoire === 'France' ? undefined : territoire,
+      100000
+    )
+
+    let territoireEffectif = territoire
+    let codeRegionEffectif: string | undefined
+    if (filtres.codeDepartement !== undefined) {
+      territoireEffectif = filtres.codeDepartement
+    } else if (filtres.codeRegion !== undefined) {
+      territoireEffectif = 'France'
+      codeRegionEffectif = filtres.codeRegion
+    }
+
     const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
     const postesReadModel = await postesLoader.get({
+      bonification: filtres.bonification,
+      codeRegion: codeRegionEffectif,
+      conventions: filtres.conventions,
       pagination: {
-        limite: 100000,
+        limite: filtres.limite,
         page: 1,
       },
-      territoire,
+      statut: filtres.statut,
+      territoire: territoireEffectif,
+      typesEmployeur: filtres.typesEmployeur,
+      typesPoste: filtres.typesPoste,
     })
 
     if ('type' in postesReadModel) {
@@ -64,11 +95,12 @@ export async function GET(): Promise<NextResponse> {
 function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): string {
   const headers = [
     'ID Poste',
+    'ID Structure TP',
     'Structure',
     'Département',
     'Statut',
     'Coordinateur',
-    'Sources financement',
+    'Convention',
     'Fin de convention',
     'Fin de contrat',
     'Bonification',
@@ -86,6 +118,20 @@ function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): 
     return value
   }
 
+  function formaterConvention(enveloppes: null | string): string {
+    if (enveloppes === null) {
+      return ''
+    }
+    if (enveloppes.includes(',')) {
+      return 'Renouvellement'
+    }
+    const mapping: Record<string, string> = {
+      V1: 'Initiale',
+      V2: 'Renouvellement',
+    }
+    return mapping[enveloppes] ?? enveloppes
+  }
+
   function getStatutLabel(statut: string): string {
     const labels: Record<string, string> = {
       occupe: 'Occupé',
@@ -97,11 +143,12 @@ function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): 
 
   const rows = postes.map((poste) => [
     poste.posteConumId.toString(),
+    poste.structureTpId === null ? '' : poste.structureTpId.toString(),
     escapeCSV(poste.nomStructure),
     poste.codeDepartement,
     getStatutLabel(poste.statut),
     poste.estCoordinateur ? 'Oui' : 'Non',
-    escapeCSV(poste.sourcesFinancement),
+    formaterConvention(poste.sourcesFinancement),
     poste.dateFinConvention === null ? '' : formaterEnDateFrancaise(poste.dateFinConvention),
     poste.dateFinContrat === null ? '' : formaterEnDateFrancaise(poste.dateFinContrat),
     poste.bonification ? 'Oui' : 'Non',
