@@ -14,6 +14,7 @@ export type PosteConseillerNumeriqueReadModel = Readonly<{
   // Sources de financement cumulées (ex: "DGE, DITP")
   sourcesFinancement: null | string
   statut: EtatPoste
+  structureTpId: null | number
   totalConventionne: number
   totalVerse: number
 }>
