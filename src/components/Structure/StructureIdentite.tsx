@@ -99,6 +99,7 @@ export default function StructureIdentite({ identite }: Props): ReactElement {
               {identite.departement}
             </div>
           </div>
+          <div style={{ flex: '1 0 0' }} />
         </div>
       </article>
     </section>

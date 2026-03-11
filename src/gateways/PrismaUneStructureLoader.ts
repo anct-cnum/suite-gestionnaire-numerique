@@ -8,6 +8,11 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
     const structureRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         adresse: true,
+        categories_juridiques: {
+          select: {
+            nom: true,
+          },
+        },
         contrat: {
           include: {
             personne: true,
@@ -106,7 +111,7 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
         nom: structureRecord.nom,
         region: regionNom,
         siret: structureRecord.siret ?? undefined,
-        typologie: structureRecord.typologies.join(', '),
+        typologie: structureRecord.categories_juridiques?.nom ?? structureRecord.typologies.join(', '),
       },
       role: {
         feuillesDeRoute,
