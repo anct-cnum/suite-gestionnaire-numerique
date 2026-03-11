@@ -104,7 +104,7 @@ function formaterEnveloppes(enveloppes: null | string): string {
 
 function transformerPoste(poste: PosteConseillerNumeriqueReadModel): PosteConseillerNumeriqueViewModel {
   return {
-    bonification: poste.bonification ? 'Oui' : '',
+    bonification: poste.bonification ? 'Oui' : 'Non',
     codeDepartement: poste.codeDepartement,
     dateFinContrat: poste.dateFinContrat === null ? '-' : formaterEnDateFrancaise(poste.dateFinContrat),
     dateFinConvention: poste.dateFinConvention === null ? '-' : formaterEnDateFrancaise(poste.dateFinConvention),
