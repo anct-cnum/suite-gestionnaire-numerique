@@ -6,7 +6,8 @@
       "optipng",
       "pngquant",
       "jpegoptim",
-      "libwebp"
+      "libwebp",
+      "gh"
     ],
     "env": {
       "DEVBOX_COREPACK_ENABLED": "true",
