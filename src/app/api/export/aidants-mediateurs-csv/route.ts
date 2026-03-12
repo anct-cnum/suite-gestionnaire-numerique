@@ -109,6 +109,9 @@ function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>)
     'Labelisations',
     'Formations',
     'Nb Accompagnements',
+    'Nom structure',
+    'SIRET structure',
+    'Adresse structure',
   ]
 
   // Fonction pour échapper les valeurs CSV
@@ -128,6 +131,9 @@ function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>)
     escapeCSV(aidant.labelisations.join(', ')),
     escapeCSV(aidant.formations.join(', ')),
     aidant.nbAccompagnements.toString(),
+    escapeCSV(aidant.nomStructure),
+    escapeCSV(aidant.siretStructure),
+    escapeCSV(aidant.adresseStructure),
   ])
 
   // Assemblage final avec BOM UTF-8 pour Excel
