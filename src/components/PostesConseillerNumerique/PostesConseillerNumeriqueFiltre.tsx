@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useRef, useState } from 'react'
+import { ReactElement, useId, useRef, useState } from 'react'
 import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
@@ -28,15 +28,6 @@ export default function PostesConseillerNumeriqueFiltre({
 
   const statutSelectId = useId()
   const bonificationToggleId = useId()
-
-  // Synchroniser l'état du filtre avec les filtres actuels
-  useEffect(() => {
-    setSelectedStatut(currentFilters.statut)
-    setIsBonificationSelected(currentFilters.bonification)
-    setSelectedTypesPoste(currentFilters.typesPoste)
-    setSelectedConventions(currentFilters.conventions)
-    setSelectedTypesEmployeur(currentFilters.typesEmployeur)
-  }, [currentFilters])
 
   function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
     setSelectedZone(zoneGeographique)

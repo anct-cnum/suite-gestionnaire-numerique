@@ -284,6 +284,7 @@ export default function ListePostesConseillerNumerique({
 
       {viewModel.postes.length === 0 ? (
         <div
+          className="fr-mb-4w"
           style={{ backgroundColor: 'var(--blue-france-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
         >
           <p
@@ -353,6 +354,7 @@ export default function ListePostesConseillerNumerique({
             setIsDrawerOpen(false)
           }}
           currentFilters={parseURLParamsToFiltresPostesConseillerNumeriqueInternes(normalizedSearchParams)}
+          key={normalizedSearchParams.toString()}
           onFilterAction={onFilter}
           onResetAction={onReset}
           utilisateurRole={utilisateurRole}
