@@ -31,8 +31,22 @@ export default function AccompagnementsRealisesAsyncLoader({
               Accompagnements réalisés
             </span>
             <Information>
-              <p>
-                Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect
+              <p className="fr-mb-0">
+                Depuis 
+                {' '}
+                <strong>
+                  2021
+                </strong>
+                , avec les dispositifs
+                {' '}
+                <strong>
+                  Conseillers Numériques
+                </strong>
+                {' '}
+                et
+                <strong>
+                  Aidants Connect.
+                </strong>
               </p>
             </Information>
           </div>
@@ -96,7 +110,11 @@ export default function AccompagnementsRealisesAsyncLoader({
               </span>
               <Information>
                 <p className="fr-mb-0">
-                  Accompagnements saisis sur La Coop
+                  Accompagnements saisis sur 
+                  {' '}
+                  <strong>
+                    La Coop.
+                  </strong>
                 </p>
               </Information>
             </div>

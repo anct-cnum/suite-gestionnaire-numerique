@@ -64,26 +64,60 @@ export default function BeneficiairesAsyncCard({
         <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
           Bénéficiaires accompagnés
           <Information>
-            <p className="fr-mb-0">
-              Sur la Coop, après un accompagnement, le médiateur peut choisir d&apos;enregistrer ou
-              non la personne accompagnée dans sa liste de bénéficiaires et de la rattacher à
-              cet accompagnement.
-              {' '}
-              <br />
-              <br />
-              Exemple sur un mois :
-              {' '}
-              <br />
-              Une personne suivie est accompagnée trois fois. Elle compte pour 1 accompagnement.
-              <br />
-              <br />
-              Une personne anonyme est accompagnée deux fois. Elle compte pour 2
-              accompagnements.
-              {' '}
-              <br />
-              <br />
-              Le total affiché pour ce mois sera donc 3 accompagnements : 1 suivi + 2 anonymes
-            </p>
+            <div className="fr-mb-0">
+              <p className="fr-mb-1v">
+                Après un accompagnement, le médiateur peut choisir d&apos;enregistrer
+                la personne accompagnée dans sa 
+                {' '}
+                <strong>
+                  liste de bénéficiaires.
+                </strong>
+              </p>
+              <p className="fr-mb-1v">
+                <strong>
+                  Exemple sur un mois :
+                </strong>
+              </p>
+              <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
+                <li>
+                  1 personne 
+                  {' '}
+                  <strong>
+                    suivie
+                  </strong>
+                  , accompagnée 3 fois = 
+                  {' '}
+                  <strong>
+                    1
+                  </strong>
+                  {' '}
+                  accompagnement
+                </li>
+                <li>
+                  1 personne 
+                  {' '}
+                  <strong>
+                    anonyme
+                  </strong>
+                  , accompagnée 2 fois = 
+                  {' '}
+                  <strong>
+                    2
+                  </strong>
+                  {' '}
+                  accompagnements
+                </li>
+              </ul>
+              <p className="fr-mb-0">
+                Total affiché :
+                {' '}
+                <strong>
+                  3 accompagnements
+                </strong>
+                {' '}
+                (1 suivi + 2 anonymes)
+              </p>
+            </div>
           </Information>
         </div>
         <div className="fr-text--sm fr-text-title--blue-france fr-m-0">

@@ -101,14 +101,6 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
   const nombreAteliers = statistiques?.accompagnements.nombreAteliers ?? 0
   const avecAidantsConnect = statistiques?.accompagnements.avecAidantsConnect ?? 0
 
-  const informationLabel = `${total.toLocaleString('fr-FR')} accompagnements au total dont :
-${individuels.toLocaleString('fr-FR')} accompagnements individuels
-${participationsAteliers.toLocaleString('fr-FR')} participations lors de ${nombreAteliers.toLocaleString('fr-FR')} ateliers*
-*Les ateliers collectifs comptent pour 1 accompagnement par participant.
-Ex : Un atelier collectif avec 10 participants compte pour 10 accompagnements.
-
-${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Connect`
-
   return (
     <div className="fr-col-12 fr-col-md-4">
       <div className="d-flex flex-column">
@@ -132,9 +124,49 @@ ${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Conne
             <p className="fr-text--sm fr-text--bold fr-mb-1v">
               Accompagnements
               <Information>
-                <span>
-                  {informationLabel}
-                </span>
+                <div className="fr-mb-0">
+                  <strong>
+                    {total.toLocaleString('fr-FR')}
+                    {' '}
+                    accompagnements
+                  </strong>
+                  {' '}
+                  au total dont :
+                  <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
+                    <li>
+                      <strong>
+                        {individuels.toLocaleString('fr-FR')}
+                      </strong>
+                      {' '}
+                      accompagnements individuels
+                    </li>
+                    <li>
+                      <strong>
+                        {participationsAteliers.toLocaleString('fr-FR')}
+                      </strong>
+                      {' '}
+                      participations lors de
+                      {' '}
+                      <strong>
+                        {nombreAteliers.toLocaleString('fr-FR')}
+                      </strong>
+                      {' '}
+                      ateliers
+                    </li>
+                    <li>
+                      <strong>
+                        {avecAidantsConnect.toLocaleString('fr-FR')}
+                      </strong>
+                      {' '}
+                      accompagnements avec Aidants Connect
+                    </li>
+                  </ul>
+                  <em>
+                    Les ateliers collectifs comptent pour 1 accompagnement par participant.
+                    <br />
+                    Ex : un atelier avec 10 participants = 10 accompagnements.
+                  </em>
+                </div>
               </Information>
             </p>
             <p className="fr-text--xs fr-mt-0">
@@ -237,10 +269,26 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
             Nombre d&apos;accompagnements
             <Information>
               <div className="fr-mb-0">
-                Le nombre d&apos;accompagnements correspond à la somme des 2 types d&apos;activités
-                enregistrées : accompagnement individuel et atelier collectif. À noter : Les
-                ateliers collectifs comptent pour 1 accompagnement par participant. Ex : Un
-                atelier collectif avec 10 participants compte pour 10 accompagnements.
+                Somme des 
+                {' '}
+                <strong>
+                  2 types d&apos;activités
+                </strong>
+                {' '}
+                enregistrées :
+                <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
+                  <li>
+                    Accompagnement individuel
+                  </li>
+                  <li>
+                    Atelier collectif
+                  </li>
+                </ul>
+                <em>
+                  Les ateliers collectifs comptent pour 1 accompagnement par participant.
+                  <br />
+                  Ex : un atelier avec 10 participants = 10 accompagnements.
+                </em>
               </div>
             </Information>
           </h3>

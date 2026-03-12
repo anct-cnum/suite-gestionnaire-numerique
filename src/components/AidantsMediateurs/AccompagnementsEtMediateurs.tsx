@@ -86,9 +86,19 @@ export default function AccompagnementsEtMediateurs({
             Accompagnements et Médiateurs numériques
             <Information>
               <p className="fr-mb-0">
+                Les indicateurs affichés concernent les médiateurs numériques inscrits sur
                 {' '}
-                Les indicateurs affichés concernent les médiateurs numériques inscrits sur la Coop
-                de la médiation ainsi que les conseillers numériques de votre territoire&quot;
+                <strong>
+                  la Coop de la médiation
+                </strong>
+                {' '}
+                ainsi que les
+                {' '}
+                <strong>
+                  conseillers numériques
+                </strong>
+                {' '}
+                de votre territoire.
               </p>
             </Information>
           </h2>

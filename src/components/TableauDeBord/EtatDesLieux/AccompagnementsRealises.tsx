@@ -40,7 +40,21 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
           </span>
           <Information>
             <p className="fr-mb-0">
-              &quot;Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect
+              Depuis 
+              {' '}
+              <strong>
+                2021
+              </strong>
+              , avec les dispositifs
+              {' '}
+              <strong>
+                Conseillers Numériques
+              </strong>
+              {' '}
+              et
+              <strong>
+                Aidants Connect.
+              </strong>
             </p>
           </Information>
         </div>
@@ -53,7 +67,11 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
           </span>
           <Information>
             <p className="fr-mb-0">
-              Accompagnements saisis sur La Coop
+              Accompagnements saisis sur 
+              {' '}
+              <strong>
+                La Coop.
+              </strong>
             </p>
           </Information>
         </div>

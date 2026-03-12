@@ -1,4 +1,4 @@
-import { ReactElement, useId } from 'react'
+import { ReactElement, ReactNode, useId } from 'react'
 
 export default function Information({ children }: Props): ReactElement {
   const id = useId().replace(/:/g, '')
@@ -34,5 +34,5 @@ export default function Information({ children }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  children: ReactElement
+  children: ReactNode
 }>

@@ -49,13 +49,13 @@ export function StatistiquesGenerales({
                   Accompagnement
                   {sPluriel(totalCounts.accompagnements.total)}
                 </span>
-                <Information
-                  children={
-                    <p className="fr-mb-0">
-                      Les ateliers collectifs comptent pour 1 accompagnement par participant.
-                    </p>
-                  }
-                />
+                <Information>
+                  <p className="fr-mb-0">
+                    Les ateliers collectifs comptent pour
+                    {' '}
+                    <strong>1 accompagnement par participant</strong>.
+                  </p>
+                </Information>
               </div>
             </div>
             <div
@@ -129,14 +129,13 @@ export function StatistiquesGenerales({
             <div className="fr-mb-1w">
               <h3 className="fr-text--lg fr-mb-0">
                 <span>Nombre d'accompagnements</span>
-                <Information
-                  children={
-                    <p className="fr-mb-0">
-                      Somme des accompagnements individuels et participations aux ateliers
-                      collectifs.
-                    </p>
-                  }
-                />
+                <Information>
+                  <p className="fr-mb-0">
+                    Somme des <strong>accompagnements individuels</strong> et
+                    {' '}
+                    <strong>participations aux ateliers collectifs</strong>.
+                  </p>
+                </Information>
               </h3>
             </div>
             <fieldset className="fr-segmented fr-segmented--sm fr-md-col fr-col-12">
