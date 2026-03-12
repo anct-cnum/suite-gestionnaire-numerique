@@ -79,14 +79,13 @@ export function StatistiquesActivites({
         <div className={`fr-mb-4v ${styles.thematiquesHeader}`}>
           <h3 className="fr-text--lg fr-mb-0">
             <span>Thématiques des activités</span>
-            <Information
-              children={
-                <p className="fr-mb-0">
-                  Thématiques sélectionnées lors de l'enregistrement d'une activité. Une activité
-                  peut avoir plusieurs thématiques.
-                </p>
-              }
-            />
+            <Information>
+              <p className="fr-mb-0">
+                Thématiques sélectionnées lors de l&apos;enregistrement d&apos;une activité.
+                <br />
+                <em>Une activité peut avoir <strong>plusieurs thématiques</strong>.</em>
+              </p>
+            </Information>
           </h3>
           <fieldset className="fr-segmented fr-segmented--sm">
             <legend className="fr-segmented__legend sr-only">Bascule entre les thématiques</legend>
@@ -144,14 +143,13 @@ export function StatistiquesActivites({
         <div className="fr-mb-3w">
           <h3 className="fr-text--lg fr-mb-0">
             <span>Matériel utilisé</span>
-            <Information
-              children={
-                <p>
-                  Matériel utilisé lors d'une activité. Plusieurs matériels peuvent être utilisés
-                  lors d'une même activité.
-                </p>
-              }
-            />
+            <Information>
+              <p className="fr-mb-0">
+                Matériel utilisé lors d&apos;une activité.
+                <br />
+                <em><strong>Plusieurs matériels</strong> peuvent être utilisés lors d&apos;une même activité.</em>
+              </p>
+            </Information>
           </h3>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -177,11 +175,11 @@ export function StatistiquesActivites({
           <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
               <span>Canaux des activités</span>
-              <Information
-                children={
-                  <p className="fr-mb-0">Répartition des activités enregistrées par canal.</p>
-                }
-              />
+              <Information>
+                <p className="fr-mb-0">
+                  Répartition des activités enregistrées par <strong>canal</strong>.
+                </p>
+              </Information>
             </h3>
             <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart
@@ -199,11 +197,11 @@ export function StatistiquesActivites({
           <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
               <span>Durées des activités</span>
-              <Information
-                children={
-                  <p className="fr-mb-0">Répartition des activités enregistrées par durée.</p>
-                }
-              />
+              <Information>
+                <p className="fr-mb-0">
+                  Répartition des activités enregistrées par <strong>durée</strong>.
+                </p>
+              </Information>
             </h3>
             <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart

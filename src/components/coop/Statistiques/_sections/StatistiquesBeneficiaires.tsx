@@ -45,13 +45,11 @@ export function StatistiquesBeneficiaires({
         <div>
           <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
             <span>Genres</span>
-            <Information
-              children={
-                <p className="fr-mb-0">
-                  Bénéficiaires suivis et anonymes dont le genre a été complété.
-                </p>
-              }
-            />
+            <Information>
+              <p className="fr-mb-0">
+                Bénéficiaires <strong>suivis</strong> et <strong>anonymes</strong> dont le genre a été complété.
+              </p>
+            </Information>
           </h3>
           <div className={styles.genresContainer}>
             <div className={styles.genresItem}>
@@ -73,14 +71,12 @@ export function StatistiquesBeneficiaires({
         <div className={styles.tranchesStatutsContainer}>
           <div className={styles.tranchesStatutsItem}>
             <h3 className="fr-text--lg fr-mb-0">
-              <span>Tranches d'âge</span>
-              <Information
-                children={
-                  <p className="fr-mb-0">
-                    Bénéficiaires suivis et anonymes dont la tranche d'âge a été complétée.
-                  </p>
-                }
-              />
+              <span>Tranches d&apos;âge</span>
+              <Information>
+                <p className="fr-mb-0">
+                  Bénéficiaires <strong>suivis</strong> et <strong>anonymes</strong> dont la tranche d&apos;âge a été complétée.
+                </p>
+              </Information>
             </h3>
             <ProgressBar
               colors={tranchesAgeColors}
@@ -96,13 +92,11 @@ export function StatistiquesBeneficiaires({
           <div className={styles.tranchesStatutsItem}>
             <h3 className="fr-text--lg fr-mb-0">
               <span>Statuts</span>
-              <Information
-                children={
-                  <p className="fr-mb-0">
-                    Bénéficiaires suivis et anonymes dont le statut a été complété.
-                  </p>
-                }
-              />
+              <Information>
+                <p className="fr-mb-0">
+                  Bénéficiaires <strong>suivis</strong> et <strong>anonymes</strong> dont le statut a été complété.
+                </p>
+              </Information>
             </h3>
             <ProgressBar
               colors={statusColors}
@@ -123,13 +117,11 @@ export function StatistiquesBeneficiaires({
             <div className="fr-mb-3w">
               <h3 className="fr-text--lg fr-mb-0">
                 <span>Commune de résidence des bénéficiaires</span>
-                <Information
-                  children={
-                    <p className="fr-mb-0">
-                      Bénéficiaires suivis et anonymes dont la commune de résidence a été complétée.
-                    </p>
-                  }
-                />
+                <Information>
+                  <p className="fr-mb-0">
+                    Bénéficiaires <strong>suivis</strong> et <strong>anonymes</strong> dont la commune de résidence a été complétée.
+                  </p>
+                </Information>
               </h3>
             </div>
 

@@ -24,7 +24,17 @@ export default function MediateursEtAidants({
           </span>
           <Information>
             <p className="fr-mb-0">
-              Professionnels inscrits sur la Coop et/ou labellisés Aidants Connect
+              Professionnels inscrits sur 
+              {' '}
+              <strong>
+                la Coop
+              </strong>
+              {' '}
+              et/ou labellisés
+              {' '}
+              <strong>
+                Aidants Connect.
+              </strong>
             </p>
           </Information>
         </div>

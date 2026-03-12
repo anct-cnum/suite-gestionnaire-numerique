@@ -59,8 +59,17 @@ export default function CarteFragiliteDepartement({
                 </span>
                 <Information>
                   <p className="fr-mb-0">
-                    L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
-                    2021
+                    L&apos;Indice de Fragilité Numérique est issu des données de
+                    la 
+                    {' '}
+                    <strong>
+                      Mednum
+                    </strong>
+                    , calculées en 
+                    {' '}
+                    <strong>
+                      2021.
+                    </strong>
                   </p>
                 </Information>
               </div>
