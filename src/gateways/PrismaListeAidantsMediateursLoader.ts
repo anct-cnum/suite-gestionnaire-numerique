@@ -145,10 +145,15 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           BOOL_OR(f.pix) AS pix,
           BOOL_OR(f.remn) AS remn,
           COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
-          COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac
+          COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac,
+          MAX(s.nom) AS structure_nom,
+          MAX(s.siret) AS structure_siret,
+          MAX(TRIM(CONCAT_WS(' ', a.numero_voie::text, a.repetition, a.nom_voie, a.code_postal, a.nom_commune))) AS structure_adresse
         FROM min.personne_enrichie pe
                LEFT JOIN main.formation f ON pe.id = f.personne_id
                LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
+               LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+               LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           ${whereConditions}
         GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
@@ -169,7 +174,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           BOOL_OR(f.pix) AS pix,
           BOOL_OR(f.remn) AS remn,
           COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
-          COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac
+          COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac,
+          MAX(s.nom) AS structure_nom,
+          MAX(s.siret) AS structure_siret,
+          MAX(TRIM(CONCAT_WS(' ', a.numero_voie::text, a.repetition, a.nom_voie, a.code_postal, a.nom_commune))) AS structure_adresse
         FROM min.personne_enrichie pe
                LEFT JOIN main.formation f ON pe.id = f.personne_id
                LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
@@ -444,9 +452,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         const personneAvecAccompagnements = personne as PersonneAvecAccompagnementQueryResult
         return {
           ...baseAidant,
-          nbAccompagnements: 
-            Number(personneAvecAccompagnements.accompagnements) 
+          adresseStructure: personneAvecAccompagnements.structure_adresse ?? '',
+          nbAccompagnements:
+            Number(personneAvecAccompagnements.accompagnements)
             + Number(personneAvecAccompagnements.accompagnements_ac),
+          nomStructure: personneAvecAccompagnements.structure_nom ?? '',
+          siretStructure: personneAvecAccompagnements.structure_siret ?? '',
         } as AidantMediateurAvecAccompagnementReadModel
       }
 
@@ -524,4 +535,7 @@ interface PersonneQueryResult {
 interface PersonneAvecAccompagnementQueryResult extends PersonneQueryResult {
   accompagnements: number
   accompagnements_ac: number
+  structure_adresse: null | string
+  structure_nom: null | string
+  structure_siret: null | string
 }
