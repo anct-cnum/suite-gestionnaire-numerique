@@ -10,6 +10,7 @@ import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernan
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
+import { PrismaConseillerNumeriqueTableauDeBordLoader } from '@/gateways/tableauDeBord/PrismaConseillerNumeriqueTableauDeBordLoader'
 import { PrismaFinancementsAdminLoader } from '@/gateways/tableauDeBord/PrismaFinancementsAdminLoader'
 import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
 import { PrismaGouvernanceAdminLoader } from '@/gateways/tableauDeBord/PrismaGouvernanceAdminLoader'
@@ -26,7 +27,10 @@ import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lie
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
+import { TableauDeBordLoaderBeneficiaires } from '@/use-cases/queries/RecuperBeneficiaires'
+import { ConseillerNumeriqueTableauDeBordReadModel } from '@/use-cases/queries/RecupererConseillerNumeriqueTableauDeBord'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -62,6 +66,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
+  const cnLoader = new PrismaConseillerNumeriqueTableauDeBordLoader()
 
   // Créer la Promise pour les accompagnements (sera résolue de manière asynchrone via Suspense)
   const accompagnementsRealisesPromise = fetchAccompagnementsRealises(territoireCode)
@@ -79,9 +84,14 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     mediateursEtAidantsPresenter
   )
 
+  // Charger les données des bénéficiaires et les données Conseiller numérique
   const beneficiairesReadModel = await beneficiairesLoader.get(territoireCode)
+  const cnReadModel = await cnLoader.get(territoireCode)
+
+  // Fusionner les données CN dans les bénéficiaires
+  const mergedBeneficiaires = mergeCnIntoBeneficiaires(beneficiairesReadModel, cnReadModel)
   const beneficiairesViewModel = handleReadModelOrError(
-    beneficiairesReadModel,
+    mergedBeneficiaires,
     beneficiairesPresenter
   )
 
@@ -104,8 +114,9 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
     const financementsAdminLoader = new PrismaFinancementsAdminLoader()
     const financementsReadModel = await financementsAdminLoader.get()
+    const mergedFinancementsAdmin = mergeCnIntoFinancements(financementsReadModel, cnReadModel)
     const financementsViewModel = handleReadModelOrError(
-      financementsReadModel,
+      mergedFinancementsAdmin,
       financementAdminPresenter
     )
 
@@ -140,8 +151,9 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   const financementsLoader = new PrismaFinancementsLoader()
   const financementsReadModel = await financementsLoader.get(territoireCode)
+  const mergedFinancementsPref = mergeCnIntoFinancements(financementsReadModel, cnReadModel)
   const financementsViewModel = handleReadModelOrError(
-    financementsReadModel,
+    mergedFinancementsPref,
     financementsPrefPresenter
   )
 
@@ -165,4 +177,63 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       tableauDeBordViewModel={tableauDeBordViewModel}
     />
   )
+}
+
+function cnEnveloppesVentilation(
+  cnReadModel: ConseillerNumeriqueTableauDeBordReadModel
+): ReadonlyArray<{ enveloppeTotale: string; label: string; total: string }> {
+  return cnReadModel.enveloppes.map((enveloppe) => ({
+    enveloppeTotale: enveloppe.total.toString(),
+    label: enveloppe.label,
+    total: enveloppe.total.toString(),
+  }))
+}
+
+function hasCnData(
+  cnReadModel: ConseillerNumeriqueTableauDeBordReadModel | ErrorReadModel
+): cnReadModel is ConseillerNumeriqueTableauDeBordReadModel {
+  return !isErrorReadModel(cnReadModel) && cnReadModel.enveloppes.length > 0
+}
+
+function mergeCnIntoBeneficiaires(
+  beneficiairesReadModel: ErrorReadModel | TableauDeBordLoaderBeneficiaires,
+  cnReadModel: ConseillerNumeriqueTableauDeBordReadModel | ErrorReadModel
+): ErrorReadModel | TableauDeBordLoaderBeneficiaires {
+  if (isErrorReadModel(beneficiairesReadModel) || !hasCnData(cnReadModel)) {
+    return beneficiairesReadModel
+  }
+
+  const cnDetails = cnReadModel.enveloppes.map((enveloppe) => ({
+    label: enveloppe.label,
+    total: enveloppe.beneficiaires,
+  }))
+  const cnTotal = cnReadModel.enveloppes
+    .reduce((acc, enveloppe) => acc + enveloppe.beneficiaires, 0)
+
+  return {
+    collectivite: beneficiairesReadModel.collectivite,
+    details: [...beneficiairesReadModel.details, ...cnDetails],
+    total: beneficiairesReadModel.total + cnTotal,
+  }
+}
+
+function mergeCnIntoFinancements<T extends { ventilationSubventionsParEnveloppe: ReadonlyArray<{
+  enveloppeTotale: string
+  label: string
+  total: string
+}> }>(
+  financementsReadModel: ErrorReadModel | T,
+  cnReadModel: ConseillerNumeriqueTableauDeBordReadModel | ErrorReadModel
+): ErrorReadModel | T {
+  if (isErrorReadModel(financementsReadModel) || !hasCnData(cnReadModel)) {
+    return financementsReadModel
+  }
+
+  return {
+    ...financementsReadModel,
+    ventilationSubventionsParEnveloppe: [
+      ...financementsReadModel.ventilationSubventionsParEnveloppe,
+      ...cnEnveloppesVentilation(cnReadModel),
+    ],
+  }
 }
