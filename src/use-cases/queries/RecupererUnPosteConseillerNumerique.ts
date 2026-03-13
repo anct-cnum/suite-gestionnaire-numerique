@@ -51,5 +51,5 @@ export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
 }>
 
 export interface PosteConseillerNumeriqueDetailLoader {
-  getById(posteId: number): Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel>
+  get(posteConumId: number, structureId: number): Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel>
 }

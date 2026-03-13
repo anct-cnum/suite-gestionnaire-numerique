@@ -89,7 +89,7 @@ const PosteRow = memo(({
       <td>
         <a
           className="fr-btn fr-btn--tertiary-no-outline fr-icon-eye-line"
-          href={`/poste/${poste.idPoste}`}
+          href={`/poste/${poste.posteConumId}/structure/${poste.structureId}`}
           title="Voir le détail du poste"
         />
       </td>
@@ -317,7 +317,7 @@ export default function ListePostesConseillerNumerique({
           >
             {viewModel.postes.map((poste) => (
               <PosteRow
-                key={poste.idPoste}
+                key={`${poste.posteConumId}-${poste.structureId}`}
                 poste={poste}
               />
             ))}

@@ -148,8 +148,8 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
 
     const result = await prisma.$queryRaw<Array<PosteQueryResult>>`
       SELECT
-        v.poste_id AS id_poste,
         v.poste_conum_id,
+        v.structure_id,
         st.nom AS nom_structure,
         a.departement AS code_departement,
         v.etat AS statut,
@@ -209,11 +209,11 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       dateFinContrat: poste.date_fin_contrat,
       dateFinConvention: poste.date_fin_convention,
       estCoordinateur: poste.est_coordinateur,
-      idPoste: poste.id_poste,
       nomStructure: poste.nom_structure,
       posteConumId: poste.poste_conum_id,
       sourcesFinancement: poste.enveloppes,
       statut: poste.statut as EtatPoste,
+      structureId: poste.structure_id,
       structureTpId: poste.structure_tp_id,
       totalConventionne: Number(poste.total_conventionne),
       totalVerse: Number(poste.total_verse),
@@ -228,10 +228,10 @@ interface PosteQueryResult {
   date_fin_convention: Date | null
   enveloppes: null | string
   est_coordinateur: boolean
-  id_poste: number
   nom_structure: string
   poste_conum_id: number
   statut: string
+  structure_id: number
   structure_tp_id: null | number
   total_conventionne: bigint
   total_verse: bigint

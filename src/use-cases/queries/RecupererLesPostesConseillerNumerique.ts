@@ -8,12 +8,12 @@ export type PosteConseillerNumeriqueReadModel = Readonly<{
   dateFinContrat: Date | null
   dateFinConvention: Date | null
   estCoordinateur: boolean
-  idPoste: number
   nomStructure: string
   posteConumId: number
   // Sources de financement cumulées (ex: "DGE, DITP")
   sourcesFinancement: null | string
   statut: EtatPoste
+  structureId: number
   structureTpId: null | number
   totalConventionne: number
   totalVerse: number

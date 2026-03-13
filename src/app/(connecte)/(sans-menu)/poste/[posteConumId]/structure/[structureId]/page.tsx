@@ -11,20 +11,21 @@ export const metadata: Metadata = {
 }
 
 export default async function PosteConseillerNumeriqueController({ params }: Props): Promise<ReactElement> {
-  const { posteId } = await params
+  const { posteConumId, structureId } = await params
 
-  if (!posteId) {
+  if (!posteConumId || !structureId) {
     notFound()
   }
 
-  const posteIdNumeric = Number.parseInt(posteId, 10)
+  const posteConumIdNumeric = Number.parseInt(posteConumId, 10)
+  const structureIdNumeric = Number.parseInt(structureId, 10)
 
-  if (Number.isNaN(posteIdNumeric)) {
+  if (Number.isNaN(posteConumIdNumeric) || Number.isNaN(structureIdNumeric)) {
     notFound()
   }
 
   const loader = new PrismaPosteConseillerNumeriqueDetailLoader()
-  const readModel = await loader.getById(posteIdNumeric)
+  const readModel = await loader.get(posteConumIdNumeric, structureIdNumeric)
   const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, new Date())
 
   if ('type' in viewModel) {
@@ -46,6 +47,7 @@ export default async function PosteConseillerNumeriqueController({ params }: Pro
 
 type Props = Readonly<{
   params: Promise<Readonly<{
-    posteId: string
+    posteConumId: string
+    structureId: string
   }>>
 }>
