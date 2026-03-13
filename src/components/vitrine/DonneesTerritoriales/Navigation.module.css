@@ -1,14 +1,9 @@
 .navigationFixed {
   background-color: white;
   box-shadow: none;
-  gap: 3.5rem;
-  height: 24rem;
-  left: 0;
-  opacity: 1;
-  padding: var(--spacing-10v, 2.5rem) var(--spacing-0v, 0) var(--spacing-10v, 2.5rem)
-    var(--spacing-20v, 5rem);
+  left: max(1.5rem, calc((100vw - 78rem) / 2 + 1.5rem));
   position: fixed;
-  width: 20rem;
+  width: 16rem;
 }
 
 .navigationFixed :global(.fr-sidemenu__inner) {
@@ -17,9 +12,7 @@
 
 @media (width <= 62rem) {
   .navigationFixed {
-    gap: 0;
-    height: auto;
-    padding: 0;
+    left: auto;
     position: static;
     width: 100%;
   }

@@ -1,12 +1,12 @@
+.headerWrapper {
+  background-color: var(--background-alt-blue-france);
+  border-top: 0.0625rem solid var(--border-default-grey);
+}
+
 .wrapper {
   display: grid;
   grid-template:
-    'header header' auto
-    'sidebar content' 1fr / 20rem 1fr;
-}
-
-.header {
-  grid-area: header;
+    'sidebar content' 1fr / 16rem 1fr;
 }
 
 .sidebar {
@@ -17,8 +17,8 @@
 .content {
   background-color: var(--background-default-grey);
   grid-area: content;
-  padding: 2.5rem;
   padding-bottom: 5rem;
+  padding-top: 2.5rem;
 }
 
 @media (width <= 62rem) {
@@ -29,16 +29,10 @@
 
   .sidebar {
     margin-bottom: 1.5rem;
-    order: 1;
-  }
-
-  .header {
-    order: 2;
   }
 
   .content {
-    order: 3;
-    padding: 1rem;
     padding-bottom: 2.5rem;
+    padding-top: 1rem;
   }
 }

@@ -68,7 +68,7 @@ export default function Navigation(): ReactElement {
       role="navigation"
       style={{ top: topPosition }}
     >
-      <div className="fr-sidemenu__inner fr-pt-12v">
+      <div className="fr-sidemenu__inner">
         <button
           aria-controls="donnees-territoriales-menu-wrapper"
           aria-expanded="false"

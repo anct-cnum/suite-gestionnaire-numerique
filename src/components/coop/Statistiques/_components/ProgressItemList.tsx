@@ -1,107 +1,115 @@
+'use client'
 
-import type { QuantifiedShare } from '../types'
 import { numberToPercentage, numberToString } from '../utils'
+import classNames from 'classnames'
+import type { CSSProperties } from 'react'
+import type { QuantifiedShare } from '../types'
 import ProgressBar from './ProgressBar'
 import styles from './ProgressItemList.module.css'
-import type { CSSProperties } from 'react'
 
-export function ProgressItemList({
-  classes,
-  color,
-  colors,
+export const ProgressItemList = ({
   items,
   maxProportion,
-  oneLineLabel = false,
-  style,
+  colors,
+  color,
   truncateLabel = false,
+  oneLineLabel = false,
+  tooltipKey,
+  classes,
+  style,
 }: {
-  readonly classes?: {
-    count?: string
+  items: QuantifiedShare[]
+  maxProportion: number
+  truncateLabel?: boolean
+  color?: string
+  colors?: string[]
+  oneLineLabel?: boolean
+  tooltipKey?: string
+  classes?: {
     label?: string
-    progressBar?: string
+    count?: string
     proportion?: string
+    progressBar?: string
   }
-  readonly color?: string
-  readonly colors?: Array<string>
-  readonly items: Array<QuantifiedShare>
-  readonly maxProportion: number
-  readonly oneLineLabel?: boolean
-  readonly style?: {
-    count?: CSSProperties
+  style?: {
     label?: CSSProperties
-    progressBar?: CSSProperties
+    count?: CSSProperties
     proportion?: CSSProperties
+    progressBar?: CSSProperties
   }
-  readonly truncateLabel?: boolean
-}) {
-  return (<div className={classNames('fr-width-full', styles.container)}>
-    {items.map(({ count, label, proportion }, index) => {
+}) => (
+  <div className={classNames('fr-width-full', styles.container)}>
+    {items.map(({ label, count, proportion }, index) => {
       const computedColors = color
         ? [color]
         : colors && colors.length > 0
           ? [colors[index % colors.length]]
           : []
 
+      const showTooltip = (truncateLabel || oneLineLabel) && tooltipKey
+
       return (
-        <div
-          className={styles.row}
-          key={index}
-        >
-          <div className={styles.leftPart}>
+        <div key={index} className={styles.row}>
+          {showTooltip && (
             <span
-              className={classNames(
-                'fr-text--sm',
-                styles.label,
-                truncateLabel && styles.truncatedLabel,
-                oneLineLabel && styles.oneLineLabel,
-                classes?.label
-              )}
-              style={style?.label}
-              title={truncateLabel ? label : undefined}
+              className="fr-tooltip fr-placement fr-text--sm fr-p-2v fr-border-radius--8"
+              id={`tooltip-${tooltipKey}-${index}`}
+              style={{ background: 'rgba(30, 27, 57, 0.95)', color: 'white' }}
+              role="tooltip"
+              aria-hidden
             >
               {label}
             </span>
-            <span
-              className={classNames(
-                'fr-text--sm fr-text--right fr-text--bold fr-whitespace-nowrap',
-                styles.count,
-                classes?.count
-              )}
-              style={style?.count}
-            >
-              {numberToString(count)}
-            </span>
-          </div>
-          <div className={styles.rightPart}>
-            <span
-              className={classNames(
-                'fr-text--sm fr-text--right fr-text--medium fr-text-mention--grey fr-whitespace-nowrap',
-                styles.proportion,
-                classes?.proportion
-              )}
-              style={style?.proportion}
-            >
-              {numberToPercentage(proportion)}
-            </span>
-            <ProgressBar
-              className={classNames(styles.progressBar, classes?.progressBar)}
-              colors={computedColors}
-              progress={[
-                {
-                  label,
-                  percentage:
-                    maxProportion === 0 ? 0 : 100 * proportion / maxProportion,
-                },
-              ]}
-              style={style?.progressBar}
-            />
-          </div>
+          )}
+          <span
+            className={classNames(
+              'fr-text--sm',
+              styles.label,
+              truncateLabel && styles.truncatedLabel,
+              oneLineLabel && styles.oneLineLabel,
+              classes?.label,
+            )}
+            style={style?.label}
+            aria-describedby={
+              showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined
+            }
+          >
+            {label}
+          </span>
+          <span
+            className={classNames(
+              'fr-text--sm fr-text--right fr-text--bold fr-whitespace-nowrap',
+              styles.count,
+              classes?.count,
+            )}
+            style={style?.count}
+          >
+            {numberToString(count)}
+          </span>
+          <span
+            className={classNames(
+              'fr-text--sm fr-text--right fr-text--medium fr-text-mention--grey fr-whitespace-nowrap',
+              styles.proportion,
+              classes?.proportion,
+            )}
+            style={style?.proportion}
+          >
+            {numberToPercentage(proportion)}
+          </span>
+          <ProgressBar
+            className={classNames(styles.progressBar, classes?.progressBar)}
+            style={style?.progressBar}
+            progress={[
+              {
+                label,
+                percentage:
+                  maxProportion === 0 ? 0 : (100 * proportion) / maxProportion,
+              },
+            ]}
+            colors={computedColors}
+          />
         </div>
       )
     })}
-          </div>)
-}
-
-function classNames(...classes: Array<boolean | string | undefined>): string {
-  return classes.filter(Boolean).join(' ')
-}
+  </div>
+)

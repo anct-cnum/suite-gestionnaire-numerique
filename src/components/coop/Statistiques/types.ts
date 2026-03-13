@@ -42,6 +42,7 @@ export type AccompagnementsStats = {
 export type ActivitesStats = {
   durees: Array<{ value: string } & QuantifiedShare>
   materiels: Array<{ value: string } & QuantifiedShare>
+  tags?: Array<{ value: string } & QuantifiedShare>
   thematiques: Array<{ value: string } & QuantifiedShare>
   thematiquesDemarches: Array<{ value: string } & QuantifiedShare>
   total: number
@@ -74,5 +75,7 @@ export type StatistiquesMediateursData = {
   accompagnementsParMois: AccompagnementCountByPeriod
   activites: ActivitesStats
   beneficiaires: BeneficiaireStats
+  communes?: Array<QuantifiedShare>
+  structures?: Array<QuantifiedShare>
   totalCounts: AccompagnementsStats
 }

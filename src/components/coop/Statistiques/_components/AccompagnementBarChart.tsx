@@ -3,110 +3,113 @@
 import {
   Bar,
   BarChart,
+  CartesianGrid,
   LabelList,
   ResponsiveContainer,
   Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
 } from 'recharts'
 
-export function AccompagnementBarChart({
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<number, string>) =>
+  active &&
+  payload &&
+  payload.length > 0 && (
+    <div
+      className="fr-p-2v fr-border-radius--8 fr-tile--shadow fr-whitespace-nowrap fr-text--sm"
+      style={{ backgroundColor: 'rgba(30, 27, 57, 0.95)', color: 'white' }}
+    >
+      <div className="fr-text--bold">{label}</div>
+      <div>
+        <span className="fr-text--xs">Accompagnements&nbsp;:</span>{' '}
+        <span className="fr-text--bold">
+          {payload[0].value?.toLocaleString('fr-FR')}
+        </span>
+      </div>
+    </div>
+  )
+
+export const AccompagnementBarChart = ({
   data,
 }: {
-  readonly data: Array<{ count: number; label: string }>
-}) {
-  // Si plus de 12 éléments, on ne garde que les 30 dernières valeurs
-  const displayData = data.length > 12 ? data.slice(-30) : data
+  data: { label: string; count: number }[]
+}) => {
+  const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
+  const emptyData = data.map((item) => ({ ...item, count: 1 }))
+  const displayData = isEmpty
+    ? emptyData
+    : data.length > 12
+      ? data.slice(-30)
+      : data
 
   return (
-    <ResponsiveContainer
-      height={200}
-      width="100%"
-    >
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart
-        barSize={displayData.length > 12 ? 6 : 16}
         data={displayData}
-        margin={{ bottom: 10, left: 20, right: 30, top: 15 }}
+        margin={{ top: 15, right: 10, left: 5, bottom: 0 }}
+        barSize={displayData.length > 18 ? 16 : 20}
       >
+        <CartesianGrid
+          horizontal
+          vertical={false}
+          strokeDasharray="3 3"
+          stroke="#ddd"
+        />
         <XAxis
-          angle={-45}
-          className="fr-text--sm fr-text--medium"
+          className="fr-text--xxs"
           dataKey="label"
-          interval={displayData.length > 12 ? 2 : 0}
-          padding={{ left: 10, right: 10 }}
           scale="point"
-          tick={{ dy: 10 }}
+          padding={{ left: 14, right: 14 }}
           tickLine={false}
+          axisLine={false}
+          interval={displayData.length > 12 ? 2 : 0}
         />
         <YAxis
+          width={35}
+          tickCount={5}
+          tickLine={false}
+          axisLine={false}
           allowDecimals={false}
-          className="fr-text--sm fr-text--medium"
-          interval="preserveStartEnd"
-          tickFormatter={(value: number) => {
-            if (value >= 1000) {
-              return `${(value / 1000).toFixed(1)}k`
-            }
-            return value.toString()
-          }}
-          tickMargin={15}
+          domain={isEmpty ? [0, 1] : undefined}
+          className="fr-text--xxs"
+          tickFormatter={(value) =>
+            isEmpty
+              ? ''
+              : value >= 1000
+                ? `${(value / 1000).toFixed(1)}k`
+                : value.toString()
+          }
         />
-        <Tooltip content={<CustomTooltip />} />
+        {!isEmpty && <Tooltip content={<CustomTooltip />} />}
         <Bar
           dataKey="count"
-          fill="#009099"
-          radius={[10, 10, 0, 0]}
+          fill={isEmpty ? 'var(--blue-france-975-75)' : '#6a6af4'}
+          radius={[4, 4, 0, 0]}
         >
-          <LabelList
-            dataKey="count"
-            formatter={(value: number | string | undefined | null | false) => {
-              if (value === undefined || value === null || value === false) {return ''}
-              const count = typeof value === 'number' ? value : Number(value)
-              if (count === 0 || isNaN(count)) {return ''}
-              if (count >= 1000) {
-                return `${(count / 1000).toFixed(1)}k`
-              }
-              return count.toString()
-            }}
-            position="top"
-            style={{
-              fontSize: displayData.length > 12 ? 10 : 12,
-              fontWeight: 'bold',
-            }}
-          />
+          {!isEmpty && (
+            <LabelList
+              dataKey="count"
+              position="top"
+              style={{
+                fontSize: displayData.length > 12 ? 10 : 12,
+                fontWeight: 'bold',
+              }}
+              formatter={(count: number) => {
+                if (count === 0) return ''
+                if (count >= 1000) {
+                  return `${(count / 1000).toFixed(1)}k`
+                }
+                return count.toString()
+              }}
+            />
+          )}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
-  )
-}
-
-type TooltipPayload = {
-  payload: { label: string }
-  value: number
-}
-
-function CustomTooltip({
-  active,
-  label,
-  payload,
-}: {
-  readonly active?: boolean
-  readonly label?: string
-  readonly payload?: Array<TooltipPayload>
-}) {
-  return active &&
-  payload &&
-  payload.length > 0 && (
-    <ul className="fr-background-default--grey fr-p-1w fr-list-group fr-raw-list fr-tile--shadow">
-      <li className="fr-text--bold">
-        {label}
-      </li>
-      <li>
-        Accompagnements :
-        {' '}
-        <span className="fr-text--bold">
-          {payload[0].value.toLocaleString('fr-FR')}
-        </span>
-      </li>
-    </ul>
   )
 }

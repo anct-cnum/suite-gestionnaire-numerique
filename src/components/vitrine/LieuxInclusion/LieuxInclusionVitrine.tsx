@@ -14,7 +14,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
       <div className="fr-mb-10w">
         <div className="fr-mb-1w">
           <div style={{ alignItems: 'center', display: 'flex', gap: '10px', justifyContent: 'center', minHeight: '40px' }}>
-            <h3
+            <h2
               className="fr-mb-0"
               style={{
                 color: '#000091',
@@ -25,7 +25,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
               }}
             >
               Données et statistiques
-            </h3>
+            </h2>
             <button
               className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-download-line"
               type="button"

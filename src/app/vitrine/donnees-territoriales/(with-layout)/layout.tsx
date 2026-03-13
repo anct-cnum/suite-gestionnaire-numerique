@@ -5,19 +5,25 @@ import { Header, Navigation } from '@/components/vitrine/DonneesTerritoriales'
 
 export default function DonneesTerritoriales({ children }: Props): ReactElement {
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.header}>
-        <Header titre="Données de l'inclusion numérique" />
+    <>
+      <div className={styles.headerWrapper}>
+        <div className="fr-container">
+          <Header titre="Données de l'inclusion numérique" />
+        </div>
       </div>
 
-      <aside className={styles.sidebar}>
-        <Navigation />
-      </aside>
+      <div className="fr-container">
+        <div className={styles.wrapper}>
+          <aside className={styles.sidebar}>
+            <Navigation />
+          </aside>
 
-      <div className={styles.content}>
-        {children}
+          <div className={styles.content}>
+            {children}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

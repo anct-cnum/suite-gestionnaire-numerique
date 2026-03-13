@@ -1,54 +1,52 @@
 export const thematiquesAccompagnementColors = [
-  '#68A532',
-  '#465F9D',
-  '#A558A0',
-  '#E18B76',
-  '#C8AA39',
-  '#E4794A',
-  '#D1B781',
-  '#AEA397',
-  '#00A95F',
-  '#417DC4',
-  '#CE614A',
-  '#C3992A',
+  '#8ba7f8',
+  '#68a532',
+  '#d1b781',
+  '#ce70cc',
+  '#465f9d',
+  '#a558a0',
+  '#e18b76',
+  '#c8aa39',
+  '#e4794a',
+  '#d1b781',
+  '#aea397',
+  '#00a95f',
+  '#417dc4',
+  '#ce614a',
+  '#c3992a',
   '#009081',
-  '#BD987A',
+  '#bd987a',
+  '#ce70cc',
+  '#6a6af4',
 ]
-
-
 export const canauxAccompagnementColors = [
-  '#C7F6FC',
-  '#60E0EB',
+  '#c7f6fc',
+  '#60e0eb',
   '#009099',
-  '#006A6F',
+  '#006a6f',
 ]
-
 export const dureesAccompagnementColors = [
-  '#F7EBE5',
-  '#EAC7B2',
-  '#C08C65',
-  '#855D48',
+  '#f7ebe5',
+  '#eac7b2',
+  '#c08c65',
+  '#855d48',
 ]
-
 export const tranchesAgeColors = [
-  '#00AC8C',
-  '#FF6F4C',
-  '#CAC5B0',
-  '#5770BE',
-  '#FF0185',
-  '#9747FF',
-  '#F88AEF',
-  '#E3E3FD',
+  '#009099',
+  '#e4794a',
+  '#d1b781',
+  '#6a6af4',
+  '#e18b76',
+  '#a558a0',
+  '#c3992a',
+  '#e3e3fd',
 ]
-
 export const statusColors = [
-  '#FFF480',
-  '#B68B65',
-  '#A3A6BC',
-  '#FFDBD2',
-  '#E3E3FD',
+  '#e4794a',
+  '#a558a0',
+  '#009099',
+  '#c08c65',
+  '#e3e3fd',
 ]
-
-export const genresColors = ['#C08C65', '#009099', '#E3E3FD']
-
+export const genresColors = ['#d1b781', '#009099', '#e3e3fd']
 export const communeColor = '#6A6AF4'

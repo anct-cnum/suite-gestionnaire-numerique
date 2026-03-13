@@ -1,80 +1,92 @@
 'use client'
 
+import { numberToPercentage, numberToString } from '../utils'
 import {
   Cell,
   Pie,
   PieChart,
   ResponsiveContainer,
   Tooltip,
+  TooltipProps,
 } from 'recharts'
 
-export function AccompagnementPieChart({
-  className,
-  colors = [],
-  data,
-  isAnimationActive = true,
-  size,
-  width = 24,
-}: {
-  readonly className?: string
-  readonly colors?: Array<string>
-  readonly data: Array<{ count: number; label: string; proportion: number }>
-  readonly isAnimationActive?: boolean
-  readonly size: number
-  readonly width?: number
-}) {
-  return (<ResponsiveContainer
-    className={className}
-    height={size}
-    width={size}
-          >
-    <PieChart>
-      <Pie
-        cx="50%"
-        cy="50%"
-        data={data}
-        dataKey="count"
-        innerRadius={size / 2 - width}
-        isAnimationActive={isAnimationActive}
-        nameKey="label"
-        outerRadius={size / 2}
-        strokeWidth={0}
-      >
-        {data.map((item, index) => (
-          <Cell
-            fill={colors[index % colors.length]}
-            key={item.label}
-          />
-        ))}
-      </Pie>
-      <Tooltip content={<CustomTooltip />} />
-    </PieChart>
-          </ResponsiveContainer>)
-}
+type PieData = { label: string; count: number; proportion: number }
 
-type TooltipPayload = {
-  name: string
-  value: number
-}
-
-function CustomTooltip({
+const CustomTooltip = ({
   active,
   payload,
-}: {
-  readonly active?: boolean
-  readonly payload?: Array<TooltipPayload>
-}) {
-  return active &&
+}: TooltipProps<number, string> & {
+  payload?: { payload: PieData }[]
+}) =>
+  active &&
   payload &&
   payload.length > 0 && (
-    <div className="fr-background-default--grey fr-p-1w fr-list-group fr-tile--shadow fr-whitespace-nowrap">
-      {payload[0].name}
-      {' '}
-      :
-      {' '}
-      <span className="fr-text--bold">
-        {payload[0].value}
-      </span>
+    <div
+      className="fr-p-2v fr-border-radius--8 fr-tile--shadow fr-whitespace-nowrap fr-text--sm"
+      style={{ backgroundColor: 'rgba(30, 27, 57, 0.95)', color: 'white' }}
+    >
+      <div className="fr-text--bold">{payload[0].payload.label}</div>
+      <div>
+        <span className="fr-text--xs">Accompagnements&nbsp;:</span>{' '}
+        <span className="fr-text--bold">
+          {numberToString(payload[0].payload.count)}
+        </span>
+        &emsp;
+        {numberToPercentage(payload[0].payload.proportion)}
+      </div>
     </div>
+  )
+
+export const AccompagnementPieChart = ({
+  data,
+  size,
+  isAnimationActive = true,
+  width = 24,
+  colors = [],
+  className,
+  half = false,
+}: {
+  data: { label: string; count: number; proportion: number }[]
+  size: number
+  isAnimationActive?: boolean
+  width?: number
+  colors?: string[]
+  className?: string
+  half?: boolean
+}) => {
+  const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
+  const emptyData = [{ label: 'Aucune donnée', count: 1, proportion: 100 }]
+
+  return (
+    <ResponsiveContainer
+      width={size}
+      height={half ? size / 2 + 10 : size}
+      className={className}
+    >
+      <PieChart>
+        <Pie
+          strokeWidth={0}
+          dataKey="count"
+          nameKey="label"
+          isAnimationActive={isAnimationActive}
+          data={isEmpty ? emptyData : data}
+          cx="50%"
+          cy={half ? '100%' : '50%'}
+          innerRadius={size / 2 - width}
+          outerRadius={size / 2}
+          startAngle={half ? 180 : 0}
+          endAngle={half ? 0 : 360}
+        >
+          {isEmpty ? (
+            <Cell fill="var(--blue-france-975-75)" />
+          ) : (
+            data.map((item, index) => (
+              <Cell key={item.label} fill={colors[index % colors.length]} />
+            ))
+          )}
+        </Pie>
+        {!isEmpty && <Tooltip content={<CustomTooltip />} />}
+      </PieChart>
+    </ResponsiveContainer>
   )
 }

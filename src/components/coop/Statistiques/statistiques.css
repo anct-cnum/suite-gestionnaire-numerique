@@ -1,67 +1,220 @@
 /* Styles pour les statistiques de la Coop */
 
-/* Points de couleur dans les légendes */
-.ri-circle-fill {
-  font-size: 0.5rem;
-  margin-right: 0.5rem;
+/* ============================================
+   FLEX UTILITIES
+   ============================================ */
+
+.fr-flex {
+  display: flex !important;
 }
 
-/* Barres de progression */
-.fr-progress {
-  display: block;
-  width: 100%;
-  height: 8px;
-  background-color: var(--background-contrast-grey);
+.fr-inline-flex {
+  display: inline-flex !important;
+}
+
+.fr-direction-column {
+  flex-direction: column;
+}
+
+.fr-direction-row {
+  flex-direction: row;
+}
+
+.fr-align-self-center {
+  align-self: center;
+}
+
+.fr-align-items-center {
+  align-items: center;
+}
+
+.fr-align-items-baseline {
+  align-items: baseline;
+}
+
+.fr-align-items-start {
+  align-items: flex-start;
+}
+
+.fr-align-items-end {
+  align-items: flex-end;
+}
+
+.fr-align-items-stretch {
+  align-items: stretch;
+}
+
+.fr-justify-content-center {
+  justify-content: center;
+}
+
+.fr-justify-content-start {
+  justify-content: flex-start;
+}
+
+.fr-justify-content-end {
+  justify-content: flex-end;
+}
+
+.fr-justify-content-space-between {
+  justify-content: space-between;
+}
+
+.fr-justify-content-space-around {
+  justify-content: space-around;
+}
+
+.fr-flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.fr-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.fr-flex-gap-1v {
+  gap: 4px;
+}
+
+.fr-flex-gap-2v {
+  gap: 8px;
+}
+
+.fr-flex-gap-3v {
+  gap: 12px;
+}
+
+.fr-flex-gap-4v {
+  gap: 16px;
+}
+
+.fr-flex-gap-5v {
+  gap: 20px;
+}
+
+.fr-flex-gap-6v {
+  gap: 24px;
+}
+
+.fr-flex-gap-8v {
+  gap: 32px;
+}
+
+.fr-flex-gap-10v {
+  gap: 40px;
+}
+
+.fr-flex-gap-12v {
+  gap: 48px;
+}
+
+.fr-flex-gap-16v {
+  gap: 64px;
+}
+
+.fr-flex-basis-0 {
+  flex-basis: 0;
+}
+
+.fr-flex-basis-full {
+  flex-basis: 100%;
+}
+
+.fr-flex-grow-0 {
+  flex-grow: 0;
+}
+
+.fr-flex-grow-1 {
+  flex-grow: 1;
+}
+
+.fr-flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.fr-flex-shrink-1 {
+  flex-shrink: 1;
+}
+
+/* lg flex rules */
+@media (min-width: 62em) {
+  .fr-direction-lg-row {
+    flex-direction: row;
+  }
+
+  .fr-direction-lg-column {
+    flex-direction: column;
+  }
+
+  .fr-align-items-lg-center {
+    align-items: center;
+  }
+
+  .fr-flex-basis-lg-0 {
+    flex-basis: 0;
+  }
+}
+
+/* ============================================
+   DISPLAY UTILITIES
+   ============================================ */
+
+.fr-display-block {
+  display: block !important;
+}
+
+.fr-display-none {
+  display: none !important;
+}
+
+.fr-display-inline-block {
+  display: inline-block !important;
+}
+
+.fr-display-grid {
+  display: grid !important;
+}
+
+.fr-overflow-hidden {
+  overflow: hidden;
+}
+
+.fr-min-width-0 {
+  min-width: 0;
+}
+
+.fr-flex-0 {
+  flex: 0 !important;
+}
+
+.fr-flex-1 {
+  flex: 1 !important;
+}
+
+/* ============================================
+   BORDER UTILITIES
+   ============================================ */
+
+.fr-border {
+  border: 1px solid var(--border-default-grey);
+}
+
+.fr-border-none {
+  border: none !important;
+}
+
+.fr-border-top {
+  border-top: 1px solid var(--border-default-grey);
+}
+
+.fr-border-bottom {
+  border-bottom: 1px solid var(--border-default-grey);
+}
+
+.fr-border-radius--4 {
   border-radius: 4px;
-  overflow: hidden;
 }
 
-.fr-progress--sm {
-  height: 4px;
-}
-
-.fr-progress--lg {
-  height: 12px;
-  border-radius: 6px;
-}
-
-.fr-progress__bar {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  transition: width 0.3s ease;
-}
-
-.fr-progress-stacked {
-  display: flex;
-  width: 100%;
-  height: 12px;
-  background-color: var(--background-contrast-grey);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.fr-progress-stacked .fr-progress {
-  height: 100%;
-  background-color: transparent;
-  border-radius: 0;
-}
-
-.fr-progress-stacked .fr-progress__bar {
-  border-radius: 0;
-}
-
-/* Conteneur des thématiques avec barres de progression */
-.fr-width-full {
-  width: 100%;
-}
-
-/* Utilitaires de texte */
-.fr-whitespace-nowrap {
-  white-space: nowrap;
-}
-
-/* Border radius personnalisés */
 .fr-border-radius--8 {
   border-radius: 8px;
 }
@@ -70,41 +223,170 @@
   border-radius: 16px;
 }
 
-/* Couleurs de fond personnalisées */
-.fr-background-alt--brown-caramel {
-  background-color: var(--background-alt-brown-caramel, #f3ebe5);
+.fr-border-radius--32 {
+  border-radius: 32px;
 }
 
-/* Flex gap personnalisés */
-.fr-flex-gap-2v {
-  gap: 0.5rem;
+/* ============================================
+   TEXT UTILITIES
+   ============================================ */
+
+.fr-text--xxs {
+  font-size: 0.625rem;
 }
 
-.fr-flex-gap-4v {
-  gap: 1rem;
+.fr-text--medium {
+  font-weight: 500 !important;
 }
 
-.fr-flex-gap-6v {
-  gap: 1.5rem;
+.fr-text--semi-bold {
+  font-weight: 500 !important;
 }
 
-/* Séparateurs */
+.fr-text--center {
+  text-align: center;
+}
+
+.fr-text--left {
+  text-align: left !important;
+}
+
+.fr-text--right {
+  text-align: right !important;
+}
+
+.fr-text--nowrap {
+  text-wrap: nowrap;
+}
+
+.fr-text--uppercase {
+  text-transform: uppercase !important;
+}
+
+.fr-whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.fr-whitespace-normal {
+  white-space: normal !important;
+}
+
+.fr-text-overflow--ellipsis {
+  text-overflow: ellipsis;
+}
+
+.fr-line-height-1 {
+  line-height: 1 !important;
+}
+
+/* ============================================
+   SEPARATOR UTILITIES
+   ============================================ */
+
 .fr-separator-1px {
   border: none;
   border-top: 1px solid var(--border-default-grey);
   margin: 0;
 }
 
+.fr-separator-4v {
+  border: none;
+  border-top: 1px solid var(--border-default-grey);
+  margin: 16px 0;
+}
+
 .fr-separator-8v {
   border: none;
   border-top: 1px solid var(--border-default-grey);
-  margin: 2rem 0;
+  margin: 32px 0;
 }
 
-/* Display inline-block */
-.fr-display-inline-block {
-  display: inline-block;
+/* ============================================
+   POSITION UTILITIES
+   ============================================ */
+
+.fr-position-relative {
+  position: relative;
 }
+
+.fr-position-absolute {
+  position: absolute;
+}
+
+/* ============================================
+   PROGRESS BARS (copié de la coop)
+   ============================================ */
+
+.fr-progress,
+.fr-progress-stacked {
+  --progress-height: 12px;
+  --progress-radius: 16px;
+
+  display: flex;
+  height: var(--progress-height);
+  overflow: hidden;
+  font-size: 0.75rem;
+  background-color: var(--blue-france-975-75);
+  border-radius: var(--progress-radius);
+}
+
+.fr-progress__bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--text-default-grey);
+  text-align: center;
+  white-space: nowrap;
+  background-color: var(--text-action-high-blue-france);
+}
+
+.fr-progress--sm {
+  --progress-height: 8px;
+}
+
+.fr-progress--lg {
+  --progress-height: 40px;
+  --progress-radius: 10px;
+}
+
+.fr-progress:last-child .fr-progress__bar {
+  border-start-end-radius: var(--progress-radius);
+  border-end-end-radius: var(--progress-radius);
+}
+
+.fr-progress-stacked > .fr-progress {
+  position: relative;
+  overflow: visible;
+}
+
+.fr-progress-stacked > .fr-progress:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--background-default-grey);
+}
+
+.fr-progress-stacked > .fr-progress > .fr-progress__bar {
+  width: 100%;
+}
+
+/* ============================================
+   SIZE UTILITIES
+   ============================================ */
+
+.fr-width-full {
+  width: 100%;
+}
+
+/* ============================================
+   OTHER UTILITIES
+   ============================================ */
+
+/* Points de couleur dans les légendes - taille par défaut de remixicon (16px) */
 
 /* Screen reader only */
 .sr-only {
@@ -117,4 +399,9 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Couleurs de fond personnalisées */
+.fr-background-alt--brown-caramel {
+  background-color: var(--background-alt-brown-caramel, #f3ebe5);
 }

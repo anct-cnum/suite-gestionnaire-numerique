@@ -3,9 +3,12 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import 'react-toastify/dist/ReactToastify.css'
 import '@gouvfr/dsfr/dist/dsfr.min.css'
-import '@gouvfr/dsfr/dist/utility/utility.css'
+import '@gouvfr/dsfr/dist/utility/utility.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons.css'
+import 'remixicon/fonts/remixicon.css'
 import '../global.css'
+
+import Dsfr from './Dsfr'
 
 export default function Layout({ children }: Readonly<PropsWithChildren>): ReactElement {
   return (
@@ -28,10 +31,7 @@ export default function Layout({ children }: Readonly<PropsWithChildren>): React
           rel="shortcut icon"
           type="image/x-icon"
         />
-        <Script
-          src="/dsfr-1.13.1.module.min.js"
-          strategy="lazyOnload"
-        />
+        <Dsfr />
         {
           process.env.NODE_ENV === 'production' ? (
             <Script

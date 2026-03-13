@@ -1,15 +1,15 @@
 'use client'
 
+import Button from '@codegouvfr/react-dsfr/Button'
 import { CSSProperties, useMemo, useState } from 'react'
-
 import { QuantifiedShare } from '../types'
 import { ProgressItemList } from './ProgressItemList'
 
 const orderQuantifiedShares = (
-  quantifiedShares: Array<QuantifiedShare>,
-  order?: 'asc' | 'desc'
+  quantifiedShares: QuantifiedShare[],
+  order?: 'asc' | 'desc',
 ) => {
-  if (!order) {return quantifiedShares}
+  if (!order) return quantifiedShares
   return quantifiedShares.sort((a, b) => {
     if (a.count > b.count) {
       return order === 'asc' ? 1 : -1
@@ -21,43 +21,45 @@ const orderQuantifiedShares = (
   })
 }
 
-export function QuantifiedShareList({
-  classes,
-  color,
-  colors,
-  limit,
-  oneLineLabel = false,
-  order,
+export const QuantifiedShareList = ({
   quantifiedShares,
-  style,
+  limit,
+  order,
+  colors,
+  color,
   truncateLabel = false,
+  oneLineLabel = false,
+  tooltipKey,
+  classes,
+  style,
 }: {
-  readonly classes?: {
-    count?: string
-    label?: string
-    progressBar?: string
-    proportion?: string
-  }
-  readonly color?: string
-  readonly colors?: Array<string>
-  readonly limit?: {
-    count: number
-    hideLabel: string
+  quantifiedShares: QuantifiedShare[]
+  order?: 'asc' | 'desc'
+  truncateLabel?: boolean
+  oneLineLabel?: boolean
+  tooltipKey?: string
+  colors?: string[]
+  color?: string
+  limit?: {
     showLabel: string
+    hideLabel: string
+    count: number
   }
-  readonly oneLineLabel?: boolean
-  readonly order?: 'asc' | 'desc'
-  readonly quantifiedShares: Array<QuantifiedShare>
-  readonly style?: {
-    count?: CSSProperties
+  classes?: {
+    label?: string
+    count?: string
+    proportion?: string
+    progressBar?: string
+  }
+  style?: {
     label?: CSSProperties
-    progressBar?: CSSProperties
+    count?: CSSProperties
     proportion?: CSSProperties
+    progressBar?: CSSProperties
   }
-  readonly truncateLabel?: boolean
-}) {
+}) => {
   const listShouldBeTruncacted =
-    Boolean(limit?.count) && quantifiedShares.length > (limit?.count ?? 0)
+    !!limit?.count && quantifiedShares.length > limit.count
 
   const [displayFullList, setdisplayFullList] = useState(false)
 
@@ -66,9 +68,9 @@ export function QuantifiedShareList({
       quantifiedShares.reduce(
         (max, quantifiedShare) =>
           quantifiedShare.proportion > max ? quantifiedShare.proportion : max,
-        0
+        0,
       ),
-    [quantifiedShares]
+    [quantifiedShares],
   )
 
   const orderedQuantifiedShares = orderQuantifiedShares(quantifiedShares, order)
@@ -76,44 +78,46 @@ export function QuantifiedShareList({
   const quantifiedSharesToDisplay =
     !listShouldBeTruncacted || displayFullList
       ? orderedQuantifiedShares
-      : orderedQuantifiedShares.slice(0, limit?.count ?? 0)
+      : orderedQuantifiedShares.slice(0, limit.count)
 
   return (
     <>
       <ProgressItemList
-        classes={classes}
-        color={color}
-        colors={colors}
         items={quantifiedSharesToDisplay}
+        colors={colors}
+        color={color}
         maxProportion={maxProportion}
-        oneLineLabel={oneLineLabel}
-        style={style}
         truncateLabel={truncateLabel}
+        oneLineLabel={oneLineLabel}
+        tooltipKey={tooltipKey}
+        classes={classes}
+        style={style}
       />
-      {listShouldBeTruncacted && limit ? <button
-        className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-mt-2w"
-        onClick={() => { setdisplayFullList(!displayFullList) }}
-        type="button"
-      >
-        {displayFullList ? 
-          limit.hideLabel
-          : (
+      {listShouldBeTruncacted && (
+        <Button
+          type="button"
+          size="small"
+          priority="tertiary no outline"
+          className="fr-mt-2w"
+          onClick={() => setdisplayFullList(!displayFullList)}
+        >
+          {displayFullList ? (
+            limit.hideLabel
+          ) : (
             <>
-              {limit.showLabel}
-              {' '}
-              ·
-              {quantifiedShares.length - limit.count}
+              {limit.showLabel} · {quantifiedShares.length - limit.count}
             </>
           )}
-        <span
-          aria-hidden
-          className={
-            displayFullList
-              ? 'fr-ml-1w ri-arrow-up-s-line'
-              : 'fr-ml-1w ri-arrow-down-s-line'
-          }
-        />
-                                </button> : null}
+          <span
+            className={
+              displayFullList
+                ? 'fr-ml-1w ri-arrow-up-s-line'
+                : 'fr-ml-1w ri-arrow-down-s-line'
+            }
+            aria-hidden
+          />
+        </Button>
+      )}
     </>
   )
 }
