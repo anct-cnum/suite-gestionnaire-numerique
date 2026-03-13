@@ -13,13 +13,13 @@ export type PosteConseillerNumeriqueViewModel = Readonly<{
   dateFinContrat: string
   dateFinConvention: string
   estCoordinateur: boolean
-  idPoste: number
   nomStructure: string
   posteConumId: number
   sourcesFinancement: string
   statut: EtatPoste
   statutBadgeVariant: BadgeVariant
   statutLabel: string
+  structureId: number
   totalConventionne: string
   totalVerse: string
 }>
@@ -109,13 +109,13 @@ function transformerPoste(poste: PosteConseillerNumeriqueReadModel): PosteConsei
     dateFinContrat: poste.dateFinContrat === null ? '-' : formaterEnDateFrancaise(poste.dateFinContrat),
     dateFinConvention: poste.dateFinConvention === null ? '-' : formaterEnDateFrancaise(poste.dateFinConvention),
     estCoordinateur: poste.estCoordinateur,
-    idPoste: poste.idPoste,
     nomStructure: poste.nomStructure,
     posteConumId: poste.posteConumId,
     sourcesFinancement: formaterEnveloppes(poste.sourcesFinancement),
     statut: poste.statut,
     statutBadgeVariant: getStatutBadgeVariant(poste.statut),
     statutLabel: getStatutLabel(poste.statut),
+    structureId: poste.structureId,
     totalConventionne: poste.totalConventionne > 0 ? formatMontant(poste.totalConventionne) : '-',
     totalVerse: poste.totalVerse > 0 ? formatMontant(poste.totalVerse) : '-',
   }

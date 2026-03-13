@@ -8,7 +8,8 @@ import {
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseillerNumeriqueDetailLoader {
-  async getById(posteId: number): Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel> {
+  async get(posteConumId: number, structureId: number): 
+  Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel> {
     try {
       // Récupérer les données du poste depuis la vue synthèse
       const posteResult = await prisma.$queryRaw<Array<PosteVueResult>>`
@@ -31,7 +32,8 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           v.bonification_v2,
           v.versement_cumule_v2
         FROM min.postes_conseiller_numerique_synthese v
-        WHERE v.poste_id = ${posteId}
+        WHERE v.poste_conum_id = ${posteConumId}
+          AND v.structure_id = ${structureId}
       `
 
       if (posteResult.length === 0) {
@@ -76,10 +78,10 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       const structure = structureResult[0]
 
       // Récupérer les dates des conventions
-      const datesConventions = await this.recupererDatesConventions(poste.poste_conum_id)
+      const datesConventions = await this.recupererDatesConventions(poste.poste_conum_id, poste.structure_id)
 
-      // Récupérer les contrats rattachés au poste
-      const contrats = await this.recupererContrats(poste.structure_id, poste.personne_id)
+      // Récupérer tous les contrats rattachés au poste (toutes personnes historiques)
+      const contrats = await this.recupererContrats(poste.poste_conum_id, poste.structure_id)
 
       // Construire la réponse
       const referent = this.parseContact(structure.contact)
@@ -113,14 +115,25 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaPosteConseillerNumeriqueDetailLoader', {
-        operation: 'getById',
-        posteId,
+        operation: 'get',
+        posteConumId,
+        structureId,
       })
       return {
         message: 'Impossible de récupérer les détails du poste',
         type: 'error',
       }
     }
+  }
+
+  async getFirstStructureId(posteConumId: number): Promise<null | number> {
+    const result = await prisma.$queryRaw<Array<{ structure_id: number }>>`
+      SELECT structure_id
+      FROM min.postes_conseiller_numerique_synthese
+      WHERE poste_conum_id = ${posteConumId}
+      LIMIT 1
+    `
+    return result.length > 0 ? result[0].structure_id : null
   }
 
   private buildConventionV1(
@@ -247,8 +260,8 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
   }
 
   private async recupererContrats(
-    structureId: number,
-    personneId: null | number
+    posteConumId: number,
+    structureId: number
   ): Promise<ReadonlyArray<{
       dateDebut: Date | null
       dateFin: Date | null
@@ -257,10 +270,6 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       role: string
       typeContrat: string
     }>> {
-    if (personneId === null) {
-      return []
-    }
-
     const result = await prisma.$queryRaw<Array<{
       date_debut: Date | null
       date_fin: Date | null
@@ -271,19 +280,21 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       prenom: null | string
       type_contrat: null | string
     }>>`
-      SELECT
+      SELECT DISTINCT
         c.date_debut,
         c.date_fin,
         c.date_rupture,
         c.type as type_contrat,
-        p.nom,
-        p.prenom,
-        p.is_coordinateur,
-        p.is_mediateur
-      FROM main.contrat c
-      INNER JOIN main.personne p ON p.id = c.personne_id
-      WHERE c.structure_id = ${structureId}
-        AND c.personne_id = ${personneId}
+        pers.nom,
+        pers.prenom,
+        pers.is_coordinateur,
+        pers.is_mediateur
+      FROM main.poste p
+      INNER JOIN main.contrat c
+        ON c.personne_id = p.personne_id AND c.structure_id = p.structure_id
+      INNER JOIN main.personne pers ON pers.id = c.personne_id
+      WHERE p.poste_conum_id = ${posteConumId}
+        AND p.structure_id = ${structureId}
       ORDER BY c.date_debut DESC
     `
 
@@ -297,7 +308,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
     }))
   }
 
-  private async recupererDatesConventions(posteConumId: number): Promise<DatesConventions> {
+  private async recupererDatesConventions(posteConumId: number, structureId: number): Promise<DatesConventions> {
     const result = await prisma.$queryRaw<Array<{
       date_debut_dgcl: Date | null
       date_debut_dge: Date | null
@@ -314,7 +325,9 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
         s.date_debut_convention_dge as date_debut_dge,
         s.date_fin_convention_dge as date_fin_dge
       FROM main.subvention s
-      WHERE s.poste_id = ${posteConumId}
+      JOIN main.poste p ON p.id = s.poste_id
+      WHERE p.poste_conum_id = ${posteConumId}
+        AND p.structure_id = ${structureId}
     `
 
     const dates: DatesConventions = {

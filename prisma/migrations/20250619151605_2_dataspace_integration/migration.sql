@@ -879,75 +879,49 @@ ALTER TABLE main.contrat OWNER TO sonum;
 CREATE TABLE main.subvention (
                                id integer NOT NULL,
                                poste_id integer NOT NULL,
-                               source_financement character varying(4),
-                               date_debut_convention date,
-                               date_debut_financement date,
-                               date_fin_convention date,
-                               date_fin_financement date,
-                               montant_subvention bigint,
-                               montant_bonification bigint,
-                               versement_1 bigint,
-                               versement_2 bigint,
-                               versement_3 bigint,
-                               date_versement_1 date,
-                               date_versement_2 date,
-                               date_versement_3 date,
-                               is_territoire_prioritaire boolean,
-                               mois_utilises_periode_financement smallint,
-                               mois_utilises_poste smallint,
+                               -- DGCL (V1)
+                               date_debut_convention_dgcl date,
+                               date_debut_financement_dgcl date,
+                               date_fin_convention_dgcl date,
+                               date_fin_financement_dgcl date,
+                               mois_utilises_periode_financement_dgcl smallint,
+                               -- DITP (V2)
+                               date_debut_convention_ditp date,
+                               date_debut_financement_ditp date,
+                               date_fin_convention_ditp date,
+                               date_fin_financement_ditp date,
+                               mois_utilises_periode_financement_ditp smallint,
+                               -- DGE (V2)
+                               date_debut_convention_dge date,
+                               date_debut_financement_dge date,
+                               date_fin_convention_dge date,
+                               date_fin_financement_dge date,
+                               mois_utilises_periode_financement_dge smallint,
+                               -- Montants V1
+                               montant_subvention_v1 bigint,
+                               montant_versement_v1 bigint,
+                               montant_avoir_v1 bigint,
+                               -- Montants V2
+                               montant_bonification_v2 bigint,
+                               montant_subvention_v2 bigint,
+                               montant_avoir_v2 bigint,
+                               -- Versements V2
+                               versement_1_v2 bigint,
+                               versement_2_v2 bigint,
+                               versement_3_v2 bigint,
+                               date_versement_1_v2 date,
+                               date_versement_2_v2 date,
+                               date_versement_3_v2 date,
                                created_at timestamp without time zone DEFAULT now(),
-                               updated_at timestamp without time zone,
-                               avoir bigint,
-                               cp_a_date bigint,
-                               CONSTRAINT subvention_source_check CHECK (((source_financement)::text = ANY (ARRAY[('DGCL'::character varying)::text, ('DGE'::character varying)::text, ('DITP'::character varying)::text])))
+                               updated_at timestamp without time zone
 );
 
 
 ALTER TABLE main.subvention OWNER TO sonum;
 
--- Name: COLUMN subvention.source_financement; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: TABLE subvention; Type: COMMENT; Schema: main; Owner: sonum
 
-COMMENT ON COLUMN main.subvention.source_financement IS 'Origine des fonds reversés à la structure : DGCL (financement initial), DITP ou DGE (reconventionnement ou financement direct en phase 2)';
-
-
--- Name: COLUMN subvention.date_debut_convention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_debut_convention IS 'Date de signature de la convention entre la structure employeuse et l’État. Marque le début de la relation contractuelle.';
-
-
--- Name: COLUMN subvention.date_debut_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_debut_financement IS 'Date du premier versement de subvention effectué à la structure (début effectif du financement).';
-
-
--- Name: COLUMN subvention.date_fin_convention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_fin_convention IS 'Date de fin prévisionnelle de la convention (généralement 2 à 3 ans après la signature, ajustée si des périodes de vacance existent).';
-
-
--- Name: COLUMN subvention.date_fin_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_fin_financement IS 'Date de fin effective de la période de financement. En général, un an après le dernier versement sur le poste.';
-
-
--- Name: COLUMN subvention.montant_subvention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.montant_subvention IS 'Montant total de la subvention attribuée à la structure pour le poste concerné.';
-
-
--- Name: COLUMN subvention.montant_bonification; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.montant_bonification IS 'Montant supplémentaire éventuellement accordé en complément de la subvention de base, attribuer en fonction de la priorité du territoire.';
-
-
--- Name: COLUMN subvention.is_territoire_prioritaire; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.is_territoire_prioritaire IS 'Indique si le poste subventionné se situe dans un territoire prioritaire au sens de la politique publique, Exemple : QPV (Quartiers Prioritaires de la Ville) ou FRR (France Ruralités Revitalisation) ';
-
-
--- Name: COLUMN subvention.mois_utilises_periode_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.mois_utilises_periode_financement IS 'Nombre de mois réellement consommés sur la période de financement allouée.';
+COMMENT ON TABLE main.subvention IS 'Table des subventions par poste. Une ligne par poste avec colonnes spécifiques pour DGCL (V1), DITP (V2) et DGE (V2)';
 
 
 -- Name: activites_coop_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
