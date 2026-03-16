@@ -154,7 +154,7 @@ describe('tableau de bord', () => {
     expect(financements1Label).toBeInTheDocument()
     const financements1Montant = within(financementsItems[0]).getByText('40 000 €')
     expect(financements1Montant).toBeInTheDocument()
-    const financements2Label = within(financementsItems[1]).getByText('Conseiller Numérique - Plan France Relance - État')
+    const financements2Label = within(financementsItems[1]).getByText('Conseiller Numérique - initiale - État')
     expect(financements2Label).toBeInTheDocument()
     const financements2Montant = within(financementsItems[1]).getByText('25 000 €')
     expect(financements2Montant).toBeInTheDocument()
@@ -189,7 +189,7 @@ describe('tableau de bord', () => {
     expect(beneficiaires1Label).toBeInTheDocument()
     const beneficiaires1Montant = within(beneficiairesItems[0]).getByText('20')
     expect(beneficiaires1Montant).toBeInTheDocument()
-    const beneficiaires2Label = within(beneficiairesItems[1]).getByText('Conseiller Numérique - Plan France Relance - État')
+    const beneficiaires2Label = within(beneficiairesItems[1]).getByText('Conseiller Numérique - initiale - État')
     expect(beneficiaires2Label).toBeInTheDocument()
     const beneficiaires2Montant = within(beneficiairesItems[1]).getByText('16')
     expect(beneficiaires2Montant).toBeInTheDocument()
@@ -358,7 +358,7 @@ describe('tableau de bord', () => {
             },
             {
               color: 'dot-purple-glycine-850-200',
-              label: 'Conseiller Numérique - Plan France Relance - État',
+              label: 'Conseiller Numérique - initiale - État',
               total: 16,
             },
             {
@@ -397,7 +397,7 @@ describe('tableau de bord', () => {
             },
             {
               color: 'dot-purple-glycine-850-200',
-              label: 'Conseiller Numérique - Plan France Relance - État',
+              label: 'Conseiller Numérique - initiale - État',
               pourcentageConsomme: 0,
               total: '25 000 €',
             },

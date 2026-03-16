@@ -438,7 +438,7 @@ function determinerEnveloppeEtLibelle(sourceFinancement: null | string): {
 } {
   if (sourceFinancement === 'DGCL') {
     return {
-      enveloppeLibelle: 'Conseiller Numérique - Plan France Relance - État',
+      enveloppeLibelle: 'Conseiller Numérique - initiale - État',
       sourceLibelle: 'DGCL',
     }
   }
