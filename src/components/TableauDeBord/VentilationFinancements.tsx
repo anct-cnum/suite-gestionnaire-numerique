@@ -92,7 +92,7 @@ export default function VentilationFinancements({
                         borderRadius: '4px',
                         height: '8px',
                         transition: 'width 0.3s ease',
-                        width: `${detail.pourcentageConsomme}%`,
+                        width: `${Math.min(detail.pourcentageConsomme, 100)}%`,
                       }}
                     />
                   </div>

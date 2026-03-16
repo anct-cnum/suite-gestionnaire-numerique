@@ -30,6 +30,7 @@ import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagn
 import { TableauDeBordLoaderBeneficiaires } from '@/use-cases/queries/RecuperBeneficiaires'
 import { ConseillerNumeriqueTableauDeBordReadModel } from '@/use-cases/queries/RecupererConseillerNumeriqueTableauDeBord'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { TableauDeBordLoaderFinancements, TableauDeBordLoaderFinancementsAdmin } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export const metadata: Metadata = {
@@ -114,7 +115,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
     const financementsAdminLoader = new PrismaFinancementsAdminLoader()
     const financementsReadModel = await financementsAdminLoader.get()
-    const mergedFinancementsAdmin = mergeCnIntoFinancements(financementsReadModel, cnReadModel)
+    const mergedFinancementsAdmin = mergeCnIntoFinancementsAdmin(financementsReadModel, cnReadModel)
     const financementsViewModel = handleReadModelOrError(
       mergedFinancementsAdmin,
       financementAdminPresenter
@@ -151,7 +152,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   const financementsLoader = new PrismaFinancementsLoader()
   const financementsReadModel = await financementsLoader.get(territoireCode)
-  const mergedFinancementsPref = mergeCnIntoFinancements(financementsReadModel, cnReadModel)
+  const mergedFinancementsPref = mergeCnIntoFinancementsPref(financementsReadModel, cnReadModel)
   const financementsViewModel = handleReadModelOrError(
     mergedFinancementsPref,
     financementsPrefPresenter
@@ -183,10 +184,18 @@ function cnEnveloppesVentilation(
   cnReadModel: ConseillerNumeriqueTableauDeBordReadModel
 ): ReadonlyArray<{ enveloppeTotale: string; label: string; total: string }> {
   return cnReadModel.enveloppes.map((enveloppe) => ({
-    enveloppeTotale: enveloppe.total.toString(),
+    enveloppeTotale: enveloppe.enveloppeTotale.toString(),
     label: enveloppe.label,
-    total: enveloppe.total.toString(),
+    total: enveloppe.creditsEngages.toString(),
   }))
+}
+
+function cnTotalCredits(cnReadModel: ConseillerNumeriqueTableauDeBordReadModel): number {
+  return cnReadModel.enveloppes.reduce((acc, enveloppe) => acc + enveloppe.creditsEngages, 0)
+}
+
+function cnTotalEnveloppes(cnReadModel: ConseillerNumeriqueTableauDeBordReadModel): number {
+  return cnReadModel.enveloppes.reduce((acc, enveloppe) => acc + enveloppe.enveloppeTotale, 0)
 }
 
 function hasCnData(
@@ -217,20 +226,52 @@ function mergeCnIntoBeneficiaires(
   }
 }
 
-function mergeCnIntoFinancements<T extends { ventilationSubventionsParEnveloppe: ReadonlyArray<{
-  enveloppeTotale: string
-  label: string
-  total: string
-}> }>(
-  financementsReadModel: ErrorReadModel | T,
+function mergeCnIntoFinancementsAdmin(
+  financementsReadModel: ErrorReadModel | TableauDeBordLoaderFinancementsAdmin,
   cnReadModel: ConseillerNumeriqueTableauDeBordReadModel | ErrorReadModel
-): ErrorReadModel | T {
+): ErrorReadModel | TableauDeBordLoaderFinancementsAdmin {
   if (isErrorReadModel(financementsReadModel) || !hasCnData(cnReadModel)) {
     return financementsReadModel
   }
 
+  const totalCreditsCn = cnTotalCredits(cnReadModel)
+  const newCreditsEngages = Number(financementsReadModel.creditsEngages) + totalCreditsCn
+
   return {
     ...financementsReadModel,
+    creditsEngages: newCreditsEngages.toString(),
+    nombreEnveloppesUtilisees: financementsReadModel.nombreEnveloppesUtilisees + cnReadModel.enveloppes.length,
+    ventilationSubventionsParEnveloppe: [
+      ...financementsReadModel.ventilationSubventionsParEnveloppe,
+      ...cnEnveloppesVentilation(cnReadModel),
+    ],
+  }
+}
+
+function mergeCnIntoFinancementsPref(
+  financementsReadModel: ErrorReadModel | TableauDeBordLoaderFinancements,
+  cnReadModel: ConseillerNumeriqueTableauDeBordReadModel | ErrorReadModel
+): ErrorReadModel | TableauDeBordLoaderFinancements {
+  if (isErrorReadModel(financementsReadModel) || !hasCnData(cnReadModel)) {
+    return financementsReadModel
+  }
+
+  const totalEnveloppesCn = cnTotalEnveloppes(cnReadModel)
+  const totalCreditsCn = cnTotalCredits(cnReadModel)
+  const newBudgetTotal = Number(financementsReadModel.budget.total) + totalEnveloppesCn
+  const newCreditTotal = Number(financementsReadModel.credit.total) + totalCreditsCn
+  const newPourcentage = newBudgetTotal > 0 ? Math.round(newCreditTotal / newBudgetTotal * 100) : 0
+
+  return {
+    ...financementsReadModel,
+    budget: {
+      ...financementsReadModel.budget,
+      total: newBudgetTotal.toString(),
+    },
+    credit: {
+      pourcentage: newPourcentage,
+      total: newCreditTotal.toString(),
+    },
     ventilationSubventionsParEnveloppe: [
       ...financementsReadModel.ventilationSubventionsParEnveloppe,
       ...cnEnveloppesVentilation(cnReadModel),

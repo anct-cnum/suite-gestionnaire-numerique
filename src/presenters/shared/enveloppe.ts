@@ -6,8 +6,8 @@ export type Enveloppe = (
   )
 
 export const couleursEnveloppes = {
-  'Conseiller Numérique - 2021 - État': 'dot-purple-glycine-main-494',
-  'Conseiller Numérique - Plan France Relance - État': 'dot-purple-glycine-850-200',
+  'Conseiller Numérique - initiale - État': 'dot-purple-glycine-850-200',
+  'Conseiller Numérique - Renouvellement - État': 'dot-purple-glycine-main-494',
   'Formation Aidant Numérique/Aidants Connect - 2024 - État': 'dot-green-tilleul-verveine-925',
   'Ingénierie France Numérique Ensemble - 2024 - État': 'dot-orange-terre-battue-850-200',
 } as const

@@ -234,7 +234,7 @@ function buildConventionV1(
     },
     enveloppe: {
       color: 'france',
-      libelle: 'Conseiller Numérique - Plan France Relance - État',
+      libelle: 'Conseiller Numérique - initiale - État',
       montant: total,
       montantFormate: formatMontant(total),
     },

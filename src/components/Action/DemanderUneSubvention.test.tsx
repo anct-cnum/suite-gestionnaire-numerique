@@ -69,7 +69,7 @@ describe('faire une demande de subvention', () => {
         expect(enveloppes[0].hidden).toBe(true)
         expect(enveloppes[1].textContent).toBe('Conseiller Numérique - 2024')
         expect(enveloppes[1].hidden).toBe(false)
-        expect(enveloppes[2].textContent).toBe('Conseiller Numérique - Plan France Relance')
+        expect(enveloppes[2].textContent).toBe('Conseiller Numérique - initiale')
         expect(enveloppes[2].hidden).toBe(false)
         expect(enveloppes[3].textContent).toBe('Formation Aidant Numérique/Aidants Connect - 2024')
         expect(enveloppes[3].hidden).toBe(false)

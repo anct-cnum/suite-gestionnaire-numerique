@@ -21,7 +21,7 @@ const enveloppes: ActionViewModel['enveloppes'] = [
     available: true,
     budget: 100_000,
     isSelected: false,
-    label: 'Conseiller Numérique - Plan France Relance',
+    label: 'Conseiller Numérique - initiale',
     limiteLaDemandeSubvention: true,
     value: '2',
   },
