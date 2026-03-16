@@ -51,8 +51,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           st.id as structure_id,
           st.nom as nom_structure,
           st.siret,
-          st.contact,
-          st.typologies,
+          cj.nom as categorie_juridique_nom,
           a.numero_voie,
           a.repetition,
           a.nom_voie,
@@ -65,6 +64,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
         LEFT JOIN main.adresse a ON a.id = st.adresse_id
         LEFT JOIN admin.departement d ON d.code = a.departement
         LEFT JOIN admin.region r ON r.id = d.region_id
+        LEFT JOIN reference.categories_juridiques cj ON cj.code = st.categorie_juridique
         WHERE st.id = ${poste.structure_id}
       `
 
@@ -83,8 +83,8 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       // Récupérer tous les contrats rattachés au poste (toutes personnes historiques)
       const contrats = await this.recupererContrats(poste.poste_conum_id, poste.structure_id)
 
-      // Construire la réponse
-      const referent = this.parseContact(structure.contact)
+      // Récupérer les contacts de la structure
+      const contacts = await this.recupererContacts(poste.structure_id)
 
       return {
         contrats,
@@ -100,17 +100,15 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
         statut: poste.etat as EtatPoste,
         structure: {
           adresse: this.formatAdresse(structure),
+          contacts,
           departement: structure.departement_nom !== null && structure.departement_nom !== ''
             ? `(${structure.code_departement}) ${structure.departement_nom}`
             : structure.code_departement ?? '',
           nom: structure.nom_structure,
-          referent,
           region: structure.region_nom ?? '',
           siret: structure.siret ?? '',
           structureId: structure.structure_id,
-          typologie: Array.isArray(structure.typologies)
-            ? structure.typologies.join(', ')
-            : '',
+          typologie: structure.categorie_juridique_nom ?? '',
         },
       }
     } catch (error) {
@@ -210,53 +208,32 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
     return `${rue}, ${codePostal} ${commune}`.trim()
   }
 
-  private parseContact(contact: unknown): {
-    email: string
-    fonction: string
-    nom: string
-    telephone: string
-  } | null {
-    if (contact === null || contact === undefined) {
-      return null
-    }
+  private async recupererContacts(
+    structureId: number
+  ): Promise<PosteConseillerNumeriqueDetailReadModel['structure']['contacts']> {
+    const contactStructures = await prisma.contact_structure.findMany({
+      include: {
+        contact: true,
+      },
+      orderBy: [
+        { contact: { est_referent_fne: 'desc' } },
+        { contact: { nom: 'asc' } },
+        { contact: { prenom: 'asc' } },
+      ],
+      where: {
+        structure_id: structureId,
+      },
+    })
 
-    if (typeof contact !== 'object' || Array.isArray(contact)) {
-      return null
-    }
-
-    const contactObj = contact as Record<string, unknown>
-
-    const prenom = typeof contactObj.prenom === 'string' ? contactObj.prenom : ''
-    const nom = typeof contactObj.nom === 'string' ? contactObj.nom : ''
-    const fonction = typeof contactObj.fonction === 'string' ? contactObj.fonction : ''
-    const telephone = typeof contactObj.telephone === 'string' ? contactObj.telephone : ''
-
-    // courriels peut être une string ou un objet {email: "..."}
-    let email = ''
-    if (typeof contactObj.courriels === 'string') {
-      email = contactObj.courriels
-    } else if (
-      typeof contactObj.courriels === 'object' &&
-      contactObj.courriels !== null &&
-      !Array.isArray(contactObj.courriels)
-    ) {
-      const courrielsObj = contactObj.courriels as Record<string, unknown>
-      email = typeof courrielsObj.email === 'string' ? courrielsObj.email : ''
-    }
-
-    const fullName = `${prenom} ${nom}`.trim()
-
-    // Si aucune info n'est disponible, on retourne null
-    if (fullName === '' && email === '' && fonction === '' && telephone === '') {
-      return null
-    }
-
-    return {
-      email,
-      fonction,
-      nom: fullName,
-      telephone,
-    }
+    return contactStructures.map((cs) => ({
+      email: cs.contact.email,
+      estReferentFNE: cs.contact.est_referent_fne,
+      fonction: cs.contact.fonction,
+      id: cs.contact.id,
+      nom: cs.contact.nom,
+      prenom: cs.contact.prenom,
+      telephone: cs.contact.telephone,
+    }))
   }
 
   private async recupererContrats(
@@ -304,7 +281,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       dateRupture: contrat.date_rupture,
       mediateur: `${contrat.prenom ?? ''} ${contrat.nom ?? ''}`.trim(),
       role: this.determinerRole(contrat.is_coordinateur, contrat.is_mediateur),
-      typeContrat: contrat.type_contrat ?? 'CDD',
+      typeContrat: contrat.type_contrat ?? 'Non renseigné',
     }))
   }
 
@@ -385,9 +362,9 @@ interface PosteVueResult {
 }
 
 interface StructureResult {
+  categorie_juridique_nom: null | string
   code_departement: null | string
   code_postal: null | string
-  contact: unknown
   departement_nom: null | string
   nom_commune: null | string
   nom_structure: string
@@ -397,7 +374,6 @@ interface StructureResult {
   repetition: null | string
   siret: null | string
   structure_id: number
-  typologies: ReadonlyArray<string>
 }
 
 interface DatesConventions {

@@ -35,14 +35,17 @@ export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
   statut: EtatPoste
   structure: Readonly<{
     adresse: string
+    contacts: ReadonlyArray<Readonly<{
+      email: string
+      estReferentFNE: boolean
+      fonction: string
+      id: number
+      nom: string
+      prenom: string
+      telephone: string
+    }>>
     departement: string
     nom: string
-    referent: null | Readonly<{
-      email: string
-      fonction: string
-      nom: string
-      telephone: string
-    }>
     region: string
     siret: string
     structureId: number
