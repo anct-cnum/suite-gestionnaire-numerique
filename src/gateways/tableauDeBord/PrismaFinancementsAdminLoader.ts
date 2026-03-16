@@ -10,8 +10,10 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
 
   async get(): Promise<ErrorReadModel | TableauDeBordLoaderFinancementsAdmin> {
     try {
-      // Récupérer toutes les enveloppes
-      const enveloppes = await this.#enveloppeDao.findMany()
+      // Récupérer les enveloppes hors Conseiller Numérique (gérées séparément)
+      const enveloppes = await this.#enveloppeDao.findMany({
+        where: { libelle: { not: { startsWith: 'Conseiller Numérique' } } },
+      })
       const montantTotalEnveloppes = enveloppes.reduce((acc, env) => acc + env.montant, 0)
       const nombreEnveloppes = enveloppes.length
 

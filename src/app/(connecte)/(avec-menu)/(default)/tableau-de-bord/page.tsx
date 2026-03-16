@@ -33,6 +33,9 @@ import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTer
 import { TableauDeBordLoaderFinancements, TableauDeBordLoaderFinancementsAdmin } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
+// Désactivé temporairement pour raisons politiques — passer à true pour réactiver les données CN sur le TDB
+const isCnEnabled = false as boolean
+
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
 }
@@ -67,7 +70,6 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
-  const cnLoader = new PrismaConseillerNumeriqueTableauDeBordLoader()
 
   // Créer la Promise pour les accompagnements (sera résolue de manière asynchrone via Suspense)
   const accompagnementsRealisesPromise = fetchAccompagnementsRealises(territoireCode)
@@ -85,11 +87,12 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     mediateursEtAidantsPresenter
   )
 
-  // Charger les données des bénéficiaires et les données Conseiller numérique
+  // Charger les données des bénéficiaires et optionnellement les données CN
   const beneficiairesReadModel = await beneficiairesLoader.get(territoireCode)
-  const cnReadModel = await cnLoader.get(territoireCode)
+  const cnReadModel = isCnEnabled
+    ? await new PrismaConseillerNumeriqueTableauDeBordLoader().get(territoireCode)
+    : { enveloppes: [] } as ConseillerNumeriqueTableauDeBordReadModel
 
-  // Fusionner les données CN dans les bénéficiaires
   const mergedBeneficiaires = mergeCnIntoBeneficiaires(beneficiairesReadModel, cnReadModel)
   const beneficiairesViewModel = handleReadModelOrError(
     mergedBeneficiaires,
