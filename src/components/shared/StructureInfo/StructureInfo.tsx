@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import StructureContacts, { type ContactData } from './StructureContacts'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import Tag from '@/components/shared/Tag/Tag'
 
@@ -94,9 +95,10 @@ export default function StructureInfo({ data, sectionId, showSiretLink, titre }:
           </div>
         </div>
 
-        {data.referent === undefined ? null : (
-          <StructureReferent referent={data.referent} />
-        )}
+        <StructureInfoContacts
+          contacts={data.contacts}
+          referent={data.referent}
+        />
       </article>
     </section>
   )
@@ -104,6 +106,7 @@ export default function StructureInfo({ data, sectionId, showSiretLink, titre }:
 
 export type StructureInfoData = Readonly<{
   adresse: string
+  contacts?: ReadonlyArray<ContactData>
   departement: string
   nom: string
   referent?: ReferentData
@@ -126,6 +129,23 @@ type Props = Readonly<{
   showSiretLink?: boolean
   titre: string
 }>
+
+function StructureInfoContacts(
+  { contacts, referent }: Readonly<{ contacts?: ReadonlyArray<ContactData>; referent?: ReferentData }>
+): null | ReactElement {
+  if (contacts !== undefined && contacts.length > 0) {
+    return (
+      <>
+        <div className="separator" />
+        <StructureContacts contacts={contacts} />
+      </>
+    )
+  }
+  if (referent !== undefined) {
+    return <StructureReferent referent={referent} />
+  }
+  return null
+}
 
 function StructureReferent({ referent }: Readonly<{ referent: ReferentData }>): ReactElement {
   return (

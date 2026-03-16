@@ -18,9 +18,9 @@ export function posteConseillerNumeriqueDetailPresenter(
     posteId: readModel.posteConumId,
     structure: {
       adresse: readModel.structure.adresse,
+      contacts: readModel.structure.contacts,
       departement: readModel.structure.departement,
       nom: readModel.structure.nom,
-      referent: readModel.structure.referent ?? undefined,
       region: readModel.structure.region,
       siret: readModel.structure.siret,
       structureId: readModel.structure.structureId,
@@ -39,14 +39,17 @@ type PosteDetailViewModel = Readonly<{
   posteId: number
   structure: Readonly<{
     adresse: string
+    contacts: ReadonlyArray<Readonly<{
+      email: string
+      estReferentFNE: boolean
+      fonction: string
+      id: number
+      nom: string
+      prenom: string
+      telephone: string
+    }>>
     departement: string
     nom: string
-    referent?: Readonly<{
-      email: string
-      fonction: string
-      nom: string
-      telephone: string
-    }>
     region: string
     siret: string
     structureId: number
