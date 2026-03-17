@@ -357,7 +357,6 @@ Pour mieux représenter la réalité métier :
 **Avantages** :
 
 1. Séparation claire des concepts :
-
    - `rattachement_structure` : historique des transferts de poste entre structures
    - `affectation_personne` : historique des personnes employées sur un rattachement
 

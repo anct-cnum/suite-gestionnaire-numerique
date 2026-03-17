@@ -361,7 +361,7 @@
 }
 
 .fr-progress-stacked > .fr-progress:not(:last-child)::after {
-  content: "";
+  content: '';
   position: absolute;
   right: -1px;
   top: 0;

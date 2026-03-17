@@ -5,8 +5,7 @@
 
 .wrapper {
   display: grid;
-  grid-template:
-    'sidebar content' 1fr / 16rem 1fr;
+  grid-template: 'sidebar content' 1fr / 16rem 1fr;
 }
 
 .sidebar {
