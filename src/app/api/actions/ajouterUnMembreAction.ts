@@ -100,7 +100,7 @@ const validator = z.object({
     categorieJuridiqueCode: z.string().optional(),
     categorieJuridiqueUniteLegale: z.string().min(1, { message: 'La catégorie juridique doit être renseignée' }),
     codeInsee: z.string().min(1, { message: 'Le code INSEE doit être renseigné' }),
-    codePostal: z.string().min(1, { message: 'Le code postal doit être renseigné' }),
+    codePostal: z.string(),
     commune: z.string().min(1, { message: 'La commune doit être renseignée' }),
     nom: z.string().min(1, { message: 'Le nom de l\'entreprise doit être renseigné' }),
     nomVoie: z.string().min(1, { message: 'Le nom de voie doit être renseigné' }),
