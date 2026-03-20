@@ -39,7 +39,7 @@ export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): R
               <li>
                 <button
                   className="fr-btn fr-btn--tertiary color-red fr-ml-0"
-                  onClick={onDelete}
+                  onClick={() => { void onDelete() }}
                   title={`Supprimer ${nom}`}
                   type="button"
                 >

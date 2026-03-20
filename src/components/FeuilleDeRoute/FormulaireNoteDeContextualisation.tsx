@@ -1,4 +1,4 @@
-import { FormEvent, PropsWithChildren, ReactElement } from 'react'
+import { PropsWithChildren, ReactElement, SyntheticEvent } from 'react'
 
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
@@ -41,5 +41,5 @@ type Props = PropsWithChildren<Readonly<{
   contenu: string
   gererLeChangementDeContenu(contenu: string): void
   labelId: string
-  validerFormulaire(event: FormEvent<HTMLFormElement>): void
+  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
 }>>

@@ -176,7 +176,7 @@ export default function NiveauDeFormation({
           </p>
         </div>
         <DownloadButton
-          onClick={handleDownload}
+          onClick={() => { void handleDownload() }}
           title="Niveau de formation"
         />
       </div>

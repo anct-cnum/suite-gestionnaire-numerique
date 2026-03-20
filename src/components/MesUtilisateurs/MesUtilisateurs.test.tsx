@@ -331,7 +331,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 3 })
-      const titre = allHeadings.find((heading) => heading.textContent?.includes('aujourd') ?? false)
+      const titre = allHeadings.find((heading) => heading.textContent.includes('aujourd'))
       expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
     })
@@ -397,7 +397,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
-      const titre = allHeadings.find((heading) => heading.textContent?.includes('Retirer Julien Deschamps') ?? false)
+      const titre = allHeadings.find((heading) => heading.textContent.includes('Retirer Julien Deschamps'))
       expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
 
@@ -458,7 +458,7 @@ describe('mes utilisateurs', () => {
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
       const allHeadings = screen.getAllByRole('heading', { hidden: true, level: 1 })
-      const titre = allHeadings.find((heading) => heading.textContent?.includes('Retirer Julien Deschamps') ?? false)
+      const titre = allHeadings.find((heading) => heading.textContent.includes('Retirer Julien Deschamps'))
       expect(titre).toBeDefined()
       expect(titre).toBeInTheDocument()
       jeFermeLaSuppressionDUnUtilisateur()

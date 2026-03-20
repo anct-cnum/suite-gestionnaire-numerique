@@ -153,7 +153,7 @@ export default function GouvernancesTerritoriales({
           </p>
         </div>
         <DownloadButton 
-          onClick={handleDownload}
+          onClick={() => { void handleDownload() }}
           title="Gouvernances territoriales"
         />
       </div>

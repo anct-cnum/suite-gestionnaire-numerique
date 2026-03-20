@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import FormulaireComite from './FormulaireComite'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -25,7 +25,7 @@ export default function ModifierUnComite({
         label={label}
         labelId={labelId}
         peutGerer={peutGerer}
-        validerFormulaire={modifierUnComite}
+        validerFormulaire={(event) => { void modifierUnComite(event) }}
       >
         {peutGerer ?
           <>
@@ -39,7 +39,7 @@ export default function ModifierUnComite({
               aria-controls={id}
               className="fr-btn red-button"
               disabled={isDisabled}
-              onClick={supprimerUnComite}
+              onClick={() => { void supprimerUnComite() }}
               type="button"
             >
               {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
@@ -59,7 +59,7 @@ export default function ModifierUnComite({
     </>
   )
 
-  async function modifierUnComite(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierUnComite(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

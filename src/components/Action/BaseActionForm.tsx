@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useState } from 'react'
+import { ReactElement, SyntheticEvent, useState } from 'react'
 
 import { FormulaireAction } from './FormulaireAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
@@ -49,7 +49,7 @@ export function BaseActionForm({
   )
 
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
     coFinancements: Array<{
@@ -79,7 +79,7 @@ type BaseActionFormProps = Readonly<{
   date: Date
   formLabel: string
   onSubmit?(
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
     coFinancements: Array<{

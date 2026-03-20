@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -42,7 +42,7 @@ export default function ModifierMonCompte({
       <form
         aria-label="Modifier"
         method="dialog"
-        onSubmit={modifierMesInfosPersos}
+        onSubmit={(event) => { void modifierMesInfosPersos(event) }}
       >
         <TextInput
           defaultValue={nom}
@@ -125,7 +125,7 @@ export default function ModifierMonCompte({
     </>
   )
 
-  async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierMesInfosPersos(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

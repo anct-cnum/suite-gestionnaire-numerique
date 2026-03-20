@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import EditHoraires, { transformHoraires } from '@/components/LieuInclusionDetails/EditHoraires'
 import { LieuAccueilPublicData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
@@ -24,7 +24,7 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
   // itinerance est un tableau, on vérifie s'il n'est pas vide pour l'affichage
   const isItinerant = itinerance !== undefined && itinerance.length > 0
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
@@ -57,7 +57,7 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
   return (
     <form
       className="fr-p-4w"
-      onSubmit={handleSubmit}
+      onSubmit={(event) => { void handleSubmit(event) }}
     >
       <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
         <div className="fr-col">

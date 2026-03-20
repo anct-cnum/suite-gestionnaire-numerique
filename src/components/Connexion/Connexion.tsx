@@ -79,7 +79,7 @@ export default function Connexion({ idProvider }: Props): ReactElement {
         <div className="fr-mb-6v">
           <button
             className="fr-btn fr-mb-2w fr-text--lg"
-            onClick={async () => signIn(idProvider, { callbackUrl: '/' })}
+            onClick={() => { void signIn(idProvider, { callbackUrl: '/' }) }}
             title="S’identifier avec ProConnect"
             type="button"
           >

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ChangeEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import { ContactPrincipal, NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
@@ -329,7 +329,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     setErreurRechercheSiret('')
   }
 
-  function soumettreRechercheSiret(event: React.FormEvent<HTMLFormElement>): void {
+  function soumettreRechercheSiret(event: SyntheticEvent<HTMLFormElement>): void {
     event.preventDefault()
     // SIRET = 14 chiffres, RIDET = 6 ou 7 chiffres
     if (siret.length === 14 || siret.length >= 6 && siret.length <= 7) {
@@ -363,44 +363,36 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     return `${numeroBrut.slice(0, 3)} ${numeroBrut.slice(3, 6)} ${numeroBrut.slice(6, 9)} ${numeroBrut.slice(9)}`
   }
 
-  function changerNomContact(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContact(contactActuel => ({ ...contactActuel, nom: target.value }))
+  function changerNomContact(event: ChangeEvent<HTMLInputElement>): void {
+    setContact(contactActuel => ({ ...contactActuel, nom: event.target.value }))
   }
 
-  function changerPrenomContact(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContact(contactActuel => ({ ...contactActuel, prenom: target.value }))
+  function changerPrenomContact(event: ChangeEvent<HTMLInputElement>): void {
+    setContact(contactActuel => ({ ...contactActuel, prenom: event.target.value }))
   }
 
-  function changerEmailContact(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContact(contactActuel => ({ ...contactActuel, email: target.value }))
+  function changerEmailContact(event: ChangeEvent<HTMLInputElement>): void {
+    setContact(contactActuel => ({ ...contactActuel, email: event.target.value }))
   }
 
-  function changerFonctionContact(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContact(contactActuel => ({ ...contactActuel, fonction: target.value }))
+  function changerFonctionContact(event: ChangeEvent<HTMLInputElement>): void {
+    setContact(contactActuel => ({ ...contactActuel, fonction: event.target.value }))
   }
 
-  function changerNomContactSecondaire(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContactSecondaire(contactActuel => ({ ...contactActuel, nom: target.value }))
+  function changerNomContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
+    setContactSecondaire(contactActuel => ({ ...contactActuel, nom: event.target.value }))
   }
 
-  function changerPrenomContactSecondaire(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContactSecondaire(contactActuel => ({ ...contactActuel, prenom: target.value }))
+  function changerPrenomContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
+    setContactSecondaire(contactActuel => ({ ...contactActuel, prenom: event.target.value }))
   }
 
-  function changerEmailContactSecondaire(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContactSecondaire(contactActuel => ({ ...contactActuel, email: target.value }))
+  function changerEmailContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
+    setContactSecondaire(contactActuel => ({ ...contactActuel, email: event.target.value }))
   }
 
-  function changerFonctionContactSecondaire(event: FormEvent<HTMLInputElement>): void {
-    const target = event.target as HTMLInputElement
-    setContactSecondaire(contactActuel => ({ ...contactActuel, fonction: target.value }))
+  function changerFonctionContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
+    setContactSecondaire(contactActuel => ({ ...contactActuel, fonction: event.target.value }))
   }
 
   function supprimerContactSecondaire(): void {

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, ReactNode, RefObject, useContext, useId, useState } from 'react'
+import { ReactElement, ReactNode, RefObject, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import Badge from '../shared/Badge/Badge'
@@ -49,7 +49,7 @@ export default function InviterUnUtilisateur({
       <form
         aria-label="Inviter un utilisateur"
         method="dialog"
-        onSubmit={inviterUtilisateur}
+        onSubmit={(event) => { void inviterUtilisateur(event) }}
       >
         <TextInput
           id={nomId}
@@ -141,7 +141,7 @@ export default function InviterUnUtilisateur({
     </div>
   )
 
-  async function inviterUtilisateur(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function inviterUtilisateur(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     setIsDisabled(true)

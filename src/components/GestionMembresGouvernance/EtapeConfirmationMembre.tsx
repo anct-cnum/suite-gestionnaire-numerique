@@ -184,7 +184,7 @@ export default function EtapeConfirmationMembre({
           <button
             className="fr-btn"
             disabled={isAjoutEnCours}
-            onClick={confirmerAjout}
+            onClick={() => { void confirmerAjout() }}
             type="button"
           >
             {isAjoutEnCours ? 'Ajout en cours...' : 'Ajouter cette structure'}

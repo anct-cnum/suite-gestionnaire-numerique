@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useId, useRef, useState } from 'react'
 
 import FormulaireFeuilleDeRoute from '../FeuillesDeRoute/FormulaireFeuilleDeRoute'
 import { clientContext } from '../shared/ClientContext'
@@ -58,7 +58,7 @@ export default function ModifierUneFeuilleDeRoute({
           nom={nom}
           perimetreActuel={perimetre}
           perimetres={perimetres}
-          validerFormulaire={modifierUneFeuilleDeRoute}
+          validerFormulaire={(event) => { void modifierUneFeuilleDeRoute(event) }}
         >
           <SubmitButton isDisabled={isDisabled}>
             {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
@@ -68,7 +68,7 @@ export default function ModifierUneFeuilleDeRoute({
     </>
   )
 
-  async function modifierUneFeuilleDeRoute(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierUneFeuilleDeRoute(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     setIsDisabled(true)

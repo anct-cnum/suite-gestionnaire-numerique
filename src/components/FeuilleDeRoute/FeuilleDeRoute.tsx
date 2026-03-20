@@ -97,7 +97,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
         <OuvrirPdf
           href={viewModel.document.href}
           nom={viewModel.document.nom}
-          onDelete={async () => handleSupprimerDocument()}
+          onDelete={() => { void handleSupprimerDocument() }}
         />
       )}
       else {
@@ -136,7 +136,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                 disabled={isUploading}
                 id="file-upload"
                 name="file-upload"
-                onChange={handleFileUpload}
+                onChange={(event) => { void handleFileUpload(event) }}
                 type="file"
               />
               {isUploading ? (

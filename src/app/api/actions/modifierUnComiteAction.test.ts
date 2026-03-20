@@ -9,7 +9,7 @@ describe('modifier un comité action', () => {
   it('quand un comité est modifié avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

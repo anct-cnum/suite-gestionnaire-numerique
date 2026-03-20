@@ -80,7 +80,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
         </div>
       </div>
       {renderCartesStatistiques(statistiquesMediateursViewModel)}
-     <hr />
+      <hr />
       <AsyncLoaderErrorBoundary
         fallback={
           <div className="fr-py-4w">

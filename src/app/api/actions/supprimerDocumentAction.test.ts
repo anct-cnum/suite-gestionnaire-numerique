@@ -9,7 +9,7 @@ describe('supprimer un document', () => {
   it('quand un document est supprimé avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerDocument.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

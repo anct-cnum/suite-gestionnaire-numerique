@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation'
-import { FormEvent } from 'react'
+import { SyntheticEvent } from 'react'
 
 import { Notification } from '@/components/shared/Notification/Notification'
 import { DemandeDeSubvention } from '@/presenters/actionPresenter'
 import { feuilleDeRouteLink } from '@/presenters/shared/link'
 
 export function handleActionSubmit(
-  event: FormEvent<HTMLFormElement>,
+  event: SyntheticEvent<HTMLFormElement>,
   contexteContenu: string,
   descriptionContenu: string,
   coFinancements: ReadonlyArray<{

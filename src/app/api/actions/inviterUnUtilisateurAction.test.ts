@@ -70,7 +70,7 @@ describe('inviter un utilisateur action', () => {
       // GIVEN
       vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
       vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
-      vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+      vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
       // WHEN
       const messages = await inviterUnUtilisateurAction(actionParams)
@@ -87,7 +87,7 @@ describe('inviter un utilisateur action', () => {
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('emailExistant')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     const inviterUnUtilisateurParams = {
       codeOrganisation: '21',
@@ -205,7 +205,7 @@ describe('inviter un utilisateur action', () => {
         '$desc, alors l’email est envoyé avec le paramétrage approprié',
         async ({ expectedParams, isSuperAdmin }) => {
           // GIVEN
-          vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+          vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
           vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('sub')
           vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
             utilisateurFactory({ isSuperAdmin })

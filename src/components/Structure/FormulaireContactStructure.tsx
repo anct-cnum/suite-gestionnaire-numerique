@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useId, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
@@ -67,7 +67,7 @@ export default function FormulaireContactStructure({
       <form
         aria-label={titre}
         method="dialog"
-        onSubmit={submitContact}
+        onSubmit={(event) => { void submitContact(event) }}
       >
         <TextInput
           defaultValue={contactReferent?.nom}
@@ -154,7 +154,7 @@ export default function FormulaireContactStructure({
     </>
   )
 
-  async function submitContact(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function submitContact(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

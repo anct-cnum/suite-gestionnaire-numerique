@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
@@ -24,7 +24,7 @@ export default function AjouterNoteDeContexte({
     <form
       aria-label="Note de contexte"
       method="dialog"
-      onSubmit={creerUneNoteDeContexte}
+      onSubmit={(event) => { void creerUneNoteDeContexte(event) }}
     >
       <DrawerTitle id={labelId}>
         Note de contexte
@@ -66,7 +66,7 @@ export default function AjouterNoteDeContexte({
     </form>
   )
 
-  async function creerUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function creerUneNoteDeContexte(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
     const messages = await ajouterUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })

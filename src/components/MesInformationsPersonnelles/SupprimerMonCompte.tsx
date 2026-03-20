@@ -1,5 +1,5 @@
 import { signOut } from 'next-auth/react'
-import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
@@ -26,7 +26,7 @@ export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Pr
       <form
         aria-label="Supprimer"
         method="dialog"
-        onSubmit={logout}
+        onSubmit={(event) => { void logout(event) }}
       >
         <div className="fr-modal__content">
           <ModalTitle id={labelModaleId}>
@@ -93,12 +93,12 @@ export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Pr
     closeModal()
   }
 
-  function handleInput({ currentTarget }: FormEvent<HTMLInputElement>): void {
+  function handleInput({ currentTarget }: SyntheticEvent<HTMLInputElement>): void {
     currentTarget.value = currentTarget.value.trim()
     setEmailValidationInfo(emailValidationInfoByState[validationState(currentTarget, email)])
   }
 
-  async function logout(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function logout(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     setIsDisabled(true)

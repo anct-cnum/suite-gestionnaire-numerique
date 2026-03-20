@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import FormulaireComite from './FormulaireComite'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -23,7 +23,7 @@ export default function AjouterUnComite({
       label="Ajouter un comité"
       labelId={labelId}
       peutGerer={peutGerer}
-      validerFormulaire={creerUnComite}
+      validerFormulaire={(event) => { void creerUnComite(event) }}
     >
       {peutGerer ?
         <SubmitButton
@@ -36,7 +36,7 @@ export default function AjouterUnComite({
     </FormulaireComite>
   )
 
-  async function creerUnComite(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function creerUnComite(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

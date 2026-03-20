@@ -353,7 +353,7 @@ export default function MesUtilisateurs(
     }
   }
 
-  function soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void {
+  function soumettreLaRecherche(event: React.SyntheticEvent<HTMLFormElement>): void {
     event.preventDefault()
     const cloneUrlAvecParametres = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
     cloneUrlAvecParametres.searchParams.delete('page')

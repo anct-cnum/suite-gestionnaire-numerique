@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useContext, useId, useState } from 'react'
+import { Fragment, PropsWithChildren, ReactElement, RefObject, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
@@ -136,13 +136,13 @@ export function FormulaireAction({
           event.preventDefault()
         }
       }}
-      onSubmit={async (event) => {
+      onSubmit={(event) => {
         event.preventDefault()
 
         if (isReadOnly) {
           return
         }
-        await validerFormulaire?.(
+        void validerFormulaire?.(
           event,
           contexteContenu,
           descriptionContenu,
@@ -565,8 +565,10 @@ type Props = PropsWithChildren<Readonly<{
   isReadOnly?: boolean
   label: string
   supprimerUneDemandeDeSubvention?(): void
-  validerFormulaire?(event: FormEvent<HTMLFormElement>, contexte: string, description: string, cofinancement : Array<{
-    coFinanceur: string
-    montant: string
-  }>): Promise<void> | undefined
+  validerFormulaire?(
+    event: SyntheticEvent<HTMLFormElement>,
+    contexte: string,
+    description: string,
+    cofinancement: Array<{ coFinanceur: string; montant: string }>
+  ): Promise<void> | undefined
 }>>

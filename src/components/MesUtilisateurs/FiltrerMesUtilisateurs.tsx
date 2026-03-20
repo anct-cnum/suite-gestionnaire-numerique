@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useRef, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useRef, useState } from 'react'
 // eslint-disable-next-line import/no-unresolved
 import Select from 'react-select/dist/declarations/src/Select'
 
@@ -91,7 +91,7 @@ export default function FiltrerMesUtilisateurs({
     resetSearch()
   }
 
-  function filtrer(event: FormEvent<HTMLFormElement>): void {
+  function filtrer(event: SyntheticEvent<HTMLFormElement>): void {
     event.preventDefault()
 
     closeDrawer()

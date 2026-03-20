@@ -2,7 +2,7 @@
 
 import { Typologie } from '@gouvfr-anct/lieux-de-mediation-numerique'
 import { usePathname } from 'next/navigation'
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import { LieuAccueilPublicData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -143,7 +143,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
     })),
   ]
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
@@ -174,7 +174,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
   return (
     <form
       className="fr-p-4w"
-      onSubmit={handleSubmit}
+      onSubmit={(event) => { void handleSubmit(event) }}
     >
       <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
         <div className="fr-col">

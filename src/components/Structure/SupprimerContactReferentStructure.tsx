@@ -49,7 +49,7 @@ export default function SupprimerContactReferentStructure({
           <button
             aria-controls={id}
             className="fr-btn red-button"
-            onClick={onSupprimer}
+            onClick={() => { void onSupprimer() }}
             type="button"
           >
             Confirmer

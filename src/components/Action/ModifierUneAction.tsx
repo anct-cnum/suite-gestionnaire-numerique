@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext } from 'react'
+import { ReactElement, SyntheticEvent, useContext } from 'react'
 
 import { ActionDataWithUid, handleActionResponse, handleActionSubmit } from './actionUtils'
 import { BaseActionForm } from './BaseActionForm'
@@ -25,7 +25,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
   )
 
   async function modifierAction(
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
     coFinancements: Array<{
