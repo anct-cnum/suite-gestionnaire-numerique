@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { TerritoireReadModel } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 import { RoleUtilisateur } from '@/use-cases/queries/shared/UnUtilisateurReadModel'

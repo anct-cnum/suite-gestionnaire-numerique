@@ -133,7 +133,7 @@ export class StructureAdresse extends Entity<StructureAdresseState> {
   }
 }
 
-export class StructureAdresseUid extends Uid<StructureAdresseUidState> {
+class StructureAdresseUid extends Uid<StructureAdresseUidState> {
   constructor(value: number) {
     super({ value })
   }

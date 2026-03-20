@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
 import { renderComponent } from '@/components/testHelper'

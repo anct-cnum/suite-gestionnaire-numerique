@@ -68,7 +68,7 @@ export class CoFinancement extends Entity<State> {
 
 export type CoFinancementFailure = 'montantInvalide'
 
-export class CoFinancementUid extends Uid<UidState> {
+class CoFinancementUid extends Uid<UidState> {
   constructor(value: string) {
     super({ value })
   }

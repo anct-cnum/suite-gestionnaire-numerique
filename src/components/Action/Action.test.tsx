@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { FormEvent } from 'react'
-import { Mock } from 'vitest'
+import { describe, expect, it, Mock } from 'vitest'
 
 import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
@@ -17,8 +17,7 @@ import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvern
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 vi.mock('next/navigation', () => ({
-  // eslint-disable-next-line vitest/require-mock-type-parameters
-  redirect: vi.fn(),
+  redirect: vi.fn<(url: string) => never>(),
 }))
 
 describe('formulaire d‘ajout d‘une action', () => {

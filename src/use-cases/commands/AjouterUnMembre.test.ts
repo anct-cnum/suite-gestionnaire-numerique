@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
 import { Prisma } from '@prisma/client'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUnMembre } from './AjouterUnMembre'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
@@ -262,7 +263,7 @@ class StructureExistanteRepositorySpy implements CreateStructureRepository, GetS
   }
 
   async getBySiret(siret: string, __?: Prisma.TransactionClient): Promise<null | Structure> {
-    if (structureExistante && structureExistante.identifiantEtablissement === siret) {
+    if (structureExistante?.identifiantEtablissement === siret) {
       return Structure.create({
         departementCode: '75',
         identifiantEtablissement: siret,

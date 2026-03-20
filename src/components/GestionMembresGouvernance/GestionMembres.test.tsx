@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
 import GestionMembres from './GestionMembres'
 import { renderComponent } from '../testHelper'
@@ -6,23 +7,15 @@ import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
 vi.mock('next/navigation', () => ({
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  useRouter: () => ({
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    back: vi.fn(),
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    prefetch: vi.fn(),
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    push: vi.fn(),
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    refresh: vi.fn(),
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    replace: vi.fn(),
+  useRouter: vi.fn<() => object>().mockReturnValue({
+    back: vi.fn<() => void>(),
+    prefetch: vi.fn<() => void>(),
+    push: vi.fn<() => void>(),
+    refresh: vi.fn<() => void>(),
+    replace: vi.fn<() => void>(),
   }),
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  useSearchParams: () => ({
-    // eslint-disable-next-line vitest/require-mock-type-parameters
-    get: vi.fn().mockReturnValue(null),
+  useSearchParams: vi.fn<() => object>().mockReturnValue({
+    get: vi.fn<() => null>().mockReturnValue(null),
   }),
 }))
 

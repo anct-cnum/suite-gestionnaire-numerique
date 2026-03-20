@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { etablirSyntheseFinanciereGouvernance } from './EtablirSyntheseFinanciereGouvernance'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 

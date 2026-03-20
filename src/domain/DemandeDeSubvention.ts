@@ -122,17 +122,17 @@ export class DemandeDeSubventionUid extends Uid<UidState> {
   }
 }
 
-export class EnveloppeFinancementUid extends Uid<UidState> {
-  constructor(value: string) {
-    super({ value })
-  }
-}
-
 export enum StatutSubvention {
   ACCEPTEE = 'acceptee',
   DEPOSEE = 'deposee',
   EN_COURS = 'enCours',
   REFUSEE = 'refusee'
+}
+
+class EnveloppeFinancementUid extends Uid<UidState> {
+  constructor(value: string) {
+    super({ value })
+  }
 }
 
 type FactoryParams = Readonly<{

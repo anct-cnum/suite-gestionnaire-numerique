@@ -2,6 +2,7 @@
 /* eslint-disable import/no-restricted-paths */
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
+import { describe, expect } from 'vitest'
 
 import { invitationEmailTemplate } from './emails/invitationEmail'
 import { NodemailerEmailInvitationGateway } from './NodemailerEmailInvitationGateway'

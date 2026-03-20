@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
 import {
   GetUtilisateurRepository,

@@ -86,9 +86,15 @@ export default [
         {
           zones: [
             {
-              target: ['src/domain'],
+              target: ['src/domain/**[^test].ts'],
               from: ['src', 'node_modules'],
               except: ['domain', 'shared'],
+              message: "Le domain représente le métier, il ne dépend d'aucun élément extérieur.",
+            },
+            {
+              target: ['src/domain/**test.ts'],
+              from: ['src', 'node_modules'],
+              except: ['domain', 'shared', 'vitest'],
               message: "Le domain représente le métier, il ne dépend d'aucun élément extérieur.",
             },
             {
@@ -100,7 +106,7 @@ export default [
             {
               target: ['src/use-cases/**test.ts'],
               from: ['src', 'node_modules'],
-              except: ['domain', 'use-cases', 'use-cases/shared'],
+              except: ['domain', 'use-cases', 'use-cases/shared', 'vitest'],
               message: "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs.",
             },
             {
@@ -129,6 +135,7 @@ export default [
                 '@prisma/client',
                 'nodemailer',
                 'mjml',
+                'vitest',
               ],
               message: "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases.",
             },
@@ -141,7 +148,7 @@ export default [
             {
               target: ['src/presenters/**test.ts'],
               from: ['src', 'node_modules'],
-              except: ['use-cases', 'presenters'],
+              except: ['use-cases', 'presenters', 'vitest'],
               message: "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
             },
           ],
