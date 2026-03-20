@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+import { describe, expect, it } from 'vitest'
+
 import { RecupererTerritoireUtilisateur, TerritoireDepartementsLoader, TerritoireReadModel } from './RecupererTerritoireUtilisateur'
 import { RoleUtilisateur, UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 

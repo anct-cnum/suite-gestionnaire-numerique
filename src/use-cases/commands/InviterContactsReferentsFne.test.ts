@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { ContactReferentFne, ContactReferentFneLoader, InviterContactsReferentsFne } from './InviterContactsReferentsFne'
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'

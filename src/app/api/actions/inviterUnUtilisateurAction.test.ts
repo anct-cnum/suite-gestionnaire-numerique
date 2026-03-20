@@ -1,5 +1,6 @@
 import * as nextCache from 'next/cache'
 import nodemailer from 'nodemailer'
+import { describe, expect, it } from 'vitest'
 
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -210,7 +211,10 @@ describe('inviter un utilisateur action', () => {
             utilisateurFactory({ isSuperAdmin })
           )
           vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
-          const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
+          const spiedMailerTransport = vi
+            .spyOn(nodemailer, 'createTransport')
+            // @ts-expect-error
+            .mockReturnValueOnce({ sendMail: vi.fn<() => void>() })
           const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
           // WHEN

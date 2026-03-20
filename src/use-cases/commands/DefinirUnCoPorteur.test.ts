@@ -27,7 +27,7 @@ import { Destinataire } from '@/gateways/emails/invitationEmail'
 import { epochTime } from '@/shared/testHelper'
 
 // Mock Sentry
-vi.mock('@sentry/nextjs', () => ({
+vi.mock(import('@sentry/nextjs'), () => ({
 
   captureMessage: vi.fn(),
 }))

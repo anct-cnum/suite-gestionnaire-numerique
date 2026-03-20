@@ -1,5 +1,6 @@
 import { S3Client } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
+import { describe, expect, it } from 'vitest'
 
 import { GET } from './route'
 

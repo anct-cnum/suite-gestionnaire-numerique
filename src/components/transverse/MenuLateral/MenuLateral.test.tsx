@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
 import MenuLateral from './MenuLateral'
 import styles from './MenuLateral.module.css'

@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest'
+
 import { MesUtilisateursLoader, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
 import { utilisateurReadModelFactory } from '../testHelper'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { describe, expect, it } from 'vitest'
 
 import { GET } from './route'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'

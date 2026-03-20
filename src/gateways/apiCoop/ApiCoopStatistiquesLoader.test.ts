@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { ApiCoopStatistiquesLoader } from './ApiCoopStatistiquesLoader'
 
 describe('apiCoopStatistiquesLoader', () => {

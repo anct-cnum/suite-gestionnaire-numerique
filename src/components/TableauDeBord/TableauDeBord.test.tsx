@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import TableauDeBord from './TableauDeBord'
@@ -6,7 +7,7 @@ import { gouvernancePrefPresenter } from '@/presenters/tableauDeBord/gouvernance
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 // Mock du composant Carte
-vi.mock('../shared/Carte/Carte', () => ({
+vi.mock(import('../shared/Carte/Carte'), () => ({
   // eslint-disable-next-line vitest/require-mock-type-parameters
   default: vi.fn(() => (
     <div data-testid="carte-mock">
@@ -15,7 +16,7 @@ vi.mock('../shared/Carte/Carte', () => ({
 }))
 
 // Mock du composant CarteFranceAvecInsets
-vi.mock('../shared/Carte/CarteFranceAvecInsets', () => ({
+vi.mock(import('../shared/Carte/CarteFranceAvecInsets'), () => ({
   // eslint-disable-next-line vitest/require-mock-type-parameters
   default: vi.fn(() => (
     <div data-testid="carte-france-mock">
@@ -24,7 +25,7 @@ vi.mock('../shared/Carte/CarteFranceAvecInsets', () => ({
 }))
 
 // Mock du composant AccompagnementsRealises (chargement asynchrone avec Suspense)
-vi.mock('./EtatDesLieux/AccompagnementsRealises', () => ({
+vi.mock(import('./EtatDesLieux/AccompagnementsRealises'), () => ({
   // eslint-disable-next-line vitest/require-mock-type-parameters
   default: vi.fn(() => (
     <>

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
+import { describe, expect, it } from 'vitest'
 
 import Connexion from './Connexion'
 

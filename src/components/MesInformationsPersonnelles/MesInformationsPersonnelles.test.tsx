@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
+import { describe, expect, it } from 'vitest'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'

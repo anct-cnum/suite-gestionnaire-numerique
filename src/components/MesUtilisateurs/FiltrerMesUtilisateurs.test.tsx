@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import { clearFirst, select } from 'react-select-event'
+import { describe, expect, it } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import { renderComponent, rolesAvecStructure, structuresFetch } from '@/components/testHelper'

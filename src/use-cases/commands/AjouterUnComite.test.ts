@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { AjouterUnComite } from './AjouterUnComite'
 import { AddComiteRepository } from './shared/ComiteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
