@@ -36,7 +36,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
         dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
         derniereModification: new Date(action.state.dateDeCreation),
         description: action.state.description,
-        feuilleDeRouteId: action.state.uidFeuilleDeRoute,
+        feuilleDeRouteId: Number(action.state.uidFeuilleDeRoute),
         nom: action.state.nom,
         porteurAction: {
           create: action.state.uidPorteurs.map((uidPorteur) => ({
