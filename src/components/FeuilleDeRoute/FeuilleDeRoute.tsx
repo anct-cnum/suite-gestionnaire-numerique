@@ -97,7 +97,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
         <OuvrirPdf
           href={viewModel.document.href}
           nom={viewModel.document.nom}
-          onDelete={() => { void handleSupprimerDocument() }}
+          onDelete={async () => { await handleSupprimerDocument() }}
         />
       )}
       else {

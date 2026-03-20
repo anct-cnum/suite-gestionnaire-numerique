@@ -6,7 +6,8 @@ import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
-vi.mock(import('next/navigation'), () => ({
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock('next/navigation', () => ({
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
