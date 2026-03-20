@@ -73,7 +73,6 @@ export function statistiquesCoopToMediateursData(
         value: item.value,
       })),
     },
-    // Structures et communes (affiche la section avec message d'attente si vide)
     structures: [],
     communes: [],
     totalCounts: {

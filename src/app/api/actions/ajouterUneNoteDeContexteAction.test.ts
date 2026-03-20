@@ -10,7 +10,7 @@ describe('ajouter une note de contexte', () => {
   it('quand une note de contexte est ajoutée avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
@@ -45,7 +45,7 @@ describe('ajouter une note de contexte', () => {
   it('quand une note de contexte contient du HTML malveillant, alors le contenu est assaini', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'handle').mockResolvedValueOnce('OK')
 
     const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
