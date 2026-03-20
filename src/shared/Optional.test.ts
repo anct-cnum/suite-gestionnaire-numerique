@@ -46,11 +46,11 @@ describe('optional', () => {
     })
 
     it('orElseThrow() should throw default error', () => {
-      expect(() => empty.orElseThrow()).toThrow("Can't get value from an empty optional")
+      expect(() => empty.orElseThrow()).toThrowError("Can't get value from an empty optional")
     })
 
     it('orElseThrow() should throw custom error', () => {
-      expect(() => empty.orElseThrow(() => new TypeError('custom'))).toThrow('custom')
+      expect(() => empty.orElseThrow(() => new TypeError('custom'))).toThrowError('custom')
     })
 
     it('toArray() should return empty array', () => {

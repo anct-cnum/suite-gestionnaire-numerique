@@ -120,7 +120,7 @@ describe('gouvernance loader', () => {
       .get(codeDepartementInexistant)
 
     // THEN
-    await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernanceReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(gouvernanceReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 

@@ -97,7 +97,7 @@ describe('mes informations personnelles loader', () => {
     }
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(utilisateurReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(utilisateurReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

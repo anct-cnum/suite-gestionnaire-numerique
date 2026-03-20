@@ -25,7 +25,7 @@ describe('membre repository', () => {
     const membre = new PrismaMembreRepository().get(new MembreUid('prefecture-93').state.value)
 
     // THEN
-    await expect(membre).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(membre).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(membre).rejects.toMatchObject({ code: 'P2025' })
   })
 

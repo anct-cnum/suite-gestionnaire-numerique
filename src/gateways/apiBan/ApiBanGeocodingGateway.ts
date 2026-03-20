@@ -95,7 +95,8 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
         // Si c'est la dernière tentative, on lance l'erreur
         if (tentative === 3) {
           throw new Error(
-            `Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur.message}`
+            `Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur.message}`,
+            { cause: erreur }
           )
         }
 

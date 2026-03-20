@@ -80,11 +80,11 @@ describe('action repository', () => {
           dateDeDebut: new Date('2024-01-01'),
           dateDeFin: new Date('2025-01-01'),
           description: 'Description détaillée de l\'action',
-          feuilleDeRouteId: Number(feuilleDeRouteId),
+          feuilleDeRouteId,
           nom: 'Action test',
         }))
         throw new Error('ROLLBACK_TEST')
       })
-    ).rejects.toThrow('ROLLBACK_TEST')
+    ).rejects.toThrowError('ROLLBACK_TEST')
   })
 })

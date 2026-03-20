@@ -28,7 +28,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
     const actionRecord = await client.actionRecord.create({
       data: {
         besoins: action.state.besoins,
-        budgetGlobal: Number(action.state.budgetGlobal),
+        budgetGlobal: action.state.budgetGlobal,
         contexte: action.state.contexte,
         createurId: user.id,
         creation: new Date(action.state.dateDeCreation),
@@ -36,7 +36,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
         dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
         derniereModification: new Date(action.state.dateDeCreation),
         description: action.state.description,
-        feuilleDeRouteId: Number(action.state.uidFeuilleDeRoute),
+        feuilleDeRouteId: action.state.uidFeuilleDeRoute,
         nom: action.state.nom,
         porteurAction: {
           create: action.state.uidPorteurs.map((uidPorteur) => ({
@@ -121,7 +121,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
     await client.actionRecord.update({
       data: {
         besoins: action.state.besoins,
-        budgetGlobal: Number(action.state.budgetGlobal),
+        budgetGlobal: action.state.budgetGlobal,
         contexte: action.state.contexte,
         dateDeDebut: new Date(action.state.dateDeDebut),
         dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',

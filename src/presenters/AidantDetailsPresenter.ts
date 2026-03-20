@@ -22,7 +22,7 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
       adresse: lieu.adresse,
       idCoopCarto: lieu.idCoopCarto,
       nom: lieu.nom,
-      nombreAccompagnements: Number(lieu.nombreAccompagnements),
+      nombreAccompagnements: lieu.nombreAccompagnements,
     })),
     statistiquesActivites: {
       accompagnements: {

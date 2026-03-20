@@ -12,7 +12,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       return this.transformerReponse(donnees)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
-      throw new Error(`Erreur lors de la récupération des statistiques: ${errorMessage}`)
+      throw new Error(`Erreur lors de la récupération des statistiques: ${errorMessage}`, { cause: error })
     }
   }
 
@@ -106,7 +106,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         derniereErreur = erreur as Error
 
         if (tentative === 3) {
-          throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`)
+          throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`, { cause: erreur })
         }
 
         // eslint-disable-next-line no-await-in-loop

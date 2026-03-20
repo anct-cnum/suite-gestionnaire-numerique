@@ -78,7 +78,7 @@ export class ApiSireneLoader implements SireneLoader {
 
         // Si c'est la dernière tentative, on lance l'erreur
         if (tentative === 3) {
-          throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`)
+          throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`, { cause: erreur })
         }
 
         // Attente avant retry (500ms, puis 1s)

@@ -83,7 +83,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       // Ajouter les accompagnements AC
       for (const row of resultAC) {
         const currentTotal = accompagnementsMap.get(String(row.id)) ?? 0
-        accompagnementsMap.set(String(row.id), currentTotal + Number(row.nb_accompagnements_ac))
+        accompagnementsMap.set(String(row.id), currentTotal + row.nb_accompagnements_ac)
       }
 
       // S'assurer que tous les IDs ont une valeur (0 par défaut)
@@ -412,10 +412,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     includeAccompagnements: boolean
   ): Array<AidantMediateurAvecAccompagnementReadModel | AidantMediateurReadModel> {
     return personnes.map(personne => {
-      const isCoordinateur = Boolean(personne.coordinateur)
-      const isMediateur = Boolean(personne.est_actuellement_mediateur_en_poste)
-      const hasAidantConnect = Boolean(personne.aidants_connect)
-      const hasConseillerNumerique = Boolean(personne.conseiller_numerique)
+      const isCoordinateur = personne.coordinateur
+      const isMediateur = personne.est_actuellement_mediateur_en_poste
+      const hasAidantConnect = personne.aidants_connect
+      const hasConseillerNumerique = personne.conseiller_numerique
 
       const roles: Array<string> = []
       if (isCoordinateur) { roles.push('Coordinateur') }
@@ -454,8 +454,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           ...baseAidant,
           adresseStructure: personneAvecAccompagnements.structure_adresse ?? '',
           nbAccompagnements:
-            Number(personneAvecAccompagnements.accompagnements)
-            + Number(personneAvecAccompagnements.accompagnements_ac),
+            personneAvecAccompagnements.accompagnements
+            + personneAvecAccompagnements.accompagnements_ac,
           nomStructure: personneAvecAccompagnements.structure_nom ?? '',
           siretStructure: personneAvecAccompagnements.structure_siret ?? '',
         } as AidantMediateurAvecAccompagnementReadModel

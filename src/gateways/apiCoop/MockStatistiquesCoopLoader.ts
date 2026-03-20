@@ -47,9 +47,9 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     return {
       accompagnementsParJour: this.genererAccompagnementsParJour(),
       accompagnementsParMois: this.genererAccompagnementsParMois(),
-      activites: this.genererActivites(Boolean(estDepartemental), facteurTemporel),
-      beneficiaires: this.genererBeneficiaires(Boolean(estDepartemental), facteurTemporel),
-      totaux: this.genererTotaux(Boolean(estDepartemental), departement, facteurTemporel),
+      activites: this.genererActivites(estDepartemental, facteurTemporel),
+      beneficiaires: this.genererBeneficiaires(estDepartemental, facteurTemporel),
+      totaux: this.genererTotaux(estDepartemental, departement, facteurTemporel),
     }
   }
 

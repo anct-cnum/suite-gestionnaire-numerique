@@ -43,7 +43,7 @@ describe('mettre à jour l\'identifiant unique à la première connexion', () =>
     const promise = mettreAJourUidALaPremiereConnexion.handle({ email, uid })
 
     // THEN
-    await expect(promise).rejects.toThrow('Utilisateur non trouvé')
+    await expect(promise).rejects.toThrowError('Utilisateur non trouvé')
   })
 })
 

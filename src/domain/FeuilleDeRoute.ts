@@ -168,7 +168,7 @@ export class FeuilleDeRoute extends Entity<State> {
       const membreCoporteur = membresCoporteurs.find(membre =>
         membre.structureUid === structureUid)
       // isCoporteur doit être explicitement true (undefined = false par défaut)
-      if (membreCoporteur && membreCoporteur.isCoporteur === true) {
+      if (membreCoporteur?.isCoporteur === true) {
         return true
       }
     }

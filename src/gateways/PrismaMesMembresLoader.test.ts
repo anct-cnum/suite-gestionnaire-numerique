@@ -300,7 +300,7 @@ describe('mes membres loader', () => {
     const mesMembresReadModel = new PrismaMesMembresLoader().get(codeDepartementInexistant)
 
     // THEN
-    await expect(mesMembresReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(mesMembresReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(mesMembresReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

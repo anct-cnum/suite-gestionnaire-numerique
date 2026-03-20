@@ -192,10 +192,6 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (sources.has('aidant-connect')) {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/aidant-numerique.svg`)
     }
-    // if (personne.is_mediateur === true) {
-    //   logos.push(`${process.env.NEXT_PUBLIC_HOST}/mednum.svg`)
-    // }
-
     return {
       fonction: fonctions.join(', '),
       id: personne.id,

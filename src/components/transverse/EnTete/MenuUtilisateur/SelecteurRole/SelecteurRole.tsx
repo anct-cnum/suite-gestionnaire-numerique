@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext } from 'react'
+import { ChangeEvent, ReactElement, useContext } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import Select from '@/components/shared/Select/Select'
@@ -13,7 +13,7 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
       ariaControlsId={ariaControlsId}
       id="role"
       name="role"
-      onChange={changerDeRole}
+      onChange={(event) => { void changerDeRole(event) }}
       options={roles
         .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')
         .map((role) => ({
@@ -27,7 +27,7 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
     </Select>
   )
 
-  async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
+  async function changerDeRole({ currentTarget }: ChangeEvent<HTMLSelectElement>): Promise<void> {
     await changerMonRoleAction({ nouveauRole: currentTarget.value, path: pathname })
   }
 }

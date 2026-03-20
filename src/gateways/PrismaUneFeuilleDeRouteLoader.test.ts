@@ -300,7 +300,7 @@ describe('récupérer une feuille de route loader', () => {
     const readModel = new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('999')
 
     // THEN
-    await expect(readModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(readModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(readModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

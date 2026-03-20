@@ -44,7 +44,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     const asyncResult = mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })
 
     // THEN
-    await expect(asyncResult).rejects.toThrow('dateDeDerniereConnexionInvalide')
+    await expect(asyncResult).rejects.toThrowError('dateDeDerniereConnexionInvalide')
   })
 })
 
