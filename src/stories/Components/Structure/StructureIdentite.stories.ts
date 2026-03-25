@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof StructureIdentite> = {
   argTypes: {
     identite: {
-      description: 'Informations d\'identité de la structure',
+      description: "Informations d'identité de la structure",
     },
   },
   component: StructureIdentite,
@@ -16,7 +16,7 @@ const meta: Meta<typeof StructureIdentite> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 const defaultViewModel = createDefaultStructureViewModel()
 
@@ -40,7 +40,7 @@ export const TypologieEntreprise: Story = {
   args: {
     identite: {
       ...defaultViewModel.identite,
-      nom: 'Entreprise d\'insertion numérique',
+      nom: "Entreprise d'insertion numérique",
       typologie: 'Entreprise',
     },
   },

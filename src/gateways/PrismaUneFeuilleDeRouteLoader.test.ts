@@ -2,13 +2,31 @@ import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaUneFeuilleDeRouteLoader } from './PrismaUneFeuilleDeRouteLoader'
-import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
+import {
+  creerUnBeneficiaireSubvention,
+  creerUnCoFinancement,
+  creerUnContact,
+  creerUnDepartement,
+  creerUneAction,
+  creerUneDemandeDeSubvention,
+  creerUneEnveloppeFinancement,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnMembre,
+  creerUnPorteurAction,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
-import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
+import {
+  Gouvernance,
+  SyntheseGouvernance,
+} from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
   beforeEach(async () => {
@@ -32,7 +50,8 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      noteDeContextualisation:
+        '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
     })
@@ -46,15 +65,19 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(
+      dummyEtablisseurSyntheseGouvernance
+    ).get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
       actions: [
         {
           beneficiaire: 0,
-          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
+          besoins: [
+            BesoinsPossible.STRUCTURER_UN_FONDS,
+            BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
+          ],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -81,7 +104,10 @@ describe('récupérer une feuille de route loader', () => {
         },
         {
           beneficiaire: 0,
-          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
+          besoins: [
+            BesoinsPossible.STRUCTURER_UN_FONDS,
+            BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
+          ],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -104,7 +130,8 @@ describe('récupérer une feuille de route loader', () => {
       beneficiaire: 0,
       budgetTotalActions: 0,
       coFinanceur: 0,
-      contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      contextualisation:
+        '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       document: {
         chemin: 'user/fooId/feuille-de-route-fake.pdf',
         nom: 'feuille-de-route-fake.pdf',
@@ -142,7 +169,8 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      noteDeContextualisation:
+        '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
     })
@@ -156,15 +184,19 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(
+      dummyEtablisseurSyntheseGouvernance
+    ).get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
       actions: [
         {
           beneficiaire: 0,
-          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
+          besoins: [
+            BesoinsPossible.STRUCTURER_UN_FONDS,
+            BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
+          ],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -191,7 +223,10 @@ describe('récupérer une feuille de route loader', () => {
         },
         {
           beneficiaire: 0,
-          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
+          besoins: [
+            BesoinsPossible.STRUCTURER_UN_FONDS,
+            BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
+          ],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -214,7 +249,8 @@ describe('récupérer une feuille de route loader', () => {
       beneficiaire: 0,
       budgetTotalActions: 0,
       coFinanceur: 0,
-      contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      contextualisation:
+        '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       document: {
         chemin: 'user/fooId/feuille-de-route-fake.pdf',
         nom: 'feuille-de-route-fake.pdf',
@@ -253,8 +289,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(
+      dummyEtablisseurSyntheseGouvernance
+    ).get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel.porteur).toBeUndefined()
@@ -275,8 +312,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(
+      dummyEtablisseurSyntheseGouvernance
+    ).get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel.document).toBeUndefined()
@@ -297,10 +335,12 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('999')
+    const readModel = new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      '999'
+    )
 
     // THEN
-    await expect(readModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(readModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(readModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })
@@ -317,7 +357,10 @@ async function creerAction(uidAction: number, withSubvention: boolean): Promise<
   const uidDemandeSubvention = uidAction + 2
 
   await creerUneAction({
-    besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
+    besoins: [
+      BesoinsPossible.STRUCTURER_UN_FONDS,
+      BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
+    ],
     budgetGlobal: 70_000,
     createurId: uidUtilisateur,
     feuilleDeRouteId: Number(uidFeuilleDeRoute),
@@ -384,8 +427,8 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
     budget: 0,
     coFinancement: 0,
     coFinanceurs: 0,
-    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
-      actions: feuilleDeRoute.actions.map(action => ({
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map((feuilleDeRoute) => ({
+      actions: feuilleDeRoute.actions.map((action) => ({
         beneficiaires: 0,
         budget: action.budgetGlobal,
         coFinancement: 0,

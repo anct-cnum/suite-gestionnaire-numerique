@@ -23,12 +23,14 @@ export default function GouvernanceProvider({
   )
 }
 
-export const gouvernanceContext = createContext<GouvernanceContextProviderValue>({} as GouvernanceContextProviderValue)
+export const gouvernanceContext = createContext({} as GouvernanceContextProviderValue)
 
- type GouvernanceContextProviderValue = Readonly<{
-   gouvernanceViewModel: GouvernanceViewModel
- }>
-
-type Props = PropsWithChildren<Readonly<{
+type GouvernanceContextProviderValue = Readonly<{
   gouvernanceViewModel: GouvernanceViewModel
-}>>
+}>
+
+type Props = PropsWithChildren<
+  Readonly<{
+    gouvernanceViewModel: GouvernanceViewModel
+  }>
+>

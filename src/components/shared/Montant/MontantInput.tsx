@@ -10,7 +10,7 @@ export default function MontantInput({
   montantInitial,
   onChange,
 }: Readonly<Props>): ReactElement {
-  const [inputValue, setInputValue] = useState<Optional<MontantPositif>>(montantInitial)
+  const [inputValue, setInputValue] = useState(montantInitial)
 
   useEffect(() => {
     setInputValue(montantInitial)

@@ -104,13 +104,11 @@ export default function ClientContext({
   )
 
   return (
-    <clientContext.Provider value={clientContextProviderValue}>
-      {children}
-    </clientContext.Provider>
+    <clientContext.Provider value={clientContextProviderValue}>{children}</clientContext.Provider>
   )
 }
 
-export const clientContext = createContext<ClientContextProviderValue>({} as ClientContextProviderValue)
+export const clientContext = createContext({} as ClientContextProviderValue)
 
 export type ClientContextProviderValue = Readonly<{
   accepterUnMembreAction: typeof accepterUnMembreAction
@@ -157,8 +155,10 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number
 }>
-type Props = PropsWithChildren<Readonly<{
-  roles: ReadonlyArray<string>
-  sessionUtilisateurViewModel: SessionUtilisateurViewModel
-  utilisateursParPage: number
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    roles: ReadonlyArray<string>
+    sessionUtilisateurViewModel: SessionUtilisateurViewModel
+    utilisateursParPage: number
+  }>
+>

@@ -15,15 +15,15 @@ describe('optional', () => {
     })
 
     it('map() should return empty', () => {
-      expect(empty.map(value => value * 2).isEmpty()).toBe(true)
+      expect(empty.map((value) => value * 2).isEmpty()).toBe(true)
     })
 
     it('flatMap() should return empty', () => {
-      expect(empty.flatMap(value => Optional.of(value * 2)).isEmpty()).toBe(true)
+      expect(empty.flatMap((value) => Optional.of(value * 2)).isEmpty()).toBe(true)
     })
 
     it('filter() should return empty', () => {
-      expect(empty.filter(value => value > 0).isEmpty()).toBe(true)
+      expect(empty.filter((value) => value > 0).isEmpty()).toBe(true)
     })
 
     it('ifPresent() should do nothing', () => {
@@ -46,11 +46,11 @@ describe('optional', () => {
     })
 
     it('orElseThrow() should throw default error', () => {
-      expect(() => empty.orElseThrow()).toThrowError("Can't get value from an empty optional")
+      expect(() => empty.orElseThrow()).toThrow("Can't get value from an empty optional")
     })
 
     it('orElseThrow() should throw custom error', () => {
-      expect(() => empty.orElseThrow(() => new TypeError('custom'))).toThrowError('custom')
+      expect(() => empty.orElseThrow(() => new TypeError('custom'))).toThrow('custom')
     })
 
     it('toArray() should return empty array', () => {
@@ -70,21 +70,21 @@ describe('optional', () => {
     })
 
     it('map() should transform the value', () => {
-      const result = opt.map(value => value * 2)
+      const result = opt.map((value) => value * 2)
       expect(result.orElse(0)).toBe(20)
     })
 
     it('flatMap() should transform to another Optional', () => {
-      const result = opt.flatMap(value => Optional.of(value + 5))
+      const result = opt.flatMap((value) => Optional.of(value + 5))
       expect(result.orElse(0)).toBe(15)
     })
 
     it('filter(true) should keep the value', () => {
-      expect(opt.filter(value => value === 10).isPresent()).toBe(true)
+      expect(opt.filter((value) => value === 10).isPresent()).toBe(true)
     })
 
     it('filter(false) should return empty', () => {
-      expect(opt.filter(value => value !== 10).isEmpty()).toBe(true)
+      expect(opt.filter((value) => value !== 10).isEmpty()).toBe(true)
     })
 
     it('ifPresent() should call the consumer', () => {

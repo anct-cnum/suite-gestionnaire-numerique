@@ -12,20 +12,19 @@ const defaultDateService: DateService = {
   now: () => new Date(),
 }
 
-const dateContext = createContext<DateService>(defaultDateService)
+const dateContext = createContext(defaultDateService)
 
 export function useDateService(): DateService {
   return useContext(dateContext)
 }
 
-export default function DateProvider({ children, dateService = defaultDateService }: Props): ReactElement {
+export default function DateProvider({
+  children,
+  dateService = defaultDateService,
+}: Props): ReactElement {
   const value = useMemo(() => dateService, [dateService])
 
-  return (
-    <dateContext.Provider value={value}>
-      {children}
-    </dateContext.Provider>
-  )
+  return <dateContext.Provider value={value}>{children}</dateContext.Provider>
 }
 
 type Props = PropsWithChildren<

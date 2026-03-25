@@ -1,11 +1,14 @@
-/* eslint-disable camelcase */
 import { describe, expect, it } from 'vitest'
 
-import { RecupererTerritoireUtilisateur, TerritoireDepartementsLoader, TerritoireReadModel } from './RecupererTerritoireUtilisateur'
+import {
+  RecupererTerritoireUtilisateur,
+  TerritoireDepartementsLoader,
+  TerritoireReadModel,
+} from './RecupererTerritoireUtilisateur'
 import { RoleUtilisateur, UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
 describe('récupérer territoire utilisateur', () => {
-  it('quand l\'utilisateur est administrateur alors le territoire est France', async () => {
+  it("quand l'utilisateur est administrateur alors le territoire est France", async () => {
     // GIVEN
     const utilisateur = createUtilisateurReadModel({ role: 'administrateur_dispositif' })
     const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub())
@@ -20,9 +23,12 @@ describe('récupérer territoire utilisateur', () => {
     })
   })
 
-  it('quand l\'utilisateur est gestionnaire département alors le territoire est le département', async () => {
+  it("quand l'utilisateur est gestionnaire département alors le territoire est le département", async () => {
     // GIVEN
-    const utilisateur = createUtilisateurReadModel({ departementCode: '69', role: 'gestionnaire_departement' })
+    const utilisateur = createUtilisateurReadModel({
+      departementCode: '69',
+      role: 'gestionnaire_departement',
+    })
     const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub())
 
     // WHEN
@@ -35,9 +41,12 @@ describe('récupérer territoire utilisateur', () => {
     })
   })
 
-  it('quand l\'utilisateur est gestionnaire région alors le territoire est la région', async () => {
+  it("quand l'utilisateur est gestionnaire région alors le territoire est la région", async () => {
     // GIVEN
-    const utilisateur = createUtilisateurReadModel({ regionCode: '84', role: 'gestionnaire_region' })
+    const utilisateur = createUtilisateurReadModel({
+      regionCode: '84',
+      role: 'gestionnaire_region',
+    })
     const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub())
 
     // WHEN
@@ -50,10 +59,15 @@ describe('récupérer territoire utilisateur', () => {
     })
   })
 
-  it('quand l\'utilisateur est gestionnaire structure alors le territoire est le département de la structure', async () => {
+  it("quand l'utilisateur est gestionnaire structure alors le territoire est le département de la structure", async () => {
     // GIVEN
-    const utilisateur = createUtilisateurReadModel({ role: 'gestionnaire_structure', structureId: 123 })
-    const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub('75'))
+    const utilisateur = createUtilisateurReadModel({
+      role: 'gestionnaire_structure',
+      structureId: 123,
+    })
+    const queryHandler = new RecupererTerritoireUtilisateur(
+      new TerritoireDepartementsLoaderStub('75')
+    )
 
     // WHEN
     const territoire = await queryHandler.handle(utilisateur)
@@ -65,10 +79,15 @@ describe('récupérer territoire utilisateur', () => {
     })
   })
 
-  it('quand l\'utilisateur est gestionnaire structure sans département alors le territoire est vide', async () => {
+  it("quand l'utilisateur est gestionnaire structure sans département alors le territoire est vide", async () => {
     // GIVEN
-    const utilisateur = createUtilisateurReadModel({ role: 'gestionnaire_structure', structureId: 123 })
-    const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub(null))
+    const utilisateur = createUtilisateurReadModel({
+      role: 'gestionnaire_structure',
+      structureId: 123,
+    })
+    const queryHandler = new RecupererTerritoireUtilisateur(
+      new TerritoireDepartementsLoaderStub(null)
+    )
 
     // WHEN
     const territoire = await queryHandler.handle(utilisateur)
@@ -98,7 +117,8 @@ function createUtilisateurReadModel(
     departementCode: overrides.departementCode ?? null,
     // eslint-disable-next-line no-restricted-syntax
     derniereConnexion: overrides.derniereConnexion ?? new Date(),
-    displayMenusPilotage: overrides.role === 'gestionnaire_departement' || overrides.role === 'gestionnaire_structure',
+    displayMenusPilotage:
+      overrides.role === 'gestionnaire_departement' || overrides.role === 'gestionnaire_structure',
     email: overrides.email ?? 'test@example.fr',
     groupementId: overrides.groupementId ?? null,
     // eslint-disable-next-line no-restricted-syntax

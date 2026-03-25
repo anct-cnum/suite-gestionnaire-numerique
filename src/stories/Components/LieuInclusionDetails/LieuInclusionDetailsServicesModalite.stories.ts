@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof LieuInclusionDetailsServicesModalite> = {
   argTypes: {
     modalitesAcces: {
-      description: 'Modalités d\'accès depuis la base de données',
+      description: "Modalités d'accès depuis la base de données",
     },
   },
   component: LieuInclusionDetailsServicesModalite,
@@ -16,7 +16,7 @@ const meta: Meta<typeof LieuInclusionDetailsServicesModalite> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {

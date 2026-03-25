@@ -3,12 +3,22 @@ import { Prisma } from '@prisma/client'
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
 import departements from '../../ressources/departements.json'
-import { AidantMediateurAvecAccompagnementReadModel, AidantMediateurReadModel, FiltreFormations, FiltreHabilitations, FiltreRoles, FiltresListeAidants, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import {
+  AidantMediateurAvecAccompagnementReadModel,
+  AidantMediateurReadModel,
+  FiltreFormations,
+  FiltreHabilitations,
+  FiltreRoles,
+  FiltresListeAidants,
+  ListeAidantsMediateursLoader,
+  ListeAidantsMediateursReadModel,
+} from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateursLoader {
-  async get(filtres: FiltresListeAidants)
-    : Promise<ErrorReadModel | ListeAidantsMediateursReadModel> {
+  async get(
+    filtres: FiltresListeAidants
+  ): Promise<ErrorReadModel | ListeAidantsMediateursReadModel> {
     try {
       const { pagination, territoire } = filtres
 
@@ -17,7 +27,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const offset = (safePage - 1) * pagination.limite // offset = 0 pour page 1
 
       // Récupération des aidants avec pagination
-      const aidantsData = await this.getAidantsPagines(territoire, pagination.limite, offset, filtres)
+      const aidantsData = await this.getAidantsPagines(
+        territoire,
+        pagination.limite,
+        offset,
+        filtres
+      )
 
       // Récupération des statistiques
       const statsData = await this.getStatistiques(territoire, filtres)
@@ -52,7 +67,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         return new Map()
       }
 
-      const personneIdsAsNumbers = personneIds.map(id => parseInt(id, 10))
+      const personneIdsAsNumbers = personneIds.map((id) => parseInt(id, 10))
 
       const result = await prisma.$queryRaw<Array<{ personne_id: number; total: bigint }>>`
         SELECT
@@ -95,16 +110,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
       return accompagnementsMap
     } catch (error) {
-      reportLoaderError(error, 'PrismaListeAidantsMediateursLoader.getAccompagnementsForPersonnes', {
-        personneIds,
-      })
+      reportLoaderError(
+        error,
+        'PrismaListeAidantsMediateursLoader.getAccompagnementsForPersonnes',
+        {
+          personneIds,
+        }
+      )
       // Retourner une Map avec des 0 en cas d'erreur
-      return new Map(personneIds.map(id => [id, 0]))
+      return new Map(personneIds.map((id) => [id, 0]))
     }
   }
 
-  async getForExport(filtres: FiltresListeAidants): 
-  Promise<Array<AidantMediateurAvecAccompagnementReadModel> | ErrorReadModel> {
+  async getForExport(
+    filtres: FiltresListeAidants
+  ): Promise<Array<AidantMediateurAvecAccompagnementReadModel> | ErrorReadModel> {
     try {
       const { territoire } = filtres
 
@@ -118,7 +138,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         operation: 'getForExport',
       })
       return {
-        message: 'Impossible de récupérer la liste des aidants et médiateurs numériques pour l\'export',
+        message:
+          "Impossible de récupérer la liste des aidants et médiateurs numériques pour l'export",
         type: 'error',
       }
     }
@@ -160,7 +181,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         ORDER BY pe.nom, pe.prenom
         ${limitOffset};
       `
-    } 
+    }
     return prisma.$queryRaw<Array<PersonneAvecAccompagnementQueryResult>>`
         SELECT
           pe.id,
@@ -191,10 +212,13 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         ${limitOffset};
       `
   }
-   
-  /* eslint-disable-next-line sonarjs/cognitive-complexity, complexity */
-  private buildWhereConditions(roles?: FiltreRoles, habilitations?: FiltreHabilitations, formations?: FiltreFormations):
-  Prisma.Sql {
+
+  /* eslint-disable-next-line sonarjs/cognitive-complexity */
+  private buildWhereConditions(
+    roles?: FiltreRoles,
+    habilitations?: FiltreHabilitations,
+    formations?: FiltreFormations
+  ): Prisma.Sql {
     const conditions: Array<Prisma.Sql> = []
 
     // Filtre par rôles
@@ -208,7 +232,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         roleConditions.push(Prisma.sql`pe.is_coordinateur = true`)
       }
       if (roles.includes('Aidant')) {
-        roleConditions.push(Prisma.sql`(pe.est_actuellement_aidant_numerique_en_poste = true AND pe.est_actuellement_mediateur_en_poste = false)`)
+        roleConditions.push(
+          Prisma.sql`(pe.est_actuellement_aidant_numerique_en_poste = true AND pe.est_actuellement_mediateur_en_poste = false)`
+        )
       }
 
       if (roleConditions.length > 0) {
@@ -227,7 +253,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         habilitationConditions.push(Prisma.sql`pe.labellisation_aidant_connect = true`)
       }
       if (habilitations.includes('Sans habilitation/labellisation')) {
-        habilitationConditions.push(Prisma.sql`(pe.est_actuellement_conseiller_numerique = false AND pe.labellisation_aidant_connect = false)`)
+        habilitationConditions.push(
+          Prisma.sql`(pe.est_actuellement_conseiller_numerique = false AND pe.labellisation_aidant_connect = false)`
+        )
       }
 
       if (habilitationConditions.length > 0) {
@@ -239,7 +267,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     if (formations && formations.length > 0) {
       const formationConditions: Array<Prisma.Sql> = []
       const hasSansFormation = formations.includes('Sans formation')
-      const otherFormations = formations.filter(formation => formation !== 'Sans formation')
+      const otherFormations = formations.filter((formation) => formation !== 'Sans formation')
 
       // Gérer les formations normales
       if (otherFormations.includes('PIX')) {
@@ -258,7 +286,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       // Ajouter la condition "Sans formation" si sélectionnée
       if (hasSansFormation) {
         // Personne sans aucune formation
-        formationConditions.push(Prisma.sql`(f.id IS NULL OR (f.pix = false AND f.remn = false AND f.label IS NULL))`)
+        formationConditions.push(
+          Prisma.sql`(f.id IS NULL OR (f.pix = false AND f.remn = false AND f.label IS NULL))`
+        )
       }
 
       if (formationConditions.length > 0) {
@@ -290,8 +320,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       if (geographique) {
         if (geographique.type === 'region') {
           departementsFilter = departements
-            .filter(dept => dept.regionCode === geographique.code)
-            .map(dept => dept.code)
+            .filter((dept) => dept.regionCode === geographique.code)
+            .map((dept) => dept.code)
         } else {
           departementsFilter = [geographique.code]
         }
@@ -303,21 +333,37 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
       // Construction des conditions WHERE
       const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
-      const departementFilter = departementsFilter.length > 0
-        ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
-        : Prisma.empty
+      const departementFilter =
+        departementsFilter.length > 0
+          ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
+          : Prisma.empty
 
-      const limitOffset = limite !== undefined && offset !== undefined
-        ? Prisma.sql`LIMIT ${limite} OFFSET ${offset}`
-        : Prisma.empty
+      const limitOffset =
+        limite !== undefined && offset !== undefined
+          ? Prisma.sql`LIMIT ${limite} OFFSET ${offset}`
+          : Prisma.empty
 
       const personnes = includeAccompagnements
-        ? await this.avecAccompagnementQuery(territoire, geographique, whereConditions, departementFilter, limitOffset)
-        : await this.sansAccompagnementQuery(territoire, geographique, whereConditions, departementFilter, limitOffset)
+        ? await this.avecAccompagnementQuery(
+            territoire,
+            geographique,
+            whereConditions,
+            departementFilter,
+            limitOffset
+          )
+        : await this.sansAccompagnementQuery(
+            territoire,
+            geographique,
+            whereConditions,
+            departementFilter,
+            limitOffset
+          )
 
       return this.mapPersonnesToAidants(personnes, includeAccompagnements)
     } catch (error) {
-      const operation = includeAccompagnements ? 'getAidantsPaginesAvecAccompagnements' : 'getAidantsPagines'
+      const operation = includeAccompagnements
+        ? 'getAidantsPaginesAvecAccompagnements'
+        : 'getAidantsPagines'
       reportLoaderError(error, `PrismaListeAidantsMediateursLoader.${operation}`, {
         filtres,
         limite,
@@ -328,21 +374,30 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getAidantsPagines(territoire: string, limite: number, offset: number, filtres: FiltresListeAidants)
-    : Promise<Array<AidantMediateurReadModel>> {
-    return (
-      this.executeAidantsQuery(territoire, filtres, false, limite, offset) as Promise<Array<AidantMediateurReadModel>>
-    )
+  private async getAidantsPagines(
+    territoire: string,
+    limite: number,
+    offset: number,
+    filtres: FiltresListeAidants
+  ): Promise<Array<AidantMediateurReadModel>> {
+    return this.executeAidantsQuery(territoire, filtres, false, limite, offset) as Promise<
+      Array<AidantMediateurReadModel>
+    >
   }
 
-  private async getAidantsPaginesAvecAccompagnements(territoire: string, filtres: FiltresListeAidants)
-    : Promise<Array<AidantMediateurAvecAccompagnementReadModel>> {
+  private async getAidantsPaginesAvecAccompagnements(
+    territoire: string,
+    filtres: FiltresListeAidants
+  ): Promise<Array<AidantMediateurAvecAccompagnementReadModel>> {
     return this.executeAidantsQuery(territoire, filtres, true) as Promise<
       Array<AidantMediateurAvecAccompagnementReadModel>
     >
   }
 
-  private async getStatistiques(territoire: string, filtres: FiltresListeAidants): Promise<{
+  private async getStatistiques(
+    territoire: string,
+    filtres: FiltresListeAidants
+  ): Promise<{
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
@@ -354,8 +409,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       if (geographique.type === 'region') {
         // Récupérer tous les départements de la région
         departementsFilter = departements
-          .filter(dept => dept.regionCode === geographique.code)
-          .map(dept => dept.code)
+          .filter((dept) => dept.regionCode === geographique.code)
+          .map((dept) => dept.code)
       } else {
         // C'est un code département
         departementsFilter = [geographique.code]
@@ -368,15 +423,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
     // Construction des conditions WHERE pour les nouveaux filtres
     const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
-    const departementFilterPersonnes = departementsFilter.length > 0
-      ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
-      : Prisma.empty
+    const departementFilterPersonnes =
+      departementsFilter.length > 0
+        ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
+        : Prisma.empty
 
     // Statistiques des personnes en poste
     const conseillersResult =
       territoire === 'France' && !geographique && departementsFilter.length === 0
         ? await prisma.$queryRaw<
-          Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
+            Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>
+          >`
         SELECT
           COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
           COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true AND est_actuellement_conseiller_numerique = false) AS mediateur,
@@ -387,7 +444,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           ${whereConditions}
           `
         : await prisma.$queryRaw<
-          Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
+            Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>
+          >`
         SELECT
           COUNT(*) FILTER (WHERE pe.est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
           COUNT(*) FILTER (WHERE pe.est_actuellement_mediateur_en_poste = true AND pe.est_actuellement_conseiller_numerique = false) AS mediateur,
@@ -401,9 +459,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         ${whereConditions}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
-    const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)
-      + Number(conseillersResult[0]?.aidant_connect || 0)
-      + Number(conseillersResult[0]?.mediateur || 0)
+    const totalPersonnes =
+      Number(conseillersResult[0]?.conseillers_numeriques || 0) +
+      Number(conseillersResult[0]?.aidant_connect || 0) +
+      Number(conseillersResult[0]?.mediateur || 0)
 
     return {
       totalActeursNumerique: totalPersonnes,
@@ -415,16 +474,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     personnes: Array<PersonneAvecAccompagnementQueryResult | PersonneQueryResult>,
     includeAccompagnements: boolean
   ): Array<AidantMediateurAvecAccompagnementReadModel | AidantMediateurReadModel> {
-    return personnes.map(personne => {
+    return personnes.map((personne) => {
       const isCoordinateur = personne.coordinateur
       const isMediateur = personne.est_actuellement_mediateur_en_poste
       const hasAidantConnect = personne.aidants_connect
       const hasConseillerNumerique = personne.conseiller_numerique
 
       const roles: Array<string> = []
-      if (isCoordinateur) { roles.push('Coordinateur') }
-      if (isMediateur) { roles.push('Médiateur') }
-      else { roles.push('aidant') }
+      if (isCoordinateur) {
+        roles.push('Coordinateur')
+      }
+      if (isMediateur) {
+        roles.push('Médiateur')
+      } else {
+        roles.push('aidant')
+      }
 
       const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
       if (hasConseillerNumerique) {
@@ -435,7 +499,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       }
 
       // Construction du tableau des formations avec PIX et REMN
-      const formations = [...personne.formations.filter(item => Boolean(item) && item.trim() !== '')]
+      const formations = [
+        ...personne.formations.filter((item) => Boolean(item) && item.trim() !== ''),
+      ]
       if (personne.pix) {
         formations.push('PIX')
       }
@@ -458,8 +524,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           ...baseAidant,
           adresseStructure: personneAvecAccompagnements.structure_adresse ?? '',
           nbAccompagnements:
-            personneAvecAccompagnements.accompagnements
-            + personneAvecAccompagnements.accompagnements_ac,
+            personneAvecAccompagnements.accompagnements +
+            personneAvecAccompagnements.accompagnements_ac,
           nomStructure: personneAvecAccompagnements.structure_nom ?? '',
           siretStructure: personneAvecAccompagnements.structure_siret ?? '',
         } as AidantMediateurAvecAccompagnementReadModel
@@ -497,7 +563,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         ORDER BY pe.nom, pe.prenom
         ${limitOffset};
       `
-    } 
+    }
     return prisma.$queryRaw<Array<PersonneQueryResult>>`
         SELECT
           pe.id,

@@ -8,7 +8,7 @@ const meta: Meta<typeof StructureHeader> = {
       description: 'Liste des gouvernances avec leurs rôles',
     },
     identite: {
-      description: 'Informations d\'identité de la structure',
+      description: "Informations d'identité de la structure",
     },
   },
   component: StructureHeader,
@@ -19,7 +19,7 @@ const meta: Meta<typeof StructureHeader> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 const defaultViewModel = createDefaultStructureViewModel()
 

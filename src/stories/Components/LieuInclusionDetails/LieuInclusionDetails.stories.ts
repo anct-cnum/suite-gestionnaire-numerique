@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof LieuxInclusionDetails> = {
   argTypes: {
     data: {
-      description: 'Données complètes du lieu d\'inclusion numérique',
+      description: "Données complètes du lieu d'inclusion numérique",
     },
   },
   component: LieuxInclusionDetails,
@@ -17,7 +17,7 @@ const meta: Meta<typeof LieuxInclusionDetails> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {

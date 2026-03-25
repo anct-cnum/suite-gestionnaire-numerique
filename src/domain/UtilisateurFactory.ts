@@ -8,7 +8,15 @@ import { GroupementUid } from './Groupement'
 import { Region, RegionState } from './Region'
 import { Role, TypologieRole } from './Role'
 import { StructureUid } from './Structure'
-import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
+import {
+  Email,
+  Nom,
+  Prenom,
+  Telephone,
+  Utilisateur,
+  UtilisateurUid,
+  UtilisateurUidState,
+} from './Utilisateur'
 
 export class UtilisateurFactory {
   readonly #departement?: DepartementState
@@ -58,10 +66,9 @@ export class UtilisateurFactory {
     }).create(state.role.nom)
   }
 
-  // eslint-disable-next-line @typescript-eslint/consistent-return
   create(role: TypologieRole, codeOrganisation = ''): Utilisateur {
     //Suppression du default car tous les cas sont gérés et vérifiés par TypeScript
-    // eslint-disable-next-line default-case
+
     switch (role) {
       case 'Administrateur dispositif':
         return this.#createAdministrateur(new Role(role))

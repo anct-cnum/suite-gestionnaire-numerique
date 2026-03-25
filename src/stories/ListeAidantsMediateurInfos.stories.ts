@@ -1,4 +1,3 @@
-
 import ListeAidantsMediateurInfos from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurInfos'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
@@ -16,7 +15,7 @@ const meta: Meta<typeof ListeAidantsMediateurInfos> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {

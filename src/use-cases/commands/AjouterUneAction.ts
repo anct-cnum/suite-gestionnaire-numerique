@@ -1,16 +1,22 @@
-/* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
 import { CoFinancementCommand, creationDesCoFinancements } from './shared/ActionUtils'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
-import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import {
+  GetFeuilleDeRouteRepository,
+  UpdateFeuilleDeRouteRepository,
+} from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
 import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
-import { DemandeDeSubvention , DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
+import {
+  DemandeDeSubvention,
+  DemandeDeSubventionFailure,
+  StatutSubvention,
+} from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Utilisateur } from '@/domain/Utilisateur'
@@ -94,11 +100,10 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
     }
 
-    const coFinancements: Array<CoFinancement> | CoFinancementFailure =
-      creationDesCoFinancements(
-        command.coFinancements ?? [],
-        action.state.uid.value
-      )
+    const coFinancements: Array<CoFinancement> | CoFinancementFailure = creationDesCoFinancements(
+      command.coFinancements ?? [],
+      action.state.uid.value
+    )
 
     if (!Array.isArray(coFinancements)) {
       return coFinancements

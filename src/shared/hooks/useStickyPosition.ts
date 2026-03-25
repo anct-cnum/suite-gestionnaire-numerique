@@ -11,8 +11,8 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
     headerSelectors = ['.fr-header'],
   } = options
 
-  const [topPosition, setTopPosition] = useState<string>('30px')
-  const [maxHeight, setMaxHeight] = useState<string>('none')
+  const [topPosition, setTopPosition] = useState('30px')
+  const [maxHeight, setMaxHeight] = useState('none')
 
   useEffect(() => {
     if (!enabled) {

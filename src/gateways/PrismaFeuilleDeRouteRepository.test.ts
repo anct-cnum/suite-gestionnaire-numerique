@@ -2,7 +2,16 @@ import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
-import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre,  creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
+import {
+  creerUnContact,
+  creerUnDepartement,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUnMembre,
+  creerUnUtilisateur,
+  feuilleDeRouteRecordFactory,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { feuilleDeRouteFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -55,7 +64,9 @@ describe('feuille de route repository', () => {
         gouvernanceDepartementCode: departementCode,
       },
     })
-    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({ porteurId: uidPorteur }))
+    expect(feuilleDeRouteRecord).toMatchObject(
+      feuilleDeRouteRecordFactory({ porteurId: uidPorteur })
+    )
   })
 
   it('modifier une feuille de route', async () => {
@@ -125,7 +136,12 @@ describe('feuille de route repository', () => {
         id: 1,
       },
     })
-    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({ noteDeContextualisation: '<p>un contenu<p>' ,porteurId: uidPorteur }))
+    expect(feuilleDeRouteRecord).toMatchObject(
+      feuilleDeRouteRecordFactory({
+        noteDeContextualisation: '<p>un contenu<p>',
+        porteurId: uidPorteur,
+      })
+    )
   })
 
   it('trouver une feuille de route complète', async () => {
@@ -321,7 +337,7 @@ describe('feuille de route repository', () => {
     const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('111')
 
     // THEN
-    await expect(feuilleDeRoute).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(feuilleDeRoute).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(feuilleDeRoute).rejects.toMatchObject({ code: 'P2025' })
   })
 
@@ -334,13 +350,14 @@ describe('feuille de route repository', () => {
     await creerUneFeuilleDeRoute({
       gouvernanceDepartementCode: departementCode,
       id: 1,
-      perimetreGeographique: 'toto' })
+      perimetreGeographique: 'toto',
+    })
 
     // WHEN
     const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('1')
 
     // THEN
-    await expect(feuilleDeRoute).rejects.toThrowError('perimetreGeographiqueInvalide')
+    await expect(feuilleDeRoute).rejects.toThrow('perimetreGeographiqueInvalide')
   })
 
   it('quand je modifie une note de contextualisation d’une feuille de route', async () => {

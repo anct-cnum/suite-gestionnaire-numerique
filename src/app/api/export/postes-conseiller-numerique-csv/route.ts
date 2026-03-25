@@ -71,7 +71,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     })
 
     if ('type' in postesReadModel) {
-      return NextResponse.json({ error: 'Erreur lors de la récupération des données' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Erreur lors de la récupération des données' },
+        { status: 500 }
+      )
     }
 
     const csvContent = generateCSV(postesReadModel.postes)
@@ -86,8 +89,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erreur lors de l\'export CSV:', error)
+    console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }

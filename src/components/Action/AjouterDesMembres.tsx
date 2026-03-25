@@ -30,13 +30,18 @@ export default function AjouterDesMembres({
   const fieldset = useRef<HTMLFieldSetElement>(null)
 
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+  const membresGouvernanceConfirme =
+    gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
   const hasMembres = membres.length > 0
   return (
     <>
       <button
         aria-controls={drawerId}
-        className={hasMembres ? 'fr-btn fr-btn--tertiary' : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'}
+        className={
+          hasMembres
+            ? 'fr-btn fr-btn--tertiary'
+            : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
+        }
         data-fr-opened="false"
         onClick={() => {
           resetToutEffacer(fieldset)
@@ -64,70 +69,42 @@ export default function AjouterDesMembres({
           {titre}
         </DrawerTitle>
         <p className="fr-text--sm color-grey">
-          Sélectionnez un ou plusieurs
-          {' '}
-          {labelPluriel}
-          {' '}
-          pour cette action.
-          Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en
-          {' '}
-          <Link
-            className="color-blue-france"
-            href={urlGestionMembresGouvernance}
-          >
+          Sélectionnez un ou plusieurs {labelPluriel} pour cette action. Si vous ne trouvez pas la
+          structure dans cette liste, invitez-la à rejoindre la gouvernance en{' '}
+          <Link className="color-blue-france" href={urlGestionMembresGouvernance}>
             cliquant ici
           </Link>
           .
         </p>
-        <fieldset
-          className={`${styles['no-border']} ${styles.separator}`}
-          ref={fieldset}
-        >
-          <legend className="fr-sr-only">
-            Les différents
-            {' '}
-            {labelPluriel}
-          </legend>
-          {
-            membresGouvernanceConfirme.map((membre) => (
-              <Checkbox
-                id={checkboxName+membre.id}
-                isSelected={membres.some( preSelectedMember => preSelectedMember.id === membre.id)}
-                key={checkboxName+membre.id}
-                label={checkboxName}
-                value={membre.id}
-              >
-                <span className="primary font-weight-700 fr-px-0 no-hover d-block">
-                  {membre.nom}
+        <fieldset className={`${styles['no-border']} ${styles.separator}`} ref={fieldset}>
+          <legend className="fr-sr-only">Les différents {labelPluriel}</legend>
+          {membresGouvernanceConfirme.map((membre) => (
+            <Checkbox
+              id={checkboxName + membre.id}
+              isSelected={membres.some((preSelectedMember) => preSelectedMember.id === membre.id)}
+              key={checkboxName + membre.id}
+              label={checkboxName}
+              value={membre.id}
+            >
+              <span className="primary font-weight-700 fr-px-0 no-hover d-block">{membre.nom}</span>
+              {}
+              {membre.type !== undefined ? (
+                <span className="fr-text--sm" style={{ marginBottom: 0 }}>
+                  {membre.type}
                 </span>
-                {/* eslint-disable-next-line no-negated-condition */}
-                { membre.type !== undefined ?
-                  <span
-                    className="fr-text--sm"
-                    style={{ marginBottom: 0 }}
-                  >
-                    {membre.type}
-                  </span>
-                  : null}
-                
-                <div style={{ border: 'none', display: 'flex', flexDirection: 'row' }}>
-                  {
+              ) : null}
 
-                    membre.roles
-                      .filter(role => role.nom !== 'Observateur' )
-                      .map((role: RoleViewModel) => (
-                        <Badge
-                          color={role.color}
-                          key={membre.id+ role.nom+role.color}
-                        >
-                          {role.nom}
-                        </Badge>
-                      ))
-                  }
-                </div>
-              </Checkbox>
-            ))
-          }
+              <div style={{ border: 'none', display: 'flex', flexDirection: 'row' }}>
+                {membre.roles
+                  .filter((role) => role.nom !== 'Observateur')
+                  .map((role: RoleViewModel) => (
+                    <Badge color={role.color} key={membre.id + role.nom + role.color}>
+                      {role.nom}
+                    </Badge>
+                  ))}
+              </div>
+            </Checkbox>
+          ))}
           <div className="fr-btns-group">
             <button
               aria-controls={drawerId}

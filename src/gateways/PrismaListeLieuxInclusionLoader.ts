@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { Prisma } from '@prisma/client'
@@ -130,11 +129,13 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       )`)
     }
 
-    const dispositifWhereClause = dispositifConditions.length > 0
-      ? Prisma.sql`WHERE ${Prisma.join(dispositifConditions, ' AND ')}`
-      : Prisma.empty
+    const dispositifWhereClause =
+      dispositifConditions.length > 0
+        ? Prisma.sql`WHERE ${Prisma.join(dispositifConditions, ' AND ')}`
+        : Prisma.empty
 
-    const dispositifResult : Array<{ nb_conseillers: bigint; total: bigint }>= await prisma.$queryRaw`
+    const dispositifResult: Array<{ nb_conseillers: bigint; total: bigint }> =
+      await prisma.$queryRaw`
       SELECT
         COUNT(*) AS total,
         SUM(CASE WHEN 'Conseillers numériques' = ANY(s.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_conseillers

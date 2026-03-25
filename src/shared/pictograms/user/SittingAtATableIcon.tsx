@@ -9,14 +9,11 @@ export function SittingAtATableIcon({
     <svg
       height={height}
       width={width}
-      // eslint-disable-next-line react/jsx-props-no-spreading -- SVG props needed
       {...props}
       viewBox="0 0 80 80"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <title>
-        Deux personnes assises à table
-      </title>
+      <title>Deux personnes assises à table</title>
       <path
         className="fr-artwork-minor"
         d="M21.065 16.808a4.99 4.99 0 0 0-4.988 4.989 4.988 4.988 0 0 0 8.907 3.086.996.996 0 1 1 1.562 1.236 6.98 6.98 0 0 1-12.46-4.321 6.98 6.98 0 0 1 6.98-6.981 6.98 6.98 0 0 1 6.98 6.98.996.996 0 0 1-1.992 0 4.99 4.99 0 0 0-4.989-4.989m37.85 0a4.99 4.99 0 0 0-4.99 4.989.996.996 0 0 1-1.99 0 6.98 6.98 0 0 1 6.98-6.98 6.98 6.98 0 0 1 6.98 6.98 6.98 6.98 0 0 1-12.498 4.274.996.996 0 1 1 1.575-1.22 4.988 4.988 0 0 0 8.93-3.053 4.99 4.99 0 0 0-4.988-4.99"

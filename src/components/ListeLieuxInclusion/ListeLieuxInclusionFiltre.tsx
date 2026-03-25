@@ -7,7 +7,11 @@ import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeog
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Select from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
-import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
+import {
+  toutesLesRegions,
+  ZoneGeographique,
+  zoneGeographiqueToURLSearchParams,
+} from '@/presenters/filtresUtilisateurPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUtils'
 
@@ -21,11 +25,12 @@ export default function ListeLieuxInclusionFiltre({
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
-  const [selectedStructureType, setSelectedStructureType] = useState<string>(currentFilters.typeStructure)
-  const [isQpvSelected, setIsQpvSelected] = useState<boolean>(currentFilters.qpv)
-  const [isFrrSelected, setIsFrrSelected] = useState<boolean>(currentFilters.frr)
-  const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] =
-    useState<boolean>(currentFilters.horsZonePrioritaire)
+  const [selectedStructureType, setSelectedStructureType] = useState(currentFilters.typeStructure)
+  const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
+  const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)
+  const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(
+    currentFilters.horsZonePrioritaire
+  )
 
   const structureTypeSelectId = useId()
   const qpvCheckboxId = useId()
@@ -33,8 +38,20 @@ export default function ListeLieuxInclusionFiltre({
   const horsZonePrioritaireCheckboxId = useId()
 
   const typologiesTerritoire = [
-    { checked: isQpvSelected, id: qpvCheckboxId, label: 'QPV', name: 'qpv', onChange: setIsQpvSelected },
-    { checked: isFrrSelected, id: frrCheckboxId, label: 'FRR', name: 'frr', onChange: setIsFrrSelected },
+    {
+      checked: isQpvSelected,
+      id: qpvCheckboxId,
+      label: 'QPV',
+      name: 'qpv',
+      onChange: setIsQpvSelected,
+    },
+    {
+      checked: isFrrSelected,
+      id: frrCheckboxId,
+      label: 'FRR',
+      name: 'frr',
+      onChange: setIsFrrSelected,
+    },
     {
       checked: isHorsZonePrioritaireSelected,
       id: horsZonePrioritaireCheckboxId,
@@ -102,7 +119,7 @@ export default function ListeLieuxInclusionFiltre({
 
   const typesStructureOptions: ReadonlyArray<LabelValue> = [
     { isSelected: selectedStructureType === '', label: 'Tous les types', value: '' },
-    ...typesStructure.map(type => ({
+    ...typesStructure.map((type) => ({
       isSelected: selectedStructureType === type.code,
       label: type.nom,
       value: type.code,
@@ -110,8 +127,8 @@ export default function ListeLieuxInclusionFiltre({
   ]
 
   return (
-    <div >
-      {utilisateurRole ===  'Administrateur dispositif' && (
+    <div>
+      {utilisateurRole === 'Administrateur dispositif' && (
         <>
           <FiltrerParZonesGeographiques
             ref={ref}
@@ -124,7 +141,9 @@ export default function ListeLieuxInclusionFiltre({
       <Select<string>
         id={structureTypeSelectId}
         name="typeStructure"
-        onChange={(event) => { setSelectedStructureType(event.target.value) }}
+        onChange={(event) => {
+          setSelectedStructureType(event.target.value)
+        }}
         options={typesStructureOptions}
         placeholder="Choisir un type"
       >
@@ -132,16 +151,16 @@ export default function ListeLieuxInclusionFiltre({
       </Select>
 
       <div className="fr-fieldset">
-        <legend className="fr-fieldset__legend fr-text--regular">
-          Typologie de territoire
-        </legend>
+        <legend className="fr-fieldset__legend fr-text--regular">Typologie de territoire</legend>
         {typologiesTerritoire.map(({ checked, id, label, name, onChange }) => (
           <Checkbox
             id={id}
             isSelected={checked}
             key={name}
             label={name}
-            onChange={(event) => { onChange(event.target.checked) }}
+            onChange={(event) => {
+              onChange(event.target.checked)
+            }}
             value={name}
           >
             {label}
@@ -150,18 +169,10 @@ export default function ListeLieuxInclusionFiltre({
       </div>
 
       <div className="fr-btns-group fr-mt-3w">
-        <button
-          className="fr-btn"
-          onClick={handleApplyFilters}
-          type="button"
-        >
+        <button className="fr-btn" onClick={handleApplyFilters} type="button">
           Afficher les lieux
         </button>
-        <button
-          className="fr-btn fr-btn--secondary"
-          onClick={handleReset}
-          type="button"
-        >
+        <button className="fr-btn fr-btn--secondary" onClick={handleReset} type="button">
           Réinitialiser
         </button>
       </div>

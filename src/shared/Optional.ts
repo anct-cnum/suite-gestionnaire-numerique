@@ -1,5 +1,6 @@
 // eslint-disable-next-line func-style
-const checkIsNaN: <Value>(value: Value) => boolean = <Value>(value: Value) => typeof value === 'number' && isNaN(value)
+const checkIsNaN: <Value>(value: Value) => boolean = <Value>(value: Value) =>
+  typeof value === 'number' && isNaN(value)
 
 export abstract class Optional<Value> {
   static empty<Value>(): Optional<Value> {
@@ -82,7 +83,6 @@ class EmptyOptional<Value> extends Optional<Value> {
 }
 
 class ValuatedOptional<Value> extends Optional<Value> {
-  // eslint-disable-next-line @typescript-eslint/parameter-properties
   constructor(private readonly value: Value) {
     super()
   }

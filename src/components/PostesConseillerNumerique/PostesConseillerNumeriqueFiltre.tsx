@@ -7,7 +7,11 @@ import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeog
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Select from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
-import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
+import {
+  toutesLesRegions,
+  ZoneGeographique,
+  zoneGeographiqueToURLSearchParams,
+} from '@/presenters/filtresUtilisateurPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 import { FiltresPostesConseillerNumeriqueInternes } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 
@@ -20,11 +24,13 @@ export default function PostesConseillerNumeriqueFiltre({
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
-  const [selectedStatut, setSelectedStatut] = useState<string>(currentFilters.statut)
-  const [isBonificationSelected, setIsBonificationSelected] = useState<boolean>(currentFilters.bonification)
-  const [selectedTypesPoste, setSelectedTypesPoste] = useState<Array<string>>(currentFilters.typesPoste)
-  const [selectedConventions, setSelectedConventions] = useState<Array<string>>(currentFilters.conventions)
-  const [selectedTypesEmployeur, setSelectedTypesEmployeur] = useState<Array<string>>(currentFilters.typesEmployeur)
+  const [selectedStatut, setSelectedStatut] = useState(currentFilters.statut)
+  const [isBonificationSelected, setIsBonificationSelected] = useState(currentFilters.bonification)
+  const [selectedTypesPoste, setSelectedTypesPoste] = useState(currentFilters.typesPoste)
+  const [selectedConventions, setSelectedConventions] = useState(currentFilters.conventions)
+  const [selectedTypesEmployeur, setSelectedTypesEmployeur] = useState(
+    currentFilters.typesEmployeur
+  )
 
   const statutSelectId = useId()
   const bonificationToggleId = useId()
@@ -164,18 +170,13 @@ export default function PostesConseillerNumeriqueFiltre({
           }}
           type="checkbox"
         />
-        <label
-          className="fr-toggle__label"
-          htmlFor={bonificationToggleId}
-        >
+        <label className="fr-toggle__label" htmlFor={bonificationToggleId}>
           Voir uniquement les postes bonifiés
         </label>
       </div>
 
       <div className="fr-fieldset fr-mt-3w">
-        <legend className="fr-fieldset__legend fr-text--regular">
-          Par type de poste
-        </legend>
+        <legend className="fr-fieldset__legend fr-text--regular">Par type de poste</legend>
         {typesPosteOptions.map(({ label, value }) => (
           <Checkbox
             id={`typePoste-${value}`}
@@ -193,9 +194,7 @@ export default function PostesConseillerNumeriqueFiltre({
       </div>
 
       <div className="fr-fieldset fr-mt-3w">
-        <legend className="fr-fieldset__legend fr-text--regular">
-          Par convention
-        </legend>
+        <legend className="fr-fieldset__legend fr-text--regular">Par convention</legend>
         {conventionsOptions.map(({ label, value }) => (
           <Checkbox
             id={`convention-${value}`}
@@ -213,9 +212,7 @@ export default function PostesConseillerNumeriqueFiltre({
       </div>
 
       <div className="fr-fieldset fr-mt-3w">
-        <legend className="fr-fieldset__legend fr-text--regular">
-          Par type d&apos;employeur
-        </legend>
+        <legend className="fr-fieldset__legend fr-text--regular">Par type d&apos;employeur</legend>
         {typesEmployeurOptions.map(({ label, value }) => (
           <Checkbox
             id={`typeEmployeur-${value}`}
@@ -233,18 +230,10 @@ export default function PostesConseillerNumeriqueFiltre({
       </div>
 
       <div className="fr-btns-group fr-mt-3w">
-        <button
-          className="fr-btn"
-          onClick={handleApplyFilters}
-          type="button"
-        >
+        <button className="fr-btn" onClick={handleApplyFilters} type="button">
           Afficher
         </button>
-        <button
-          className="fr-btn fr-btn--secondary"
-          onClick={handleReset}
-          type="button"
-        >
+        <button className="fr-btn fr-btn--secondary" onClick={handleReset} type="button">
           Réinitialiser
         </button>
       </div>

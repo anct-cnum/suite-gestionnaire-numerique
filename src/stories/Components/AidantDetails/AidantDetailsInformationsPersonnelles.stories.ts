@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof InformationsPersonnellesCard> = {
   argTypes: {
     data: {
-      description: 'Données des informations personnelles de l\'aidant',
+      description: "Données des informations personnelles de l'aidant",
     },
     onEdit: {
       description: 'Callback pour éditer les informations personnelles',
@@ -20,7 +20,7 @@ const meta: Meta<typeof InformationsPersonnellesCard> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {

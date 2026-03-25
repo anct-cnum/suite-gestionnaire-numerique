@@ -33,9 +33,7 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
         urlParams.set('lon', params.longitude.toString())
       }
 
-      const response = await this.recupererAvecTentatives(
-        `${this.apiUrl}?${urlParams.toString()}`
-      )
+      const response = await this.recupererAvecTentatives(`${this.apiUrl}?${urlParams.toString()}`)
 
       const donnees = await this.gererReponse(response)
 
@@ -70,7 +68,6 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
     // Retry jusqu'à 3 fois en cas d'erreur réseau
     for (let tentative = 1; tentative <= 3; tentative += 1) {
       try {
-        // eslint-disable-next-line no-await-in-loop
         reponse = await fetch(url, {
           headers: this.headers,
           // Timeout de 10 secondes
@@ -82,8 +79,7 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
           const retryAfter = reponse.headers.get('Retry-After')
           const waitTime = retryAfter === null ? 5000 : Number.parseInt(retryAfter, 10) * 1000
 
-          // eslint-disable-next-line no-await-in-loop
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             setTimeout(resolve, waitTime)
           })
         } else {
@@ -101,8 +97,8 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
         }
 
         // Attente avant retry (2s, puis 4s)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => {
+
+        await new Promise((resolve) => {
           setTimeout(resolve, tentative * 2000)
         })
       }
@@ -118,7 +114,7 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
   }
 
   private traiterReponseApi(donnees: BanApiResponse): AdresseGeocodeReadModel | null {
-    if ( donnees.features.length === 0) {
+    if (donnees.features.length === 0) {
       return null
     }
 

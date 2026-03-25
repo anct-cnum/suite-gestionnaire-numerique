@@ -21,14 +21,12 @@ export class PrismaGouvernancesInfosLoader {
       return {
         /* eslint-disable */
         actionCount: feuilleDeRoute?.nombreActions ?? 0,
-        coFinancementMontant:
-          cofinancementGouvernance !== null ? cofinancementGouvernance : 0,
+        coFinancementMontant: cofinancementGouvernance !== null ? cofinancementGouvernance : 0,
         coporteurCount: membre?.coporteur ?? 0,
         departementCode: gouvernance.code,
         departementNom: gouvernance.nom,
         departementRegion: gouvernance.relationRegion.nom,
-        dotationEtatMontant:
-          dotationsEtatGouvernance !== null ? dotationsEtatGouvernance : 0,
+        dotationEtatMontant: dotationsEtatGouvernance !== null ? dotationsEtatGouvernance : 0,
         feuilleDeRouteCount: feuilleDeRoute?.nombreFeuillesDeRoute ?? 0,
         indiceDeConfiance: this.formatIndiceDeConfiance(indiceDeConfiance),
         membreCount: membre?.membre ?? 0,
@@ -109,10 +107,7 @@ export class PrismaGouvernancesInfosLoader {
       by: ['departementCode'],
     })
 
-    return Object.fromEntries(
-      // eslint-disable-next-line no-underscore-dangle
-      result.map((dep) => [dep.departementCode, dep._sum.plafond])
-    )
+    return Object.fromEntries(result.map((dep) => [dep.departementCode, dep._sum.plafond]))
   }
 
   private async getFeuilleDeRouteParGouvernance(): Promise<
@@ -165,9 +160,7 @@ export class PrismaGouvernancesInfosLoader {
       },
     })
 
-    return Object.fromEntries(
-      indices.map((indice) => [indice.code, indice.label])
-    )
+    return Object.fromEntries(indices.map((indice) => [indice.code, indice.label]))
   }
 
   private async getMemberesParGouvernancess(): Promise<

@@ -11,7 +11,7 @@ const meta: Meta<typeof LieuInclusionDetailsAccueilHeader> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {},

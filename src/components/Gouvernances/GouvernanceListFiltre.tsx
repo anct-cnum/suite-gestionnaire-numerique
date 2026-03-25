@@ -14,19 +14,18 @@ export default function GouvernanceListFiltre({
   onFilterAction,
   onResetAction,
 }: Props): ReactElement {
-  const [avance, setAvance] = useState<FilterType>(filterAvance)
-  const [geographique, setGeographique] = useState<string>(filtreGeographique)
+  const [avance, setAvance] = useState(filterAvance)
+  const [geographique, setGeographique] = useState(filtreGeographique)
   const [totalResults, setTotalResults] = useState(details.length)
   const [regions, setRegions] = useState<Array<string>>([])
 
   useEffect(() => {
-    const detailsRegions = details.map(detail => detail.departementRegion)
+    const detailsRegions = details.map((detail) => detail.departementRegion)
     setRegions(Array.from(new Set(detailsRegions)))
   }, [])
 
   useEffect(() => {
-    const nouveauDetails: Array<GouvernanceDetails> =
-      filtrerDetails(details, geographique,avance)
+    const nouveauDetails: Array<GouvernanceDetails> = filtrerDetails(details, geographique, avance)
     setTotalResults(nouveauDetails.length)
   }, [avance, geographique])
 
@@ -39,10 +38,7 @@ export default function GouvernanceListFiltre({
   return (
     <div className="sidepanel__content">
       <div className="fr-mb-3w">
-        <label
-          className="fr-label"
-          htmlFor="region-select"
-        >
+        <label className="fr-label" htmlFor="region-select">
           Par zone géographique
         </label>
         <select
@@ -53,24 +49,16 @@ export default function GouvernanceListFiltre({
           }}
           value={geographique}
         >
-          <option value="">
-            Toutes les régions
-          </option>
+          <option value="">Toutes les régions</option>
           {regions.map((region) => (
-            <option
-              key={region}
-              value={region}
-            >
+            <option key={region} value={region}>
               {region}
             </option>
           ))}
         </select>
       </div>
 
-      <fieldset
-        aria-labelledby="radio-group-1"
-        className="fr-fieldset fr-ml-0"
-      >
+      <fieldset aria-labelledby="radio-group-1" className="fr-fieldset fr-ml-0">
         <div className="fr-radio-group fr-mb-2w">
           <input
             checked={avance === FilterType.NO_GOUV}
@@ -82,10 +70,7 @@ export default function GouvernanceListFiltre({
             type="radio"
             value={FilterType.NO_GOUV}
           />
-          <label
-            className="fr-label"
-            htmlFor="gouv1"
-          >
+          <label className="fr-label" htmlFor="gouv1">
             Départements sans gouvernance
           </label>
         </div>
@@ -101,10 +86,7 @@ export default function GouvernanceListFiltre({
             type="radio"
             value={FilterType.NO_ROADMAP}
           />
-          <label
-            className="fr-label"
-            htmlFor="gouv2"
-          >
+          <label className="fr-label" htmlFor="gouv2">
             Départements sans Feuilles de route
           </label>
         </div>
@@ -120,10 +102,7 @@ export default function GouvernanceListFiltre({
             type="radio"
             value={FilterType.MULTI_ROADMAP}
           />
-          <label
-            className="fr-label"
-            htmlFor="gouv3"
-          >
+          <label className="fr-label" htmlFor="gouv3">
             Départements avec plus d’une Feuille de route
           </label>
         </div>
@@ -139,10 +118,7 @@ export default function GouvernanceListFiltre({
             type="radio"
             value={FilterType.NO_ACTIONS}
           />
-          <label
-            className="fr-label"
-            htmlFor="gouv4"
-          >
+          <label className="fr-label" htmlFor="gouv4">
             Départements sans actions
           </label>
         </div>
@@ -152,14 +128,12 @@ export default function GouvernanceListFiltre({
         <button
           aria-controls={drawerId}
           className="fr-btn"
-          onClick={() => { onFilterAction(geographique, avance) }}
+          onClick={() => {
+            onFilterAction(geographique, avance)
+          }}
           type="button"
         >
-          Afficher les
-          {' '}
-          {totalResults}
-          {' '}
-          résultats
+          Afficher les {totalResults} résultats
         </button>
         <button
           aria-controls={drawerId}

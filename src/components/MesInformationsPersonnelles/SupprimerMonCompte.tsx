@@ -9,43 +9,27 @@ import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Props): ReactElement {
   const { supprimerMonCompteAction } = useContext(clientContext)
-  const [emailValidationInfo, setEmailValidationInfo] =
-    useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
+  const [emailValidationInfo, setEmailValidationInfo] = useState(emailValidationInfoByState.invalid)
   const [isDisabled, setIsDisabled] = useState(false)
   const labelModaleId = useId()
   const champEmailId = useId()
   const messageValidationId = 'supprimer-mon-compte-email-message-validation'
 
   return (
-    <Modal
-      close={close}
-      id={id}
-      isOpen={isOpen}
-      labelId={labelModaleId}
-    >
+    <Modal close={close} id={id} isOpen={isOpen} labelId={labelModaleId}>
       <form
         aria-label="Supprimer"
         method="dialog"
-        onSubmit={(event) => { void logout(event) }}
+        onSubmit={(event) => {
+          void logout(event)
+        }}
       >
         <div className="fr-modal__content">
-          <ModalTitle id={labelModaleId}>
-            Supprimer mon compte
-          </ModalTitle>
-          <p>
-            Êtes-vous sûr de vouloir supprimer votre compte ? Cette
-            action est irréversible.
-          </p>
+          <ModalTitle id={labelModaleId}>Supprimer mon compte</ModalTitle>
+          <p>Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
           <div className={`fr-input-group input-group--sobre ${emailValidationInfo.groupClass}`}>
-            <label
-              className="fr-label"
-              htmlFor={champEmailId}
-            >
-              Saisissez «
-              {' '}
-              {email}
-              {' '}
-              » dans le champ ci-dessous
+            <label className="fr-label" htmlFor={champEmailId}>
+              Saisissez « {email} » dans le champ ci-dessous
             </label>
             <input
               aria-describedby={messageValidationId}
@@ -59,10 +43,7 @@ export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Pr
             {
               // Stryker disable next-line ConditionalExpression
               emailValidationInfo.message === '' ? null : (
-                <p
-                  className={emailValidationInfo.messageClass}
-                  id={messageValidationId}
-                >
+                <p className={emailValidationInfo.messageClass} id={messageValidationId}>
                   {emailValidationInfo.message}
                 </p>
               )
@@ -103,8 +84,7 @@ export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Pr
 
     setIsDisabled(true)
 
-    await supprimerMonCompteAction()
-      .then(async () => signOut({ callbackUrl: '/connexion' }))
+    await supprimerMonCompteAction().then(async () => signOut({ callbackUrl: '/connexion' }))
   }
 
   function isConfirmerDisabled(): boolean {

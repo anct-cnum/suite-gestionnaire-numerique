@@ -2,7 +2,12 @@ import { Prisma, Role } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMesInformationsPersonnellesLoader } from './PrismaMesInformationsPersonnellesLoader'
-import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnUtilisateur } from './testHelper'
+import {
+  creerUnDepartement,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
@@ -28,24 +33,29 @@ describe('mes informations personnelles loader', () => {
       role: 'gestionnaire_groupement' as Role,
       roleLabel: 'Gestionnaire groupement',
     },
-  ])('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure', async ({ role, roleLabel }) => {
-    // GIVEN
-    const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    await creerUnUtilisateur({ role, ssoId: ssoIdExistant })
+  ])(
+    'cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure',
+    async ({ role, roleLabel }) => {
+      // GIVEN
+      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      await creerUnUtilisateur({ role, ssoId: ssoIdExistant })
 
-    // WHEN
-    const mesInformationsPersonnellesReadModel =
-      await new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdExistant)
+      // WHEN
+      const mesInformationsPersonnellesReadModel =
+        await new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdExistant)
 
-    // THEN
-    expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
-      emailDeContact: 'martin.tartempion@example.net',
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      role: roleLabel,
-      telephone: '0102030405',
-    })
-  })
+      // THEN
+      expect(
+        mesInformationsPersonnellesReadModel
+      ).toStrictEqual<MesInformationsPersonnellesReadModel>({
+        emailDeContact: 'martin.tartempion@example.net',
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        role: roleLabel,
+        telephone: '0102030405',
+      })
+    }
+  )
 
   it('cherchant un utilisateur "Gestionnaire structure" qui existe par son ssoId alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
     // GIVEN
@@ -65,7 +75,9 @@ describe('mes informations personnelles loader', () => {
       await new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdExistant)
 
     // THEN
-    expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
+    expect(
+      mesInformationsPersonnellesReadModel
+    ).toStrictEqual<MesInformationsPersonnellesReadModel>({
       emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
@@ -97,7 +109,7 @@ describe('mes informations personnelles loader', () => {
     }
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(utilisateurReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

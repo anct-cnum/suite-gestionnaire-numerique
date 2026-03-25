@@ -2,56 +2,56 @@
 
 import { ChangeEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
-import { ContactPrincipal, NouveauMembreData } from './types'
+import { NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
 import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
 import TextInput from '../shared/TextInput/TextInput'
 
-// eslint-disable-next-line complexity
-export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: EtapeSelectionMembreProps): ReactElement {
+export default function EtapeSelectionMembre({
+  donneesMembre,
+  onContinuer,
+}: EtapeSelectionMembreProps): ReactElement {
   const { rechercherUneEntrepriseAction } = useContext(clientContext)
   const [siret, setSiret] = useState(donneesMembre?.entreprise?.identifiant ?? '')
-  const [entreprise, setEntreprise] = useState<EntrepriseViewModel | null>(donneesMembre?.entreprise ?? null)
+  const [entreprise, setEntreprise] = useState(donneesMembre?.entreprise ?? null)
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
-  const [contact, setContact] = useState<ContactPrincipal>(donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' })
-  const [contactSecondaire, setContactSecondaire] = useState<ContactPrincipal>(donneesMembre?.contactSecondaire ?? { email: '', fonction: '', nom: '', prenom: '' })
+  const [contact, setContact] = useState(
+    donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' }
+  )
+  const [contactSecondaire, setContactSecondaire] = useState(
+    donneesMembre?.contactSecondaire ?? { email: '', fonction: '', nom: '', prenom: '' }
+  )
   const [showContactSecondaire, setShowContactSecondaire] = useState(
     donneesMembre?.contactSecondaire !== null && donneesMembre?.contactSecondaire !== undefined
   )
 
-  const isContactSecondaireValide = !showContactSecondaire || 
+  const isContactSecondaireValide =
+    !showContactSecondaire ||
     contactSecondaire.nom.trim() !== '' &&
-    contactSecondaire.prenom.trim() !== '' &&
-    contactSecondaire.email.trim() !== '' &&
-    contactSecondaire.fonction.trim() !== ''
+      contactSecondaire.prenom.trim() !== '' &&
+      contactSecondaire.email.trim() !== '' &&
+      contactSecondaire.fonction.trim() !== ''
 
-  const isFormulairePret = entreprise !== null && 
-    contact.nom.trim() !== '' && 
-    contact.prenom.trim() !== '' && 
-    contact.email.trim() !== '' && 
+  const isFormulairePret =
+    entreprise !== null &&
+    contact.nom.trim() !== '' &&
+    contact.prenom.trim() !== '' &&
+    contact.email.trim() !== '' &&
     contact.fonction.trim() !== '' &&
     isContactSecondaireValide
 
   return (
     <div>
-      <div className="fr-card fr-mt-4w">   
+      <div className="fr-card fr-mt-4w">
         <div className="fr-card__body">
           <div className="fr-card__content">
             <p className="fr-text--sm color-grey fr-mb-3w">
-              Les champs avec 
-              {' '}
-              <span className="color-red">
-                *
-              </span>
-              {' '}
-              sont obligatoires
+              Les champs avec <span className="color-red">*</span> sont obligatoires
             </p>
             {/* Structure */}
             <div className="fr-mb-4w">
-              <h3 className="fr-h5 fr-mb-3w">
-                Structure
-              </h3>              
+              <h3 className="fr-h5 fr-mb-3w">Structure</h3>
               <Search
                 labelBouton="Rechercher"
                 placeholder="Renseignez le Numéro SIRET ou RIDET *"
@@ -65,17 +65,13 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                 Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)
               </p>
 
-              {erreurRechercheSiret ?
-                <div
-                  className="fr-alert fr-alert--error fr-mt-2w"
-                  role="alert"
-                >
-                  <p>
-                    {erreurRechercheSiret}
-                  </p>
-                </div> : null}
+              {erreurRechercheSiret ? (
+                <div className="fr-alert fr-alert--error fr-mt-2w">
+                  <p>{erreurRechercheSiret}</p>
+                </div>
+              ) : null}
 
-              {entreprise ? 
+              {entreprise ? (
                 <div className="fr-card fr-mt-3w background-blue-france">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
@@ -92,16 +88,14 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                     </div>
                   </div>
                 </div>
-                : null}
+              ) : null}
             </div>
 
             {/* Contact référent */}
-            {entreprise ? 
+            {entreprise ? (
               <div className="fr-mb-4w">
-                <h3 className="fr-h5 fr-mb-3w">
-                  Contact référent
-                </h3>
-                
+                <h3 className="fr-h5 fr-mb-3w">Contact référent</h3>
+
                 <div className="fr-grid-row fr-grid-row--gutters">
                   <div className="fr-col-12 fr-col-md-6">
                     <TextInput
@@ -111,11 +105,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contact.nom}
                     >
-                      Nom
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Nom <span className="color-red">*</span>
                     </TextInput>
                   </div>
                   <div className="fr-col-12 fr-col-md-6">
@@ -126,15 +116,11 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contact.prenom}
                     >
-                      Prénom
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Prénom <span className="color-red">*</span>
                     </TextInput>
                   </div>
                 </div>
-                
+
                 <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
                   <div className="fr-col-12 fr-col-md-6">
                     <TextInput
@@ -145,11 +131,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       type="email"
                       value={contact.email}
                     >
-                      Adresse électronique
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Adresse électronique <span className="color-red">*</span>
                     </TextInput>
                   </div>
                   <div className="fr-col-12 fr-col-md-6">
@@ -160,19 +142,15 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contact.fonction}
                     >
-                      Fonction
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Fonction <span className="color-red">*</span>
                     </TextInput>
                   </div>
                 </div>
               </div>
-              :  null}
+            ) : null}
 
             {/* Bouton pour ajouter un contact secondaire */}
-            {entreprise && !showContactSecondaire ? 
+            {entreprise && !showContactSecondaire ? (
               <div className="fr-mb-4w">
                 <button
                   className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
@@ -184,16 +162,14 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                   Ajouter un contact secondaire (facultatif)
                 </button>
               </div>
-              : null}
+            ) : null}
 
             {/* Contact secondaire */}
-            {entreprise && showContactSecondaire ? 
+            {entreprise && showContactSecondaire ? (
               <div className="fr-mb-4w">
                 <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
                   <div className="fr-col">
-                    <h3 className="fr-h5 fr-mb-0">
-                      Contact secondaire
-                    </h3>
+                    <h3 className="fr-h5 fr-mb-0">Contact secondaire</h3>
                   </div>
                   <div className="fr-col-auto">
                     <button
@@ -202,13 +178,11 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       title="Supprimer le contact secondaire"
                       type="button"
                     >
-                      <span className="fr-sr-only">
-                        Supprimer le contact secondaire
-                      </span>
+                      <span className="fr-sr-only">Supprimer le contact secondaire</span>
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="fr-grid-row fr-grid-row--gutters">
                   <div className="fr-col-12 fr-col-md-6">
                     <TextInput
@@ -218,11 +192,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contactSecondaire.nom}
                     >
-                      Nom
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Nom <span className="color-red">*</span>
                     </TextInput>
                   </div>
                   <div className="fr-col-12 fr-col-md-6">
@@ -233,15 +203,11 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contactSecondaire.prenom}
                     >
-                      Prénom
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Prénom <span className="color-red">*</span>
                     </TextInput>
                   </div>
                 </div>
-                
+
                 <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
                   <div className="fr-col-12 fr-col-md-6">
                     <TextInput
@@ -252,11 +218,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       type="email"
                       value={contactSecondaire.email}
                     >
-                      Adresse électronique
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Adresse électronique <span className="color-red">*</span>
                     </TextInput>
                   </div>
                   <div className="fr-col-12 fr-col-md-6">
@@ -267,16 +229,12 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                       required={true}
                       value={contactSecondaire.fonction}
                     >
-                      Fonction
-                      {' '}
-                      <span className="color-red">
-                        *
-                      </span>
+                      Fonction <span className="color-red">*</span>
                     </TextInput>
                   </div>
                 </div>
               </div>
-              :  null}
+            ) : null}
           </div>
         </div>
       </div>
@@ -284,18 +242,11 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
       {/* Boutons alignés avec l'encart */}
       <div className="fr-grid-row fr-mt-4w">
         <div className="fr-col-12 fr-col-md-6">
-          <button
-            className="fr-btn fr-btn--secondary"
-            onClick={abandonner}
-            type="button"
-          >
+          <button className="fr-btn fr-btn--secondary" onClick={abandonner} type="button">
             Abandonner
           </button>
         </div>
-        <div
-          className="fr-col-12 fr-col-md-6 fr-grid-row--right"
-          style={{ display: 'flex' }}
-        >
+        <div className="fr-col-12 fr-col-md-6 fr-grid-row--right" style={{ display: 'flex' }}>
           <button
             className="fr-btn"
             disabled={!isFormulairePret}
@@ -317,12 +268,14 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     if (nouveauSiret !== siret) {
       setEntreprise(null)
     }
-    
+
     // Validation indicative pendant la saisie
     if (nouveauSiret.length > 0 && nouveauSiret.length < 6) {
       // Pas encore assez de chiffres, on n'affiche pas d'erreur
     } else if (nouveauSiret.length > 7 && nouveauSiret.length < 14) {
-      setErreurRechercheSiret('Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)')
+      setErreurRechercheSiret(
+        'Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'
+      )
     }
   }
 
@@ -340,9 +293,13 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     } else if (siret.length > 0) {
       // Affichage d'un message d'erreur pour les saisies invalides
       if (siret.length < 6) {
-        setErreurRechercheSiret('Le numéro saisi est trop court. Saisissez un SIRET (14 chiffres) ou un RIDET (6-7 chiffres)')
+        setErreurRechercheSiret(
+          'Le numéro saisi est trop court. Saisissez un SIRET (14 chiffres) ou un RIDET (6-7 chiffres)'
+        )
       } else if (siret.length > 7 && siret.length < 14) {
-        setErreurRechercheSiret('Le numéro saisi ne correspond ni à un SIRET (14 chiffres) ni à un RIDET (6-7 chiffres)')
+        setErreurRechercheSiret(
+          'Le numéro saisi ne correspond ni à un SIRET (14 chiffres) ni à un RIDET (6-7 chiffres)'
+        )
       } else if (siret.length > 14) {
         setErreurRechercheSiret('Le numéro saisi est trop long. Maximum 14 chiffres pour un SIRET')
       }
@@ -367,35 +324,35 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
   }
 
   function changerNomContact(event: ChangeEvent<HTMLInputElement>): void {
-    setContact(contactActuel => ({ ...contactActuel, nom: event.target.value }))
+    setContact((contactActuel) => ({ ...contactActuel, nom: event.target.value }))
   }
 
   function changerPrenomContact(event: ChangeEvent<HTMLInputElement>): void {
-    setContact(contactActuel => ({ ...contactActuel, prenom: event.target.value }))
+    setContact((contactActuel) => ({ ...contactActuel, prenom: event.target.value }))
   }
 
   function changerEmailContact(event: ChangeEvent<HTMLInputElement>): void {
-    setContact(contactActuel => ({ ...contactActuel, email: event.target.value }))
+    setContact((contactActuel) => ({ ...contactActuel, email: event.target.value }))
   }
 
   function changerFonctionContact(event: ChangeEvent<HTMLInputElement>): void {
-    setContact(contactActuel => ({ ...contactActuel, fonction: event.target.value }))
+    setContact((contactActuel) => ({ ...contactActuel, fonction: event.target.value }))
   }
 
   function changerNomContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
-    setContactSecondaire(contactActuel => ({ ...contactActuel, nom: event.target.value }))
+    setContactSecondaire((contactActuel) => ({ ...contactActuel, nom: event.target.value }))
   }
 
   function changerPrenomContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
-    setContactSecondaire(contactActuel => ({ ...contactActuel, prenom: event.target.value }))
+    setContactSecondaire((contactActuel) => ({ ...contactActuel, prenom: event.target.value }))
   }
 
   function changerEmailContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
-    setContactSecondaire(contactActuel => ({ ...contactActuel, email: event.target.value }))
+    setContactSecondaire((contactActuel) => ({ ...contactActuel, email: event.target.value }))
   }
 
   function changerFonctionContactSecondaire(event: ChangeEvent<HTMLInputElement>): void {
-    setContactSecondaire(contactActuel => ({ ...contactActuel, fonction: event.target.value }))
+    setContactSecondaire((contactActuel) => ({ ...contactActuel, fonction: event.target.value }))
   }
 
   function supprimerContactSecondaire(): void {
@@ -405,12 +362,12 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
   async function rechercherEntreprise(): Promise<void> {
     const isRidet = siret.length <= 7
-    
+
     if (!isRidet && siret.length !== 14) {
       setErreurRechercheSiret('Le SIRET doit contenir exactement 14 chiffres')
       return
     }
-    
+
     if (isRidet && (siret.length < 6 || siret.length > 7)) {
       setErreurRechercheSiret('Le RIDET doit contenir 6 ou 7 chiffres')
       return
@@ -420,7 +377,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
     try {
       const result = await rechercherUneEntrepriseAction({ siret })
-      
+
       if (Array.isArray(result)) {
         // Erreur : result contient des messages d'erreur
         setErreurRechercheSiret(result.join(', '))
@@ -435,10 +392,10 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
   function continuerVersConfirmation(): void {
     if (isFormulairePret) {
-      onContinuer({ 
-        contact, 
+      onContinuer({
+        contact,
         contactSecondaire: showContactSecondaire ? contactSecondaire : null,
-        entreprise, 
+        entreprise,
       })
     }
   }

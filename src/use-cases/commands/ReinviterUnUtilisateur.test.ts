@@ -2,7 +2,10 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
-import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import {
+  GetUtilisateurRepository,
+  UpdateUtilisateurRepository,
+} from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { Destinataire } from '@/gateways/emails/invitationEmail'
@@ -34,12 +37,14 @@ describe('réinviter un utilisateur', () => {
       nom: spiedUtilisateurToUpdate?.state.nom,
       prenom: spiedUtilisateurToUpdate?.state.prenom,
     })
-    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
-      derniereConnexion: undefined,
-      inviteLe: epochTimeMinusOneDay,
-      role: 'Gestionnaire structure',
-      uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
-    }).state)
+    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
+      utilisateurFactory({
+        derniereConnexion: undefined,
+        inviteLe: epochTimeMinusOneDay,
+        role: 'Gestionnaire structure',
+        uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
+      }).state
+    )
     expect(result).toBe('OK')
   })
 
@@ -98,7 +103,7 @@ describe('réinviter un utilisateur', () => {
     })
 
     // THEN
-    await expect(asyncResult).rejects.toThrowError('dateDInvitationInvalide')
+    await expect(asyncResult).rejects.toThrow('dateDInvitationInvalide')
   })
 })
 
@@ -121,7 +126,10 @@ const utilisateursByUid: Record<string, Utilisateur> = {
   }),
   uidUtilisateurCourantAvecRoleDifferent: utilisateurFactory({
     role: 'Gestionnaire département',
-    uid: { email: 'uidUtilisateurCourantAvecRoleDifferent', value: 'uidUtilisateurCourantAvecRoleDifferent' },
+    uid: {
+      email: 'uidUtilisateurCourantAvecRoleDifferent',
+      value: 'uidUtilisateurCourantAvecRoleDifferent',
+    },
   }),
 }
 
@@ -142,10 +150,10 @@ class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurReposi
 }
 
 function emailGatewayFactorySpy(): EmailGateway {
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }
-  }()
+  })()
 }

@@ -4,25 +4,16 @@ import Link from 'next/link'
 import { ReactElement, useState } from 'react'
 
 export default function MenuLateral({ menu }: Props): ReactElement {
-  const [selectedSection, setSelectedSection] = useState<string>(menu[0].url)
+  const [selectedSection, setSelectedSection] = useState(menu[0].url)
 
   return (
-    <nav
-      aria-labelledby="fr-sidemenu-title"
-      className="fr-sidemenu fr-pt-5w fr-px-1w"
-    >
-      <div
-        className="fr-hidden"
-        id="fr-sidemenu-title"
-      >
+    <nav aria-labelledby="fr-sidemenu-title" className="fr-sidemenu fr-pt-5w fr-px-1w">
+      <div className="fr-hidden" id="fr-sidemenu-title">
         Sommaire
       </div>
       <ul className="fr-sidemenu__list">
         {menu.map(({ libelle, url }) => (
-          <li
-            className="fr-sidemenu__item"
-            key={url}
-          >
+          <li className="fr-sidemenu__item" key={url}>
             <Link
               aria-current={selectedSection === url ? 'page' : undefined}
               className="fr-sidemenu__link"

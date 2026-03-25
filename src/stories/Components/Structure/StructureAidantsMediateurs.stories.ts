@@ -1,4 +1,7 @@
-import { createDefaultStructureViewModel, createStructureViewModelWithMinimalData } from './StructureTestData'
+import {
+  createDefaultStructureViewModel,
+  createStructureViewModelWithMinimalData,
+} from './StructureTestData'
 import StructureAidantsMediateurs from '@/components/Structure/StructureAidantsMediateurs'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
@@ -16,7 +19,7 @@ const meta: Meta<typeof StructureAidantsMediateurs> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 const defaultViewModel = createDefaultStructureViewModel()
 

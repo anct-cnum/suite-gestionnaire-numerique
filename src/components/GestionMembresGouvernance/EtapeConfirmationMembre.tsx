@@ -1,14 +1,13 @@
-/* eslint-disable no-negated-condition */
 'use client'
 
 import { ReactElement, useState } from 'react'
 
 import { NouveauMembreData } from './types'
 
-export default function EtapeConfirmationMembre({ 
-  data, 
-  onConfirmer, 
-  onRetour, 
+export default function EtapeConfirmationMembre({
+  data,
+  onConfirmer,
+  onRetour,
 }: EtapeConfirmationMembreProps): ReactElement {
   const [isAjoutEnCours, setIsAjoutEnCours] = useState(false)
 
@@ -19,149 +18,90 @@ export default function EtapeConfirmationMembre({
           <div className="fr-card__content">
             {/* Structure */}
             <div className="fr-mb-4w">
-              <h3 className="fr-h5 fr-mb-3w">
-                Structure
-              </h3>
-              {data.entreprise ? 
-                <dl
-                  aria-label="Structure"
-                  className="fr-grid-row fr-grid-row--gutters"
-                  role="list"
-                >
+              <h3 className="fr-h5 fr-mb-3w">Structure</h3>
+              {data.entreprise ? (
+                <dl aria-label="Structure" className="fr-grid-row fr-grid-row--gutters" role="list">
                   <div className="fr-col-12">
-                    <dt className="color-grey">
-                      Dénomination
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.entreprise.denomination}
-                    </dd>
+                    <dt className="color-grey">Dénomination</dt>
+                    <dd className="font-weight-500">{data.entreprise.denomination}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      SIRET/RIDET
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.entreprise.identifiant}
-                    </dd>
+                    <dt className="color-grey">SIRET/RIDET</dt>
+                    <dd className="font-weight-500">{data.entreprise.identifiant}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Activité principale
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.entreprise.activitePrincipaleLibelle}
-                    </dd>
+                    <dt className="color-grey">Activité principale</dt>
+                    <dd className="font-weight-500">{data.entreprise.activitePrincipaleLibelle}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Forme juridique
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.entreprise.categorieJuridiqueLibelle}
-                    </dd>
+                    <dt className="color-grey">Forme juridique</dt>
+                    <dd className="font-weight-500">{data.entreprise.categorieJuridiqueLibelle}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Adresse
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.entreprise.adresse}
-                    </dd>
+                    <dt className="color-grey">Adresse</dt>
+                    <dd className="font-weight-500">{data.entreprise.adresse}</dd>
                   </div>
-                </dl> : null}
+                </dl>
+              ) : null}
             </div>
 
             {/* Contact référent */}
             <div className="fr-mb-4w">
-              <h3 className="fr-h5 fr-mb-3w">
-                Contact référent
-              </h3>
-              {data.contact ?
+              <h3 className="fr-h5 fr-mb-3w">Contact référent</h3>
+              {data.contact ? (
                 <dl
                   aria-label="Contact référent"
                   className="fr-grid-row fr-grid-row--gutters"
                   role="list"
                 >
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Nom
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contact.nom}
-                    </dd>
+                    <dt className="color-grey">Nom</dt>
+                    <dd className="font-weight-500">{data.contact.nom}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Prénom
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contact.prenom}
-                    </dd>
+                    <dt className="color-grey">Prénom</dt>
+                    <dd className="font-weight-500">{data.contact.prenom}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Adresse électronique
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contact.email}
-                    </dd>
+                    <dt className="color-grey">Adresse électronique</dt>
+                    <dd className="font-weight-500">{data.contact.email}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Fonction
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contact.fonction}
-                    </dd>
+                    <dt className="color-grey">Fonction</dt>
+                    <dd className="font-weight-500">{data.contact.fonction}</dd>
                   </div>
-                </dl> : null}
+                </dl>
+              ) : null}
             </div>
 
             {/* Contact secondaire */}
-            {data.contactSecondaire !== null ?
+            {data.contactSecondaire !== null ? (
               <div className="fr-mb-4w">
-                <h3 className="fr-h5 fr-mb-3w">
-                  Contact secondaire
-                </h3>
+                <h3 className="fr-h5 fr-mb-3w">Contact secondaire</h3>
                 <dl
                   aria-label="Contact secondaire"
                   className="fr-grid-row fr-grid-row--gutters"
                   role="list"
                 >
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Nom
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contactSecondaire.nom}
-                    </dd>
+                    <dt className="color-grey">Nom</dt>
+                    <dd className="font-weight-500">{data.contactSecondaire.nom}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Prénom
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contactSecondaire.prenom}
-                    </dd>
+                    <dt className="color-grey">Prénom</dt>
+                    <dd className="font-weight-500">{data.contactSecondaire.prenom}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Adresse électronique
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contactSecondaire.email}
-                    </dd>
+                    <dt className="color-grey">Adresse électronique</dt>
+                    <dd className="font-weight-500">{data.contactSecondaire.email}</dd>
                   </div>
                   <div className="fr-col-6">
-                    <dt className="color-grey">
-                      Fonction
-                    </dt>
-                    <dd className="font-weight-500">
-                      {data.contactSecondaire.fonction}
-                    </dd>
+                    <dt className="color-grey">Fonction</dt>
+                    <dd className="font-weight-500">{data.contactSecondaire.fonction}</dd>
                   </div>
                 </dl>
-              </div> : null}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -177,14 +117,13 @@ export default function EtapeConfirmationMembre({
             Modifier
           </button>
         </div>
-        <div
-          className="fr-col-12 fr-col-md-6 fr-grid-row--right"
-          style={{ display: 'flex' }}
-        >
+        <div className="fr-col-12 fr-col-md-6 fr-grid-row--right" style={{ display: 'flex' }}>
           <button
             className="fr-btn"
             disabled={isAjoutEnCours}
-            onClick={() => { void confirmerAjout() }}
+            onClick={() => {
+              void confirmerAjout()
+            }}
             type="button"
           >
             {isAjoutEnCours ? 'Ajout en cours...' : 'Ajouter cette structure'}

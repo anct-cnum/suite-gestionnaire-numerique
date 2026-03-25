@@ -46,21 +46,22 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erreur lors de l\'export CSV:', error)
+    console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }
 
 type MembreAvecContacts = Readonly<{
-  contacts: ReadonlyArray<Readonly<{
-    email: string
-    estReferentFNE: boolean
-    fonction: string
-    nom: string
-    prenom: string
-    telephone: string
-  }>>
+  contacts: ReadonlyArray<
+    Readonly<{
+      email: string
+      estReferentFNE: boolean
+      fonction: string
+      nom: string
+      prenom: string
+      telephone: string
+    }>
+  >
   nom: string
   type: string
 }>
@@ -86,16 +87,7 @@ function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
 
   const rows = membres.flatMap((membre) => {
     if (membre.contacts.length === 0) {
-      return [[
-        escapeCSV(membre.nom),
-        escapeCSV(membre.type),
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-      ]]
+      return [[escapeCSV(membre.nom), escapeCSV(membre.type), '', '', '', '', '', '']]
     }
 
     return membre.contacts.map((contact) => [
@@ -113,4 +105,3 @@ function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
   const csvLines = [headers.join(','), ...rows.map((row) => row.join(','))]
   return `\uFEFF${csvLines.join('\n')}`
 }
-

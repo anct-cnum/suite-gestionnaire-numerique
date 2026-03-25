@@ -30,9 +30,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateursActives = searchParams.get('utilisateursActives') === 'on'
     const prenomOuNomOuEmail = searchParams.get('prenomOuNomOuEmail') ?? undefined
     const idStructureParam = searchParams.get('idStructure')
-    const idStructure = idStructureParam !== null && idStructureParam !== ''
-      ? Number(idStructureParam)
-      : undefined
+    const idStructure =
+      idStructureParam !== null && idStructureParam !== '' ? Number(idStructureParam) : undefined
 
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
     const result = await rechercherMesUtilisateurs.handle({
@@ -66,8 +65,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erreur lors de l\'export CSV:', error)
+    console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }

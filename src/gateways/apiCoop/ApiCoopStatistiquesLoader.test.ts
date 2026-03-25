@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ApiCoopStatistiquesLoader } from './ApiCoopStatistiquesLoader'
@@ -9,49 +8,54 @@ describe('apiCoopStatistiquesLoader', () => {
   beforeEach(() => {
     loader = new ApiCoopStatistiquesLoader()
   })
-  
-  it('devrait transformer correctement les données de l\'API', () => {
+
+  it("devrait transformer correctement les données de l'API", () => {
     // Mock de la réponse API réelle (structure simplifiée)
     const reponseApiMock = {
       data: {
         attributes: {
-          accompagnements_par_jour: [
-            { count: 485, label: '14/08' },
-          ],
-          accompagnements_par_mois: [
-            { count: 16427, label: 'Août' },
-          ],
+          accompagnements_par_jour: [{ count: 485, label: '14/08' }],
+          accompagnements_par_mois: [{ count: 16427, label: 'Août' }],
           activites: {
             durees: [
-              { count: 100000, label: 'Moins d\'une heure', proportion: 10.0, value: 'MoinsUneHeure' },
+              {
+                count: 100000,
+                label: "Moins d'une heure",
+                proportion: 10.0,
+                value: 'MoinsUneHeure',
+              },
             ],
             materiels: [
               { count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' },
             ],
             thematiques: [
-              { count: 200000, label: 'Prise en main d\'un ordinateur', proportion: 20.0, value: 'PriseEnMainOrdinateur' },
+              {
+                count: 200000,
+                label: "Prise en main d'un ordinateur",
+                proportion: 20.0,
+                value: 'PriseEnMainOrdinateur',
+              },
             ],
-            thematiques_demarches: [
-              { count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' },
-            ],
+            thematiques_demarches: [{ count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' }],
             total: 1161183,
             type_activites: [
               { count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' },
             ],
-            type_lieu: [
-              { count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' },
-            ],
+            type_lieu: [{ count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' }],
           },
           beneficiaires: {
-            genres: [
-              { count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' },
-            ],
+            genres: [{ count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' }],
             statuts_social: [
               { count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' },
             ],
             total: 1009721,
             tranche_ages: [
-              { count: 192281, label: '70 ans et plus', proportion: 19.043, value: 'SoixanteDixPlus' },
+              {
+                count: 192281,
+                label: '70 ans et plus',
+                proportion: 19.043,
+                value: 'SoixanteDixPlus',
+              },
             ],
           },
           totaux: {
@@ -101,37 +105,32 @@ describe('apiCoopStatistiquesLoader', () => {
     const result = loader.transformerReponse(reponseApiMock)
 
     expect(result).toStrictEqual({
-      accompagnementsParJour: [
-        { count: 485, label: '14/08' },
-      ],
-      accompagnementsParMois: [
-        { count: 16427, label: 'Août' },
-      ],
+      accompagnementsParJour: [{ count: 485, label: '14/08' }],
+      accompagnementsParMois: [{ count: 16427, label: 'Août' }],
       activites: {
         durees: [
-          { count: 100000, label: 'Moins d\'une heure', proportion: 10.0, value: 'MoinsUneHeure' },
+          { count: 100000, label: "Moins d'une heure", proportion: 10.0, value: 'MoinsUneHeure' },
         ],
         materiels: [
           { count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' },
         ],
         thematiques: [
-          { count: 200000, label: 'Prise en main d\'un ordinateur', proportion: 20.0, value: 'PriseEnMainOrdinateur' },
+          {
+            count: 200000,
+            label: "Prise en main d'un ordinateur",
+            proportion: 20.0,
+            value: 'PriseEnMainOrdinateur',
+          },
         ],
-        thematiquesDemarches: [
-          { count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' },
-        ],
+        thematiquesDemarches: [{ count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' }],
         total: 1161183,
         typeActivites: [
           { count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' },
         ],
-        typeLieu: [
-          { count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' },
-        ],
+        typeLieu: [{ count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' }],
       },
       beneficiaires: {
-        genres: [
-          { count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' },
-        ],
+        genres: [{ count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' }],
         statutsSocial: [
           { count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' },
         ],
