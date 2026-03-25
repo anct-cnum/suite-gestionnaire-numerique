@@ -14,7 +14,10 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 
-export default function GestionMembres({ membresViewModel, peutGererGouvernance }: Props): ReactElement {
+export default function GestionMembres({
+  membresViewModel,
+  peutGererGouvernance,
+}: Props): ReactElement {
   const selectRoleId = useId()
   const selectTypologieId = useId()
 
@@ -34,7 +37,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
 
   const {
     accepterUnMembreAction,
-    definirUnCoPorteurAction ,
+    definirUnCoPorteurAction,
     pathname,
     retirerUnCoPorteurAction,
     supprimerUnMembreOuCandidatAction,
@@ -60,7 +63,9 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     })
   }, [membresViewModel.membres, statutInitial])
 
-  function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+  function getMenuMembreCoPorteur(
+    membre: MembreViewModel
+  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-user-line"
@@ -81,13 +86,17 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     ]
   }
 
-  function getMenuMembreNonCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+  function getMenuMembreNonCoPorteur(
+    membre: MembreViewModel
+  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-user-star-line"
         key={`ajout-${membre.uid}`}
         label="Définir comme coporteur"
-        onClick={() => { void definirUnCoPorteur(membre) }}
+        onClick={() => {
+          void definirUnCoPorteur(membre)
+        }}
       />,
       <MenuItem
         iconClass="fr-icon-delete-line"
@@ -100,13 +109,17 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     ]
   }
 
-  function getMenuCandidat(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>>{
+  function getMenuCandidat(
+    membre: MembreViewModel
+  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-add-line"
         key={`ajout-${membre.uid}`}
         label="Ajouter à la gouvernance"
-        onClick={() => { void ajouterUnMembre(membre) }}
+        onClick={() => {
+          void ajouterUnMembre(membre)
+        }}
       />,
       <MenuItem
         iconClass="fr-icon-delete-line"
@@ -120,7 +133,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
   }
 
   function getMenu(membre: MembreViewModel): null | ReactElement {
-    if(!peutGererGouvernance){
+    if (!peutGererGouvernance) {
       return (
         <td style={{ verticalAlign: 'middle' }}>
           {membre.structureId === undefined ? null : (
@@ -139,24 +152,24 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
       )
     }
     let menuItem
-    if(membresView.statutSelectionne === 'candidat')
-    {
-      menuItem =  getMenuCandidat(membre)
-    }
-    else if(membre.roles.some((role) => role.nom === 'Co-porteur'))
-    {
-      menuItem =  getMenuMembreCoPorteur(membre)
-    }
-    else {
+    if (membresView.statutSelectionne === 'candidat') {
+      menuItem = getMenuCandidat(membre)
+    } else if (membre.roles.some((role) => role.nom === 'Co-porteur')) {
+      menuItem = getMenuMembreCoPorteur(membre)
+    } else {
       menuItem = getMenuMembreNonCoPorteur(membre)
     }
-    return  (
+    return (
       <td style={{ verticalAlign: 'middle' }}>
-        <div style={{ alignItems: 'center', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-          <Menu
-            items={menuItem}
-            label="Actions"
-          />
+        <div
+          style={{
+            alignItems: 'center',
+            display: 'flex',
+            gap: '0.5rem',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Menu items={menuItem} label="Actions" />
           {membre.structureId === undefined ? null : (
             <button
               aria-label="Voir la fiche structure"
@@ -172,17 +185,14 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     )
   }
 
-  function getEnTetes() : Array<string>{
+  function getEnTetes(): Array<string> {
     return ['Structure', 'Contacts', 'Rôles', '']
   }
 
   return (
     <>
       <div className="fr-grid-row space-between fr-grid-row--middle">
-        <PageTitle>
-          Gérer les membres ·
-          {membresViewModel.departement}
-        </PageTitle>
+        <PageTitle>Gérer les membres ·{membresViewModel.departement}</PageTitle>
         {peutGererGouvernance ? (
           <button
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
@@ -200,10 +210,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         <ul className="fr-nav__list">
           {[['confirme', 'Membres'] as const, ['candidat', 'Candidats'] as const].map(
             ([statut, libelle]) => (
-              <li
-                className="fr-nav__item"
-                key={statut}
-              >
+              <li className="fr-nav__item" key={statut}>
                 <button
                   aria-current={isSelectionne(statut)}
                   className="fr-nav__link fr-nav__link"
@@ -213,10 +220,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
                   role="tab"
                   type="button"
                 >
-                  {libelle}
-                  {' '}
-                  ·
-                  {membresByStatut[statut].length}
+                  {libelle} ·{membresByStatut[statut].length}
                 </button>
               </li>
             )
@@ -225,14 +229,9 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
       </div>
       <div className="fr-grid-row space-between fr-mt-4w fr-grid-row--middle">
         <div className="fr-grid-row fr-grid-row--middle">
-          <div className="fr-pr-1w">
-            Filtres :
-          </div>
+          <div className="fr-pr-1w">Filtres :</div>
           <div className={`fr-tag fr-accordion__btn ${styles.selecteur} fr-mr-1w`}>
-            <label
-              className="fr-sr-only"
-              htmlFor={selectRoleId}
-            >
+            <label className="fr-sr-only" htmlFor={selectRoleId}>
               Filtrer par rôle
             </label>
             <select
@@ -243,26 +242,18 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
                 setFiltreRole(event.target.value)
               }}
             >
-              <option value={toutRole}>
-                Rôles
-              </option>
+              <option value={toutRole}>Rôles</option>
               {membresViewModel.roles
                 .filter((role) => role.nom !== 'Observateur')
                 .map((role) => (
-                  <option
-                    key={role.color}
-                    value={role.nom}
-                  >
+                  <option key={role.color} value={role.nom}>
                     {role.nom}
                   </option>
                 ))}
             </select>
           </div>
           <div className={`fr-tag fr-accordion__btn color-blue-france ${styles.selecteur}`}>
-            <label
-              className="fr-sr-only"
-              htmlFor={selectTypologieId}
-            >
+            <label className="fr-sr-only" htmlFor={selectTypologieId}>
               Filtrer par typologie
             </label>
             <select
@@ -273,14 +264,9 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
                 setFiltreTypologie(event.target.value)
               }}
             >
-              <option value={touteTypologie}>
-                Typologie
-              </option>
+              <option value={touteTypologie}>Typologie</option>
               {membresViewModel.typologies.map((typologie) => (
-                <option
-                  key={typologie.value.replace(/\s/, '-')}
-                  value={typologie.value}
-                >
+                <option key={typologie.value.replace(/\s/, '-')} value={typologie.value}>
                   {typologie.label}
                 </option>
               ))}
@@ -290,22 +276,18 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         <button
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
           onClick={() => {
-            window.open(`/api/export/contacts-membres-csv?codeDepartement=${membresViewModel.uidGouvernance}&statut=${membresView.statutSelectionne}`)
+            window.open(
+              `/api/export/contacts-membres-csv?codeDepartement=${membresViewModel.uidGouvernance}&statut=${membresView.statutSelectionne}`
+            )
           }}
           type="button"
         >
           Exporter les contacts
         </button>
       </div>
-      <Table
-        enTetes={getEnTetes()}
-        titre="Membres"
-      >
+      <Table enTetes={getEnTetes()} titre="Membres">
         {membresView.membres.map((membre, index) => (
-          <tr
-            data-row-key={index}
-            key={membre.uid}
-          >
+          <tr data-row-key={index} key={membre.uid}>
             <td
               style={{
                 maxWidth: '50ch',
@@ -327,12 +309,8 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
                 }}
                 type="button"
               >
-                <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">
-                  {membre.nom}
-                </p>
-                <p className="fr-text--sm fr-text-mention--grey">
-                  {membre.typologie.simple.value}
-                </p>
+                <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">{membre.nom}</p>
+                <p className="fr-text--sm fr-text-mention--grey">{membre.typologie.simple.value}</p>
               </button>
             </td>
 
@@ -340,13 +318,13 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
               <button
                 className="fr-link fr-text--sm"
                 onClick={() => {
-                  router.push(membre.structureId === undefined ? membre.link : `${membre.link}#contact`)
+                  router.push(
+                    membre.structureId === undefined ? membre.link : `${membre.link}#contact`
+                  )
                 }}
                 type="button"
               >
-                {membre.nombreContacts}
-                {' '}
-                {membre.nombreContacts <= 1 ? 'contact' : 'contacts'}
+                {membre.nombreContacts} {membre.nombreContacts <= 1 ? 'contact' : 'contacts'}
               </button>
             </td>
             <td>
@@ -364,10 +342,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
                   .filter((role) => role.nom !== 'Observateur')
                   .map((role) => (
                     <Fragment key={role.color}>
-                      <Badge color={role.color}>
-                        {role.nom}
-                      </Badge>
-                      {' '}
+                      <Badge color={role.color}>{role.nom}</Badge>{' '}
                     </Fragment>
                   ))}
               </div>
@@ -395,16 +370,13 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         title={`Retirer ${memberToDelete?.nom ?? ''} des membres de la gouvernance ?`}
       >
         <p>
-          En cliquant sur confirmer, tous les utilisateurs de la structure perdront leur
-          accès à leur espace de gestion sur Mon Inclusion Numérique.
+          En cliquant sur confirmer, tous les utilisateurs de la structure perdront leur accès à
+          leur espace de gestion sur Mon Inclusion Numérique.
         </p>
         <p>
-          Si vous souhaitez modifier le contact référent de la structure, merci de vous
-          rapprocher du support via l&apos;adresse électronique :
-          {' '}
-          <a href="mailto:moninclusionnumerique@anct.gouv.fr">
-            moninclusionnumerique@anct.gouv.fr
-          </a>
+          Si vous souhaitez modifier le contact référent de la structure, merci de vous rapprocher
+          du support via l&apos;adresse électronique :{' '}
+          <a href="mailto:moninclusionnumerique@anct.gouv.fr">moninclusionnumerique@anct.gouv.fr</a>
         </p>
       </ConfirmationModal>
 
@@ -470,9 +442,11 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     return membres
       .values()
       .filter(({ roles }) =>
-        role === toutRole ? true : roles.map(({ nom }) => nom).includes(role))
+        role === toutRole ? true : roles.map(({ nom }) => nom).includes(role)
+      )
       .filter((membre) =>
-        typologie === touteTypologie ? true : typologie === membre.typologie.simple.value)
+        typologie === touteTypologie ? true : typologie === membre.typologie.simple.value
+      )
       .toArray()
   }
 

@@ -12,12 +12,10 @@ import testingLibrary from 'eslint-plugin-testing-library'
 import perfectionist from 'eslint-plugin-perfectionist'
 import unusedImports from 'eslint-plugin-unused-imports'
 import tseslint from 'typescript-eslint'
-import 'eslint-plugin-only-warn'
-
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ['src/**/*.ts?(x)'] },
-  { settings: { 'import/resolver': {typescript: {} } } },
+  { settings: { 'import/resolver': { typescript: { alwaysTryTypes: true, symlinks: false } } } },
   {
     languageOptions: {
       parserOptions: {
@@ -26,9 +24,9 @@ export default [
       },
     },
   },
-  eslint.configs.all,
-  ...tseslint.configs.all,
-  react.configs.flat.all,
+  eslint.configs.recommended,
+  ...tseslint.configs.strictTypeChecked,
+  react.configs.flat.recommended,
   sonarjs.configs.recommended,
   importPlugin.flatConfigs.recommended,
   importPlugin.flatConfigs.typescript,
@@ -77,6 +75,7 @@ export default [
       'require-unicode-regexp': 'off',
       'sort-imports': 'off',
       'sort-keys': ['error', 'asc', { 'caseSensitive': false }],
+      'import/namespace': 'off',
       'import/newline-after-import': 'error',
       'import/no-anonymous-default-export': 'off',
       'import/no-extraneous-dependencies': 'error',
@@ -256,6 +255,7 @@ export default [
           named: 'never',
         },
       ],
+      '@typescript-eslint/restrict-template-expressions': ['error', { allowBoolean: true, allowNumber: true, allowNullish: true }],
       '@typescript-eslint/array-type': ['error', { default: 'generic', readonly: 'generic' }],
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/consistent-type-imports': 'off',
