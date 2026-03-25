@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'

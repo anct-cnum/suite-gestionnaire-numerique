@@ -11,7 +11,7 @@ import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
 import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
-import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et médiateurs numriques',
@@ -38,14 +38,18 @@ export default async function ListeAidantsMediateursController({
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
-  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
-  const territoireResult = await territoireUseCase.handle(utilisateur)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  const codesDepartements = contexte.codesDepartements()
 
   let territoire: string
-  if (territoireResult.type === 'france') {
+  let codesDepartementsScope: ReadonlyArray<string> | undefined
+  if (contexte.estNational()) {
     territoire = 'France'
-  } else if (territoireResult.codes.length > 0) {
-    territoire = territoireResult.codes[0]
+  } else if (codesDepartements.length > 1) {
+    territoire = 'France'
+    codesDepartementsScope = codesDepartements
+  } else if (codesDepartements.length === 1) {
+    territoire = codesDepartements[0]
   } else {
     redirect('/')
   }
@@ -54,7 +58,9 @@ export default async function ListeAidantsMediateursController({
   const filtres = buildFiltresListeAidants(
     resolvedSearchParams,
     territoire,
-    utilisateur.role.nom as TypologieRole
+    utilisateur.role.nom as TypologieRole,
+    undefined,
+    codesDepartementsScope
   )
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()

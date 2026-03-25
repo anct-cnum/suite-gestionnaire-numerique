@@ -14,7 +14,7 @@ import styles from '../AidantDetails/MenuCollant.module.css'
 import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
-export default function Structure({ viewModel }: Props): ReactElement {
+export default function Structure({ peutGererStructure, viewModel }: Props): ReactElement {
   return (
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
@@ -37,6 +37,7 @@ export default function Structure({ viewModel }: Props): ReactElement {
 
           <StructureContactReferent
             contacts={viewModel.contacts}
+            peutGererStructure={peutGererStructure}
             structureId={viewModel.structureId}
           />
 
@@ -54,6 +55,7 @@ export default function Structure({ viewModel }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  peutGererStructure: boolean
   viewModel: StructureViewModel
 }>
 

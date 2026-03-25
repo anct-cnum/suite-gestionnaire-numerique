@@ -7,7 +7,6 @@ import styles from './GestionMembres.module.css'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import { clientContext } from '@/components/shared/ClientContext'
-import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import Menu from '@/components/shared/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
 import ConfirmationModal from '@/components/shared/Modal/ConfirmationModal'
@@ -15,7 +14,7 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 
-export default function GestionMembres({ membresViewModel }: Props): ReactElement {
+export default function GestionMembres({ membresViewModel, peutGererGouvernance }: Props): ReactElement {
   const selectRoleId = useId()
   const selectTypologieId = useId()
 
@@ -38,7 +37,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     definirUnCoPorteurAction ,
     pathname,
     retirerUnCoPorteurAction,
-    sessionUtilisateurViewModel,
     supprimerUnMembreOuCandidatAction,
   } = useContext(clientContext)
 
@@ -53,7 +51,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     statutSelectionne: statutInitial,
     typologieSelectionnee: touteTypologie,
   })
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
   useEffect(() => {
     setMembresView({
       membres: membresByStatut[statutInitial],
@@ -62,10 +59,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       typologieSelectionnee: touteTypologie,
     })
   }, [membresViewModel.membres, statutInitial])
-
-  function estUnePrefecture(membre: MembreViewModel): boolean {
-    return membre.typologie.simple.value === 'Préfecture départementale'
-  }
 
   function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
@@ -126,15 +119,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     ]
   }
 
-  function estDansLaMemeStructure(membre: MembreViewModel): boolean{
-    return membre.structureId !== undefined && membre.structureId === sessionUtilisateurViewModel.structureId
-  }
-
   function getMenu(membre: MembreViewModel): null | ReactElement {
-    if(!gouvernanceViewModel.peutGererGouvernance ||
-      estDansLaMemeStructure(membre) ||
-      estUnePrefecture(membre)
-    ){
+    if(!peutGererGouvernance){
       return (
         <td style={{ verticalAlign: 'middle' }}>
           {membre.structureId === undefined ? null : (
@@ -187,10 +173,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   }
 
   function getEnTetes() : Array<string>{
-    const enTetes: Array<string> = ['Structure', 'Contacts', 'Rôles']
-    if(gouvernanceViewModel.peutGererGouvernance)
-    {return enTetes.concat([''])}
-    return  enTetes
+    return ['Structure', 'Contacts', 'Rôles', '']
   }
 
   return (
@@ -200,7 +183,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           Gérer les membres ·
           {membresViewModel.departement}
         </PageTitle>
-        {gouvernanceViewModel.peutGererGouvernance ? (
+        {peutGererGouvernance ? (
           <button
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
             onClick={() => {
@@ -566,6 +549,7 @@ const touteTypologie = 'touteTypologie'
 
 type Props = Readonly<{
   membresViewModel: MembresViewModel
+  peutGererGouvernance: boolean
 }>
 
 type StatutSelectionnable = 'candidat' | 'confirme'

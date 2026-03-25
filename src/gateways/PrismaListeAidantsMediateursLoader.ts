@@ -131,7 +131,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     departementFilter: Prisma.Sql,
     limitOffset: Prisma.Sql
   ): Promise<Array<PersonneAvecAccompagnementQueryResult>> {
-    if (territoire === 'France' && !geographique) {
+    if (territoire === 'France' && !geographique && departementFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneAvecAccompagnementQueryResult>>`
         SELECT
           pe.id,
@@ -297,6 +297,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         }
       } else if (territoire !== 'France') {
         departementsFilter = [territoire]
+      } else if (filtres.codesDepartementsScope !== undefined && filtres.codesDepartementsScope.length > 0) {
+        departementsFilter = [...filtres.codesDepartementsScope]
       }
 
       // Construction des conditions WHERE
@@ -360,6 +362,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       }
     } else if (territoire !== 'France') {
       departementsFilter = [territoire]
+    } else if (filtres.codesDepartementsScope !== undefined && filtres.codesDepartementsScope.length > 0) {
+      departementsFilter = [...filtres.codesDepartementsScope]
     }
 
     // Construction des conditions WHERE pour les nouveaux filtres
@@ -370,7 +374,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
     // Statistiques des personnes en poste
     const conseillersResult =
-      territoire === 'France' && !geographique
+      territoire === 'France' && !geographique && departementsFilter.length === 0
         ? await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
@@ -472,7 +476,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     departementFilter: Prisma.Sql,
     limitOffset: Prisma.Sql
   ): Promise<Array<PersonneQueryResult>> {
-    if (territoire === 'France' && !geographique) {
+    if (territoire === 'France' && !geographique && departementFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneQueryResult>>`
         SELECT
           pe.id,

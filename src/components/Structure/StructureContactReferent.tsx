@@ -12,7 +12,7 @@ import { modifierContactStructureAction } from '@/app/api/actions/modifierContac
 import { supprimerContactStructureAction } from '@/app/api/actions/supprimerContactStructureAction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
-export default function StructureContactReferent({ contacts, structureId }: Props): ReactElement {
+export default function StructureContactReferent({ contacts, peutGererStructure, structureId }: Props): ReactElement {
   const pathname = usePathname()
   const [drawerMode, setDrawerMode] = useState<'ajouter' | 'modifier'>('ajouter')
   const [contactAModifier, setContactAModifier] = useState<Contact | null>(null)
@@ -134,15 +134,17 @@ export default function StructureContactReferent({ contacts, structureId }: Prop
             >
               Contacts
             </h2>
-            <button
-              aria-controls={drawerId}
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-add-line fr-btn--icon-right"
-              data-fr-opened="false"
-              onClick={openDrawerAjouter}
-              type="button"
-            >
-              Ajouter un contact
-            </button>
+            {peutGererStructure ? (
+              <button
+                aria-controls={drawerId}
+                className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-add-line fr-btn--icon-right"
+                data-fr-opened="false"
+                onClick={openDrawerAjouter}
+                type="button"
+              >
+                Ajouter un contact
+              </button>
+            ) : null}
           </div>
           <p className="fr-text--sm fr-text-mention--grey fr-mb-2w">
             Responsable ou contact technique de votre structure
@@ -156,8 +158,8 @@ export default function StructureContactReferent({ contacts, structureId }: Prop
               <ContactCard
                 contact={contact}
                 drawerId={drawerId}
-                onModifier={openDrawerModifier}
-                onSupprimer={openModalSupprimer}
+                onModifier={peutGererStructure ? openDrawerModifier : undefined}
+                onSupprimer={peutGererStructure ? openModalSupprimer : undefined}
               />
             </Fragment>
           ))}
@@ -234,28 +236,34 @@ function ContactCard({ contact, drawerId, onModifier, onSupprimer }: ContactCard
             </p>
           ) : null}
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button
-            aria-controls={drawerId}
-            className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-edit-line fr-btn--icon-right"
-            data-fr-opened="false"
-            onClick={() => {
-              onModifier(contact)
-            }}
-            type="button"
-          >
-            Modifier
-          </button>
-          <button
-            className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-delete-line fr-btn--icon-right"
-            onClick={() => {
-              onSupprimer(contact)
-            }}
-            type="button"
-          >
-            Supprimer
-          </button>
-        </div>
+        {onModifier !== undefined || onSupprimer !== undefined ? (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {onModifier === undefined ? null : (
+              <button
+                aria-controls={drawerId}
+                className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-edit-line fr-btn--icon-right"
+                data-fr-opened="false"
+                onClick={() => {
+                  onModifier(contact)
+                }}
+                type="button"
+              >
+                Modifier
+              </button>
+            )}
+            {onSupprimer === undefined ? null : (
+              <button
+                className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-delete-line fr-btn--icon-right"
+                onClick={() => {
+                  onSupprimer(contact)
+                }}
+                type="button"
+              >
+                Supprimer
+              </button>
+            )}
+          </div>
+        ) : null}
       </div>
       <p
         className="fr-text--sm fr-mb-0"
@@ -298,12 +306,13 @@ type Contact = ContactFormData & Readonly<{ id: number }>
 
 type Props = Readonly<{
   contacts: StructureViewModel['contacts']
+  peutGererStructure: boolean
   structureId: number
 }>
 
 type ContactCardProps = Readonly<{
   contact: Contact
   drawerId: string
-  onModifier(contact: Contact): void
-  onSupprimer(contact: Contact): void
+  onModifier: ((contact: Contact) => void) | undefined
+  onSupprimer: ((contact: Contact) => void) | undefined
 }>

@@ -31,7 +31,8 @@ export function buildFiltresListeAidants(
   params: FiltresURLParams,
   territoire: string,
   utilisateurRole: TypologieRole,
-  limite = 10
+  limite = 10,
+  codesDepartementsScope?: ReadonlyArray<string>
 ): FiltresListeAidants {
   const { codeDepartement, codeRegion, formations, habilitations, page, roles } = params
 
@@ -53,6 +54,7 @@ export function buildFiltresListeAidants(
   }
 
   return {
+    codesDepartementsScope,
     formations: formations !== undefined && formations.length > 0
       ? formations.split(',') as FiltreFormations
       : undefined,

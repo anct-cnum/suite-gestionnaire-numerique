@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 
 import styles from './GouvernancePref.module.css'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import BlocCard from '../BlocCard'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
 
@@ -14,10 +15,7 @@ export default function GouvernancePref({
 }: Props): ReactElement {
   if (isErrorViewModel(gouvernanceViewModel)) {
     return (
-      <section
-        aria-labelledby="gouvernance"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <BlocCard labelledBy="gouvernance">
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="compass-3-line" />
@@ -89,15 +87,12 @@ export default function GouvernancePref({
             </div>
           </div>
         </div>
-      </section>
+      </BlocCard>
     )
   }
 
   return (
-    <section
-      aria-labelledby="gouvernance"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <BlocCard labelledBy="gouvernance">
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="compass-3-line" />
@@ -169,7 +164,7 @@ export default function GouvernancePref({
           </div>
         </div>
       </div>
-    </section>
+    </BlocCard>
   )
 }
 

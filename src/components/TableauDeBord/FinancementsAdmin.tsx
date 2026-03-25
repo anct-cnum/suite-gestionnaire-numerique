@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import BlocCard from './BlocCard'
 import VentilationFinancements from './VentilationFinancements'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -9,10 +10,7 @@ import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financemen
 export default function FinancementsAdmin({ financementViewModel, lienFinancements }: Props): ReactElement {
   if (isErrorViewModel(financementViewModel)) {
     return (
-      <section
-        aria-labelledby="financementss"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <BlocCard labelledBy="financements">
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="pen-nib-line" />
@@ -49,15 +47,12 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
             </div>
           </div>
         </div>
-      </section>
+      </BlocCard>
     )
   }
 
   return (
-    <section
-      aria-labelledby="financements"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <BlocCard labelledBy="financements">
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="pen-nib-line" />
@@ -134,7 +129,7 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
         nombreDeFinancementsEngagesParLEtat={financementViewModel.nombreDeFinancementsEngagesParLEtat}
         ventilationSubventionsParEnveloppe={financementViewModel.ventilationSubventionsParEnveloppe}
       />
-    </section>
+    </BlocCard>
   )
 }
 

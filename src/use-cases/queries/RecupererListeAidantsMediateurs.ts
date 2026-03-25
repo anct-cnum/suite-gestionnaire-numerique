@@ -12,6 +12,7 @@ export type FiltreHabilitations = ReadonlyArray<'Aidants Connect' | 'Conseiller 
 export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN' | 'Sans formation'>
 
 export type FiltresListeAidants = Readonly<{
+  codesDepartementsScope?: ReadonlyArray<string>
   formations?: FiltreFormations
   geographique?: FiltreGeographique
   habilitations?: FiltreHabilitations

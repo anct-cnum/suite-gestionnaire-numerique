@@ -11,7 +11,7 @@ import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { postesConseillerNumeriquePresenter } from '@/presenters/postesConseillerNumeriquePresenter'
 import { buildFiltresPostesConseillerNumerique } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 import config from '@/use-cases/config.json'
-import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Suivi des postes Conseiller Numérique',
@@ -41,14 +41,18 @@ export default async function PostesConseillerNumeriqueController({
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
-  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
-  const territoireResult = await territoireUseCase.handle(utilisateur)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  const codesDepartements = contexte.codesDepartements()
 
   let territoire: string
-  if (territoireResult.type === 'france') {
+  let codesDepartementsScope: ReadonlyArray<string> | undefined
+  if (contexte.estNational()) {
     territoire = 'France'
-  } else if (territoireResult.codes.length > 0) {
-    territoire = territoireResult.codes[0]
+  } else if (codesDepartements.length > 1) {
+    territoire = 'France'
+    codesDepartementsScope = codesDepartements
+  } else if (codesDepartements.length === 1) {
+    territoire = codesDepartements[0]
   } else {
     redirect('/')
   }
@@ -66,10 +70,13 @@ export default async function PostesConseillerNumeriqueController({
   // - Sinon, utiliser le territoire de l'utilisateur
   let territoireEffectif = territoire
   let codeRegionEffectif: string | undefined
+  // Quand un dept est sélectionné, il prend la priorité et annule le scope multi-dept
   if (filtres.codeDepartement !== undefined) {
     territoireEffectif = filtres.codeDepartement
+    codesDepartementsScope = undefined
   } else if (filtres.codeRegion !== undefined) {
     territoireEffectif = 'France'
+    codesDepartementsScope = undefined
     codeRegionEffectif = filtres.codeRegion
   }
 
@@ -77,6 +84,7 @@ export default async function PostesConseillerNumeriqueController({
   const postesReadModel = await postesLoader.get({
     bonification: filtres.bonification,
     codeRegion: codeRegionEffectif,
+    codesDepartementsScope,
     conventions: filtres.conventions,
     pagination: {
       limite: filtres.limite,
