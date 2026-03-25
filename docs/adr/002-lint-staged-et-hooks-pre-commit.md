@@ -11,8 +11,8 @@ Le hook Husky `pre-push` exécutait `yarn check` sur l'intégralité du codebase
 ## Décision
 
 - **Installer `lint-staged`** avec autofix (`--fix`, `--write`) en hook `pre-commit` pour vérifier uniquement les fichiers stagés
-- **Simplifier le hook `pre-push`** : remplacer `yarn check` (8 vérifications sur tout le codebase) par un simple `pnpm typecheck`
-- La CI (ADR-001) devient le vrai garde-fou pour les vérifications exhaustives
+- **Supprimer le hook `pre-push`** : le typecheck est déjà couvert par la CI (ADR-001) et par le build Next.js (`ignoreBuildErrors: false`), le conserver en pre-push ajoutait de la friction sans valeur supplémentaire
+- La CI (ADR-001) est le vrai garde-fou pour les vérifications exhaustives
 
 ### Configuration lint-staged
 
@@ -31,11 +31,11 @@ Le hook Husky `pre-push` exécutait `yarn check` sur l'intégralité du codebase
 ## Alternatives envisagées
 
 - **Garder `yarn check` en pre-push** : rejeté car trop lent et vérifie des fichiers non modifiés
-- **Supprimer complètement le pre-push** : envisageable mais le typecheck rapide apporte un feedback utile avant de pousser
+- **Garder un typecheck en pre-push** : envisagé initialement, mais redondant avec la CI et le build — retiré pour fluidifier l'expérience
 
 ## Conséquences
 
 - Feedback immédiat au commit (pas au push)
 - Autofix transparent : le développeur n'est pas bloqué par des erreurs de formatting
 - Seules les erreurs non auto-fixables bloquent le commit
-- Le typecheck en pre-push reste un filet de sécurité rapide
+- Aucune friction au push — la CI gère tout
