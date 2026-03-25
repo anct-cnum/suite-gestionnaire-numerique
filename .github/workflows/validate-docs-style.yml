@@ -1,0 +1,21 @@
+name: Validate docs and style
+
+on:
+  push:
+    branches:
+      - "docs/*"
+      - "style/*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn lint:css
+      - run: yarn format:check
+      - run: yarn check:shai-hulud

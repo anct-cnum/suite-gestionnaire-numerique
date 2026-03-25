@@ -1,0 +1,74 @@
+name: Validate feature branch
+
+on:
+  push:
+    branches:
+      - "chore/*"
+      - "ci/*"
+      - "feat/*"
+      - "fix/*"
+      - "perf/*"
+      - "refactor/*"
+      - "revert/*"
+      - "test/*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn lint:ts
+      - run: yarn lint:css
+      - run: yarn format:check
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn typecheck
+
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn dedupe --check
+      - run: yarn depcheck
+      - run: yarn deadcode
+      - run: yarn prisma format --check
+      - run: yarn check:shai-hulud
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn build:dev
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.5-alpine
+        env:
+          POSTGRES_USER: min
+          POSTGRES_PASSWORD: min
+          POSTGRES_DB: min
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -U min"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: yarn dotenv:test -- yarn prisma:migrate
+      - run: yarn dotenv:test -- vitest run --coverage
