@@ -24,23 +24,10 @@ export function MenuItemLien({
 
   function renderIcone(): null | ReactElement {
     if (customIcon !== undefined) {
-      return (
-        <img
-          alt=""
-          className="fr-mr-1w"
-          height={24}
-          src={customIcon}
-          width={24}
-        />
-      )
+      return <img alt="" className="fr-mr-1w" height={24} src={customIcon} width={24} />
     }
     if (icon !== undefined) {
-      return (
-        <Icon
-          classname="fr-mr-1w"
-          icon={icon}
-        />
-      )
+      return <Icon classname="fr-mr-1w" icon={icon} />
     }
     return null
   }
@@ -73,12 +60,14 @@ export function MenuItemLien({
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  ariaControls?: string
-  ariaExpanded?: boolean
-  customIcon?: string
-  estAVenir?: boolean
-  icon?: string
-  label: string
-  url: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    ariaControls?: string
+    ariaExpanded?: boolean
+    customIcon?: string
+    estAVenir?: boolean
+    icon?: string
+    label: string
+    url: string
+  }>
+>

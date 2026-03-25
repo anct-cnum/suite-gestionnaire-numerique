@@ -11,21 +11,11 @@ export default async function BlocBeneficiaires({ contexte }: Props): Promise<Re
 
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
   const beneficiairesReadModel = await beneficiairesLoader.get(code)
-  const beneficiairesViewModel = handleReadModelOrError(
-    beneficiairesReadModel,
-    beneficiairesPresenter
-  )
+  const beneficiairesViewModel = handleReadModelOrError(beneficiairesReadModel, beneficiairesPresenter)
 
-  const lienBeneficiaires = code === 'France'
-    ? '/gouvernance/01/beneficiaires'
-    : `/gouvernance/${code}/beneficiaires`
+  const lienBeneficiaires = code === 'France' ? '/gouvernance/01/beneficiaires' : `/gouvernance/${code}/beneficiaires`
 
-  return (
-    <Beneficiaires
-      beneficiairesViewModel={beneficiairesViewModel}
-      lienBeneficiaires={lienBeneficiaires}
-    />
-  )
+  return <Beneficiaires beneficiairesViewModel={beneficiairesViewModel} lienBeneficiaires={lienBeneficiaires} />
 }
 
 type Props = Readonly<{

@@ -10,22 +10,16 @@ export default async function BlocDonneesStructure({ contexte }: Props): Promise
   const structureId = contexte.idStructure()
 
   if (structureId === 0) {
-    return (
-      <DonneesStructure viewModel={viewModelVide} />
-    )
+    return <DonneesStructure viewModel={viewModelVide} />
   }
   const loader = new PrismaDonneesStructureLoader()
   const readModel = await loader.get(structureId, new Date())
 
   if (isErrorReadModel(readModel)) {
-    return (
-      <DonneesStructure viewModel={viewModelVide} />
-    )
+    return <DonneesStructure viewModel={viewModelVide} />
   }
 
-  return (
-    <DonneesStructure viewModel={presenter(readModel)} />
-  )
+  return <DonneesStructure viewModel={presenter(readModel)} />
 }
 
 function presenter(readModel: DonneesStructureReadModel): DonneesStructureViewModel {

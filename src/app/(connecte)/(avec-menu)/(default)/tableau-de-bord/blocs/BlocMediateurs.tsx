@@ -13,20 +13,15 @@ export default async function BlocMediateurs({ contexte }: Props): Promise<React
   const readModel = await loader.get(contexte.codeTerritoire())
 
   if (isErrorReadModel(readModel)) {
-    return (
-      <MediateursAidants viewModel={viewModelVide} />
-    )
+    return <MediateursAidants viewModel={viewModelVide} />
   }
 
-  return (
-    <MediateursAidants viewModel={presenter(readModel)} />
-  )
+  return <MediateursAidants viewModel={presenter(readModel)} />
 }
 
 function presenter(readModel: StatistiquesMediateursReadModel): MediateursAidantsViewModel {
-  const nonHabilites = readModel.nombreMediateurs
-    - readModel.nombreConseillersNumeriques
-    - readModel.nombreAidantsConnect
+  const nonHabilites =
+    readModel.nombreMediateurs - readModel.nombreConseillersNumeriques - readModel.nombreAidantsConnect
 
   return {
     details: [

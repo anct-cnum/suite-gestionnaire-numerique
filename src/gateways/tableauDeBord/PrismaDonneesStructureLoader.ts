@@ -20,10 +20,12 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
         where: { est_active: true, structure_id: structureId },
       })
 
-      const accompagnementsParMois = await prisma.$queryRaw<Array<{
-        mois: Date
-        total: bigint
-      }>>`
+      const accompagnementsParMois = await prisma.$queryRaw<
+        Array<{
+          mois: Date
+          total: bigint
+        }>
+      >`
         SELECT
           periode AS mois,
           SUM(accompagnements) AS total
@@ -35,10 +37,7 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
         ORDER BY periode ASC
       `
 
-      const totalAccompagnements = accompagnementsParMois.reduce(
-        (sum, row) => sum + Number(row.total),
-        0
-      )
+      const totalAccompagnements = accompagnementsParMois.reduce((sum, row) => sum + Number(row.total), 0)
 
       const accompagnementsMensuels = accompagnementsParMois.map((row) => ({
         mois: row.mois.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }),

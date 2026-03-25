@@ -279,16 +279,10 @@ function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonl
   return within(rowsBody[rank]).getAllByRole('cell')
 }
 
-function afficherMembres(
-  options?: Partial<Parameters<typeof renderComponent>[1]>,
-  peutGererGouvernance = true
-): void {
+function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>, peutGererGouvernance = true): void {
   const membresViewModel = membresPresenter(membresReadModelFactory())
   renderComponent(
-    <GestionMembres
-      membresViewModel={membresViewModel}
-      peutGererGouvernance={peutGererGouvernance}
-    />,
+    <GestionMembres membresViewModel={membresViewModel} peutGererGouvernance={peutGererGouvernance} />,
     options
   )
 }
