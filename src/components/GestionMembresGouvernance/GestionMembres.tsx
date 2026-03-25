@@ -20,7 +20,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
 
   const router = useRouter()
   const searchParams = useSearchParams()
-  const statutInitial = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
+  const statutInitial: StatutSelectionnable = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
   const [memberToDelete, setMemberToDelete] = useState<MembreViewModel>()
   const [memberToRemoveCoPorteur, setMemberToRemoveCoPorteur] = useState<MembreViewModel>()
 
@@ -45,7 +45,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     confirme: membresViewModel.membres,
   }
 
-  const [membresView, setMembresView] = useState<MembresView>({
+  const [membresView, setMembresView] = useState({
     membres: membresByStatut[statutInitial],
     roleSelectionne: toutRole,
     statutSelectionne: statutInitial,
@@ -427,10 +427,8 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
   function filtrerMembres(role: string, typologie: string): ReadonlyArray<MembreViewModel> {
     const membres = membresByStatut[membresView.statutSelectionne]
     return membres
-      .values()
       .filter(({ roles }) => (role === toutRole ? true : roles.map(({ nom }) => nom).includes(role)))
       .filter((membre) => (typologie === touteTypologie ? true : typologie === membre.typologie.simple.value))
-      .toArray()
   }
 
   async function ajouterUnMembre(membre: MembreViewModel): Promise<void> {
@@ -510,10 +508,3 @@ type Props = Readonly<{
 }>
 
 type StatutSelectionnable = 'candidat' | 'confirme'
-
-type MembresView = Readonly<{
-  membres: ReadonlyArray<MembreViewModel>
-  roleSelectionne: string
-  statutSelectionne: StatutSelectionnable
-  typologieSelectionnee: string
-}>
