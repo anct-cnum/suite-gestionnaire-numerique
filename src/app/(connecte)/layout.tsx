@@ -48,10 +48,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
           style={{ width: '30rem' }}
         />
         <EnTete />
-        <main
-          className="fr-container--fluid fr-mx-5w"
-          id="content"
-        >
+        <main className="fr-container--fluid fr-mx-5w" id="content">
           {children}
         </main>
         <PiedDePage />

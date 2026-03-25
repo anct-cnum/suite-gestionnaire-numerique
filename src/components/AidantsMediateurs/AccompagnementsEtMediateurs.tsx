@@ -53,19 +53,11 @@ export default function AccompagnementsEtMediateurs({
 
   if (isErrorViewModel(accompagnementsEtMediateurs)) {
     return (
-      <section
-        aria-labelledby="accompagnements-et-mediateurs"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <section aria-labelledby="accompagnements-et-mediateurs" className="fr-mb-4w grey-border border-radius fr-p-4w">
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
-            <TitleIcon
-              background="white"
-              icon="error-warning-line"
-            />
-            <div className="fr-text--sm color-blue-france fr-mt-2w">
-              {accompagnementsEtMediateurs.message}
-            </div>
+            <TitleIcon background="white" icon="error-warning-line" />
+            <div className="fr-text--sm color-blue-france fr-mt-2w">{accompagnementsEtMediateurs.message}</div>
           </div>
         </div>
       </section>
@@ -73,42 +65,23 @@ export default function AccompagnementsEtMediateurs({
   }
 
   return (
-    <section
-      aria-labelledby="accompagnements-et-mediateurs"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <section aria-labelledby="accompagnements-et-mediateurs" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
         <div>
-          <h2
-            className="fr-h4 color-blue-france fr-m-0"
-            id="accompagnements-et-mediateurs"
-          >
+          <h2 className="fr-h4 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
             Accompagnements et Médiateurs numériques
             <Information>
               <p className="fr-mb-0">
-                Les indicateurs affichés concernent les médiateurs numériques inscrits sur
-                {' '}
-                <strong>
-                  la Coop de la médiation
-                </strong>
-                {' '}
-                ainsi que les
-                {' '}
-                <strong>
-                  conseillers numériques
-                </strong>
-                {' '}
-                de votre territoire.
+                Les indicateurs affichés concernent les médiateurs numériques inscrits sur{' '}
+                <strong>la Coop de la médiation</strong> ainsi que les <strong>conseillers numériques</strong> de votre
+                territoire.
               </p>
             </Information>
           </h2>
         </div>
       </div>
 
-      <div
-        className="fr-grid-row fr-mb-4w fr-grid-row--gutters"
-        ref={componentRef}
-      >
+      <div className="fr-grid-row fr-mb-4w fr-grid-row--gutters" ref={componentRef}>
         <div className={`fr-col-12 fr-col-md-6 fr-pr-4w ${styles.separator}`}>
           <div className="center">
             <div>
@@ -116,31 +89,19 @@ export default function AccompagnementsEtMediateurs({
                 backgroundColor={accompagnementsEtMediateurs.thematiques.map(
                   (thematique) => thematique.backgroundColor
                 )}
-                data={accompagnementsEtMediateurs.thematiques.map(
-                  (thematique) => thematique.pourcentage
-                )}
+                data={accompagnementsEtMediateurs.thematiques.map((thematique) => thematique.pourcentage)}
                 isFull={false}
                 labels={accompagnementsEtMediateurs.thematiques.map((thematique) => thematique.nom)}
               />
             </div>
-            <div
-              style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
-            >
+            <div style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}>
               <AsyncLoaderErrorBoundary
                 fallback={
                   <div>
-                    <div className="fr-display--xs fr-mb-0">
-                      -
-                    </div>
-                    <div className="fr-text--lg font-weight-700 fr-m-0">
-                      Bénéficiaires accompagnés
-                    </div>
+                    <div className="fr-display--xs fr-mb-0">-</div>
+                    <div className="fr-text--lg font-weight-700 fr-m-0">Bénéficiaires accompagnés</div>
                     <div className="color-blue-france fr-pb-4w">
-                      Soit 
-                      {' '}
-                      <strong>
-                        - accompagnements réalisés
-                      </strong>
+                      Soit <strong>- accompagnements réalisés</strong>
                     </div>
                   </div>
                 }
@@ -148,18 +109,10 @@ export default function AccompagnementsEtMediateurs({
                 <Suspense
                   fallback={
                     <div>
-                      <div className="fr-display--xs fr-mb-0 color-grey">
-                        ...
-                      </div>
-                      <div className="fr-text--lg font-weight-700 fr-m-0">
-                        Bénéficiaires accompagnés
-                      </div>
+                      <div className="fr-display--xs fr-mb-0 color-grey">...</div>
+                      <div className="fr-text--lg font-weight-700 fr-m-0">Bénéficiaires accompagnés</div>
                       <div className="color-blue-france fr-pb-4w">
-                        Soit 
-                        {' '}
-                        <strong>
-                          ... accompagnements réalisés
-                        </strong>
+                        Soit <strong>... accompagnements réalisés</strong>
                       </div>
                     </div>
                   }
@@ -174,14 +127,8 @@ export default function AccompagnementsEtMediateurs({
           <div className="fr-mt-4w">
             <ul>
               {accompagnementsEtMediateurs.thematiques.map((thematique) => (
-                <li
-                  className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                  key={thematique.nom}
-                >
-                  <div
-                    className={gouvernancesStyles['text-ellipsis']}
-                    style={{ flex: 1, minWidth: 0 }}
-                  >
+                <li className="fr-grid-row fr-btns-group--space-between fr-mb-1w" key={thematique.nom}>
+                  <div className={gouvernancesStyles['text-ellipsis']} style={{ flex: 1, minWidth: 0 }}>
                     <span className={gouvernancesStyles['dot-margin']}>
                       <Dot color={thematique.couleur} />
                     </span>
@@ -189,21 +136,12 @@ export default function AccompagnementsEtMediateurs({
                       {thematique.nom}
                       {thematique.nombreThematiquesRestantes !== undefined &&
                         thematique.nombreThematiquesRestantes > 0 && (
-                        <span>
-                          {' '}
-                          (
-                          {thematique.nombreThematiquesRestantes}
-                          )
-                        </span>
-                      )}
+                          <span> ({thematique.nombreThematiquesRestantes})</span>
+                        )}
                     </span>
                   </div>
-                  <div
-                    className="font-weight-700"
-                    style={{ flexShrink: 0 }}
-                  >
-                    {thematique.pourcentage}
-                    %
+                  <div className="font-weight-700" style={{ flexShrink: 0 }}>
+                    {thematique.pourcentage}%
                   </div>
                 </li>
               ))}
@@ -213,20 +151,18 @@ export default function AccompagnementsEtMediateurs({
           <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
             <div style={{ flex: 1 }}>
               <p className="fr-text--sm fr-mb-0">
-                Données mises à jour le 
-                {' '}
-                {dateGeneration.toLocaleDateString('fr-FR')}
+                Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}
               </p>
               {Boolean(accompagnementsEtMediateurs.avertissementApiCoop) && (
                 <p className="fr-text--xs color-orange fr-mb-0 fr-mt-1v">
-                  ⚠️ 
-                  {' '}
-                  {accompagnementsEtMediateurs.avertissementApiCoop}
+                  ⚠️ {accompagnementsEtMediateurs.avertissementApiCoop}
                 </p>
               )}
             </div>
             <DownloadButton
-              onClick={() => { void handleDownload() }}
+              onClick={() => {
+                void handleDownload()
+              }}
               title="Accompagnements et Médiateurs"
             />
           </div>
@@ -234,14 +170,8 @@ export default function AccompagnementsEtMediateurs({
         <div className="fr-col-12 fr-col-md-6 fr-pl-4w">
           {accompagnementsEtMediateurs.metriques.map((metrique, index) => (
             <div key={metrique.titre}>
-              <Metric
-                chiffre={metrique.chiffre}
-                sousTitre={metrique.sousTitre}
-                titre={metrique.titre}
-              />
-              {index < accompagnementsEtMediateurs.metriques.length - 1 && (
-                <hr className="fr-hr fr-my-2w" />
-              )}
+              <Metric chiffre={metrique.chiffre} sousTitre={metrique.sousTitre} titre={metrique.titre} />
+              {index < accompagnementsEtMediateurs.metriques.length - 1 && <hr className="fr-hr fr-my-2w" />}
             </div>
           ))}
         </div>

@@ -5,20 +5,19 @@ import { ReactElement, Ref, useContext } from 'react'
 import Select, { SelectInstance, StylesConfig } from 'react-select'
 
 import { clientContext } from '../shared/ClientContext'
-import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/filtresUtilisateurPresenter'
+import {
+  regionsEtDepartements,
+  ZoneGeographique,
+  zoneGeographiqueParDefaut,
+} from '@/presenters/filtresUtilisateurPresenter'
 import { isNullish } from '@/shared/lang'
 
-export default function FiltrerParZonesGeographiques(
-  { ref, setZoneGeographique }: Props
-): ReactElement {
+export default function FiltrerParZonesGeographiques({ ref, setZoneGeographique }: Props): ReactElement {
   const { searchParams } = useContext(clientContext)
 
   return (
     <div className="fr-select-group">
-      <label
-        className="fr-label"
-        htmlFor="zoneGeographique"
-      >
+      <label className="fr-label" htmlFor="zoneGeographique">
         Par zone géographique
       </label>
       <Select
@@ -78,11 +77,7 @@ const styles: StylesConfig<ZoneGeographique> = {
 
 function DropdownIndicator(): ReactElement {
   return (
-    <svg
-      height="24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
       <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
     </svg>
   )

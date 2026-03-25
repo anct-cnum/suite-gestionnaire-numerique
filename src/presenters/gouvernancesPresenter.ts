@@ -1,11 +1,10 @@
-
 import { GouvernancesInfosReadModel } from '@/use-cases/queries/RecupererGouvernancesInfos'
 
-export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel) : GouvernancesViewModel {
+export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel): GouvernancesViewModel {
   return {
-    details: viewModel.details.map(detail => {
+    details: viewModel.details.map((detail) => {
       return {
-        actionCount : detail.actionCount,
+        actionCount: detail.actionCount,
         coFinancementMontant: detail.coFinancementMontant,
         coporteurCount: detail.coporteurCount,
         departementCode: detail.departementCode,
@@ -16,7 +15,7 @@ export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel) : Go
         membreCount: detail.membreCount,
         montantEngager: detail.montantEngager,
       }
-    } ),
+    }),
   }
 }
 
@@ -36,4 +35,3 @@ export interface GouvernanceDetails {
   membreCount: number
   montantEngager: Array<number>
 }
-

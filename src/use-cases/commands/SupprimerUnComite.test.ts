@@ -103,11 +103,13 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: '75',
-      role: 'Gestionnaire département',
-      uid: { email: emailEditeur, value: uidEditeur },
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        codeOrganisation: '75',
+        role: 'Gestionnaire département',
+        uid: { email: emailEditeur, value: uidEditeur },
+      })
+    )
   }
 }
 
@@ -126,10 +128,12 @@ class ComiteRepositorySpy implements DropComiteRepository, GetComiteRepository {
 
   async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
-    return Promise.resolve(comiteFactory({
-      uid: { value: uidComite },
-      uidEditeur: { email: emailEditeur, value: uidEditeur },
-      uidGouvernance: { value: uidGouvernance },
-    }))
+    return Promise.resolve(
+      comiteFactory({
+        uid: { value: uidComite },
+        uidEditeur: { email: emailEditeur, value: uidEditeur },
+        uidGouvernance: { value: uidGouvernance },
+      })
+    )
   }
 }

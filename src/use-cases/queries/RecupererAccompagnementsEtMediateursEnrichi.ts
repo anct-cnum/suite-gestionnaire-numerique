@@ -83,10 +83,5 @@ type RecupererAccompagnementsEtMediateursEnrichiQuery = Readonly<{
 }>
 
 function isErrorReadModel(readModel: unknown): readModel is ErrorReadModel {
-  return (
-    typeof readModel === 'object' &&
-    readModel !== null &&
-    'type' in readModel &&
-    readModel.type === 'error'
-  )
+  return typeof readModel === 'object' && readModel !== null && 'type' in readModel && readModel.type === 'error'
 }

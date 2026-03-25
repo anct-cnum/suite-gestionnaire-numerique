@@ -258,15 +258,7 @@ export default function ListeLieuxInclusion({
             }}
           />
           <Table
-            enTetes={[
-              'Lieu',
-              'Adresse',
-              'Siret',
-              'FRR / QPV',
-              'Mandats AC',
-              'Nb Accompagnements',
-              'Action',
-            ]}
+            enTetes={['Lieu', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
             titre="Lieux d'inclusion numérique"
           >
             {viewModel.lieux.map((lieu) => (

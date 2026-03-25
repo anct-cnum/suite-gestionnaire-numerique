@@ -1,16 +1,10 @@
-import {
-  EntrepriseNonTrouvee,
-  EntrepriseReadModel,
-  SireneLoader,
-} from '@/use-cases/queries/RechercherUneEntreprise'
+import { EntrepriseNonTrouvee, EntrepriseReadModel, SireneLoader } from '@/use-cases/queries/RechercherUneEntreprise'
 
 // Types pour l'API Sirene INSEE officielle
 // Documentation : https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=Sirene&version=V3&provider=insee
 
 export class ApiSireneLoader implements SireneLoader {
-  async rechercherParIdentifiant(
-    siret: string
-  ): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
+  async rechercherParIdentifiant(siret: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
     try {
       const urlApiSirene = `https://api.insee.fr/api-sirene/3.11/siret/${siret}`
       const reponse = await this.recupererAvecTentatives(urlApiSirene)
@@ -21,10 +15,7 @@ export class ApiSireneLoader implements SireneLoader {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
 
       // Si l'entreprise n'est pas trouvée, retourner EntrepriseNonTrouvee
-      if (
-        errorMessage.includes('Aucun établissement trouvé') ||
-        errorMessage.includes("n'est plus en activité")
-      ) {
+      if (errorMessage.includes('Aucun établissement trouvé') || errorMessage.includes("n'est plus en activité")) {
         return { estTrouvee: false }
       }
 
@@ -85,10 +76,9 @@ export class ApiSireneLoader implements SireneLoader {
 
         // Si c'est la dernière tentative, on lance l'erreur
         if (tentative === 3) {
-          throw new Error(
-            `Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`,
-            { cause: erreur }
-          )
+          throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`, {
+            cause: erreur,
+          })
         }
 
         // Attente avant retry (500ms, puis 1s)
@@ -100,9 +90,7 @@ export class ApiSireneLoader implements SireneLoader {
     }
 
     if (!reponse) {
-      throw new Error(
-        `Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur?.message}`
-      )
+      throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur?.message}`)
     }
 
     return reponse
@@ -153,10 +141,7 @@ export class ApiSireneLoader implements SireneLoader {
       'Dénomination non renseignée'
 
     // Construction du nom de voie propre (type + libellé)
-    const nomVoieElements = [
-      adresseEtab.typeVoieEtablissement,
-      adresseEtab.libelleVoieEtablissement,
-    ].filter(Boolean)
+    const nomVoieElements = [adresseEtab.typeVoieEtablissement, adresseEtab.libelleVoieEtablissement].filter(Boolean)
     const nomVoie = nomVoieElements.join(' ')
 
     return {

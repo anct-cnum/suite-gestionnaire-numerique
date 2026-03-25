@@ -30,18 +30,13 @@ export default function AjouterDesMembres({
   const fieldset = useRef<HTMLFieldSetElement>(null)
 
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const membresGouvernanceConfirme =
-    gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
   const hasMembres = membres.length > 0
   return (
     <>
       <button
         aria-controls={drawerId}
-        className={
-          hasMembres
-            ? 'fr-btn fr-btn--tertiary'
-            : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
-        }
+        className={hasMembres ? 'fr-btn fr-btn--tertiary' : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'}
         data-fr-opened="false"
         onClick={() => {
           resetToutEffacer(fieldset)
@@ -69,8 +64,8 @@ export default function AjouterDesMembres({
           {titre}
         </DrawerTitle>
         <p className="fr-text--sm color-grey">
-          Sélectionnez un ou plusieurs {labelPluriel} pour cette action. Si vous ne trouvez pas la
-          structure dans cette liste, invitez-la à rejoindre la gouvernance en{' '}
+          Sélectionnez un ou plusieurs {labelPluriel} pour cette action. Si vous ne trouvez pas la structure dans cette
+          liste, invitez-la à rejoindre la gouvernance en{' '}
           <Link className="color-blue-france" href={urlGestionMembresGouvernance}>
             cliquant ici
           </Link>
@@ -106,19 +101,10 @@ export default function AjouterDesMembres({
             </Checkbox>
           ))}
           <div className="fr-btns-group">
-            <button
-              aria-controls={drawerId}
-              className="fr-btn"
-              onClick={enregistrer(fieldset)}
-              type="button"
-            >
+            <button aria-controls={drawerId} className="fr-btn" onClick={enregistrer(fieldset)} type="button">
               Enregistrer
             </button>
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={toutEffacer(fieldset)}
-              type="button"
-            >
+            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
               Tout effacer
             </button>
           </div>

@@ -91,8 +91,7 @@ export class DemandeDeSubvention extends Entity<State> {
         new EnveloppeFinancementUid(uidEnveloppeFinancement.value),
         new MembreUid(uidCreateur)
       )
-    }
-    catch (error) {
+    } catch (error) {
       return (error as Exception<DemandeDeSubventionFailure>).message as DemandeDeSubventionFailure
     }
   }
@@ -108,7 +107,7 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation,
       uid: this.#uid.state,
       uidAction: { value: uidAction },
-      uidCreateur :this.#uidCreateur.state.value,
+      uidCreateur: this.#uidCreateur.state.value,
       uidEnveloppeFinancement: { value: this.#uidEnveloppeFinancement.state.value },
     }) as DemandeDeSubvention
   }
@@ -126,7 +125,7 @@ export enum StatutSubvention {
   ACCEPTEE = 'acceptee',
   DEPOSEE = 'deposee',
   EN_COURS = 'enCours',
-  REFUSEE = 'refusee'
+  REFUSEE = 'refusee',
 }
 
 class EnveloppeFinancementUid extends Uid<UidState> {
@@ -164,4 +163,3 @@ type State = Readonly<{
 }>
 
 type UidState = Readonly<{ value: string }>
-

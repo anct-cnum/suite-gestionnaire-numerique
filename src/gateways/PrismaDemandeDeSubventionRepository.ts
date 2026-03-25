@@ -10,10 +10,12 @@ import {
 } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository
-implements AddDemandeDeSubventionRepository,
-GetDemandeDeSubventionRepository,
-SupprimerDemandeDeSubventionRepository,
-UpdateDemandeDeSubventionRepository {
+  implements
+    AddDemandeDeSubventionRepository,
+    GetDemandeDeSubventionRepository,
+    SupprimerDemandeDeSubventionRepository,
+    UpdateDemandeDeSubventionRepository
+{
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
@@ -40,13 +42,14 @@ UpdateDemandeDeSubventionRepository {
 
     // Création des associations avec les bénéficiaires
     await Promise.all(
-      demandeDeSubvention.state.beneficiaires.map(async beneficiaireId =>
+      demandeDeSubvention.state.beneficiaires.map(async (beneficiaireId) =>
         client.beneficiaireSubventionRecord.create({
           data: {
             demandeDeSubventionId: demande.id,
             membreId: beneficiaireId,
           },
-        }))
+        })
+      )
     )
 
     return true
@@ -133,13 +136,14 @@ UpdateDemandeDeSubventionRepository {
 
     // Création des nouvelles associations avec les bénéficiaires
     await Promise.all(
-      demandeDeSubvention.state.beneficiaires.map(async beneficiaireId =>
+      demandeDeSubvention.state.beneficiaires.map(async (beneficiaireId) =>
         client.beneficiaireSubventionRecord.create({
           data: {
             demandeDeSubventionId: Number(demandeDeSubvention.state.uid.value),
             membreId: beneficiaireId,
           },
-        }))
+        })
+      )
     )
 
     return true

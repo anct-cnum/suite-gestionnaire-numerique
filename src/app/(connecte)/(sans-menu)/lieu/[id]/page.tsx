@@ -11,10 +11,10 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { lieuDetailsPresenter } from '@/presenters/LieuDetailsPresenter'
 
 export const metadata: Metadata = {
-  title: 'Détails du lieu d\'inclusion ',
+  title: "Détails du lieu d'inclusion ",
 }
 
-async function LieuPage({ params }: Props) : Promise<ReactElement>{
+async function LieuPage({ params }: Props): Promise<ReactElement> {
   const { id } = await params
 
   const loader = new PrismaRecupererLieuDetailsLoader()
@@ -40,9 +40,7 @@ async function LieuPage({ params }: Props) : Promise<ReactElement>{
     },
   })
 
-  const departementsGouvernances = gouvernancesDepartements.map(
-    (membre) => membre.gouvernanceDepartementCode
-  )
+  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
 
   // Calculer si l'utilisateur peut modifier ce lieu
   const peutModifier = LieuInclusion.peutEtreModifiePar(
@@ -55,15 +53,15 @@ async function LieuPage({ params }: Props) : Promise<ReactElement>{
 
   const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier)
 
-  return (
-    <LieuxInclusionDetails data={presentedData} />
-  )
+  return <LieuxInclusionDetails data={presentedData} />
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    id: string
-  }>>
+  params: Promise<
+    Readonly<{
+      id: string
+    }>
+  >
 }>
 
 export default LieuPage

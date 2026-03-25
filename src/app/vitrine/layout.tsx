@@ -9,10 +9,7 @@ export default function VitrineLayout({ children }: Readonly<PropsWithChildren>)
     <>
       <LienEvitement />
       <EnTeteVitrine />
-      <main
-        className="fr-container--fluid"
-        id="content"
-      >
+      <main className="fr-container--fluid" id="content">
         {children}
       </main>
       <PiedDePage />

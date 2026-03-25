@@ -1,51 +1,49 @@
 import type { StatistiquesMediateursData } from './types'
 import type { StatistiquesCoopReadModel } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
-export function statistiquesCoopToMediateursData(
-  readModel: StatistiquesCoopReadModel
-): StatistiquesMediateursData {
+export function statistiquesCoopToMediateursData(readModel: StatistiquesCoopReadModel): StatistiquesMediateursData {
   return {
-    accompagnementsParJour: readModel.accompagnementsParJour.map(item => ({
+    accompagnementsParJour: readModel.accompagnementsParJour.map((item) => ({
       count: item.count,
       label: item.label,
     })),
-    accompagnementsParMois: readModel.accompagnementsParMois.map(item => ({
+    accompagnementsParMois: readModel.accompagnementsParMois.map((item) => ({
       count: item.count,
       label: item.label,
     })),
     activites: {
-      durees: readModel.activites.durees.map(item => ({
+      durees: readModel.activites.durees.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
-      materiels: readModel.activites.materiels.map(item => ({
+      materiels: readModel.activites.materiels.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
-      thematiques: readModel.activites.thematiques.map(item => ({
+      thematiques: readModel.activites.thematiques.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
-      thematiquesDemarches: readModel.activites.thematiquesDemarches.map(item => ({
+      thematiquesDemarches: readModel.activites.thematiquesDemarches.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
       total: readModel.activites.total,
-      typeActivites: readModel.activites.typeActivites.map(item => ({
+      typeActivites: readModel.activites.typeActivites.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
-      typeLieu: readModel.activites.typeLieu.map(item => ({
+      typeLieu: readModel.activites.typeLieu.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
@@ -53,20 +51,20 @@ export function statistiquesCoopToMediateursData(
       })),
     },
     beneficiaires: {
-      genres: readModel.beneficiaires.genres.map(item => ({
+      genres: readModel.beneficiaires.genres.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
-      statutsSocial: readModel.beneficiaires.statutsSocial.map(item => ({
+      statutsSocial: readModel.beneficiaires.statutsSocial.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,
         value: item.value,
       })),
       total: readModel.beneficiaires.total,
-      trancheAges: readModel.beneficiaires.trancheAges.map(item => ({
+      trancheAges: readModel.beneficiaires.trancheAges.map((item) => ({
         count: item.count,
         label: item.label,
         proportion: item.proportion,

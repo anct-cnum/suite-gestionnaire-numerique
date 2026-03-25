@@ -9,77 +9,52 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
   return (
     <div className="fr-pb-4w">
       <DrawerTitle id={labelId}>
-        <TitleIcon
-          background={action.statut.background}
-          icon={action.statut.icon}
-        />
+        <TitleIcon background={action.statut.background} icon={action.statut.icon} />
         <br />
         {action.nom}
       </DrawerTitle>
       {Object.keys(action.besoins).length > 0 && (
-        <p className="fr-text--sm color-grey fr-text--bold">
-          {Object.entries(action.besoins)[0]?.[1]}
-        </p>
+        <p className="fr-text--sm color-grey fr-text--bold">{Object.entries(action.besoins)[0]?.[1]}</p>
       )}
 
-      <div className="color-grey fr-mt-2w fr-mb-1w">
-        Porteur de l&apos;action
-      </div>
+      <div className="color-grey fr-mt-2w fr-mb-1w">Porteur de l&apos;action</div>
       {action.porteurs.length === 0 ? (
-        <span className="fr-text--bold">
-          -
-        </span>
+        <span className="fr-text--bold">-</span>
       ) : (
         <ul className="fr-tags-group">
           {action.porteurs.map((porteur) => (
             <li key={porteur.link}>
-              <p className="fr-tag">
-                {porteur.label}
-              </p>
+              <p className="fr-tag">{porteur.label}</p>
             </li>
           ))}
         </ul>
       )}
 
-      <div className="color-grey fr-mt-2w fr-mb-1w ">
-        Budget total de l&apos;action
-      </div>
-      <p className="fr-text--bold">
-        {action.budgetPrevisionnel.global.montant}
-      </p>
+      <div className="color-grey fr-mt-2w fr-mb-1w ">Budget total de l&apos;action</div>
+      <p className="fr-text--bold">{action.budgetPrevisionnel.global.montant}</p>
 
       {action.description.length > 0 && (
         <>
-          <div className="color-grey fr-text--bold fr-mt-2w fr-mb-1w">
-            Contexte de l&apos;action
-          </div>
+          <div className="color-grey fr-text--bold fr-mt-2w fr-mb-1w">Contexte de l&apos;action</div>
           <ReadMoreVitrine texte={action.description} />
         </>
       )}
 
       {action.description.length > 0 && (
         <>
-          <div className="color-grey fr-mt-1w fr-mb-1w">
-            Description de l&apos;action
-          </div>
+          <div className="color-grey fr-mt-1w fr-mb-1w">Description de l&apos;action</div>
           <ReadMoreVitrine texte={action.description} />
         </>
       )}
 
-      <div className="color-grey fr-mt-2w fr-mb-1w">
-        Bénéficiaires des subventions
-      </div>
+      <div className="color-grey fr-mt-2w fr-mb-1w">Bénéficiaires des subventions</div>
       {action.beneficiaires.length === 0 ? (
-        <span className="fr-text--bold">
-          -
-        </span>
+        <span className="fr-text--bold">-</span>
       ) : (
         <ul className="fr-tags-group">
           {action.beneficiaires.map((beneficiaire) => (
             <li key={beneficiaire.link}>
-              <p className="fr-tag">
-                {beneficiaire.label}
-              </p>
+              <p className="fr-tag">{beneficiaire.label}</p>
             </li>
           ))}
         </ul>

@@ -13,19 +13,13 @@ export const metadata: Metadata = {
 export default function FinancementsController(): ReactElement {
   return (
     <div className="center fr-mt-6w">
-      <Badge
-        color="new"
-        icon={true}
-      >
+      <Badge color="new" icon={true}>
         à venir
       </Badge>
       <PageTitle margin="fr-mt-5w fr-h4">
         Suivez les demandes de financements et de conventionnement des membres de la gouvernance
       </PageTitle>
-      <Image
-        alt=""
-        src={teaser}
-      />
+      <Image alt="" src={teaser} />
     </div>
   )
 }

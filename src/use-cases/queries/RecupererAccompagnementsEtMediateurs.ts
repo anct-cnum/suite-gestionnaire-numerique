@@ -20,15 +20,14 @@ export interface AccompagnementsEtMediateursLoader {
 
 export class RecupererAccompagnementsEtMediateurs {
   private readonly accompagnementsLoader: AccompagnementsEtMediateursLoader
-  
-  constructor(
-    accompagnementsLoader: AccompagnementsEtMediateursLoader
-  ) {
+
+  constructor(accompagnementsLoader: AccompagnementsEtMediateursLoader) {
     this.accompagnementsLoader = accompagnementsLoader
   }
 
-  async execute(query: RecupererAccompagnementsEtMediateursQuery): 
-  Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
+  async execute(
+    query: RecupererAccompagnementsEtMediateursQuery
+  ): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
     return this.accompagnementsLoader.get(query.territoire)
   }
 }
@@ -36,4 +35,3 @@ export class RecupererAccompagnementsEtMediateurs {
 type RecupererAccompagnementsEtMediateursQuery = Readonly<{
   territoire?: string
 }>
-

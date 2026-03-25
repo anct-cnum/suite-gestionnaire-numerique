@@ -49,7 +49,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
       },
       action.uid
     ) as ActionDataWithUid
-    
+
     const messages = await modifierUneActionAction(data)
     return handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, true)
   }

@@ -1,19 +1,8 @@
-import {
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  LinearScale,
-  Tooltip,
-} from 'chart.js'
+import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } from 'chart.js'
 import { ReactElement, ReactNode } from 'react'
 import { Bar as ReactBar } from 'react-chartjs-2'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip
-)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip)
 
 export default function Bar({ backgroundColor, data, header, labels }: Props): ReactElement {
   return (
@@ -48,7 +37,7 @@ export default function Bar({ backgroundColor, data, header, labels }: Props): R
             },
           },
           scales: {
-          // eslint-disable-next-line id-length
+            // eslint-disable-next-line id-length
             x: {
               border: {
                 display: false,

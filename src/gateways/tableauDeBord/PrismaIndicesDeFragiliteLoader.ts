@@ -1,6 +1,10 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { CommuneReadModel, DepartementsReadModel, IndicesLoader } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
+import {
+  CommuneReadModel,
+  DepartementsReadModel,
+  IndicesLoader,
+} from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
@@ -54,7 +58,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
       const icpMap = new Map(
         icpDepartements.map((icp: { code: string; label: null | string }) => [icp.code, icp.label])
       )
-      
+
       const statistiquesicp = {
         appuinecessaire: 0,
         atteignable: 0,
@@ -65,7 +69,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
 
       const departementsWithIcp = departements.map((departement) => {
         const label = icpMap.get(departement.code)
-        
+
         switch (label) {
           case 'appuis nécessaires':
             statistiquesicp.appuinecessaire += 1

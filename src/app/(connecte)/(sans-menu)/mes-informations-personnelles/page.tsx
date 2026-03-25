@@ -13,10 +13,9 @@ export const metadata: Metadata = {
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const mesInformationsPersonnellesQuery = new PrismaMesInformationsPersonnellesLoader()
   const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.byUid(await getSessionSub())
-  const mesInformationsPersonnellesViewModel =
-    mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-
-  return (
-    <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
+  const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(
+    mesInformationsPersonnellesReadModel
   )
+
+  return <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
 }

@@ -66,10 +66,7 @@ describe('action repository', () => {
         )
 
         const action = actionFactory({
-          besoins: [
-            BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
-            BesoinsPossible.STRUCTURER_UN_FONDS,
-          ],
+          besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
           budgetGlobal: 50_000,
           contexte: 'Contexte de test',
           dateDeCreation: epochTime,

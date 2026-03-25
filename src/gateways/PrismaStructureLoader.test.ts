@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStructureLoader } from './PrismaStructureLoader'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre } from './testHelper'
+import {
+  creerUnContact,
+  creerUnDepartement,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnMembre,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 
 describe('structures loader', () => {
@@ -55,7 +62,7 @@ describe('structures loader', () => {
       },
       {
         expected: [],
-        intention: 'aucune structure n\'est trouvée s\'il n\'y a aucune correspondance',
+        intention: "aucune structure n'est trouvée s'il n'y a aucune correspondance",
         match: 'Solidarnum',
       },
     ])('alors $intention', async ({ expected, match }) => {
@@ -111,7 +118,12 @@ describe('structures loader', () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
-      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
 
       // WHEN
       const structureReadModel = await new PrismaStructureLoader().structures('conseil aube')
@@ -121,7 +133,7 @@ describe('structures loader', () => {
         {
           commune: 'TROYES',
           isMembre: false,
-          nom: 'Conseil départemental de l\'Aube',
+          nom: "Conseil départemental de l'Aube",
           uid: '100',
         },
       ])
@@ -131,7 +143,12 @@ describe('structures loader', () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
-      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
 
       // WHEN - "aude" au lieu de "aube"
       const structureReadModel = await new PrismaStructureLoader().structures('conseil aude')
@@ -141,7 +158,7 @@ describe('structures loader', () => {
         {
           commune: 'TROYES',
           isMembre: false,
-          nom: 'Conseil départemental de l\'Aube',
+          nom: "Conseil départemental de l'Aube",
           uid: '100',
         },
       ])
@@ -151,7 +168,12 @@ describe('structures loader', () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
-      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
 
       // WHEN - "departemental" sans accent
       const structureReadModel = await new PrismaStructureLoader().structures('departemental')
@@ -161,7 +183,7 @@ describe('structures loader', () => {
         {
           commune: 'TROYES',
           isMembre: false,
-          nom: 'Conseil départemental de l\'Aube',
+          nom: "Conseil départemental de l'Aube",
           uid: '100',
         },
       ])
@@ -171,7 +193,12 @@ describe('structures loader', () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
-      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
 
       // WHEN
       const structureReadModel = await new PrismaStructureLoader().structures('   ')
@@ -180,11 +207,16 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([])
     })
 
-    it('indique si une structure est membre d\'une gouvernance', async () => {
+    it("indique si une structure est membre d'une gouvernance", async () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
-      await creerUneStructure({ commune: 'TROYES', departementCode: '10', id: 100, nom: 'Conseil départemental de l\'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
       await creerUneGouvernance({ departementCode: '10' })
       await creerUnContact({ email: 'contact@aube.fr' })
       await creerUnMembre({
@@ -201,7 +233,7 @@ describe('structures loader', () => {
         {
           commune: 'TROYES',
           isMembre: true,
-          nom: 'Conseil départemental de l\'Aube',
+          nom: "Conseil départemental de l'Aube",
           uid: '100',
         },
       ])
@@ -211,7 +243,7 @@ describe('structures loader', () => {
 
 async function createStructures(): Promise<void> {
   await creerUneRegion()
-  await creerUneRegion({ code: '93', nom: 'Provence-Alpes-Côte d\'Azur' })
+  await creerUneRegion({ code: '93', nom: "Provence-Alpes-Côte d'Azur" })
   await creerUnDepartement({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' })
   await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
   await creerUneStructure({ commune: 'GRASSE', departementCode: '06', id: 14, nom: 'TETRIS' })

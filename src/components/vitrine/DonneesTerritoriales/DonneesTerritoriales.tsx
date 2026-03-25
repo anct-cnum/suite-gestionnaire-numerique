@@ -13,7 +13,7 @@ import { ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
 const MemoizedCarteFranceVitrine = memo(CarteFranceVitrine)
 
 export default function DonneesTerritoriales(): ReactElement {
-  const [ zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
+  const [zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
 
   const router = useRouter()
 
@@ -43,10 +43,8 @@ export default function DonneesTerritoriales(): ReactElement {
   return (
     <>
       {/* Section Découvrir les données */}
-      <section
-        style={{ backgroundColor: '#ffffff' }}
-      >
-        <div >
+      <section style={{ backgroundColor: '#ffffff' }}>
+        <div>
           <div className="fr-grid-row fr-grid-row--gutters">
             {/* Colonne gauche - Titre + Dropdown + Bouton */}
             <div className="fr-col-12 fr-col-lg-6">
@@ -101,7 +99,9 @@ export default function DonneesTerritoriales(): ReactElement {
                   <div style={{ textAlign: 'center' }}>
                     <button
                       className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-                      onClick={() => { router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national') }}
+                      onClick={() => {
+                        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+                      }}
                       type="button"
                     >
                       Voir les données nationales
@@ -140,10 +140,7 @@ export default function DonneesTerritoriales(): ReactElement {
       />
 
       {/* Section Sources et données utilisées */}
-      <section
-        className="fr-py-12w"
-        style={{ backgroundColor: '#ffffff' }}
-      >
+      <section className="fr-py-12w" style={{ backgroundColor: '#ffffff' }}>
         <div className="fr-container">
           <SectionSources />
         </div>

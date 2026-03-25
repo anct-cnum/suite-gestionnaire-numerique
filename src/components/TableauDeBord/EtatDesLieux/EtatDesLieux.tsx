@@ -21,42 +21,36 @@ export default function EtatDesLieux({
   mediateursEtAidantsViewModel,
 }: EtatDesLieuxProps): ReactElement {
   return (
-    <section
-      aria-labelledby="etatDesLieux"
-      className="fr-mb-4w "
-    >
+    <section aria-labelledby="etatDesLieux" className="fr-mb-4w ">
       <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
-        <div
-          className="fr-col-auto"
-          style={{ alignItems: 'stretch', display: 'flex' }}
-        >
+        <div className="fr-col-auto" style={{ alignItems: 'stretch', display: 'flex' }}>
           <TitleIcon icon="france-line" />
         </div>
         <div className="fr-col">
           <div
             className="fr-mb-1w"
-            style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between' }}
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              justifyContent: 'space-between',
+            }}
           >
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="etatDesLieux"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="etatDesLieux">
               État des lieux de l&apos;inclusion numérique
             </h2>
-            {afficherLienLieux ?
+            {afficherLienLieux ? (
               <Link
                 className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
                 href="/lieux-inclusion"
               >
                 Lieux d&apos;inclusion numérique
               </Link>
-              : null}
+            ) : null}
           </div>
-          <p className="fr-m-0 font-weight-500">
-            Données cumulées de tous les dispositifs d&apos;inclusion numérique
-          </p>
+          <p className="fr-m-0 font-weight-500">Données cumulées de tous les dispositifs d&apos;inclusion numérique</p>
         </div>
-
       </div>
       <div className="fr-grid-row">
         {carte}

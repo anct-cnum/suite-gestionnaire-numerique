@@ -1,4 +1,3 @@
-
 export function gestionMembresGouvernanceUrl(uidGouvernance: string): string {
   return `/gouvernance/${uidGouvernance}/membres`
 }
@@ -7,4 +6,3 @@ export function gestionMembresGouvernanceUrl(uidGouvernance: string): string {
 export function feuilleDeRouteUrl(uidGouvernance: string, uidFeuilleDeRoute: string): string {
   return `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}`
 }
-

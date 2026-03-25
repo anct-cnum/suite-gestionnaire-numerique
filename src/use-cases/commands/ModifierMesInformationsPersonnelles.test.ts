@@ -61,12 +61,14 @@ describe('modifier mes informations personnelles', () => {
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('fooId')
-    expect(spiedMesInformationsPersonnellesToModify?.state).toStrictEqual(utilisateurFactory({
-      emailDeContact: 'martine.dugenoux@example.com',
-      nom: 'Dugenoux',
-      prenom: 'Martine',
-      telephone: '0102030406',
-    }).state)
+    expect(spiedMesInformationsPersonnellesToModify?.state).toStrictEqual(
+      utilisateurFactory({
+        emailDeContact: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        telephone: '0102030406',
+      }).state
+    )
     expect(result).toBe('OK')
   })
 })

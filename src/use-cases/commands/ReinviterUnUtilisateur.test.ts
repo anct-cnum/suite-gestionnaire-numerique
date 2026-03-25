@@ -2,10 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
-import {
-  GetUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { Destinataire } from '@/gateways/emails/invitationEmail'
@@ -50,11 +47,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      epochTime
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, epochTime)
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
@@ -70,11 +63,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      epochTime
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, epochTime)
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
@@ -90,11 +79,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné une date invalide d’invitation d’un utilisateur, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      invalidDate
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, invalidDate)
 
     // WHEN
     const asyncResult = reinviterUnUtilisateur.handle({

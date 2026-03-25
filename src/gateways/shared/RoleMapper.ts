@@ -24,9 +24,7 @@ export function fromTypologieRole(role: TypologieRole): $Enums.Role {
   return enumRoleByTypologieRole[role]
 }
 
-export function organisation(
-  utilisateurRecord: UtilisateurEtSesRelationsRecord
-): string | undefined {
+export function organisation(utilisateurRecord: UtilisateurEtSesRelationsRecord): string | undefined {
   switch (typologieRoleByEnumRole[utilisateurRecord.role]) {
     case 'Gestionnaire département':
       return `${utilisateurRecord.relationDepartement?.nom} (${utilisateurRecord.relationDepartement?.code})`

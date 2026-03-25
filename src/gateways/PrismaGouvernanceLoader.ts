@@ -73,9 +73,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
 
   #transform(
     gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>,
-    membresConfirmesGouvernance: ReadonlyArray<
-      Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>
-    >
+    membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>
   ): UneGouvernanceLoaderReadModel {
     const noteDeContexte =
       gouvernanceRecord.noteDeContexte &&
@@ -119,10 +117,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
             | (typeof action.demandesDeSubvention)[number]
             | undefined
           return {
-            beneficiaires: beneficiairesSubvention(
-              [action],
-              (enveloppe) => !isEnveloppeDeFormation(enveloppe)
-            ),
+            beneficiaires: beneficiairesSubvention([action], (enveloppe) => !isEnveloppeDeFormation(enveloppe)),
             budgetGlobal: action.budgetGlobal,
             coFinancements: [],
             subvention: demandeDeSubvention
@@ -151,10 +146,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           feuilleDeRoute.action,
           (enveloppe) => !isEnveloppeDeFormation(enveloppe)
         ),
-        beneficiairesSubventionFormation: beneficiairesSubvention(
-          feuilleDeRoute.action,
-          isEnveloppeDeFormation
-        ),
+        beneficiairesSubventionFormation: beneficiairesSubvention(feuilleDeRoute.action, isEnveloppeDeFormation),
         beneficiairesSubventionFormationAccordee: beneficiairesSubventionAccordee(
           feuilleDeRoute.action,
           isEnveloppeDeFormation
@@ -170,8 +162,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         budgetGlobal: synthese.feuillesDeRoute[index].budget,
         montantSubventionAccordee: synthese.feuillesDeRoute[index].financemenTotalAccorde,
         montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
-        montantSubventionFormationAccordee:
-          synthese.feuillesDeRoute[index].financementFormationAccorde,
+        montantSubventionFormationAccordee: synthese.feuillesDeRoute[index].financementFormationAccorde,
         nom: feuilleDeRoute.nom,
         porteur: feuilleDeRoute.relationMembre
           ? toMembres([feuilleDeRoute.relationMembre]).map(fromMembre)[0]
@@ -199,9 +190,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
             const feuillesDeRoutePortees = feuillesDeRoute.filter(
               (feuilleDeRoute) => feuilleDeRoute.porteur?.uid === membre.id
             )
-            const premierContact = membre.contacts[0] as
-              | (typeof membre.contacts)[number]
-              | undefined
+            const premierContact = membre.contacts[0] as (typeof membre.contacts)[number] | undefined
             return {
               contactReferent: premierContact
                 ? {
@@ -260,10 +249,7 @@ function beneficiairesSubventionAccordee(
     actions
       .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
       .filter(Boolean)
-      .filter(
-        ({ enveloppe, statut }) =>
-          predicate(enveloppe) && statut === StatutSubvention.ACCEPTEE.toString()
-      )
+      .filter(({ enveloppe, statut }) => predicate(enveloppe) && statut === StatutSubvention.ACCEPTEE.toString())
       .flatMap(({ beneficiaire }) => beneficiaire)
       .map(({ membre }) => membre)
   )
@@ -284,8 +270,7 @@ function calculerTotaux(totaux: Totaux, feuilleDeRoute: FeuilleDeRouteReadModel)
     totalMontantsSubventionsAccordees:
       totaux.totalMontantsSubventionsAccordees + feuilleDeRoute.montantSubventionAccordee,
     totalMontantsSubventionsFormationAccordees:
-      totaux.totalMontantsSubventionsFormationAccordees +
-      feuilleDeRoute.montantSubventionFormationAccordee,
+      totaux.totalMontantsSubventionsFormationAccordees + feuilleDeRoute.montantSubventionFormationAccordee,
   }
 }
 

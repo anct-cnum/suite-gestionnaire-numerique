@@ -14,7 +14,7 @@ export class Action extends Entity<State> {
       dateDeCreation: this.#dateDeCreation.toJSON(),
       dateDeDebut: this.#dateDeDebut.getFullYear().toString(),
       dateDeFin: this.#dateDeFin.getFullYear().toString(),
-      demandeDeSubventionUid: this.#demandeDeSubventionUid ,
+      demandeDeSubventionUid: this.#demandeDeSubventionUid,
       description: this.#description,
       destinataires: this.#destinataires.map((destinataire) => destinataire.state.value),
       nom: this.#nom,
@@ -69,7 +69,7 @@ export class Action extends Entity<State> {
     this.#uidPorteurs = uidPorteurs
     this.#uidCreateur = uidCreateur
     this.#dateDeDebut = dateDeDebut
-    this.#dateDeFin =  dateDeFin ?? dateDeDebut
+    this.#dateDeFin = dateDeFin ?? dateDeDebut
     this.#dateDeCreation = dateDeCreation
   }
 
@@ -93,8 +93,9 @@ export class Action extends Entity<State> {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const dateDeDebutValidee = new ValidDateFromYearString(dateDeDebut, 'dateDeDebutInvalide')
 
-      const dateDeFinValidee = dateDeFin ? new ValidDateFromYearString(dateDeFin, 'dateDeFinInvalide') :
-        new ValidDateFromYearString(dateDeDebut, 'dateDeFinInvalide')
+      const dateDeFinValidee = dateDeFin
+        ? new ValidDateFromYearString(dateDeFin, 'dateDeFinInvalide')
+        : new ValidDateFromYearString(dateDeDebut, 'dateDeFinInvalide')
       return new Action(
         new ActionUid(uid.value),
         besoins,
@@ -104,15 +105,14 @@ export class Action extends Entity<State> {
         demandeDeSubventionUid,
         description,
         budgetGlobal,
-        new  FeuilleDeRouteUid(uidFeuilleDeRoute.value),
+        new FeuilleDeRouteUid(uidFeuilleDeRoute.value),
         uidPorteurs.map((uidPorteur) => new MembreUid(uidPorteur)),
         new MembreUid(uidCreateur),
         dateDeDebutValidee,
         dateDeFinValidee,
         dateDeCreationValidee
       )
-    }
-    catch (error) {
+    } catch (error) {
       return (error as Exception<ActionFailure>).message as ActionFailure
     }
   }

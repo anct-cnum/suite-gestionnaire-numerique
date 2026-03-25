@@ -42,7 +42,10 @@ export class PrismaStructureLoader implements StructureLoader {
     // Construire la condition : chaque mot doit avoir une bonne similarité avec le nom
     // word_similarity compare un mot à tous les mots d'une chaîne
     const conditionsMots = mots
-      .map((_, index) => `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(s.nom))) > 0.3`)
+      .map(
+        (_, index) =>
+          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(s.nom))) > 0.3`
+      )
       .join(' AND ')
 
     // Calcul du score : moyenne des similarités de chaque mot
@@ -52,9 +55,8 @@ export class PrismaStructureLoader implements StructureLoader {
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
 
     const nbMotsParams = mots.length
-    const whereParamsAdjusted = whereClause !== undefined && whereClause !== ''
-      ? whereClause.replace(/\$2/g, `$${nbMotsParams + 1}`)
-      : ''
+    const whereParamsAdjusted =
+      whereClause !== undefined && whereClause !== '' ? whereClause.replace(/\$2/g, `$${nbMotsParams + 1}`) : ''
 
     const whereExtra = whereParamsAdjusted === '' ? '' : `AND ${whereParamsAdjusted}`
 
@@ -72,7 +74,12 @@ export class PrismaStructureLoader implements StructureLoader {
       LIMIT 10
     `
 
-    interface RawResult { commune: null | string; id: number; is_membre: boolean; nom: string }
+    interface RawResult {
+      commune: null | string
+      id: number
+      is_membre: boolean
+      nom: string
+    }
 
     const params = [...mots, ...whereParams]
     const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...params)

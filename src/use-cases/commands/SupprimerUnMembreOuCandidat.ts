@@ -10,17 +10,20 @@ export class SupprimerUnMembreOuCandidat implements CommandHandler<Command> {
   private readonly membreRepository: MembreRepository
   private readonly utilisateurRepository: UtilisateurRepository
 
-  constructor(membreRepository: MembreRepository,
+  constructor(
+    membreRepository: MembreRepository,
     utilisateurRepository: UtilisateurRepository,
-    gouvernanceRepository: GouvernanceRepository) {
+    gouvernanceRepository: GouvernanceRepository
+  ) {
     this.membreRepository = membreRepository
     this.utilisateurRepository = utilisateurRepository
-    this.gouvernanceRepository = gouvernanceRepository}
+    this.gouvernanceRepository = gouvernanceRepository
+  }
 
   async handle(command: Command): ResultAsync<Failure> {
     const user = await this.utilisateurRepository.get(command.uidUtilisateurConnecte)
     const gouvernance = await this.gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
-    if(!gouvernance.peutEtreGereePar(user)){
+    if (!gouvernance.peutEtreGereePar(user)) {
       return 'UtilisateurNonAutorise'
     }
     const membre = await this.membreRepository.get(command.uidMembre)
@@ -32,11 +35,7 @@ export class SupprimerUnMembreOuCandidat implements CommandHandler<Command> {
   }
 }
 
-type Failure =
-  | 'MembreDéjàNonCoPorteur'
-  | 'MembreDoitEtreConfirmer'
-  | 'UtilisateurNonAutorise'
-  | MembreFailure
+type Failure = 'MembreDéjàNonCoPorteur' | 'MembreDoitEtreConfirmer' | 'UtilisateurNonAutorise' | MembreFailure
 
 type Command = Readonly<{
   date: Date
@@ -44,4 +43,3 @@ type Command = Readonly<{
   uidMembre: string
   uidUtilisateurConnecte: string
 }>
-

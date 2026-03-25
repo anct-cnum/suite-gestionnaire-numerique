@@ -98,9 +98,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ORDER BY nb_lieux_inclusion_numerique DESC;
     `)
 
-    const nombreStructuresZonesPrioritaires = await prisma.$queryRaw<
-      Array<{ nb_structures: number }>
-    >(Prisma.sql`
+    const nombreStructuresZonesPrioritaires = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure s
         ${JOIN_ADRESSE}
@@ -131,9 +129,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${deptFilter};
     `)
 
-    const nombreStructuresAvecProgrammeNational = await prisma.$queryRaw<
-      Array<{ count: number }>
-    >(Prisma.sql`
+    const nombreStructuresAvecProgrammeNational = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS count
       FROM main.structure s
         ${JOIN_ADRESSE}
@@ -141,9 +137,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${deptFilter};
     `)
 
-    const nombreStructuresAvecConseillersNumeriques = await prisma.$queryRaw<
-      Array<{ count: number }>
-    >(Prisma.sql`
+    const nombreStructuresAvecConseillersNumeriques = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS count
       FROM main.structure s
         ${JOIN_ADRESSE}
@@ -151,9 +145,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${deptFilter};
     `)
 
-    const nombreStructuresAvecFranceServices = await prisma.$queryRaw<
-      Array<{ count: number }>
-    >(Prisma.sql`
+    const nombreStructuresAvecFranceServices = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS count
       FROM main.structure s
         ${JOIN_ADRESSE}

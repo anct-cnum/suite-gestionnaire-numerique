@@ -25,9 +25,7 @@ describe('apiCoopStatistiquesLoader', () => {
                 value: 'MoinsUneHeure',
               },
             ],
-            materiels: [
-              { count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' },
-            ],
+            materiels: [{ count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' }],
             thematiques: [
               {
                 count: 200000,
@@ -38,16 +36,12 @@ describe('apiCoopStatistiquesLoader', () => {
             ],
             thematiques_demarches: [{ count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' }],
             total: 1161183,
-            type_activites: [
-              { count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' },
-            ],
+            type_activites: [{ count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' }],
             type_lieu: [{ count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' }],
           },
           beneficiaires: {
             genres: [{ count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' }],
-            statuts_social: [
-              { count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' },
-            ],
+            statuts_social: [{ count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' }],
             total: 1009721,
             tranche_ages: [
               {
@@ -108,12 +102,8 @@ describe('apiCoopStatistiquesLoader', () => {
       accompagnementsParJour: [{ count: 485, label: '14/08' }],
       accompagnementsParMois: [{ count: 16427, label: 'Août' }],
       activites: {
-        durees: [
-          { count: 100000, label: "Moins d'une heure", proportion: 10.0, value: 'MoinsUneHeure' },
-        ],
-        materiels: [
-          { count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' },
-        ],
+        durees: [{ count: 100000, label: "Moins d'une heure", proportion: 10.0, value: 'MoinsUneHeure' }],
+        materiels: [{ count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' }],
         thematiques: [
           {
             count: 200000,
@@ -124,20 +114,14 @@ describe('apiCoopStatistiquesLoader', () => {
         ],
         thematiquesDemarches: [{ count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' }],
         total: 1161183,
-        typeActivites: [
-          { count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' },
-        ],
+        typeActivites: [{ count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' }],
         typeLieu: [{ count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' }],
       },
       beneficiaires: {
         genres: [{ count: 278165, label: 'Masculin', proportion: 27.549, value: 'Masculin' }],
-        statutsSocial: [
-          { count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' },
-        ],
+        statutsSocial: [{ count: 203477, label: 'Sans emploi', proportion: 20.157, value: 'SansEmploi' }],
         total: 1009721,
-        trancheAges: [
-          { count: 192281, label: '70 ans et plus', proportion: 19.043, value: 'SoixanteDixPlus' },
-        ],
+        trancheAges: [{ count: 192281, label: '70 ans et plus', proportion: 19.043, value: 'SoixanteDixPlus' }],
       },
       totaux: {
         accompagnements: {

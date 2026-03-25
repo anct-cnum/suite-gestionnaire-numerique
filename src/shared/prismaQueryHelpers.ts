@@ -50,16 +50,12 @@ export function buildWhereClause(
     )`)
   }
 
-  return conditions.length > 0
-    ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
-    : Prisma.empty
+  return conditions.length > 0 ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
 }
 
 // Crée un mapping de code région -> liste de codes départements
 function getDepartementsParRegion(codeRegion: string): Array<string> {
-  return departements
-    .filter(dept => dept.regionCode === codeRegion)
-    .map(dept => dept.code)
+  return departements.filter((dept) => dept.regionCode === codeRegion).map((dept) => dept.code)
 }
 
 interface ZonageFilters {

@@ -78,28 +78,23 @@ export default function AidantDetails(props: Props): ReactElement {
 
   // Cacher la section activités si rôle = médiateur ET pas de labelisation/habilitation
   const isMediateur = data.header.tags.includes('Médiateur')
-  const hasLabelisation = data.header.tags.includes('Conseiller numérique') || data.header.tags.includes('Aidant numérique')
+  const hasLabelisation =
+    data.header.tags.includes('Conseiller numérique') || data.header.tags.includes('Aidant numérique')
   const shouldShowActivites = !(isMediateur && !hasLabelisation)
 
   const menuItems: ReadonlyArray<SideMenuItem> = [
     { linkProps: { href: '#informations-personnelles' }, text: 'Informations personnelles' },
     { linkProps: { href: '#structures-employeuses' }, text: 'Structures employeuses' },
-    ...shouldShowActivites ? [{ linkProps: { href: '#activites' }, text: 'Activités' }] : [],
-    { linkProps: { href: '#lieux-activite' }, text: 'Lieux d\'activité' },
+    ...(shouldShowActivites ? [{ linkProps: { href: '#activites' }, text: 'Activités' }] : []),
+    { linkProps: { href: '#lieux-activite' }, text: "Lieux d'activité" },
   ]
   return (
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
         <div className={styles.menuContainer}>
-          <MenuCollant
-            contentId="aidant-content"
-            items={menuItems}
-          />
+          <MenuCollant contentId="aidant-content" items={menuItems} />
         </div>
-        <div
-          className={styles.contentContainer}
-          id="aidant-content"
-        >
+        <div className={styles.contentContainer} id="aidant-content">
           <div id="header">
             <AidantDetailsHeader data={data.header} />
           </div>
@@ -110,21 +105,19 @@ export default function AidantDetails(props: Props): ReactElement {
 
           <div id="structures-employeuses">
             {data.structuresEmployeuses.map((structure) => (
-              <AidantDetailsStructureEmployeuse
-                data={structure}
-                key={structure.nom}
-              />
+              <AidantDetailsStructureEmployeuse data={structure} key={structure.nom} />
             ))}
           </div>
 
-          {shouldShowActivites ?
+          {shouldShowActivites ? (
             <div id="activites">
               <AidantDetailsActivites
                 data={data.statistiquesActivites}
                 nom={data.informationsPersonnelles.nom}
                 prenom={data.informationsPersonnelles.prenom}
               />
-            </div> : null}
+            </div>
+          ) : null}
 
           <div id="lieux-activite">
             <AidantDetailsLieuxActivite

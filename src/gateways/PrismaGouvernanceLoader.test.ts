@@ -18,10 +18,7 @@ import {
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
-import {
-  Gouvernance,
-  SyntheseGouvernance,
-} from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
+import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('gouvernance loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -123,9 +120,7 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get('93')
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
     expect(gouvernanceReadModel.uid).toBe('93')
@@ -139,9 +134,9 @@ describe('gouvernance loader', () => {
     const codeDepartementInexistant = 'zzz'
 
     // WHEN
-    const gouvernanceReadModel = new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get(codeDepartementInexistant)
+    const gouvernanceReadModel = new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartementInexistant
+    )
 
     // THEN
     await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -185,9 +180,7 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get('93')
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
     expect(gouvernanceReadModel.notePrivee).toBeUndefined()
@@ -215,9 +208,9 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
@@ -254,9 +247,9 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
@@ -293,9 +286,9 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(
-      dummyEtablisseurSyntheseGouvernance
-    ).get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
@@ -313,10 +306,7 @@ describe('gouvernance loader', () => {
   })
 })
 
-async function creerComites(
-  gouvernanceDepartementCode: string,
-  incrementId: number
-): Promise<void> {
+async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
   await creerUnComite({
     commentaire: 'commentaire',
     creation: epochTime,
@@ -341,10 +331,7 @@ async function creerComites(
   })
 }
 
-async function creerFeuillesDeRoute(
-  gouvernanceDepartementCode: string,
-  incrementId: number
-): Promise<void> {
+async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
   const id1 = 1 + incrementId
   const id2 = 2 + incrementId
   await creerUneFeuilleDeRoute({

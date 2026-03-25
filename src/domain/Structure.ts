@@ -14,30 +14,15 @@ export class Structure extends Entity<StructureState> {
   readonly #identifiantEtablissement: string
   readonly #nom: string
 
-  private constructor(
-    uid: StructureUid,
-    nom: string,
-    identifiantEtablissement: string,
-    departementCode: string
-  ) {
+  private constructor(uid: StructureUid, nom: string, identifiantEtablissement: string, departementCode: string) {
     super(uid)
     this.#nom = nom
     this.#identifiantEtablissement = identifiantEtablissement
     this.#departementCode = departementCode
   }
 
-  static create({
-    departementCode,
-    identifiantEtablissement,
-    nom,
-    uid,
-  }: StructureFactoryParams): Structure {
-    return new Structure(
-      new StructureUid(uid.value),
-      nom,
-      identifiantEtablissement,
-      departementCode
-    )
+  static create({ departementCode, identifiantEtablissement, nom, uid }: StructureFactoryParams): Structure {
+    return new Structure(new StructureUid(uid.value), nom, identifiantEtablissement, departementCode)
   }
 }
 

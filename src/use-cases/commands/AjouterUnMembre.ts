@@ -60,20 +60,23 @@ export class AjouterUnMembre implements CommandHandler<Command> {
         structureId = structureExistante.state.uid.value
       } else {
         // Créer une nouvelle structure dans la transaction avec l'adresse enrichie
-        const nouvelleStructure = await this.#structureRepository.create({
-          adresse: command.entreprise.adresse,
-          adresseEnrichie,
-          categorieJuridique: command.entreprise.categorieJuridiqueCode,
-          categorieJuridiqueLibelle: command.entreprise.categorieJuridiqueUniteLegale,
-          codeInsee: command.entreprise.codeInsee,
-          codePostal: command.entreprise.codePostal,
-          commune: command.entreprise.commune,
-          departementCode: gouvernance.state.departement.code,
-          identifiantEtablissement: command.entreprise.siret,
-          nom: command.entreprise.nom,
-          nomVoie: command.entreprise.nomVoie,
-          numeroVoie: command.entreprise.numeroVoie,
-        }, tx)
+        const nouvelleStructure = await this.#structureRepository.create(
+          {
+            adresse: command.entreprise.adresse,
+            adresseEnrichie,
+            categorieJuridique: command.entreprise.categorieJuridiqueCode,
+            categorieJuridiqueLibelle: command.entreprise.categorieJuridiqueUniteLegale,
+            codeInsee: command.entreprise.codeInsee,
+            codePostal: command.entreprise.codePostal,
+            commune: command.entreprise.commune,
+            departementCode: gouvernance.state.departement.code,
+            identifiantEtablissement: command.entreprise.siret,
+            nom: command.entreprise.nom,
+            nomVoie: command.entreprise.nomVoie,
+            numeroVoie: command.entreprise.numeroVoie,
+          },
+          tx
+        )
         structureId = nouvelleStructure.state.uid.value
       }
 

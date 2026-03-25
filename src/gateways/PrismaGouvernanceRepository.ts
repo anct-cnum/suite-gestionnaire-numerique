@@ -35,9 +35,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         : undefined
 
     const noteDeContexte =
-      record.noteDeContexte &&
-      record.relationEditeurNoteDeContexte &&
-      record.derniereEditionNoteDeContexte
+      record.noteDeContexte && record.relationEditeurNoteDeContexte && record.derniereEditionNoteDeContexte
         ? {
             contenu: record.noteDeContexte,
             dateDeModification: new Date(record.derniereEditionNoteDeContexte),

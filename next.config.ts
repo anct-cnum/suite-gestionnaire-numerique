@@ -21,7 +21,8 @@ const securityHeaders = [
    **/
   {
     key: 'Permissions-Policy',
-    value: 'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
+    value:
+      'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
   },
   /**
    * The HTTP Strict-Transport-Security response header (often abbreviated as HSTS) informs browsers that the site
@@ -72,12 +73,14 @@ const nextConfig: NextConfig = {
   },
   // @ts-expect-error
   headers() {
-    return process.env.NODE_ENV === 'development' ? [] : [
-      {
-        headers: securityHeaders,
-        source: '/:path*',
-      },
-    ]
+    return process.env.NODE_ENV === 'development'
+      ? []
+      : [
+          {
+            headers: securityHeaders,
+            source: '/:path*',
+          },
+        ]
   },
   poweredByHeader: false,
   reactStrictMode: true,

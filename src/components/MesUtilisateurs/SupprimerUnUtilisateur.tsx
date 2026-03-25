@@ -5,51 +5,31 @@ import Modal from '../shared/Modal/Modal'
 import ModalTitle from '../shared/ModalTitle/ModalTitle'
 import { Notification } from '../shared/Notification/Notification'
 
-export default function SupprimerUnUtilisateur({
-  closeModal,
-  id,
-  isOpen,
-  utilisateurASupprimer,
-}: Props): ReactElement {
+export default function SupprimerUnUtilisateur({ closeModal, id, isOpen, utilisateurASupprimer }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const labelModaleId = useId()
 
   return (
-    <Modal
-      close={closeModal}
-      id={id}
-      isOpen={isOpen}
-      labelId={labelModaleId}
-    >
+    <Modal close={closeModal} id={id} isOpen={isOpen} labelId={labelModaleId}>
       <div className="fr-modal__content">
         <ModalTitle id={labelModaleId}>
-          Retirer
-          {' '}
-          {utilisateurASupprimer.prenomEtNom}
-          {' '}
-          de mon équipe d’utilisateurs ?
+          Retirer {utilisateurASupprimer.prenomEtNom} de mon équipe d’utilisateurs ?
         </ModalTitle>
-        <p>
-          En cliquant sur confirmer, cet utilisateur n’aura plus accès à votre espace de
-          gestion.
-        </p>
+        <p>En cliquant sur confirmer, cet utilisateur n’aura plus accès à votre espace de gestion.</p>
       </div>
       <div className="fr-modal__footer">
         <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-          <button
-            aria-controls={id}
-            className="fr-btn fr-btn--secondary"
-            onClick={closeModal}
-            type="button"
-          >
+          <button aria-controls={id} className="fr-btn fr-btn--secondary" onClick={closeModal} type="button">
             Annuler
           </button>
           <button
             aria-controls={id}
             className="fr-btn red-button"
             disabled={isDisabled}
-            onClick={() => { void supprimer(utilisateurASupprimer.uid) }}
+            onClick={() => {
+              void supprimer(utilisateurASupprimer.uid)
+            }}
             type="button"
           >
             {isDisabled ? 'Suppression en cours...' : 'Confirmer'}

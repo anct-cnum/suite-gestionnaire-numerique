@@ -366,15 +366,9 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe(
-        'Gestionnaire département'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe(
-        'Gestionnaire département'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire département')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire département')
     })
 
     it('étant gestionnaire région quand je cherche mes utilisateurs alors je trouve tous ceux qui ont la même région', async () => {
@@ -429,9 +423,7 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire région')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire région')
     })
 
@@ -486,15 +478,9 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe(
-        'Gestionnaire groupement'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe(
-        'Gestionnaire groupement'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire groupement')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire groupement')
     })
 
     it('étant gestionnaire structure quand je cherche mes utilisateurs alors je trouve tous ceux qui ont la même structure', async () => {
@@ -550,15 +536,9 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe(
-        'Gestionnaire structure'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe(
-        'Gestionnaire structure'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire structure')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
@@ -586,9 +566,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
     })
 
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
@@ -614,9 +592,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
@@ -642,9 +618,7 @@ describe('prisma utilisateur query', () => {
       )
 
       // THEN
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(
-        epochTime
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(epochTime)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].isActive).toBe(false)
     })
 
@@ -673,9 +647,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
@@ -704,16 +676,10 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe(
-        'Administrateur dispositif'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Administrateur dispositif')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe(
-        'Gestionnaire structure'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
     it(`quand je cherche mes utilisateurs par un département alors je trouve tous ceux qui sont rattachés à :
@@ -764,9 +730,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('1234568')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].departementCode).toBe('93')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(11)
@@ -836,9 +800,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(3)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(3)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].regionCode).toBe('11')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].departementCode).toBe('75')
@@ -894,9 +856,7 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(
-        '31512478-64eb-4993-af47-a728ec4d8e06'
-      )
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('31512478-64eb-4993-af47-a728ec4d8e06')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('userFooId')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].structureId).toBe(structureId)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(structureId)

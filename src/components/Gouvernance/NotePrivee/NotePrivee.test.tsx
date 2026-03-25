@@ -15,7 +15,9 @@ describe('note privée', () => {
     // THEN
     const resumeTitre = screen.getByText('Créez une note privée', { selector: 'p' })
     expect(resumeTitre).toBeInTheDocument()
-    const resumeSousTitre = screen.getByText('Elle sera uniquement accessible par vous et votre équipe interne.', { selector: 'p' })
+    const resumeSousTitre = screen.getByText('Elle sera uniquement accessible par vous et votre équipe interne.', {
+      selector: 'p',
+    })
     expect(resumeSousTitre).toBeInTheDocument()
     const ajouterUneNotePrivee = screen.getByRole('button', { name: 'Rédiger une note' })
     expect(ajouterUneNotePrivee).toHaveAttribute('aria-controls', 'drawerAjouterNotePriveeId')
@@ -27,7 +29,12 @@ describe('note privée', () => {
     afficherUneGouvernanceAvecNotePrivee()
 
     // THEN
-    const contenu = screen.getByText(matchWithoutMarkup('Note privée (interne)lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim...'), { selector: 'p' })
+    const contenu = screen.getByText(
+      matchWithoutMarkup(
+        'Note privée (interne)lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim...'
+      ),
+      { selector: 'p' }
+    )
     expect(contenu).toBeInTheDocument()
     const edition = screen.getAllByText('Modifié le 01/01/1970 par Lucie Lu', { selector: 'p' })[0]
     expect(edition).toBeInTheDocument()
@@ -38,7 +45,12 @@ describe('note privée', () => {
     afficherUneGouvernanceAvecNotePriveeNonCoPorteur()
 
     // THEN
-    const contenu = screen.queryByText(matchWithoutMarkup('Note privée (interne)lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim...'), { selector: 'p' })
+    const contenu = screen.queryByText(
+      matchWithoutMarkup(
+        'Note privée (interne)lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim...'
+      ),
+      { selector: 'p' }
+    )
     expect(contenu).not.toBeInTheDocument()
   })
 
@@ -56,7 +68,9 @@ describe('note privée', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Note privée' })
       const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Note privée' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', {
+        selector: 'p',
+      })
       expect(sousTitre).toBeInTheDocument()
       const note = within(formulaire).getByRole('textbox', { name: 'Votre note' })
       expect(note).toHaveAttribute('maxLength', '500')
@@ -142,11 +156,15 @@ describe('note privée', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Note privée' })
       const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Note privée' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', {
+        selector: 'p',
+      })
       expect(sousTitre).toBeInTheDocument()
       const note = within(formulaire).getByRole('textbox', { name: 'Votre note' })
       expect(note).toHaveAttribute('maxLength', '500')
-      expect(note).toHaveValue('lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.')
+      expect(note).toHaveValue(
+        'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.'
+      )
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterNotePriveeId')
       expect(enregistrer).toBeEnabled()
@@ -286,14 +304,18 @@ describe('note privée', () => {
 
   function afficherUneGouvernanceAvecNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = {
-      ...gouvernancePresenter(gouvernanceReadModelFactory({
-        notePrivee: {
-          dateDEdition: epochTime,
-          nomEditeur: 'Lu',
-          prenomEditeur: 'Lucie',
-          texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
-        },
-      }), now),
+      ...gouvernancePresenter(
+        gouvernanceReadModelFactory({
+          notePrivee: {
+            dateDEdition: epochTime,
+            nomEditeur: 'Lu',
+            prenomEditeur: 'Lucie',
+            texte:
+              'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
+          },
+        }),
+        now
+      ),
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
@@ -302,15 +324,19 @@ describe('note privée', () => {
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
     const gouvernanceViewModel = {
-      ...gouvernancePresenter(gouvernanceReadModelFactory({
-        notePrivee: {
-          dateDEdition: epochTime,
-          nomEditeur: 'Lu',
-          prenomEditeur: 'Lucie',
-          texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
-        },
-        peutVoirNotePrivee: false,
-      }), now),
+      ...gouvernancePresenter(
+        gouvernanceReadModelFactory({
+          notePrivee: {
+            dateDEdition: epochTime,
+            nomEditeur: 'Lu',
+            prenomEditeur: 'Lucie',
+            texte:
+              'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
+          },
+          peutVoirNotePrivee: false,
+        }),
+        now
+      ),
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }

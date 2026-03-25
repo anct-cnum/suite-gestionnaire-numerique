@@ -21,32 +21,21 @@ export default function HorairesOuverture(props: Props): ReactElement {
 
   return (
     <div>
-      <p className="fr-text--sm fr-mb-2w fr-text-mention--grey">
-        Horaires d&apos;ouverture du lieu
-      </p>
+      <p className="fr-text--sm fr-mb-2w fr-text-mention--grey">Horaires d&apos;ouverture du lieu</p>
 
       {horaires !== undefined && horaires !== '' ? (
         <>
           <OpeningState osmOpeningHours={horaires} />
-          <TimeTable
-            daysOfWeek={JOURS_SEMAINE}
-            osmOpeningHours={horaires}
-          />
+          <TimeTable daysOfWeek={JOURS_SEMAINE} osmOpeningHours={horaires} />
           {detailHoraires !== '' && (
             <div className="fr-mt-3w">
-              <h3 className="fr-h6 fr-mb-1w">
-                Détail horaires
-              </h3>
-              <p className="fr-text--sm">
-                {detailHoraires}
-              </p>
+              <h3 className="fr-h6 fr-mb-1w">Détail horaires</h3>
+              <p className="fr-text--sm">{detailHoraires}</p>
             </div>
           )}
         </>
       ) : (
-        <p className="fr-text--sm">
-          Horaires non renseignés
-        </p>
+        <p className="fr-text--sm">Horaires non renseignés</p>
       )}
     </div>
   )

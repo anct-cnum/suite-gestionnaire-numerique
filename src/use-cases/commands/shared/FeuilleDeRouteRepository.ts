@@ -11,7 +11,5 @@ export interface AddFeuilleDeRouteRepository {
 export interface UpdateFeuilleDeRouteRepository {
   update(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<void>
 }
-export interface FeuilleDeRouteRepository extends
-  AddFeuilleDeRouteRepository,
-  GetFeuilleDeRouteRepository,
-  UpdateFeuilleDeRouteRepository {}
+export interface FeuilleDeRouteRepository
+  extends AddFeuilleDeRouteRepository, GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {}

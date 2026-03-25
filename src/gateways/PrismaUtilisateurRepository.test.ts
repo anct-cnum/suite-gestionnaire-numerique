@@ -265,9 +265,7 @@ describe('utilisateur repository', () => {
       // GIVEN
       const prismaClientKnownRequestErrorOnUpdateStub = {
         async update(): Promise<never> {
-          return Promise.reject(
-            new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
-          )
+          return Promise.reject(new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' }))
         },
       } as unknown as Prisma.UtilisateurRecordDelegate
       const prismaClientUnknownRequestErrorOnUpdateStub = {

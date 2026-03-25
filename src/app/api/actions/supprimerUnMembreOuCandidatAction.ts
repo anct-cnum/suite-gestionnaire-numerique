@@ -25,13 +25,12 @@ export async function supprimerUnMembreOuCandidatAction(
     new PrismaMembreRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaGouvernanceRepository()
-  )
-    .handle({
-      date: new Date(),
-      uidGouvernance: actionParams.uidGouvernance,
-      uidMembre: actionParams.uidMembre,
-      uidUtilisateurConnecte: sessionSub,
-    })
+  ).handle({
+    date: new Date(),
+    uidGouvernance: actionParams.uidGouvernance,
+    uidMembre: actionParams.uidMembre,
+    uidUtilisateurConnecte: sessionSub,
+  })
 
   revalidatePath(actionParams.path)
 

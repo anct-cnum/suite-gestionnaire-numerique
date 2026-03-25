@@ -11,9 +11,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerDocument } from '@/use-cases/commands/SupprimerDocument'
 
-export async function supprimerDocumentAction(
-  actionParam: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function supprimerDocumentAction(actionParam: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParam)
 
   if (validationResult.error) {

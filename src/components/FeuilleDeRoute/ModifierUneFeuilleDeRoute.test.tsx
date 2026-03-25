@@ -20,7 +20,9 @@ describe('modifier une feuille de route', () => {
       expect(drawer).toHaveAttribute('id', 'drawerModifierUneFeuilleDeRouteId')
       const titre = within(drawer).getByRole('heading', { level: 3, name: 'Modifier une feuille de route' })
       expect(titre).toBeInTheDocument()
-      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
+      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), {
+        selector: 'p',
+      })
       expect(champsObligatoires).toBeInTheDocument()
 
       const formulaire = within(drawer).getByRole('form', { name: 'Modifier une feuille de route' })
@@ -30,7 +32,9 @@ describe('modifier une feuille de route', () => {
       expect(nom).toHaveAttribute('name', 'nom')
       expect(nom).toHaveValue('Feuille de route FNE')
       expect(nom).toHaveAttribute('type', 'text')
-      const porteur = within(formulaire).getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' })
+      const porteur = within(formulaire).getByRole('combobox', {
+        name: 'Quel membre de la gouvernance porte la feuille de route ? *',
+      })
       expect(porteur).toBeRequired()
       const choisir = within(porteur).getByRole('option', { name: 'Choisir' })
       expect(choisir).toBeInTheDocument()
@@ -40,7 +44,10 @@ describe('modifier une feuille de route', () => {
       expect(membre2).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
-      const perimetre = within(fieldsets[0]).getByText(matchWithoutMarkup('Quel est le périmètre géographique de la feuille de route ? *'), { selector: 'legend' })
+      const perimetre = within(fieldsets[0]).getByText(
+        matchWithoutMarkup('Quel est le périmètre géographique de la feuille de route ? *'),
+        { selector: 'legend' }
+      )
       expect(perimetre).toBeInTheDocument()
       const regional = within(formulaire).getByRole('radio', { name: 'Régional' })
       expect(regional).toBeRequired()
@@ -128,7 +135,10 @@ describe('modifier une feuille de route', () => {
   }
 
   function jeSelectionneUnMembre(value: string): void {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }), { target: { value } })
+    fireEvent.change(
+      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }),
+      { target: { value } }
+    )
   }
 
   function jeSelectionneUnPerimetre(name: string): void {
@@ -153,30 +163,33 @@ describe('modifier une feuille de route', () => {
     return button
   }
 
-  function afficherUneFeuilleDeRoute(
-    options?: Partial<Parameters<typeof renderComponent>[1]>
-  ): void {
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ porteur:{
-      nom: 'La Poste',
-      structureId: 1,
-      uid: 'membre2FooId',
-    },
-    uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
-      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        {
-          nom: 'Croix Rouge Française',
-          roles: ['porteur'],
-          structureId: 203,
-          uid: 'membre1FooId',
-        },
-        {
+  function afficherUneFeuilleDeRoute(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+    const viewModel = feuilleDeRoutePresenter(
+      feuilleDeRouteReadModelFactory({
+        porteur: {
           nom: 'La Poste',
-          roles: ['porteur'],
-          structureId: 300,
+          structureId: 1,
           uid: 'membre2FooId',
         },
-      ],
-    }))
+        uid: 'feuilleDeRouteFooId',
+      }),
+      gouvernanceReadModelFactory({
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+          {
+            nom: 'Croix Rouge Française',
+            roles: ['porteur'],
+            structureId: 203,
+            uid: 'membre1FooId',
+          },
+          {
+            nom: 'La Poste',
+            roles: ['porteur'],
+            structureId: 300,
+            uid: 'membre2FooId',
+          },
+        ],
+      })
+    )
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options)
   }
 })

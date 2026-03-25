@@ -135,12 +135,7 @@ export default function GouvernanceListFiltre({
         >
           Afficher les {totalResults} résultats
         </button>
-        <button
-          aria-controls={drawerId}
-          className="fr-btn fr-btn--secondary"
-          onClick={handleReset}
-          type="button"
-        >
+        <button aria-controls={drawerId} className="fr-btn fr-btn--secondary" onClick={handleReset} type="button">
           Réinitialiser
         </button>
       </div>

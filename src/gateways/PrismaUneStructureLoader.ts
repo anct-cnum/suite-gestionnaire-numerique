@@ -72,10 +72,12 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
     })
 
     // Récupérer les informations de département et région via SQL
-    const departementRegionResult = await prisma.$queryRaw<Array<{
-      departement_nom: null | string
-      region_nom: null | string
-    }>>`
+    const departementRegionResult = await prisma.$queryRaw<
+      Array<{
+        departement_nom: null | string
+        region_nom: null | string
+      }>
+    >`
       SELECT
         admin.departement.nom as departement_nom,
         admin.region.nom as region_nom
@@ -149,15 +151,17 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
   totalMediateur: number
 } {
   const totalMediateur = personnesAffectations.filter(
-    affectation => affectation.personne.is_mediateur === true
+    (affectation) => affectation.personne.is_mediateur === true
   ).length
   const totalCoordinateur = personnesAffectations.filter(
-    affectation => affectation.personne.is_coordinateur === true
+    (affectation) => affectation.personne.is_coordinateur === true
   ).length
-  const totalAidant = personnesAffectations.filter(affectation =>
-    affectation.source === 'aidant-connect' ||
-    affectation.personne.is_coordinateur === true ||
-    affectation.personne.is_mediateur === true).length
+  const totalAidant = personnesAffectations.filter(
+    (affectation) =>
+      affectation.source === 'aidant-connect' ||
+      affectation.personne.is_coordinateur === true ||
+      affectation.personne.is_mediateur === true
+  ).length
 
   // Dédupliquer les personnes par ID et collecter les sources par personne
   const personnesUniques = new Map<number, PersonneAffectation>()
@@ -171,7 +175,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     sourcesParPersonne.set(affectation.personne.id, sources)
   }
 
-  const liste = Array.from(personnesUniques.values()).map(affectation => {
+  const liste = Array.from(personnesUniques.values()).map((affectation) => {
     const personne = affectation.personne
     const sources = sourcesParPersonne.get(personne.id) ?? new Set<string>()
     const fonctions: Array<string> = []
@@ -231,7 +235,7 @@ function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): Readonl
   mediateur: string
   role: string
 }> {
-  return contrats.map(contrat => ({
+  return contrats.map((contrat) => ({
     contrat: contrat.type ?? 'CDD',
     dateDebut: contrat.date_debut ?? undefined,
     dateFin: contrat.date_fin ?? undefined,
@@ -241,24 +245,22 @@ function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): Readonl
   }))
 }
 
-async function buildContacts(structureId: number): Promise<ReadonlyArray<{
-  email: string
-  estReferentFNE: boolean
-  fonction: string
-  id: number
-  nom: string
-  prenom: string
-  telephone: string
-}>> {
+async function buildContacts(structureId: number): Promise<
+  ReadonlyArray<{
+    email: string
+    estReferentFNE: boolean
+    fonction: string
+    id: number
+    nom: string
+    prenom: string
+    telephone: string
+  }>
+> {
   const contactStructures = await prisma.contact_structure.findMany({
     include: {
       contact: true,
     },
-    orderBy: [
-      { contact: { est_referent_fne: 'desc' } },
-      { contact: { nom: 'asc' } },
-      { contact: { prenom: 'asc' } },
-    ],
+    orderBy: [{ contact: { est_referent_fne: 'desc' } }, { contact: { nom: 'asc' } }, { contact: { prenom: 'asc' } }],
     where: {
       structure_id: structureId,
     },
@@ -300,12 +302,7 @@ interface MembreRecord {
 }
 
 function isValidRoleType(role: string): role is RoleType {
-  const validRoles: ReadonlyArray<RoleType> = [
-    'beneficiaire',
-    'cofinanceur',
-    'coporteur',
-    'recipiendaire',
-  ]
+  const validRoles: ReadonlyArray<RoleType> = ['beneficiaire', 'cofinanceur', 'coporteur', 'recipiendaire']
   return validRoles.includes(role as RoleType)
 }
 
@@ -314,13 +311,16 @@ function extractGouvernances(membres: ReadonlyArray<MembreRecord>): ReadonlyArra
   nom: string
   roles: Array<RoleType>
 }> {
-  const gouvernancesMap = new Map<string, {
-    code: string
-    nom: string
-    roles: Set<RoleType>
-  }>()
+  const gouvernancesMap = new Map<
+    string,
+    {
+      code: string
+      nom: string
+      roles: Set<RoleType>
+    }
+  >()
 
-  membres.forEach(membre => {
+  membres.forEach((membre) => {
     const code = membre.relationGouvernance.departementCode
     const nom = membre.relationGouvernance.relationDepartement.nom ?? code
 
@@ -338,7 +338,7 @@ function extractGouvernances(membres: ReadonlyArray<MembreRecord>): ReadonlyArra
     }
   })
 
-  return Array.from(gouvernancesMap.values()).map(gouvernance => ({
+  return Array.from(gouvernancesMap.values()).map((gouvernance) => ({
     code: gouvernance.code,
     nom: gouvernance.nom,
     roles: Array.from(gouvernance.roles),
@@ -376,12 +376,12 @@ function ajouterRolesSubvention(
     return
   }
 
-  const aEnveloppeFormation = beneficiaires.some(
-    beneficiaire => beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+  const aEnveloppeFormation = beneficiaires.some((beneficiaire) =>
+    beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
   )
 
   const aEnveloppeNonFormation = beneficiaires.some(
-    beneficiaire => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
   )
 
   if (aEnveloppeFormation) {
@@ -402,13 +402,15 @@ function determinerRoleContrat(personne: { is_coordinateur: boolean | null; is_m
   return 'Aidant'
 }
 
-function formatAdresse(adresse: {
-  code_postal: string
-  nom_commune: string
-  nom_voie: null | string
-  numero_voie: null | number
-  repetition: null | string
-} | null): string {
+function formatAdresse(
+  adresse: {
+    code_postal: string
+    nom_commune: string
+    nom_voie: null | string
+    numero_voie: null | number
+    repetition: null | string
+  } | null
+): string {
   if (adresse === null) {
     return ''
   }
@@ -471,22 +473,22 @@ async function buildConventionsEtFinancements(
   structureId: number,
   membres: ReadonlyArray<MembreRecord>
 ): Promise<{
-    conventions: ReadonlyArray<{
-      dateDebut: Date
-      dateFin: Date
-      id: string
-      libelle: string
-      montantBonification: number
-      montantSubvention: number
-      montantTotal: number
-    }>
-    creditsEngagesParLEtat: number
-    enveloppes: ReadonlyArray<{
-      libelle: string
-      montant: number
-    }>
-    lienConventions: string
-  }> {
+  conventions: ReadonlyArray<{
+    dateDebut: Date
+    dateFin: Date
+    id: string
+    libelle: string
+    montantBonification: number
+    montantSubvention: number
+    montantTotal: number
+  }>
+  creditsEngagesParLEtat: number
+  enveloppes: ReadonlyArray<{
+    libelle: string
+    montant: number
+  }>
+  lienConventions: string
+}> {
   const enveloppesMap = new Map<string, number>()
   let totalCredits = 0
 
@@ -522,7 +524,8 @@ async function buildConventionsEtFinancements(
 async function buildConventionsConseillerNumerique(
   structureId: number,
   enveloppesMap: Map<string, number>
-): Promise<Array<{
+): Promise<
+  Array<{
     dateDebut: Date
     dateFin: Date
     id: string
@@ -530,7 +533,8 @@ async function buildConventionsConseillerNumerique(
     montantBonification: number
     montantSubvention: number
     montantTotal: number
-  }>> {
+  }>
+> {
   // Utiliser la vue postes_conseiller_numerique_synthese pour récupérer les données
   const postesConumResult = await prisma.$queryRaw<Array<PosteConumVueResult>>`
     SELECT
@@ -546,7 +550,7 @@ async function buildConventionsConseillerNumerique(
   `
 
   // Récupérer toutes les dates en une seule fois pour éviter les await dans la boucle
-  const postesIds = postesConumResult.map(poste => poste.poste_conum_id)
+  const postesIds = postesConumResult.map((poste) => poste.poste_conum_id)
   const datesSubventions = await recupererDatesSubventions(postesIds)
 
   // Cumuler par enveloppe au niveau de la structure
@@ -560,9 +564,9 @@ function cumulerSubventionsParEnveloppe(
   postesConumResult: ReadonlyArray<PosteConumVueResult>,
   datesSubventions: Map<number, { v1: DatesConvention | null; v2: DatesConvention | null }>
 ): {
-    cumulV1: CumulEnveloppe
-    cumulV2: { source: null | string } & CumulEnveloppe
-  } {
+  cumulV1: CumulEnveloppe
+  cumulV2: { source: null | string } & CumulEnveloppe
+} {
   const cumulV1: CumulEnveloppe = {
     dateDebut: null,
     dateFin: null,
@@ -643,14 +647,14 @@ function creerConventionsCumulees(
   cumulV2: { source: null | string } & CumulEnveloppe,
   enveloppesMap: Map<string, number>
 ): Array<{
-    dateDebut: Date
-    dateFin: Date
-    id: string
-    libelle: string
-    montantBonification: number
-    montantSubvention: number
-    montantTotal: number
-  }> {
+  dateDebut: Date
+  dateFin: Date
+  id: string
+  libelle: string
+  montantBonification: number
+  montantSubvention: number
+  montantTotal: number
+}> {
   const conventions: Array<{
     dateDebut: Date
     dateFin: Date
@@ -662,26 +666,14 @@ function creerConventionsCumulees(
   }> = []
 
   // Convention V1 (Initial)
-  const conventionV1 = creerConventionSiValide(
-    structureId,
-    'V1',
-    'DGCL',
-    cumulV1,
-    enveloppesMap
-  )
+  const conventionV1 = creerConventionSiValide(structureId, 'V1', 'DGCL', cumulV1, enveloppesMap)
   if (conventionV1 !== null) {
     conventions.push(conventionV1)
   }
 
   // Convention V2 (Renouvellement)
   const sourceV2 = cumulV2.source ?? 'DGE'
-  const conventionV2 = creerConventionSiValide(
-    structureId,
-    'V2',
-    sourceV2,
-    cumulV2,
-    enveloppesMap
-  )
+  const conventionV2 = creerConventionSiValide(structureId, 'V2', sourceV2, cumulV2, enveloppesMap)
   if (conventionV2 !== null) {
     conventions.push(conventionV2)
   }
@@ -731,23 +723,30 @@ interface CumulEnveloppe {
   montantSubvention: number
 }
 
-async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Promise<Map<number, {
-  v1: DatesConvention | null
-  v2: DatesConvention | null
-}>> {
+async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Promise<
+  Map<
+    number,
+    {
+      v1: DatesConvention | null
+      v2: DatesConvention | null
+    }
+  >
+> {
   if (postesIds.length === 0) {
     return new Map()
   }
 
-  const datesResult = await prisma.$queryRaw<Array<{
-    date_debut_dgcl: Date | null
-    date_debut_dge: Date | null
-    date_debut_ditp: Date | null
-    date_fin_dgcl: Date | null
-    date_fin_dge: Date | null
-    date_fin_ditp: Date | null
-    poste_id: number
-  }>>`
+  const datesResult = await prisma.$queryRaw<
+    Array<{
+      date_debut_dgcl: Date | null
+      date_debut_dge: Date | null
+      date_debut_ditp: Date | null
+      date_fin_dgcl: Date | null
+      date_fin_dge: Date | null
+      date_fin_ditp: Date | null
+      poste_id: number
+    }>
+  >`
     SELECT
       s.poste_id,
       s.date_debut_convention_dgcl as date_debut_dgcl,
@@ -760,10 +759,13 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
     WHERE s.poste_id = ANY(${postesIds})
   `
 
-  const datesMap = new Map<number, {
-    v1: DatesConvention | null
-    v2: DatesConvention | null
-  }>()
+  const datesMap = new Map<
+    number,
+    {
+      v1: DatesConvention | null
+      v2: DatesConvention | null
+    }
+  >()
 
   // Initialiser tous les postes
   for (const posteId of postesIds) {
@@ -825,12 +827,10 @@ interface MembreRecordWithFeuilles {
   }>
 }
 
-function extractFeuillesDeRoute(
-  membres: ReadonlyArray<MembreRecordWithFeuilles>
-): ReadonlyArray<{
-    libelle: string
-    lien: string
-  }> {
+function extractFeuillesDeRoute(membres: ReadonlyArray<MembreRecordWithFeuilles>): ReadonlyArray<{
+  libelle: string
+  lien: string
+}> {
   const feuillesDeRoute: Array<{
     libelle: string
     lien: string

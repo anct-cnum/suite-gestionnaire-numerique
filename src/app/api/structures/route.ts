@@ -23,7 +23,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<null | Str
   return NextResponse.json(structuresReadModel)
 }
 
-function makeZone(searchParams: URLSearchParams): Parameters<typeof RechercherLesStructures.prototype.handle>[0]['zone'] {
+function makeZone(
+  searchParams: URLSearchParams
+): Parameters<typeof RechercherLesStructures.prototype.handle>[0]['zone'] {
   const [departement, region] = [searchParams.get('departement'), searchParams.get('region')]
   let zone: ReturnType<typeof makeZone>
   if (!isNullishOrEmpty(departement)) {

@@ -14,7 +14,9 @@ export default function SelecteurDepartement({ ariaControlsId }: Props): ReactEl
       ariaControlsId={ariaControlsId}
       id="departement"
       name="departement"
-      onChange={(event) => { void changerDeDepartement(event) }}
+      onChange={(event) => {
+        void changerDeDepartement(event)
+      }}
       options={departements.map((departement) => ({
         id: departement.code,
         isSelected: departement.code === sessionUtilisateurViewModel.codeDepartement,

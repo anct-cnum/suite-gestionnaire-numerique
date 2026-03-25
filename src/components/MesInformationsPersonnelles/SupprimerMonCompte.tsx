@@ -52,12 +52,7 @@ export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Pr
         </div>
         <div className="fr-modal__footer">
           <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-            <button
-              aria-controls={id}
-              className="fr-btn fr-btn--secondary"
-              onClick={close}
-              type="reset"
-            >
+            <button aria-controls={id} className="fr-btn fr-btn--secondary" onClick={close} type="reset">
               Annuler
             </button>
             <SubmitButton isDisabled={isConfirmerDisabled()}>

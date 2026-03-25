@@ -1,10 +1,12 @@
 export type BeneficiairesViewModel = Readonly<{
   collectivite: number
-  details: ReadonlyArray<Readonly<{
-    color: string
-    label: string
-    total: number
-  }>>
+  details: ReadonlyArray<
+    Readonly<{
+      color: string
+      label: string
+      total: number
+    }>
+  >
   graphique: Readonly<{
     backgroundColor: ReadonlyArray<string>
   }>
@@ -22,9 +24,9 @@ export function beneficiairesPresenter(
     label: detail.label,
     total: detail.total,
   }))
-  
-  const backgroundColor = details.map(detail => obtenirCouleurGraphique(detail.color))
-  
+
+  const backgroundColor = details.map((detail) => obtenirCouleurGraphique(detail.color))
+
   return {
     collectivite: beneficiairesReadModel.collectivite,
     details,

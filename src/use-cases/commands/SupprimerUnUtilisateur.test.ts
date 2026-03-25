@@ -26,42 +26,45 @@ describe('supprimer un utilisateur', () => {
     expect(result).toBe('suppressionNonAutorisee')
   })
 
-  it('l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, mais ce dernier a été supprimé'
-    + ' entre-temps : échec de la suppression', async () => {
-    // GIVEN
-    const commandHandler = new SupprimerUnUtilisateur(new UtilisateursSuppressionConcurrenteRepositorySpy())
+  it(
+    'l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, mais ce dernier a été supprimé' +
+      ' entre-temps : échec de la suppression',
+    async () => {
+      // GIVEN
+      const commandHandler = new SupprimerUnUtilisateur(new UtilisateursSuppressionConcurrenteRepositorySpy())
 
-    // WHEN
-    const result = await commandHandler.handle({
-      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-      uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
-    })
+      // WHEN
+      const result = await commandHandler.handle({
+        uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+        uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+      })
 
-    // THEN
-    expect(spiedUtilisateurToDrop).not.toBeNull()
-    expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
-    expect(result).toBe('compteASupprimerDejaSupprime')
-  })
+      // THEN
+      expect(spiedUtilisateurToDrop).not.toBeNull()
+      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
+      expect(result).toBe('compteASupprimerDejaSupprime')
+    }
+  )
 
-  it('l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, qui n’a pas été supprimé'
-    + ' entre-temps : succès de la suppression', async () => {
-    // GIVEN
-    const commandHandler = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
+  it(
+    'l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, qui n’a pas été supprimé' +
+      ' entre-temps : succès de la suppression',
+    async () => {
+      // GIVEN
+      const commandHandler = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
-    // WHEN
-    const result = await commandHandler.handle({
-      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-      uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
-    })
+      // WHEN
+      const result = await commandHandler.handle({
+        uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+        uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+      })
 
-    // THEN
-    expect(spiedUidsToFind).toStrictEqual([
-      'utilisateurCourantExistantAutreUid',
-      'utilisateurASupprimerExistantUid',
-    ])
-    expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
-    expect(result).toBe('OK')
-  })
+      // THEN
+      expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantExistantAutreUid', 'utilisateurASupprimerExistantUid'])
+      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
+      expect(result).toBe('OK')
+    }
+  )
 })
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {

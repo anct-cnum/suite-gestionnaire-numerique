@@ -11,8 +11,14 @@ import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIa
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
-import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
-import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import {
+  accompagnementsEtMediateursPresenter,
+  AccompagnementsEtMediateursViewModel,
+} from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import {
+  niveauDeFormationPresenter,
+  NiveauDeFormationViewModel,
+} from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
@@ -38,7 +44,9 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
   const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
     new PrismaAccompagnementsEtMediateursLoader()
   )
-  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({ territoire: 'France' })
+  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({
+    territoire: 'France',
+  })
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
     accompagnementsEtMediateursPresenter
@@ -46,10 +54,9 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
   const niveauDeFormationReadModel = await niveauDeFormationLoader.get()
-  const niveauDeFormationViewModel = handleReadModelOrError(
-    niveauDeFormationReadModel,
-    niveauDeFormationPresenter
-  ) as ErrorViewModel | NiveauDeFormationViewModel
+  const niveauDeFormationViewModel = handleReadModelOrError(niveauDeFormationReadModel, niveauDeFormationPresenter) as
+    | ErrorViewModel
+    | NiveauDeFormationViewModel
   const dateGeneration = new Date()
 
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements()

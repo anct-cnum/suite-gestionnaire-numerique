@@ -18,8 +18,7 @@ export default function AjouterUnCoFinancement({
   labelId,
 }: Props): ReactElement {
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const membresGouvernanceConfirme =
-    gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
 
   const [coFinanceur, setCoFinanceur] = useState('')
   const [montant, setMontant] = useState<Optional<MontantPositif>>(() => Optional.empty())
@@ -38,9 +37,7 @@ export default function AjouterUnCoFinancement({
         aria-controls="ajouter-un-cofinancement"
         className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
         data-fr-opened={isDrawerOpen}
-        disabled={MontantPositif.of(String(budgetGlobal))
-          .orElse(MontantPositif.Zero)
-          .lessThan(MontantPositif.of('1'))}
+        disabled={MontantPositif.of(String(budgetGlobal)).orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
         onClick={() => {
           setIsDrawerOpen(true)
         }}
@@ -110,10 +107,7 @@ export default function AjouterUnCoFinancement({
         <div className="fr-btns-group fr-mt-2w">
           <button
             className="fr-btn"
-            disabled={
-              coFinanceur === '' ||
-              montant.orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))
-            }
+            disabled={coFinanceur === '' || montant.orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
             onClick={handleSubmit}
             type="button"
           >

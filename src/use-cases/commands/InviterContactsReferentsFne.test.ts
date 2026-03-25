@@ -1,8 +1,16 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ContactReferentFne, ContactReferentFneLoader, InviterContactsReferentsFne } from './InviterContactsReferentsFne'
+import {
+  ContactReferentFne,
+  ContactReferentFneLoader,
+  InviterContactsReferentsFne,
+} from './InviterContactsReferentsFne'
 import { EmailGateway } from './shared/EmailGateway'
-import { AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import {
+  AddUtilisateurRepository,
+  FindUtilisateurByEmailRepository,
+  GetUtilisateurRepository,
+} from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { Destinataire } from '@/gateways/emails/invitationEmail'
@@ -66,12 +74,10 @@ describe('inviter les contacts référents FNE', () => {
     expect(result).toBe('OK')
     expect(spiedUtilisateursAjoutes).toHaveLength(1)
     expect(spiedUtilisateursAjoutes[0]?.state.emailDeContact).toBe('marie.durand@example.net')
-    expect(spiedDestinataires).toStrictEqual([
-      { email: 'marie.durand@example.net', nom: 'Durand', prenom: 'Marie' },
-    ])
+    expect(spiedDestinataires).toStrictEqual([{ email: 'marie.durand@example.net', nom: 'Durand', prenom: 'Marie' }])
   })
 
-  it('quand il n\'y a aucun contact référent FNE, alors aucune invitation n\'est envoyée', async () => {
+  it("quand il n'y a aucun contact référent FNE, alors aucune invitation n'est envoyée", async () => {
     // GIVEN
     const inviterContactsReferentsFne = new InviterContactsReferentsFne(
       new UtilisateurRepositorySpy(),
@@ -103,8 +109,9 @@ const contacts: ReadonlyArray<ContactReferentFne> = [
   { email: 'marie.durand@example.net', nom: 'Durand', prenom: 'Marie', telephone: '0607080910' },
 ]
 
-class UtilisateurRepositorySpy implements
-  AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository {
+class UtilisateurRepositorySpy
+  implements AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository
+{
   async add(utilisateur: Utilisateur): Promise<boolean> {
     spiedUtilisateursAjoutes.push(utilisateur)
     return Promise.resolve(true)
@@ -116,7 +123,9 @@ class UtilisateurRepositorySpy implements
   }
 
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    return Promise.resolve(utilisateurFactory({ role: 'Gestionnaire département', uid: { email: 'admin@example.net', value: uid } }))
+    return Promise.resolve(
+      utilisateurFactory({ role: 'Gestionnaire département', uid: { email: 'admin@example.net', value: uid } })
+    )
   }
 }
 
@@ -145,10 +154,10 @@ class ContactReferentFneLoaderSansContactsSpy implements ContactReferentFneLoade
 }
 
 function emailGatewayFactorySpy(): EmailGateway {
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataires.push(destinataire)
       return Promise.resolve()
     }
-  }()
+  })()
 }

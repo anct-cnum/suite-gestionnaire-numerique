@@ -20,12 +20,7 @@ export class CoFinancement extends Entity<State> {
   readonly #uidAction: ActionUid
   readonly #uidMembre: MembreUid
 
-  private constructor(
-    uid: CoFinancementUid,
-    montant: number,
-    uidAction: ActionUid,
-    uidMembre: MembreUid
-  ) {
+  private constructor(uid: CoFinancementUid, montant: number, uidAction: ActionUid, uidMembre: MembreUid) {
     super(uid)
     this.#uid = uid
     this.#montant = montant
@@ -33,12 +28,7 @@ export class CoFinancement extends Entity<State> {
     this.#uidMembre = uidMembre
   }
 
-  static create({
-    montant,
-    uid,
-    uidAction,
-    uidMembre,
-  }: FactoryParams): Result<CoFinancementFailure, CoFinancement> {
+  static create({ montant, uid, uidAction, uidMembre }: FactoryParams): Result<CoFinancementFailure, CoFinancement> {
     try {
       if (montant <= 0) {
         return 'montantInvalide'
@@ -50,8 +40,7 @@ export class CoFinancement extends Entity<State> {
         new ActionUid(uidAction.value),
         new MembreUid(uidMembre)
       )
-    }
-    catch (error) {
+    } catch (error) {
       return (error as Exception<CoFinancementFailure>).message as CoFinancementFailure
     }
   }

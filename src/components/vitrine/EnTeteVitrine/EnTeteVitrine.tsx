@@ -27,13 +27,8 @@ export default function EnTeteVitrine(): ReactElement {
                 </div>
               </div>
               <div className="fr-header__service">
-                <Link
-                  href="/"
-                  title="Accueil"
-                >
-                  <p className="fr-header__service-title">
-                    Inclusion Numérique
-                  </p>
+                <Link href="/" title="Accueil">
+                  <p className="fr-header__service-title">Inclusion Numérique</p>
                 </Link>
               </div>
             </div>
@@ -41,10 +36,7 @@ export default function EnTeteVitrine(): ReactElement {
               <div className="fr-header__tools-links">
                 <ul className="fr-links-group">
                   <li>
-                    <a
-                      className="fr-link fr-icon-question-line"
-                      href="mailto:moninclusionnumerique@anct.gouv.fr"
-                    >
+                    <a className="fr-link fr-icon-question-line" href="mailto:moninclusionnumerique@anct.gouv.fr">
                       Aide
                     </a>
                   </li>
@@ -54,36 +46,21 @@ export default function EnTeteVitrine(): ReactElement {
           </div>
         </div>
       </div>
-      <div
-        aria-labelledby="button-vitrine-menu"
-        className="fr-header__menu fr-modal"
-        id="navigation"
-      >
+      <div aria-labelledby="button-vitrine-menu" className="fr-header__menu fr-modal" id="navigation">
         <div className="fr-container">
-          <button
-            aria-controls="navigation"
-            className="fr-btn--close fr-btn"
-            type="button"
-          >
+          <button aria-controls="navigation" className="fr-btn--close fr-btn" type="button">
             Fermer
           </button>
           <div className="fr-header__menu-links">
             <ul className="fr-btns-group">
               <li>
-                <a
-                  className="fr-link fr-icon-question-line"
-                  href="mailto:moninclusionnumerique@anct.gouv.fr"
-                >
+                <a className="fr-link fr-icon-question-line" href="mailto:moninclusionnumerique@anct.gouv.fr">
                   Aide
                 </a>
               </li>
             </ul>
           </div>
-          <nav
-            aria-label="Menu principal"
-            className="fr-nav"
-            role="navigation"
-          >
+          <nav aria-label="Menu principal" className="fr-nav" role="navigation">
             <ul className="fr-nav__list">
               <li className="fr-nav__item">
                 <Link
@@ -131,18 +108,10 @@ export default function EnTeteVitrine(): ReactElement {
                 </Link>
               </li>
               <li className="fr-nav__item">
-                <button
-                  aria-controls="menu-etudes"
-                  aria-expanded="false"
-                  className="fr-nav__btn"
-                  type="button"
-                >
+                <button aria-controls="menu-etudes" aria-expanded="false" className="fr-nav__btn" type="button">
                   Études et enquêtes
                 </button>
-                <div
-                  className="fr-collapse fr-menu"
-                  id="menu-etudes"
-                >
+                <div className="fr-collapse fr-menu" id="menu-etudes">
                   <ul className="fr-menu__list">
                     <li>
                       <a

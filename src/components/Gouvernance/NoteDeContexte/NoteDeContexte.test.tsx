@@ -23,7 +23,9 @@ describe('note de contexte', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
       const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Note de contexte' })
       expect(titre).toBeInTheDocument()
-      const texteDInstructions = within(drawer).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
+      const texteDInstructions = within(drawer).getByText(
+        'Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance'
+      )
       expect(texteDInstructions).toBeInTheDocument()
       const boutonsEdition = [
         'Titre 1',
@@ -78,7 +80,7 @@ describe('note de contexte', () => {
       expect(boutonEnregistrer).toBeDisabled()
       const ajouterUneNoteDeContexteDrawer = await screen.findByRole('dialog', { name: 'Note de contexte' })
       expect(ajouterUneNoteDeContexteDrawer).not.toBeVisible()
-      const notification = await screen.findByRole('status')
+      const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note de contexte ajoutée')
       expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
     })
@@ -110,7 +112,9 @@ describe('note de contexte', () => {
       const drawer = modifierUneNoteDeContexteDrawer()
       const editeurDeTextEnrichi = within(drawer).getByRole('textarea')
       expect(editeurDeTextEnrichi).toBeInTheDocument()
-      expect(editeurDeTextEnrichi.innerHTML).toBe('<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <strong>bold</strong></p>')
+      expect(editeurDeTextEnrichi.innerHTML).toBe(
+        '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <strong>bold</strong></p>'
+      )
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toBeEnabled()
       const boutonEffacer = within(drawer).getByRole('button', { name: 'Effacer' })
@@ -152,7 +156,7 @@ describe('note de contexte', () => {
         path: '/gouvernance/11',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('status')
+      const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note de contexte bien modifiée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
@@ -189,8 +193,11 @@ describe('note de contexte', () => {
     // THEN
     expect(enregistrer).toHaveAccessibleName('Modification en cours...')
     expect(enregistrer).toBeDisabled()
-    expect(supprimerUneNoteDeContexteAction).toHaveBeenCalledWith({ path: '/gouvernance/11', uidGouvernance: 'gouvernanceFooId' })
-    const notification = await screen.findByRole('status')
+    expect(supprimerUneNoteDeContexteAction).toHaveBeenCalledWith({
+      path: '/gouvernance/11',
+      uidGouvernance: 'gouvernanceFooId',
+    })
+    const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Note de contexte supprimée')
     expect(noteDeContexte.textContent).toBe('')
     expect(drawer).not.toBeVisible()
@@ -224,14 +231,17 @@ function afficherUneGouvernance(options?: Partial<Parameters<typeof renderCompon
 }
 
 function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-    noteDeContexte: {
-      dateDeModification: epochTime,
-      nomAuteur: 'Deschamps',
-      prenomAuteur: 'Jean',
-      texte: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
-    },
-  }), epochTime)
+  const gouvernanceViewModel = gouvernancePresenter(
+    gouvernanceReadModelFactory({
+      noteDeContexte: {
+        dateDeModification: epochTime,
+        nomAuteur: 'Deschamps',
+        prenomAuteur: 'Jean',
+        texte: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
+      },
+    }),
+    epochTime
+  )
   renderComponent(<Gouvernance />, options, gouvernanceViewModel)
 }
 

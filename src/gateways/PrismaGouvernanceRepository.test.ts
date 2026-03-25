@@ -47,9 +47,7 @@ describe('gouvernance repository', () => {
     await creerUneGouvernance({ departementCode: '76' })
 
     // WHEN
-    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(
-      new GouvernanceUid(departementCode)
-    )
+    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(
@@ -71,9 +69,7 @@ describe('gouvernance repository', () => {
     })
 
     // WHEN
-    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(
-      new GouvernanceUid(departementCode)
-    )
+    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(
@@ -102,14 +98,11 @@ describe('gouvernance repository', () => {
     await creerUneGouvernance({ departementCode: '76' })
 
     // WHEN
-    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(
-      new GouvernanceUid(departementCode)
-    )
+    const gouvernanceTrouvee = await new PrismaGouvernanceRepository().get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(
-      gouvernanceFactory({ noteDeContexte: undefined, notePrivee: undefined, uid: departementCode })
-        .state
+      gouvernanceFactory({ noteDeContexte: undefined, notePrivee: undefined, uid: departementCode }).state
     )
   })
 

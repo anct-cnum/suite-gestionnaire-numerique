@@ -40,11 +40,7 @@ export const ProgressItemList = ({
 }) => (
   <div className={classNames('fr-width-full', styles.container)}>
     {items.map(({ label, count, proportion }, index) => {
-      const computedColors = color
-        ? [color]
-        : colors && colors.length > 0
-          ? [colors[index % colors.length]]
-          : []
+      const computedColors = color ? [color] : colors && colors.length > 0 ? [colors[index % colors.length]] : []
 
       const showTooltip = (truncateLabel || oneLineLabel) && tooltipKey
 
@@ -67,12 +63,10 @@ export const ProgressItemList = ({
               styles.label,
               truncateLabel && styles.truncatedLabel,
               oneLineLabel && styles.oneLineLabel,
-              classes?.label,
+              classes?.label
             )}
             style={style?.label}
-            aria-describedby={
-              showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined
-            }
+            aria-describedby={showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined}
           >
             {label}
           </span>
@@ -80,7 +74,7 @@ export const ProgressItemList = ({
             className={classNames(
               'fr-text--sm fr-text--right fr-text--bold fr-whitespace-nowrap',
               styles.count,
-              classes?.count,
+              classes?.count
             )}
             style={style?.count}
           >
@@ -90,7 +84,7 @@ export const ProgressItemList = ({
             className={classNames(
               'fr-text--sm fr-text--right fr-text--medium fr-text-mention--grey fr-whitespace-nowrap',
               styles.proportion,
-              classes?.proportion,
+              classes?.proportion
             )}
             style={style?.proportion}
           >
@@ -102,8 +96,7 @@ export const ProgressItemList = ({
             progress={[
               {
                 label,
-                percentage:
-                  maxProportion === 0 ? 0 : (100 * proportion) / maxProportion,
+                percentage: maxProportion === 0 ? 0 : (100 * proportion) / maxProportion,
               },
             ]}
             colors={computedColors}

@@ -13,7 +13,9 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
     <div className="fr-pr-lg-10w">
       <div className="fr-mb-10w">
         <div className="fr-mb-1w">
-          <div style={{ alignItems: 'center', display: 'flex', gap: '10px', justifyContent: 'center', minHeight: '40px' }}>
+          <div
+            style={{ alignItems: 'center', display: 'flex', gap: '10px', justifyContent: 'center', minHeight: '40px' }}
+          >
             <h2
               className="fr-mb-0"
               style={{
@@ -26,10 +28,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             >
               Données et statistiques
             </h2>
-            <button
-              className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-download-line"
-              type="button"
-            >
+            <button className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-download-line" type="button">
               Exporter
             </button>
           </div>
@@ -48,12 +47,28 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
           <GraphiqueDemiCercle
             dateGeneration={viewModel.categoryGenerationDate}
             details={[
-              { backgroundColor: 'dot-purple-glycine-main-494', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
-              { backgroundColor: 'dot-purple-glycine-850-200', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
+              {
+                backgroundColor: 'dot-purple-glycine-main-494',
+                label: 'En quartier prioritaire de la ville (QPV)',
+                value: viewModel.territoriesQPV,
+              },
+              {
+                backgroundColor: 'dot-purple-glycine-850-200',
+                label: 'En zone France Ruralités Revitalisation (FRR)',
+                value: viewModel.territoriesFRR,
+              },
             ]}
             graphiqueInfos={[
-              { backgroundColor: '#a558a0', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
-              { backgroundColor: '#fbb8f6', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
+              {
+                backgroundColor: '#a558a0',
+                label: 'En quartier prioritaire de la ville (QPV)',
+                value: viewModel.territoriesQPV,
+              },
+              {
+                backgroundColor: '#fbb8f6',
+                label: 'En zone France Ruralités Revitalisation (FRR)',
+                value: viewModel.territoriesFRR,
+              },
             ]}
             indicateur={viewModel.territoriesPrioritaires}
             label="Lieux en territoires prioritaires"
@@ -63,12 +78,28 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
           <GraphiqueDemiCercle
             dateGeneration={viewModel.categoryGenerationDate}
             details={[
-              { backgroundColor: 'dot-green-emeraude-main-632', label: 'Lieux accueillant des conseillers numériques', value: viewModel.lieuxConseillerNumeriques },
-              { backgroundColor: 'dot-green-menthe-main-548', label: 'Points d\'accueil labellisés France services', value: viewModel.lieuxFranceService },
+              {
+                backgroundColor: 'dot-green-emeraude-main-632',
+                label: 'Lieux accueillant des conseillers numériques',
+                value: viewModel.lieuxConseillerNumeriques,
+              },
+              {
+                backgroundColor: 'dot-green-menthe-main-548',
+                label: "Points d'accueil labellisés France services",
+                value: viewModel.lieuxFranceService,
+              },
             ]}
             graphiqueInfos={[
-              { backgroundColor: '#00a95f', label: 'Lieux accueillant des conseillers numériques', value: viewModel.lieuxConseillerNumeriques },
-              { backgroundColor: '#009081', label: 'Points d\'accueil labellisés France services', value: viewModel.lieuxFranceService },
+              {
+                backgroundColor: '#00a95f',
+                label: 'Lieux accueillant des conseillers numériques',
+                value: viewModel.lieuxConseillerNumeriques,
+              },
+              {
+                backgroundColor: '#009081',
+                label: "Points d'accueil labellisés France services",
+                value: viewModel.lieuxFranceService,
+              },
             ]}
             indicateur={viewModel.nombreLabellisesOuHabilites}
             information="Un lieu peut accueillir des médiateurs de plusieurs dispositifs, il est alors comptabilisé dans chaque catégorie"
@@ -77,14 +108,8 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
         </div>
       </div>
 
-      <div
-        className="fr-grid-row fr-mb-4w fr-border-default--grey"
-        style={{ borderRadius: '1rem', height: '20rem' }}
-      >
-        <div
-          className="fr-col-12 fr-col-md-6 fr-pr-1w"
-          style={{ borderRadius: '1rem', position: 'relative' }}
-        >
+      <div className="fr-grid-row fr-mb-4w fr-border-default--grey" style={{ borderRadius: '1rem', height: '20rem' }}>
+        <div className="fr-col-12 fr-col-md-6 fr-pr-1w" style={{ borderRadius: '1rem', position: 'relative' }}>
           <Image
             alt=""
             className="fr-mr-2w"
@@ -111,14 +136,8 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             textAlign: 'center',
           }}
         >
-          <div
-            style={{ height: 'auto', textAlign: 'start', width: '60%' }}
-          >
-            <span
-              className="fr-h2 fr-text-label--blue-france"
-            >
-              Voir tous les lieux sur la cartographie
-            </span>
+          <div style={{ height: 'auto', textAlign: 'start', width: '60%' }}>
+            <span className="fr-h2 fr-text-label--blue-france">Voir tous les lieux sur la cartographie</span>
           </div>
           <div className="fr-mt-2w">
             <a

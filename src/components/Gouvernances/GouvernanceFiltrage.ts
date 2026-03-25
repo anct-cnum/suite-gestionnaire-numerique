@@ -3,8 +3,11 @@
 import { FilterType, InfosGouvernances } from '@/components/Gouvernances/GouvernancesList'
 import { GouvernanceDetails } from '@/presenters/gouvernancesPresenter'
 
-export function filtrerDetails(details: Array<GouvernanceDetails>, filtreGeographique:string, avance: FilterType)
-  : Array<GouvernanceDetails> {
+export function filtrerDetails(
+  details: Array<GouvernanceDetails>,
+  filtreGeographique: string,
+  avance: FilterType
+): Array<GouvernanceDetails> {
   let nouveauDetails = details
   if (filtreGeographique !== '') {
     nouveauDetails = nouveauDetails.filter((detail) => detail.departementRegion === filtreGeographique)
@@ -20,10 +23,7 @@ export function filtrerDetails(details: Array<GouvernanceDetails>, filtreGeograp
       break
     case FilterType.NO_GOUV:
       nouveauDetails = nouveauDetails.filter(
-        (detail) =>
-          detail.feuilleDeRouteCount === 0 &&
-          detail.coporteurCount === 1 &&
-          detail.membreCount === 1
+        (detail) => detail.feuilleDeRouteCount === 0 && detail.coporteurCount === 1 && detail.membreCount === 1
       )
       break
     case FilterType.NO_ROADMAP:
@@ -38,7 +38,7 @@ export function filtrerDetails(details: Array<GouvernanceDetails>, filtreGeograp
 export function getInfosFilrer(details: Array<GouvernanceDetails>): InfosGouvernances {
   const creditEngagerGlobal = details
     // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
-    .filter((gouvernanceDetail) =>  gouvernanceDetail.montantEngager !== undefined)
+    .filter((gouvernanceDetail) => gouvernanceDetail.montantEngager !== undefined)
     .flatMap((gouvernanceDetail) => gouvernanceDetail.montantEngager)
     .reduce((count, value) => count + value, 0)
 

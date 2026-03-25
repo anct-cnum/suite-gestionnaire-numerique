@@ -40,40 +40,28 @@ export const GridSystem: Story = {
 
       <div className="fr-grid-row fr-grid-row--gutters fr-mb-4v">
         <div className="fr-col-12">
-          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>
-            fr-col-12 (100%)
-          </div>
+          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>fr-col-12 (100%)</div>
         </div>
       </div>
 
       <div className="fr-grid-row fr-grid-row--gutters fr-mb-4v">
         <div className="fr-col-6">
-          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>
-            fr-col-6 (50%)
-          </div>
+          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>fr-col-6 (50%)</div>
         </div>
         <div className="fr-col-6">
-          <div style={{ backgroundColor: '#fef7e0', padding: '1rem', textAlign: 'center' }}>
-            fr-col-6 (50%)
-          </div>
+          <div style={{ backgroundColor: '#fef7e0', padding: '1rem', textAlign: 'center' }}>fr-col-6 (50%)</div>
         </div>
       </div>
 
       <div className="fr-grid-row fr-grid-row--gutters fr-mb-4v">
         <div className="fr-col-4">
-          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>
-            fr-col-4
-          </div>
+          <div style={{ backgroundColor: '#e3e3fd', padding: '1rem', textAlign: 'center' }}>fr-col-4</div>
         </div>
         <div className="fr-col-4">
-          <div style={{ backgroundColor: '#fef7e0', padding: '1rem', textAlign: 'center' }}>
-            fr-col-4
-          </div>
+          <div style={{ backgroundColor: '#fef7e0', padding: '1rem', textAlign: 'center' }}>fr-col-4</div>
         </div>
         <div className="fr-col-4">
-          <div style={{ backgroundColor: '#f0fdf4', padding: '1rem', textAlign: 'center' }}>
-            fr-col-4
-          </div>
+          <div style={{ backgroundColor: '#f0fdf4', padding: '1rem', textAlign: 'center' }}>fr-col-4</div>
         </div>
       </div>
 
@@ -112,16 +100,10 @@ export const SpacingAndAlignment: Story = {
 
       <div className="fr-mb-6v">
         <h4>Alignement du texte</h4>
-        <div
-          className="fr-text--left fr-mb-2v"
-          style={{ backgroundColor: '#f0fdf4', padding: '1rem' }}
-        >
+        <div className="fr-text--left fr-mb-2v" style={{ backgroundColor: '#f0fdf4', padding: '1rem' }}>
           fr-text--left
         </div>
-        <div
-          className="fr-text--center fr-mb-2v"
-          style={{ backgroundColor: '#fef7e0', padding: '1rem' }}
-        >
+        <div className="fr-text--center fr-mb-2v" style={{ backgroundColor: '#fef7e0', padding: '1rem' }}>
           fr-text--center
         </div>
         <div className="fr-text--right" style={{ backgroundColor: '#fee2e2', padding: '1rem' }}>

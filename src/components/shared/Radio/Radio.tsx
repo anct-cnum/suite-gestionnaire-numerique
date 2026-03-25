@@ -19,10 +19,7 @@ export default function Radio({ children, id, isChecked, nomGroupe, onChange }: 
           type="radio"
           value={id}
         />
-        <label
-          className="fr-label"
-          htmlFor={id}
-        >
+        <label className="fr-label" htmlFor={id}>
           {children}
         </label>
       </div>
@@ -30,9 +27,11 @@ export default function Radio({ children, id, isChecked, nomGroupe, onChange }: 
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  id: string
-  isChecked: boolean
-  nomGroupe: string
-  onChange?: ChangeEventHandler<HTMLInputElement>
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    id: string
+    isChecked: boolean
+    nomGroupe: string
+    onChange?: ChangeEventHandler<HTMLInputElement>
+  }>
+>

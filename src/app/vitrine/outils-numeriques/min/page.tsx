@@ -7,10 +7,18 @@ import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
 
 export const metadata: Metadata = {
-  description: 'Mon Inclusion Numérique : outil de visualisation de données et de pilotage de l\'inclusion numérique dans les territoires. Accédez aux données départementales et régionales, pilotez la feuille de route France Numérique Ensemble.',
-  keywords: ['Mon Inclusion Numérique', 'pilotage territorial', 'données inclusion', 'gouvernance territoriale', 'feuille de route', 'collectivités'],
+  description:
+    "Mon Inclusion Numérique : outil de visualisation de données et de pilotage de l'inclusion numérique dans les territoires. Accédez aux données départementales et régionales, pilotez la feuille de route France Numérique Ensemble.",
+  keywords: [
+    'Mon Inclusion Numérique',
+    'pilotage territorial',
+    'données inclusion',
+    'gouvernance territoriale',
+    'feuille de route',
+    'collectivités',
+  ],
   openGraph: {
-    description: 'Outil de visualisation de données et de pilotage de l\'inclusion numérique dans les territoires.',
+    description: "Outil de visualisation de données et de pilotage de l'inclusion numérique dans les territoires.",
     locale: 'fr_FR',
     title: 'Mon Inclusion Numérique - Inclusion Numérique',
     type: 'website',
@@ -89,10 +97,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
             paddingBottom: '240px',
           }}
         >
-          <div
-            className="fr-grid-row fr-grid-row--center"
-            style={{ width: '100%' }}
-          >
+          <div className="fr-grid-row fr-grid-row--center" style={{ width: '100%' }}>
             <div
               className="fr-col-12"
               style={{
@@ -109,17 +114,10 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                     color: 'var(--yellow-tournesol-sun-407-moon-922)',
                   }}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-flashlight-fill fr-icon--xs"
-                  />
-                  {' '}
-                  Nouvelle plateforme
+                  <span aria-hidden="true" className="fr-icon-flashlight-fill fr-icon--xs" /> Nouvelle plateforme
                 </span>
               </div>
-              <h1 className={styles.heroTitle}>
-                Mon Inclusion Numérique
-              </h1>
+              <h1 className={styles.heroTitle}>Mon Inclusion Numérique</h1>
               <p
                 className="fr-text--lead"
                 style={{
@@ -150,10 +148,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
       {/* Section: À qui s'adresse cet outil ? */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', justifyContent: 'space-between' }}
-          >
+          <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Illustration à gauche */}
             <div
               className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}
@@ -179,45 +174,23 @@ export default function MonInclusionNumeriquePage(): ReactElement {
             {/* Contenu à droite */}
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div>
-                <img
-                  alt=""
-                  src="/vitrine/outils/min/logo-instituer.svg"
-                  style={{ height: '56px', width: 'auto' }}
-                />
+                <img alt="" src="/vitrine/outils/min/logo-instituer.svg" style={{ height: '56px', width: 'auto' }} />
               </div>
-              <h2
-                className="fr-h2"
-                style={{ marginBottom: 0 }}
-              >
+              <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 À qui s&apos;adresse cet outil ?
               </h2>
-              <p className="fr-text--md">
-                Mon Inclusion Numérique est conçu pour les :
-              </p>
-              <ul
-                className="fr-text--md"
-                style={{ listStyleType: 'disc', paddingLeft: '1.5rem' }}
-              >
+              <p className="fr-text--md">Mon Inclusion Numérique est conçu pour les :</p>
+              <ul className="fr-text--md" style={{ listStyleType: 'disc', paddingLeft: '1.5rem' }}>
                 <li>
-                  <strong>
-                    Collectivités territoriales
-                  </strong>
-                  {' '}
-                  : mieux comprendre et structurer les actions locales
+                  <strong>Collectivités territoriales</strong> : mieux comprendre et structurer les actions locales
                 </li>
                 <li>
-                  <strong>
-                    Administrations et institutions
-                  </strong>
-                  {' '}
-                  : piloter les politiques publiques d&apos;inclusion numérique
+                  <strong>Administrations et institutions</strong> : piloter les politiques publiques d&apos;inclusion
+                  numérique
                 </li>
                 <li>
-                  <strong>
-                    Acteurs de terrain et associations
-                  </strong>
-                  {' '}
-                  : comprendre l&apos;inclusion numérique sur son territoire et participer à la dynamique locale
+                  <strong>Acteurs de terrain et associations</strong> : comprendre l&apos;inclusion numérique sur son
+                  territoire et participer à la dynamique locale
                 </li>
               </ul>
             </div>
@@ -226,15 +199,10 @@ export default function MonInclusionNumeriquePage(): ReactElement {
       </section>
 
       {/* Section titre: Un outil unique pour comprendre l'inclusion numérique */}
-      <section
-        className="fr-py-8w"
-      >
+      <section className="fr-py-8w">
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--center">
-            <div
-              className="fr-col-12 fr-col-md-8"
-              style={{ textAlign: 'center' }}
-            >
+            <div className="fr-col-12 fr-col-md-8" style={{ textAlign: 'center' }}>
               <div>
                 <img
                   alt=""
@@ -256,13 +224,9 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               >
                 piloter l&apos;inclusion numérique
               </p>
-              <h2
-                className="fr-h2"
-                style={{ color: '#000091' }}
-              >
+              <h2 className="fr-h2" style={{ color: '#000091' }}>
                 Un outil unique pour comprendre et piloter l&apos;inclusion numérique sur votre territoire
               </h2>
-
             </div>
           </div>
         </div>
@@ -301,15 +265,9 @@ export default function MonInclusionNumeriquePage(): ReactElement {
       />
 
       {/* Section: Comment participer à une gouvernance territoriale */}
-      <section
-        className="fr-py-12w"
-        style={{ backgroundColor: '#FFF8E1' }}
-      >
+      <section className="fr-py-12w" style={{ backgroundColor: '#FFF8E1' }}>
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', justifyContent: 'space-between' }}
-          >
+          <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Illustration à gauche */}
             <div
               className={`fr-col-12 fr-col-md-5 ${styles.imageLeft}`}
@@ -331,22 +289,13 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
             {/* Contenu à droite */}
             <div className={`fr-col-12 fr-col-md-6 ${styles.contentRight}`}>
-              <h2
-                className="fr-h2"
-                style={{ color: '#000091', marginBottom: 0 }}
-              >
+              <h2 className="fr-h2" style={{ color: '#000091', marginBottom: 0 }}>
                 Comment participer à une gouvernance territoriale ?
               </h2>
               <p className="fr-text--md">
-                <strong>
-                  En tant que collectivité ou acteur territorial,
-                </strong>
-                {' '}
-                vous êtes invité à manifester votre souhait de participer à une gouvernance
-                de l’inclusion numérique sur votre territoire.
-                {' '}
-                En tant que Conseil Régional, Conseil Département ou EPCI, vous pouvez également
-                porter une feuille de route.
+                <strong>En tant que collectivité ou acteur territorial,</strong> vous êtes invité à manifester votre
+                souhait de participer à une gouvernance de l’inclusion numérique sur votre territoire. En tant que
+                Conseil Régional, Conseil Département ou EPCI, vous pouvez également porter une feuille de route.
               </p>
               <div>
                 <a
@@ -355,8 +304,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  Accéder au formulaire
-                  {' '}
+                  Accéder au formulaire{' '}
                 </a>
               </div>
             </div>

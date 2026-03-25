@@ -41,5 +41,5 @@ export default async function LieuxInclusionController(): Promise<ReactElement> 
 
   const viewModel = lieuxInclusionNumeriquePresenter(result)
 
-  return (<LieuxInclusion viewModel={viewModel} />)
+  return <LieuxInclusion viewModel={viewModel} />
 }

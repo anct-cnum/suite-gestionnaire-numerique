@@ -19,7 +19,9 @@ export default async function Page({ params }: Props): Promise<ReactElement> {
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
+  params: Promise<
+    Readonly<{
+      codeDepartement: string
+    }>
+  >
 }>

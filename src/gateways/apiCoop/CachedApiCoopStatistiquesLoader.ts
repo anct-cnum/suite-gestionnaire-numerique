@@ -53,9 +53,7 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     const entreeCache = CachedApiCoopStatistiquesLoader.cache.get(cacheKey)
 
     if (entreeCache && this.estCacheValide(entreeCache, maintenant)) {
-      console.log(
-        `📦 Cache HIT pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`
-      )
+      console.log(`📦 Cache HIT pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`)
       return entreeCache.data
     }
 
@@ -125,9 +123,7 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     }
 
     if (filtres.types && filtres.types.length > 0) {
-      elements.push(
-        `types_${[...filtres.types].sort((typeA, typeB) => typeA.localeCompare(typeB, 'fr')).join('_')}`
-      )
+      elements.push(`types_${[...filtres.types].sort((typeA, typeB) => typeA.localeCompare(typeB, 'fr')).join('_')}`)
     }
 
     if (filtres.conseillerNumerique !== undefined) {

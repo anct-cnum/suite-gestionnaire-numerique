@@ -3,7 +3,11 @@ import { notFound } from 'next/navigation'
 import { ReactElement, Suspense } from 'react'
 
 import AsyncLoaderErrorBoundary from '@/components/AidantsMediateurs/GenericErrorBoundary'
-import { StatistiquesAsyncContent, statistiquesCoopToMediateursData, StatistiquesMediateursData } from '@/components/coop/Statistiques'
+import {
+  StatistiquesAsyncContent,
+  statistiquesCoopToMediateursData,
+  StatistiquesMediateursData,
+} from '@/components/coop/Statistiques'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
@@ -13,7 +17,10 @@ import CarteStatistiqueMediateurs from '@/components/vitrine/MediateursNumerique
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistiquesMediateursLoader'
-import { statistiquesMediateursPresenter, StatistiquesMediateursViewModel } from '@/presenters/vitrine/statistiquesMediateursPresenter'
+import {
+  statistiquesMediateursPresenter,
+  StatistiquesMediateursViewModel,
+} from '@/presenters/vitrine/statistiquesMediateursPresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 
 const DATE_DEBUT_DISPOSITIF = '2020-11-07'
@@ -23,8 +30,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const codeDepartement = code?.[0]
 
   return generateTerritoireMetadata(niveau, codeDepartement, {
-    descriptionTemplate: 'Découvrez les médiateurs numériques pour {territoire}. Statistiques sur les conseillers numériques, aidants Connect et professionnels de la médiation numérique.',
-    keywords: ['médiateurs numériques', 'conseillers numériques', 'Aidants Connect', 'médiation numérique', 'accompagnement numérique'],
+    descriptionTemplate:
+      'Découvrez les médiateurs numériques pour {territoire}. Statistiques sur les conseillers numériques, aidants Connect et professionnels de la médiation numérique.',
+    keywords: [
+      'médiateurs numériques',
+      'conseillers numériques',
+      'Aidants Connect',
+      'médiation numérique',
+      'accompagnement numérique',
+    ],
     titleTemplate: 'Médiateurs numériques - {territoire} - Inclusion Numérique',
   })
 }
@@ -47,7 +61,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
   const codeDepartement = niveau === 'departement' && code !== undefined ? code[0] : undefined
 
   // Déterminer le territoire pour les loaders
-  const territoire = niveau === 'national' ? 'France' : codeDepartement ?? ''
+  const territoire = niveau === 'national' ? 'France' : (codeDepartement ?? '')
 
   // Dates pour le filtre (par défaut : début du dispositif jusqu'à aujourd'hui)
   const aujourdhui = new Date().toISOString().slice(0, 10)
@@ -66,13 +80,9 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
   const statistiquesPromise = recupererStatistiques(codeDepartement, dateDebut, dateFin)
 
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="fr-mb-4w">
-        <h2 className="fr-h2 color-blue-france fr-mb-0">
-          Médiateurs numériques
-        </h2>
+        <h2 className="fr-h2 color-blue-france fr-mb-0">Médiateurs numériques</h2>
         <div>
           <p className="fr-m-0 fr-text--sm fr-text--semi-bold fr-text-mention--grey">
             L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
@@ -85,9 +95,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
         fallback={
           <div className="fr-py-4w">
             <div className="fr-alert fr-alert--error">
-              <p>
-                Erreur de récupération de la donnée depuis la Coop
-              </p>
+              <p>Erreur de récupération de la donnée depuis la Coop</p>
             </div>
           </div>
         }
@@ -96,11 +104,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
           fallback={<SpinnerSimple text="Récupération des données depuis la Coop" />}
           key={`${dateDebut}-${dateFin}`}
         >
-          <StatistiquesAsyncContent
-            dateDebut={dateDebut}
-            dateFin={dateFin}
-            statistiquesPromise={statistiquesPromise}
-          />
+          <StatistiquesAsyncContent dateDebut={dateDebut} dateFin={dateFin} statistiquesPromise={statistiquesPromise} />
         </Suspense>
       </AsyncLoaderErrorBoundary>
       <div className="fr-mb-4w ">
@@ -110,16 +114,12 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
   )
 }
 
-function renderCartesStatistiques(
-  viewModel: ErrorViewModel | StatistiquesMediateursViewModel
-): ReactElement {
+function renderCartesStatistiques(viewModel: ErrorViewModel | StatistiquesMediateursViewModel): ReactElement {
   if (isErrorReadModel(viewModel)) {
     return (
       <div className="fr-mb-4w">
         <div className="fr-alert fr-alert--error">
-          <p>
-            {viewModel.message}
-          </p>
+          <p>{viewModel.message}</p>
         </div>
       </div>
     )
@@ -128,10 +128,7 @@ function renderCartesStatistiques(
   return (
     <div className="fr-grid-row fr-grid-row--gutters fr-mb-3v">
       <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
-        <CarteStatistiqueMediateurs
-          nombre={viewModel.mediateurs.nombre}
-          sousTexte={viewModel.mediateurs.sousTexte}
-        />
+        <CarteStatistiqueMediateurs nombre={viewModel.mediateurs.nombre} sousTexte={viewModel.mediateurs.sousTexte} />
       </div>
       <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
         <CarteStatistiqueConseillersNumeriques

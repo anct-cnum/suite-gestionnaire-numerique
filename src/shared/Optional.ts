@@ -1,6 +1,5 @@
 // eslint-disable-next-line func-style
-const checkIsNaN: <Value>(value: Value) => boolean = <Value>(value: Value) =>
-  typeof value === 'number' && isNaN(value)
+const checkIsNaN: <Value>(value: Value) => boolean = <Value>(value: Value) => typeof value === 'number' && isNaN(value)
 
 export abstract class Optional<Value> {
   static empty<Value>(): Optional<Value> {

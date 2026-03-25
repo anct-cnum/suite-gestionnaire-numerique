@@ -11,9 +11,7 @@ export type NiveauDeFormationViewModel = Readonly<{
   totalAidantsEtMediateurs: string
 }>
 
-export function niveauDeFormationPresenter(
-  readModel: NiveauDeFormationReadModel
-): NiveauDeFormationViewModel {
+export function niveauDeFormationPresenter(readModel: NiveauDeFormationReadModel): NiveauDeFormationViewModel {
   // Couleurs dans l'ordre (pas de tri nécessaire, les données arrivent dans l'ordre)
   // Ces couleurs correspondent aux variables CSS du DSFR dans Dot.module.css
   const couleursOrdonnees = [

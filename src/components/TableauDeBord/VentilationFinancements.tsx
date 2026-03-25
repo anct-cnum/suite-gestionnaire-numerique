@@ -10,55 +10,29 @@ export default function VentilationFinancements({
 }: Props): ReactElement {
   return (
     <>
-      <div
-        className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w"
-        style={{ fontWeight: 500 }}
-      >
-        {nombreDeFinancementsEngagesParLEtat}
-        {' '}
-        financement(s) engagé(s) par l&apos;État
+      <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w" style={{ fontWeight: 500 }}>
+        {nombreDeFinancementsEngagesParLEtat} financement(s) engagé(s) par l&apos;État
         {contexte === 'departement' && (
           <Information>
             <p className="fr-mb-0">
-              Nombre de demandes de 
-              {' '}
-              <strong>
-                subventions validées
-              </strong>
-              {' '}
-              des feuilles de route
-              de votre gouvernance.
+              Nombre de demandes de <strong>subventions validées</strong> des feuilles de route de votre gouvernance.
             </p>
           </Information>
         )}
         {contexte === 'admin' && (
           <Information>
             <p className="fr-mb-0">
-              Nombre de demandes de 
-              {' '}
-              <strong>
-                subventions validées
-              </strong>
-              {' '}
-              des feuilles de route.
+              Nombre de demandes de <strong>subventions validées</strong> des feuilles de route.
             </p>
           </Information>
         )}
       </div>
       <ul>
         {ventilationSubventionsParEnveloppe.map((detail) => (
-          <li
-            key={detail.label}
-            style={{ listStyle: 'none' }}
-          >
+          <li key={detail.label} style={{ listStyle: 'none' }}>
             <div style={{ alignItems: 'center', display: 'flex' }}>
-              <div
-                className="fr-text--sm fr-mb-1w"
-                style={{ flex: '1 1 auto', fontWeight: 400, minWidth: 0 }}
-              >
-                <Dot color={detail.color} /> 
-                {' '}
-                {detail.label}
+              <div className="fr-text--sm fr-mb-1w" style={{ flex: '1 1 auto', fontWeight: 400, minWidth: 0 }}>
+                <Dot color={detail.color} /> {detail.label}
               </div>
               <div
                 className="fr-text--sm fr-mb-1w"
@@ -73,10 +47,7 @@ export default function VentilationFinancements({
                 {detail.total}
               </div>
               {contexte === 'admin' && (
-                <div
-                  style={{ width: '6.25rem' }}
-                  title={`${detail.pourcentageConsomme}% de l'enveloppe consommée`}
-                >
+                <div style={{ width: '6.25rem' }} title={`${detail.pourcentageConsomme}% de l'enveloppe consommée`}>
                   <div
                     className="fr-text--sm fr-mb-1w"
                     style={{

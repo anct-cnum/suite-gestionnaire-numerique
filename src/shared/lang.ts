@@ -30,8 +30,9 @@ export function noop(): void {
 
 export function alphaAsc(): (left: string, right: string) => number
 export function alphaAsc<K extends string, V extends Record<K, string>>(key: K): (left: V, right: V) => number
-export function alphaAsc<K extends string, V extends Record<K, string>>(key?: K):
-(left: string | V, right: string | V) => number {
+export function alphaAsc<K extends string, V extends Record<K, string>>(
+  key?: K
+): (left: string | V, right: string | V) => number {
   if (isNullish(key)) {
     return (left, right) => (left as string).localeCompare(right as string)
   }

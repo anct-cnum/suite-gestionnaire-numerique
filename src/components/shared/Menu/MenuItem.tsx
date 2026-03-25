@@ -4,10 +4,7 @@ import { Key, ReactElement } from 'react'
 
 export default function MenuItem({ iconClass, label, onClick }: Readonly<MenuItemProps>): ReactElement {
   return (
-    <li
-      className="fr-p-0"
-      role="none"
-    >
+    <li className="fr-p-0" role="none">
       <button
         className="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left w-full text-left flex items-center justify-start px-4 py-2"
         onClick={() => {
@@ -20,13 +17,8 @@ export default function MenuItem({ iconClass, label, onClick }: Readonly<MenuIte
         }}
         type="button"
       >
-        <span
-          aria-hidden="true"
-          className={`${iconClass} fr-mr-2w`}
-        />
-        <span className="fr-text-label--grey">
-          {label}
-        </span>
+        <span aria-hidden="true" className={`${iconClass} fr-mr-2w`} />
+        <span className="fr-text-label--grey">{label}</span>
       </button>
     </li>
   )

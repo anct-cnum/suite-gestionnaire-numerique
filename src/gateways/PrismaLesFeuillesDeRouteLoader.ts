@@ -52,10 +52,11 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
     codeDepartement: string
   ): FeuillesDeRouteReadModel {
     const synthese = this.#etablisseurSynthese({
-      feuillesDeRoute: feuillesDeRouteRecord.map(feuilleDeRoute => ({
-        actions: feuilleDeRoute.action.map(action => {
-          const demandeDeSubvention =
-            action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
+      feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRoute) => ({
+        actions: feuilleDeRoute.action.map((action) => {
+          const demandeDeSubvention = action.demandesDeSubvention[0] as
+            | (typeof action.demandesDeSubvention)[number]
+            | undefined
           return {
             beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
             budgetGlobal: action.budgetGlobal,
@@ -63,15 +64,17 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
               coFinanceur: fromMembre(toMembre(membre)),
               montant,
             })),
-            subvention: demandeDeSubvention ? {
-              isFormation: isEnveloppeDeFormation(demandeDeSubvention.enveloppe),
-              montants: {
-                prestation: demandeDeSubvention.subventionPrestation ?? 0,
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                ressourcesHumaines: demandeDeSubvention?.subventionEtp ?? 0,
-              },
-              statut: demandeDeSubvention.statut as StatutSubvention,
-            } : undefined,
+            subvention: demandeDeSubvention
+              ? {
+                  isFormation: isEnveloppeDeFormation(demandeDeSubvention.enveloppe),
+                  montants: {
+                    prestation: demandeDeSubvention.subventionPrestation ?? 0,
+                    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                    ressourcesHumaines: demandeDeSubvention?.subventionEtp ?? 0,
+                  },
+                  statut: demandeDeSubvention.statut as StatutSubvention,
+                }
+              : undefined,
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             uid: `${action?.id ?? 'ID inconnu'}`,
           }
@@ -82,12 +85,13 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
     return {
       feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord, indexDeuilleDeRoute) => ({
         actions: feuilleDeRouteRecord.action.map((action, indexAction) => {
-          const demandeDeSubvention =
-            action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
+          const demandeDeSubvention = action.demandesDeSubvention[0] as
+            | (typeof action.demandesDeSubvention)[number]
+            | undefined
           const syntheseAction = synthese.feuillesDeRoute[indexDeuilleDeRoute].actions[indexAction]
           return {
             beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-            besoins: action.besoins.map(besoin => besoin as BesoinsPossible),
+            besoins: action.besoins.map((besoin) => besoin as BesoinsPossible),
             budgetGlobal: action.budgetGlobal,
             coFinancements: action.coFinancement.map(({ membre, montant }) => ({
               coFinanceur: fromMembre(toMembre(membre)),
@@ -97,14 +101,16 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
             description: action.description,
             nom: action.nom,
             porteurs: toMembres(action.porteurAction.map(({ membre }) => membre)).map(fromMembre),
-            subvention: demandeDeSubvention ? {
-              enveloppe: demandeDeSubvention.enveloppe.libelle,
-              montants: {
-                prestation: demandeDeSubvention.subventionPrestation ?? 0,
-                ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
-              },
-              statut: demandeDeSubvention.statut as StatutSubvention,
-            } : undefined,
+            subvention: demandeDeSubvention
+              ? {
+                  enveloppe: demandeDeSubvention.enveloppe.libelle,
+                  montants: {
+                    prestation: demandeDeSubvention.subventionPrestation ?? 0,
+                    ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
+                  },
+                  statut: demandeDeSubvention.statut as StatutSubvention,
+                }
+              : undefined,
             totaux: {
               coFinancement: syntheseAction.coFinancement,
               financementAccorde: syntheseAction.financemenTotalAccorde,
@@ -115,14 +121,14 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
         beneficiaires: 0,
         coFinanceurs: 0,
         nom: feuilleDeRouteRecord.nom,
-        ...Boolean(feuilleDeRouteRecord.pieceJointe) && {
+        ...(Boolean(feuilleDeRouteRecord.pieceJointe) && {
           pieceJointe: {
             apercu: '',
             emplacement: '',
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             nom: feuilleDeRouteRecord.pieceJointe!,
           },
-        },
+        }),
         structureCoPorteuse: feuilleDeRouteRecord.relationMembre
           ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
           : undefined,
@@ -147,15 +153,20 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
   }
 }
 
-function fromMembre(
-  { id, nom, structureId }: Membre
-): NonNullable<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['structureCoPorteuse']> {
+function fromMembre({
+  id,
+  nom,
+  structureId,
+}: Membre): NonNullable<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['structureCoPorteuse']> {
   return { nom, structureId, uid: id }
 }
 
-function fromMembreAvecRoles(
-  { id, nom, roles, structureId }: Membre
-): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
+function fromMembreAvecRoles({
+  id,
+  nom,
+  roles,
+  structureId,
+}: Membre): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
   return { nom, roles, structureId, uid: id }
 }
 

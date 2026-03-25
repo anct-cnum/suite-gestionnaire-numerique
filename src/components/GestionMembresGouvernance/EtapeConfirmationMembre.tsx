@@ -49,11 +49,7 @@ export default function EtapeConfirmationMembre({
             <div className="fr-mb-4w">
               <h3 className="fr-h5 fr-mb-3w">Contact référent</h3>
               {data.contact ? (
-                <dl
-                  aria-label="Contact référent"
-                  className="fr-grid-row fr-grid-row--gutters"
-                  role="list"
-                >
+                <dl aria-label="Contact référent" className="fr-grid-row fr-grid-row--gutters" role="list">
                   <div className="fr-col-6">
                     <dt className="color-grey">Nom</dt>
                     <dd className="font-weight-500">{data.contact.nom}</dd>
@@ -78,11 +74,7 @@ export default function EtapeConfirmationMembre({
             {data.contactSecondaire !== null ? (
               <div className="fr-mb-4w">
                 <h3 className="fr-h5 fr-mb-3w">Contact secondaire</h3>
-                <dl
-                  aria-label="Contact secondaire"
-                  className="fr-grid-row fr-grid-row--gutters"
-                  role="list"
-                >
+                <dl aria-label="Contact secondaire" className="fr-grid-row fr-grid-row--gutters" role="list">
                   <div className="fr-col-6">
                     <dt className="color-grey">Nom</dt>
                     <dd className="font-weight-500">{data.contactSecondaire.nom}</dd>
@@ -108,12 +100,7 @@ export default function EtapeConfirmationMembre({
 
       <div className="fr-grid-row fr-mt-4w">
         <div className="fr-col-12 fr-col-md-6">
-          <button
-            className="fr-btn fr-btn--secondary"
-            disabled={isAjoutEnCours}
-            onClick={onRetour}
-            type="button"
-          >
+          <button className="fr-btn fr-btn--secondary" disabled={isAjoutEnCours} onClick={onRetour} type="button">
             Modifier
           </button>
         </div>

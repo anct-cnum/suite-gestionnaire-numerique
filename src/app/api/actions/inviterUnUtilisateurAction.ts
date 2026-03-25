@@ -11,9 +11,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
-export async function inviterUnUtilisateurAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function inviterUnUtilisateurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
@@ -28,10 +26,12 @@ export async function inviterUnUtilisateurAction(
     email: validationResult.data.email,
     nom: validationResult.data.nom,
     prenom: validationResult.data.prenom,
-    role: validationResult.data.role ? {
-      codeOrganisation: validationResult.data.codeOrganisation,
-      type: validationResult.data.role,
-    } : undefined,
+    role: validationResult.data.role
+      ? {
+          codeOrganisation: validationResult.data.codeOrganisation,
+          type: validationResult.data.role,
+        }
+      : undefined,
     uidUtilisateurCourant: await getSessionSub(),
   })
 
@@ -50,10 +50,7 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  codeOrganisation: z
-    .string()
-    .min(1, { message: 'Le code organisation doit être renseigné' })
-    .optional(),
+  codeOrganisation: z.string().min(1, { message: 'Le code organisation doit être renseigné' }).optional(),
   email: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),

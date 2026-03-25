@@ -7,7 +7,7 @@ export enum WeekDay {
   Sunday = 0,
   Thursday = 4,
   Tuesday = 2,
-  Wednesday = 3
+  Wednesday = 3,
 }
 
 export type WeekOpeningHours = Record<WeekDay, Array<{ end: Time; start: Time; startAM: boolean }>>

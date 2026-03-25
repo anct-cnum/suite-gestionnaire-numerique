@@ -30,8 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateursActives = searchParams.get('utilisateursActives') === 'on'
     const prenomOuNomOuEmail = searchParams.get('prenomOuNomOuEmail') ?? undefined
     const idStructureParam = searchParams.get('idStructure')
-    const idStructure =
-      idStructureParam !== null && idStructureParam !== '' ? Number(idStructureParam) : undefined
+    const idStructure = idStructureParam !== null && idStructureParam !== '' ? Number(idStructureParam) : undefined
 
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
     const result = await rechercherMesUtilisateurs.handle({
@@ -116,10 +115,7 @@ function getDepartementEtRegion(
   return { departement: '', region: '' }
 }
 
-function generateCSV(
-  utilisateurs: ReadonlyArray<UnUtilisateurReadModel>,
-  territoires: TerritoiresReadModel
-): string {
+function generateCSV(utilisateurs: ReadonlyArray<UnUtilisateurReadModel>, territoires: TerritoiresReadModel): string {
   const headers = [
     'Nom',
     'Prénom',

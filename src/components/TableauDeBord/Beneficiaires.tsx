@@ -12,32 +12,19 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 
-export default function Beneficiaires({
-  beneficiairesViewModel,
-  lienBeneficiaires,
-}: Props): ReactElement {
+export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaires }: Props): ReactElement {
   if ('type' in beneficiairesViewModel) {
     return (
       <BlocCard labelledBy="beneficiaires">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="community-line" />
-          <h2
-            className="fr-h4 color-blue-france fr-m-0"
-            id="beneficiaires"
-          >
+          <h2 className="fr-h4 color-blue-france fr-m-0" id="beneficiaires">
             Bénéficiaires de financement(s)
           </h2>
         </div>
-        <div
-          className="fr-alert fr-alert--error fr-mt-3w"
-          role="alert"
-        >
-          <p className="fr-alert__title">
-            Erreur
-          </p>
-          <p>
-            {beneficiairesViewModel.message}
-          </p>
+        <div className="fr-alert fr-alert--error fr-mt-3w">
+          <p className="fr-alert__title">Erreur</p>
+          <p>{beneficiairesViewModel.message}</p>
         </div>
       </BlocCard>
     )
@@ -51,21 +38,13 @@ export default function Beneficiaires({
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="community-line" />
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="beneficiaires"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="beneficiaires">
               Bénéficiaires de financement(s)
             </h2>
-            <p className="fr-m-0 font-weight-500">
-              Chiffres clés sur les bénéficiaires de financement(s)
-            </p>
+            <p className="fr-m-0 font-weight-500">Chiffres clés sur les bénéficiaires de financement(s)</p>
           </div>
         </div>
-        <Link
-          className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-          href={lienBeneficiaires}
-        >
+        <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienBeneficiaires}>
           Les conventions
         </Link>
       </div>
@@ -79,49 +58,35 @@ export default function Beneficiaires({
               labels={viewModel.details.map((detail) => detail.label)}
             />
           </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-            {viewModel.total}
-          </div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">
-            Bénéficiaires
-          </div>
+          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{viewModel.total}</div>
+          <div className="fr-text--lg font-weight-700 fr-m-0">Bénéficiaires</div>
           {viewModel.collectivite > 0 && (
-            <div className="color-blue-france">
-              dont
-              {' '}
-              {viewModel.collectivite}
-              {' '}
-              collectivités
-            </div>
+            <div className="color-blue-france">dont {viewModel.collectivite} collectivités</div>
           )}
         </div>
         <div className="fr-col">
-          <div className="fr-text--md fr-mb-2w font-weight-500">
-            Nombre de bénéficiaires par financements
-          </div>
+          <div className="fr-text--md fr-mb-2w font-weight-500">Nombre de bénéficiaires par financements</div>
           <ul>
-            {
-              viewModel.details.map((detail) => (
-                <li
-                  className="fr-mb-1w fr-mt-1w"
-                  key={detail.label}
-                  style={{ listStyle: 'none' }}
-                >
-                  <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
-                    <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                      <Dot color={detail.color} />
-                      {' '}
-                      {detail.label}
-                    </div>
-                    <div
-                      style={{ fontWeight: 700, marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
-                    >
-                      {detail.total}
-                    </div>
+            {viewModel.details.map((detail) => (
+              <li className="fr-mb-1w fr-mt-1w" key={detail.label} style={{ listStyle: 'none' }}>
+                <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
+                  <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                    <Dot color={detail.color} /> {detail.label}
                   </div>
-                </li>
-              ))
-            }
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      marginLeft: '1rem',
+                      marginRight: '1rem',
+                      minWidth: '3rem',
+                      textAlign: 'right',
+                    }}
+                  >
+                    {detail.total}
+                  </div>
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

@@ -8,11 +8,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
   readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(
-    utilisateurRepository: UtilisateurRepository,
-    emailGatewayFactory: EmailGatewayFactory,
-    date: Date
-  ) {
+  constructor(utilisateurRepository: UtilisateurRepository, emailGatewayFactory: EmailGatewayFactory, date: Date) {
     this.#utilisateurRepository = utilisateurRepository
     this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date

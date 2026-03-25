@@ -11,10 +11,7 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
 
-export default async function Layout({
-  children,
-  params,
-}: Props): Promise<ReactElement> {
+export default async function Layout({ children, params }: Props): Promise<ReactElement> {
   const session = await getSession()
 
   if (!session) {
@@ -32,15 +29,15 @@ export default async function Layout({
   })
   const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
-  return (
-    <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>
-      {children}
-    </GouvernanceProvider>
-  )
+  return <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>{children}</GouvernanceProvider>
 }
 
-type Props = PropsWithChildren<Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    params: Promise<
+      Readonly<{
+        codeDepartement: string
+      }>
+    >
+  }>
+>

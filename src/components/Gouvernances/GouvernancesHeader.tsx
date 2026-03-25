@@ -6,29 +6,19 @@ import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 export default function GouvernancesHearder(props: Props): ReactElement {
   const { drawerId, filterAvance, filtreGeographique, onFilterClick } = props
   return (
-    <section
-      aria-labelledby="entete"
-      className="fr-pb-2w"
-    >
+    <section aria-labelledby="entete" className="fr-pb-2w">
       <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
-        <div
-          className="fr-col-auto"
-          style={{ alignItems: 'stretch', display: 'flex' }}
-        >
+        <div className="fr-col-auto" style={{ alignItems: 'stretch', display: 'flex' }}>
           <TitleIcon icon="france-line" />
         </div>
         <div className="fr-col fr-grid-row fr-grid-row--middle">
           <div>
             <div className="fr-mb-1w">
-              <h2
-                className="fr-h2 fr-text-label--blue-france"
-                id="etatDesLieux"
-              >
+              <h2 className="fr-h2 fr-text-label--blue-france" id="etatDesLieux">
                 Gouvernances territoriales
               </h2>
             </div>
           </div>
-
         </div>
         <button
           aria-controls={drawerId}
@@ -41,7 +31,7 @@ export default function GouvernancesHearder(props: Props): ReactElement {
         </button>
       </div>
       <div>
-        {filterAvance.value === FilterType.NO_FILTRE ? null:  (
+        {filterAvance.value === FilterType.NO_FILTRE ? null : (
           <button
             aria-label={`Retirer le filtre ${filterAvance.libeller}`}
             className="fr-tag fr-icon-close-line fr-tag--icon-left fr-mr-1w "
@@ -54,7 +44,7 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           >
             {filterAvance.libeller}
           </button>
-        ) }
+        )}
 
         {filtreGeographique.value === '' ? null : (
           <button
@@ -69,22 +59,21 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           >
             {filtreGeographique.value}
           </button>
-        ) }
-
+        )}
       </div>
     </section>
   )
 }
 type Props = Readonly<{
   drawerId: string
-  filterAvance:{
-    libeller:string
+  filterAvance: {
+    libeller: string
     onRemove(): void
-    value:FilterType
+    value: FilterType
   }
   filtreGeographique: {
     onRemove(): void
-    value:string
+    value: string
   }
   onFilterClick(): void
 }>

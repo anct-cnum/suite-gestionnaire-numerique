@@ -88,10 +88,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   }, [isOpen, appliquerFiltres])
 
   return (
-    <div
-      className={styles.container}
-      ref={containerRef}
-    >
+    <div className={styles.container} ref={containerRef}>
       <button
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -110,18 +107,12 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
         {formaterDateCourte(dateFin)}
         <span
           aria-hidden
-          className={cx(
-            'fr-ml-1v fr-icon--sm',
-            isOpen ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'
-          )}
+          className={cx('fr-ml-1v fr-icon--sm', isOpen ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line')}
         />
       </button>
 
       {isOpen ? (
-        <div
-          className={styles.popover}
-          id={`${id}-popover`}
-        >
+        <div className={styles.popover} id={`${id}-popover`}>
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-6">
               <h5 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
@@ -154,18 +145,10 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
           </div>
           <hr className="fr-separator-1px fr-my-3v" />
           <div className="fr-flex fr-flex-gap-4v" style={{ justifyContent: 'flex-end' }}>
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={effacerFiltres}
-              type="button"
-            >
+            <button className="fr-btn fr-btn--secondary" onClick={effacerFiltres} type="button">
               Effacer
             </button>
-            <button
-              className="fr-btn"
-              onClick={appliquerFiltres}
-              type="button"
-            >
+            <button className="fr-btn" onClick={appliquerFiltres} type="button">
               Valider
             </button>
           </div>

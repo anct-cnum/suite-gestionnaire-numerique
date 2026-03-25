@@ -26,4 +26,3 @@ type DepartementReadModel = Readonly<{
   ifn: number
   indiceConfiance: null | string
 }>
-

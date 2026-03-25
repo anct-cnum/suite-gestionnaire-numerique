@@ -6,13 +6,7 @@ export function PairIcon({
   ...props
 }: Readonly<Parameters<Pictogram>[0]>): ReturnType<Pictogram> {
   return (
-    <svg
-      height={height}
-      width={width}
-      {...props}
-      viewBox="0 0 80 80"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg height={height} width={width} {...props} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <title>Deux personnes assises avec leurs ordinateurs</title>
       <path
         className="fr-artwork-major"

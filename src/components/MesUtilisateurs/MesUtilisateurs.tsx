@@ -169,9 +169,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
                   setTermesDeRechercheNomOuEmail(event.target.value)
                 }}
                 reinitialiserBouton="Reinitialiser"
-                reinitialiserLesTermesDeRechercheNomOuEmail={
-                  reinitialiserLesTermesDeRechercheNomOuEmail
-                }
+                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
                 soumettreLaRecherche={soumettreLaRecherche}
                 termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
               />
@@ -205,23 +203,11 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
         <p>Aucun utilisateur ne correspond aux filtres sélectionnés.</p>
       ) : (
         <Table
-          enTetes={[
-            '',
-            'Utilisateur',
-            'Adresse électronique',
-            'Rôle',
-            'Dernière connexion',
-            'Statut',
-            'Action',
-          ]}
+          enTetes={['', 'Utilisateur', 'Adresse électronique', 'Rôle', 'Dernière connexion', 'Statut', 'Action']}
           titre="Mes utilisateurs"
         >
           {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => (
-            <tr
-              data-row-key={index}
-              id={`table-sm-row-key-${index}`}
-              key={unUtilisateurViewModel.uid}
-            >
+            <tr data-row-key={index} id={`table-sm-row-key-${index}`} key={unUtilisateurViewModel.uid}>
               <td className="fr-cell--center">
                 <Image
                   alt=""
@@ -232,9 +218,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
               </td>
               <td>
                 <button
-                  aria-controls={
-                    unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId
-                  }
+                  aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
@@ -250,9 +234,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
               </td>
               <td>{unUtilisateurViewModel.derniereConnexion}</td>
               <td>
-                <Badge color={unUtilisateurViewModel.statut.couleur}>
-                  {unUtilisateurViewModel.statut.libelle}
-                </Badge>
+                <Badge color={unUtilisateurViewModel.statut.couleur}>{unUtilisateurViewModel.statut.libelle}</Badge>
               </td>
               <td className="fr-cell--center">
                 <button
@@ -276,10 +258,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
       )}
       {mesUtilisateursViewModel.displayPagination ? (
         <div className="fr-grid-row fr-grid-row--center">
-          <Pagination
-            pathname="/mes-utilisateurs"
-            totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
-          />
+          <Pagination pathname="/mes-utilisateurs" totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur} />
         </div>
       ) : null}
       <SupprimerUnUtilisateur

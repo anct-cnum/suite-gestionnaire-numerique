@@ -28,7 +28,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   const popup = useRef<null | Popup>(null)
 
   function searchFeatures(): void {
-    if (!map.current) {return}
+    if (!map.current) {
+      return
+    }
 
     // Coordonnées approximatives du centre de chaque département
     // Le calcul par les features est trop complexe car elles ne se chargent pas à tous les niveaux de zoom
@@ -145,7 +147,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     // Calculer les bounds approximatifs
     // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
     const latDelta = 0.55 // ~61 km au nord et au sud
-    const lngDelta = 0.55 / Math.cos(center[1] * Math.PI / 180) // Ajuster pour la longitude
+    const lngDelta = 0.55 / Math.cos((center[1] * Math.PI) / 180) // Ajuster pour la longitude
 
     const bounds = new LngLatBounds(
       [center[0] - lngDelta, center[1] - latDelta],
@@ -175,7 +177,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   }
 
   function initializeLayers(): void {
-    if (!map.current) {return}
+    if (!map.current) {
+      return
+    }
 
     // Ajouter une couche pour les communes avec l'indice de fragilité
     map.current.addLayer({
@@ -186,10 +190,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         'fill-color': [
           'match',
           ['get', 'code'],
-          ...communesFragilite.flatMap((commune) => [
-            commune.codeInsee,
-            commune.couleur,
-          ]),
+          ...communesFragilite.flatMap((commune) => [commune.codeInsee, commune.couleur]),
           '#ffffff',
         ] as unknown as DataDrivenPropertyValueSpecification<string>,
         'fill-opacity': 0.7,
@@ -203,7 +204,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   }
 
   function checkSourceLoaded(): void {
-    if (!map.current) {return}
+    if (!map.current) {
+      return
+    }
 
     if (map.current.isSourceLoaded('decoupage')) {
       initializeLayers()
@@ -213,15 +216,18 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   }
 
   useEffect(() => {
-    if (!mapContainer.current) {return undefined}
+    if (!mapContainer.current) {
+      return undefined
+    }
 
     // Vérifier le support WebGL avant d'initialiser la carte
     const canvas = document.createElement('canvas')
     const gl = canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl')
-    
+
     if (!gl) {
       // Afficher un message d'erreur dans le conteneur de la carte
-      mapContainer.current.innerHTML = '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte. Veuillez activer WebGL ou utiliser un navigateur compatible.</p></div>'
+      mapContainer.current.innerHTML =
+        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte. Veuillez activer WebGL ou utiliser un navigateur compatible.</p></div>'
       return undefined
     }
 
@@ -240,12 +246,12 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     })
 
     map.current.on('load', () => {
-      if (!mapContainer.current || !map.current) {return}
+      if (!mapContainer.current || !map.current) {
+        return
+      }
 
       map.current.addSource('decoupage', {
-        tiles: [
-          'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
-        ],
+        tiles: ['https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf'],
         type: 'vector',
       })
 
@@ -279,12 +285,14 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         if (popup.current) {
           popup.current
             .setLngLat(coordinates)
-            .setHTML(`
+            .setHTML(
+              `
               <div class="fr-text--lg">
                 <div class="fr-text--bold fr-mb-1w">${feature.properties.nom}</div>
                 ${commune ? `<div class="color-blue-france">Indice : ${commune.indice}/10</div>` : ''}
               </div>
-            `)
+            `
+            )
             .addTo(map.current)
         }
       }
@@ -308,20 +316,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   }, [departement, communesFragilite])
 
   return (
-    <div
-      className={styles.mapWrapper}
-      data-testid="carte-wrapper"
-    >
-      <div
-        className={styles.mapContainer}
-        data-testid="carte-container"
-        ref={mapContainer}
-      />
-      <div
-        className={styles.legendWrapper}
-        data-testid="legend-wrapper"
-        style={{ width: '90%'  }}
-      >
+    <div className={styles.mapWrapper} data-testid="carte-wrapper">
+      <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
+      <div className={styles.legendWrapper} data-testid="legend-wrapper" style={{ width: '90%' }}>
         <Legend />
       </div>
     </div>

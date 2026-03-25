@@ -141,23 +141,26 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     presserLeBouton('Se déconnecter')
   }
 
-  function afficherLEnTete(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): void {
-    renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction,
+  function afficherLEnTete(
+    spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])
+  ): void {
+    renderComponent(<EnTete />, {
+      changerMonRoleAction: spiedChangerMonRoleAction,
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         peutChangerDeRole: false,
-      }) })
+      }),
+    })
   }
 
-  function afficherLEnTetePeutChangerDeRole(spiedChangerMonRoleAction = async (): Promise<ReadonlyArray<string>> => Promise.resolve(['OK'])): void {
-    renderComponent(
-      <EnTete />,
-      {
-        changerMonRoleAction: spiedChangerMonRoleAction,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          peutChangerDeRole: true,
-        }),
-      }
-    )
+  function afficherLEnTetePeutChangerDeRole(
+    spiedChangerMonRoleAction = async (): Promise<ReadonlyArray<string>> => Promise.resolve(['OK'])
+  ): void {
+    renderComponent(<EnTete />, {
+      changerMonRoleAction: spiedChangerMonRoleAction,
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        peutChangerDeRole: true,
+      }),
+    })
   }
 
   function presserLeBouton(name: string): HTMLElement {
@@ -166,4 +169,3 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     return button
   }
 })
-

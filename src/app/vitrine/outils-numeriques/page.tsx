@@ -6,10 +6,17 @@ import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
 
 export const metadata: Metadata = {
-  description: 'Découvrez les outils numériques pour piloter l\'inclusion numérique : Mon Inclusion Numérique, cartographie nationale, données territoriales et outils de pilotage.',
-  keywords: ['outils numériques', 'Mon Inclusion Numérique', 'pilotage', 'données territoriales', 'cartographie nationale'],
+  description:
+    "Découvrez les outils numériques pour piloter l'inclusion numérique : Mon Inclusion Numérique, cartographie nationale, données territoriales et outils de pilotage.",
+  keywords: [
+    'outils numériques',
+    'Mon Inclusion Numérique',
+    'pilotage',
+    'données territoriales',
+    'cartographie nationale',
+  ],
   openGraph: {
-    description: 'Découvrez les outils numériques pour piloter l\'inclusion numérique sur les territoires.',
+    description: "Découvrez les outils numériques pour piloter l'inclusion numérique sur les territoires.",
     locale: 'fr_FR',
     title: 'Outils numériques - Inclusion Numérique',
     type: 'website',

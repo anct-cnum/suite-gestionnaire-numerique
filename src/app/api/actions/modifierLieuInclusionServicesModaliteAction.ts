@@ -44,9 +44,7 @@ export async function modifierLieuInclusionServicesModaliteAction(
     },
   })
 
-  const departementsGouvernances = gouvernancesDepartements.map(
-    (membre) => membre.gouvernanceDepartementCode
-  )
+  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
 
   const peutModifier = LieuInclusion.peutEtreModifiePar(
     utilisateur,
@@ -57,13 +55,11 @@ export async function modifierLieuInclusionServicesModaliteAction(
   )
 
   if (!peutModifier) {
-    return ['Vous n\'avez pas les droits pour modifier ce lieu']
+    return ["Vous n'avez pas les droits pour modifier ce lieu"]
   }
 
   // Appel du Use Case
-  const result = await new ModifierLieuInclusionServicesModalite(
-    new PrismaLieuInclusionRepository()
-  ).handle({
+  const result = await new ModifierLieuInclusionServicesModalite(new PrismaLieuInclusionRepository()).handle({
     email: actionParams.email,
     fraisACharge: actionParams.fraisACharge,
     modalitesAcces: actionParams.modalitesAcces,
@@ -91,6 +87,6 @@ const validator = z.object({
   fraisACharge: z.array(z.string()),
   modalitesAcces: z.array(z.string()),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  structureId: z.string().min(1, { message: 'L\'identifiant de la structure doit être renseigné' }),
+  structureId: z.string().min(1, { message: "L'identifiant de la structure doit être renseigné" }),
   telephone: z.string().optional(),
 })

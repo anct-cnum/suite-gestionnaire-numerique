@@ -87,20 +87,21 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
 
   // Convertir les valeurs DB en values pour le formulaire
   const existingPublics = (publicsSpecifiquementAdresses ?? [])
-    .map(dbValue => publicsDisponibles.find(publicItem => publicItem.dbValue === dbValue)?.value)
+    .map((dbValue) => publicsDisponibles.find((publicItem) => publicItem.dbValue === dbValue)?.value)
     .filter((value): value is string => value !== undefined)
 
   // État pour gérer "Tout public" et les publics sélectionnés
   // "Tout public" est coché uniquement si TOUS les publics sont présents dans le tableau
-  const allPublicsInDB = publicsDisponibles.every(publicItem =>
-    (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue))
+  const allPublicsInDB = publicsDisponibles.every((publicItem) =>
+    (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue)
+  )
   const [isToutPublic, setIsToutPublic] = useState(allPublicsInDB)
 
   // État pour les publics sélectionnés
   const [selectedPublics, setSelectedPublics] = useState<ReadonlyArray<string>>(() => {
     // Si tous les publics sont présents en DB, on les sélectionne tous
     if (allPublicsInDB) {
-      return publicsDisponibles.map(publicDisponible => publicDisponible.value)
+      return publicsDisponibles.map((publicDisponible) => publicDisponible.value)
     }
     // Sinon on sélectionne uniquement ceux qui sont dans la liste (peut être vide)
     return existingPublics
@@ -110,17 +111,18 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
   useEffect(() => {
     if (isEditing) {
       // Recalculer si tous les publics sont présents
-      const allPresent = publicsDisponibles.every(publicItem =>
-        (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue))
+      const allPresent = publicsDisponibles.every((publicItem) =>
+        (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue)
+      )
       setIsToutPublic(allPresent)
 
       if (allPresent) {
         // Si tous les publics sont présents, sélectionner tout
-        setSelectedPublics(publicsDisponibles.map(publicItem => publicItem.value))
+        setSelectedPublics(publicsDisponibles.map((publicItem) => publicItem.value))
       } else {
         // Sinon, sélectionner uniquement ceux qui sont dans la liste
         const currentExistingPublics = (publicsSpecifiquementAdresses ?? [])
-          .map(dbValue => publicsDisponibles.find(publicItem => publicItem.dbValue === dbValue)?.value)
+          .map((dbValue) => publicsDisponibles.find((publicItem) => publicItem.dbValue === dbValue)?.value)
           .filter((value): value is string => value !== undefined)
         setSelectedPublics(currentExistingPublics)
       }
@@ -135,7 +137,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
     // Si "Tout public" est coché, sélectionner tous les publics
     // Si "Tout public" est décoché, désélectionner tous les publics
     if (isChecked) {
-      setSelectedPublics(publicsDisponibles.map(publicItem => publicItem.value))
+      setSelectedPublics(publicsDisponibles.map((publicItem) => publicItem.value))
     } else {
       setSelectedPublics([])
     }
@@ -148,13 +150,13 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
     if (isChecked) {
       newSelectedPublics = [...selectedPublics, publicValue]
     } else {
-      newSelectedPublics = selectedPublics.filter(value => value !== publicValue)
+      newSelectedPublics = selectedPublics.filter((value) => value !== publicValue)
     }
 
     setSelectedPublics(newSelectedPublics)
 
     // Si toutes les checkboxes sont cochées, cocher "Tout public", sinon le décocher
-    const allChecked = publicsDisponibles.every(publicItem => newSelectedPublics.includes(publicItem.value))
+    const allChecked = publicsDisponibles.every((publicItem) => newSelectedPublics.includes(publicItem.value))
     setIsToutPublic(allChecked)
   }
 
@@ -165,20 +167,18 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
 
     // Récupérer les publics sélectionnés depuis l'état (plus fiable que FormData)
     const publicsDB = selectedPublics
-      .map(value => publicsDisponibles.find(publicItem => publicItem.value === value)?.dbValue)
+      .map((value) => publicsDisponibles.find((publicItem) => publicItem.value === value)?.dbValue)
       .filter((dbValue): dbValue is string => dbValue !== undefined)
 
     // Récupérer les prises en charge sélectionnées
     const prisesEnChargeValues = form.getAll('prises-en-charge') as ReadonlyArray<string>
     const prisesEnChargeDB = prisesEnChargeValues
-      .map(value => prisesEnChargeDisponibles.find(pec => pec.value === value)?.dbValue)
+      .map((value) => prisesEnChargeDisponibles.find((pec) => pec.value === value)?.dbValue)
       .filter((dbValue): dbValue is string => dbValue !== undefined)
 
     // Si "Tout public" est coché, envoyer TOUS les publics
     // Sinon, envoyer les publics sélectionnés (peut être un tableau vide si aucune sélection)
-    const finalPublics = isToutPublic
-      ? publicsDisponibles.map(publicItem => publicItem.dbValue)
-      : publicsDB
+    const finalPublics = isToutPublic ? publicsDisponibles.map((publicItem) => publicItem.dbValue) : publicsDB
 
     setIsDisabled(true)
 
@@ -201,12 +201,13 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
 
   function handleCancel(): void {
     // Réinitialiser les états à leurs valeurs d'origine
-    const allPresent = publicsDisponibles.every(publicItem =>
-      (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue))
+    const allPresent = publicsDisponibles.every((publicItem) =>
+      (publicsSpecifiquementAdresses ?? []).includes(publicItem.dbValue)
+    )
     setIsToutPublic(allPresent)
 
     if (allPresent) {
-      setSelectedPublics(publicsDisponibles.map(publicItem => publicItem.value))
+      setSelectedPublics(publicsDisponibles.map((publicItem) => publicItem.value))
     } else {
       setSelectedPublics(existingPublics)
     }
@@ -222,9 +223,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
     if (allPublicsInDB) {
       return (
         <span className="fr-tag fr-tag--sm">
-          <span className="fr-icon-user-heart-line fr-icon--mg fr-mr-1w"  />
-          {' '}
-          Tout public
+          <span className="fr-icon-user-heart-line fr-icon--mg fr-mr-1w" /> Tout public
         </span>
       )
     }
@@ -233,10 +232,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
       return (
         <div className="fr-tags-group">
           {publicsSpecifiquementAdresses.map((publicAdresse) => (
-            <span
-              className="fr-tag fr-tag--mg"
-              key={publicAdresse}
-            >
+            <span className="fr-tag fr-tag--mg" key={publicAdresse}>
               {publicAdresse}
             </span>
           ))}
@@ -244,11 +240,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
       )
     }
 
-    return (
-      <p className="fr-text--sm">
-        Aucun public spécifiquement renseigné.
-      </p>
-    )
+    return <p className="fr-text--sm">Aucun public spécifiquement renseigné.</p>
   }
 
   function renderPrisesEnChargeDisplay(): ReactElement {
@@ -256,10 +248,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
       return (
         <div className="fr-tags-group">
           {priseEnChargeSpecifique.map((priseEnCharge) => (
-            <span
-              className="fr-tag fr-tag--mg"
-              key={priseEnCharge}
-            >
+            <span className="fr-tag fr-tag--mg" key={priseEnCharge}>
               {priseEnCharge}
             </span>
           ))}
@@ -267,30 +256,24 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
       )
     }
 
-    return (
-      <p className="fr-text--sm">
-        Aucune prise en charge spécifique renseignée.
-      </p>
-    )
+    return <p className="fr-text--sm">Aucune prise en charge spécifique renseignée.</p>
   }
 
   const existingPrisesEnCharge = (priseEnChargeSpecifique ?? [])
-    .map(dbValue => prisesEnChargeDisponibles.find(pec => pec.dbValue === dbValue)?.value)
+    .map((dbValue) => prisesEnChargeDisponibles.find((pec) => pec.dbValue === dbValue)?.value)
     .filter((value): value is string => value !== undefined)
 
   return (
     <form
       className="fr-p-4w"
-      onSubmit={(event) => { void handleSubmit(event) }}
+      onSubmit={(event) => {
+        void handleSubmit(event)
+      }}
     >
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col fr-col-12 fr-col-md-8">
-          <h4 className="fr-h6 fr-mb-1v">
-            Types de publics accueillis
-          </h4>
-          <p className="fr-text--sm fr-mb-2w">
-            Indiquez si ce lieu accueille des publics spécifiques
-          </p>
+          <h4 className="fr-h6 fr-mb-1v">Types de publics accueillis</h4>
+          <p className="fr-text--sm fr-mb-2w">Indiquez si ce lieu accueille des publics spécifiques</p>
         </div>
         <div className="fr-col fr-col-12 fr-col-md-4">
           <div className="fr-grid-row fr-grid-row--right">
@@ -307,50 +290,31 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
         </div>
       </div>
 
-      {isEditing
-        ? (
-          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
-            Ces champs sont optionnels
-          </p>
-        )
-        : null}
+      {isEditing ? (
+        <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>Ces champs sont optionnels</p>
+      ) : null}
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-2w">
-          Précisez les publics accueillis dans ce lieu
-        </h5>
+        <h5 className="fr-text--md fr-mb-2w">Précisez les publics accueillis dans ce lieu</h5>
         {isEditing ? (
           <>
             <p className="fr-text--sm fr-mb-2w">
-              Par défaut, un lieu d&apos;inclusion numérique est inclusif et peut accueillir tout public.
-              Malgré tout, certains lieux sont habilités à recevoir exclusivement certains publics.
-              Vous pouvez le préciser ici.
+              Par défaut, un lieu d&apos;inclusion numérique est inclusif et peut accueillir tout public. Malgré tout,
+              certains lieux sont habilités à recevoir exclusivement certains publics. Vous pouvez le préciser ici.
             </p>
             <fieldset className="fr-fieldset">
               <div className="fr-fieldset__content">
                 {/* Checkbox "Tout public" */}
                 <div className="fr-checkbox-group">
-                  <input
-                    checked={isToutPublic}
-                    id="tout-public"
-                    onChange={handleToutPublicChange}
-                    type="checkbox"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor="tout-public"
-                  >
+                  <input checked={isToutPublic} id="tout-public" onChange={handleToutPublicChange} type="checkbox" />
+                  <label className="fr-label" htmlFor="tout-public">
                     Tout public (tout sélectionner)
                   </label>
                 </div>
 
                 {/* Checkboxes des publics spécifiques */}
                 {publicsDisponibles.map((publicItem) => (
-                  <div
-                    className="fr-checkbox-group"
-                    key={publicItem.value}
-                    style={{ marginLeft: '2rem' }}
-                  >
+                  <div className="fr-checkbox-group" key={publicItem.value} style={{ marginLeft: '2rem' }}>
                     <input
                       checked={selectedPublics.includes(publicItem.value)}
                       id={publicItem.value}
@@ -361,10 +325,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
                       type="checkbox"
                       value={publicItem.value}
                     />
-                    <label
-                      className="fr-label"
-                      htmlFor={publicItem.value}
-                    >
+                    <label className="fr-label" htmlFor={publicItem.value}>
                       {publicItem.label}
                     </label>
                   </div>
@@ -372,14 +333,13 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
               </div>
             </fieldset>
           </>
-        ) :
-          renderPublicsDisplay()}
+        ) : (
+          renderPublicsDisplay()
+        )}
       </div>
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-2w">
-          Prise en charge spécifique
-        </h5>
+        <h5 className="fr-text--md fr-mb-2w">Prise en charge spécifique</h5>
         <p className="fr-text--sm fr-mb-2w">
           Indiquez si le lieu est en mesure d&apos;accompagner et soutenir des publics ayant des besoins particuliers.
         </p>
@@ -388,10 +348,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
           <fieldset className="fr-fieldset">
             <div className="fr-fieldset__content">
               {prisesEnChargeDisponibles.map((pec) => (
-                <div
-                  className="fr-checkbox-group"
-                  key={pec.value}
-                >
+                <div className="fr-checkbox-group" key={pec.value}>
                   <input
                     defaultChecked={existingPrisesEnCharge.includes(pec.value)}
                     id={pec.value}
@@ -399,41 +356,28 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
                     type="checkbox"
                     value={pec.value}
                   />
-                  <label
-                    className="fr-label"
-                    htmlFor={pec.value}
-                  >
+                  <label className="fr-label" htmlFor={pec.value}>
                     {pec.label}
                   </label>
                 </div>
               ))}
             </div>
           </fieldset>
-        ) :
-          renderPrisesEnChargeDisplay()}
+        ) : (
+          renderPrisesEnChargeDisplay()
+        )}
       </div>
 
-      {isEditing
-        ? (
-          <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
-            <button
-              className="fr-btn fr-btn--secondary"
-              disabled={isDisabled}
-              onClick={handleCancel}
-              type="button"
-            >
-              Annuler
-            </button>
-            <button
-              className="fr-btn"
-              disabled={isDisabled}
-              type="submit"
-            >
-              {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
-            </button>
-          </div>
-        )
-        : null}
+      {isEditing ? (
+        <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
+          <button className="fr-btn fr-btn--secondary" disabled={isDisabled} onClick={handleCancel} type="button">
+            Annuler
+          </button>
+          <button className="fr-btn" disabled={isDisabled} type="submit">
+            {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
+          </button>
+        </div>
+      ) : null}
     </form>
   )
 }

@@ -17,9 +17,7 @@ export async function modifierContactReferentStructureAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const message = await new ModifierContactReferentStructure(
-    new PrismaStructureRepository()
-  ).handle({
+  const message = await new ModifierContactReferentStructure(new PrismaStructureRepository()).handle({
     contactReferent: {
       email: actionParams.email,
       fonction: actionParams.fonction,
@@ -46,11 +44,14 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  email: z.string().regex(emailPattern, { message: 'L\'adresse électronique doit être valide' }),
+  email: z.string().regex(emailPattern, { message: "L'adresse électronique doit être valide" }),
   fonction: z.string().min(1, { message: 'La fonction doit être renseignée' }),
   nom: z.string().min(1, { message: 'Le nom doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   prenom: z.string().min(1, { message: 'Le prénom doit être renseigné' }),
-  structureId: z.number().int().positive({ message: 'L\'identifiant de la structure doit être un entier positif' }),
-  telephone: z.string().regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
+  structureId: z.number().int().positive({ message: "L'identifiant de la structure doit être un entier positif" }),
+  telephone: z
+    .string()
+    .regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' })
+    .or(z.literal('')),
 })

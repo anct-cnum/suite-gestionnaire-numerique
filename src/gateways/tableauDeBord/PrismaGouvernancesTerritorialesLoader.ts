@@ -26,9 +26,7 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
       })
 
       // Compter les gouvernances sans coporteur (autre que préfecture)
-      const gouvernancesSansCoporteur = gouvernances.filter(
-        (gouvernance) => gouvernance.membres.length === 1
-      ).length
+      const gouvernancesSansCoporteur = gouvernances.filter((gouvernance) => gouvernance.membres.length === 1).length
 
       // Compter les gouvernances par type de coporteur
       const gouvernancesParType = new Map<string, Set<string>>()

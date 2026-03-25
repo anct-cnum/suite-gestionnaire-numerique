@@ -27,18 +27,14 @@ export const StatistiqueMateriel = ({
       >
         <div
           style={
-            'rotation' in iconConfig && iconConfig.rotation
-              ? { transform: `rotate(${iconConfig.rotation}deg)` }
-              : {}
+            'rotation' in iconConfig && iconConfig.rotation ? { transform: `rotate(${iconConfig.rotation}deg)` } : {}
           }
           className={`${iconConfig.icon} ri-2x fr-line-height-1 fr-text-label--blue-france`}
         />
       </div>
       <div className="fr-flex fr-flex-gap-2v fr-justify-content-center fr-text--nowrap">
         <span className="fr-text--bold">{numberToString(count)}</span>
-        <span className="fr-text-mention--grey">
-          {numberToPercentage(proportion)}
-        </span>
+        <span className="fr-text-mention--grey">{numberToPercentage(proportion)}</span>
       </div>
       {label}
     </div>

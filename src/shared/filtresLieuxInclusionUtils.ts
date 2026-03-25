@@ -30,15 +30,15 @@ export function buildFiltresLieuxInclusion(
   territoireDepartement?: string,
   limite = 10
 ): {
-    codeDepartement?: string
-    codeRegion?: string
-    frr?: boolean
-    horsZonePrioritaire?: boolean
-    limite: number
-    page: number
-    qpv?: boolean
-    typeStructure?: string
-  } {
+  codeDepartement?: string
+  codeRegion?: string
+  frr?: boolean
+  horsZonePrioritaire?: boolean
+  limite: number
+  page: number
+  qpv?: boolean
+  typeStructure?: string
+} {
   const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = params
 
   return {
@@ -92,10 +92,7 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
 /**
  * Supprime un filtre spécifique des paramètres
  */
-export function removeLieuxInclusionFilterFromParams(
-  params: URLSearchParams,
-  paramKey: string
-): URLSearchParams {
+export function removeLieuxInclusionFilterFromParams(params: URLSearchParams, paramKey: string): URLSearchParams {
   const newParams = new URLSearchParams(params)
   newParams.delete(paramKey)
   return newParams
@@ -108,10 +105,10 @@ export function getActiveLieuxInclusionFilters(
   params: URLSearchParams,
   typesStructure?: Array<{ code: string; nom: string }>
 ): Array<{
-    label: string
-    paramKey: string
-    paramValue: string
-  }> {
+  label: string
+  paramKey: string
+  paramValue: string
+}> {
   const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
 
   const codeDepartement = params.get('codeDepartement')
@@ -213,8 +210,8 @@ function getDepartementName(code: string): string {
     17: 'Charente-Maritime (17)',
     18: 'Cher (18)',
     19: 'Corrèze (19)',
-    21: 'Côte-d\'Or (21)',
-    22: 'Côtes-d\'Armor (22)',
+    21: "Côte-d'Or (21)",
+    22: "Côtes-d'Armor (22)",
     23: 'Creuse (23)',
     24: 'Dordogne (24)',
     25: 'Doubs (25)',
@@ -289,7 +286,7 @@ function getDepartementName(code: string): string {
     92: 'Hauts-de-Seine (92)',
     93: 'Seine-Saint-Denis (93)',
     94: 'Val-de-Marne (94)',
-    95: 'Val-d\'Oise (95)',
+    95: "Val-d'Oise (95)",
     971: 'Guadeloupe (971)',
     972: 'Martinique (972)',
     973: 'Guyane (973)',
@@ -321,7 +318,7 @@ function getRegionName(code: string): string {
     75: 'Nouvelle-Aquitaine',
     76: 'Occitanie',
     84: 'Auvergne-Rhône-Alpes',
-    93: 'Provence-Alpes-Côte d\'Azur',
+    93: "Provence-Alpes-Côte d'Azur",
     94: 'Corse',
   }
 
@@ -331,14 +328,11 @@ function getRegionName(code: string): string {
 /**
  * Fonction utilitaire pour obtenir le nom d'un type de structure par son code
  */
-function getTypeStructureName(
-  code: string,
-  typesStructure?: Array<{ code: string; nom: string }>
-): string {
+function getTypeStructureName(code: string, typesStructure?: Array<{ code: string; nom: string }>): string {
   if (!typesStructure) {
     return code
   }
 
-  const typeStructure = typesStructure.find(type => type.code === code)
+  const typeStructure = typesStructure.find((type) => type.code === code)
   return typeStructure ? typeStructure.nom : code
 }

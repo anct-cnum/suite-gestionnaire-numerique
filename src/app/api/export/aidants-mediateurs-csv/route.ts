@@ -49,10 +49,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         )
       }
       if (codeRegionDemande !== undefined) {
-        return NextResponse.json(
-          { error: 'Accès refusé : vous ne pouvez pas filtrer par région' },
-          { status: 403 }
-        )
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
       }
 
       // Force le département de l'utilisateur
@@ -78,10 +75,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const aidantsForExport = await listeAidantsMediateursLoader.getForExport(filtres)
 
     if ('type' in aidantsForExport) {
-      return NextResponse.json(
-        { error: 'Erreur lors de la récupération des données' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Erreur lors de la récupération des données' }, { status: 500 })
     }
 
     // Génération du CSV

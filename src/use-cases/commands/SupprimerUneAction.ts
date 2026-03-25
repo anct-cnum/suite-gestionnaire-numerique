@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { Action, ActionUid } from '@/domain/Action'
-import { DemandeDeSubvention , DemandeDeSubventionUid, StatutSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, DemandeDeSubventionUid, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 
@@ -8,8 +8,10 @@ export class SupprimerUneAction implements CommandHandler<Command> {
   private readonly prismaActionRepository: PrismaActionRepository
   private readonly prismaDemandeDeSubventionRepository: PrismaDemandeDeSubventionRepository
 
-  constructor(prismaActionRepository: PrismaActionRepository,
-    prismaDemandeDeSubventionRepository: PrismaDemandeDeSubventionRepository) {
+  constructor(
+    prismaActionRepository: PrismaActionRepository,
+    prismaDemandeDeSubventionRepository: PrismaDemandeDeSubventionRepository
+  ) {
     this.prismaActionRepository = prismaActionRepository
     this.prismaDemandeDeSubventionRepository = prismaDemandeDeSubventionRepository
   }
@@ -20,22 +22,24 @@ export class SupprimerUneAction implements CommandHandler<Command> {
       return 'supprimerActionErreurInconnue'
     }
 
-    if (actionASupprimer.state.demandeDeSubventionUid)
-    {
-      const demandeDeSubventionResult = await this.prismaDemandeDeSubventionRepository
-        .get(actionASupprimer.state.demandeDeSubventionUid)
+    if (actionASupprimer.state.demandeDeSubventionUid) {
+      const demandeDeSubventionResult = await this.prismaDemandeDeSubventionRepository.get(
+        actionASupprimer.state.demandeDeSubventionUid
+      )
 
       if (!(demandeDeSubventionResult instanceof DemandeDeSubvention)) {
         return 'supprimerActionErreurInconnue'
       }
-      if (demandeDeSubventionResult.state.statut !== StatutSubvention.DEPOSEE)
-      {return 'existeSubventionNonSupprimable'}
+      if (demandeDeSubventionResult.state.statut !== StatutSubvention.DEPOSEE) {
+        return 'existeSubventionNonSupprimable'
+      }
     }
 
-    const result  = await this.prismaActionRepository.supprimer(new ActionUid(command.uidActionASupprimer),
-      new DemandeDeSubventionUid(actionASupprimer.state.demandeDeSubventionUid))
-    if(result)
-    {
+    const result = await this.prismaActionRepository.supprimer(
+      new ActionUid(command.uidActionASupprimer),
+      new DemandeDeSubventionUid(actionASupprimer.state.demandeDeSubventionUid)
+    )
+    if (result) {
       return 'OK'
     }
 

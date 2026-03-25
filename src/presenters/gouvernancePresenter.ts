@@ -6,12 +6,15 @@ import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullishOrEmpty } from '@/shared/lang'
-import { ComiteReadModel, CoporteurDetailReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import {
+  ComiteReadModel,
+  CoporteurDetailReadModel,
+  FeuilleDeRouteReadModel,
+  MembreReadModel,
+  UneGouvernanceReadModel,
+} from '@/use-cases/queries/RecupererUneGouvernance'
 
-export function gouvernancePresenter(
-  gouvernanceReadModel: UneGouvernanceReadModel,
-  now: Date
-): GouvernanceViewModel {
+export function gouvernancePresenter(gouvernanceReadModel: UneGouvernanceReadModel, now: Date): GouvernanceViewModel {
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite)) },
     comiteARemplir,
@@ -24,26 +27,27 @@ export function gouvernancePresenter(
     peutGererGouvernance: gouvernanceReadModel.peutGererGouvernance,
     peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
     porteursPotentielsNouvellesFeuillesDeRouteOuActions:
-      gouvernanceReadModel
-        .porteursPotentielsNouvellesFeuillesDeRouteOuActions
-        .map(porteur => ({
-          id: porteur.uid,
-          link: membreLink(porteur.structureId),
-          nom: porteur.nom,
-          roles: porteur.roles.map( role=> toRoleViewModel(role)),
-          type:  porteur.type,
-        } as PorteurPotentielViewModel)),
+      gouvernanceReadModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions.map(
+        (porteur) =>
+          ({
+            id: porteur.uid,
+            link: membreLink(porteur.structureId),
+            nom: porteur.nom,
+            roles: porteur.roles.map((role) => toRoleViewModel(role)),
+            type: porteur.type,
+          }) as PorteurPotentielViewModel
+      ),
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
-        feuillesDeRoute:
-          gouvernanceReadModel.feuillesDeRoute.map(toFeuillesDeRouteViewModel(gouvernanceReadModel.uid)),
+        feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute.map(toFeuillesDeRouteViewModel(gouvernanceReadModel.uid)),
       },
     },
     sectionMembres: {
       ...{
-        coporteurs:
-          gouvernanceReadModel.syntheseMembres.coporteurs.map(toCoporteursDetailsViewModel(gouvernanceReadModel.uid)),
+        coporteurs: gouvernanceReadModel.syntheseMembres.coporteurs.map(
+          toCoporteursDetailsViewModel(gouvernanceReadModel.uid)
+        ),
       },
       lien: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
       totalEtWording: [
@@ -167,9 +171,7 @@ type FeuilleDeRouteViewModel = Readonly<{
 }>
 
 function toComitesViewModel(comite: ComiteReadModel): ComiteResumeViewModel {
-  const date = comite.date
-    ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}`
-    : ''
+  const date = comite.date ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}` : ''
   const frequence: Record<string, string> = {
     annuelle: 'Annuel',
     mensuelle: 'Mensuel',
@@ -210,15 +212,13 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
     const nombreDeBeneficiairesSubventionAccordee = feuilleDeRoute.beneficiairesSubventionAccordee.length
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
     const nombreDeBeneficiairesSubventionFormationAccordee =
-            feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
+      feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel()),
-      beneficiairesSubventionAccordee:
-             feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel()),
-      beneficiairesSubventionFormation:
-        feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel()),
+      beneficiairesSubventionAccordee: feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel()),
+      beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel()),
       beneficiairesSubventionFormationAccordee:
         feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel()),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
@@ -231,13 +231,16 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
         href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
-        metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
-          `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
+        metadonnee: feuilleDeRoute.pieceJointe.metadonnees
+          ? `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.`
+          : '',
       },
-      porteur: feuilleDeRoute.porteur ? {
-        label: feuilleDeRoute.porteur.nom,
-        link: membreLink(feuilleDeRoute.porteur.structureId),
-      } : undefined,
+      porteur: feuilleDeRoute.porteur
+        ? {
+            label: feuilleDeRoute.porteur.nom,
+            link: membreLink(feuilleDeRoute.porteur.structureId),
+          }
+        : undefined,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
       wordingBeneficiairesSubventionAccordee: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionAccordee)}`,
@@ -261,23 +264,32 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
       : undefined
 
     const detailsAffichage: MembreDetailsViewModel['details'] = [
-      ...coporteur.contactReferent?.denomination === 'Contact politique de la collectivité' && contactReferent !== undefined ? [{ information: contactReferent, intitule: coporteur.contactReferent.denomination }] : [],
+      ...(coporteur.contactReferent?.denomination === 'Contact politique de la collectivité' &&
+      contactReferent !== undefined
+        ? [{ information: contactReferent, intitule: coporteur.contactReferent.denomination }]
+        : []),
 
-      ...isNaN(coporteur.totalMontantsSubventionsAccordees ?? NaN) ? [] : [
-        {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsAccordees!)} €`,
-          intitule: 'Total subventions accordées',
-        },
-      ],
-      ...isNaN(coporteur.totalMontantsSubventionsFormationAccordees ?? NaN) ? [] : [
-        {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsFormationAccordees!)} €`,
-          intitule: 'Total subventions formations accordées',
-        },
-      ],
-      ...coporteur.contactReferent?.denomination === 'Contact référent' && contactReferent !== undefined ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
+      ...(isNaN(coporteur.totalMontantsSubventionsAccordees ?? NaN)
+        ? []
+        : [
+            {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsAccordees!)} €`,
+              intitule: 'Total subventions accordées',
+            },
+          ]),
+      ...(isNaN(coporteur.totalMontantsSubventionsFormationAccordees ?? NaN)
+        ? []
+        : [
+            {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsFormationAccordees!)} €`,
+              intitule: 'Total subventions formations accordées',
+            },
+          ]),
+      ...(coporteur.contactReferent?.denomination === 'Contact référent' && contactReferent !== undefined
+        ? [{ information: contactReferent, intitule: 'Contact référent' }]
+        : []),
       {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         information: isNullishOrEmpty(coporteur.telephone) ? '-' : coporteur.telephone!,
@@ -286,16 +298,14 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
     ]
     const details = detailsAffichage.slice()
     if (coporteur.feuillesDeRoute.length >= 1) {
-      details.unshift(
-        {
-          feuillesDeRoute: coporteur.feuillesDeRoute.map((feuilleDeRoute) => ({
-            label: feuilleDeRoute.nom,
-            link: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
-          })),
-          information: '',
-          intitule: `Feuille${formatPluriel(coporteur.feuillesDeRoute.length)} de route`,
-        }
-      )
+      details.unshift({
+        feuillesDeRoute: coporteur.feuillesDeRoute.map((feuilleDeRoute) => ({
+          label: feuilleDeRoute.nom,
+          link: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
+        })),
+        information: '',
+        intitule: `Feuille${formatPluriel(coporteur.feuillesDeRoute.length)} de route`,
+      })
     }
 
     return {
@@ -314,7 +324,9 @@ function buildLogoMembre(type: string): string {
   return type === 'Administration' ? 'bank-line' : 'community-line'
 }
 
-function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['noteDeContexte']): GouvernanceViewModel['sectionNoteDeContexte']['noteDeContexte'] {
+function toNoteDeContexteViewModel(
+  noteDeContexte: UneGouvernanceReadModel['noteDeContexte']
+): GouvernanceViewModel['sectionNoteDeContexte']['noteDeContexte'] {
   if (!noteDeContexte) {
     return undefined
   }
@@ -340,15 +352,14 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
 }
 
 function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembres']): string {
-  return [
-    [syntheseMembres.coporteurs.length, 'co-porteur'] as const,
-    [syntheseMembres.candidats, 'candidat'] as const,
-  ]
+  return [[syntheseMembres.coporteurs.length, 'co-porteur'] as const, [syntheseMembres.candidats, 'candidat'] as const]
     .map(([nombre, categorie]) => `${nombre} ${categorie}${formatPluriel(nombre)}`)
     .join(', ')
 }
 
-function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): GouvernanceViewModel['sectionFeuillesDeRoute'] {
+function buildTitresFeuillesDeRoute(
+  gouvernance: UneGouvernanceReadModel
+): GouvernanceViewModel['sectionFeuillesDeRoute'] {
   if (gouvernance.feuillesDeRoute.length === 0) {
     return {
       budgetTotalCumule: '0',
@@ -362,17 +373,22 @@ function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): Gouve
     }
   }
   const url = `/gouvernance/${gouvernance.uid}/feuilles-de-route`
-  const lien = gouvernance.feuillesDeRoute.length === 1 ? {
-    label: 'Voir la feuille de route',
-    url,
-  } : {
-    label: 'Voir les feuilles de route',
-    url,
-  }
+  const lien =
+    gouvernance.feuillesDeRoute.length === 1
+      ? {
+          label: 'Voir la feuille de route',
+          url,
+        }
+      : {
+          label: 'Voir les feuilles de route',
+          url,
+        }
 
   const nombreDeFeuillesDeRoute = gouvernance.feuillesDeRoute.length
-  const budgetTotalCumule =
-    gouvernance.feuillesDeRoute.reduce((budget, feuilleDeRoute) => budget + feuilleDeRoute.budgetGlobal, 0)
+  const budgetTotalCumule = gouvernance.feuillesDeRoute.reduce(
+    (budget, feuilleDeRoute) => budget + feuilleDeRoute.budgetGlobal,
+    0
+  )
 
   return {
     budgetTotalCumule: formaterEnNombreFrancais(budgetTotalCumule),
@@ -391,10 +407,11 @@ function buildSousTitreNoteDeContexte(noteDeContexte: UneGouvernanceReadModel['n
   return `Modifié le ${formaterEnDateFrancaise(noteDeContexte.dateDeModification)} par ${noteDeContexte.prenomAuteur} ${noteDeContexte.nomAuteur}`
 }
 
-type ComiteResumeViewModel = ComiteViewModel & Readonly<{
-  frequence: string
-  intitule: string
-}>
+type ComiteResumeViewModel = ComiteViewModel &
+  Readonly<{
+    frequence: string
+    intitule: string
+  }>
 
 const frequences = [
   {

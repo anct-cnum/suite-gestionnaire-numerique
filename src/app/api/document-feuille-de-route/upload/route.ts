@@ -30,30 +30,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Vérification de l'authentification
     const session = await getSession()
     if (isNullish(session)) {
-      return NextResponse.json(
-        { message: 'Accès non autorisé' },
-        { status: 403 }
-      )
+      return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
     }
 
     const formData = await request.formData()
-    const fileRaw = formData.get('file') 
+    const fileRaw = formData.get('file')
     const uidFeuilleDeRoute = formData.get('uidFeuilleDeRoute') as string
     const uidEditeur = formData.get('uidEditeur') as string
 
     if (fileRaw === null || !uidFeuilleDeRoute || !uidEditeur) {
-      return NextResponse.json(
-        { message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' }, { status: 400 })
     }
 
     // Vérification que l'utilisateur authentifié correspond à l'uidEditeur
     if (session?.user.sub !== uidEditeur) {
-      return NextResponse.json(
-        { message: 'Accès non autorisé' },
-        { status: 403 }
-      )
+      return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
     }
 
     const file = fileRaw as File
@@ -61,7 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = await appelUseCase({ fileName: file.name, key, uidEditeur, uidFeuilleDeRoute })
 
     if (result !== 'OK') {
-      Sentry.captureException(new Error('Erreur lors de l\'ajout du document en base'), {
+      Sentry.captureException(new Error("Erreur lors de l'ajout du document en base"), {
         extra: {
           fileName: file.name,
           uidEditeur,
@@ -73,18 +64,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           type: 'DATABASE_ERROR',
         },
       })
-      return NextResponse.json(
-        { message: 'Erreur lors de l\'ajout du document en base' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: "Erreur lors de l'ajout du document en base" }, { status: 400 })
     }
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       href: `/api/document-feuille-de-route/${key}`,
       nom: file.name,
     })
   } catch (error) {
-    return gereErreur(error, { 
+    return gereErreur(error, {
       fileName: (error as CustomError).file?.name ?? 'unknown',
       uidEditeur: (error as CustomError).uidEditeur ?? 'unknown',
       uidFeuilleDeRoute: (error as CustomError).uidFeuilleDeRoute ?? 'unknown',
@@ -113,7 +101,7 @@ interface CustomError extends Error {
 
 async function televerseVersS3(file: File, uidFeuilleDeRoute: string): Promise<string> {
   const key = `user/${uidFeuilleDeRoute}/${nanoid()}_${file.name}`
-  
+
   await s3.send(
     new PutObjectCommand({
       Body: Buffer.from(await file.arrayBuffer()),
@@ -158,14 +146,14 @@ function gereErreur(error: unknown, context: ErrorContext): NextResponse {
   if (error instanceof Error) {
     if (error.name.includes('S3')) {
       return NextResponse.json(
-        { message: 'Erreur lors de l\'interaction avec le stockage S3. Veuillez réessayer.' },
+        { message: "Erreur lors de l'interaction avec le stockage S3. Veuillez réessayer." },
         { status: 503 }
       )
     }
 
     if (error.name.includes('Prisma')) {
       return NextResponse.json(
-        { message: 'Erreur lors de l\'interaction avec la base de données. Veuillez réessayer.' },
+        { message: "Erreur lors de l'interaction avec la base de données. Veuillez réessayer." },
         { status: 503 }
       )
     }
@@ -178,8 +166,5 @@ function gereErreur(error: unknown, context: ErrorContext): NextResponse {
     }
   }
 
-  return NextResponse.json(
-    { message: 'Une erreur inattendue s\'est produite. Veuillez réessayer.' },
-    { status: 500 }
-  )
-} 
+  return NextResponse.json({ message: "Une erreur inattendue s'est produite. Veuillez réessayer." }, { status: 500 })
+}

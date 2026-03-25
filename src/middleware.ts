@@ -6,8 +6,9 @@ export function middleware(request: NextRequest): NextResponse {
   // Déterminer si on est sur le site vitrine
   // En production: inclusion-numerique.anct.gouv.fr (sans préfixe min.)
   // En développement: utiliser SITE_MODE=vitrine pour forcer le mode vitrine
-  const isVitrineDomain = hostname.startsWith('inclusion-numerique.anct.gouv.fr') &&
-                          !hostname.startsWith('min.inclusion-numerique.anct.gouv.fr')
+  const isVitrineDomain =
+    hostname.startsWith('inclusion-numerique.anct.gouv.fr') &&
+    !hostname.startsWith('min.inclusion-numerique.anct.gouv.fr')
   const isVitrineMode = process.env.SITE_MODE === 'vitrine'
 
   const isVitrine = isVitrineDomain || isVitrineMode
@@ -17,7 +18,11 @@ export function middleware(request: NextRequest): NextResponse {
     const url = request.nextUrl.clone()
 
     // Éviter les rewrites infinis en vérifiant qu'on n'est pas déjà sur /vitrine
-    if (!url.pathname.startsWith('/vitrine') && !url.pathname.startsWith('/_next') && !url.pathname.startsWith('/api')) {
+    if (
+      !url.pathname.startsWith('/vitrine') &&
+      !url.pathname.startsWith('/_next') &&
+      !url.pathname.startsWith('/api')
+    ) {
       url.pathname = `/vitrine${url.pathname}`
       return NextResponse.rewrite(url)
     }

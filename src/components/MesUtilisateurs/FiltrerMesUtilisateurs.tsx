@@ -18,12 +18,7 @@ import {
   zoneGeographiqueToURLSearchParams,
 } from '@/presenters/filtresUtilisateurPresenter'
 
-export default function FiltrerMesUtilisateurs({
-  closeDrawer,
-  id,
-  labelId,
-  resetSearch,
-}: Props): ReactElement {
+export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, resetSearch }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
@@ -56,11 +51,7 @@ export default function FiltrerMesUtilisateurs({
         />
         <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
-          <button
-            className="fr-btn fr-btn--secondary fr-col-5"
-            onClick={reinitialiser}
-            type="reset"
-          >
+          <button className="fr-btn fr-btn--secondary fr-col-5" onClick={reinitialiser} type="reset">
             Réinitialiser les filtres
           </button>
           <SubmitButton ariaControls={id} className="fr-col-5">

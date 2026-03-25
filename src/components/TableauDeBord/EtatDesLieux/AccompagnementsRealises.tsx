@@ -8,14 +8,10 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
-export default function AccompagnementsRealises({
-  accompagnementsRealisesPromise,
-}: Props): ReactElement {
+export default function AccompagnementsRealises({ accompagnementsRealisesPromise }: Props): ReactElement {
   return (
     <Suspense fallback={<AccompagnementsRealisesSkeleton />}>
-      <AccompagnementsRealisesAsyncLoader
-        accompagnementsRealisesPromise={accompagnementsRealisesPromise}
-      />
+      <AccompagnementsRealisesAsyncLoader accompagnementsRealisesPromise={accompagnementsRealisesPromise} />
     </Suspense>
   )
 }
@@ -25,59 +21,29 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
     <>
       <div className="background-blue-france fr-p-4w fr-ml-1w">
         <div className="fr-h1 fr-m-0">
-          <TitleIcon
-            background="white"
-            icon="compass-3-line"
-          />
-          <span className="color-grey">
-            ...
-          </span>
+          <TitleIcon background="white" icon="compass-3-line" />
+          <span className="color-grey">...</span>
         </div>
         <div className="font-weight-500">
-          <span>
-            {' '}
-            Accompagnements réalisés
-          </span>
+          <span> Accompagnements réalisés</span>
           <Information>
             <p className="fr-mb-0">
-              Depuis 
-              {' '}
-              <strong>
-                2021
-              </strong>
-              , avec les dispositifs
-              {' '}
-              <strong>
-                Conseillers Numériques
-              </strong>
-              {' '}
-              et
-              <strong>
-                Aidants Connect.
-              </strong>
+              Depuis <strong>2021</strong>, avec les dispositifs <strong>Conseillers Numériques</strong> et
+              <strong>Aidants Connect.</strong>
             </p>
           </Information>
         </div>
       </div>
       <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
         <div className="font-weight-500">
-          <span>
-            {' '}
-            Accompagnements des 6 derniers mois
-          </span>
+          <span> Accompagnements des 6 derniers mois</span>
           <Information>
             <p className="fr-mb-0">
-              Accompagnements saisis sur 
-              {' '}
-              <strong>
-                La Coop.
-              </strong>
+              Accompagnements saisis sur <strong>La Coop.</strong>
             </p>
           </Information>
         </div>
-        <div className="fr-text--sm color-grey fr-mt-2w">
-          Chargement...
-        </div>
+        <div className="fr-text--sm color-grey fr-mt-2w">Chargement...</div>
       </div>
     </>
   )

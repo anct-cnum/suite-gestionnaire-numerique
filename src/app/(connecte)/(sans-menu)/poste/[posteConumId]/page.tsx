@@ -26,7 +26,9 @@ export default async function RedirectPosteVersStructure({ params }: Props): Pro
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    posteConumId: string
-  }>>
+  params: Promise<
+    Readonly<{
+      posteConumId: string
+    }>
+  >
 }>

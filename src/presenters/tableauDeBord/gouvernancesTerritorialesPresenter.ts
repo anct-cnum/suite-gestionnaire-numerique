@@ -49,9 +49,7 @@ export function gouvernancesTerritorialesPresenter(
   }
 }
 
-function isErrorReadModel(
-  readModel: ErrorReadModel | GouvernancesTerritorialesReadModel
-): readModel is ErrorReadModel {
+function isErrorReadModel(readModel: ErrorReadModel | GouvernancesTerritorialesReadModel): readModel is ErrorReadModel {
   return 'type' in readModel
 }
 
@@ -78,7 +76,7 @@ function getColorForType(type: string): string {
     'Service public': 'dot-purple-glycine-200-850',
     'Structure associative': 'dot-pink-macaron-main-689',
   }
-  
+
   return couleursMappings[type] ?? 'dot-pink-tuile-main-556'
 }
 

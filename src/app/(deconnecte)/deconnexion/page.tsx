@@ -11,8 +11,5 @@ export default function DeconnexionPage(): ReactElement {
     void deconnexion()
   }, [])
 
-  return (
-    <>
-    </>
-  )
+  return <></>
 }

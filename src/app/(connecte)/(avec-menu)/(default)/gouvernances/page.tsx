@@ -47,7 +47,7 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   )
 
   const dateGeneration = new Date()
-  
+
   return (
     <Gouvernances
       dateGeneration={dateGeneration}

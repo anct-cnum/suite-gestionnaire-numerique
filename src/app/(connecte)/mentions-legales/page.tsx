@@ -9,7 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function MentionsLegalesController(): ReactElement {
-  return (
-    <MentionsLegales />
-  )
+  return <MentionsLegales />
 }

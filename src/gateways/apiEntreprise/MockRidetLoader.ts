@@ -10,7 +10,7 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
   codeInsee: '',
   codePostal: '',
   commune: 'Nouméa',
-  denomination: 'ASS. D\'ENTRAIDE SOCIALE CULTURELLE DE LA JEUNESSE',
+  denomination: "ASS. D'ENTRAIDE SOCIALE CULTURELLE DE LA JEUNESSE",
   identifiant: '0271528',
   nomVoie: '',
   numeroVoie: '',
@@ -19,7 +19,7 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
 export class MockRidetLoader implements SireneLoader {
   async rechercherParIdentifiant(numeroRidet: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
     // Simulation d'un délai d'API
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(resolve, 500)
     })
 

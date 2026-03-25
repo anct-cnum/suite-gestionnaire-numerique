@@ -16,42 +16,44 @@ export type FeuillesDeRouteReadModel = Readonly<{
   uidGouvernance: string
 }>
 
-export type MembreAvecRoleDansLaGouvernance = Membre & Readonly<{ roles: ReadonlyArray<string> }> &
- Readonly<{ type?: string }>
+export type MembreAvecRoleDansLaGouvernance = Membre &
+  Readonly<{ roles: ReadonlyArray<string> }> &
+  Readonly<{ type?: string }>
 
-type FeuilleDeRouteReadModel = Readonly<
-  {
-    actions: ReadonlyArray<ActionReadModel>
-    beneficiaires: number
-    coFinanceurs: number
+type FeuilleDeRouteReadModel = Readonly<{
+  actions: ReadonlyArray<ActionReadModel>
+  beneficiaires: number
+  coFinanceurs: number
+  nom: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    metadonnees?: Readonly<{
+      format: string
+      taille: string
+      upload: Date
+    }>
     nom: string
-    pieceJointe?: Readonly<{
-      apercu: string
-      emplacement: string
-      metadonnees?: Readonly<{
-        format: string
-        taille: string
-        upload: Date
-      }>
-      nom: string
-    }>
-    structureCoPorteuse?: Membre
-    totaux: Readonly<{
-      budget: number
-      coFinancement: number
-      financementAccorde: number
-    }>
-    uid: string
   }>
+  structureCoPorteuse?: Membre
+  totaux: Readonly<{
+    budget: number
+    coFinancement: number
+    financementAccorde: number
+  }>
+  uid: string
+}>
 
 type ActionReadModel = Readonly<{
   beneficiaires: ReadonlyArray<Membre>
   besoins: ReadonlyArray<BesoinsPossible>
   budgetGlobal: number
-  coFinancements: ReadonlyArray<Readonly<{
-    coFinanceur: Membre
-    montant: number
-  }>>
+  coFinancements: ReadonlyArray<
+    Readonly<{
+      coFinanceur: Membre
+      montant: number
+    }>
+  >
   contexte: string
   description: string
   nom: string

@@ -1,4 +1,4 @@
-export type RoleUtilisateur = 
+export type RoleUtilisateur =
   | 'administrateur_dispositif'
   | 'gestionnaire_departement'
   | 'gestionnaire_groupement'

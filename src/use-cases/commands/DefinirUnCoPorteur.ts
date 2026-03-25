@@ -45,25 +45,25 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   async handle(command: Command): ResultAsync<Failure> {
     const user = await this.utilisateurRepository.get(command.uidUtilisateurConnecte)
     const gouvernance = await this.gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
-    if(!gouvernance.peutEtreGereePar(user)){
+    if (!gouvernance.peutEtreGereePar(user)) {
       return 'UtilisateurNonAutorise'
     }
     const membre = await this.membreRepository.get(command.uidMembre)
 
-    if(membre instanceof MembreCandidat){
+    if (membre instanceof MembreCandidat) {
       return 'MembreDoitEtreConfirmer'
     }
 
-    if(membre.state.roles.includes('coporteur')) {
+    if (membre.state.roles.includes('coporteur')) {
       return 'MembreDéjàCoPorteur'
     }
 
     const nouveauxRoles = [...membre.state.roles, 'coporteur']
 
-    const membreConfirmer= new MembreConfirme(
+    const membreConfirmer = new MembreConfirme(
       new MembreUid(membre.state.uid.value),
       membre.state.nom,
-      nouveauxRoles.map(role => new Role(role)),
+      nouveauxRoles.map((role) => new Role(role)),
       new GouvernanceUid(membre.state.uidGouvernance.value),
       new Statut(membre.state.statut),
       new StructureUid(membre.state.uidStructure.value)
@@ -96,8 +96,9 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   ): Promise<void> {
     const contacts = await this.membreRepository.getContacts(membreUid)
 
-    await Promise.all(contacts.map(async (contact) =>
-      this.traiterContact(contact, structureId, departement, membreUid)))
+    await Promise.all(
+      contacts.map(async (contact) => this.traiterContact(contact, structureId, departement, membreUid))
+    )
   }
 
   /**
@@ -120,7 +121,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
         return
       }
       // Utilisateur lié à une autre structure → Logger dans Sentry
-      Sentry.captureMessage('Contact coporteur déjà utilisateur d\'une autre structure', {
+      Sentry.captureMessage("Contact coporteur déjà utilisateur d'une autre structure", {
         extra: {
           contactEmail: contact.email,
           contactNom: contact.nom,
@@ -171,11 +172,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   }
 }
 
-type Failure =
-  | 'MembreDéjàCoPorteur'
-  | 'MembreDoitEtreConfirmer'
-  | 'UtilisateurNonAutorise'
-  | MembreFailure
+type Failure = 'MembreDéjàCoPorteur' | 'MembreDoitEtreConfirmer' | 'UtilisateurNonAutorise' | MembreFailure
 
 type Command = Readonly<{
   uidGouvernance: string
@@ -183,9 +180,10 @@ type Command = Readonly<{
   uidUtilisateurConnecte: string
 }>
 
-type MembreRepositoryForDefinirUnCoPorteur =
-  GetMembreRepository & GetStructureContactsRepository & UpdateMembreRepository
+type MembreRepositoryForDefinirUnCoPorteur = GetMembreRepository &
+  GetStructureContactsRepository &
+  UpdateMembreRepository
 
-type UtilisateurRepositoryForDefinirUnCoPorteur = AddUtilisateurRepository
-                                                  & FindUtilisateurByEmailRepository
-                                                  & GetUtilisateurRepository
+type UtilisateurRepositoryForDefinirUnCoPorteur = AddUtilisateurRepository &
+  FindUtilisateurByEmailRepository &
+  GetUtilisateurRepository

@@ -28,9 +28,7 @@ export default function ListeLieuxInclusionFiltre({
   const [selectedStructureType, setSelectedStructureType] = useState(currentFilters.typeStructure)
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
   const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)
-  const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(
-    currentFilters.horsZonePrioritaire
-  )
+  const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(currentFilters.horsZonePrioritaire)
 
   const structureTypeSelectId = useId()
   const qpvCheckboxId = useId()
@@ -130,10 +128,7 @@ export default function ListeLieuxInclusionFiltre({
     <div>
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
-          <FiltrerParZonesGeographiques
-            ref={ref}
-            setZoneGeographique={handleZoneGeographiqueChange}
-          />
+          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
           <hr className="fr-hr" />
         </>
       )}

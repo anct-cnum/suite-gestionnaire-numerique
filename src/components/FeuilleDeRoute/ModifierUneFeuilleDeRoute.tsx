@@ -58,11 +58,11 @@ export default function ModifierUneFeuilleDeRoute({
           nom={nom}
           perimetreActuel={perimetre}
           perimetres={perimetres}
-          validerFormulaire={(event) => { void modifierUneFeuilleDeRoute(event) }}
+          validerFormulaire={(event) => {
+            void modifierUneFeuilleDeRoute(event)
+          }}
         >
-          <SubmitButton isDisabled={isDisabled}>
-            {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
-          </SubmitButton>
+          <SubmitButton isDisabled={isDisabled}>{isDisabled ? 'Modification en cours...' : 'Enregistrer'}</SubmitButton>
         </FormulaireFeuilleDeRoute>
       </Drawer>
     </>

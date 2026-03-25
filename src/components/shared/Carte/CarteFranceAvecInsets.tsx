@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-
-/* eslint-disable @stylistic/quote-props */
 'use client'
 import {
   AddLayerObject,
@@ -100,9 +98,7 @@ export default function CarteFranceAvecInsets({
     // Ajouter la source si elle n'existe pas déjà
     if (!map.getSource('decoupage')) {
       map.addSource('decoupage', {
-        tiles: [
-          'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
-        ],
+        tiles: ['https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf'],
         type: 'vector',
       })
     }
@@ -153,9 +149,7 @@ export default function CarteFranceAvecInsets({
       if (event.features?.length) {
         const feature = event.features[0]
         const codeDepartement = feature.properties.code as string
-        const departement = donneesDepartements.find(
-          (dept) => dept.codeDepartement === codeDepartement
-        )
+        const departement = donneesDepartements.find((dept) => dept.codeDepartement === codeDepartement)
 
         // Mettre à jour le filtre de la couche de highlight seulement si pas de popup
 
@@ -342,9 +336,7 @@ function gererLeSurvolDepartement(
   }
 
   const feature = event.features[0]
-  const departement = departementsFragilite.find(
-    (dept) => dept.codeDepartement === feature.properties.code
-  )
+  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
 
   if (!departement?.popup) {
     // Pas de popup à afficher

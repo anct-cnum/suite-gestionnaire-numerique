@@ -1,8 +1,8 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+import storybook from 'eslint-plugin-storybook'
 
 import eslint from '@eslint/js'
-import stylistic from '@stylistic/eslint-plugin'
+import eslintConfigPrettier from 'eslint-config-prettier'
 import vitest from '@vitest/eslint-plugin'
 import importPlugin from 'eslint-plugin-import'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
@@ -34,7 +34,6 @@ export default [
   perfectionist.configs['recommended-alphabetical'],
   {
     plugins: {
-      '@stylistic': stylistic,
       'unused-imports': unusedImports,
     },
   },
@@ -42,11 +41,10 @@ export default [
     rules: {
       'arrow-body-style': 'off',
       'capitalized-comments': 'off',
-      "class-methods-use-this": "off",
+      'class-methods-use-this': 'off',
       'func-style': ['error', 'declaration'],
       'id-length': ['error', { exceptions: ['_'] }],
       'init-declarations': 'off',
-      'jsx-quotes': ['error'],
       'line-comment-position': 'off',
       'max-classes-per-file': 'off',
       'max-lines': 'off',
@@ -74,7 +72,7 @@ export default [
       'prefer-named-capture-group': 'off',
       'require-unicode-regexp': 'off',
       'sort-imports': 'off',
-      'sort-keys': ['error', 'asc', { 'caseSensitive': false }],
+      'sort-keys': ['error', 'asc', { caseSensitive: false }],
       'import/namespace': 'off',
       'import/newline-after-import': 'error',
       'import/no-anonymous-default-export': 'off',
@@ -100,13 +98,15 @@ export default [
               target: ['src/use-cases/**[^test].ts'],
               from: ['src', 'node_modules'],
               except: ['domain', 'shared'],
-              message: "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs.",
+              message:
+                "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs.",
             },
             {
               target: ['src/use-cases/**test.ts'],
               from: ['src', 'node_modules'],
               except: ['domain', 'use-cases', 'use-cases/shared', 'vitest'],
-              message: "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs.",
+              message:
+                "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs.",
             },
             {
               target: ['src/gateways/**[^test].ts'],
@@ -126,29 +126,22 @@ export default [
             {
               target: ['src/gateways/**test.ts'],
               from: ['src', 'node_modules'],
-              except: [
-                'domain',
-                'use-cases',
-                'gateways',
-                'shared',
-                '@prisma/client',
-                'nodemailer',
-                'mjml',
-                'vitest',
-              ],
+              except: ['domain', 'use-cases', 'gateways', 'shared', '@prisma/client', 'nodemailer', 'mjml', 'vitest'],
               message: "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases.",
             },
             {
               target: ['src/presenters/**[^test].ts'],
               from: ['src', 'node_modules'],
               except: ['use-cases', 'presenters/shared', 'shared'],
-              message: "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
+              message:
+                "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
             },
             {
               target: ['src/presenters/**test.ts'],
               from: ['src', 'node_modules'],
               except: ['use-cases', 'presenters', 'vitest'],
-              message: "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
+              message:
+                "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
             },
           ],
         },
@@ -167,23 +160,18 @@ export default [
       'jsx-a11y/no-interactive-element-to-noninteractive-role': 'error',
       'jsx-a11y/no-aria-hidden-on-focusable': 'error',
       'jsx-a11y/lang': 'error',
-      'perfectionist/sort-imports': "off",
-      'perfectionist/sort-jsx-props': "off",
-      'perfectionist/sort-modules': ["error", { 'groups': [
-        [
-          'export-class',
-          'export-function',
-          'export-enum',
-          'export-interface',
-          'export-type',
-        ],
-        'unknown',
-      ], 'type': 'unsorted' }],
+      'perfectionist/sort-imports': 'off',
+      'perfectionist/sort-jsx-props': 'off',
+      'perfectionist/sort-modules': [
+        'error',
+        {
+          groups: [['export-class', 'export-function', 'export-enum', 'export-interface', 'export-type'], 'unknown'],
+          type: 'unsorted',
+        },
+      ],
       'react/forbid-component-props': 'off',
       'react/jsx-boolean-value': 'off',
       'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
-      'react/jsx-indent': ['error', 2],
-      'react/jsx-indent-props': ['error', 2],
       'react/jsx-max-depth': 'off',
       'react/jsx-newline': 'off',
       'react/jsx-no-bind': 'off',
@@ -192,70 +180,10 @@ export default [
       'react/no-multi-comp': ['error', { ignoreStateless: true }],
       'sonarjs/no-nested-functions': 'off',
       'sonarjs/function-return-type': 'off',
-      '@stylistic/array-element-newline': ['error', 'consistent'],
-      '@stylistic/comma-dangle': [
+      '@typescript-eslint/restrict-template-expressions': [
         'error',
-        {
-          arrays: 'always-multiline',
-          imports: 'always-multiline',
-          objects: 'always-multiline',
-        },
+        { allowBoolean: true, allowNumber: true, allowNullish: true },
       ],
-      '@stylistic/dot-location': ['error', 'property'],
-      '@stylistic/function-call-argument-newline': ['error', 'consistent'],
-      '@stylistic/function-paren-newline': ['error', 'consistent'],
-      '@stylistic/implicit-arrow-linebreak': ['off'],
-      '@stylistic/indent': ['error', 2],
-      '@stylistic/lines-around-comment': 'off',
-      '@stylistic/lines-between-class-members': [
-        'error',
-        {
-          enforce: [
-            { blankLine: 'always', prev: '*', next: '*' },
-            { blankLine: 'never', prev: 'field', next: 'field' },
-          ],
-        },
-      ],
-      '@stylistic/max-len': [
-        'error',
-        {
-          code: 120,
-          ignoreRegExpLiterals: true,
-          ignoreStrings: true,
-          ignoreTemplateLiterals: true,
-          ignoreUrls: true,
-        },
-      ],
-      '@stylistic/member-delimiter-style': [
-        'error',
-        {
-          multiline: {
-            delimiter: 'none',
-          },
-        },
-      ],
-      '@stylistic/multiline-ternary': 'off',
-      '@stylistic/multiline-comment-style': 'off',
-      '@stylistic/newline-per-chained-call': ['off'],
-      '@stylistic/no-confusing-arrow': ['off'],
-      '@stylistic/no-extra-parens': ['error', 'all', { ignoreJSX: 'all' }],
-      '@stylistic/no-multiple-empty-lines': ['error', { max: 1 }],
-      '@stylistic/object-curly-spacing': ['error', 'always'],
-      '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
-      '@stylistic/operator-linebreak': 'off',
-      '@stylistic/padded-blocks': ['error', 'never'],
-      '@stylistic/quote-props': ['error', 'as-needed'],
-      '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
-      '@stylistic/semi': ['error', 'never'],
-      '@stylistic/space-before-function-paren': [
-        'error',
-        {
-          anonymous: 'always',
-          asyncArrow: 'always',
-          named: 'never',
-        },
-      ],
-      '@typescript-eslint/restrict-template-expressions': ['error', { allowBoolean: true, allowNumber: true, allowNullish: true }],
       '@typescript-eslint/array-type': ['error', { default: 'generic', readonly: 'generic' }],
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/consistent-type-imports': 'off',
@@ -263,17 +191,14 @@ export default [
       '@typescript-eslint/explicit-member-accessibility': 'off',
       '@typescript-eslint/init-declarations': 'off',
       '@typescript-eslint/max-params': 'off',
-      "@typescript-eslint/member-ordering": "off",
-      '@typescript-eslint/method-signature-style': ["error", "method"],
+      '@typescript-eslint/member-ordering': 'off',
+      '@typescript-eslint/method-signature-style': ['error', 'method'],
       '@typescript-eslint/naming-convention': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/no-shadow': 'off',
       '@typescript-eslint/no-use-before-define': 'off',
-      "@typescript-eslint/switch-exhaustiveness-check": [
-        "error",
-        { "considerDefaultExhaustiveForUnions": true }
-      ],
-      "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+      '@typescript-eslint/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
+      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
       '@typescript-eslint/no-unnecessary-type-parameters': 'off',
       '@typescript-eslint/no-unsafe-type-assertion': 'off',
       '@typescript-eslint/prefer-destructuring': 'off',
@@ -337,7 +262,7 @@ export default [
       'vitest/prefer-to-be-falsy': 'off',
       'vitest/prefer-to-be-truthy': 'off',
       'vitest/require-hook': 'off',
-      'vitest/valid-title': ['error', { 'allowArguments': true }],
+      'vitest/valid-title': ['error', { allowArguments: true }],
     },
   },
   {
@@ -347,7 +272,7 @@ export default [
   {
     files: ['**/gateways/**/Prisma*.ts'],
     rules: {
-      'camelcase': 'off',
+      camelcase: 'off',
     },
   },
   {
@@ -378,5 +303,6 @@ export default [
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     },
   },
-  ...storybook.configs["flat/recommended"]
-];
+  ...storybook.configs['flat/recommended'],
+  eslintConfigPrettier,
+]

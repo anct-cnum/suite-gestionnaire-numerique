@@ -1,4 +1,8 @@
-import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
+import {
+  StatistiquesCoopLoader,
+  StatistiquesCoopReadModel,
+  StatistiquesFilters,
+} from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 export interface MockConfig {
   delaySeconds: number
@@ -7,14 +11,14 @@ export interface MockConfig {
 
 export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
   private readonly config: MockConfig
-  
+
   constructor(config: MockConfig = { delaySeconds: 0.8, shouldFail: false }) {
     this.config = config
   }
 
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     // Simulation d'un délai d'API
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(resolve, this.config.delaySeconds * 1000)
     })
 
@@ -26,14 +30,14 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     // Données différentes selon le filtre géographique
     const estDepartemental = filtres?.departements !== undefined && filtres.departements.length > 0
     const departement = estDepartemental ? filtres.departements[0] : null
-    
+
     // Calculer un facteur temporel si des dates sont fournies
     let facteurTemporel = 1
     if (filtres?.du !== undefined && filtres.au !== undefined) {
       const dateDebut = new Date(filtres.du)
       const dateFin = new Date(filtres.au)
       const joursEcoules = Math.round((dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60 * 24))
-      
+
       // Si période de 30 jours ou moins, diviser par 100
       // Si période entre 30 et 365 jours, ajuster proportionnellement
       if (joursEcoules <= 30) {
@@ -78,7 +82,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
 
   private genererActivites(estDepartemental: boolean, facteurTemporel = 1): StatistiquesCoopReadModel['activites'] {
     const facteur = (estDepartemental ? 0.08 : 1) * facteurTemporel
-    
+
     return {
       durees: [
         {
@@ -89,7 +93,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
         },
         {
           count: Math.round(320000 * facteur),
-          label: 'Moins d\'1h',
+          label: "Moins d'1h",
           proportion: 33.7,
           value: 'MoinsUneHeure',
         },
@@ -129,7 +133,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
       thematiques: [
         {
           count: Math.round(180000 * facteur),
-          label: 'Prise en main d\'un ordinateur',
+          label: "Prise en main d'un ordinateur",
           proportion: 18.9,
           value: 'PriseEnMainOrdinateur',
         },
@@ -228,9 +232,12 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     }
   }
 
-  private genererBeneficiaires(estDepartemental: boolean, facteurTemporel = 1): StatistiquesCoopReadModel['beneficiaires'] {
+  private genererBeneficiaires(
+    estDepartemental: boolean,
+    facteurTemporel = 1
+  ): StatistiquesCoopReadModel['beneficiaires'] {
     const facteur = (estDepartemental ? 0.08 : 1) * facteurTemporel // 8% pour un département vs France entière
-    
+
     return {
       genres: [
         {
@@ -240,14 +247,14 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           value: 'Feminin',
         },
         {
-          count: Math.round(320000 * facteur), 
+          count: Math.round(320000 * facteur),
           label: 'Masculin',
           proportion: 37.6,
           value: 'Masculin',
         },
         {
           count: Math.round(150000 * facteur),
-          label: 'Non communiqué', 
+          label: 'Non communiqué',
           proportion: 17.7,
           value: 'NonCommunique',
         },
@@ -315,18 +322,18 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
   }
 
   private genererTotaux(
-    estDepartemental: boolean, 
-    departement: null | string, 
+    estDepartemental: boolean,
+    departement: null | string,
     facteurTemporel = 1
   ): StatistiquesCoopReadModel['totaux'] {
     const facteur = estDepartemental ? 0.08 : 1
-    
+
     // Ajustements spécifiques par département pour plus de réalisme
     let facteurDept = facteur
     if (departement !== null && departement !== '') {
       switch (departement) {
-        case '13': // Bouches-du-Rhône  
-          facteurDept = 0.10
+        case '13': // Bouches-du-Rhône
+          facteurDept = 0.1
           break
         case '59': // Nord
           facteurDept = 0.11
@@ -341,10 +348,10 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           facteurDept = 0.08
       }
     }
-    
+
     // Appliquer le facteur temporel
     facteurDept *= facteurTemporel
-    
+
     return {
       accompagnements: {
         collectifs: {

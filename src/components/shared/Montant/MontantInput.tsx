@@ -5,11 +5,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from 'react'
 import { MontantPositif } from './MontantPositif'
 import { Optional } from '@/shared/Optional'
 
-export default function MontantInput({
-  id,
-  montantInitial,
-  onChange,
-}: Readonly<Props>): ReactElement {
+export default function MontantInput({ id, montantInitial, onChange }: Readonly<Props>): ReactElement {
   const [inputValue, setInputValue] = useState(montantInitial)
 
   useEffect(() => {

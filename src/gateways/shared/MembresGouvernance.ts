@@ -66,8 +66,7 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
 
     // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
     const aEnveloppeNonFormation = beneficiaireSubvention.some(
-      (beneficiaire) =>
-        !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+      (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
     )
 
     if (aEnveloppeFormation) {

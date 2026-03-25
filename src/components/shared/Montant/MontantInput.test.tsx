@@ -23,13 +23,7 @@ describe('montantInput', () => {
   it('appelle onChange avec une nouvelle valeur après saisie utilisateur', () => {
     const onChange = vi.fn<(montant: Optional<MontantPositif>) => void>()
 
-    renderComponent(
-      <MontantInput
-        id="montantTest"
-        montantInitial={Optional.empty()}
-        onChange={onChange}
-      />
-    )
+    renderComponent(<MontantInput id="montantTest" montantInitial={Optional.empty()} onChange={onChange} />)
 
     const input = screen.getByRole('textbox', { name: '' })
     fireEvent.change(input, { target: { value: '999' } })

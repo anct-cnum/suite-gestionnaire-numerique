@@ -20,26 +20,19 @@ export default function ModifierUneNotePrivee({
     <FormulaireNotePrivee
       labelId={labelId}
       texte={texte}
-      validerFormulaire={(event) => { void modifierLaNotePrivee(event) }}
+      validerFormulaire={(event) => {
+        void modifierLaNotePrivee(event)
+      }}
     >
       <div className="fr-btns-group">
-        <SubmitButton
-          ariaControls={id}
-          isDisabled={isDisabled}
-        >
+        <SubmitButton ariaControls={id} isDisabled={isDisabled}>
           {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
         </SubmitButton>
-        <button
-          className="fr-btn red-button"
-          onClick={viderLeContenu}
-          type="reset"
-        >
+        <button className="fr-btn red-button" onClick={viderLeContenu} type="reset">
           Effacer
         </button>
       </div>
-      <p className="fr-text--xs center">
-        {edition}
-      </p>
+      <p className="fr-text--xs center">{edition}</p>
     </FormulaireNotePrivee>
   )
 

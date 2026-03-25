@@ -20,7 +20,9 @@ describe('ajouter une feuille de route', () => {
       expect(drawer).toHaveAttribute('id', 'drawerAjouterFeuilleDeRouteId')
       const titre = within(drawer).getByRole('heading', { level: 3, name: 'Ajouter une feuille de route' })
       expect(titre).toBeInTheDocument()
-      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
+      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), {
+        selector: 'p',
+      })
       expect(champsObligatoires).toBeInTheDocument()
 
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter une feuille de route' })
@@ -29,7 +31,9 @@ describe('ajouter une feuille de route', () => {
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
       expect(nom).toHaveAttribute('type', 'text')
-      const porteur = within(formulaire).getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' })
+      const porteur = within(formulaire).getByRole('combobox', {
+        name: 'Quel membre de la gouvernance porte la feuille de route ? *',
+      })
       expect(porteur).toBeRequired()
       const choisir = within(porteur).getByRole('option', { name: 'Choisir', selected: true })
       expect(choisir).toBeInTheDocument()
@@ -41,7 +45,10 @@ describe('ajouter une feuille de route', () => {
       expect(membre3).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
-      const perimetre = within(fieldsets[0]).getByText(matchWithoutMarkup('Quel est le périmètre géographique de la feuille de route ? *'), { selector: 'legend' })
+      const perimetre = within(fieldsets[0]).getByText(
+        matchWithoutMarkup('Quel est le périmètre géographique de la feuille de route ? *'),
+        { selector: 'legend' }
+      )
       expect(perimetre).toBeInTheDocument()
       const regional = within(formulaire).getByRole('radio', { name: 'Régional' })
       expect(regional).toBeRequired()
@@ -130,7 +137,10 @@ describe('ajouter une feuille de route', () => {
   }
 
   function jeSelectionneLePorteur(value: string): void {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }), { target: { value } })
+    fireEvent.change(
+      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }),
+      { target: { value } }
+    )
   }
 
   function jeSelectionneUnPerimetre(name: string): void {

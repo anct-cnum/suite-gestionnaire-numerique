@@ -23,11 +23,13 @@ describe('changer mon rôle', () => {
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateur.state).toStrictEqual(utilisateurFactory({
-      isSuperAdmin: true,
-      role: 'Gestionnaire structure',
-      uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
-    }).state)
+    expect(spiedUtilisateur.state).toStrictEqual(
+      utilisateurFactory({
+        isSuperAdmin: true,
+        role: 'Gestionnaire structure',
+        uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
+      }).state
+    )
   })
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
@@ -62,7 +64,7 @@ const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
   }),
 }
 
-const utilisateurRepository = new class implements GetUtilisateurRepository, UpdateUtilisateurRepository {
+const utilisateurRepository = new (class implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     return Promise.resolve(utilisateurByUid[uid])
   }
@@ -71,4 +73,4 @@ const utilisateurRepository = new class implements GetUtilisateurRepository, Upd
     spiedUtilisateur = utilisateur
     return Promise.resolve()
   }
-}()
+})()

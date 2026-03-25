@@ -35,56 +35,19 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const blocs = blocsParContexte(contexte)
-  return (
-    <>
-      {blocs.map((bloc) => renderBloc(bloc, contexte, utilisateur))}
-    </>
-  )
+  return <>{blocs.map((bloc) => renderBloc(bloc, contexte, utilisateur))}</>
 }
 
-function renderBloc(
-  bloc: IdentifiantBloc,
-  contexte: Contexte,
-  utilisateur: UnUtilisateurReadModel
-): ReactElement {
+function renderBloc(bloc: IdentifiantBloc, contexte: Contexte, utilisateur: UnUtilisateurReadModel): ReactElement {
   const blocsRenderers: Record<IdentifiantBloc, () => ReactElement> = {
-    accueil: () => (
-      <BlocAccueil
-        contexte={contexte}
-        key="accueil"
-        prenom={utilisateur.prenom}
-      />),
-    beneficiaires: () => (
-      <BlocBeneficiaires
-        contexte={contexte}
-        key="beneficiaires"
-      />),
+    accueil: () => <BlocAccueil contexte={contexte} key="accueil" prenom={utilisateur.prenom} />,
+    beneficiaires: () => <BlocBeneficiaires contexte={contexte} key="beneficiaires" />,
     cartographie: () => <BlocCartographie key="cartographie" />,
-    donneesStructure: () => (
-      <BlocDonneesStructure
-        contexte={contexte}
-        key="donneesStructure"
-      />),
-    etatDesLieux: () => (
-      <BlocEtatDesLieux
-        contexte={contexte}
-        key="etatDesLieux"
-      />),
-    financements: () => (
-      <BlocFinancements
-        contexte={contexte}
-        key="financements"
-      />),
-    gouvernance: () => (
-      <BlocGouvernance
-        contexte={contexte}
-        key="gouvernance"
-      />),
-    mediateurs: () => (
-      <BlocMediateurs
-        contexte={contexte}
-        key="mediateurs"
-      />),
+    donneesStructure: () => <BlocDonneesStructure contexte={contexte} key="donneesStructure" />,
+    etatDesLieux: () => <BlocEtatDesLieux contexte={contexte} key="etatDesLieux" />,
+    financements: () => <BlocFinancements contexte={contexte} key="financements" />,
+    gouvernance: () => <BlocGouvernance contexte={contexte} key="gouvernance" />,
+    mediateurs: () => <BlocMediateurs contexte={contexte} key="mediateurs" />,
     rejoindreGouvernance: () => <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
     sources: () => <BlocSources key="sources" />,
   }

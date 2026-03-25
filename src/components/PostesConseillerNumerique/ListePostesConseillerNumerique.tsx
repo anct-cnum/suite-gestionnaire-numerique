@@ -18,7 +18,10 @@ import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteCon
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import { PosteConseillerNumeriqueViewModel, PostesConseillerNumeriqueViewModel } from '@/presenters/postesConseillerNumeriquePresenter'
+import {
+  PosteConseillerNumeriqueViewModel,
+  PostesConseillerNumeriqueViewModel,
+} from '@/presenters/postesConseillerNumeriquePresenter'
 import {
   buildURLSearchParamsFromPostesConseillerNumeriqueFilters,
   getActivePostesConseillerNumeriqueFilters,
@@ -32,27 +35,17 @@ const statutBadgeStyles: Record<string, string> = {
   vacant: styles.badgeVacant,
 }
 
-const PosteRow = memo(({
-  poste,
-}: {
-  readonly poste: PosteConseillerNumeriqueViewModel
-}) => {
+const PosteRow = memo(({ poste }: { readonly poste: PosteConseillerNumeriqueViewModel }) => {
   return (
     <tr style={{ height: '4rem' }}>
       <td>
         <div className="fr-grid-row fr-grid-row--middle">
           <div>
-            <div className="fr-text--bold">
-              {poste.nomStructure}
-            </div>
+            <div className="fr-text--bold">{poste.nomStructure}</div>
             <div className="fr-text--sm fr-text-mention--grey fr-mb-0">
-              Poste #
-              {poste.posteConumId}
+              Poste #{poste.posteConumId}
               {poste.estCoordinateur ? (
-                <Badge
-                  color="info"
-                  small={true}
-                >
+                <Badge color="info" small={true}>
                   Coordinateur
                 </Badge>
               ) : null}
@@ -60,32 +53,16 @@ const PosteRow = memo(({
           </div>
         </div>
       </td>
+      <td>{poste.codeDepartement}</td>
       <td>
-        {poste.codeDepartement}
+        <span className={`${styles.badgeStatut} ${statutBadgeStyles[poste.statut]}`}>{poste.statutLabel}</span>
       </td>
-      <td>
-        <span className={`${styles.badgeStatut} ${statutBadgeStyles[poste.statut]}`}>
-          {poste.statutLabel}
-        </span>
-      </td>
-      <td>
-        {poste.sourcesFinancement}
-      </td>
-      <td>
-        {poste.dateFinConvention}
-      </td>
-      <td>
-        {poste.dateFinContrat}
-      </td>
-      <td>
-        {poste.bonification}
-      </td>
-      <td className="fr-text--bold">
-        {poste.totalConventionne}
-      </td>
-      <td className="fr-text--bold">
-        {poste.totalVerse}
-      </td>
+      <td>{poste.sourcesFinancement}</td>
+      <td>{poste.dateFinConvention}</td>
+      <td>{poste.dateFinContrat}</td>
+      <td>{poste.bonification}</td>
+      <td className="fr-text--bold">{poste.totalConventionne}</td>
+      <td className="fr-text--bold">{poste.totalVerse}</td>
       <td>
         <a
           className="fr-btn fr-btn--tertiary-no-outline fr-icon-eye-line"
@@ -161,13 +138,8 @@ export default function ListePostesConseillerNumerique({
 
   if ('type' in postesConseillerNumeriqueViewModel) {
     return (
-      <div
-        className="fr-alert fr-alert--error"
-        role="alert"
-      >
-        <p>
-          {postesConseillerNumeriqueViewModel.message}
-        </p>
+      <div className="fr-alert fr-alert--error">
+        <p>{postesConseillerNumeriqueViewModel.message}</p>
       </div>
     )
   }
@@ -223,10 +195,7 @@ export default function ListePostesConseillerNumerique({
         <div className="fr-mb-2w">
           <div className="fr-grid-row fr-grid-row--gutters">
             {getFiltresActifs().map((filtre) => (
-              <div
-                className="fr-col-auto"
-                key={`${filtre.paramKey}-${filtre.paramValue}`}
-              >
+              <div className="fr-col-auto" key={`${filtre.paramKey}-${filtre.paramValue}`}>
                 <button
                   aria-label={`Retirer le filtre ${filtre.label}`}
                   className="fr-tag fr-icon-close-line fr-tag--icon-left"
@@ -259,10 +228,7 @@ export default function ListePostesConseillerNumerique({
             zIndex: 9999,
           }}
         >
-          <SpinnerSimple
-            size="large"
-            text="Chargement..."
-          />
+          <SpinnerSimple size="large" text="Chargement..." />
         </div>
       ) : null}
 
@@ -278,9 +244,7 @@ export default function ListePostesConseillerNumerique({
             target="_blank"
           >
             {'Tableau de pilotage Conseiller Numérique '}
-            <span
-              aria-hidden="true"
-            />
+            <span aria-hidden="true" />
           </a>
         </p>
       </div>
@@ -288,15 +252,15 @@ export default function ListePostesConseillerNumerique({
       {viewModel.postes.length === 0 ? (
         <div
           className="fr-mb-4w"
-          style={{ backgroundColor: 'var(--blue-france-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
+          style={{
+            backgroundColor: 'var(--blue-france-975-75)',
+            borderRadius: '1rem',
+            padding: '3rem',
+            textAlign: 'center',
+          }}
         >
-          <p
-            className="fr-text--md fr-mb-0"
-            style={{ textAlign: 'center' }}
-          >
-            <span className="fr-text--bold">
-              Aucun poste de conseiller numérique trouvé sur votre territoire
-            </span>
+          <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
+            <span className="fr-text--bold">Aucun poste de conseiller numérique trouvé sur votre territoire</span>
           </p>
         </div>
       ) : (
@@ -319,10 +283,7 @@ export default function ListePostesConseillerNumerique({
             titre="Postes Conseiller Numérique"
           >
             {viewModel.postes.map((poste) => (
-              <PosteRow
-                key={`${poste.posteConumId}-${poste.structureId}`}
-                poste={poste}
-              />
+              <PosteRow key={`${poste.posteConumId}-${poste.structureId}`} poste={poste} />
             ))}
           </Table>
         </>
@@ -330,10 +291,7 @@ export default function ListePostesConseillerNumerique({
 
       {viewModel.displayPagination ? (
         <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
-          <Pagination
-            pathname="/postes-conseiller-numerique"
-            totalUtilisateurs={viewModel.total}
-          />
+          <Pagination pathname="/postes-conseiller-numerique" totalUtilisateurs={viewModel.total} />
         </div>
       ) : null}
 

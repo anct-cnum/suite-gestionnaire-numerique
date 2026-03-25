@@ -163,15 +163,17 @@ describe('demande de subvention repository', () => {
     })
 
     expect(beneficiaires).toHaveLength(2)
-    expect(beneficiaires).toStrictEqual(expect.arrayContaining([
-      expect.objectContaining({
-        demandeDeSubventionId: actualDemandeId,
-        membreId: beneficiaire1Id,
-      }),
-      expect.objectContaining({
-        demandeDeSubventionId: actualDemandeId,
-        membreId: beneficiaire2Id,
-      }),
-    ]))
+    expect(beneficiaires).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          demandeDeSubventionId: actualDemandeId,
+          membreId: beneficiaire1Id,
+        }),
+        expect.objectContaining({
+          demandeDeSubventionId: actualDemandeId,
+          membreId: beneficiaire2Id,
+        }),
+      ])
+    )
   })
 })

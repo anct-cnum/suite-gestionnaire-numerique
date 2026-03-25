@@ -2,7 +2,10 @@ import { Prisma } from '@prisma/client'
 
 import { toTypologieRole } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
-import { MesInformationsPersonnellesLoader, MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
+import {
+  MesInformationsPersonnellesLoader,
+  MesInformationsPersonnellesReadModel,
+} from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
   readonly #dataResource = prisma.utilisateurRecord

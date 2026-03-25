@@ -5,10 +5,7 @@ import { createContext, PropsWithChildren, ReactElement, useMemo } from 'react'
 
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function GouvernanceProvider({
-  children,
-  gouvernanceViewModel,
-}: Props): ReactElement {
+export default function GouvernanceProvider({ children, gouvernanceViewModel }: Props): ReactElement {
   const gouvernanceContextProviderValue = useMemo(
     () => ({
       gouvernanceViewModel,
@@ -16,11 +13,7 @@ export default function GouvernanceProvider({
     [gouvernanceViewModel]
   )
 
-  return (
-    <gouvernanceContext.Provider value={gouvernanceContextProviderValue}>
-      {children}
-    </gouvernanceContext.Provider>
-  )
+  return <gouvernanceContext.Provider value={gouvernanceContextProviderValue}>{children}</gouvernanceContext.Provider>
 }
 
 export const gouvernanceContext = createContext({} as GouvernanceContextProviderValue)

@@ -9,23 +9,14 @@ import SelecteurRangeDates from './SelecteurRangeDates'
 import type { StatistiquesMediateursData } from './types'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
 
-export default function StatistiquesAsyncContent({
-  dateDebut,
-  dateFin,
-  statistiquesPromise,
-}: Props): ReactElement {
+export default function StatistiquesAsyncContent({ dateDebut, dateFin, statistiquesPromise }: Props): ReactElement {
   const statistiques = use(statistiquesPromise)
 
   if (isErrorViewModel(statistiques)) {
     return (
       <div className="fr-py-4w">
-        <div
-          className="fr-alert fr-alert--error"
-          role="alert"
-        >
-          <p>
-            Erreur de récupération de la donnée depuis la Coop
-          </p>
+        <div className="fr-alert fr-alert--error">
+          <p>Erreur de récupération de la donnée depuis la Coop</p>
         </div>
       </div>
     )

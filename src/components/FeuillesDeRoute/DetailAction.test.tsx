@@ -16,9 +16,15 @@ describe('détail d’une action', () => {
       jOuvreUneAction()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 1' })
+      const drawer = screen.getByRole('dialog', {
+        hidden: false,
+        name: 'Structurer une filière de reconditionnement locale 1',
+      })
       expect(drawer).toHaveAttribute('id', 'drawerActionIdfeuilleDeRouteFooId1')
-      const titre = within(drawer).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale 1' })
+      const titre = within(drawer).getByRole('heading', {
+        level: 3,
+        name: 'Structurer une filière de reconditionnement locale 1',
+      })
       expect(titre).toBeInTheDocument()
 
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })
@@ -38,7 +44,12 @@ describe('détail d’une action', () => {
 
       const descriptionLabel = within(drawer).getByText('Description de l’action')
       expect(descriptionLabel).toBeInTheDocument()
-      const description = within(drawer).getByText(matchWithoutMarkup('Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.'), { selector: 'p' })
+      const description = within(drawer).getByText(
+        matchWithoutMarkup(
+          'Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.'
+        ),
+        { selector: 'p' }
+      )
       expect(description).toBeInTheDocument()
       const lirePlus = screen.getByRole('button', { name: 'Lire plus' })
       expect(lirePlus).toHaveAttribute('type', 'button')
@@ -52,7 +63,9 @@ describe('détail d’une action', () => {
       expect(budgetLigne1Gauche).toBeInTheDocument()
       const budgetLigne1Droite = within(budgetDefinitions[0]).getByText('70 000 €')
       expect(budgetLigne1Droite).toBeInTheDocument()
-      const nomDeLEnveloppeDeFinancementAction1 = screen.getAllByText('Financement : Ingénierie France Numérique Ensemble')[0]
+      const nomDeLEnveloppeDeFinancementAction1 = screen.getAllByText(
+        'Financement : Ingénierie France Numérique Ensemble'
+      )[0]
       expect(nomDeLEnveloppeDeFinancementAction1).toBeInTheDocument()
       const budgetLigne2Gauche = within(budgetTerms[1]).getByText('Prestation de service')
       expect(budgetLigne2Gauche).toBeInTheDocument()
@@ -86,7 +99,10 @@ describe('détail d’une action', () => {
       expect(beneficiaire2).toHaveAttribute('href', '/structure/2')
 
       const modifierAction = within(drawer).getByRole('link', { name: 'Modifier cette action' })
-      expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId1/modifier')
+      expect(modifierAction).toHaveAttribute(
+        'href',
+        '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId1/modifier'
+      )
     })
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -111,7 +127,10 @@ describe('détail d’une action', () => {
       jOuvreUneActionSansPorteurs()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 7' })
+      const drawer = screen.getByRole('dialog', {
+        hidden: false,
+        name: 'Structurer une filière de reconditionnement locale 7',
+      })
       const porteurLabel = within(drawer).queryByText('Porteur de l’action')
       expect(porteurLabel).toBeInTheDocument()
       const tiret = within(drawer).getByText('-')
@@ -148,15 +167,19 @@ describe('détail d’une action', () => {
   function afficherUneFeuilleDeRouteActionSansPorteur(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     feuillesDeRouteReadModel = feuillesDeRouteReadModelFactory({
-      feuillesDeRoute: [{
-        ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
-        actions: [{
-          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0]?.actions[0],
-          nom: 'Structurer une filière de reconditionnement locale 7',
-          porteurs: [],
-        }],
-        uid: 'feuilleDeRouteFooId1',
-      }],
+      feuillesDeRoute: [
+        {
+          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+          actions: [
+            {
+              ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0]?.actions[0],
+              nom: 'Structurer une filière de reconditionnement locale 7',
+              porteurs: [],
+            },
+          ],
+          uid: 'feuilleDeRouteFooId1',
+        },
+      ],
     })
   ): void {
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)

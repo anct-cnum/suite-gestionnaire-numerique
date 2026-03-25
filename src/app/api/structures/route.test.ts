@@ -66,7 +66,8 @@ describe('route /structures', () => {
     ])('$desc', async ({ expectedFindParams, searchParams }) => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
-      const spiedFind = vi.spyOn(RechercherLesStructures.prototype, 'handle')
+      const spiedFind = vi
+        .spyOn(RechercherLesStructures.prototype, 'handle')
         .mockResolvedValueOnce([{ commune: 'TARBES', isMembre: false, nom: 'La Poste', uid: '802' }])
 
       const req = {

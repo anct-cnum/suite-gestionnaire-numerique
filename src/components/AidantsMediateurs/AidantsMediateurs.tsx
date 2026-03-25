@@ -52,10 +52,7 @@ export default function AidantsMediateurs({
           </p>
         </div>
         <div className="fr-col-auto">
-          <Link
-            className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/liste-aidants-mediateurs"
-          >
+          <Link className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line" href="/liste-aidants-mediateurs">
             Suivi des médiateurs
           </Link>
         </div>
@@ -66,9 +63,7 @@ export default function AidantsMediateurs({
           <div className="fr-col">
             <div className="fr-grid-row fr-grid-row--middle">
               <InformationLogo />
-              <span>
-                Aidants, médiateurs, conseillers numériques, … : Quelles différences ?
-              </span>
+              <span>Aidants, médiateurs, conseillers numériques, … : Quelles différences ?</span>
             </div>
           </div>
           <div className="fr-col-auto">
@@ -100,10 +95,7 @@ export default function AidantsMediateurs({
       </div>
 
       <div className="fr-mb-4w">
-        <NiveauDeFormation
-          dateGeneration={dateGeneration}
-          niveauDeFormation={niveauDeFormationViewModel}
-        />
+        <NiveauDeFormation dateGeneration={dateGeneration} niveauDeFormation={niveauDeFormationViewModel} />
       </div>
 
       {isDrawerOpen ? (
@@ -156,9 +148,7 @@ export default function AidantsMediateurs({
                   width: '72px',
                 }}
               />
-              <h1 className="fr-h3 color-blue-france fr-mb-0">
-                Les aidants et médiateurs numériques
-              </h1>
+              <h1 className="fr-h3 color-blue-france fr-mb-0">Les aidants et médiateurs numériques</h1>
             </div>
 
             <div
@@ -170,50 +160,34 @@ export default function AidantsMediateurs({
               }}
             >
               <p className="fr-mb-3w">
-                <strong>
-                  Médiateur numérique
-                </strong>
-                {' '}
-                : un médiateur numérique a pour cœur de métier d&apos;accompagner la montée en compétences
-                de ceux qui le souhaitent sur le numérique mais aussi d&apos;initier à la culture numérique.
+                <strong>Médiateur numérique</strong> : un médiateur numérique a pour cœur de métier d&apos;accompagner
+                la montée en compétences de ceux qui le souhaitent sur le numérique mais aussi d&apos;initier à la
+                culture numérique.
               </p>
 
               <p className="fr-mb-3w">
-                <strong>
-                  Conseiller Numérique
-                </strong>
-                {' '}
-                : un médiateur numérique dont le poste est cofinancé par l&apos;État dans le cadre du dispositif
-                Conseiller numérique.
+                <strong>Conseiller Numérique</strong> : un médiateur numérique dont le poste est cofinancé par
+                l&apos;État dans le cadre du dispositif Conseiller numérique.
               </p>
 
               <p className="fr-mb-3w">
-                <strong>
-                  Aidant numérique
-                </strong>
-                {' '}
-                : la notion d&apos;aidant numérique recouvre une grande diversité d&apos;acteurs.
-                Nous entendons par aidant numérique les professionnels en première ligne face aux usagers
-                en difficultés avec le numérique alors même que l&apos;accompagnement des publics dans leurs
+                <strong>Aidant numérique</strong> : la notion d&apos;aidant numérique recouvre une grande diversité
+                d&apos;acteurs. Nous entendons par aidant numérique les professionnels en première ligne face aux
+                usagers en difficultés avec le numérique alors même que l&apos;accompagnement des publics dans leurs
                 usages numériques ne constitue pas toujours le cœur de leurs missions. Par exemple, les travailleurs
-                sociaux, les agents d&apos;accueil en collectivité territoriale ou dans des agences de services
-                publics (Pôle Emploi, CAF, etc), les animateurs jeunesse sont des aidants numériques.
+                sociaux, les agents d&apos;accueil en collectivité territoriale ou dans des agences de services publics
+                (Pôle Emploi, CAF, etc), les animateurs jeunesse sont des aidants numériques.
               </p>
 
               <p className="fr-mb-3w">
-                <strong>
-                  Aidants Connect
-                </strong>
-                {' '}
-                : service public numérique qui permet à des aidants professionnels habilités de réaliser
-                des démarches administratives en ligne de manière légale et sécurisée pour le compte de
-                personnes en difficulté avec les outils numériques.
+                <strong>Aidants Connect</strong> : service public numérique qui permet à des aidants professionnels
+                habilités de réaliser des démarches administratives en ligne de manière légale et sécurisée pour le
+                compte de personnes en difficulté avec les outils numériques.
               </p>
             </div>
           </div>
         </div>
       ) : null}
-
     </>
   )
 }

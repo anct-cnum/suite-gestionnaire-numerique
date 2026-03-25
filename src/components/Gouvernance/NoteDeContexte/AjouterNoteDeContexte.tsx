@@ -24,16 +24,15 @@ export default function AjouterNoteDeContexte({
     <form
       aria-label="Note de contexte"
       method="dialog"
-      onSubmit={(event) => { void creerUneNoteDeContexte(event) }}
+      onSubmit={(event) => {
+        void creerUneNoteDeContexte(event)
+      }}
     >
-      <DrawerTitle id={labelId}>
-        Note de contexte
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>Note de contexte</DrawerTitle>
       <div className="fr-mb-4w">
         <div className="fr-text--sm color-grey">
-          Précisez, au sein d‘une note qualitative,
-          les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez,
-          ou tout autre élément que vous souhaitez porter à notre connaissance
+          Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que
+          vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance
         </div>
       </div>
       <TextEditor
@@ -42,27 +41,18 @@ export default function AjouterNoteDeContexte({
         height={380}
         onChange={gererLeChangementDeContenu}
       />
-      {peutGerer ? 
+      {peutGerer ? (
         <div className="fr-btns-group fr-mt-2w">
-          <SubmitButton
-            ariaControls={id}
-            isDisabled={!contenu.trim()}
-          >
+          <SubmitButton ariaControls={id} isDisabled={!contenu.trim()}>
             {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
           </SubmitButton>
-          {
-            contenu.trim() ?
-              <button
-                className="fr-btn red-button"
-                onClick={viderLeContenu}
-                type="button"
-              >
-                Supprimer
-              </button>
-              : null
-          }
+          {contenu.trim() ? (
+            <button className="fr-btn red-button" onClick={viderLeContenu} type="button">
+              Supprimer
+            </button>
+          ) : null}
         </div>
-        : null}
+      ) : null}
     </form>
   )
 

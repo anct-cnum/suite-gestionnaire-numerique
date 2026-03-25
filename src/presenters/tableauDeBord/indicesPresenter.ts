@@ -8,22 +8,30 @@ export const FRAGILITE_COLORS = {
   7: '#D95C5E',
 }
 
-export function indiceFragilitePresenter(ifnCommunes: ReadonlyArray<Readonly<{
-  codeInsee: string
-  ifn: null | number
-}>>): Array<CommuneFragilite> {
-  return ifnCommunes.map(commune => ({
+export function indiceFragilitePresenter(
+  ifnCommunes: ReadonlyArray<
+    Readonly<{
+      codeInsee: string
+      ifn: null | number
+    }>
+  >
+): Array<CommuneFragilite> {
+  return ifnCommunes.map((commune) => ({
     codeInsee: commune.codeInsee,
     couleur: getCouleurFragilite(commune.ifn ?? 0),
     indice: Number((commune.ifn ?? 0).toFixed(2)),
   }))
 }
 
-export function indiceFragiliteDepartementsPresenter(departements: ReadonlyArray<Readonly<{
-  codeDepartement: string
-  ifn: number
-}>>): Array<DepartementFragilite> {
-  return departements.map(departement => ({
+export function indiceFragiliteDepartementsPresenter(
+  departements: ReadonlyArray<
+    Readonly<{
+      codeDepartement: string
+      ifn: number
+    }>
+  >
+): Array<DepartementFragilite> {
+  return departements.map((departement) => ({
     codeDepartement: departement.codeDepartement,
     couleur: getCouleurFragilite(departement.ifn),
     score: Number(departement.ifn.toFixed(2)),
@@ -51,7 +59,7 @@ export type DepartementData = Readonly<{
 export function transformerDonneesCarteFrance(
   departementsFragilite: ReadonlyArray<DepartementFragilite>
 ): Array<DepartementData> {
-  return departementsFragilite.map(dept => ({
+  return departementsFragilite.map((dept) => ({
     codeDepartement: dept.codeDepartement,
     couleur: dept.couleur,
     popup: `${dept.score}/10`,
@@ -165,7 +173,7 @@ export function transformerDonneesCarteFranceVitrine(): Array<DepartementData> {
     '976',
   ]
 
-  return departements.map(codeDepartement => ({
+  return departements.map((codeDepartement) => ({
     codeDepartement,
     couleur: '#8484F6',
     popup: '',
@@ -177,7 +185,7 @@ function getCouleurFragilite(indice: number): string {
   const nombreDeCouleurs = Object.keys(FRAGILITE_COLORS).length
   const nombreDIndice = 10
 
-  const indiceDeCouleur = Math.max(1, Math.ceil(indice * nombreDeCouleurs / nombreDIndice))
+  const indiceDeCouleur = Math.max(1, Math.ceil((indice * nombreDeCouleurs) / nombreDIndice))
 
   return FRAGILITE_COLORS[indiceDeCouleur as keyof typeof FRAGILITE_COLORS] || '#ffffff'
 }

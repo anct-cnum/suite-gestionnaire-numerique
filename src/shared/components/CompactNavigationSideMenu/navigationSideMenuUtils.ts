@@ -20,9 +20,10 @@ function addActiveStateToItems(
   return items.map((item, index) => {
     if ('items' in item && item.items !== undefined && item.items.length > 0) {
       return {
-        expandedByDefault: activeHref !== null && activeHref !== undefined && activeHref !== ''
-          ? item.items.some((subItem) => isItemActive(activeHref, subItem))
-          : index === 0,
+        expandedByDefault:
+          activeHref !== null && activeHref !== undefined && activeHref !== ''
+            ? item.items.some((subItem) => isItemActive(activeHref, subItem))
+            : index === 0,
         ...item,
         items: addActiveStateToItems(item.items, activeHref, index === 0),
       }
@@ -30,9 +31,10 @@ function addActiveStateToItems(
 
     return {
       ...item,
-      isActive: activeHref !== null && activeHref !== undefined && activeHref !== ''
-        ? isItemActive(activeHref, item)
-        : index === 0 && isFirstRecursion,
+      isActive:
+        activeHref !== null && activeHref !== undefined && activeHref !== ''
+          ? isItemActive(activeHref, item)
+          : index === 0 && isFirstRecursion,
     }
   })
 }

@@ -46,17 +46,15 @@ describe('envoi de mail d’invitation', () => {
       // @ts-expect-error
       .mockReturnValueOnce({ sendMail: mockSendMail })
 
-    const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
-    const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
-    const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
+    const logoFrUrl = `${process.env.NEXTAUTH_URL}/fr.svg`
+    const logoAnctUrl = `${process.env.NEXTAUTH_URL}/anct-texte.svg`
+    const logominUrl = `${process.env.NEXTAUTH_URL}/min-texte.svg`
     const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
     const prenom = 'Martin'
     const nom = 'Tartempion'
     // WHEN
-    const invitationEmail = invitationEmailTemplate.replaceAll(
-      '<%= link %>',
-      'localhost:3000/connexion'
-    )
+    const invitationEmail = invitationEmailTemplate
+      .replaceAll('<%= link %>', 'localhost:3000/connexion')
       .replaceAll('<%= logoFrUrl %>', logoFrUrl)
       .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
       .replaceAll('<%= logominUrl %>', logominUrl)
@@ -81,4 +79,3 @@ describe('envoi de mail d’invitation', () => {
     })
   })
 })
-

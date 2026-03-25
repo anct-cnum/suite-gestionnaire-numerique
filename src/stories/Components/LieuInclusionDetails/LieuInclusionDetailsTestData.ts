@@ -87,12 +87,10 @@ export function createDefaultServicesInclusionNumeriqueData(): ReadonlyArray<Ser
       ],
     },
     {
-      description: 'Accompagnement pour la recherche d\'emploi en ligne',
+      description: "Accompagnement pour la recherche d'emploi en ligne",
       modalites: ['Téléphone', 'Contacter par mail'],
-      nom: 'Accompagnement recherche d\'emploi',
-      thematiques: [
-        'Acquisition de matériel informatique à prix solidaire',
-      ],
+      nom: "Accompagnement recherche d'emploi",
+      thematiques: ['Acquisition de matériel informatique à prix solidaire'],
     },
   ]
 }

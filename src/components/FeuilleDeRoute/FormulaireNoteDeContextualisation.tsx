@@ -12,19 +12,15 @@ export default function FormulaireNoteDeContextualisation({
   validerFormulaire,
 }: Props): ReactElement {
   return (
-    <form
-      aria-label="Contextualisation des demandes de subvention"
-      method="dialog"
-      onSubmit={validerFormulaire}
-    >
+    <form aria-label="Contextualisation des demandes de subvention" method="dialog" onSubmit={validerFormulaire}>
       <DrawerTitle id={labelId}>
         <TitleIcon icon="message-2-line" />
         <br />
         Contextualisation des demandes de subvention
       </DrawerTitle>
       <p className="fr-text--sm color-grey">
-        Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés
-        que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.
+        Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que
+        vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.
       </p>
       <TextEditor
         ariaLabel="Éditeur de note de contextualisation"
@@ -37,9 +33,11 @@ export default function FormulaireNoteDeContextualisation({
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  contenu: string
-  gererLeChangementDeContenu(contenu: string): void
-  labelId: string
-  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    contenu: string
+    gererLeChangementDeContenu(contenu: string): void
+    labelId: string
+    validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
+  }>
+>

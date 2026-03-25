@@ -8,10 +8,7 @@ export default function Notice(): ReactElement {
   return (
     <div className={`fr-notice border-radius fr-my-4w ${styles.background}`}>
       <p className="center">
-        <Icon
-          classname="fr-text--lead"
-          icon="flashlight-fill"
-        />
+        <Icon classname="fr-text--lead" icon="flashlight-fill" />
         Cette page présente des données fictives.
       </p>
     </div>

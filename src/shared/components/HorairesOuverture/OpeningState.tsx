@@ -10,21 +10,17 @@ export default function OpeningState(props: OpeningStateProps): null | ReactElem
   const today = new Date()
   const state = openingState(today)(osmOpeningHours)
 
-  return state === undefined ?  null : (
+  return state === undefined ? null : (
     <div className="fr-grid-row fr-grid-row--gutters fr-mb-2w">
       {state.isOpen ? (
         <>
           <div className="fr-col-auto">
-            <p className="fr-badge fr-badge--success fr-badge--sm fr-mb-0">
-              Ouvert
-            </p>
+            <p className="fr-badge fr-badge--success fr-badge--sm fr-mb-0">Ouvert</p>
           </div>
           {state.time !== undefined && (
             <div className="fr-col-auto">
               <p className="fr-text--sm fr-text--bold fr-mb-0">
-                Ferme à
-                {' '}
-                {state.time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                Ferme à {state.time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
           )}
@@ -32,19 +28,12 @@ export default function OpeningState(props: OpeningStateProps): null | ReactElem
       ) : (
         <>
           <div className="fr-col-auto">
-            <p className="fr-badge fr-badge--error fr-badge--sm fr-mb-0">
-              Fermé
-            </p>
+            <p className="fr-badge fr-badge--error fr-badge--sm fr-mb-0">Fermé</p>
           </div>
           {state.time !== undefined && (
             <div className="fr-col-auto">
               <p className="fr-text--sm fr-text--bold fr-mb-0">
-                Ouvre
-                {' '}
-                {today.getDay() === state.day ? 'aujourd\'hui' : JOURS[state.day]}
-                {' '}
-                à
-                {' '}
+                Ouvre {today.getDay() === state.day ? "aujourd'hui" : JOURS[state.day]} à{' '}
                 {state.time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>

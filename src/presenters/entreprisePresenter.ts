@@ -18,4 +18,3 @@ export function entreprisePresenter(readModel: EntrepriseReadModel): EntrepriseV
     numeroVoie: readModel.numeroVoie,
   }
 }
-

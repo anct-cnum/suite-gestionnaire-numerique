@@ -7,10 +7,7 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(
-    gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: UtilisateurRepository
-  ) {
+  constructor(gouvernanceRepository: GouvernanceRepository, utilisateurRepository: UtilisateurRepository) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
   }

@@ -15,10 +15,7 @@ describe('recupérer une gouvernance', () => {
 
   it('quand une gouvernance est demandée sur un département alors on la récupère', async () => {
     // GIVEN
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub()
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
     const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
@@ -38,10 +35,7 @@ describe('recupérer une gouvernance', () => {
         total: 0,
       },
     }
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub()
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
     const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
@@ -66,7 +60,10 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Laetitia',
             },
-            feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }, {  nom: 'Feuille de route numérique du Rhône', uid: '1' }],
+            feuillesDeRoute: [
+              { nom: 'Feuille de route inclusion', uid: '0' },
+              { nom: 'Feuille de route numérique du Rhône', uid: '1' },
+            ],
             links: {},
             nom: 'Préfecture du Rhône',
             nombreContacts: 1,
@@ -79,10 +76,7 @@ describe('recupérer une gouvernance', () => {
         total: 1,
       },
     }
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub()
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
     const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
@@ -99,7 +93,10 @@ describe('recupérer une gouvernance', () => {
             poste: 'chargé de mission',
             prenom: 'Laetitia',
           },
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }, { nom: 'Feuille de route numérique du Rhône', uid: '1' }],
+          feuillesDeRoute: [
+            { nom: 'Feuille de route inclusion', uid: '0' },
+            { nom: 'Feuille de route numérique du Rhône', uid: '1' },
+          ],
           links: {},
           nom: 'Préfecture du Rhône',
           nombreContacts: 1,
@@ -143,10 +140,7 @@ describe('recupérer une gouvernance', () => {
         total: 1,
       },
     }
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub()
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
     const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
@@ -163,7 +157,7 @@ describe('recupérer une gouvernance', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [{  nom: 'Feuille de route inclusion', uid: '44' }],
+          feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '44' }],
           links: {},
           nom: 'Département du Rhône',
           nombreContacts: 1,
@@ -265,10 +259,7 @@ describe('recupérer une gouvernance', () => {
       },
     }
 
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub('11')
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub('11'))
 
     // WHEN
     const gouvernance = await queryHandler.handle({
@@ -317,10 +308,7 @@ describe('recupérer une gouvernance', () => {
       },
     }
 
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub('69')
-    )
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub('69'))
 
     // WHEN
     const gouvernance = await queryHandler.handle({
@@ -382,10 +370,12 @@ class UtilisateurRepositoryStub implements GetUtilisateurRepository {
   }
 
   async get(): Promise<Utilisateur> {
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: this.#codeDepartement,
-      role: 'Gestionnaire département',
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        codeOrganisation: this.#codeDepartement,
+        role: 'Gestionnaire département',
+      })
+    )
   }
 }
 

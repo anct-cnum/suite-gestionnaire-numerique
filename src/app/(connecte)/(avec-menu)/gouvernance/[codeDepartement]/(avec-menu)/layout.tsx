@@ -23,14 +23,10 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
       <div className="fr-grid-row">
         <div className="fr-col-3 fr-col-lg-2">
           <MenuActifProvider>
-            <MenuLateral
-              contexte={contexte}
-            />
+            <MenuLateral contexte={contexte} />
           </MenuActifProvider>
         </div>
-        <div className="fr-col-9 fr-col-lg-10 fr-pl-7w menu-border">
-          {children}
-        </div>
+        <div className="fr-col-9 fr-col-lg-10 fr-pl-7w menu-border">{children}</div>
       </div>
     )
   } catch {

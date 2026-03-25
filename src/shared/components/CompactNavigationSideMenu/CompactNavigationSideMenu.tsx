@@ -18,12 +18,7 @@ export default function CompactNavigationSideMenu({
   const sideMenuId = 'fr-sidemenu-compact'
 
   return (
-    <nav
-      aria-labelledby={`${sideMenuId}-title`}
-      className={`fr-sidemenu ${className}`}
-      role="navigation"
-      style={style}
-    >
+    <nav aria-labelledby={`${sideMenuId}-title`} className={`fr-sidemenu ${className}`} role="navigation" style={style}>
       <div className="fr-sidemenu__inner">
         <button
           aria-controls={`${sideMenuId}-wrapper`}
@@ -33,13 +28,9 @@ export default function CompactNavigationSideMenu({
         >
           {burgerMenuButtonText}
         </button>
-        <div
-          className="fr-collapse"
-          id={`${sideMenuId}-wrapper`}
-        >
+        <div className="fr-collapse" id={`${sideMenuId}-wrapper`}>
           <ul className="fr-sidemenu__list">
-            {processedItems.map((item, index) =>
-              getItemElement(item, `${sideMenuId}-${index}`, activeHref))}
+            {processedItems.map((item, index) => getItemElement(item, `${sideMenuId}-${index}`, activeHref))}
           </ul>
         </div>
       </div>
@@ -56,39 +47,22 @@ function getItemElement(
 
   if ('items' in item && item.items !== undefined && item.items.length > 0) {
     return (
-      <li
-        className="fr-sidemenu__item"
-        key={id}
-      >
-        <a
-          aria-current={isActive ? 'page' : undefined}
-          className="fr-sidemenu__link"
-          href={item.linkProps?.href}
-        >
+      <li className="fr-sidemenu__item" key={id}>
+        <a aria-current={isActive ? 'page' : undefined} className="fr-sidemenu__link" href={item.linkProps?.href}>
           {item.text}
         </a>
         <ul className="fr-sidemenu__list">
           {item.items.map((subItem, subIndex) =>
-            getItemElement(
-              subItem as Readonly<{ isActive?: boolean }> & SideMenuItem,
-              `${id}-${subIndex}`,
-              activeHref
-            ))}
+            getItemElement(subItem as Readonly<{ isActive?: boolean }> & SideMenuItem, `${id}-${subIndex}`, activeHref)
+          )}
         </ul>
       </li>
     )
   }
 
   return (
-    <li
-      className="fr-sidemenu__item"
-      key={id}
-    >
-      <a
-        aria-current={isActive ? 'page' : undefined}
-        className="fr-sidemenu__link"
-        href={item.linkProps?.href}
-      >
+    <li className="fr-sidemenu__item" key={id}>
+      <a aria-current={isActive ? 'page' : undefined} className="fr-sidemenu__link" href={item.linkProps?.href}>
         {item.text}
       </a>
     </li>

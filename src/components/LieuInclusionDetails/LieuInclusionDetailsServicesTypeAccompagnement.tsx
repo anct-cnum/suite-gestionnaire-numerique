@@ -23,7 +23,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
   // Extraire l'ID de structure depuis l'URL (/lieu/[id])
   const structureId = pathname.split('/').pop() ?? ''
 
-  const allThematiques = data.flatMap(service => service.thematiques)
+  const allThematiques = data.flatMap((service) => service.thematiques)
   const uniqueThematiques = useMemo(() => [...new Set(allThematiques)], [allThematiques.join(',')])
 
   // State pour gérer les thématiques sélectionnées en mode édition
@@ -50,7 +50,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     'En autonomie': PairIcon,
   }
 
-  const allModalites = data.flatMap(service => service.modalites)
+  const allModalites = data.flatMap((service) => service.modalites)
   const uniqueModalites = [...new Set(allModalites)]
 
   // Récupérer les types d'accompagnement depuis modalites_accompagnement
@@ -86,13 +86,14 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
 
   // Récupérer les types d'accompagnement existants depuis modalitesAccueil
   // modalitesAccueil contient une string avec les modalités séparées par des virgules
-  const existingTypesAccompagnementFromDB = modalitesAccueil !== undefined && modalitesAccueil !== ''
-    ? modalitesAccueil.split(',').map(modalite => modalite.trim())
-    : []
+  const existingTypesAccompagnementFromDB =
+    modalitesAccueil !== undefined && modalitesAccueil !== ''
+      ? modalitesAccueil.split(',').map((modalite) => modalite.trim())
+      : []
 
   // Convertir les valeurs DB en values pour le formulaire
   const existingTypesAccompagnement = existingTypesAccompagnementFromDB
-    .map(dbValue => typeAccompagnements.find(type => type.dbValue === dbValue)?.value)
+    .map((dbValue) => typeAccompagnements.find((type) => type.dbValue === dbValue)?.value)
     .filter((value): value is string => value !== undefined)
 
   function handleThematiqueSelect(event: React.ChangeEvent<HTMLSelectElement>): void {
@@ -105,7 +106,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
   }
 
   function handleRemoveThematique(thematiqueToRemove: string): void {
-    setSelectedThematiques((prev) => prev.filter(thematique => thematique !== thematiqueToRemove))
+    setSelectedThematiques((prev) => prev.filter((thematique) => thematique !== thematiqueToRemove))
   }
 
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
@@ -116,7 +117,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
 
     // Convertir les values en dbValues pour la sauvegarde
     const typesAccompagnementDB = typesAccompagnementValues
-      .map(value => typeAccompagnements.find(type => type.value === value)?.dbValue)
+      .map((value) => typeAccompagnements.find((type) => type.value === value)?.dbValue)
       .filter((dbValue): dbValue is string => dbValue !== undefined)
 
     setIsDisabled(true)
@@ -130,7 +131,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     })
 
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifiés', title: 'Services et types d\'accompagnement ' })
+      Notification('success', { description: 'modifiés', title: "Services et types d'accompagnement " })
       setIsEditing(false)
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
@@ -155,21 +156,12 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     if (isEditing) {
       return (
         <>
-          <select
-            className="fr-select"
-            id="thematiques-select"
-            onChange={handleThematiqueSelect}
-          >
-            <option value="">
-              Choisissez un ou plusieurs types
-            </option>
+          <select className="fr-select" id="thematiques-select" onChange={handleThematiqueSelect}>
+            <option value="">Choisissez un ou plusieurs types</option>
             {thematiquesDisponibles
-              .filter(thematique => !selectedThematiques.includes(thematique))
+              .filter((thematique) => !selectedThematiques.includes(thematique))
               .map((thematique) => (
-                <option
-                  key={thematique}
-                  value={thematique}
-                >
+                <option key={thematique} value={thematique}>
                   {thematique}
                 </option>
               ))}
@@ -201,16 +193,10 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
 
     return (
       <ul>
-        {uniqueThematiques.length > 0 ? uniqueThematiques.map((thematique) => (
-          <li key={thematique}>
-            •
-            {' '}
-            {thematique}
-          </li>
-        )) : (
-          <li>
-            Aucune thématique renseignée
-          </li>
+        {uniqueThematiques.length > 0 ? (
+          uniqueThematiques.map((thematique) => <li key={thematique}>• {thematique}</li>)
+        ) : (
+          <li>Aucune thématique renseignée</li>
         )}
       </ul>
     )
@@ -222,10 +208,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
         <fieldset className="fr-fieldset">
           <div className="fr-fieldset__content">
             {typeAccompagnements.map((type) => (
-              <div
-                className="fr-checkbox-group"
-                key={type.value}
-              >
+              <div className="fr-checkbox-group" key={type.value}>
                 <input
                   defaultChecked={existingTypesAccompagnement.includes(type.value)}
                   id={type.value}
@@ -233,15 +216,10 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
                   type="checkbox"
                   value={type.value}
                 />
-                <label
-                  className="fr-label"
-                  htmlFor={type.value}
-                >
+                <label className="fr-label" htmlFor={type.value}>
                   {type.label}
                   {type.subLabel !== undefined && type.subLabel !== '' ? (
-                    <span className="fr-hint-text">
-                      {type.subLabel}
-                    </span>
+                    <span className="fr-hint-text">{type.subLabel}</span>
                   ) : null}
                 </label>
               </div>
@@ -261,14 +239,8 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
           {selectedTypes.map((typeAccompagnement) => {
             const Icon = typesAccompagnementIcons[typeAccompagnement]
             return (
-              <li
-                className={styles.typeItem}
-                key={typeAccompagnement}
-              >
-                <Icon
-                  height={36}
-                  width={36}
-                />
+              <li className={styles.typeItem} key={typeAccompagnement}>
+                <Icon height={36} width={36} />
                 {typeAccompagnement}
               </li>
             )
@@ -277,23 +249,19 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
       )
     }
 
-    return (
-      <p className="fr-text--sm">
-        Aucun type d&apos;accompagnement renseigné
-      </p>
-    )
+    return <p className="fr-text--sm">Aucun type d&apos;accompagnement renseigné</p>
   }
 
   return (
     <form
       className="fr-p-4w"
-      onSubmit={(event) => { void handleSubmit(event) }}
+      onSubmit={(event) => {
+        void handleSubmit(event)
+      }}
     >
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
         <div className="fr-col fr-col-12 fr-col-md-8">
-          <h4 className="fr-h6 fr-mb-1v">
-            Services & types d&apos;accompagnement
-          </h4>
+          <h4 className="fr-h6 fr-mb-1v">Services & types d&apos;accompagnement</h4>
           <p className={`fr-text--sm fr-mb-2w ${sharedStyles.subtitleGrey}`}>
             Renseigner les les services et les types d&apos;accompagnements proposés dans ce lieu.
           </p>
@@ -313,52 +281,31 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
         </div>
       </div>
 
-      {isEditing
-        ? (
-          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
-            Ces champs sont optionnels
-          </p>
-        )
-        : null}
+      {isEditing ? (
+        <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>Ces champs sont optionnels</p>
+      ) : null}
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Thématiques des services d&apos;inclusion numérique
-        </h5>
-        <p className="fr-text--sm fr-mb-2w">
-          Renseigner les services proposés dans ce lieu.
-        </p>
+        <h5 className="fr-text--md fr-mb-1w">Thématiques des services d&apos;inclusion numérique</h5>
+        <p className="fr-text--sm fr-mb-2w">Renseigner les services proposés dans ce lieu.</p>
         {renderThematiques()}
       </div>
 
       <div className="fr-mb-3w">
-        <p className="fr-text">
-          Types d&apos;accompagnements proposés
-        </p>
+        <p className="fr-text">Types d&apos;accompagnements proposés</p>
         {renderTypesAccompagnement()}
       </div>
 
-      {isEditing
-        ? (
-          <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
-            <button
-              className="fr-btn fr-btn--secondary"
-              disabled={isDisabled}
-              onClick={handleCancel}
-              type="button"
-            >
-              Annuler
-            </button>
-            <button
-              className="fr-btn"
-              disabled={isDisabled}
-              type="submit"
-            >
-              {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
-            </button>
-          </div>
-        )
-        : null}
+      {isEditing ? (
+        <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
+          <button className="fr-btn fr-btn--secondary" disabled={isDisabled} onClick={handleCancel} type="button">
+            Annuler
+          </button>
+          <button className="fr-btn" disabled={isDisabled} type="submit">
+            {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
+          </button>
+        </div>
+      ) : null}
     </form>
   )
 }

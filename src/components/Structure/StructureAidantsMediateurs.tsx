@@ -7,18 +7,11 @@ import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Props): ReactElement {
   return (
-    <section
-      aria-labelledby="aidants"
-      className="grey-border border-radius fr-mb-2w fr-p-4w"
-      id="aidants"
-    >
+    <section aria-labelledby="aidants" className="grey-border border-radius fr-mb-2w fr-p-4w" id="aidants">
       <header className="separator fr-mb-3w">
         <div className="fr-grid-row space-between">
           <div>
-            <h2
-              className="fr-h6 fr-m-0"
-              id="aidantsEtMediateurs"
-            >
+            <h2 className="fr-h6 fr-m-0" id="aidantsEtMediateurs">
               Aidants et médiateurs
             </h2>
             <p className="fr-text--sm color-grey">
@@ -38,21 +31,15 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
           <div className="fr-col-12 fr-col-md-4 fr-col-sm-6">
             <div className="fr-grid-row background-blue-france fr-p-3w fr-mb-4w">
               <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="user-star-line"
-                />
+                <TitleIcon background="white" icon="user-star-line" />
               </div>
               <div>
                 <p className="fr-m-0">
                   <span className="fr-h6 font-weight-700 fr-m-0 color-blue-france">
-                    {aidantsEtMediateurs.totalCoordinateur}
-                    {' '}
+                    {aidantsEtMediateurs.totalCoordinateur}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">
-                    Coordinateur
-                  </span>
+                  <span className="font-weight-500 color-blue-france">Coordinateur</span>
                 </p>
               </div>
             </div>
@@ -60,21 +47,15 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
           <div className="fr-col-12 fr-col-md-4 fr-col-sm-6">
             <div className="fr-grid-row background-blue-france fr-p-3w fr-mb-4w">
               <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="account-pin-circle-line"
-                />
+                <TitleIcon background="white" icon="account-pin-circle-line" />
               </div>
               <div>
                 <p className="fr-m-0">
                   <span className="fr-h6 font-weight-700 fr-m-0 color-blue-france">
-                    {aidantsEtMediateurs.totalMediateur}
-                    {' '}
+                    {aidantsEtMediateurs.totalMediateur}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">
-                    Médiateurs numériques
-                  </span>
+                  <span className="font-weight-500 color-blue-france">Médiateurs numériques</span>
                 </p>
               </div>
             </div>
@@ -82,21 +63,15 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
           <div className="fr-col-12 fr-col-md-4 fr-col-sm-6">
             <div className="fr-grid-row background-blue-france fr-p-3w fr-mb-4w">
               <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="team-line"
-                />
+                <TitleIcon background="white" icon="team-line" />
               </div>
               <div>
                 <p className="fr-m-0">
                   <span className="fr-h6 font-weight-700 fr-m-0 color-blue-france">
-                    {aidantsEtMediateurs.totalAidant}
-                    {' '}
+                    {aidantsEtMediateurs.totalAidant}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">
-                    Aidants numériques
-                  </span>
+                  <span className="font-weight-500 color-blue-france">Aidants numériques</span>
                 </p>
               </div>
             </div>
@@ -105,39 +80,20 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
       </header>
       <article aria-label="Aidants et médiateurs">
         <ul>
-          {
-            aidantsEtMediateurs.liste.map((aidant) => (
-              <li
-                className="separator fr-mb-3w fr-pb-2w"
-                key={aidant.id}
-              >
-                <Link href={aidant.lienFiche}>
-                  <div className="font-weight-700">
-                    <span
-                      aria-hidden="true"
-                      className="fr-icon-user-line color-blue-france fr-mr-1w"
-                    />
-                    {aidant.nom}
-                    {
-                      aidant.logos.map((logo) => (
-                        <Image
-                          alt=""
-                          className="fr-ml-1w"
-                          height={24}
-                          key={logo}
-                          src={logo}
-                          width={24}
-                        />
-                      ))
-                    }
-                  </div>
-                  <div className="fr-text--sm color-grey fr-m-0">
-                    {aidant.fonction}
-                  </div>
-                </Link>
-              </li>
-            ))
-          }
+          {aidantsEtMediateurs.liste.map((aidant) => (
+            <li className="separator fr-mb-3w fr-pb-2w" key={aidant.id}>
+              <Link href={aidant.lienFiche}>
+                <div className="font-weight-700">
+                  <span aria-hidden="true" className="fr-icon-user-line color-blue-france fr-mr-1w" />
+                  {aidant.nom}
+                  {aidant.logos.map((logo) => (
+                    <Image alt="" className="fr-ml-1w" height={24} key={logo} src={logo} width={24} />
+                  ))}
+                </div>
+                <div className="fr-text--sm color-grey fr-m-0">{aidant.fonction}</div>
+              </Link>
+            </li>
+          ))}
         </ul>
       </article>
     </section>

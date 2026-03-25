@@ -20,10 +20,7 @@ export default function ToolCard({
   return (
     <section className="fr-py-8w">
       <div className="fr-container">
-        <div
-          className="fr-grid-row"
-          style={{ alignItems: 'center', justifyContent: 'space-between' }}
-        >
+        <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
           <div
             className={`fr-col-12 fr-col-md-5 ${styles.content}`}
             style={{

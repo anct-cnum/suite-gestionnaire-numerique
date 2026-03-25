@@ -113,7 +113,10 @@ export class PrismaMembreRepository implements MembreRepository {
     }) as Membre
   }
 
-  async getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<ReadonlyArray<ContactData>> {
+  async getContacts(
+    uid: MembreState['uid']['value'],
+    tx?: Prisma.TransactionClient
+  ): Promise<ReadonlyArray<ContactData>> {
     const client = tx ?? prisma
     const record = await client.membreRecord.findUniqueOrThrow({
       select: {

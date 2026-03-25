@@ -21,9 +21,7 @@ export function BaseActionForm({
 
   return (
     <>
-      <title>
-        {title}
-      </title>
+      <title>{title}</title>
       <FormulaireAction
         action={action}
         ajouterDemandeDeSubvention={isReadOnly ? undefined : ajouterDemandeDeSubvention}
@@ -32,15 +30,15 @@ export function BaseActionForm({
         isReadOnly={isReadOnly}
         label={formLabel}
         supprimerUneDemandeDeSubvention={isReadOnly ? undefined : supprimerDemandeDeSubvention}
-        validerFormulaire={isReadOnly ? undefined : 
-          async (event, contexte, description, coFinancements): Promise<void> => 
-            handleSubmit(event, contexte, description, coFinancements)}
+        validerFormulaire={
+          isReadOnly
+            ? undefined
+            : async (event, contexte, description, coFinancements): Promise<void> =>
+                handleSubmit(event, contexte, description, coFinancements)
+        }
       >
         {!isReadOnly && (
-          <SubmitButton
-            className="fr-col-11 fr-mb-5w d-block"
-            isDisabled={isDisabled}
-          >
+          <SubmitButton className="fr-col-11 fr-mb-5w d-block" isDisabled={isDisabled}>
             {isDisabled ? submitButtonLoadingText : submitButtonText}
           </SubmitButton>
         )}
@@ -57,7 +55,9 @@ export function BaseActionForm({
       montant: string
     }>
   ): Promise<void> {
-    if (!onSubmit) {return}
+    if (!onSubmit) {
+      return
+    }
     setIsDisabled(true)
     const success = await onSubmit(event, contexteContenu, descriptionContenu, coFinancements, demandeDeSubvention)
     if (!success) {
@@ -92,4 +92,4 @@ type BaseActionFormProps = Readonly<{
   submitButtonLoadingText?: string
   submitButtonText?: string
   title: string
-}> 
+}>

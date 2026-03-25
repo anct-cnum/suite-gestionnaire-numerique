@@ -4,10 +4,7 @@ export default function Information({ children }: Props): ReactElement {
   const id = useId().replace(/:/g, '')
 
   return (
-    <span
-      className="fr-ml-1w"
-      style={{ display: 'inline-block', position: 'relative' }}
-    >
+    <span className="fr-ml-1w" style={{ display: 'inline-block', position: 'relative' }}>
       <span
         aria-describedby={id}
         className="fr-icon fr-icon-information-line fr-p-0 fr-btn--sm color-blue-france"

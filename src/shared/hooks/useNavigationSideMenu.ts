@@ -19,19 +19,11 @@ export default function useNavigationSideMenu({
     setContentElement(document.getElementById(contentId))
   }, [contentId])
 
-  const navigableItemIds = useMemo(
-    () => items.flatMap(getIdsFromItem).filter(Boolean),
-    [items]
-  )
+  const navigableItemIds = useMemo(() => items.flatMap(getIdsFromItem).filter(Boolean), [items])
 
-  const navigableItemsMemoKey = useMemo(
-    () => navigableItemIds.join('-'),
-    [navigableItemIds]
-  )
+  const navigableItemsMemoKey = useMemo(() => navigableItemIds.join('-'), [navigableItemIds])
 
-  const [activeId, setActiveId] = useState<null | string>(
-    navigableItemIds[0] ?? null
-  )
+  const [activeId, setActiveId] = useState<null | string>(navigableItemIds[0] ?? null)
 
   useEffect(() => {
     // contentElement is used to trigger re-observation when the DOM element becomes available
@@ -95,9 +87,7 @@ function getIdsFromItem(item: SideMenuItem): ReadonlyArray<string> {
   const rootId = getIdFromItem(item)
 
   if ('items' in item && item.items !== undefined) {
-    return rootId === null
-      ? item.items.flatMap(getIdsFromItem)
-      : [rootId, ...item.items.flatMap(getIdsFromItem)]
+    return rootId === null ? item.items.flatMap(getIdsFromItem) : [rootId, ...item.items.flatMap(getIdsFromItem)]
   }
 
   return rootId === null ? [] : [rootId]

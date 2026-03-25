@@ -37,12 +37,12 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
       // Calculer les crédits engagés et la ventilation par enveloppe
       const subventionsParEnveloppe = new Map<string, { enveloppeTotale: number; total: number }>()
       let creditsEngagesTotal = 0
-      
-      demandesAcceptees.forEach(demande => {
+
+      demandesAcceptees.forEach((demande) => {
         creditsEngagesTotal += demande.subventionDemandee
         const label = demande.enveloppe.libelle
         const enveloppeTotale = demande.enveloppe.montant
-        
+
         const current = subventionsParEnveloppe.get(label) ?? { enveloppeTotale, total: 0 }
         subventionsParEnveloppe.set(label, {
           enveloppeTotale,

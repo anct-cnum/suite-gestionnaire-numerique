@@ -1,14 +1,7 @@
 'use client'
 
 import { numberToPercentage, numberToString } from '../utils'
-import {
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  TooltipProps,
-} from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts'
 
 type PieData = { label: string; count: number; proportion: number }
 
@@ -28,9 +21,7 @@ const CustomTooltip = ({
       <div className="fr-text--bold">{payload[0].payload.label}</div>
       <div>
         <span className="fr-text--xs">Accompagnements&nbsp;:</span>{' '}
-        <span className="fr-text--bold">
-          {numberToString(payload[0].payload.count)}
-        </span>
+        <span className="fr-text--bold">{numberToString(payload[0].payload.count)}</span>
         &emsp;
         {numberToPercentage(payload[0].payload.proportion)}
       </div>
@@ -58,11 +49,7 @@ export const AccompagnementPieChart = ({
   const emptyData = [{ label: 'Aucune donnée', count: 1, proportion: 100 }]
 
   return (
-    <ResponsiveContainer
-      width={size}
-      height={half ? size / 2 + 10 : size}
-      className={className}
-    >
+    <ResponsiveContainer width={size} height={half ? size / 2 + 10 : size} className={className}>
       <PieChart>
         <Pie
           strokeWidth={0}
@@ -80,9 +67,7 @@ export const AccompagnementPieChart = ({
           {isEmpty ? (
             <Cell fill="var(--blue-france-975-75)" />
           ) : (
-            data.map((item, index) => (
-              <Cell key={item.label} fill={colors[index % colors.length]} />
-            ))
+            data.map((item, index) => <Cell key={item.label} fill={colors[index % colors.length]} />)
           )}
         </Pie>
         {!isEmpty && <Tooltip content={<CustomTooltip />} />}

@@ -1,6 +1,9 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { LieuxInclusionNumeriqueLoader, LieuxInclusionNumeriqueReadModel } from '@/use-cases/queries/RecupererLieuxInclusionNumerique'
+import {
+  LieuxInclusionNumeriqueLoader,
+  LieuxInclusionNumeriqueReadModel,
+} from '@/use-cases/queries/RecupererLieuxInclusionNumerique'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeriqueLoader {
@@ -37,7 +40,7 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
         territoire,
       })
       return {
-        message: 'Impossible de récupérer les données des lieux d\'inclusion numérique',
+        message: "Impossible de récupérer les données des lieux d'inclusion numérique",
         type: 'error',
       }
     }

@@ -22,9 +22,7 @@ export class SupprimerDocument implements CommandHandler<Command> {
   async handle(command: Command): ResultAsync<Failure> {
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.get(
-      new GouvernanceUid(feuilleDeRoute.state.uidGouvernance)
-    )
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(feuilleDeRoute.state.uidGouvernance))
 
     if (!feuilleDeRoute.peutEtreGereePar(editeur, gouvernance.state.membresCoporteurs)) {
       return 'editeurNePeutPasSupprimerDocument'
@@ -46,7 +44,7 @@ type Command = Readonly<{
   uidFeuilleDeRoute: string
 }>
 
-interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository { }
+interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {}
 
 type GouvernanceRepository = GetGouvernanceRepository
 

@@ -112,11 +112,7 @@ export class TableauDeBordCoopUseCase {
 import { RecupererStatistiquesCoop } from '@/use-cases/queries/RecupererStatistiquesCoop'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 
-export async function recupererStatistiquesCoopAction(filtres?: {
-  du?: string
-  au?: string
-  departements?: string[]
-}) {
+export async function recupererStatistiquesCoopAction(filtres?: { du?: string; au?: string; departements?: string[] }) {
   // Le cache est activé par défaut via la factory
   const useCase = new RecupererStatistiquesCoop(createApiCoopStatistiquesLoader())
 

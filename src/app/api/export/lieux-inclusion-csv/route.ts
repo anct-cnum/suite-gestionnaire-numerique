@@ -50,10 +50,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         )
       }
       if (codeRegion !== null) {
-        return NextResponse.json(
-          { error: 'Accès refusé : vous ne pouvez pas filtrer par région' },
-          { status: 403 }
-        )
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
       }
 
       departementFinal = territoireDepartement
@@ -128,9 +125,7 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
 
   // Construction des lignes CSV
   const rows = lieux.map((lieu) => {
-    const adresse = [lieu.numero_voie, lieu.nom_voie, lieu.code_postal, lieu.nom_commune]
-      .filter(Boolean)
-      .join(' ')
+    const adresse = [lieu.numero_voie, lieu.nom_voie, lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')
 
     return [
       escapeCSV(lieu.id),

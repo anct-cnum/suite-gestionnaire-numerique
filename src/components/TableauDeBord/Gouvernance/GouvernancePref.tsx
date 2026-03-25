@@ -9,10 +9,7 @@ import BlocCard from '../BlocCard'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
 
-export default function GouvernancePref({
-  gouvernanceViewModel,
-  lienGouvernance,
-}: Props): ReactElement {
+export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance }: Props): ReactElement {
   if (isErrorViewModel(gouvernanceViewModel)) {
     return (
       <BlocCard labelledBy="gouvernance">
@@ -20,10 +17,7 @@ export default function GouvernancePref({
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="compass-3-line" />
             <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="gouvernance"
-              >
+              <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
                 Gouvernances
               </h2>
             </div>
@@ -40,51 +34,26 @@ export default function GouvernancePref({
         <div className={styles.cartesContainer}>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="bank-line"
-              />
-              -
+              <TitleIcon background="white" icon="bank-line" />-
             </div>
-            <div
-              className="fr-text--md fr-mb-0"
-              style={{ fontWeight: 500 }}
-            >
+            <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
               Membres de la gouvernance
             </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="community-line"
-              />
-              -
+              <TitleIcon background="white" icon="community-line" />-
             </div>
-            <div className="font-weight-500">
-              Collectivité impliquées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
+            <div className="font-weight-500">Collectivité impliquées</div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
             <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="file-download-line"
-              />
-              -
+              <TitleIcon background="white" icon="file-download-line" />-
             </div>
-            <div className="font-weight-500">
-              Feuilles de route déposées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
+            <div className="font-weight-500">Feuilles de route déposées</div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
         </div>
       </BlocCard>
@@ -97,19 +66,13 @@ export default function GouvernancePref({
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="compass-3-line" />
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="gouvernance"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
               Gouvernances
             </h2>
           </div>
         </div>
         {lienGouvernance !== undefined && (
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={lienGouvernance}
-          >
+          <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienGouvernance}>
             La gouvernance
           </Link>
         )}
@@ -117,50 +80,27 @@ export default function GouvernancePref({
       <div className={styles.cartesContainer}>
         <div className={`${styles.carte} background-blue-france fr-p-4w`}>
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="bank-line"
-            />
+            <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.membre.total}
           </div>
-          <div
-            className="fr-text--md fr-mb-0"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
             Membres de la gouvernance
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            dont
-            {' '}
-            <span style={{ fontWeight: 700 }}>
-              {gouvernanceViewModel.membre.coporteur}
-              {' '}
-              coporteurs
-            </span>
+            dont <span style={{ fontWeight: 700 }}>{gouvernanceViewModel.membre.coporteur} coporteurs</span>
           </div>
         </div>
         <div className={`${styles.carte} background-blue-france fr-p-4w`}>
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="file-download-line"
-            />
+            <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
           </div>
-          <div
-            className="fr-text--md fr-mb-0"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
             Feuilles de route déposées
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            comprenant
-            {' '}
-            <span style={{ fontWeight: 700 }}>
-              {gouvernanceViewModel.feuilleDeRoute.action}
-              {' '}
-              actions enregistrées
-            </span>
+            comprenant{' '}
+            <span style={{ fontWeight: 700 }}>{gouvernanceViewModel.feuilleDeRoute.action} actions enregistrées</span>
           </div>
         </div>
       </div>

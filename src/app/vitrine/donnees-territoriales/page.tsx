@@ -4,7 +4,8 @@ import { ReactElement } from 'react'
 import DonneesTerritoriales from '@/components/vitrine/DonneesTerritoriales/DonneesTerritoriales'
 
 export const metadata: Metadata = {
-  description: 'Accédez aux données publiques d\'inclusion numérique par territoire en France. Statistiques sur les lieux d\'inclusion, médiateurs numériques, feuilles de route et accompagnements réalisés par département.',
+  description:
+    "Accédez aux données publiques d'inclusion numérique par territoire en France. Statistiques sur les lieux d'inclusion, médiateurs numériques, feuilles de route et accompagnements réalisés par département.",
   keywords: [
     'inclusion numérique',
     'données territoriales',
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
     'France Numérique Ensemble',
   ],
   openGraph: {
-    description: 'Accédez aux données publiques d\'inclusion numérique par territoire en France.',
+    description: "Accédez aux données publiques d'inclusion numérique par territoire en France.",
     locale: 'fr_FR',
     siteName: 'Inclusion Numérique',
     title: 'Données territoriales - Inclusion Numérique',

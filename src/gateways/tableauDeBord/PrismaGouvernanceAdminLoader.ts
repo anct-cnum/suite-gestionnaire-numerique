@@ -1,6 +1,9 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { GouvernanceAdminReadModel, RecupererTableauDeBordGouvernanceAdminLoader } from '@/use-cases/queries/RecupererTableauDeBordGouvernance'
+import {
+  GouvernanceAdminReadModel,
+  RecupererTableauDeBordGouvernanceAdminLoader,
+} from '@/use-cases/queries/RecupererTableauDeBordGouvernance'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaGouvernanceAdminLoader implements RecupererTableauDeBordGouvernanceAdminLoader {
@@ -41,9 +44,7 @@ export class PrismaGouvernanceAdminLoader implements RecupererTableauDeBordGouve
       )
 
       // Compter les gouvernances qui ont plus de 2 co-porteurs
-      const nombreGouvernancesCoPortees = gouvernancesAvecCoPorteurs.filter(
-        (gov) => gov.nombreCoPorteurs >= 2
-      ).length
+      const nombreGouvernancesCoPortees = gouvernancesAvecCoPorteurs.filter((gov) => gov.nombreCoPorteurs >= 2).length
 
       // Compter les feuilles de route et actions (France entière, excluant zzz)
       const feuillesDeRoute = await this.#feuilleDeRouteDao.findMany({

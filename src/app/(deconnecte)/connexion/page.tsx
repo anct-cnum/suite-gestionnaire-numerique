@@ -13,9 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function ConnexionController(): Promise<ReactElement> {
-  const providers = await getProviders() as unknown as ProConnectProvider
+  const providers = (await getProviders()) as unknown as ProConnectProvider
 
-  return (
-    <Connexion idProvider={providers['pro-connect'].id} />
-  )
+  return <Connexion idProvider={providers['pro-connect'].id} />
 }

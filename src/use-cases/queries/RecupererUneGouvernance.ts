@@ -14,15 +14,13 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
   }
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
-    const readModel = await this.#loader.get(query.codeDepartement)
-      .then((gouvernance) => ({
-        ...gouvernance,
-        syntheseMembres: {
-          ...gouvernance.syntheseMembres,
-          coporteurs: gouvernance.syntheseMembres.coporteurs
-            .map(toMembreDetailIntitulerReadModel),
-        },
-      }))
+    const readModel = await this.#loader.get(query.codeDepartement).then((gouvernance) => ({
+      ...gouvernance,
+      syntheseMembres: {
+        ...gouvernance.syntheseMembres,
+        coporteurs: gouvernance.syntheseMembres.coporteurs.map(toMembreDetailIntitulerReadModel),
+      },
+    }))
 
     // Récupérer les membres pour extraire les co-porteurs via FK structure_id
     const membres = await this.#loader.getMembres(query.codeDepartement)
@@ -121,10 +119,12 @@ export type CoporteurDetailReadModel = Readonly<{
     poste: string
     prenom: string
   }>
-  feuillesDeRoute: ReadonlyArray<Readonly<{
-    nom: string
-    uid: string
-  }>>
+  feuillesDeRoute: ReadonlyArray<
+    Readonly<{
+      nom: string
+      uid: string
+    }>
+  >
   links: Readonly<{
     plusDetails?: string
   }>
@@ -165,15 +165,15 @@ type Query = Readonly<{
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const denomination = isPrefectureDepartementale(membre)
-    ? 'Contact politique de la collectivité' as const
-    : 'Contact référent' as const
+    ? ('Contact politique de la collectivité' as const)
+    : ('Contact référent' as const)
   return {
     ...membre,
     contactReferent: membre.contactReferent
       ? {
-        ...membre.contactReferent,
-        denomination,
-      }
+          ...membre.contactReferent,
+          denomination,
+        }
       : undefined,
   }
 }
@@ -181,12 +181,11 @@ function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolea
   return coporteur.type === 'Préfecture départementale'
 }
 
-function createMembresCoporteurs(membres: ReadonlyArray<Membre>):
-Array<{ isCoporteur: boolean; structureUid: number }> {
-  return membres
-    .filter(isCoporteur)
-    .map(membre => ({
-      isCoporteur: true,
-      structureUid: membre.structureId,
-    }))
+function createMembresCoporteurs(
+  membres: ReadonlyArray<Membre>
+): Array<{ isCoporteur: boolean; structureUid: number }> {
+  return membres.filter(isCoporteur).map((membre) => ({
+    isCoporteur: true,
+    structureUid: membre.structureId,
+  }))
 }

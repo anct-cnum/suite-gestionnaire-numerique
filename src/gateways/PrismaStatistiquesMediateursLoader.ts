@@ -17,9 +17,10 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
     try {
       const departementFilter = this.buildDepartementFilter(territoire)
 
-      const result = territoire === 'France'
-        ? await this.getStatistiquesNationales()
-        : await this.getStatistiquesDepartement(departementFilter)
+      const result =
+        territoire === 'France'
+          ? await this.getStatistiquesNationales()
+          : await this.getStatistiquesDepartement(departementFilter)
 
       return {
         nombreAidantsConnect: Number(result.aidants_connect),
@@ -45,9 +46,9 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
     }
 
     // Vérifier si c'est un code région
-    const departementsRegion = departements.filter(dept => dept.regionCode === territoire)
+    const departementsRegion = departements.filter((dept) => dept.regionCode === territoire)
     if (departementsRegion.length > 0) {
-      return departementsRegion.map(dept => dept.code)
+      return departementsRegion.map((dept) => dept.code)
     }
 
     // Sinon c'est un code département
@@ -55,9 +56,8 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
   }
 
   private async getStatistiquesDepartement(departementsFilter: Array<string>): Promise<StatistiquesQueryResult> {
-    const departementCondition = departementsFilter.length > 0
-      ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
-      : Prisma.empty
+    const departementCondition =
+      departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty
 
     const result = await prisma.$queryRaw<Array<StatistiquesQueryResult>>`
       SELECT

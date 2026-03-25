@@ -20,7 +20,6 @@ describe('gouvernance', () => {
       membresCoporteurs: [{ isCoporteur: true, structureUid: 79227291600034 }],
       utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
     },
-
   ])('$intention', ({ membresCoporteurs, utilisateur }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({
@@ -44,17 +43,19 @@ describe('gouvernance', () => {
 
   it.each([
     {
-      intention: 'un gestionnaire structure dont la structure n\'est pas membre de la gouvernance ne peut pas la gérer',
+      intention: "un gestionnaire structure dont la structure n'est pas membre de la gouvernance ne peut pas la gérer",
       membresCoporteurs: [],
       utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
     },
     {
-      intention: 'un gestionnaire structure dont la structure est membre mais pas co-porteur (isCoporteur: false) ne peut pas la gérer',
+      intention:
+        'un gestionnaire structure dont la structure est membre mais pas co-porteur (isCoporteur: false) ne peut pas la gérer',
       membresCoporteurs: [{ isCoporteur: false, structureUid: 79227291600034 }],
       utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
     },
     {
-      intention: 'un gestionnaire structure dont la structure est membre mais isCoporteur non défini (= false par défaut) ne peut pas la gérer',
+      intention:
+        'un gestionnaire structure dont la structure est membre mais isCoporteur non défini (= false par défaut) ne peut pas la gérer',
       membresCoporteurs: [{ structureUid: 79227291600034 }],
       utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
     },
@@ -63,7 +64,8 @@ describe('gouvernance', () => {
       utilisateur: utilisateurFactory({ codeOrganisation: '', role: 'Gestionnaire groupement' }),
     },
     {
-      intention: 'un gestionnaire région dont le département de la gouvernance appartient à celle-ci ne peut pas la gérer',
+      intention:
+        'un gestionnaire région dont le département de la gouvernance appartient à celle-ci ne peut pas la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
     },
   ])('$intention', ({ membresCoporteurs, utilisateur }) => {
@@ -92,7 +94,6 @@ describe('gouvernance', () => {
       intention: 'un administrateur dispositif ne peut pas gérer une note privée',
       utilisateur: utilisateurFactory({ role: 'Administrateur dispositif' }),
     },
-    
   ])('$intention', ({ utilisateur }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({

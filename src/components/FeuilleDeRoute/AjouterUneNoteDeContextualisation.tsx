@@ -48,13 +48,12 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
           contenu={contenu}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
-          validerFormulaire={(event) => { void creerUneNoteDeContextualisation(event) }}
+          validerFormulaire={(event) => {
+            void creerUneNoteDeContextualisation(event)
+          }}
         >
           <div className="fr-btns-group fr-mt-2w">
-            <SubmitButton
-              ariaControls={drawerId}
-              isDisabled={isDisabled}
-            >
+            <SubmitButton ariaControls={drawerId} isDisabled={isDisabled}>
               {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
             </SubmitButton>
           </div>

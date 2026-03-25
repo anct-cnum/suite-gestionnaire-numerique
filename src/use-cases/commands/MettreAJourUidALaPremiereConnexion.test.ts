@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { MettreAJourUidALaPremiereConnexion } from './MettreAJourUidALaPremiereConnexion'
-import {
-  FindUtilisateurByEmailRepository,
-  UpdateUtilisateurUidRepository,
-} from './shared/UtilisateurRepository'
+import { FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
@@ -18,9 +15,7 @@ describe("mettre à jour l'identifiant unique à la première connexion", () => 
     // GIVEN
     const email = 'martin.tartempion@example.net'
     const uid = 'fooId'
-    const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(
-      new UtilisateurRepositorySpy()
-    )
+    const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(new UtilisateurRepositorySpy())
 
     // WHEN
     const result = await mettreAJourUidALaPremiereConnexion.handle({ email, uid })
@@ -58,9 +53,7 @@ describe("mettre à jour l'identifiant unique à la première connexion", () => 
 let spiedEmailToFind: null | string
 let spiedUtilisateurToUpdate: null | Utilisateur
 
-class UtilisateurRepositorySpy
-  implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository
-{
+class UtilisateurRepositorySpy implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository {
   async findByEmail(email: string): Promise<undefined | Utilisateur> {
     spiedEmailToFind = email
     return Promise.resolve(
@@ -77,9 +70,7 @@ class UtilisateurRepositorySpy
   }
 }
 
-class UtilisateurRepositorySpyNotFound
-  implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository
-{
+class UtilisateurRepositorySpyNotFound implements FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async findByEmail(_: string): Promise<undefined | Utilisateur> {
     return Promise.resolve(undefined)

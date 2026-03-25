@@ -41,7 +41,8 @@ describe('rechercher les structures', () => {
 })
 
 let spiedCall: keyof StructuresLoaderSpy | null
-let spiedArgs: null
+let spiedArgs:
+  | null
   | Parameters<typeof StructuresLoaderSpy.prototype.structures>
   | Parameters<typeof StructuresLoaderSpy.prototype.structuresByDepartement>
   | Parameters<typeof StructuresLoaderSpy.prototype.structuresByRegion>

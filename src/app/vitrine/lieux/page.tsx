@@ -7,19 +7,26 @@ import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
-  description: 'Cartographie interactive des lieux d\'inclusion numérique en France. Outil de prescription et de pilotage mobilisant des données territoriales pour agir efficacement.',
-  keywords: ['lieux inclusion numérique', 'cartographie', 'médiation numérique', 'structures d\'accompagnement', 'aidants numériques'],
+  description:
+    "Cartographie interactive des lieux d'inclusion numérique en France. Outil de prescription et de pilotage mobilisant des données territoriales pour agir efficacement.",
+  keywords: [
+    'lieux inclusion numérique',
+    'cartographie',
+    'médiation numérique',
+    "structures d'accompagnement",
+    'aidants numériques',
+  ],
   openGraph: {
-    description: 'Cartographie interactive des lieux d\'inclusion numérique en France.',
+    description: "Cartographie interactive des lieux d'inclusion numérique en France.",
     locale: 'fr_FR',
-    title: 'Lieux d\'inclusion numérique - Inclusion Numérique',
+    title: "Lieux d'inclusion numérique - Inclusion Numérique",
     type: 'website',
   },
   robots: {
     follow: true,
     index: true,
   },
-  title: 'Lieux d\'inclusion numérique - Inclusion Numérique',
+  title: "Lieux d'inclusion numérique - Inclusion Numérique",
 }
 
 export default function LieuxPage(): ReactElement {
@@ -34,33 +41,18 @@ export default function LieuxPage(): ReactElement {
       {/* Section Cartographie des lieux */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '5rem' }}
-          >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              <h2
-                className="fr-h2"
-                style={{ marginBottom: 0 }}
-              >
+          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
+            <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 Cartographie des lieux d&apos;inclusion numérique
               </h2>
-              <p
-                className="fr-text--md"
-                style={{ marginBottom: 0 }}
-              >
-                Que vous soyez ou non un professionnel de la médiation numérique ou sociale,
-                la cartographie nationale vous permet d&apos;orienter rapidement un bénéficiaire vers
-                un lieu au sein duquel il pourra être accompagné.
+              <p className="fr-text--md" style={{ marginBottom: 0 }}>
+                Que vous soyez ou non un professionnel de la médiation numérique ou sociale, la cartographie nationale
+                vous permet d&apos;orienter rapidement un bénéficiaire vers un lieu au sein duquel il pourra être
+                accompagné.
               </p>
               <div>
-                <Link
-                  className="fr-btn"
-                  href="https://cartographie.societenumerique.gouv.fr/cartographie"
-                >
+                <Link className="fr-btn" href="https://cartographie.societenumerique.gouv.fr/cartographie">
                   Voir la cartographie
                 </Link>
               </div>
@@ -79,10 +71,7 @@ export default function LieuxPage(): ReactElement {
       {/* Section Visualisation des indicateurs */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '5rem' }}
-          >
+          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
             <div className={`fr-col-12 fr-col-md-6 ${styles.visualisationImage}`}>
               <img
                 alt="Visualisation des indicateurs territoriaux"
@@ -91,25 +80,15 @@ export default function LieuxPage(): ReactElement {
               />
             </div>
             <div className={`fr-col-12 fr-col-md-5 ${styles.visualisationContent}`}>
-              <h2
-                className="fr-h2"
-                style={{ marginBottom: 0 }}
-              >
+              <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 Visualisation des indicateurs territoriaux
               </h2>
-              <p
-                className="fr-text--md"
-                style={{ marginBottom: 0 }}
-              >
-                Grâce à la visualisation de plusieurs indicateurs, notamment l&apos;Indice de fragilité
-                numérique, la cartographie nationale permet aux acteurs de l&apos;inclusion numérique
-                de mieux piloter leurs actions.
+              <p className="fr-text--md" style={{ marginBottom: 0 }}>
+                Grâce à la visualisation de plusieurs indicateurs, notamment l&apos;Indice de fragilité numérique, la
+                cartographie nationale permet aux acteurs de l&apos;inclusion numérique de mieux piloter leurs actions.
               </p>
               <div>
-                <Link
-                  className="fr-btn"
-                  href="https://cartographie.societenumerique.gouv.fr/cartographie"
-                >
+                <Link className="fr-btn" href="https://cartographie.societenumerique.gouv.fr/cartographie">
                   Voir la cartographie
                 </Link>
               </div>
@@ -121,27 +100,15 @@ export default function LieuxPage(): ReactElement {
       {/* Section Implémentation */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '5rem' }}
-          >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              <h2
-                className="fr-h2"
-                style={{ marginBottom: 0 }}
-              >
+          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
+            <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 Implémentez facilement la cartographie sur votre site internet
               </h2>
-              <p
-                className="fr-text--md"
-                style={{ marginBottom: 0 }}
-              >
-                La cartographie peut être facilement intégrée sur votre site. Elle peut être reliée à
-                la source de données de votre choix. Vous pouvez également télécharger les données
-                de votre territoire depuis notre API.
+              <p className="fr-text--md" style={{ marginBottom: 0 }}>
+                La cartographie peut être facilement intégrée sur votre site. Elle peut être reliée à la source de
+                données de votre choix. Vous pouvez également télécharger les données de votre territoire depuis notre
+                API.
               </p>
               <div>
                 <Link
@@ -173,19 +140,14 @@ export default function LieuxPage(): ReactElement {
         }}
       >
         <div className="fr-container">
-          <div
-            className="fr-mb-4w"
-            style={{ textAlign: 'center' }}
-          >
+          <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
               alt="Icône exemples"
               src="/vitrine/lieux/icone-exemples.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>
-            Exemples d&apos;intégration de la cartographie
-          </h2>
+          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>Exemples d&apos;intégration de la cartographie</h2>
 
           <div
             style={{
@@ -205,10 +167,7 @@ export default function LieuxPage(): ReactElement {
                 padding: '2.5rem',
               }}
             >
-              <div
-                className="fr-col-12 fr-col-md-6"
-                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-              >
+              <div className="fr-col-12 fr-col-md-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <h3
                   style={{
                     color: '#161616',
@@ -285,10 +244,7 @@ export default function LieuxPage(): ReactElement {
                 padding: '2.5rem',
               }}
             >
-              <div
-                className="fr-col-12 fr-col-md-6"
-                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-              >
+              <div className="fr-col-12 fr-col-md-6" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <h3
                   style={{
                     color: '#161616',
@@ -360,19 +316,14 @@ export default function LieuxPage(): ReactElement {
       {/* Section Les avantages */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-mb-4w"
-            style={{ textAlign: 'center' }}
-          >
+          <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
               alt="Icône avantages"
               src="/vitrine/lieux/icone-avantages.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>
-            Les avantages de cet outil
-          </h2>
+          <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>Les avantages de cet outil</h2>
 
           <div
             style={{
@@ -411,9 +362,8 @@ export default function LieuxPage(): ReactElement {
                 Orientation
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                En quelques secondes, renseignez les besoins d&apos;un bénéficiaire, son adresse et
-                ses disponibilités afin d&apos;afficher uniquement les lieux qui pourront
-                l&apos;aider.
+                En quelques secondes, renseignez les besoins d&apos;un bénéficiaire, son adresse et ses disponibilités
+                afin d&apos;afficher uniquement les lieux qui pourront l&apos;aider.
               </p>
             </div>
 
@@ -446,9 +396,9 @@ export default function LieuxPage(): ReactElement {
                 Standardisation
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                Nous référençons les lieux d&apos;inclusion numérique qui ont renseigné leurs
-                données au format du standard de données des lieux d&apos;inclusion numérique établi
-                par la Mednum , Datactivist et l&apos;ANCT.
+                Nous référençons les lieux d&apos;inclusion numérique qui ont renseigné leurs données au format du
+                standard de données des lieux d&apos;inclusion numérique établi par la Mednum , Datactivist et
+                l&apos;ANCT.
               </p>
             </div>
 
@@ -481,9 +431,9 @@ export default function LieuxPage(): ReactElement {
                 Mise à jour
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                Les données de la cartographie sont centralisées au sein d&apos;un entrepôt géré en commun
-                par les acteurs de l&apos;inclusion numérique. Cette mutualisation permet une mise à jour
-                plus fréquente et plus simple de ses données.
+                Les données de la cartographie sont centralisées au sein d&apos;un entrepôt géré en commun par les
+                acteurs de l&apos;inclusion numérique. Cette mutualisation permet une mise à jour plus fréquente et plus
+                simple de ses données.
               </p>
             </div>
 
@@ -516,9 +466,9 @@ export default function LieuxPage(): ReactElement {
                 Visibilité
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                La cartographie permet une visualisation fine de l&apos;offre de médiation numérique à toutes
-                les échelles : nationale, régionale, départementale, locale, micro-locale. Ouverte et contributive,
-                les données peuvent être réutilisées par tous les acteurs de la médiation numérique.
+                La cartographie permet une visualisation fine de l&apos;offre de médiation numérique à toutes les
+                échelles : nationale, régionale, départementale, locale, micro-locale. Ouverte et contributive, les
+                données peuvent être réutilisées par tous les acteurs de la médiation numérique.
               </p>
             </div>
           </div>
@@ -526,15 +476,9 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section CTA */}
-      <section
-        className="fr-py-12w"
-        style={{ backgroundColor: '#fff8e1' }}
-      >
+      <section className="fr-py-12w" style={{ backgroundColor: '#fff8e1' }}>
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '80px' }}
-          >
+          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '80px' }}>
             <div className="fr-col-12 fr-col-md-6">
               <img
                 alt="Cartographie et mise à jour"
@@ -542,14 +486,8 @@ export default function LieuxPage(): ReactElement {
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              <h2
-                className="fr-h2"
-                style={{ color: '#000091', marginBottom: 0 }}
-              >
+            <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h2 className="fr-h2" style={{ color: '#000091', marginBottom: 0 }}>
                 Vous souhaitez savoir comment apparaître sur la cartographie ou mettre à jour vos données ?
               </h2>
               <div>
@@ -568,23 +506,15 @@ export default function LieuxPage(): ReactElement {
       {/* Section Ressources Les Bases */}
       <section className="fr-py-12w">
         <div className="fr-container">
-          <div
-            className="fr-mb-4w"
-            style={{ textAlign: 'center' }}
-          >
+          <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
               alt="Icône ressources"
               src="/vitrine/lieux/icone-ressources.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
-          <h2 className={`fr-mb-2w ${styles.sectionTitle}`}>
-            Découvrez nos ressources sur Les Bases
-          </h2>
-          <p
-            className="fr-text--md fr-mb-8w"
-            style={{ textAlign: 'center' }}
-          >
+          <h2 className={`fr-mb-2w ${styles.sectionTitle}`}>Découvrez nos ressources sur Les Bases</h2>
+          <p className="fr-text--md fr-mb-8w" style={{ textAlign: 'center' }}>
             En savoir plus sur cette cartographie et ses usages variés
           </p>
 
@@ -633,9 +563,7 @@ export default function LieuxPage(): ReactElement {
               >
                 Diffuser la cartographie nationale au sein de mon réseau
               </h3>
-              <p
-                className="fr-text--sm fr-mb-0"
-              >
+              <p className="fr-text--sm fr-mb-0">
                 Vous souhaitez partager la cartographie au sein de votre réseau ? Vous êtes au bon endroit !
               </p>
               <div>
@@ -684,9 +612,7 @@ export default function LieuxPage(): ReactElement {
               >
                 Collectivité : Comment prendre en main la cartographie ?
               </h3>
-              <p
-                className="fr-text--sm fr-mb-0"
-              >
+              <p className="fr-text--sm fr-mb-0">
                 Vous représentez une collectivité et souhaitez utiliser la cartographie nationale ?
               </p>
               <div>
@@ -735,9 +661,7 @@ export default function LieuxPage(): ReactElement {
               >
                 Évolution du standard national des lieux d&apos;inclusion numérique
               </h3>
-              <p
-                className="fr-text--sm fr-mb-0"
-              >
+              <p className="fr-text--sm fr-mb-0">
                 Descriptif des évolutions du standard national des lieux d&apos;inclusion numérique (version 1.0.1)
               </p>
               <div>

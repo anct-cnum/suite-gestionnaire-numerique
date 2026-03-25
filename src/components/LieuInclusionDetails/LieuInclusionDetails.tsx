@@ -83,10 +83,7 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
       </div>
       <section className="grey-border border-radius ">
         <div id="lieu-accueil-public">
-          <LieuInclusionDetailsAccueil
-            data={data.lieuAccueilPublic}
-            peutModifier={data.peutModifier}
-          />
+          <LieuInclusionDetailsAccueil data={data.lieuAccueilPublic} peutModifier={data.peutModifier} />
         </div>
         <hr className="fr-hr fr-p-1" />
         <div id="services-inclusion-numerique">
@@ -97,7 +94,6 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
           />
         </div>
       </section>
-
     </>
   )
 }

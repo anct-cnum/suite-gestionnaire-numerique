@@ -1,8 +1,4 @@
-import {
-  AdresseGeocodeReadModel,
-  BanGeocodingGateway,
-  GeocodageParams,
-} from './BanGeocodingGateway'
+import { AdresseGeocodeReadModel, BanGeocodingGateway, GeocodageParams } from './BanGeocodingGateway'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 
 /**
@@ -90,10 +86,9 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
 
         // Si c'est la dernière tentative, on lance l'erreur
         if (tentative === 3) {
-          throw new Error(
-            `Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur.message}`,
-            { cause: erreur }
-          )
+          throw new Error(`Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur.message}`, {
+            cause: erreur,
+          })
         }
 
         // Attente avant retry (2s, puis 4s)
@@ -105,9 +100,7 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
     }
 
     if (!reponse) {
-      throw new Error(
-        `Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur?.message}`
-      )
+      throw new Error(`Échec de connexion à l'API BAN après 3 tentatives: ${derniereErreur?.message}`)
     }
 
     return reponse
@@ -128,11 +121,7 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
     }
 
     // Vérifier le type d'adresse (accepter housenumber, street, locality)
-    if (
-      properties.type !== 'housenumber' &&
-      properties.type !== 'street' &&
-      properties.type !== 'locality'
-    ) {
+    if (properties.type !== 'housenumber' && properties.type !== 'street' && properties.type !== 'locality') {
       return null
     }
 

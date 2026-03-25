@@ -8,59 +8,36 @@ import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarL
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { handleDownload } from '@/shared/DownloadHelp'
 
-export default function LieuxInclusionCategory(props : Props): ReactElement {
+export default function LieuxInclusionCategory(props: Props): ReactElement {
   const { dateGeneration, elements, nombreLieuxInclusion, nombreLieuxInclusionPublic } = props
   const divCard = useRef<HTMLDivElement>(null)
   return (
-    <section
-      className="fr-p-3w fr-mb-2w fr-border-default--grey"
-      style={{ borderRadius: '1rem' }}
-    >
-      <div
-        className="fr-card fr-card--no-border fr-p-1w"
-        ref={divCard}
-      >
+    <section className="fr-p-3w fr-mb-2w fr-border-default--grey" style={{ borderRadius: '1rem' }}>
+      <div className="fr-card fr-card--no-border fr-p-1w" ref={divCard}>
         <div className="fr-grid-row">
           <div className="fr-col-12 fr-col-md-6 ">
-            <div
-              className="fr-col-auto"
-              style={{ alignItems: 'stretch', display: 'flex' }}
-            >
+            <div className="fr-col-auto" style={{ alignItems: 'stretch', display: 'flex' }}>
               <TitleIcon icon="map-pin-2-line" />
             </div>
-            <p className="fr-display--lg fr-text--bold fr-mb-1v">
-              {nombreLieuxInclusion}
-            </p>
+            <p className="fr-display--lg fr-text--bold fr-mb-1v">{nombreLieuxInclusion}</p>
             Lieux d&apos;inclusion numérique
             <Information>
               <p className="fr-mb-0">
-                Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion
-                numérique
+                Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion numérique
               </p>
             </Information>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">
-              dont 
-              {' '}
-              {nombreLieuxInclusionPublic}
-              {' '}
-              dans le secteur public
+              dont {nombreLieuxInclusionPublic} dans le secteur public
             </p>
           </div>
           <div className={`fr-col-12 fr-col-md-6 ${styles.graphiqueContainer}`}>
-            <div className="fr-text--bold  fr-mb-1w fr-text--sm">
-              Dont
-            </div>
+            <div className="fr-text--bold  fr-mb-1w fr-text--sm">Dont</div>
             <GraphiqueBarList elements={elements} />
             <hr className="fr-hr fr-mt-2w" />
-            <div
-              className="fr-grid-row fr-grid-row--middle "
-              style={{ alignItems: 'center' }}
-            >
+            <div className="fr-grid-row fr-grid-row--middle " style={{ alignItems: 'center' }}>
               <div style={{ display: 'none', flex: 1 }}>
                 <p className="fr-text--sm fr-mb-0">
-                  Données mises à jour le 
-                  {' '}
-                  {dateGeneration.toLocaleDateString('fr-FR')}
+                  Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}
                 </p>
               </div>
               <DownloadButton
@@ -79,7 +56,7 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
 
 type Props = Readonly<{
   dateGeneration: Date
-  elements : Array<{ label: string; value: number }>
+  elements: Array<{ label: string; value: number }>
   nombreLieuxInclusion: number
   nombreLieuxInclusionPublic: number
 }>

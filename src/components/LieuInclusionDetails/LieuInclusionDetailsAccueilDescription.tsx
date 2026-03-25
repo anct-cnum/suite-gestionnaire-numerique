@@ -45,8 +45,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
     [Typologie.AUTRE]: 'Autre',
     [Typologie.AVIP]: "Crèche à vocation d'insertion professionnelle",
     [Typologie.BIB]: 'Bibliothèque / Médiathèque',
-    [Typologie.CAARUD]:
-      "Centre d'accueil et d'accompagnement à la réduction de risques pour usagers de drogues",
+    [Typologie.CAARUD]: "Centre d'accueil et d'accompagnement à la réduction de risques pour usagers de drogues",
     [Typologie.CADA]: "Centres d'accueil de demandeurs d'asile",
     [Typologie.CAF]: "Caisses d'allocation familiale",
     [Typologie.CAP_EMPLOI]: 'Cap Emploi',
@@ -71,8 +70,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
     [Typologie.CSC]: 'Centre socioculturel',
     [Typologie.DEETS]: "Directions de l'Economie, de l'Emploi, du Travail et des Solidarités",
     [Typologie.DEPT]: 'Services sociaux du Conseil départemental',
-    [Typologie.DIPLP]:
-      'Délégation interministérielle à la prévention et à la lutte contre la pauvreté',
+    [Typologie.DIPLP]: 'Délégation interministérielle à la prévention et à la lutte contre la pauvreté',
     [Typologie.E2C]: 'École de la deuxième chance',
     [Typologie.EA]: 'Entreprise adaptée',
     [Typologie.EATT]: 'Entreprise adaptée',
@@ -106,8 +104,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
     [Typologie.MSA]: 'Mutualité Sociale Agricole',
     [Typologie.MSAP]: 'Maison de Services Au Public',
     [Typologie.MUNI]: 'Municipalités',
-    [Typologie.OACAS]:
-      "Structures agréées Organisme d'accueil communautaire et d'activité solidaire",
+    [Typologie.OACAS]: "Structures agréées Organisme d'accueil communautaire et d'activité solidaire",
     [Typologie.ODC]: "Organisation délégataire d'un CD",
     [Typologie.OF]: 'Organisme de formations',
     [Typologie.OIL]: "Opérateur d'intermédiation locative",
@@ -134,8 +131,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
 
   // Récupérer le label de la typologie actuelle
   const typologieActuelle = typologies?.[0] as Typologie | undefined
-  const typologieLabel =
-    typologieActuelle === undefined ? 'Non renseigné' : typologieLabels[typologieActuelle]
+  const typologieLabel = typologieActuelle === undefined ? 'Non renseigné' : typologieLabels[typologieActuelle]
 
   // Construire les options pour le Select
   const typologiesOptions: ReadonlyArray<LabelValue> = [
@@ -238,17 +234,11 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
       <div className="fr-mb-2w">
         <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">Résumé</p>
         {isEditing ? (
-          <TextArea
-            defaultValue={presentationResume ?? modalitesAccueil ?? ''}
-            maxLength={500}
-            rows={5}
-          >
+          <TextArea defaultValue={presentationResume ?? modalitesAccueil ?? ''} maxLength={500} rows={5}>
             Résumé de la présentation
           </TextArea>
         ) : (
-          <p className="fr-mb-0">
-            {presentationResume ?? modalitesAccueil ?? 'Aucune description disponible'}
-          </p>
+          <p className="fr-mb-0">{presentationResume ?? modalitesAccueil ?? 'Aucune description disponible'}</p>
         )}
       </div>
 

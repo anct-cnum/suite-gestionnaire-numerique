@@ -33,12 +33,8 @@ export default function ListeAidantsMediateurInfos({
             height: '7rem',
           }}
         >
-          <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-            {indicateur}
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-            {description}
-          </div>
+          <div className="fr-h5 fr-text-title--blue-france fr-m-0">{indicateur}</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">{description}</div>
           <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
             {typeof legends === 'string' ? parseTextWithBold(legends) : legends}
           </div>
@@ -66,15 +62,9 @@ export default function ListeAidantsMediateurInfos({
                   height: '7rem',
                 }}
               >
-                <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                  -
-                </div>
-                <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-                  Accompagnements
-                </div>
-                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-                  sur les 30 derniers jours
-                </div>
+                <div className="fr-h5 fr-text-title--blue-france fr-m-0">-</div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">Accompagnements</div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
               </div>
             </div>
           }
@@ -95,15 +85,9 @@ export default function ListeAidantsMediateurInfos({
                     height: '7rem',
                   }}
                 >
-                  <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                    ...
-                  </div>
-                  <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-                    Accompagnements
-                  </div>
-                  <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-                    sur les 30 derniers jours
-                  </div>
+                  <div className="fr-h5 fr-text-title--blue-france fr-m-0">...</div>
+                  <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">Accompagnements</div>
+                  <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
                 </div>
               </div>
             }
@@ -130,15 +114,11 @@ export default function ListeAidantsMediateurInfos({
                   height: '7rem',
                 }}
               >
-                <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                  -
-                </div>
+                <div className="fr-h5 fr-text-title--blue-france fr-m-0">-</div>
                 <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
                   Bénéficiaires accompagnés
                 </div>
-                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-                  sur les 30 derniers jours
-                </div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
               </div>
             </div>
           }
@@ -159,15 +139,11 @@ export default function ListeAidantsMediateurInfos({
                     height: '7rem',
                   }}
                 >
-                  <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                    ...
-                  </div>
+                  <div className="fr-h5 fr-text-title--blue-france fr-m-0">...</div>
                   <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
                     Bénéficiaires accompagnés
                   </div>
-                  <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-                    sur les 30 derniers jours
-                  </div>
+                  <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
                 </div>
               </div>
             }
@@ -183,10 +159,7 @@ export default function ListeAidantsMediateurInfos({
   }
 
   return (
-    <section
-      aria-labelledby="ListeAidantsMediateursInfo"
-      className="fr-pb-3w"
-    >
+    <section aria-labelledby="ListeAidantsMediateursInfo" className="fr-pb-3w">
       <div className="fr-container-fluid">
         <div className="fr-grid-row fr-grid-row--gutters">
           {renderAidantsMediateursInfoCard({

@@ -27,9 +27,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
           />
         </MenuActifProvider>
       </div>
-      <div className="fr-col-10 fr-pl-7w menu-border">
-        {children}
-      </div>
+      <div className="fr-col-10 fr-pl-7w menu-border">{children}</div>
     </div>
   )
 }

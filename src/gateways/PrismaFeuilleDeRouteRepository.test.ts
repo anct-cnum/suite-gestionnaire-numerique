@@ -64,9 +64,7 @@ describe('feuille de route repository', () => {
         gouvernanceDepartementCode: departementCode,
       },
     })
-    expect(feuilleDeRouteRecord).toMatchObject(
-      feuilleDeRouteRecordFactory({ porteurId: uidPorteur })
-    )
+    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({ porteurId: uidPorteur }))
   })
 
   it('modifier une feuille de route', async () => {

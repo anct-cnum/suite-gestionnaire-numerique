@@ -67,10 +67,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         url.searchParams.append('filter[lieux]', filtres.lieux.join(','))
       }
       if (filtres.conseillerNumerique !== undefined) {
-        url.searchParams.append(
-          'filter[conseiller_numerique]',
-          filtres.conseillerNumerique ? '1' : '0'
-        )
+        url.searchParams.append('filter[conseiller_numerique]', filtres.conseillerNumerique ? '1' : '0')
       }
     }
 
@@ -125,10 +122,9 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         derniereErreur = erreur as Error
 
         if (tentative === 3) {
-          throw new Error(
-            `Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`,
-            { cause: erreur }
-          )
+          throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`, {
+            cause: erreur,
+          })
         }
 
         await new Promise((resolve) => {

@@ -65,9 +65,7 @@ describe('récupérer territoire utilisateur', () => {
       role: 'gestionnaire_structure',
       structureId: 123,
     })
-    const queryHandler = new RecupererTerritoireUtilisateur(
-      new TerritoireDepartementsLoaderStub('75')
-    )
+    const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub('75'))
 
     // WHEN
     const territoire = await queryHandler.handle(utilisateur)
@@ -85,9 +83,7 @@ describe('récupérer territoire utilisateur', () => {
       role: 'gestionnaire_structure',
       structureId: 123,
     })
-    const queryHandler = new RecupererTerritoireUtilisateur(
-      new TerritoireDepartementsLoaderStub(null)
-    )
+    const queryHandler = new RecupererTerritoireUtilisateur(new TerritoireDepartementsLoaderStub(null))
 
     // WHEN
     const territoire = await queryHandler.handle(utilisateur)
@@ -117,8 +113,7 @@ function createUtilisateurReadModel(
     departementCode: overrides.departementCode ?? null,
     // eslint-disable-next-line no-restricted-syntax
     derniereConnexion: overrides.derniereConnexion ?? new Date(),
-    displayMenusPilotage:
-      overrides.role === 'gestionnaire_departement' || overrides.role === 'gestionnaire_structure',
+    displayMenusPilotage: overrides.role === 'gestionnaire_departement' || overrides.role === 'gestionnaire_structure',
     email: overrides.email ?? 'test@example.fr',
     groupementId: overrides.groupementId ?? null,
     // eslint-disable-next-line no-restricted-syntax

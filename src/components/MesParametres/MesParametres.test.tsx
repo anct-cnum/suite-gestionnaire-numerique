@@ -43,11 +43,10 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
             render(<MesParametres />)
 
             // THEN
-            const receptionNotifsToggle = within(regionPreferencesDeCommunicationEtNotification())
-              .getByRole(
-                'checkbox',
-                { checked: false, name: 'Recevoir toutes les notifications sur votre adresse électronique' }
-              )
+            const receptionNotifsToggle = within(regionPreferencesDeCommunicationEtNotification()).getByRole(
+              'checkbox',
+              { checked: false, name: 'Recevoir toutes les notifications sur votre adresse électronique' }
+            )
             expect(receptionNotifsToggle).toBeInTheDocument()
           })
 
@@ -56,20 +55,16 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
             render(<MesParametres />)
 
             // THEN
-            const receptionRecapHebdoToggle = within(regionPreferencesDeCommunicationEtNotification())
-              .getByRole(
-                'checkbox',
-                { checked: false, name: 'Recevoir un récapitulatif hebdomadaire sur votre adresse électronique' }
-              )
+            const receptionRecapHebdoToggle = within(regionPreferencesDeCommunicationEtNotification()).getByRole(
+              'checkbox',
+              { checked: false, name: 'Recevoir un récapitulatif hebdomadaire sur votre adresse électronique' }
+            )
             expect(receptionRecapHebdoToggle).toBeInTheDocument()
           })
         })
 
         function regionPreferencesDeCommunicationEtNotification(): HTMLElement {
-          return screen.getByRole(
-            'region',
-            { name: titrePreferencesDeCommunicationEtNotification }
-          )
+          return screen.getByRole('region', { name: titrePreferencesDeCommunicationEtNotification })
         }
       })
 
@@ -94,11 +89,7 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
         })
 
         function regionPreferencesDAffichage(): HTMLElement {
-          return screen
-            .getByRole(
-              'region',
-              { name: titrePreferencesDAffichage }
-            )
+          return screen.getByRole('region', { name: titrePreferencesDAffichage })
         }
       })
     })

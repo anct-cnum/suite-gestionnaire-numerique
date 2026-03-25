@@ -31,24 +31,22 @@ export default async function StructureController({ params }: Props): Promise<Re
   const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
-  const uneStructureReadModel = await new RecupererUneStructure(new PrismaUneStructureLoader())
-    .handle({ structureId: structureIdNumeric })
+  const uneStructureReadModel = await new RecupererUneStructure(new PrismaUneStructureLoader()).handle({
+    structureId: structureIdNumeric,
+  })
 
   const codesDepartements = uneStructureReadModel.role.gouvernances.map((gouvernance) => gouvernance.code)
   const peutGererStructure = contexte.peutGererStructure(structureIdNumeric, codesDepartements)
 
   const viewModel = structurePresenter(uneStructureReadModel, new Date())
 
-  return (
-    <Structure
-      peutGererStructure={peutGererStructure}
-      viewModel={viewModel}
-    />
-  )
+  return <Structure peutGererStructure={peutGererStructure} viewModel={viewModel} />
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    structureId: string
-  }>>
+  params: Promise<
+    Readonly<{
+      structureId: string
+    }>
+  >
 }>

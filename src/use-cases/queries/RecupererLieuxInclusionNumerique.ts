@@ -8,4 +8,3 @@ export type LieuxInclusionNumeriqueReadModel = Readonly<{
   departement: string
   nombreLieux: number
 }>
-

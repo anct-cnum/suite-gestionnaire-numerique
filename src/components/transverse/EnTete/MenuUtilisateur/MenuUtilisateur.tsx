@@ -24,21 +24,12 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           width={80}
         />
         <div className="fr-mb-0 fr-h4">
-          <span className={`color-blue-france ${styles.nom}`}>
-            {sessionUtilisateurViewModel.prenom}
-          </span>
-          <span className={`color-blue-france ${styles.nom}`}>
-            {sessionUtilisateurViewModel.nom}
-          </span>
+          <span className={`color-blue-france ${styles.nom}`}>{sessionUtilisateurViewModel.prenom}</span>
+          <span className={`color-blue-france ${styles.nom}`}>{sessionUtilisateurViewModel.nom}</span>
         </div>
-        <div className="fr-text--xs color-blue-france">
-          {sessionUtilisateurViewModel.email}
-        </div>
+        <div className="fr-text--xs color-blue-france">{sessionUtilisateurViewModel.email}</div>
       </div>
-      <ul
-        aria-label="liens-menu"
-        className={`fr-mb-6v fr-pb-6v fr-links-group ${styles['fr-links-group']} separator`}
-      >
+      <ul aria-label="liens-menu" className={`fr-mb-6v fr-pb-6v fr-links-group ${styles['fr-links-group']} separator`}>
         <li>
           <Link
             aria-controls={ariaControlsId}
@@ -67,21 +58,17 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           </Link>
         </li>
       </ul>
-      {
-        sessionUtilisateurViewModel.peutChangerDeRole ?
-          <SelecteurRole ariaControlsId={ariaControlsId} />
-          : null
-      }
-      {
-        sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ?
-          <SelecteurDepartement ariaControlsId={ariaControlsId} />
-          : null
-      }
+      {sessionUtilisateurViewModel.peutChangerDeRole ? <SelecteurRole ariaControlsId={ariaControlsId} /> : null}
+      {sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ? (
+        <SelecteurDepartement ariaControlsId={ariaControlsId} />
+      ) : null}
       <div className="fr-btns-group--center">
         <button
           className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}
           name="deconnexion"
-          onClick={() => { void signOut({ callbackUrl: '/connexion' }) }}
+          onClick={() => {
+            void signOut({ callbackUrl: '/connexion' })
+          }}
           type="button"
         >
           Se déconnecter

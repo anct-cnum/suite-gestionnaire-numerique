@@ -8,15 +8,7 @@ import { GroupementUid } from './Groupement'
 import { Region, RegionState } from './Region'
 import { Role, TypologieRole } from './Role'
 import { StructureUid } from './Structure'
-import {
-  Email,
-  Nom,
-  Prenom,
-  Telephone,
-  Utilisateur,
-  UtilisateurUid,
-  UtilisateurUidState,
-} from './Utilisateur'
+import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
 export class UtilisateurFactory {
   readonly #departement?: DepartementState

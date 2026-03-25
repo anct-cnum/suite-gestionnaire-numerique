@@ -8,7 +8,10 @@ import {
 } from '@/use-cases/queries/RecupererAidantDetails'
 
 export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
-  async findById(id: string, graphiquePeriode: 'journalier' | 'mensuel' = 'mensuel'): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel> {
+  async findById(
+    id: string,
+    graphiquePeriode: 'journalier' | 'mensuel' = 'mensuel'
+  ): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel> {
     const personneId = parseInt(id, 10)
 
     try {
@@ -102,7 +105,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           ORDER BY main.activites_coop.date
         `
 
-        graphiqueData = graphiqueJourResult.map(row => ({
+        graphiqueData = graphiqueJourResult.map((row) => ({
           date: row.date,
           totalAccompagnements: row.total_accompagnements,
         }))
@@ -121,7 +124,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           ORDER BY DATE_TRUNC('month', ac.date)
         `
 
-        graphiqueData = graphiqueMoisResult.map(row => ({
+        graphiqueData = graphiqueMoisResult.map((row) => ({
           date: row.mois,
           totalAccompagnements: row.total_accompagnements,
         }))
@@ -162,16 +165,14 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           main.adresse.nom_commune
         ORDER BY total_accompagnements DESC;
       `
-      const totalAccompagnementsCoop = accompagnementsCoopResult.length > 0 ?
-        accompagnementsCoopResult[0].total_accompagnements : 0
-      const totalAccompagnementsAc = accompagnementsAcResult.length > 0 ?
-        accompagnementsAcResult[0].total_accompagnements_ac : 0
-      const totalIndividuels = accompagnementsIndividuelsResult.length > 0 ?
-        accompagnementsIndividuelsResult[0].total_individuels : 0
-      const nombreAteliers = ateliersResult.length > 0 ?
-        ateliersResult[0].nombre_ateliers : 0
-      const totalParticipationsAteliers = ateliersResult.length > 0 ?
-        ateliersResult[0].total_participations : 0
+      const totalAccompagnementsCoop =
+        accompagnementsCoopResult.length > 0 ? accompagnementsCoopResult[0].total_accompagnements : 0
+      const totalAccompagnementsAc =
+        accompagnementsAcResult.length > 0 ? accompagnementsAcResult[0].total_accompagnements_ac : 0
+      const totalIndividuels =
+        accompagnementsIndividuelsResult.length > 0 ? accompagnementsIndividuelsResult[0].total_individuels : 0
+      const nombreAteliers = ateliersResult.length > 0 ? ateliersResult[0].nombre_ateliers : 0
+      const totalParticipationsAteliers = ateliersResult.length > 0 ? ateliersResult[0].total_participations : 0
 
       return this.mapToReadModel(
         personne,
@@ -189,7 +190,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         operation: 'findById',
       })
       return {
-        message: 'Impossible de récupérer les détails de l\'aidant',
+        message: "Impossible de récupérer les détails de l'aidant",
         type: 'error',
       }
     }
@@ -202,8 +203,12 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     numeroVoie?: null | number
   }): string {
     const parts = []
-    if (adresse.numeroVoie !== null && adresse.numeroVoie !== undefined) {parts.push(String(adresse.numeroVoie))}
-    if (adresse.nomVoie !== null && adresse.nomVoie !== undefined) {parts.push(adresse.nomVoie)}
+    if (adresse.numeroVoie !== null && adresse.numeroVoie !== undefined) {
+      parts.push(String(adresse.numeroVoie))
+    }
+    if (adresse.nomVoie !== null && adresse.nomVoie !== undefined) {
+      parts.push(adresse.nomVoie)
+    }
     const hasPostalCode = adresse.codePostal !== null && adresse.codePostal !== undefined
     const hasCommune = adresse.nomCommune !== null && adresse.nomCommune !== undefined
     if (hasPostalCode && hasCommune) {
@@ -272,7 +277,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       coopId: personne.aidant_coop_uid ?? '',
       emails,
       graphiqueAccompagnements: graphiqueData,
-      lieuxActivite: lieuxActiviteData.map(lieu => ({
+      lieuxActivite: lieuxActiviteData.map((lieu) => ({
         adresse: this.formatAdresse({
           codePostal: lieu.code_postal,
           nomCommune: lieu.nom_commune,
@@ -360,4 +365,3 @@ type PersonneEnrichieResult = Readonly<{
   est_actuellement_mediateur_en_poste: boolean | null
   labellisation_aidant_connect: boolean | null
 }>
-

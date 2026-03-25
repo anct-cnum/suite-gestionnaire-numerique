@@ -18,9 +18,7 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
             <Navigation />
           </aside>
 
-          <div className={styles.content}>
-            {children}
-          </div>
+          <div className={styles.content}>{children}</div>
         </div>
       </div>
     </>

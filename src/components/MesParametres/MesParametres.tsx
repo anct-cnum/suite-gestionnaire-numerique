@@ -20,45 +20,27 @@ export default function MesParametres(): ReactElement {
           <TitleIcon icon="settings-5-line" />
           Mes paramètres de compte
         </PageTitle>
-        <p className="fr-text--sm color-grey">
-          Retrouvez ici, vos préférences de communication et d’affichage.
-        </p>
+        <p className="fr-text--sm color-grey">Retrouvez ici, vos préférences de communication et d’affichage.</p>
         <section
           aria-labelledby={communicationEtNotificationsHeadingId}
           className={`grey-border fr-p-4w fr-mb-4w ${styles.hidden}`}
         >
-          <h2
-            className="fr-h6"
-            id={communicationEtNotificationsHeadingId}
-          >
+          <h2 className="fr-h6" id={communicationEtNotificationsHeadingId}>
             Communication et notifications
           </h2>
-          <Toggle
-            hasSeparator={hasSeparator}
-            name="recevoirNotifications"
-          >
+          <Toggle hasSeparator={hasSeparator} name="recevoirNotifications">
             Recevoir toutes les notifications sur votre adresse électronique
           </Toggle>
-          <Toggle
-            name="recevoirRecapitulatif"
-          >
+          <Toggle name="recevoirRecapitulatif">
             Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
           </Toggle>
         </section>
-        <section
-          aria-labelledby={affichageHeadingId}
-          className="grey-border fr-p-4w fr-mb-4w fr-display"
-        >
-          <h2
-            className="fr-h6"
-            id={affichageHeadingId}
-          >
+        <section aria-labelledby={affichageHeadingId} className="grey-border fr-p-4w fr-mb-4w fr-display">
+          <h2 className="fr-h6" id={affichageHeadingId}>
             Affichage
           </h2>
           <fieldset className={`fr-segmented fr-segmented--md ${styles['fr-segmented']}`}>
-            <legend className="fr-segmented__legend">
-              Contraste de l’interface
-            </legend>
+            <legend className="fr-segmented__legend">Contraste de l’interface</legend>
             <div className={`fr-segmented__elements ${styles['fr-segmented__elements']}`}>
               <div className={`fr-segmented__element ${styles['fr-segmented__element']}`}>
                 <input
@@ -68,10 +50,7 @@ export default function MesParametres(): ReactElement {
                   type="radio"
                   value="light"
                 />
-                <label
-                  className="fr-icon-sun-line fr-label"
-                  htmlFor={modeClairRadioId}
-                >
+                <label className="fr-icon-sun-line fr-label" htmlFor={modeClairRadioId}>
                   Mode clair
                 </label>
               </div>
@@ -83,10 +62,7 @@ export default function MesParametres(): ReactElement {
                   type="radio"
                   value="dark"
                 />
-                <label
-                  className="fr-icon-moon-line fr-label"
-                  htmlFor={modeSombreRadioId}
-                >
+                <label className="fr-icon-moon-line fr-label" htmlFor={modeSombreRadioId}>
                   Mode sombre
                 </label>
               </div>

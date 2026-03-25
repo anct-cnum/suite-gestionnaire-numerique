@@ -11,9 +11,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModifierUneFeuilleDeRoute } from '@/use-cases/commands/ModifierUneFeuilleDeRoute'
 
-export async function modifierUneFeuilleDeRouteAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function modifierUneFeuilleDeRouteAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {

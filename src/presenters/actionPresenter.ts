@@ -7,25 +7,33 @@ import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
-export function actionPresenter(action: undefined | UneActionReadModel,
-  { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
-  { enveloppes: ReadonlyArray<Enveloppe>
+export function actionPresenter(
+  action: undefined | UneActionReadModel,
+  {
+    enveloppes,
+    nomFeuilleDeRoute,
+    urlFeuilleDeRoute,
+    urlGestionMembresGouvernance,
+  }: {
+    enveloppes: ReadonlyArray<Enveloppe>
     nomFeuilleDeRoute: string
     urlFeuilleDeRoute: string
-    urlGestionMembresGouvernance: string }): ActionViewModel {
+    urlGestionMembresGouvernance: string
+  }
+): ActionViewModel {
   if (!action) {
     return actionARemplir(undefined, { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })
   }
 
   const besoins = transformBesoins(action.besoins as Array<BesoinsPossible>)
   const demandeDeSubventionAction = action.demandeDeSubvention
-  let demandeDeSubvention : DemandeDeSubvention | undefined
+  let demandeDeSubvention: DemandeDeSubvention | undefined
   if (demandeDeSubventionAction) {
     demandeDeSubvention = {
       enveloppeId: demandeDeSubventionAction.enveloppeFinancementId,
       montantPrestation: demandeDeSubventionAction.subventionPrestation,
-      montantRh: demandeDeSubventionAction.subventionEtp ,
-      total:demandeDeSubventionAction.subventionDemandee,
+      montantRh: demandeDeSubventionAction.subventionEtp,
+      total: demandeDeSubventionAction.subventionDemandee,
     }
   }
   return {
@@ -33,13 +41,12 @@ export function actionPresenter(action: undefined | UneActionReadModel,
     anneeDeFin: action.anneeDeFin,
     besoins,
     budgetGlobal: action.budgetGlobal ?? 0,
-    cofinancements: action.coFinancements.map(
-      (coFinancement: CoFinancementReadModel) => {
-        return {
-          coFinanceur : coFinancement.id,
-          montant: String(coFinancement.montant),
-        } as CofinamencemenViewModel}
-    ),
+    cofinancements: action.coFinancements.map((coFinancement: CoFinancementReadModel) => {
+      return {
+        coFinanceur: coFinancement.id,
+        montant: String(coFinancement.montant),
+      } as CofinamencemenViewModel
+    }),
     contexte: action.contexte ?? '',
     demandeDeSubvention,
     description: action.description ?? '',
@@ -62,7 +69,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
 }
 
 export type DemandeDeSubvention = Readonly<{
-  enveloppeId : string
+  enveloppeId: string
   montantPrestation: number
   montantRh: number
   total: number
@@ -99,12 +106,20 @@ export type ActionViewModel = Readonly<{
   urlGestionMembresGouvernance: string
 }>
 
-export function actionARemplir(action: undefined | UneActionReadModel, 
-  { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
-  { enveloppes: ReadonlyArray<Enveloppe>
-    nomFeuilleDeRoute: string 
-    urlFeuilleDeRoute: string 
-    urlGestionMembresGouvernance: string }): ActionViewModel {
+export function actionARemplir(
+  action: undefined | UneActionReadModel,
+  {
+    enveloppes,
+    nomFeuilleDeRoute,
+    urlFeuilleDeRoute,
+    urlGestionMembresGouvernance,
+  }: {
+    enveloppes: ReadonlyArray<Enveloppe>
+    nomFeuilleDeRoute: string
+    urlFeuilleDeRoute: string
+    urlGestionMembresGouvernance: string
+  }
+): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
@@ -149,14 +164,18 @@ export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
   outillages: Besoins
 } {
   return {
-    financements: BESOINS_CATEGORIES.financements.map(besoin => 
-      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
-    formations: BESOINS_CATEGORIES.formations.map(besoin => 
-      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
-    formationsProfessionnels: BESOINS_CATEGORIES.formationsProfessionnels.map(besoin => 
-      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
-    outillages: BESOINS_CATEGORIES.outillages.map(besoin => 
-      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
+    financements: BESOINS_CATEGORIES.financements.map((besoin) =>
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))
+    ),
+    formations: BESOINS_CATEGORIES.formations.map((besoin) =>
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))
+    ),
+    formationsProfessionnels: BESOINS_CATEGORIES.formationsProfessionnels.map((besoin) =>
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))
+    ),
+    outillages: BESOINS_CATEGORIES.outillages.map((besoin) =>
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))
+    ),
   }
 }
 
@@ -164,9 +183,7 @@ interface CofinamencemenViewModel {
   coFinanceur: string
   montant: string
 }
-function toPorteurPotentielViewModel(
-  porteur: { id: string; lien: string; nom: string }
-): PorteurPotentielViewModel {
+function toPorteurPotentielViewModel(porteur: { id: string; lien: string; nom: string }): PorteurPotentielViewModel {
   return {
     id: porteur.id,
     link: porteur.lien,

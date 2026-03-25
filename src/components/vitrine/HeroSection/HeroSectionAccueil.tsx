@@ -18,24 +18,14 @@ export default function HeroSectionAccueil(): ReactElement {
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-8 fr-text--center">
             {/* Badge Nouvelle plateforme */}
-            <div
-              className="fr-mb-2w"
-              style={{ textAlign: 'center' }}
-            >
+            <div className="fr-mb-2w" style={{ textAlign: 'center' }}>
               <span className={`fr-badge fr-badge--sm ${styles.badge}`}>
-                <span
-                  aria-hidden="true"
-                  className="fr-icon-flashlight-fill fr-icon--xs"
-                />
-                {' '}
-                Nouvelle plateforme
+                <span aria-hidden="true" className="fr-icon-flashlight-fill fr-icon--xs" /> Nouvelle plateforme
               </span>
             </div>
 
             {/* Titre principal */}
-            <h1 className={`fr-mb-2w ${styles.title}`}>
-              Inclusion Numérique
-            </h1>
+            <h1 className={`fr-mb-2w ${styles.title}`}>Inclusion Numérique</h1>
 
             {/* Sous-titre */}
             <p className={`fr-mb-6w ${styles.subtitle}`}>

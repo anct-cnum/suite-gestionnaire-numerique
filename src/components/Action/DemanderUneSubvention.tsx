@@ -1,13 +1,4 @@
-import {
-  PropsWithChildren,
-  ReactElement,
-  RefObject,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { PropsWithChildren, ReactElement, RefObject, useEffect, useId, useMemo, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Drawer from '../shared/Drawer/Drawer'
@@ -25,8 +16,7 @@ export default function DemanderUneSubvention({
   montantMaxAction,
   supprimerUneDemandeDeSubvention,
 }: Props): ReactElement {
-  const enveloppeById =
-    enveloppes.length > 0 ? enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {}) : {}
+  const enveloppeById = enveloppes.length > 0 ? enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {}) : {}
 
   const labelId = useId()
   const selectEnveloppeId = useId()
@@ -47,15 +37,10 @@ export default function DemanderUneSubvention({
   const [isValid, setIsValid] = useState(false)
   const [montantPresta, setMontantPresta] = useState(demandeDeSubvention?.montantPrestation)
   const [montantRh, setMontantRh] = useState(demandeDeSubvention?.montantRh)
-  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState(
-    demandeDeSubvention?.enveloppeId ?? ''
-  )
+  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState(demandeDeSubvention?.enveloppeId ?? '')
   const [isEnveloppeSelectionnee, setIsEnveloppeSelectionnee] = useState(false)
   const isBudgetAction = useMemo(() => montantMaxAction > 0, [montantMaxAction])
-  const subventionsDemandees = useMemo(
-    () => (montantPresta ?? 0) + (montantRh ?? 0),
-    [montantPresta, montantRh]
-  )
+  const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
 
   function reinitialiserDrawer(): void {
     setIsEnveloppeSelectionnee(false)
@@ -152,17 +137,13 @@ export default function DemanderUneSubvention({
               <li>
                 <div className="fr-grid-row space-between">
                   <p>Prestation de service</p>
-                  <p className="fr-text--lg fr-mr-1w">
-                    {formatMontant(demandeDeSubvention.montantPrestation)}
-                  </p>
+                  <p className="fr-text--lg fr-mr-1w">{formatMontant(demandeDeSubvention.montantPrestation)}</p>
                 </div>
               </li>
               <li>
                 <div className="fr-grid-row space-between">
                   <p>Ressources humaines</p>
-                  <p className="fr-text--lg fr-mr-1w">
-                    {formatMontant(demandeDeSubvention.montantRh)}
-                  </p>
+                  <p className="fr-text--lg fr-mr-1w">{formatMontant(demandeDeSubvention.montantRh)}</p>
                 </div>
               </li>
             </ul>
@@ -209,9 +190,7 @@ export default function DemanderUneSubvention({
         </DrawerTitle>
         <p className="color-grey fr-text--sm">
           Saisissez le montant de la subvention que vous souhaitez obtenir de l&apos;état.{' '}
-          <span className="color-blue-france">
-            {`Dans la limite de ${formatMontant(montantMaximal())}`}
-          </span>
+          <span className="color-blue-france">{`Dans la limite de ${formatMontant(montantMaximal())}`}</span>
           {/**/}.
         </p>
         <Select
@@ -250,8 +229,8 @@ export default function DemanderUneSubvention({
             <>
               Montant en ressources humaines{' '}
               <span className="fr-hint-text">
-                Il s&apos;agit d&apos;une ressource humaine interne à la structure employeuse
-                faisant partie de la gouvernance et récipiendaire des fonds.
+                Il s&apos;agit d&apos;une ressource humaine interne à la structure employeuse faisant partie de la
+                gouvernance et récipiendaire des fonds.
                 <br />
                 Format attendu : Montant <abbr title="Équivalent temps plein">ETP</abbr> en euros
               </span>
@@ -305,21 +284,12 @@ export default function DemanderUneSubvention({
     </>
   )
 
-  function montantInput({
-    children,
-    errorTextId,
-    id,
-    max,
-    onInput,
-    ref,
-  }: MontantInputProps): ReactElement {
+  function montantInput({ children, errorTextId, id, max, onInput, ref }: MontantInputProps): ReactElement {
     const inputGroupDisabledStyle = isEnveloppeSelectionnee ? '' : 'fr-input-group--disabled'
     const inputGroupErrorStyle = hasError ? 'fr-input-group--error' : ''
 
     return (
-      <div
-        className={`fr-input-group input-group--sobre ${inputGroupDisabledStyle} ${inputGroupErrorStyle}`}
-      >
+      <div className={`fr-input-group input-group--sobre ${inputGroupDisabledStyle} ${inputGroupErrorStyle}`}>
         <label className="fr-label" htmlFor={id}>
           {children}
         </label>
@@ -338,8 +308,7 @@ export default function DemanderUneSubvention({
         />
         {hasError ? (
           <p className="fr-error-text" id={errorTextId}>
-            Les montants de prestation de service et ressources humaines cumulés dépassent vos
-            droits de subvention
+            Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention
           </p>
         ) : null}
       </div>

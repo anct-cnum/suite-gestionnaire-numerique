@@ -67,16 +67,7 @@ type MembreAvecContacts = Readonly<{
 }>
 
 function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
-  const headers = [
-    'Structure',
-    'Typologie',
-    'Nom',
-    'Prénom',
-    'Email',
-    'Téléphone',
-    'Fonction',
-    'Referent FNE',
-  ]
+  const headers = ['Structure', 'Typologie', 'Nom', 'Prénom', 'Email', 'Téléphone', 'Fonction', 'Referent FNE']
 
   function escapeCSV(value: string): string {
     if (value.includes(',') || value.includes('"') || value.includes('\n')) {

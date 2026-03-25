@@ -1,6 +1,9 @@
 import { ReactElement } from 'react'
 
-import { LieuAccueilPublicData, ServiceInclusionNumeriqueData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import {
+  LieuAccueilPublicData,
+  ServiceInclusionNumeriqueData,
+} from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import LieuInclusionDetailsServicesHeader from '@/components/LieuInclusionDetails/LieuInclusionDetailsServicesHeader'
 import LieuInclusionDetailsServicesModalite from '@/components/LieuInclusionDetails/LieuInclusionDetailsServicesModalite'
 import LieuInclusionDetailsServicesTypeAccompagnement from '@/components/LieuInclusionDetails/LieuInclusionDetailsServicesTypeAccompagnement'
@@ -12,10 +15,7 @@ export default function LieuInclusionDetailsServices(props: Props): ReactElement
   return (
     <div>
       <LieuInclusionDetailsServicesHeader />
-      <hr
-        className="fr-hr "
-        style={{ marginTop: '2px' }}
-      />
+      <hr className="fr-hr " style={{ marginTop: '2px' }} />
       <div id="lieu-detail-service-accompagnement">
         <LieuInclusionDetailsServicesTypeAccompagnement
           data={data}
@@ -23,10 +23,7 @@ export default function LieuInclusionDetailsServices(props: Props): ReactElement
           peutModifier={peutModifier}
         />
       </div>
-      <hr
-        className="fr-hr fr-mx-4w"
-        style={{ marginTop: '2px' }}
-      />
+      <hr className="fr-hr fr-mx-4w" style={{ marginTop: '2px' }} />
       <div id="lieu-detail-service-modalite">
         <LieuInclusionDetailsServicesModalite
           email={lieuAccueilPublic?.email}

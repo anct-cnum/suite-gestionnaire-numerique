@@ -48,9 +48,7 @@ export default function EditHoraires(props: Props): ReactElement {
   const detailHoraires = horaires ? extractCommentFromOsm(horaires) : ''
 
   // Conversion des horaires OSM vers le format timetable
-  const timetable: Schedule = horaires
-    ? toTimetableOpeningHours(dateService.now())(horaires)
-    : CLOSED_SCHEDULE
+  const timetable: Schedule = horaires ? toTimetableOpeningHours(dateService.now())(horaires) : CLOSED_SCHEDULE
 
   // État local pour gérer l'ouverture/fermeture de chaque période
   const [openPeriods, setOpenPeriods] = useState<Record<string, boolean>>(() => {
@@ -66,11 +64,7 @@ export default function EditHoraires(props: Props): ReactElement {
     setOpenPeriods((prev) => ({ ...prev, [`${day}-${period}`]: isOpen }))
   }
 
-  function renderPeriodCard(
-    day: (typeof OSM_DAYS_OF_WEEK)[number],
-    period: PeriodKey,
-    label: string
-  ): ReactElement {
+  function renderPeriodCard(day: (typeof OSM_DAYS_OF_WEEK)[number], period: PeriodKey, label: string): ReactElement {
     const periodKey = `${day}-${period}`
     const isOpen = openPeriods[periodKey] ?? false
     const periodData = timetable[day][period]
@@ -78,17 +72,10 @@ export default function EditHoraires(props: Props): ReactElement {
 
     return (
       <div key={periodKey}>
-        <p
-          className="fr-text--sm fr-mb-1w"
-          style={{ textAlign: 'center' }}
-        >
-          {JOURS_SEMAINE[day]}
-          {' '}
-          {label}
+        <p className="fr-text--sm fr-mb-1w" style={{ textAlign: 'center' }}>
+          {JOURS_SEMAINE[day]} {label}
         </p>
-        <div
-          className={isWeekend ? styles.periodCardClosed : styles.periodCard}
-        >
+        <div className={isWeekend ? styles.periodCardClosed : styles.periodCard}>
           <div className={styles.timeInputs}>
             <TimeInput
               ariaLabel={`${JOURS_SEMAINE[day]} ${label} - Heure de début`}
@@ -107,10 +94,7 @@ export default function EditHoraires(props: Props): ReactElement {
             />
           </div>
           <div className={styles.toggleContainer}>
-            <label
-              className={styles.toggleLabel}
-              htmlFor={`${day}-${period}-open`}
-            >
+            <label className={styles.toggleLabel} htmlFor={`${day}-${period}-open`}>
               {isOpen ? 'Ouvert' : 'Fermé'}
             </label>
             <div className="fr-toggle">
@@ -124,10 +108,7 @@ export default function EditHoraires(props: Props): ReactElement {
                 }}
                 type="checkbox"
               />
-              <label
-                className="fr-toggle__label"
-                htmlFor={`${day}-${period}-open`}
-              >
+              <label className="fr-toggle__label" htmlFor={`${day}-${period}-open`}>
                 {' '}
               </label>
             </div>
@@ -139,9 +120,7 @@ export default function EditHoraires(props: Props): ReactElement {
 
   return (
     <div>
-      <p className="fr-text--sm fr-mb-2w fr-text-mention--grey">
-        Horaires d&apos;ouverture du lieu
-      </p>
+      <p className="fr-text--sm fr-mb-2w fr-text-mention--grey">Horaires d&apos;ouverture du lieu</p>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           {OSM_DAYS_OF_WEEK.map((day) => renderPeriodCard(day, 'am', 'matin'))}
@@ -152,9 +131,7 @@ export default function EditHoraires(props: Props): ReactElement {
       </div>
 
       <div className="fr-mt-4w">
-        <h3 className="fr-h6 fr-mb-2w">
-          Détail horaires
-        </h3>
+        <h3 className="fr-h6 fr-mb-2w">Détail horaires</h3>
         <p className="fr-text--xs fr-text-mention--grey fr-mb-2w">
           Vous pouvez enregistrer ici des informations spécifiques concernant les horaires.
         </p>

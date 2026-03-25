@@ -6,19 +6,26 @@ import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
-  description: 'Découvrez les dispositifs d\'inclusion numérique : conseillers numériques, Aidants Connect, ateliers de montée en compétences. Répondre collectivement aux besoins d\'accompagnement de la population.',
-  keywords: ['conseiller numérique', 'Aidants Connect', 'dispositifs inclusion', 'accompagnement numérique', 'ateliers numériques'],
+  description:
+    "Découvrez les dispositifs d'inclusion numérique : conseillers numériques, Aidants Connect, ateliers de montée en compétences. Répondre collectivement aux besoins d'accompagnement de la population.",
+  keywords: [
+    'conseiller numérique',
+    'Aidants Connect',
+    'dispositifs inclusion',
+    'accompagnement numérique',
+    'ateliers numériques',
+  ],
   openGraph: {
-    description: 'Découvrez les dispositifs d\'inclusion numérique pour accompagner tous les publics.',
+    description: "Découvrez les dispositifs d'inclusion numérique pour accompagner tous les publics.",
     locale: 'fr_FR',
-    title: 'Les dispositifs d\'inclusion numérique - Inclusion Numérique',
+    title: "Les dispositifs d'inclusion numérique - Inclusion Numérique",
     type: 'website',
   },
   robots: {
     follow: true,
     index: true,
   },
-  title: 'Les dispositifs d\'inclusion numérique - Inclusion Numérique',
+  title: "Les dispositifs d'inclusion numérique - Inclusion Numérique",
 }
 
 export default function DispositifsPage(): ReactElement {
@@ -33,14 +40,8 @@ export default function DispositifsPage(): ReactElement {
       {/* Section Conseiller numérique */}
       <section className="fr-py-8w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', justifyContent: 'space-between' }}
-          >
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
+          <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <img
                   alt="Icône Conseiller numérique"
@@ -48,29 +49,18 @@ export default function DispositifsPage(): ReactElement {
                   style={{ height: 'auto', width: '80px' }}
                 />
               </div>
-              <h2
-                className="fr-h2 fr-mb-0"
-                style={{ color: '#000091' }}
-              >
+              <h2 className="fr-h2 fr-mb-0" style={{ color: '#000091' }}>
                 Conseiller numérique
               </h2>
               <p className="fr-text--md fr-mb-0">
                 Les conseillers et conseillères numériques sont des médiateurs co-financés par l&apos;Etat. Ils :
-              </p>
-              {' '}
-              <ul
-                className="fr-text--md fr-mb-0"
-                style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}
-              >
-                <li>
-                  Soutiennent les français.es dans leurs usages quotidiens du numérique
-                </li>
+              </p>{' '}
+              <ul className="fr-text--md fr-mb-0" style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}>
+                <li>Soutiennent les français.es dans leurs usages quotidiens du numérique</li>
                 <li>
                   Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
                 </li>
-                <li>
-                  Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
-                </li>
+                <li>Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne</li>
               </ul>
               <div>
                 <a
@@ -102,10 +92,7 @@ export default function DispositifsPage(): ReactElement {
       {/* Section Aidants Connect */}
       <section className="fr-py-4w">
         <div className="fr-container">
-          <div
-            className="fr-grid-row"
-            style={{ alignItems: 'center', justifyContent: 'space-between' }}
-          >
+          <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <div className={`fr-col-12 fr-col-md-6 ${styles.aidantsConnectImage}`}>
               <img
                 alt="Illustration Aidants Connect"
@@ -121,16 +108,12 @@ export default function DispositifsPage(): ReactElement {
                   style={{ height: 'auto', width: '80px' }}
                 />
               </div>
-              <h2
-                className="fr-h2"
-                style={{ color: '#000091', marginBottom: 0 }}
-              >
+              <h2 className="fr-h2" style={{ color: '#000091', marginBottom: 0 }}>
                 Formation Aidants numériques et/ou Aidants Connect
               </h2>
               <p className="fr-text--md fr-mb-0">
-                Une enveloppe financière a été dédiée à la formation des professionnels du
-                territoire à l&apos;inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de
-                l&apos;outil Aidants Connect.
+                Une enveloppe financière a été dédiée à la formation des professionnels du territoire à l&apos;inclusion
+                et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de l&apos;outil Aidants Connect.
               </p>
               <div>
                 <a

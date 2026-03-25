@@ -21,12 +21,7 @@ type StructureSearchViewModel = Readonly<{
   value: string
 }>
 
-function toStructureSearchViewModel({
-  commune,
-  isMembre,
-  nom,
-  uid,
-}: UneStructureReadModel): StructureSearchViewModel {
+function toStructureSearchViewModel({ commune, isMembre, nom, uid }: UneStructureReadModel): StructureSearchViewModel {
   return {
     isMembre,
     label: nom + (commune ? ` — ${commune}` : ''),

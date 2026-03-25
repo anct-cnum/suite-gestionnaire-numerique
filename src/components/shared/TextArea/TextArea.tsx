@@ -5,10 +5,7 @@ export default function TextArea({ children, defaultValue = '', disable, maxLeng
 
   return (
     <div className="fr-input-group">
-      <label
-        className="fr-label"
-        htmlFor={id}
-      >
+      <label className="fr-label" htmlFor={id}>
         {children}
       </label>
       <textarea
@@ -24,9 +21,11 @@ export default function TextArea({ children, defaultValue = '', disable, maxLeng
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  defaultValue?: string
-  disable?: boolean
-  maxLength?: number
-  rows?: number
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    defaultValue?: string
+    disable?: boolean
+    maxLength?: number
+    rows?: number
+  }>
+>

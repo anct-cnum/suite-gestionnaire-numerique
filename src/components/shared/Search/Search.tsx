@@ -12,16 +12,8 @@ export default function Search({
   termesDeRechercheNomOuEmail,
 }: Props): ReactElement {
   return (
-    <form
-      className="fr-search-bar"
-      id="header-search"
-      onSubmit={soumettreLaRecherche}
-      role="search"
-    >
-      <label
-        className="fr-label"
-        htmlFor="search-784-input"
-      >
+    <form className="fr-search-bar" id="header-search" onSubmit={soumettreLaRecherche} role="search">
+      <label className="fr-label" htmlFor="search-784-input">
         {placeholder}
       </label>
       <div className="fr-input-group fr-col-11">
@@ -35,22 +27,19 @@ export default function Search({
             type="search"
             value={termesDeRechercheNomOuEmail}
           />
-          {termesDeRechercheNomOuEmail ?
+          {termesDeRechercheNomOuEmail ? (
             <button
               className="fr-btn--icon-right fr-icon-close-circle-fill reset-button"
               onClick={reinitialiserLesTermesDeRechercheNomOuEmail}
               title={reinitialiserBouton}
               type="button"
             >
-              <span className="fr-sr-only">
-                {reinitialiserBouton}
-              </span>
-            </button> : null}
+              <span className="fr-sr-only">{reinitialiserBouton}</span>
+            </button>
+          ) : null}
         </div>
       </div>
-      <SubmitButton title={labelBouton}>
-        {labelBouton}
-      </SubmitButton>
+      <SubmitButton title={labelBouton}>{labelBouton}</SubmitButton>
     </form>
   )
 }

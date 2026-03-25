@@ -1,16 +1,22 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jeTapeLeBudgetGlobalDeLAction, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
+import {
+  afficherFormulaireDeCreationAction,
+  afficherFormulaireDeModificationAction,
+  jeCreeUnCofinancementDansLeDrawer,
+  jeTapeLeBudgetGlobalDeLAction,
+  jOuvreLeFormulairePourAjouterUnCoFinancement,
+} from './Action.test'
 
 describe('drawer d‘ajout d‘un co-financement', () => {
   it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {
     // GIVEN
     afficherFormulaireDeCreationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom: 'CC des Monts du Lyonnais', roles: [] , structureId: 200, uid: 'cc_id' },
-        { nom: 'Croix Rouge Française', roles: [] , structureId: 203, uid: 'croix_id' },
-        { nom: 'La Poste', roles: [] , structureId: 300, uid: 'post_id' },
+        { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
+        { nom: 'Croix Rouge Française', roles: [], structureId: 203, uid: 'croix_id' },
+        { nom: 'La Poste', roles: [], structureId: 300, uid: 'post_id' },
       ],
     })
 
@@ -29,9 +35,15 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
     const option1 = within(selecteurOrigineDuFinancement).getByRole('option', { hidden: true, name: '' })
     expect(option1).toBeInTheDocument()
-    const option2 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'CC des Monts du Lyonnais', selected: false })
+    const option2 = within(selecteurOrigineDuFinancement).getByRole('option', {
+      name: 'CC des Monts du Lyonnais',
+      selected: false,
+    })
     expect(option2).toBeInTheDocument()
-    const option3 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'Croix Rouge Française', selected: false })
+    const option3 = within(selecteurOrigineDuFinancement).getByRole('option', {
+      name: 'Croix Rouge Française',
+      selected: false,
+    })
     expect(option3).toBeInTheDocument()
     const option4 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'La Poste', selected: false })
     expect(option4).toBeInTheDocument()
@@ -44,9 +56,9 @@ describe('drawer d‘ajout d‘un co-financement', () => {
 
   it('étant un utilisateur, lorsque je remplis correctement le formulaire d‘ajout d‘un co-financement, alors il est ajouté', async () => {
     // GIVEN
-    afficherFormulaireDeCreationAction(undefined,  {
+    afficherFormulaireDeCreationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
+        { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
       ],
     })
 
@@ -70,9 +82,9 @@ describe('drawer d‘ajout d‘un co-financement', () => {
 
   it('étant un utilisateur, lorsque je remplis correctement le formulaire de modification d‘un co-financement, alors il est ajouté', async () => {
     // GIVEN
-    afficherFormulaireDeModificationAction(undefined,  {
+    afficherFormulaireDeModificationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        { nom : 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
+        { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'cc_id' },
       ],
     })
 

@@ -15,36 +15,22 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="pen-nib-line" />
             <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="conventionnements"
-              >
+              <h2 className="fr-h4 color-blue-france fr-m-0" id="conventionnements">
                 Financements
               </h2>
-              <p
-                className="fr-m-0 fr-text--md fr-mb-0"
-                style={{ fontWeight: 500 }}
-              >
+              <p className="fr-m-0 fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
                 Chiffres clés des budgets et financements
               </p>
             </div>
           </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={lienFinancements}
-          >
+          <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienFinancements}>
             Les demandes en cours
           </Link>
         </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
-            <TitleIcon
-              background="white"
-              icon="error-warning-line"
-            />
-            <div className="fr-text--sm color-blue-france fr-mt-2w">
-              {conventionnement.message}
-            </div>
+            <TitleIcon background="white" icon="error-warning-line" />
+            <div className="fr-text--sm color-blue-france fr-mt-2w">{conventionnement.message}</div>
           </div>
         </div>
       </BlocCard>
@@ -57,71 +43,43 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="pen-nib-line" />
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="conventionnements"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="conventionnements">
               Financements
             </h2>
-            <p
-              className="fr-m-0 fr-text--md"
-              style={{ fontWeight: 500 }}
-            >
+            <p className="fr-m-0 fr-text--md" style={{ fontWeight: 500 }}>
               Chiffres clés des budgets et financements
             </p>
           </div>
         </div>
-        <Link
-          className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-          href={lienFinancements}
-        >
+        <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienFinancements}>
           Les demandes en cours
         </Link>
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="money-euro-circle-line"
-            />
+            <TitleIcon background="white" icon="money-euro-circle-line" />
             {conventionnement.budget.total}
           </div>
-          <div
-            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
             Budget global renseigné
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            pour
-            {' '}
-            <span style={{ fontWeight: 700 }}>
-              {conventionnement.budget.feuillesDeRouteWording}
-            </span>
+            pour <span style={{ fontWeight: 700 }}>{conventionnement.budget.feuillesDeRouteWording}</span>
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="download-line"
-            />
+            <TitleIcon background="white" icon="download-line" />
             {conventionnement.credit.total}
           </div>
-          <div
-            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
             Financements engagés par l&apos;État
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            Soit
-            {' '}
+            Soit{' '}
             <span style={{ fontWeight: 700 }}>
-              {conventionnement.credit.pourcentage}
-              {' '}
-              % de votre budget global renseigné
+              {conventionnement.credit.pourcentage} % de votre budget global renseigné
             </span>
           </div>
         </div>

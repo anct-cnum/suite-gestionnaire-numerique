@@ -39,11 +39,9 @@ export class GestionnaireDepartement extends Utilisateur {
 
   override peutGerer(autre: Utilisateur): boolean {
     return (
-      this.isSuperAdmin ||
-      autre instanceof GestionnaireDepartement && autre.#departement.equals(this.#departement)
+      this.isSuperAdmin || (autre instanceof GestionnaireDepartement && autre.#departement.equals(this.#departement))
     )
   }
 }
 
-type GestionnaireDepartementState = Readonly<{ departement: DepartementState }> &
-  UtilisateurState
+type GestionnaireDepartementState = Readonly<{ departement: DepartementState }> & UtilisateurState

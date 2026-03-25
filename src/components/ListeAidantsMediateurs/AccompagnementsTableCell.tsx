@@ -10,16 +10,8 @@ export default function AccompagnementsTableCell({
   readonly aidantId: string
 }): ReactElement {
   return (
-    <Suspense fallback={
-      <span className="fr-text--xs">
-        ...
-      </span>
-    }
-    >
-      <AccompagnementsValue
-        accompagnementsPromise={accompagnementsPromise}
-        aidantId={aidantId}
-      />
+    <Suspense fallback={<span className="fr-text--xs">...</span>}>
+      <AccompagnementsValue accompagnementsPromise={accompagnementsPromise} aidantId={aidantId} />
     </Suspense>
   )
 }
@@ -34,9 +26,5 @@ function AccompagnementsValue({
   const accompagnementsMap = use(accompagnementsPromise)
   const nbAccompagnements = accompagnementsMap.get(aidantId) ?? 0
 
-  return (
-    <span>
-      {nbAccompagnements}
-    </span>
-  )
+  return <span>{nbAccompagnements}</span>
 }

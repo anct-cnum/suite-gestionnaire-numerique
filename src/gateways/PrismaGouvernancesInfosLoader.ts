@@ -163,9 +163,7 @@ export class PrismaGouvernancesInfosLoader {
     return Object.fromEntries(indices.map((indice) => [indice.code, indice.label]))
   }
 
-  private async getMemberesParGouvernancess(): Promise<
-    Record<string, { coporteur: number; membre: number }>
-  > {
+  private async getMemberesParGouvernancess(): Promise<Record<string, { coporteur: number; membre: number }>> {
     const membres = await prisma.membreRecord.findMany({
       where: {
         statut: 'confirme',

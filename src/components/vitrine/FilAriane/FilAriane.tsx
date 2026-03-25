@@ -3,23 +3,11 @@ import { ReactElement } from 'react'
 
 export default function FilAriane({ items }: FilArianeProps): ReactElement {
   return (
-    <nav
-      aria-label="vous êtes ici :"
-      className="fr-breadcrumb"
-      role="navigation"
-    >
-      <button
-        aria-controls="breadcrumb-1"
-        aria-expanded="false"
-        className="fr-breadcrumb__button"
-        type="button"
-      >
+    <nav aria-label="vous êtes ici :" className="fr-breadcrumb" role="navigation">
+      <button aria-controls="breadcrumb-1" aria-expanded="false" className="fr-breadcrumb__button" type="button">
         Voir le fil d&apos;Ariane
       </button>
-      <div
-        className="fr-collapse"
-        id="breadcrumb-1"
-      >
+      <div className="fr-collapse" id="breadcrumb-1">
         <ol className="fr-breadcrumb__list">
           {items.map((item, index) => {
             const isLast = index === items.length - 1
@@ -28,10 +16,7 @@ export default function FilAriane({ items }: FilArianeProps): ReactElement {
             return (
               <li key={item.label}>
                 {isLast || !hasHref ? (
-                  <span
-                    aria-current={isLast ? 'page' : undefined}
-                    className="fr-breadcrumb__link"
-                  >
+                  <span aria-current={isLast ? 'page' : undefined} className="fr-breadcrumb__link">
                     {item.label}
                   </span>
                 ) : (

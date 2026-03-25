@@ -35,56 +35,53 @@ describe('modifier un comité', () => {
       intention: 'sans date ni commentaire',
       type: typeValide,
     },
-  ])('étant donné une gouvernance, quand un comité est modifié $intention par son gestionnaire, alors il est modifié', async ({
-    commentaire,
-    date,
-    expectedDate,
-    frequence,
-    type,
-  }) => {
-    // GIVEN
-    const dateDeModification = epochTime
-    const modifierUnComite = new ModifierUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy(),
-      dateDeModification
-    )
+  ])(
+    'étant donné une gouvernance, quand un comité est modifié $intention par son gestionnaire, alors il est modifié',
+    async ({ commentaire, date, expectedDate, frequence, type }) => {
+      // GIVEN
+      const dateDeModification = epochTime
+      const modifierUnComite = new ModifierUnComite(
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        new ComiteRepositorySpy(),
+        dateDeModification
+      )
 
-    // WHEN
-    const result = await modifierUnComite.handle({
-      commentaire,
-      date,
-      frequence,
-      type,
-      uid: uidComite,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedComiteUidToFind).toBe(uidComite)
-    expect(spiedComiteToModify?.state).toStrictEqual(
-      comiteFactory({
+      // WHEN
+      const result = await modifierUnComite.handle({
         commentaire,
-        date: expectedDate,
-        dateDeCreation: epochTime,
-        dateDeModification,
+        date,
         frequence,
         type,
-        uidEditeur: {
-          email: emailEditeur,
-          value: uidEditeur,
-        },
-        uidGouvernance: {
-          value: uidGouvernance,
-        },
-      }).state
-    )
-    expect(result).toBe('OK')
-  })
+        uid: uidComite,
+        uidEditeur,
+        uidGouvernance,
+      })
+
+      // THEN
+      expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
+      expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+      expect(spiedComiteUidToFind).toBe(uidComite)
+      expect(spiedComiteToModify?.state).toStrictEqual(
+        comiteFactory({
+          commentaire,
+          date: expectedDate,
+          dateDeCreation: epochTime,
+          dateDeModification,
+          frequence,
+          type,
+          uidEditeur: {
+            email: emailEditeur,
+            value: uidEditeur,
+          },
+          uidGouvernance: {
+            value: uidGouvernance,
+          },
+        }).state
+      )
+      expect(result).toBe('OK')
+    }
+  )
 
   it.each([
     {
@@ -119,29 +116,32 @@ describe('modifier un comité', () => {
       intention: 'de la date de modification invalide',
       type: typeValide,
     },
-  ])('étant donné une gouvernance, quand un comité est modifié par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeModification, expectedFailure, frequence, type }) => {
-    // GIVEN
-    const modifierUnComite = new ModifierUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy(),
-      dateDeModification
-    )
+  ])(
+    'étant donné une gouvernance, quand un comité est modifié par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée',
+    async ({ date, dateDeModification, expectedFailure, frequence, type }) => {
+      // GIVEN
+      const modifierUnComite = new ModifierUnComite(
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        new ComiteRepositorySpy(),
+        dateDeModification
+      )
 
-    // WHEN
-    const result = await modifierUnComite.handle({
-      date,
-      frequence,
-      type,
-      uid: uidComite,
-      uidEditeur,
-      uidGouvernance,
-    })
+      // WHEN
+      const result = await modifierUnComite.handle({
+        date,
+        frequence,
+        type,
+        uid: uidComite,
+        uidEditeur,
+        uidGouvernance,
+      })
 
-    // THEN
-    expect(spiedComiteToModify).toBeNull()
-    expect(result).toBe(expectedFailure)
-  })
+      // THEN
+      expect(spiedComiteToModify).toBeNull()
+      expect(result).toBe(expectedFailure)
+    }
+  )
 
   it('étant donné une gouvernance, quand un comité est modifié par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
@@ -202,11 +202,13 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: '75',
-      role: 'Gestionnaire département',
-      uid: { email: emailEditeur, value: uidEditeur },
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        codeOrganisation: '75',
+        role: 'Gestionnaire département',
+        uid: { email: emailEditeur, value: uidEditeur },
+      })
+    )
   }
 }
 
@@ -220,11 +222,13 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
 class ComiteRepositorySpy implements GetComiteRepository, UpdateComiteRepository {
   async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
-    return Promise.resolve(comiteFactory({
-      uid: { value: uidComite },
-      uidEditeur: { email: emailEditeur, value: uidEditeur },
-      uidGouvernance: { value: uidGouvernance },
-    }))
+    return Promise.resolve(
+      comiteFactory({
+        uid: { value: uidComite },
+        uidEditeur: { email: emailEditeur, value: uidEditeur },
+        uidGouvernance: { value: uidGouvernance },
+      })
+    )
   }
 
   async update(comite: Comite): Promise<void> {

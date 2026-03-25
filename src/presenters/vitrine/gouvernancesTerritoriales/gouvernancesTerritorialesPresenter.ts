@@ -8,7 +8,6 @@ export function gouvernancesTerritorialesPresenter(
 ): GouvernancesTerritorialesViewModel {
   return {
     gouvernanceStats: {
-    
       feuilleDeRoute: {
         action: readModel.statistiques.feuilleDeRoute.action,
         total: readModel.statistiques.feuilleDeRoute.total,

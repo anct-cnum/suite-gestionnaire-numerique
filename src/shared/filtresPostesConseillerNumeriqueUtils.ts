@@ -47,7 +47,7 @@ export function buildFiltresPostesConseillerNumerique(
     conventions: conventions !== undefined && conventions !== '' ? conventions.split(',') : undefined,
     limite,
     page: Number(page ?? '1'),
-    statut: statut !== undefined && statut !== '' ? statut as EtatPoste : undefined,
+    statut: statut !== undefined && statut !== '' ? (statut as EtatPoste) : undefined,
     typesEmployeur: typesEmployeur !== undefined && typesEmployeur !== '' ? typesEmployeur.split(',') : undefined,
     typesPoste: typesPoste !== undefined && typesPoste !== '' ? typesPoste.split(',') : undefined,
   }
@@ -176,7 +176,11 @@ export function getActivePostesConseillerNumeriqueFilters(
   if (typesEmployeur !== null && typesEmployeur !== '') {
     const labels: Record<string, string> = { prive: 'Établissement privé', public: 'Établissement public' }
     typesEmployeur.split(',').forEach((typeEmployeur) => {
-      filtres.push({ label: labels[typeEmployeur] ?? typeEmployeur, paramKey: 'typesEmployeur', paramValue: typeEmployeur })
+      filtres.push({
+        label: labels[typeEmployeur] ?? typeEmployeur,
+        paramKey: 'typesEmployeur',
+        paramValue: typeEmployeur,
+      })
     })
   }
 

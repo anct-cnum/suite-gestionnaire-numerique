@@ -13,19 +13,12 @@ import {
   SupprimerDemandeDeSubventionRepository,
   UpdateDemandeDeSubventionRepository,
 } from './shared/DemandeDeSubventionRepository'
-import {
-  GetFeuilleDeRouteRepository,
-  UpdateFeuilleDeRouteRepository,
-} from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
-import {
-  DemandeDeSubvention,
-  DemandeDeSubventionFailure,
-  StatutSubvention,
-} from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
@@ -73,9 +66,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
 
   async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.get(
-      new GouvernanceUid(command.uidGouvernance)
-    )
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterAction'
     }
@@ -93,8 +84,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       let demandeDeSubventionUid = actionAModifier.state.demandeDeSubventionUid
       let demandeDeSubventionExistante: DemandeDeSubvention | DemandeDeSubventionFailure | undefined
       if (demandeDeSubventionUid) {
-        demandeDeSubventionExistante =
-          await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
+        demandeDeSubventionExistante = await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
 
         if (!(demandeDeSubventionExistante instanceof DemandeDeSubvention)) {
           return 'modifierActionErreurDemandeDeSubventionInconnue'
@@ -157,10 +147,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
         await this.#coFinancementRepository.supprimer(actionAModifier.state.uid.value, tx)
 
         // Création des nouveaux cofinancements
-        const coFinancements = creationDesCoFinancements(
-          command.coFinancements,
-          actionAModifier.state.uid.value
-        )
+        const coFinancements = creationDesCoFinancements(command.coFinancements, actionAModifier.state.uid.value)
         if (Array.isArray(coFinancements)) {
           for (const coFinancement of coFinancements) {
             await this.#coFinancementRepository.add(coFinancement, tx)
@@ -199,10 +186,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
         return 'modifierActionErreurInconnue'
       }
 
-      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(
-        this.#date,
-        editeur
-      )
+      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(this.#date, editeur)
 
       if (!(feuilleDeRouteAJour instanceof FeuilleDeRoute)) {
         return 'modifierActionErreurInconnue'

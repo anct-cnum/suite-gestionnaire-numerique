@@ -5,9 +5,9 @@ export const smtpFrom = 'communication@email.conseiller-numerique.gouv.fr'
 
 export const smtpReplyTo = 'moninclusionnumerique@anct.gouv.fr'
 
-const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
-const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
-const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
+const logoFrUrl = `${process.env.NEXTAUTH_URL}/fr.svg`
+const logoAnctUrl = `${process.env.NEXTAUTH_URL}/anct-texte.svg`
+const logominUrl = `${process.env.NEXTAUTH_URL}/min-texte.svg`
 const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
 
 export function makeMjml(link: string, destinataire: Destinataire): string {

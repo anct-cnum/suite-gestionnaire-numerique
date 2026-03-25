@@ -14,25 +14,18 @@ export default function Toggle({
 
   return (
     <div className={`fr-toggle ${className}`}>
-      <input
-        className="fr-toggle__input"
-        defaultChecked={defaultChecked}
-        id={id}
-        name={name}
-        type="checkbox"
-      />
-      <label
-        className="fr-toggle__label"
-        htmlFor={id}
-      >
+      <input className="fr-toggle__input" defaultChecked={defaultChecked} id={id} name={name} type="checkbox" />
+      <label className="fr-toggle__label" htmlFor={id}>
         {children}
       </label>
     </div>
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  defaultChecked?: boolean
-  hasSeparator?: boolean
-  name: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    defaultChecked?: boolean
+    hasSeparator?: boolean
+    name: string
+  }>
+>

@@ -40,14 +40,14 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     expect(result).toBe('OK')
     expect(spiedFeuilleDeRouteToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
-        noteDeContextualisation:contenu,
+        noteDeContextualisation: contenu,
         uid: { value: uidFeuilleDeRoute },
       }).state
     )
     expect(result).toBe('OK')
   })
 
-  it('étant donné une feuille de route, quand une note de contextualisation est créée par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
+  it("étant donné une feuille de route, quand une note de contextualisation est créée par un gestionnaire qui n'a pas ce droit, alors une erreur est renvoyée", async () => {
     // GIVEN
     const ajouterNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
@@ -57,14 +57,18 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     )
 
     // WHEN
-    const result = await ajouterNoteDeContextualisation.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidFeuilleDeRoute })
+    const result = await ajouterNoteDeContextualisation.handle({
+      contenu,
+      uidEditeur: 'utilisateurUsurpateur',
+      uidFeuilleDeRoute,
+    })
 
     // THEN
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()
     expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContextualisation')
   })
 
-  it('étant donné une feuille de route, quand une note de contextualisation est créée par un gestionnaire département mais qu\'une note de contextualisation existe déjà, alors une erreur est renvoyée', async () => {
+  it("étant donné une feuille de route, quand une note de contextualisation est créée par un gestionnaire département mais qu'une note de contextualisation existe déjà, alors une erreur est renvoyée", async () => {
     // GIVEN
     const ajouterNoteDeContextualisation = new AjouterUneNoteDeContextualisation(
       new FeuilleDeRouteAvecNoteDeContextualisationRepositorySpy(),
@@ -123,7 +127,9 @@ class FeuilleDeRouteAvecNoteDeContextualisationRepositorySpy extends FeuilleDeRo
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' }))
+    return Promise.resolve(
+      utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' })
+    )
   }
 }
 

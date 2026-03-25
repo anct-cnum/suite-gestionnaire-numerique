@@ -64,14 +64,15 @@ export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
 }
 
 export function zoneGeographiqueParDefaut(codeRegion: null | string, codeDepartement: null | string): ZoneGeographique {
-  return regionsEtDepartements().find(
-    (regionEtDepartement) => {
-      const [codeRegionSelectionnee, codeDepartementSelectionne] =
-        laRegionOuLeDepartementSelectionne(regionEtDepartement.value)
+  return (
+    regionsEtDepartements().find((regionEtDepartement) => {
+      const [codeRegionSelectionnee, codeDepartementSelectionne] = laRegionOuLeDepartementSelectionne(
+        regionEtDepartement.value
+      )
 
       return codeRegionSelectionnee === codeRegion || codeDepartementSelectionne === codeDepartement
-    }
-  ) ?? toutesLesRegions
+    }) ?? toutesLesRegions
+  )
 }
 
 export function zoneGeographiqueToURLSearchParams(zoneGeographique: ZoneGeographique): URLSearchParams {
@@ -97,7 +98,11 @@ function isZoneParDefaut(zoneGeographique: ZoneGeographique): boolean {
 }
 
 const valeurParDefautDeToutesLesRegions = 'all'
-export const toutesLesRegions: ZoneGeographique = { label: 'Toutes les régions', type: 'region', value: valeurParDefautDeToutesLesRegions }
+export const toutesLesRegions: ZoneGeographique = {
+  label: 'Toutes les régions',
+  type: 'region',
+  value: valeurParDefautDeToutesLesRegions,
+}
 const codeDepartementParDefautDuneRegion = '00'
 const regionDepartementSeparator = '_'
 

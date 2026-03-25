@@ -1,6 +1,10 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGateway, EmailGatewayFactory } from './shared/EmailGateway'
-import { AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import {
+  AddUtilisateurRepository,
+  FindUtilisateurByEmailRepository,
+  GetUtilisateurRepository,
+} from './shared/UtilisateurRepository'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class InviterContactsReferentsFne implements CommandHandler<Command> {
@@ -26,17 +30,12 @@ export class InviterContactsReferentsFne implements CommandHandler<Command> {
     const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
     const contacts = await this.#contactReferentFneLoader.getContactsReferentFne(command.structureId)
 
-    await Promise.all(contacts.map(async (contact) =>
-      this.#inviterContact(contact, command.structureId, emailGateway)))
+    await Promise.all(contacts.map(async (contact) => this.#inviterContact(contact, command.structureId, emailGateway)))
 
     return 'OK'
   }
 
-  async #inviterContact(
-    contact: ContactReferentFne,
-    structureId: number,
-    emailGateway: EmailGateway
-  ): Promise<void> {
+  async #inviterContact(contact: ContactReferentFne, structureId: number, emailGateway: EmailGateway): Promise<void> {
     const utilisateurExistant = await this.#utilisateurRepository.findByEmail(contact.email)
     if (utilisateurExistant) {
       return
@@ -80,5 +79,4 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-type UtilisateurRepository =
-  AddUtilisateurRepository & FindUtilisateurByEmailRepository & GetUtilisateurRepository
+type UtilisateurRepository = AddUtilisateurRepository & FindUtilisateurByEmailRepository & GetUtilisateurRepository

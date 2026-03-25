@@ -148,9 +148,7 @@ describe('faire une demande de subvention', () => {
           expect(champSaisieMontantPrestation).toBeEnabled()
           expect(champSaisieMontantRh).toBeEnabled()
           expect(recapItems).toHaveLength(2)
-          expect(recapItems[0].textContent).toBe(
-            `Vos droits de subvention ${expectedDroitsDeSubventionAffiches} €`
-          )
+          expect(recapItems[0].textContent).toBe(`Vos droits de subvention ${expectedDroitsDeSubventionAffiches} €`)
           expect(recapItems[1].textContent).toBe('Maximum autorisé pour cette action 42 500 €')
           expect(sousTitre(expectedLimiteAffichee)).toBeInTheDocument()
         }
@@ -166,8 +164,16 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 30_001,
@@ -177,8 +183,15 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
               },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
@@ -189,8 +202,16 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 29_999,
@@ -202,8 +223,16 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '4',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               expectedLimiteAffichee: '10 000',
               expectedTotalAffiche: '10 001',
               montantPrestation: 10_000,
@@ -235,20 +264,14 @@ describe('faire une demande de subvention', () => {
 
               // THEN
               const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
-              expect(champSaisieMontantPrestation).toHaveAccessibleDescription(
-                erreurMontantPrestation.message
-              )
-              erreurMontantPrestation
-                .expectation(champSaisieMontantPrestation)
-                .toHaveAttribute('aria-describedby')
+              expect(champSaisieMontantPrestation).toHaveAccessibleDescription(erreurMontantPrestation.message)
+              erreurMontantPrestation.expectation(champSaisieMontantPrestation).toHaveAttribute('aria-describedby')
               expect(champSaisieMontantRh).toHaveAccessibleDescription(erreurMontantRh.message)
               erreurMontantRh.expectation(champSaisieMontantRh).toHaveAttribute('aria-describedby')
 
               const recapItems = recapMontants()
               expect(recapItems).toHaveLength(3)
-              expect(recapItems[2].textContent).toBe(
-                `Total subventions demandées ${expectedTotalAffiche} €`
-              )
+              expect(recapItems[2].textContent).toBe(`Total subventions demandées ${expectedTotalAffiche} €`)
 
               expect(sousTitre(expectedLimiteAffichee)).toBeInTheDocument()
               expect(boutonSoumissionFormulaire()).toBeDisabled()
@@ -263,58 +286,74 @@ describe('faire une demande de subvention', () => {
         () => {
           it.each([
             {
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: {  expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               montantPrestation: 0,
               montantRh: 42_501,
               raison: 'car le montant en ressources humaines excède le budget maximal de l’action',
             },
             {
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               montantPrestation: 42_501,
               montantRh: 0,
-              raison:
-                'car le montant en prestation de service excède le budget maximal de l’action',
+              raison: 'car le montant en prestation de service excède le budget maximal de l’action',
             },
             {
-              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
-              erreurMontantRh: { expectation: expect,  message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantPrestation: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
+              erreurMontantRh: {
+                expectation: expect,
+                message:
+                  'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
+              },
               montantPrestation: 2,
               montantRh: 42_499,
               raison:
                 'car l’un des montants est saisi correctement mais l’autre résulte en une somme qui excède' +
                 ' le budget maximal de l’action',
             },
-          ])(
-            '$raison',
-            ({ erreurMontantPrestation, erreurMontantRh, montantPrestation, montantRh }) => {
-              // GIVEN
-              jAfficheLeFormulaireAction(42_500)
+          ])('$raison', ({ erreurMontantPrestation, erreurMontantRh, montantPrestation, montantRh }) => {
+            // GIVEN
+            jAfficheLeFormulaireAction(42_500)
 
-              // WHEN
-              jOuvreLeSousFormulaireDeDemandeDeSubvention()
-              jeSelectionneLEnveloppe('2')
-              jeSaisisLesMontants(montantPrestation, montantRh)
+            // WHEN
+            jOuvreLeSousFormulaireDeDemandeDeSubvention()
+            jeSelectionneLEnveloppe('2')
+            jeSaisisLesMontants(montantPrestation, montantRh)
 
-              // THEN
-              const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
-              expect(champSaisieMontantPrestation).toHaveAccessibleDescription(
-                erreurMontantPrestation.message
-              )
-              erreurMontantPrestation
-                .expectation(champSaisieMontantPrestation)
-                .toHaveAttribute('aria-describedby')
-              expect(champSaisieMontantRh).toHaveAccessibleDescription(erreurMontantRh.message)
-              erreurMontantRh.expectation(champSaisieMontantRh).toHaveAttribute('aria-describedby')
+            // THEN
+            const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
+            expect(champSaisieMontantPrestation).toHaveAccessibleDescription(erreurMontantPrestation.message)
+            erreurMontantPrestation.expectation(champSaisieMontantPrestation).toHaveAttribute('aria-describedby')
+            expect(champSaisieMontantRh).toHaveAccessibleDescription(erreurMontantRh.message)
+            erreurMontantRh.expectation(champSaisieMontantRh).toHaveAttribute('aria-describedby')
 
-              const recapItems = recapMontants()
-              expect(recapItems).toHaveLength(3)
-              expect(recapItems[2].textContent).toBe('Total subventions demandées 42 501 €')
+            const recapItems = recapMontants()
+            expect(recapItems).toHaveLength(3)
+            expect(recapItems[2].textContent).toBe('Total subventions demandées 42 501 €')
 
-              expect(boutonSoumissionFormulaire()).toBeDisabled()
-            }
-          )
+            expect(boutonSoumissionFormulaire()).toBeDisabled()
+          })
         }
       )
 
@@ -340,12 +379,7 @@ describe('faire une demande de subvention', () => {
             },
           ])(
             '$desc',
-            ({
-              montantPrestationInitial,
-              montantPrestationRectifie,
-              montantRhInitial,
-              montantRhRectifie,
-            }) => {
+            ({ montantPrestationInitial, montantPrestationRectifie, montantRhInitial, montantRhRectifie }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
 
@@ -394,8 +428,7 @@ describe('faire une demande de subvention', () => {
                 expected: 'Total subventions demandées 4 100 €',
                 montantPrestation: 800,
                 montantRh: 3_300,
-                precision:
-                  'saisie d’un montant en prestation de service et d’un montant en ressources humaines',
+                precision: 'saisie d’un montant en prestation de service et d’un montant en ressources humaines',
               },
             ])('$precision', ({ expected, montantPrestation, montantRh }) => {
               // GIVEN
@@ -494,7 +527,7 @@ function champsSaisieMontants(): Readonly<[HTMLElement, HTMLElement]> {
     within(sousFormulaire).getByRole('spinbutton', { name: 'Montant en prestation de service' }),
     within(sousFormulaire).getByRole('spinbutton', {
       name:
-        'Montant en ressources humaines Il s\'agit d\'une ressource humaine interne à la structure employeuse' +
+        "Montant en ressources humaines Il s'agit d'une ressource humaine interne à la structure employeuse" +
         ' faisant partie de la gouvernance et récipiendaire des fonds. Format attendu : Montant ETP en euros',
     }),
   ]

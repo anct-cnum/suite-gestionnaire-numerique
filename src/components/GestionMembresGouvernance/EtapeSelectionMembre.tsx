@@ -8,17 +8,12 @@ import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
 import TextInput from '../shared/TextInput/TextInput'
 
-export default function EtapeSelectionMembre({
-  donneesMembre,
-  onContinuer,
-}: EtapeSelectionMembreProps): ReactElement {
+export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: EtapeSelectionMembreProps): ReactElement {
   const { rechercherUneEntrepriseAction } = useContext(clientContext)
   const [siret, setSiret] = useState(donneesMembre?.entreprise?.identifiant ?? '')
   const [entreprise, setEntreprise] = useState(donneesMembre?.entreprise ?? null)
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
-  const [contact, setContact] = useState(
-    donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' }
-  )
+  const [contact, setContact] = useState(donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' })
   const [contactSecondaire, setContactSecondaire] = useState(
     donneesMembre?.contactSecondaire ?? { email: '', fonction: '', nom: '', prenom: '' }
   )
@@ -61,9 +56,7 @@ export default function EtapeSelectionMembre({
                 soumettreLaRecherche={soumettreRechercheSiret}
                 termesDeRechercheNomOuEmail={formaterNumero(siret)}
               />
-              <p className="color-grey fr-mb-1w">
-                Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)
-              </p>
+              <p className="color-grey fr-mb-1w">Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)</p>
 
               {erreurRechercheSiret ? (
                 <div className="fr-alert fr-alert--error fr-mt-2w">
@@ -75,9 +68,7 @@ export default function EtapeSelectionMembre({
                 <div className="fr-card fr-mt-3w background-blue-france">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
-                      <h4 className="fr-card__title color-blue-france">
-                        {entreprise.denomination}
-                      </h4>
+                      <h4 className="fr-card__title color-blue-france">{entreprise.denomination}</h4>
                       <p className="fr-card__desc">
                         {entreprise.activitePrincipaleLibelle}
                         <br />
@@ -98,13 +89,7 @@ export default function EtapeSelectionMembre({
 
                 <div className="fr-grid-row fr-grid-row--gutters">
                   <div className="fr-col-12 fr-col-md-6">
-                    <TextInput
-                      id="nom"
-                      name="nom"
-                      onChange={changerNomContact}
-                      required={true}
-                      value={contact.nom}
-                    >
+                    <TextInput id="nom" name="nom" onChange={changerNomContact} required={true} value={contact.nom}>
                       Nom <span className="color-red">*</span>
                     </TextInput>
                   </div>
@@ -247,12 +232,7 @@ export default function EtapeSelectionMembre({
           </button>
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-grid-row--right" style={{ display: 'flex' }}>
-          <button
-            className="fr-btn"
-            disabled={!isFormulairePret}
-            onClick={continuerVersConfirmation}
-            type="button"
-          >
+          <button className="fr-btn" disabled={!isFormulairePret} onClick={continuerVersConfirmation} type="button">
             Étape suivante
           </button>
         </div>
@@ -273,9 +253,7 @@ export default function EtapeSelectionMembre({
     if (nouveauSiret.length > 0 && nouveauSiret.length < 6) {
       // Pas encore assez de chiffres, on n'affiche pas d'erreur
     } else if (nouveauSiret.length > 7 && nouveauSiret.length < 14) {
-      setErreurRechercheSiret(
-        'Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'
-      )
+      setErreurRechercheSiret('Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)')
     }
   }
 

@@ -5,11 +5,7 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
   maxHeight: string
   topPosition: string
 }> {
-  const {
-    enabled = true,
-    footerSelector = '.fr-footer',
-    headerSelectors = ['.fr-header'],
-  } = options
+  const { enabled = true, footerSelector = '.fr-footer', headerSelectors = ['.fr-header'] } = options
 
   const [topPosition, setTopPosition] = useState('30px')
   const [maxHeight, setMaxHeight] = useState('none')

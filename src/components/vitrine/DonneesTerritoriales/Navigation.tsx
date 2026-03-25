@@ -19,9 +19,10 @@ export default function Navigation(): ReactElement {
   const currentSection = pathParts[2] || 'synthese-et-indicateurs'
 
   // Extraire niveau et code depuis params
-  const niveau = currentSection === 'gouvernances'
-    ? pathParts[3] // 'departement' pour gouvernances
-    : (params.niveau as string | undefined)
+  const niveau =
+    currentSection === 'gouvernances'
+      ? pathParts[3] // 'departement' pour gouvernances
+      : (params.niveau as string | undefined)
 
   const codeArray = params.code as ReadonlyArray<string> | undefined
   const code = codeArray?.[0]
@@ -35,7 +36,7 @@ export default function Navigation(): ReactElement {
     },
     {
       href: `/vitrine/donnees-territoriales/lieux-inclusion${territoirePath}`,
-      label: 'Lieux d\'inclusion',
+      label: "Lieux d'inclusion",
     },
     {
       href: `/vitrine/donnees-territoriales/mediateurs-numeriques${territoirePath}`,
@@ -77,19 +78,13 @@ export default function Navigation(): ReactElement {
         >
           Dans cette rubrique
         </button>
-        <div
-          className="fr-collapse"
-          id="donnees-territoriales-menu-wrapper"
-        >
+        <div className="fr-collapse" id="donnees-territoriales-menu-wrapper">
           <ul className="fr-sidemenu__list">
             {sections.map((section) => {
               const isActive = pathname.startsWith(section.href)
 
               return (
-                <li
-                  className="fr-sidemenu__item"
-                  key={section.href}
-                >
+                <li className="fr-sidemenu__item" key={section.href}>
                   <div className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ''}`}>
                     <Link
                       aria-current={isActive ? 'page' : undefined}

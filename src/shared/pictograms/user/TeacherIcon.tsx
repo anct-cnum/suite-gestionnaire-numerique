@@ -6,13 +6,7 @@ export function TeacherIcon({
   ...props
 }: Readonly<Parameters<Pictogram>[0]>): ReturnType<Pictogram> {
   return (
-    <svg
-      height={height}
-      width={width}
-      {...props}
-      viewBox="0 0 80 80"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg height={height} width={width} {...props} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
       <title>Enseignant devant des élèves</title>
       <path
         className="fr-artwork-major"

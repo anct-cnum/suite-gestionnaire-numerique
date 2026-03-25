@@ -39,11 +39,9 @@ export class GestionnaireStructure extends Utilisateur {
 
   override peutGerer(autre: Utilisateur): boolean {
     return (
-      this.isSuperAdmin ||
-      autre instanceof GestionnaireStructure && autre.#structureUid.equals(this.#structureUid)
+      this.isSuperAdmin || (autre instanceof GestionnaireStructure && autre.#structureUid.equals(this.#structureUid))
     )
   }
 }
 
-type GestionnaireStructureState = Readonly<{ structureUid: StructureState['uid'] }> &
-  UtilisateurState
+type GestionnaireStructureState = Readonly<{ structureUid: StructureState['uid'] }> & UtilisateurState

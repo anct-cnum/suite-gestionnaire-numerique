@@ -71,10 +71,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     })
 
     if ('type' in postesReadModel) {
-      return NextResponse.json(
-        { error: 'Erreur lors de la récupération des données' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Erreur lors de la récupération des données' }, { status: 500 })
     }
 
     const csvContent = generateCSV(postesReadModel.postes)

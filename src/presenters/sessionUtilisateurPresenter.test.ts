@@ -6,7 +6,7 @@ import { RoleUtilisateur } from '@/use-cases/queries/shared/UnUtilisateurReadMod
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('session utilisateur presenter', () => {
-  it('affichage des informations de session de l\'utilisateur connecté avec un territoire', () => {
+  it("affichage des informations de session de l'utilisateur connecté avec un territoire", () => {
     // GIVEN
     const utilisateurReadModel = utilisateurReadModelFactory({
       role: {
@@ -26,10 +26,7 @@ describe('session utilisateur presenter', () => {
     }
 
     // WHEN
-    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(
-      utilisateurReadModel,
-      territoire
-    )
+    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel, territoire)
 
     // THEN
     expect(sessionUtilisateurViewModel).toStrictEqual<SessionUtilisateurViewModel>({
@@ -57,7 +54,7 @@ describe('session utilisateur presenter', () => {
     })
   })
 
-  it('affichage des informations de session de l\'utilisateur connecté sans territoire', () => {
+  it("affichage des informations de session de l'utilisateur connecté sans territoire", () => {
     // GIVEN
     const utilisateurReadModel = utilisateurReadModelFactory({
       role: {
@@ -77,10 +74,7 @@ describe('session utilisateur presenter', () => {
     }
 
     // WHEN
-    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(
-      utilisateurReadModel,
-      territoire
-    )
+    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel, territoire)
 
     // THEN
     expect(sessionUtilisateurViewModel).toStrictEqual<SessionUtilisateurViewModel>({

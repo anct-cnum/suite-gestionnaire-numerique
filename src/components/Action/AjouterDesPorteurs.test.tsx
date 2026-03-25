@@ -26,16 +26,17 @@ describe('ajout des porteurs', () => {
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des porteurs s’affiche', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        porteurs: [
-          { id: 'id_Lyonnais', link: '', nom: 'CC des Monts du Lyonnais', roles: []  },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'id_Lyonnais'  },
-          { nom: 'Rhône (69)', roles: [], structureId: 69, uid: 'id_Rhône' },
-        ],
-      })
+      afficherLeFormulaireAction(
+        {
+          porteurs: [{ id: 'id_Lyonnais', link: '', nom: 'CC des Monts du Lyonnais', roles: [] }],
+        },
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            { nom: 'CC des Monts du Lyonnais', roles: [], structureId: 200, uid: 'id_Lyonnais' },
+            { nom: 'Rhône (69)', roles: [], structureId: 69, uid: 'id_Rhône' },
+          ],
+        }
+      )
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
@@ -45,7 +46,12 @@ describe('ajout des porteurs', () => {
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesPorteursId')
       const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) porteur(s)' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs porteurs pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
+      const sousTitre = screen.getByText(
+        matchWithoutMarkup(
+          'Sélectionnez un ou plusieurs porteurs pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'
+        ),
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
       const lien = screen.getByRole('link', { name: 'cliquant ici' })
       expect(lien).toHaveAttribute('href', '/gouvernance/11')
@@ -67,20 +73,21 @@ describe('ajout des porteurs', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        porteurs: [
-          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
-        ],
-      })
+      afficherLeFormulaireAction(
+        {
+          porteurs: [{ id: 'testUID', link: '', nom: 'monFakeNon', roles: [] }],
+        },
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          ],
+        }
+      )
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) porteur(s)' })
-      const fermer = presserLeBouton('Fermer l\'ajout des porteurs')
+      const fermer = presserLeBouton("Fermer l'ajout des porteurs")
 
       // THEN
       expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterDesPorteursId')
@@ -89,15 +96,16 @@ describe('ajout des porteurs', () => {
 
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        porteurs: [
-          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
-        ],
-      })
+      afficherLeFormulaireAction(
+        {
+          porteurs: [{ id: 'testUID', link: '', nom: 'monFakeNon', roles: [] }],
+        },
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          ],
+        }
+      )
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
@@ -119,12 +127,10 @@ describe('ajout des porteurs', () => {
   }
 
   function afficherLeFormulaireAction(
-    overrides: Partial<ActionViewModel> = {}, override?: Partial<UneGouvernanceReadModel>
+    overrides: Partial<ActionViewModel> = {},
+    override?: Partial<UneGouvernanceReadModel>
   ): void {
-    const gouvernanceViewModel = gouvernancePresenter(
-      gouvernanceReadModelFactory(override),
-      epochTime
-    )
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), epochTime)
 
     renderComponent(
       <FormulaireAction

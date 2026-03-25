@@ -150,4 +150,3 @@ type State = Readonly<{
 type AttributState = Readonly<{ value: string }>
 
 type UidState = Readonly<{ value: string }>
-

@@ -5,17 +5,11 @@ import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function PiedDePage(): ReactElement {
   return (
-    <footer
-      className="fr-footer"
-      id="footer"
-    >
+    <footer className="fr-footer" id="footer">
       <div className="fr-container">
         <div className="fr-footer__body">
           <div className="fr-footer__brand fr-enlarge-link">
-            <Link
-              href="/tableau-de-bord"
-              title="Accueil"
-            >
+            <Link href="/tableau-de-bord" title="Accueil">
               <p className="fr-logo">
                 République
                 <br />
@@ -53,11 +47,7 @@ export default function PiedDePage(): ReactElement {
                 </ExternalLink>
               </li>
               <li className="fr-footer__content-item">
-                <ExternalLink
-                  className="fr-footer__content-link"
-                  href="https://data.gouv.fr"
-                  title="data.gouv.fr"
-                >
+                <ExternalLink className="fr-footer__content-link" href="https://data.gouv.fr" title="data.gouv.fr">
                   data.gouv.fr
                 </ExternalLink>
               </li>
@@ -67,34 +57,22 @@ export default function PiedDePage(): ReactElement {
         <div className="fr-footer__bottom">
           <ul className="fr-footer__bottom-list">
             <li className="fr-footer__bottom-item">
-              <Link
-                className="fr-footer__bottom-link"
-                href="/accessibilite"
-              >
+              <Link className="fr-footer__bottom-link" href="/accessibilite">
                 Accessibilité : partiellement conforme
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
-              <Link
-                className="fr-footer__bottom-link"
-                href="/mentions-legales"
-              >
+              <Link className="fr-footer__bottom-link" href="/mentions-legales">
                 Mentions légales
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
-              <Link
-                className="fr-footer__bottom-link"
-                href="/conditions-generales-utilisation"
-              >
+              <Link className="fr-footer__bottom-link" href="/conditions-generales-utilisation">
                 Conditions générales d&apos;utilisation
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
-              <Link
-                className="fr-footer__bottom-link"
-                href="/politique-confidentialite"
-              >
+              <Link className="fr-footer__bottom-link" href="/politique-confidentialite">
                 Politique de confidentialité
               </Link>
             </li>
@@ -110,9 +88,8 @@ export default function PiedDePage(): ReactElement {
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
-              Sauf mention explicite de propriété intellectuelle détenue par des tiers,
-              les contenus de ce site sont proposés sous
-              {' '}
+              Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont
+              proposés sous{' '}
               <ExternalLink
                 href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
                 title="licence etalab-2.0"

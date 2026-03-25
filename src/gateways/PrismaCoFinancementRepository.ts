@@ -9,11 +9,13 @@ import {
   UpdateCoFinancementRepository,
 } from '@/use-cases/commands/shared/CoFinancementRepository'
 
-export class PrismaCoFinancementRepository implements
-  AddCoFinancementRepository,
-  GetCoFinancementRepository,
-  SupprimerCoFinancementRepository,
-  UpdateCoFinancementRepository {
+export class PrismaCoFinancementRepository
+  implements
+    AddCoFinancementRepository,
+    GetCoFinancementRepository,
+    SupprimerCoFinancementRepository,
+    UpdateCoFinancementRepository
+{
   async add(coFinancement: CoFinancement, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
@@ -37,13 +39,15 @@ export class PrismaCoFinancementRepository implements
       },
     })
 
-    return coFinancements.map(coFinancement =>
-      CoFinancement.create({
-        montant: coFinancement.montant,
-        uid: { value: coFinancement.id.toString() },
-        uidAction: { value: uidAction },
-        uidMembre: coFinancement.memberId,
-      }) as CoFinancement)
+    return coFinancements.map(
+      (coFinancement) =>
+        CoFinancement.create({
+          montant: coFinancement.montant,
+          uid: { value: coFinancement.id.toString() },
+          uidAction: { value: uidAction },
+          uidMembre: coFinancement.memberId,
+        }) as CoFinancement
+    )
   }
 
   async supprimer(uidAction: string, tx?: Prisma.TransactionClient): Promise<boolean> {

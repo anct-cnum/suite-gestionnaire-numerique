@@ -13,11 +13,5 @@ import { ReactNode } from 'react'
  */
 export function parseTextWithBold(text: string): ReactNode {
   const parts = text.split(/\*\*(.*?)\*\*/g)
-  return parts.map((part, index) =>
-    index % 2 === 1 ? (
-      <strong key={`bold-${part}`}>
-        {part}
-      </strong>
-    ) :
-      part)
+  return parts.map((part, index) => (index % 2 === 1 ? <strong key={`bold-${part}`}>{part}</strong> : part))
 }

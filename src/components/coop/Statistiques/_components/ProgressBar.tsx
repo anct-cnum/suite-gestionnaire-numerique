@@ -31,7 +31,7 @@ const ProgressBar = ({
       className,
       progress.length > 1 && 'fr-progress-stacked',
       size === 'small' && 'fr-progress--sm',
-      size === 'large' && 'fr-progress--lg',
+      size === 'large' && 'fr-progress--lg'
     )}
     style={style}
   >
@@ -48,44 +48,32 @@ const ProgressBar = ({
             <span className="fr-text--bold">{label}</span>
             <br />
             <span>
-              <span className="fr-text--xs fr-mb-0">
-                Accompagnements&nbsp;:
-              </span>{' '}
+              <span className="fr-text--xs fr-mb-0">Accompagnements&nbsp;:</span>{' '}
               <span className="fr-text--bold">{count}</span>&emsp;
               {numberToPercentage(percentage)}
             </span>
           </span>
         )}
         <motion.span
-          aria-describedby={
-            tooltipKey
-              ? `tooltip-progress-bar-${tooltipKey}-${index}`
-              : undefined
-          }
+          aria-describedby={tooltipKey ? `tooltip-progress-bar-${tooltipKey}-${index}` : undefined}
           key={label}
           className={classNames(
             'fr-progress',
             size === 'small' && 'fr-progress--sm',
-            size === 'large' && 'fr-progress--lg',
+            size === 'large' && 'fr-progress--lg'
           )}
           role="progressbar"
           aria-label={label}
           aria-valuenow={percentage ?? 0}
           aria-valuemin={min}
           aria-valuemax={max}
-          animate={
-            progress.length > 1
-              ? { width: `${percentage ?? 0}%`, transition: { duration: 0.2 } }
-              : {}
-          }
+          animate={progress.length > 1 ? { width: `${percentage ?? 0}%`, transition: { duration: 0.2 } } : {}}
         >
           <motion.span
             className={`fr-progress__bar ${colors[index % colors.length]}`}
             style={{
               backgroundColor:
-                colors.length > 0
-                  ? colors[index % colors.length]
-                  : 'var(--background-active-blue-france)',
+                colors.length > 0 ? colors[index % colors.length] : 'var(--background-active-blue-france)',
             }}
             animate={
               progress.length === 1

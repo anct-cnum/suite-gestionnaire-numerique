@@ -7,11 +7,11 @@ export interface UneActionReadModel {
   budgetGlobal?: number
   coFinancements: Array<CoFinancementReadModel>
   contexte?: string
-  demandeDeSubvention : DemandeDeSubventionReadModel | undefined
+  demandeDeSubvention: DemandeDeSubventionReadModel | undefined
   description?: string
   destinataires?: Array<PorteurPotentielReadModel>
   nom: string
-  nomFeuilleDeRoute : string
+  nomFeuilleDeRoute: string
   porteurs?: Array<PorteurPotentielReadModel>
   statut: StatusSubvention
   uid: string

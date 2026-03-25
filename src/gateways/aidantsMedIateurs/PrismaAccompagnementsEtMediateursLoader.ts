@@ -1,6 +1,6 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { 
+import {
   AccompagnementsEtMediateursLoader,
   AccompagnementsEtMediateursReadModel,
 } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
@@ -10,8 +10,9 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
   async get(territoire = 'France'): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
     try {
       // Thématiques des accompagnements avec comptage des thématiques distinctes
-      const thematiquesResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
+      const thematiquesResult =
+        territoire === 'France'
+          ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
             WITH thematiques AS (
               SELECT unnest(thematiques) AS thematique, SUM(accompagnements) AS nb_accompagnements
               FROM main.activites_coop
@@ -30,7 +31,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
             GROUP BY categorie
             ORDER BY nb DESC
           `
-        : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
+          : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
             WITH thematiques AS (
               SELECT unnest(ac.thematiques) AS thematique, SUM(ac.accompagnements) AS nb_accompagnements
               FROM main.activites_coop ac
@@ -54,10 +55,12 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
           `
 
       const totalThematiques = thematiquesResult.reduce((sum, thematique) => sum + Number(thematique.nb), 0)
-      const thematiques = thematiquesResult.map(thematique => ({
+      const thematiques = thematiquesResult.map((thematique) => ({
         nom: thematique.categorie,
-        pourcentage: Math.round(Number(thematique.nb) / totalThematiques * 100),
-        ...thematique.categorie === 'Autres thématiques' && Number(thematique.nb_distinctes) > 0 ? { nombreThematiquesRestantes: Number(thematique.nb_distinctes) } : {},
+        pourcentage: Math.round((Number(thematique.nb) / totalThematiques) * 100),
+        ...(thematique.categorie === 'Autres thématiques' && Number(thematique.nb_distinctes) > 0
+          ? { nombreThematiquesRestantes: Number(thematique.nb_distinctes) }
+          : {}),
       }))
 
       // Nombre de médiateurs numériques (actuellement en poste)
@@ -66,7 +69,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         where: { est_actuellement_mediateur_en_poste: true },
       })
       const mediateursData = await this.getPersonnesInTerritoire(mediateurs, territoire)
-      const mediateursIds = mediateursData.map(mediateur => mediateur.personneId)
+      const mediateursIds = mediateursData.map((mediateur) => mediateur.personneId)
       const mediateursNumeriques = mediateursData.length
 
       // Nombre de conseillers numériques (actuellement en poste avec financement état)
@@ -89,34 +92,31 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       const aidantsConnect = await prisma.personneEnrichieView.findMany({
         select: { id: true, structure_employeuse_id: true },
         where: {
-          AND: [
-            { est_actuellement_mediateur_en_poste: true },
-            { labellisation_aidant_connect: true },
-          ],
+          AND: [{ est_actuellement_mediateur_en_poste: true }, { labellisation_aidant_connect: true }],
         },
       })
       const aidantsConnectData = await this.getPersonnesInTerritoire(aidantsConnect, territoire)
       const habilitesAidantsConnect = aidantsConnectData.length
 
       // Structures employeuses des médiateurs labellisés Aidants Connect
-      const structureEmployeuseIds = [...new Set(aidantsConnectData
-        .map(aidant => aidant.structureId)
-        .filter((id): id is number => id !== null))]
-      
-      const structuresHabiliteesList = structureEmployeuseIds.length > 0
-        ? await prisma.$queryRaw<Array<{ count: bigint }>>`
+      const structureEmployeuseIds = [
+        ...new Set(aidantsConnectData.map((aidant) => aidant.structureId).filter((id): id is number => id !== null)),
+      ]
+
+      const structuresHabiliteesList =
+        structureEmployeuseIds.length > 0
+          ? await prisma.$queryRaw<Array<{ count: bigint }>>`
             SELECT COUNT(DISTINCT s.id) AS count
             FROM main.structure s
             WHERE s.structure_ac_id IS NOT NULL
               AND s.id = ANY(${structureEmployeuseIds}::bigint[])
           `
-        : [{ count: 0n }]
-      const structuresHabilitees = Number(structuresHabiliteesList[0]?.count || 0)   
+          : [{ count: 0n }]
+      const structuresHabilitees = Number(structuresHabiliteesList[0]?.count || 0)
 
       // Calcul du pourcentage de médiateurs formés
-      const pourcentageMediateursFormes = mediateursNumeriques > 0 
-        ? Math.round(mediateursFormes / mediateursNumeriques * 100) 
-        : 0
+      const pourcentageMediateursFormes =
+        mediateursNumeriques > 0 ? Math.round((mediateursFormes / mediateursNumeriques) * 100) : 0
 
       return {
         conseillerNumeriques,
@@ -144,36 +144,43 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
     territoire: string
   ): Promise<Array<{ personneId: number; structureId: null | number }>> {
     if (territoire === 'France') {
-      return personnes.map(personne => ({ 
-        personneId: personne.id, 
-        structureId: personne.structure_employeuse_id, 
+      return personnes.map((personne) => ({
+        personneId: personne.id,
+        structureId: personne.structure_employeuse_id,
       }))
     }
 
-    const structureIds = [...new Set(personnes
-      .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
-        personne.structure_employeuse_id !== null)
-      .map(personne => personne.structure_employeuse_id))]
-    
+    const structureIds = [
+      ...new Set(
+        personnes
+          .filter(
+            (personne): personne is { structure_employeuse_id: number } & typeof personne =>
+              personne.structure_employeuse_id !== null
+          )
+          .map((personne) => personne.structure_employeuse_id)
+      ),
+    ]
+
     const structures = await prisma.main_structure.findMany({
       select: { id: true },
-      where: { 
+      where: {
         adresse: {
           departement: territoire,
         },
         id: { in: structureIds },
       },
     })
-    
-    const structuresInTerritoire = new Set(structures.map(structure => structure.id))
-    
+
+    const structuresInTerritoire = new Set(structures.map((structure) => structure.id))
+
     return personnes
-      .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
-        personne.structure_employeuse_id !== null && 
-      structuresInTerritoire.has(personne.structure_employeuse_id))
-      .map(personne => ({ 
-        personneId: personne.id, 
-        structureId: personne.structure_employeuse_id, 
+      .filter(
+        (personne): personne is { structure_employeuse_id: number } & typeof personne =>
+          personne.structure_employeuse_id !== null && structuresInTerritoire.has(personne.structure_employeuse_id)
+      )
+      .map((personne) => ({
+        personneId: personne.id,
+        structureId: personne.structure_employeuse_id,
       }))
   }
 }

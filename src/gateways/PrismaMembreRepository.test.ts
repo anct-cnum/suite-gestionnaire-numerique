@@ -49,9 +49,7 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'departement-93-93', statut: 'confirme', structureId: 2 })
 
     // WHEN
-    const membre = await new PrismaMembreRepository().get(
-      new MembreUid('departement-69-69').state.value
-    )
+    const membre = await new PrismaMembreRepository().get(new MembreUid('departement-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -117,9 +115,7 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'commune-93-93', statut: 'confirme', structureId: 6 })
 
     // WHEN
-    const membre = await new PrismaMembreRepository().get(
-      new MembreUid('commune-69-69').state.value
-    )
+    const membre = await new PrismaMembreRepository().get(new MembreUid('commune-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -185,9 +181,7 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme', structureId: 10 })
 
     // WHEN
-    const membre = await new PrismaMembreRepository().get(
-      new MembreUid('structure-69-69').state.value
-    )
+    const membre = await new PrismaMembreRepository().get(new MembreUid('structure-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({

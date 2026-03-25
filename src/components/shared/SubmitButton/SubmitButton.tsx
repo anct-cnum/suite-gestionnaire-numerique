@@ -1,6 +1,12 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function SubmitButton({ ariaControls, children, className = '', isDisabled = false, title }: Props): ReactElement {
+export default function SubmitButton({
+  ariaControls,
+  children,
+  className = '',
+  isDisabled = false,
+  title,
+}: Props): ReactElement {
   return (
     <button
       aria-controls={ariaControls}
@@ -14,9 +20,11 @@ export default function SubmitButton({ ariaControls, children, className = '', i
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  ariaControls?: string
-  className?: string
-  isDisabled?: boolean
-  title?: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    ariaControls?: string
+    className?: string
+    isDisabled?: boolean
+    title?: string
+  }>
+>

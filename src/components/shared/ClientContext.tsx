@@ -103,9 +103,7 @@ export default function ClientContext({
     [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
   )
 
-  return (
-    <clientContext.Provider value={clientContextProviderValue}>{children}</clientContext.Provider>
-  )
+  return <clientContext.Provider value={clientContextProviderValue}>{children}</clientContext.Provider>
 }
 
 export const clientContext = createContext({} as ClientContextProviderValue)

@@ -12,9 +12,7 @@ export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesC
   if (coopToken.startsWith('FAKE_TOKEN')) {
     const config = parseFakeToken(coopToken)
 
-    console.log(
-      `🎭 Mode FAKE_TOKEN activé - ${config.shouldFail ? 'Erreur' : 'Succès'} après ${config.delaySeconds}s`
-    )
+    console.log(`🎭 Mode FAKE_TOKEN activé - ${config.shouldFail ? 'Erreur' : 'Succès'} après ${config.delaySeconds}s`)
     return new MockStatistiquesCoopLoader(config)
   }
 

@@ -17,13 +17,10 @@ export default function TextInput({
 }: Props): ReactElement {
   // Utilise soit un composant contrôlé (value + onChange) soit non-contrôlé (defaultValue)
   const isControlled = value !== undefined && onChange !== undefined
-  
+
   return (
     <div className={`fr-input-group ${erreur.className}`}>
-      <label
-        className="fr-label"
-        htmlFor={id}
-      >
+      <label className="fr-label" htmlFor={id}>
         {children}
       </label>
       <input
@@ -48,20 +45,22 @@ export default function TextInput({
 }
 
 const errorDefault = { className: '', content: '' }
-type Props = PropsWithChildren<Readonly<{
-  ariaDescribedById?: string
-  defaultValue?: string
-  disabled?: boolean
-  erreur?: Readonly<{
-    className: string
-    content: ReactNode
+type Props = PropsWithChildren<
+  Readonly<{
+    ariaDescribedById?: string
+    defaultValue?: string
+    disabled?: boolean
+    erreur?: Readonly<{
+      className: string
+      content: ReactNode
+    }>
+    id: string
+    name: string
+    onChange?(event: ChangeEvent<HTMLInputElement>): void
+    pattern?: string
+    placeholder?: string
+    required?: boolean
+    type?: 'email' | 'tel' | 'text'
+    value?: string
   }>
-  id: string
-  name: string
-  onChange?(event: ChangeEvent<HTMLInputElement>): void
-  pattern?: string
-  placeholder?: string
-  required?: boolean
-  type?: 'email' | 'tel' | 'text'
-  value?: string
-}>>
+>

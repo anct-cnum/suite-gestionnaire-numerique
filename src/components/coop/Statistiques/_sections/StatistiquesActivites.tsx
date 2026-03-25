@@ -8,25 +8,15 @@ import { ProgressItemList } from '../_components/ProgressItemList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
 import { StatistiqueAccompagnement } from '../_components/StatistiqueAccompagnement'
 import { StatistiqueMateriel } from '../_components/StatistiqueMateriel'
-import {
-  canauxAccompagnementColors,
-  dureesAccompagnementColors,
-  thematiquesAccompagnementColors,
-} from '../colors'
+import { canauxAccompagnementColors, dureesAccompagnementColors, thematiquesAccompagnementColors } from '../colors'
 import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
 import { numberToString, sPluriel } from '../utils'
 
 type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
 
-const desc = (
-  { count: countA }: { count: number },
-  { count: countB }: { count: number },
-) => countB - countA
+const desc = ({ count: countA }: { count: number }, { count: countB }: { count: number }) => countB - countA
 
-const toMaxProportion = (
-  max: number,
-  { proportion }: { proportion: number },
-) => (proportion > max ? proportion : max)
+const toMaxProportion = (max: number, { proportion }: { proportion: number }) => (proportion > max ? proportion : max)
 
 export const StatistiquesActivites = ({
   activites,
@@ -37,8 +27,7 @@ export const StatistiquesActivites = ({
   communes?: QuantifiedShare[]
   totalCounts: AccompagnementsStats
 }) => {
-  const [accompagnementCategory, setAccompagnementCategory] =
-    useState<AccompagnementCategory>('thematiques')
+  const [accompagnementCategory, setAccompagnementCategory] = useState<AccompagnementCategory>('thematiques')
 
   const accompagnementCategories = [
     {
@@ -58,7 +47,7 @@ export const StatistiquesActivites = ({
       items: activites.thematiquesDemarches.sort(desc),
       colors: thematiquesAccompagnementColors,
       maxProportion: activites.thematiquesDemarches.reduce(toMaxProportion, 0),
-    }
+    },
   ]
 
   return (
@@ -79,9 +68,7 @@ export const StatistiquesActivites = ({
             {value === 'Collectif' && (
               <span className="fr-text-mention--grey fr-text--sm fr-mb-0">
                 &nbsp;·&nbsp;sur{' '}
-                <span className="fr-text--bold">
-                  {numberToString(totalCounts.accompagnements.collectifs.total)}
-                </span>{' '}
+                <span className="fr-text--bold">{numberToString(totalCounts.accompagnements.collectifs.total)}</span>{' '}
                 atelier
                 {sPluriel(totalCounts.accompagnements.collectifs.total)}
               </span>
@@ -109,27 +96,18 @@ export const StatistiquesActivites = ({
                   checked: accompagnementCategory === 'demarches',
                   onChange: () => setAccompagnementCategory('demarches'),
                 },
-              }
+              },
             ]}
           />
         </div>
         <hr className="fr-separator-8v" />
         {accompagnementCategories.map(
-          ({
-            category,
-            title,
-            description,
-            items,
-            colors,
-            maxProportion,
-          }) =>
+          ({ category, title, description, items, colors, maxProportion }) =>
             category === accompagnementCategory && (
               <Fragment key={category}>
                 <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
                   <div className="fr-mb-0 fr-flex fr-align-items-center">
-                    <h4 className="fr-text--md fr-mb-0 fr-text--nowrap">
-                      {title}
-                    </h4>
+                    <h4 className="fr-text--md fr-mb-0 fr-text--nowrap">{title}</h4>
                     <Button
                       className="fr-px-1v fr-ml-1v"
                       title={`Plus d'information à propos des ${title.toLowerCase()}`}
@@ -138,10 +116,7 @@ export const StatistiquesActivites = ({
                       type="button"
                       aria-describedby={`tooltip-accompagnement-${category}`}
                     >
-                      <span
-                        className="ri-information-line fr-text--lg"
-                        aria-hidden
-                      />
+                      <span className="ri-information-line fr-text--lg" aria-hidden />
                     </Button>
                     <span
                       className="fr-tooltip fr-placement"
@@ -161,14 +136,12 @@ export const StatistiquesActivites = ({
                   tooltipKey={category}
                 />
               </Fragment>
-            ),
+            )
         )}
       </div>
       <div className="fr-border fr-p-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
-          <h4 className="fr-text--md fr-mb-0">
-            Matériel utilisé lors des accompagnements
-          </h4>
+          <h4 className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</h4>
           <Button
             className="fr-px-1v fr-ml-1v"
             title="Plus d'information à propos du matériel utilisé"
@@ -179,26 +152,14 @@ export const StatistiquesActivites = ({
           >
             <span className="ri-information-line fr-text--lg" aria-hidden />
           </Button>
-          <span
-            className="fr-tooltip fr-placement"
-            id="tooltip-meteriel-utilise"
-            role="tooltip"
-            aria-hidden
-          >
-            Matériel utilisé lors d'un accompagnement de médiation numérique. À
-            noter&nbsp;: Plusieurs matériels ont pu être utilisés lors d'un même
-            accompagnement.
+          <span className="fr-tooltip fr-placement" id="tooltip-meteriel-utilise" role="tooltip" aria-hidden>
+            Matériel utilisé lors d'un accompagnement de médiation numérique. À noter&nbsp;: Plusieurs matériels ont pu
+            être utilisés lors d'un même accompagnement.
           </span>
         </div>
         <div className="fr-flex fr-flex-wrap fr-justify-content-space-between fr-flex-gap-6v fr-px-4v">
           {activites.materiels.map(({ value, label, count, proportion }) => (
-            <StatistiqueMateriel
-              key={value}
-              value={value}
-              label={label}
-              count={count}
-              proportion={proportion}
-            />
+            <StatistiqueMateriel key={value} value={value} label={label} count={count} proportion={proportion} />
           ))}
         </div>
       </div>

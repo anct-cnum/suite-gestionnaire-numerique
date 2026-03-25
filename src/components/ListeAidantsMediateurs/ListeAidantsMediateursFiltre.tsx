@@ -6,7 +6,11 @@ import { SelectInstance } from 'react-select'
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import CheckboxGroup from '../shared/CheckboxGroup/CheckboxGroup'
 import { TypologieRole } from '@/domain/Role'
-import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
+import {
+  toutesLesRegions,
+  ZoneGeographique,
+  zoneGeographiqueToURLSearchParams,
+} from '@/presenters/filtresUtilisateurPresenter'
 
 export default function ListeAidantsMediateursFiltre({
   closeDrawer,
@@ -80,10 +84,7 @@ export default function ListeAidantsMediateursFiltre({
     <div className="sidepanel__content">
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
-          <FiltrerParZonesGeographiques
-            ref={ref}
-            setZoneGeographique={handleZoneGeographiqueChange}
-          />
+          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
 
           <hr className="fr-hr" />
         </>
@@ -128,22 +129,12 @@ export default function ListeAidantsMediateursFiltre({
       />
 
       <div className="fr-btns-group fr-mt-3w">
-        <button
-          aria-controls={id}
-          className="fr-btn"
-          onClick={appliquerFiltre}
-          type="button"
-        >
+        <button aria-controls={id} className="fr-btn" onClick={appliquerFiltre} type="button">
           Afficher
         </button>
-        <button
-          className="fr-btn fr-btn--secondary"
-          onClick={reinitialiser}
-          type="button"
-        >
+        <button className="fr-btn fr-btn--secondary" onClick={reinitialiser} type="button">
           Réinitialiser
         </button>
-
       </div>
     </div>
   )

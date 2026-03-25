@@ -33,4 +33,3 @@ export type CoFinancementCommand = Readonly<{
   membreId: string
   montant: number
 }>
-  

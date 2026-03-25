@@ -18,10 +18,7 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
       <ul aria-label="actions">
         {actions.map((action) => (
           <li key={action.uid}>
-            <div
-              className="fr-grid-row fr-grid-row--middle space-between"
-              style={{ alignItems: 'flex-start' }}
-            >
+            <div className="fr-grid-row fr-grid-row--middle space-between" style={{ alignItems: 'flex-start' }}>
               <div className="fr-col-auto">
                 <div style={{ alignItems: 'flex-start', display: 'flex', minHeight: '100%' }}>
                   <TitleIcon background={action.statut.background} icon={action.statut.icon} />
@@ -46,8 +43,7 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
                 <div>
                   {action.porteurs.length > 0 && (
                     <p className="fr-text--sm fr-mb-0" style={{ color: '#666666' }}>
-                      Coporteur de l&apos;action :{' '}
-                      {action.porteurs.map((porteur) => porteur.label).join(', ')}
+                      Coporteur de l&apos;action : {action.porteurs.map((porteur) => porteur.label).join(', ')}
                     </p>
                   )}
                 </div>

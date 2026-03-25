@@ -1,6 +1,9 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { MediateursEtAidantsLoader, MediateursEtAidantsReadModel } from '@/use-cases/queries/RecupererMediateursEtAidants'
+import {
+  MediateursEtAidantsLoader,
+  MediateursEtAidantsReadModel,
+} from '@/use-cases/queries/RecupererMediateursEtAidants'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoader {
@@ -12,10 +15,7 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
         // Pour la France, on peut compter directement
         total = await prisma.personneEnrichieView.count({
           where: {
-            OR: [
-              { est_actuellement_aidant_numerique_en_poste: true },
-              { est_actuellement_mediateur_en_poste: true },
-            ],
+            OR: [{ est_actuellement_aidant_numerique_en_poste: true }, { est_actuellement_mediateur_en_poste: true }],
           },
         })
       } else {
@@ -28,9 +28,9 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
             },
           },
         })
-        
-        const structureIds = structuresInDepartment.map(structure => structure.id)
-        
+
+        const structureIds = structuresInDepartment.map((structure) => structure.id)
+
         // Compter les personnes en poste dans ces structures
         total = await prisma.personneEnrichieView.count({
           where: {

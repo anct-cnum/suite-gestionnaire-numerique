@@ -157,7 +157,14 @@ describe('recuperer mes membres', () => {
           },
         ],
         roles: ['beneficiaire', 'cofinanceur', 'coporteur', 'observateur', 'recipiendaire'],
-        typologies: ['', 'Association', 'Collectivité, conseil départemental', 'Collectivité, EPCI', 'Entreprise privée', 'Préfecture départementale'],
+        typologies: [
+          '',
+          'Association',
+          'Collectivité, conseil départemental',
+          'Collectivité, EPCI',
+          'Entreprise privée',
+          'Préfecture départementale',
+        ],
         uidGouvernance: '69',
       })
     })

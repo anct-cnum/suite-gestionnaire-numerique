@@ -6,10 +6,7 @@ import { AjouterUneAction } from './AjouterUneAction'
 import { AddActionRepository } from './shared/ActionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
-import {
-  GetFeuilleDeRouteRepository,
-  UpdateFeuilleDeRouteRepository,
-} from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -264,9 +261,7 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   }
 }
 
-class FeuilleDeRouteRepositorySpy
-implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository
-{
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: string): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
@@ -284,18 +279,14 @@ implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(
-      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
-    )
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
 class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(
-      utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' })
-    )
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
 }
 

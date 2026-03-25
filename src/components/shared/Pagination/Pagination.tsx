@@ -13,10 +13,7 @@ export default function Pagination({ pathname, totalUtilisateurs }: Props): Reac
   const urlAvecParametres = fullUrl(pathname, searchParams)
 
   return (
-    <nav
-      aria-label="Pagination"
-      className="fr-pagination"
-    >
+    <nav aria-label="Pagination" className="fr-pagination">
       <ol className="fr-pagination__list">
         <li>
           <PremierePage urlAvecParametres={urlAvecParametres} />

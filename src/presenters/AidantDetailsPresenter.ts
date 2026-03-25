@@ -18,7 +18,7 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
       prenom: readModel.prenom,
       telephone: readModel.telephone || undefined,
     },
-    lieuxActivite: readModel.lieuxActivite.map(lieu => ({
+    lieuxActivite: readModel.lieuxActivite.map((lieu) => ({
       adresse: lieu.adresse,
       idCoopCarto: lieu.idCoopCarto,
       nom: lieu.nom,
@@ -43,21 +43,23 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
         labels: graphiqueRempli.labels,
       },
     },
-    structuresEmployeuses: [{
-      adresse: readModel.structureEmployeuse.adresse,
-      departement: readModel.structureEmployeuse.departement || undefined,
-      nom: readModel.structureEmployeuse.nom,
-      referent: {
-        email: readModel.structureEmployeuse.contactReferent.email,
-        nom: readModel.structureEmployeuse.contactReferent.nom,
-        post: readModel.structureEmployeuse.contactReferent.post,
-        prenom: readModel.structureEmployeuse.contactReferent.prenom,
-        telephone: readModel.structureEmployeuse.contactReferent.telephone,
+    structuresEmployeuses: [
+      {
+        adresse: readModel.structureEmployeuse.adresse,
+        departement: readModel.structureEmployeuse.departement || undefined,
+        nom: readModel.structureEmployeuse.nom,
+        referent: {
+          email: readModel.structureEmployeuse.contactReferent.email,
+          nom: readModel.structureEmployeuse.contactReferent.nom,
+          post: readModel.structureEmployeuse.contactReferent.post,
+          prenom: readModel.structureEmployeuse.contactReferent.prenom,
+          telephone: readModel.structureEmployeuse.contactReferent.telephone,
+        },
+        region: readModel.structureEmployeuse.region || undefined,
+        siret: readModel.structureEmployeuse.siret || undefined,
+        type: readModel.structureEmployeuse.type,
       },
-      region: readModel.structureEmployeuse.region || undefined,
-      siret: readModel.structureEmployeuse.siret || undefined,
-      type: readModel.structureEmployeuse.type,
-    }],
+    ],
   }
 }
 
@@ -93,7 +95,7 @@ function fillJournalierData(
   graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>,
   today: Date
 ): { data: ReadonlyArray<number>; labels: ReadonlyArray<string> } {
-  const dataMap = new Map(graphiqueData.map(item => [item.date, item.totalAccompagnements]))
+  const dataMap = new Map(graphiqueData.map((item) => [item.date, item.totalAccompagnements]))
 
   const labels: Array<string> = []
   const data: Array<number> = []
@@ -118,7 +120,7 @@ function fillMensuelData(
   graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>,
   today: Date
 ): { data: ReadonlyArray<number>; labels: ReadonlyArray<string> } {
-  const dataMap = new Map(graphiqueData.map(item => [item.date, item.totalAccompagnements]))
+  const dataMap = new Map(graphiqueData.map((item) => [item.date, item.totalAccompagnements]))
 
   const labels: Array<string> = []
   const data: Array<number> = []

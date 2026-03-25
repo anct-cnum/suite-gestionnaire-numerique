@@ -11,4 +11,4 @@ export function mediateursEtAidantsPresenter(readModel: MediateursEtAidantsReadM
 export type MediateursEtAidantsViewModel = Readonly<{
   departement: string
   total: string
-}> 
+}>

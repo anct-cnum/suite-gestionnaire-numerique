@@ -6,11 +6,18 @@ import Table from '@/components/shared/Table/Table'
 
 export default function GouvernancesDetails({ details }: Props): ReactElement {
   return (
-    <section
-      aria-labelledby="tableau"
-    >
+    <section aria-labelledby="tableau">
       <Table
-        enTetes={['Département', 'Membres', 'Feuille de route', 'Dotation État', 'Montant engagé', 'Co-finan. (i)', 'Montant total', '']}
+        enTetes={[
+          'Département',
+          'Membres',
+          'Feuille de route',
+          'Dotation État',
+          'Montant engagé',
+          'Co-finan. (i)',
+          'Montant total',
+          '',
+        ]}
         titre="Membres"
       >
         {details.map((detail: GouvernanceDetails) => {
@@ -19,48 +26,27 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               <td>
                 <div>
                   <span className="fr-text--sm fr-text--bold">
-                    {detail.departementCode}
-                    {' '}
-                    -
-                    {' '}
-                    {detail.departementNom}
-                  </span>
-                  {' '}
+                    {detail.departementCode} - {detail.departementNom}
+                  </span>{' '}
                 </div>
                 <div>
-                  <span className="fr-text--xs">
-                    {detail.departementRegion}
-                  </span>
+                  <span className="fr-text--xs">{detail.departementRegion}</span>
                 </div>
               </td>
               <td>
                 <div>
-                  <span className="fr-text--sm">
-                    {detail.membreCount}
-
-                  </span>
-                  {' '}
+                  <span className="fr-text--sm">{detail.membreCount}</span>{' '}
                 </div>
                 <div>
-                  <span className="fr-text--xs">
-                    {detail.coporteurCount}
-                    {' '}
-                    coporteurs
-                  </span>
+                  <span className="fr-text--xs">{detail.coporteurCount} coporteurs</span>
                 </div>
               </td>
               <td>
                 <div>
-                  <span className="fr-text--sm">
-                    {detail.feuilleDeRouteCount}
-                  </span>
+                  <span className="fr-text--sm">{detail.feuilleDeRouteCount}</span>
                 </div>
                 <div>
-                  <span className="fr-text--xs">
-                    {detail.actionCount}
-                    {' '}
-                    actions
-                  </span>
+                  <span className="fr-text--xs">{detail.actionCount} actions</span>
                 </div>
               </td>
               <td>
@@ -71,7 +57,9 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               <td>
                 <span className="fr-text--sm">
                   {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
-                  {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0)).orElse(MontantPositif.Zero).format()} €`}
+                  {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0))
+                    .orElse(MontantPositif.Zero)
+                    .format()} €`}
                 </span>
               </td>
               <td>
@@ -91,10 +79,7 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               </td>
               <td>
                 <div style={{ textAlign: 'right' }}>
-                  <Link
-                    className="fr-btn fr-btn--secondary"
-                    href={`/gouvernance/${detail.departementCode}`}
-                  >
+                  <Link className="fr-btn fr-btn--secondary" href={`/gouvernance/${detail.departementCode}`}>
                     Gouvernance
                   </Link>
                 </div>
@@ -102,7 +87,6 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
             </tr>
           )
         })}
-
       </Table>
     </section>
   )
@@ -123,4 +107,3 @@ type GouvernanceDetails = {
   membreCount: number
   montantEngager: Array<number>
 }
-

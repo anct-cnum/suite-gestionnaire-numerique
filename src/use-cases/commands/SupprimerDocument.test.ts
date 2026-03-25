@@ -40,7 +40,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     expect(result).toBe('OK')
   })
 
-  it('quand un document est supprimé par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
+  it("quand un document est supprimé par un gestionnaire qui n'a pas ce droit, alors une erreur est renvoyée", async () => {
     // GIVEN
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
@@ -49,7 +49,11 @@ describe('supprimer un document d‘une feuille de route', () => {
     )
 
     // WHEN
-    const result = await supprimerDocument.handle({ date: epochTime.toISOString(), uidEditeur: 'utilisateurUsurpateur', uidFeuilleDeRoute })
+    const result = await supprimerDocument.handle({
+      date: epochTime.toISOString(),
+      uidEditeur: 'utilisateurUsurpateur',
+      uidFeuilleDeRoute,
+    })
 
     // THEN
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()
@@ -90,7 +94,9 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' }))
+    return Promise.resolve(
+      utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' })
+    )
   }
 }
 

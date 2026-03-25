@@ -1,7 +1,4 @@
-import {
-  createDefaultStructureViewModel,
-  createStructureViewModelWithMinimalData,
-} from './StructureTestData'
+import { createDefaultStructureViewModel, createStructureViewModelWithMinimalData } from './StructureTestData'
 import Structure from '@/components/Structure/Structure'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 

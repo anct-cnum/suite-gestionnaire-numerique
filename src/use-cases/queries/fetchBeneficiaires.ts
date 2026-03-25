@@ -30,13 +30,13 @@ export async function fetchBeneficiairesEtAccompagnements(
     // Construire le filtre selon les paramètres disponibles
     if (periode !== undefined || codeDepartement !== undefined) {
       filters = {
-        ...periode !== undefined && {
+        ...(periode !== undefined && {
           au: periode.jusqua.toISOString().split('T')[0],
           du: periode.depuis.toISOString().split('T')[0],
-        },
-        ...codeDepartement !== undefined && {
+        }),
+        ...(codeDepartement !== undefined && {
           departements: [codeDepartement],
-        },
+        }),
       }
     }
     // Si aucun paramètre, filters reste undefined = France entière sans filtre

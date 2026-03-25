@@ -14,50 +14,30 @@ export default function TimeTable(props: TimeTableProps): null | ReactElement {
         <tbody>
           {daysOfWeek.map(([dayLabel, dayIndex]) => (
             <tr key={dayLabel}>
-              <td className="fr-text--sm fr-text--bold fr-pr-3w">
-                {dayLabel}
-              </td>
+              <td className="fr-text--sm fr-text--bold fr-pr-3w">{dayLabel}</td>
               {weekOpeningHours[dayIndex].length === 0 && (
                 <>
-                  <td className="fr-text--sm fr-text-mention--grey">
-                    Fermé
-                  </td>
-                  <td className="fr-text--sm fr-px-2w">
-                    /
-                  </td>
-                  <td className="fr-text--sm fr-text-mention--grey">
-                    Fermé
-                  </td>
+                  <td className="fr-text--sm fr-text-mention--grey">Fermé</td>
+                  <td className="fr-text--sm fr-px-2w">/</td>
+                  <td className="fr-text--sm fr-text-mention--grey">Fermé</td>
                 </>
               )}
               {weekOpeningHours[dayIndex].length === 1 && (
                 <>
                   {weekOpeningHours[dayIndex][0].startAM ? (
                     <td className="fr-text--sm">
-                      {weekOpeningHours[dayIndex][0].start.replace(':', 'h')}
-                      {' '}
-                      –
-                      {' '}
+                      {weekOpeningHours[dayIndex][0].start.replace(':', 'h')} –{' '}
                       {weekOpeningHours[dayIndex][0].end.replace(':', 'h')}
                     </td>
                   ) : (
-                    <td className="fr-text--sm fr-text-mention--grey">
-                      Fermé
-                    </td>
+                    <td className="fr-text--sm fr-text-mention--grey">Fermé</td>
                   )}
-                  <td className="fr-text--sm fr-px-2w">
-                    /
-                  </td>
+                  <td className="fr-text--sm fr-px-2w">/</td>
                   {weekOpeningHours[dayIndex][0].startAM ? (
-                    <td className="fr-text--sm fr-text-mention--grey">
-                      Fermé
-                    </td>
+                    <td className="fr-text--sm fr-text-mention--grey">Fermé</td>
                   ) : (
                     <td className="fr-text--sm">
-                      {weekOpeningHours[dayIndex][0].start.replace(':', 'h')}
-                      {' '}
-                      –
-                      {' '}
+                      {weekOpeningHours[dayIndex][0].start.replace(':', 'h')} –{' '}
                       {weekOpeningHours[dayIndex][0].end.replace(':', 'h')}
                     </td>
                   )}
@@ -66,16 +46,9 @@ export default function TimeTable(props: TimeTableProps): null | ReactElement {
               {weekOpeningHours[dayIndex].length > 1 &&
                 weekOpeningHours[dayIndex].map((period, index) => (
                   <Fragment key={`${period.start}-${period.end}`}>
-                    {index > 0 && (
-                      <td className="fr-text--sm fr-px-2w">
-                        /
-                      </td>
-                    )}
+                    {index > 0 && <td className="fr-text--sm fr-px-2w">/</td>}
                     <td className="fr-text--sm">
-                      {period.start.replace(':', 'h')}
-                      {' '}
-                      –
-                      {period.end.replace(':', 'h')}
+                      {period.start.replace(':', 'h')} –{period.end.replace(':', 'h')}
                     </td>
                   </Fragment>
                 ))}
@@ -83,11 +56,7 @@ export default function TimeTable(props: TimeTableProps): null | ReactElement {
           ))}
         </tbody>
       </table>
-      {comment !== undefined && comment !== '' && (
-        <p className="fr-text--xs fr-text-mention--grey">
-          {comment}
-        </p>
-      )}
+      {comment !== undefined && comment !== '' && <p className="fr-text--xs fr-text-mention--grey">{comment}</p>}
     </>
   )
 }

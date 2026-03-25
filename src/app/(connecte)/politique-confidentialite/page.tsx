@@ -9,7 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function PolitiqueConfidentialiteController(): ReactElement {
-  return (
-    <PolitiqueConfidentialite />
-  )
+  return <PolitiqueConfidentialite />
 }

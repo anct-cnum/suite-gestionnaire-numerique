@@ -14,29 +14,16 @@ export default function ConfirmationModal({
   title,
 }: Props): ReactElement {
   return (
-    <Modal
-      close={onCancel}
-      concealingBackdrop={true}
-      id={id}
-      isOpen={isOpen}
-      labelId={`${id}-title`}
-    >
+    <Modal close={onCancel} concealingBackdrop={true} id={id} isOpen={isOpen} labelId={`${id}-title`}>
       <div className="fr-modal__content">
-        <h2
-          className="fr-modal__title"
-          id={`${id}-title`}
-        >
+        <h2 className="fr-modal__title" id={`${id}-title`}>
           {title}
         </h2>
         {children}
       </div>
       <div className="fr-modal__footer">
         <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-sm">
-          <button
-            className="fr-btn fr-btn--secondary"
-            onClick={onCancel}
-            type="button"
-          >
+          <button className="fr-btn fr-btn--secondary" onClick={onCancel} type="button">
             {cancelLabel}
           </button>
           <button

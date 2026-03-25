@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { MettreAJourDateDeDerniereConnexion } from './MettreAJourDateDeDerniereConnexion'
-import {
-  GetUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime, invalidDate } from '@/shared/testHelper'
@@ -20,10 +17,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     const uidUtilisateurCourant = 'fooId'
     const date = epochTime
     const repository = new UtilisateurRepositorySpy()
-    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(
-      repository,
-      date
-    )
+    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, date)
 
     // WHEN
     const result = await mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })
@@ -46,10 +40,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     // GIVEN
     const uidUtilisateurCourant = 'fooId'
     const repository = new UtilisateurRepositorySpy()
-    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(
-      repository,
-      invalidDate
-    )
+    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, invalidDate)
 
     // WHEN
     const asyncResult = mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })

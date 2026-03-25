@@ -78,17 +78,19 @@ export function renderComponent(
   const gouvernanceViewModelDefaultValue: GouvernanceViewModel = gouvernanceViewModelFactory()
 
   return render(
-    <clientContext.Provider value={{
-      ...clientContextProviderDefaultValue,
-      ...clientContextProviderValueOverride,
-    }}
-    >
-      <gouvernanceContext.Provider value={{
-        gouvernanceViewModel: {
-          ...gouvernanceViewModelDefaultValue,
-          ...gouvernanceViewModelOverride,
-        },
+    <clientContext.Provider
+      value={{
+        ...clientContextProviderDefaultValue,
+        ...clientContextProviderValueOverride,
       }}
+    >
+      <gouvernanceContext.Provider
+        value={{
+          gouvernanceViewModel: {
+            ...gouvernanceViewModelDefaultValue,
+            ...gouvernanceViewModelOverride,
+          },
+        }}
       >
         <ToastContainer aria-label="Notifications" />
         {children}

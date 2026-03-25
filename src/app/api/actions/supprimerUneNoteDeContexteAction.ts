@@ -10,9 +10,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUneNoteDeContexte } from '@/use-cases/commands/SupprimerUneNoteDeContexte'
 
-export async function supprimerUneNoteDeContexteAction(
-  actionParam: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function supprimerUneNoteDeContexteAction(actionParam: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParam)
 
   if (validationResult.error) {

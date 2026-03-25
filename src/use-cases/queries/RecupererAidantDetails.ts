@@ -1,5 +1,8 @@
 export interface AidantDetailsLoader {
-  findById(id: string, graphiquePeriode?: 'journalier' | 'mensuel'): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel>
+  findById(
+    id: string,
+    graphiquePeriode?: 'journalier' | 'mensuel'
+  ): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel>
 }
 
 export type AidantDetailsReadModel = Readonly<{

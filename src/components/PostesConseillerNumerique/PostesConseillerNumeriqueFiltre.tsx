@@ -28,9 +28,7 @@ export default function PostesConseillerNumeriqueFiltre({
   const [isBonificationSelected, setIsBonificationSelected] = useState(currentFilters.bonification)
   const [selectedTypesPoste, setSelectedTypesPoste] = useState(currentFilters.typesPoste)
   const [selectedConventions, setSelectedConventions] = useState(currentFilters.conventions)
-  const [selectedTypesEmployeur, setSelectedTypesEmployeur] = useState(
-    currentFilters.typesEmployeur
-  )
+  const [selectedTypesEmployeur, setSelectedTypesEmployeur] = useState(currentFilters.typesEmployeur)
 
   const statutSelectId = useId()
   const bonificationToggleId = useId()
@@ -138,10 +136,7 @@ export default function PostesConseillerNumeriqueFiltre({
     <div>
       {utilisateurRole === 'Administrateur dispositif' ? (
         <>
-          <FiltrerParZonesGeographiques
-            ref={ref}
-            setZoneGeographique={handleZoneGeographiqueChange}
-          />
+          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
           <hr className="fr-hr" />
         </>
       ) : null}

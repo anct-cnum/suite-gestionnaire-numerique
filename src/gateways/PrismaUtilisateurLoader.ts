@@ -3,7 +3,10 @@ import { Prisma } from '@prisma/client'
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
-import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import {
+  MesUtilisateursLoader,
+  UtilisateursCourantsEtTotalReadModel,
+} from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
@@ -255,20 +258,24 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 
     // Pour chaque mot, il doit matcher dans au moins un des champs (nom, prenom, email)
     const conditionsMots = mots
-      .map((_, index) => `(
+      .map(
+        (_, index) => `(
         public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))) > 0.4
         OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))) > 0.4
         OR public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.email_de_contact))) > 0.4
-      )`)
+      )`
+      )
       .join(' AND ')
 
     // Score = meilleure similarité parmi les 3 champs pour chaque mot, puis moyenne
     const scoreCalcul = mots
-      .map((_, index) => `GREATEST(
+      .map(
+        (_, index) => `GREATEST(
         public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.nom))),
         public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.prenom))),
         public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(u.email_de_contact)))
-      )`)
+      )`
+      )
       .join(' + ')
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
 
@@ -280,7 +287,9 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       ORDER BY ${scoreMoyen} DESC, u.nom ASC
     `
 
-    interface RawResult { sso_id: string }
+    interface RawResult {
+      sso_id: string
+    }
     const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...mots)
 
     return results.map((row) => row.sso_id)
@@ -300,9 +309,11 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 }
 
 type UtilisateurAvecMembresRecord = {
-  relationStructure: ({
-    membres: ReadonlyArray<{ gouvernanceDepartementCode: string }>
-  } & UtilisateurEtSesRelationsRecord['relationStructure']) | null
+  relationStructure:
+    | ({
+        membres: ReadonlyArray<{ gouvernanceDepartementCode: string }>
+      } & UtilisateurEtSesRelationsRecord['relationStructure'])
+    | null
 } & Omit<UtilisateurEtSesRelationsRecord, 'relationStructure'>
 
 function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisateurReadModel {
@@ -322,9 +333,10 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
   })()
 
   // Pour un gestionnaire de structure, récupérer le code département depuis les membres de gouvernance
-  const departementCode = role.nom === 'Gestionnaire structure'
-    ? utilisateurRecord.relationStructure?.membres[0]?.gouvernanceDepartementCode ?? null
-    : utilisateurRecord.departementCode
+  const departementCode =
+    role.nom === 'Gestionnaire structure'
+      ? (utilisateurRecord.relationStructure?.membres[0]?.gouvernanceDepartementCode ?? null)
+      : utilisateurRecord.departementCode
 
   return {
     departementCode,
@@ -352,4 +364,3 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
     uid: utilisateurRecord.ssoId,
   }
 }
-

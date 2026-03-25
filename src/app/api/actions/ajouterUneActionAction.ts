@@ -15,9 +15,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUneAction } from '@/use-cases/commands/AjouterUneAction'
 
-export async function ajouterUneActionAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function ajouterUneActionAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
   if (!validationResult.success) {
     return validationResult.error.issues.map(({ message }: { message: string }) => message)
@@ -49,14 +47,18 @@ export async function ajouterUneActionAction(
     contexte: actionCommand.contexte,
     dateDeDebut: actionCommand.anneeDeDebut,
     dateDeFin: actionCommand.anneeDeFin ?? '',
-    demandesDeSubvention: actionCommand.demandeDeSubvention ? [{
-      beneficiaires: [],
-      enveloppeFinancementId: actionCommand.demandeDeSubvention.enveloppeId,
-      statut: 'deposee',
-      subventionDemandee: actionCommand.demandeDeSubvention.total,
-      subventionEtp: actionCommand.demandeDeSubvention.montantRh,
-      subventionPrestation: actionCommand.demandeDeSubvention.montantPrestation,
-    }] : undefined,
+    demandesDeSubvention: actionCommand.demandeDeSubvention
+      ? [
+          {
+            beneficiaires: [],
+            enveloppeFinancementId: actionCommand.demandeDeSubvention.enveloppeId,
+            statut: 'deposee',
+            subventionDemandee: actionCommand.demandeDeSubvention.total,
+            subventionEtp: actionCommand.demandeDeSubvention.montantRh,
+            subventionPrestation: actionCommand.demandeDeSubvention.montantPrestation,
+          },
+        ]
+      : undefined,
     description: actionCommand.description,
     destinataires: actionCommand.destinataires.map((destinataire) => destinataire),
     nom: actionCommand.nom,

@@ -29,16 +29,15 @@ export default function ModifierNoteDeContexte({
       <form
         aria-labelledby={labelId}
         method="dialog"
-        onSubmit={(event) => { void modifierUneNoteDeContexte(event) }}
+        onSubmit={(event) => {
+          void modifierUneNoteDeContexte(event)
+        }}
       >
-        <DrawerTitle id={labelId}>
-          {label}
-        </DrawerTitle>
+        <DrawerTitle id={labelId}>{label}</DrawerTitle>
         <div className="fr-mb-4w">
           <div className="fr-text--sm color-grey">
-            Précisez, au sein d‘une note qualitative,
-            les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez,
-            ou tout autre élément que vous souhaitez porter à notre connaissance
+            Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés
+            que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance
           </div>
         </div>
         <TextEditor
@@ -47,31 +46,22 @@ export default function ModifierNoteDeContexte({
           height={380}
           onChange={gererLeChangementDeContenu}
         />
-        {peutGerer ?
+        {peutGerer ? (
           <ul className="fr-btns-group fr-mt-2w">
             <li>
-              <SubmitButton
-                ariaControls={id}
-                isDisabled={isDisabled}
-              >
+              <SubmitButton ariaControls={id} isDisabled={isDisabled}>
                 {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
               </SubmitButton>
             </li>
             <li>
-              <button
-                className="fr-btn red-button"
-                onClick={viderLEditeur}
-                type="button"
-              >
+              <button className="fr-btn red-button" onClick={viderLEditeur} type="button">
                 Effacer
               </button>
             </li>
-          </ul> 
-          : null}
+          </ul>
+        ) : null}
       </form>
-      <p className="fr-text--xs center">
-        {sousTitre}
-      </p>
+      <p className="fr-text--xs center">{sousTitre}</p>
     </>
   )
 

@@ -46,8 +46,6 @@ describe('rechercherUneEntreprise', () => {
     const rechercherUneEntreprise = new RechercherUneEntreprise(mockSireneLoader)
 
     // When & Then
-    await expect(rechercherUneEntreprise.handle({ siret: '12345678901234' })).rejects.toThrow(
-      'SIRET inexistant'
-    )
+    await expect(rechercherUneEntreprise.handle({ siret: '12345678901234' })).rejects.toThrow('SIRET inexistant')
   })
 })

@@ -14,10 +14,7 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 
-export default function GestionMembres({
-  membresViewModel,
-  peutGererGouvernance,
-}: Props): ReactElement {
+export default function GestionMembres({ membresViewModel, peutGererGouvernance }: Props): ReactElement {
   const selectRoleId = useId()
   const selectTypologieId = useId()
 
@@ -63,9 +60,7 @@ export default function GestionMembres({
     })
   }, [membresViewModel.membres, statutInitial])
 
-  function getMenuMembreCoPorteur(
-    membre: MembreViewModel
-  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+  function getMenuMembreCoPorteur(membre: MembreViewModel): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-user-line"
@@ -86,9 +81,7 @@ export default function GestionMembres({
     ]
   }
 
-  function getMenuMembreNonCoPorteur(
-    membre: MembreViewModel
-  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+  function getMenuMembreNonCoPorteur(membre: MembreViewModel): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-user-star-line"
@@ -109,9 +102,7 @@ export default function GestionMembres({
     ]
   }
 
-  function getMenuCandidat(
-    membre: MembreViewModel
-  ): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+  function getMenuCandidat(membre: MembreViewModel): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
       <MenuItem
         iconClass="fr-icon-add-line"
@@ -208,23 +199,21 @@ export default function GestionMembres({
       </div>
       <div className="fr-tabs fr-tabs__list fr-pb-0">
         <ul className="fr-nav__list">
-          {[['confirme', 'Membres'] as const, ['candidat', 'Candidats'] as const].map(
-            ([statut, libelle]) => (
-              <li className="fr-nav__item" key={statut}>
-                <button
-                  aria-current={isSelectionne(statut)}
-                  className="fr-nav__link fr-nav__link"
-                  onClick={() => {
-                    setStatut(statut)
-                  }}
-                  role="tab"
-                  type="button"
-                >
-                  {libelle} ·{membresByStatut[statut].length}
-                </button>
-              </li>
-            )
-          )}
+          {[['confirme', 'Membres'] as const, ['candidat', 'Candidats'] as const].map(([statut, libelle]) => (
+            <li className="fr-nav__item" key={statut}>
+              <button
+                aria-current={isSelectionne(statut)}
+                className="fr-nav__link fr-nav__link"
+                onClick={() => {
+                  setStatut(statut)
+                }}
+                role="tab"
+                type="button"
+              >
+                {libelle} ·{membresByStatut[statut].length}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
       <div className="fr-grid-row space-between fr-mt-4w fr-grid-row--middle">
@@ -318,9 +307,7 @@ export default function GestionMembres({
               <button
                 className="fr-link fr-text--sm"
                 onClick={() => {
-                  router.push(
-                    membre.structureId === undefined ? membre.link : `${membre.link}#contact`
-                  )
+                  router.push(membre.structureId === undefined ? membre.link : `${membre.link}#contact`)
                 }}
                 type="button"
               >
@@ -370,12 +357,12 @@ export default function GestionMembres({
         title={`Retirer ${memberToDelete?.nom ?? ''} des membres de la gouvernance ?`}
       >
         <p>
-          En cliquant sur confirmer, tous les utilisateurs de la structure perdront leur accès à
-          leur espace de gestion sur Mon Inclusion Numérique.
+          En cliquant sur confirmer, tous les utilisateurs de la structure perdront leur accès à leur espace de gestion
+          sur Mon Inclusion Numérique.
         </p>
         <p>
-          Si vous souhaitez modifier le contact référent de la structure, merci de vous rapprocher
-          du support via l&apos;adresse électronique :{' '}
+          Si vous souhaitez modifier le contact référent de la structure, merci de vous rapprocher du support via
+          l&apos;adresse électronique :{' '}
           <a href="mailto:moninclusionnumerique@anct.gouv.fr">moninclusionnumerique@anct.gouv.fr</a>
         </p>
       </ConfirmationModal>
@@ -398,8 +385,8 @@ export default function GestionMembres({
         title={`Retirer ${memberToRemoveCoPorteur?.nom ?? ''} des membres coporteur de la gouvernance ?`}
       >
         <p>
-          En cliquant sur confirmer, les utilisateurs de la structure ne pourront plus éditer les
-          données de votre gouvernance.
+          En cliquant sur confirmer, les utilisateurs de la structure ne pourront plus éditer les données de votre
+          gouvernance.
         </p>
       </ConfirmationModal>
     </>
@@ -441,12 +428,8 @@ export default function GestionMembres({
     const membres = membresByStatut[membresView.statutSelectionne]
     return membres
       .values()
-      .filter(({ roles }) =>
-        role === toutRole ? true : roles.map(({ nom }) => nom).includes(role)
-      )
-      .filter((membre) =>
-        typologie === touteTypologie ? true : typologie === membre.typologie.simple.value
-      )
+      .filter(({ roles }) => (role === toutRole ? true : roles.map(({ nom }) => nom).includes(role)))
+      .filter((membre) => (typologie === touteTypologie ? true : typologie === membre.typologie.simple.value))
       .toArray()
   }
 

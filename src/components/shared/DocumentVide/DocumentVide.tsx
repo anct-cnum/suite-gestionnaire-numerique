@@ -2,11 +2,7 @@ import { ReactElement } from 'react'
 
 export default function DocumentVide(): ReactElement {
   return (
-    <svg
-      aria-hidden="true"
-      height="107"
-      width="76"
-    >
+    <svg aria-hidden="true" height="107" width="76">
       <path
         d="M0 4C0 1.79086 1.79086 0 4 0H72C74.2091 0 76 1.79086 76 4V103C76 105.209 74.2091 107 72 107H4C1.79086 107 0 105.209 0 103V4Z"
         fill="#E8EDFF"

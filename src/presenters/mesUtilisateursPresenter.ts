@@ -15,11 +15,10 @@ export function mesUtilisateursPresenter(
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
       const [statut, couleur, picto] = monUtilisateur.isActive
-        ? ['Activé', 'success', monUtilisateur.role.categorie] as const
-        : ['En attente', 'grey-main', inactif] as const
-      const [color, isDisabled] = uid === monUtilisateur.uid
-        ? ['color-grey', false] as const
-        : ['color-red', true] as const
+        ? (['Activé', 'success', monUtilisateur.role.categorie] as const)
+        : (['En attente', 'grey-main', inactif] as const)
+      const [color, isDisabled] =
+        uid === monUtilisateur.uid ? (['color-grey', false] as const) : (['color-red', true] as const)
 
       return {
         deleteButton: {
@@ -52,19 +51,20 @@ export type MesUtilisateursViewModel = Readonly<{
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>
 
-export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
-  deleteButton: Readonly<{
-    color: 'color-grey' | 'color-red'
-    isDisabled: boolean
+export type MonUtilisateur = DetailsUtilisateurViewModel &
+  Readonly<{
+    deleteButton: Readonly<{
+      color: 'color-grey' | 'color-red'
+      isDisabled: boolean
+    }>
+    isActif: boolean
+    picto: string
+    statut: Readonly<{
+      couleur: 'grey-main' | 'success'
+      libelle: 'Activé' | 'En attente'
+    }>
+    uid: string
   }>
-  isActif: boolean
-  picto: string
-  statut: Readonly<{
-    couleur: 'grey-main' | 'success'
-    libelle: 'Activé' | 'En attente'
-  }>
-  uid: string
-}>
 
 export type DetailsUtilisateurViewModel = Readonly<{
   derniereConnexion: string
@@ -76,14 +76,19 @@ export type DetailsUtilisateurViewModel = Readonly<{
   telephone: string
 }>
 
-export type RolesAvecStructure = Readonly<Record<string, {
-  label: string
-  options: ReadonlyArray<{
-    label: string
-    value: string
-  }>
-  placeholder: string
-}>>
+export type RolesAvecStructure = Readonly<
+  Record<
+    string,
+    {
+      label: string
+      options: ReadonlyArray<{
+        label: string
+        value: string
+      }>
+      placeholder: string
+    }
+  >
+>
 
 const inactif = 'inactif'
 

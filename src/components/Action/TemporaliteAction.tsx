@@ -6,9 +6,7 @@ import { LabelValue } from '@/presenters/shared/labels'
 
 export default function TemporaliteAction({ action, isReadOnly = false }: Props): ReactElement {
   const [temporalite, setTemporalite] = useState<temporalite>(
-    action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined
-      ? 'annuelle'
-      : 'pluriannuelle'
+    action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined ? 'annuelle' : 'pluriannuelle'
   )
 
   let initAnneeDebut: string

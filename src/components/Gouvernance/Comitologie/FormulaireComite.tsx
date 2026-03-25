@@ -16,11 +16,7 @@ export default function FormulaireComite({
   validerFormulaire,
 }: Props): ReactElement {
   return (
-    <form
-      aria-label={label}
-      method="dialog"
-      onSubmit={validerFormulaire}
-    >
+    <form aria-label={label} method="dialog" onSubmit={validerFormulaire}>
       <DrawerTitle id={labelId}>
         <TitleIcon icon="calendar-event-line" />
         <br />
@@ -29,65 +25,36 @@ export default function FormulaireComite({
       <p className="fr-text--sm color-grey">
         Renseignez les comités prévus et la fréquence à laquelle ils se réunissent
       </p>
-      <SegmentedControl
-        disabled={!(peutGerer ?? false)}
-        name="type"
-        options={comite.types}
-      >
+      <SegmentedControl disabled={!(peutGerer ?? false)} name="type" options={comite.types}>
         <p className="fr-label fr-mb-0">
-          Quel type de comité allez-vous organiser ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+          Quel type de comité allez-vous organiser ? <span className="color-red">*</span>
         </p>
       </SegmentedControl>
-      <SegmentedControl
-        disabled={!(peutGerer ?? false)}
-        name="frequence"
-        options={comite.frequences}
-      >
+      <SegmentedControl disabled={!(peutGerer ?? false)} name="frequence" options={comite.frequences}>
         <p className="fr-label fr-mb-0">
-          À quelle fréquence se réunit le comité ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+          À quelle fréquence se réunit le comité ? <span className="color-red">*</span>
         </p>
       </SegmentedControl>
       <div className="fr-col-6 fr-mb-3w">
-        <Datepicker
-          defaultValue={comite.date}
-          disable={!(peutGerer ?? false)}
-          name="date"
-        >
+        <Datepicker defaultValue={comite.date} disable={!(peutGerer ?? false)} name="date">
           Date du prochain comité
         </Datepicker>
       </div>
-      <TextArea
-        defaultValue={comite.commentaire}
-        disable={!(peutGerer ?? false)}
-        maxLength={500}
-        rows={9}
-      >
+      <TextArea defaultValue={comite.commentaire} disable={!(peutGerer ?? false)} maxLength={500} rows={9}>
         Description
       </TextArea>
-      <input
-        name="uid"
-        type="hidden"
-        value={comite.uid}
-      />
-      <div className="fr-btns-group">
-        {children}
-      </div>
+      <input name="uid" type="hidden" value={comite.uid} />
+      <div className="fr-btns-group">{children}</div>
     </form>
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  comite: ComiteViewModel
-  label: string
-  labelId: string
-  peutGerer?: boolean
-  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    comite: ComiteViewModel
+    label: string
+    labelId: string
+    peutGerer?: boolean
+    validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
+  }>
+>

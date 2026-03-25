@@ -9,7 +9,6 @@ export interface RecupererTableauDeBordGouvernanceAdminLoader {
 }
 
 export type GouvernanceReadModel = Readonly<{
-
   feuilleDeRoute: Readonly<{
     action: number
     total: number
@@ -27,4 +26,4 @@ export type GouvernanceAdminReadModel = Readonly<{
   }>
   nombreGouvernances: number
   nombreGouvernancesCoPortees: number
-}> 
+}>

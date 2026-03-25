@@ -27,13 +27,9 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
       })
 
       // Compter seulement les feuilles de route déposées (avec au moins 1 demande de subvention)
-      const feuillesDeRouteDeposees = feuillesDeRoute.filter(
-        (feuilleDeRoute) => {
-          return feuilleDeRoute.action.some(
-            (action) => action.demandesDeSubvention.length > 0
-          )
-        }
-      )
+      const feuillesDeRouteDeposees = feuillesDeRoute.filter((feuilleDeRoute) => {
+        return feuilleDeRoute.action.some((action) => action.demandesDeSubvention.length > 0)
+      })
 
       // Regrouper les feuilles de route déposées par périmètre géographique
       const feuillesParPerimetre = new Map<string, number>()

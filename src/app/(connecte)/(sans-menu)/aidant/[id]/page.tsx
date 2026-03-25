@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Détails aidants et médiateurs numériques',
 }
 
-async function AidantPage({ params, searchParams }: Props) : Promise<ReactElement>{
+async function AidantPage({ params, searchParams }: Props): Promise<ReactElement> {
   const { id } = await params
   const resolvedSearchParams = await searchParams
 
@@ -29,9 +29,7 @@ async function AidantPage({ params, searchParams }: Props) : Promise<ReactElemen
     return (
       <div className="fr-container fr-py-4w">
         <div className="fr-alert fr-alert--error">
-          <p>
-            {aidantResult.message}
-          </p>
+          <p>{aidantResult.message}</p>
         </div>
       </div>
     )
@@ -39,16 +37,18 @@ async function AidantPage({ params, searchParams }: Props) : Promise<ReactElemen
 
   // Transformer les données via le presenteur
   const presentedData = presentAidantDetails(aidantResult, new Date())
-  return (
-    <AidantDetails data={presentedData} />
-  )
+  return <AidantDetails data={presentedData} />
 }
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    id: string
-  }>>
-  searchParams: Promise<Readonly<{
-    periode?: string
-  }>>
+  params: Promise<
+    Readonly<{
+      id: string
+    }>
+  >
+  searchParams: Promise<
+    Readonly<{
+      periode?: string
+    }>
+  >
 }>
 export default AidantPage
