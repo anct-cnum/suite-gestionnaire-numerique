@@ -7,7 +7,7 @@
     "bash:production": "scalingo -a mon-inclusion-numerique run --size XL bash",
     "build": "./build.sh",
     "postbuild": "npm prune --omit=dev",
-    "build:dev": "next build",
+    "build:dev": "NODE_OPTIONS=--stack-size=8192 next build",
     "check": "pnpm dedupe --check && pnpm deadcode && pnpm typecheck && pnpm prisma format --check && pnpm format:check && pnpm lint:css && pnpm lint:ts && pnpm test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
     "check:shai-hulud": "bash scripts/check-hulud.sh pnpm-lock.yaml",
