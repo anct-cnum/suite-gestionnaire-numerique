@@ -157,6 +157,7 @@ export default [
           'newlines-between': 'always',
         },
       ],
+      'jsx-a11y/label-has-associated-control': 'off',
       'jsx-a11y/no-interactive-element-to-noninteractive-role': 'error',
       'jsx-a11y/no-aria-hidden-on-focusable': 'error',
       'jsx-a11y/lang': 'error',

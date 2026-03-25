@@ -208,9 +208,9 @@ export function FormulaireAction({
           >
             Nom de l‘action <span className="color-red">*</span>
           </TextInput>
-          <p className="fr-label">
-            Contexte de l’action <span className="color-red">*</span>
-          </p>
+          <label className="fr-label">
+            Contexte de l‘action <span className="color-red">*</span>
+          </label>
           <p className="color-grey fr-mb-1w">
             Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
           </p>
@@ -221,9 +221,9 @@ export function FormulaireAction({
             onChange={gererChangementContexte}
             readOnly={isReadOnly}
           />
-          <p className="fr-label fr-mt-3w">
-            Description de l’action <span className="color-red">*</span>
-          </p>
+          <label className="fr-label fr-mt-3w">
+            Description de l‘action <span className="color-red">*</span>
+          </label>
           <p className="color-grey fr-mb-1w">
             Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
           </p>
