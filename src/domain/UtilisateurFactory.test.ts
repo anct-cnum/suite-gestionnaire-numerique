@@ -159,7 +159,7 @@ describe('utilisateur factory', () => {
     const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
-    expect(lazyUtilisateur).toThrow('dateDeDerniereConnexionInvalide')
+    expect(lazyUtilisateur).toThrowError('dateDeDerniereConnexionInvalide')
   })
 
   it('la date d‘invitation doit être une date valide', () => {
@@ -178,6 +178,6 @@ describe('utilisateur factory', () => {
     const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
-    expect(lazyUtilisateur).toThrow('dateDInvitationInvalide')
+    expect(lazyUtilisateur).toThrowError('dateDInvitationInvalide')
   })
 })

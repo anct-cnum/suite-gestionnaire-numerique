@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function SubmitButton({ ariaControls = undefined, children, className = '', isDisabled = false, title = undefined }: Props): ReactElement {
+export default function SubmitButton({ ariaControls, children, className = '', isDisabled = false, title }: Props): ReactElement {
   return (
     <button
       aria-controls={ariaControls}

@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import { ComponentType, FormEvent, ReactElement, useContext, useMemo, useState } from 'react'
+import { ComponentType, ReactElement, SyntheticEvent, useContext, useMemo, useState } from 'react'
 
 import styles from './LieuInclusionDetailsServicesTypeAccompagnement.module.css'
 import { ServiceInclusionNumeriqueData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
@@ -108,7 +108,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     setSelectedThematiques((prev) => prev.filter(thematique => thematique !== thematiqueToRemove))
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
@@ -287,7 +287,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
   return (
     <form
       className="fr-p-4w"
-      onSubmit={handleSubmit}
+      onSubmit={(event) => { void handleSubmit(event) }}
     >
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
         <div className="fr-col fr-col-12 fr-col-md-8">

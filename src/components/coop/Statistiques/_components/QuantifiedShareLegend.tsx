@@ -1,66 +1,80 @@
-import type { QuantifiedShare } from '../types'
+'use client'
+
 import { numberToPercentage, numberToString } from '../utils'
+import classNames from 'classnames'
+import type { QuantifiedShare } from '../types'
 import styles from './QuantifiedShareLegend.module.css'
 
-export function QuantifiedShareLegend({
-  className,
+export const QuantifiedShareLegend = ({
   colors,
-  oneLineLabel = false,
   quantifiedShares,
+  className,
   truncateLabel = false,
+  oneLineLabel = false,
+  tooltipKey,
 }: {
-  readonly className?: string
-  readonly colors: Array<string>
-  readonly oneLineLabel?: boolean
-  readonly quantifiedShares: Array<QuantifiedShare>
-  readonly truncateLabel?: boolean
-}) {
-  return (<div
+  colors: string[]
+  quantifiedShares: QuantifiedShare[]
+  className?: string
+  truncateLabel?: boolean
+  oneLineLabel?: boolean
+  tooltipKey?: string
+}) => (
+  <div
     className={classNames('fr-width-full fr-px-0', styles.container, className)}
-          >
-    {quantifiedShares.map(({ count, label, proportion }, index) => (
-      <div
-        className={styles.row}
-        key={label}
-      >
-        <span
-          aria-hidden
-          style={{
-            backgroundColor: colors[index % colors.length],
-            borderRadius: '50%',
-            display: 'inline-block',
-            flexShrink: 0,
-            height: '10px',
-            width: '10px',
-          }}
-        />
-        <span
-          className={classNames(
-            'fr-text--sm',
-            styles.label,
-            truncateLabel && styles.truncatedLabel,
-            oneLineLabel && styles.oneLineLabel
-          )}
-          title={truncateLabel ? label : undefined}
-        >
-          {label}
-        </span>
-        <span className={classNames('fr-text--sm fr-text--bold', styles.count)}>
-          {numberToString(count ?? 0)}
-        </span>
-        <span
-          className={classNames(
-            'fr-text--sm fr-text--medium fr-text-mention--grey',
-            styles.proportion
-          )}
-        >
-          {numberToPercentage(proportion)}
-        </span>
-      </div>
-    ))}
-          </div>)
-}
+  >
+    {quantifiedShares.map(({ label, count, proportion }, index) => {
+      const showTooltip = (truncateLabel || oneLineLabel) && tooltipKey
 
-function classNames(...classes: Array<boolean | string | undefined>): string {
-  return classes.filter(Boolean).join(' ')
-}
+      return (
+        <div key={label} className={styles.row}>
+          <span
+            className={classNames('ri-circle-fill', styles)}
+            style={{ color: colors[index % colors.length] }}
+            aria-hidden
+          />
+          {showTooltip && (
+            <span
+              className="fr-tooltip fr-placement fr-text--sm fr-p-2v fr-border-radius--8"
+              id={`tooltip-${tooltipKey}-${index}`}
+              style={{ background: 'rgba(30, 27, 57, 0.95)', color: 'white' }}
+              role="tooltip"
+              aria-hidden
+            >
+              {label}
+            </span>
+          )}
+          <span
+            className={classNames(
+              'fr-text--sm',
+              styles.label,
+              truncateLabel && styles.truncatedLabel,
+              oneLineLabel && styles.oneLineLabel,
+            )}
+            aria-describedby={
+              showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined
+            }
+          >
+            {label}
+          </span>
+          <span
+            className={classNames(
+              'fr-text--sm fr-text--bold fr-text--nowrap',
+              styles.count,
+            )}
+          >
+            {numberToString(count ?? 0)}
+          </span>
+          <span
+            className={classNames(
+              'fr-text--sm fr-text--medium fr-text-mention--grey fr-text--nowrap',
+              styles.proportion,
+            )}
+          >
+            {numberToPercentage(proportion)}
+          </span>
+        </div>
+      )
+    })}
+  </div>
+)

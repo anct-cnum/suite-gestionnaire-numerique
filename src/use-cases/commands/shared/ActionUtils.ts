@@ -9,7 +9,7 @@ export function creationDesCoFinancements(
   if (coFinancementsCommand.length > 0) {
     for (const financement of coFinancementsCommand) {
       const coFinancement = CoFinancement.create({
-        montant: Number(financement.montant),
+        montant: financement.montant,
         uid: {
           value: 'identifiantCoFinancementPourLaCreation',
         },

@@ -60,7 +60,7 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
       // Calculer le total unique de bénéficiaires (tous les bénéficiaires uniques)
       const tousLesBeneficiaires = new Set<string>()
       beneficiairesParEnveloppe.forEach(beneficiaires => {
-        beneficiaires.forEach(id => tousLesBeneficiaires.add(id))
+        beneficiaires.forEach(id => { tousLesBeneficiaires.add(id) })
       })
 
       return {

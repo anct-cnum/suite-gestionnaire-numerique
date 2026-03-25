@@ -226,7 +226,7 @@ export default function AccompagnementsEtMediateurs({
               )}
             </div>
             <DownloadButton
-              onClick={handleDownload}
+              onClick={() => { void handleDownload() }}
               title="Accompagnements et Médiateurs"
             />
           </div>

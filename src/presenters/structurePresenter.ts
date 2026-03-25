@@ -76,7 +76,7 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       edition: uneStructureReadModel.identite.edition
         ? formaterEnDateFrancaise(uneStructureReadModel.identite.edition)
         : '-',
-      identifiant: String(uneStructureReadModel.identite.siret ?? ''),
+      identifiant: uneStructureReadModel.identite.siret ?? '',
       nom: uneStructureReadModel.identite.nom,
       region: uneStructureReadModel.identite.region,
       siret: uneStructureReadModel.identite.siret ?? '',

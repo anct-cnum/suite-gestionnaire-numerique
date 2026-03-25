@@ -9,7 +9,7 @@ describe('supprimer un comité action', () => {
   it('quand un comité est supprimé, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

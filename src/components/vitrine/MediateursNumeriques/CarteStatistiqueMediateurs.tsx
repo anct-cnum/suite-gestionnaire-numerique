@@ -6,10 +6,10 @@ export default function CarteStatistiqueMediateurs({
 }: Props): ReactElement {
   return (
     <div
-      className="background-blue-france fr-p-4w fr-mb-1w"
+      className="background-blue-france fr-p-3w fr-mb-1w"
       style={{ flex: 1 }}
     >
-      <div className="fr-h1 fr-m-0">
+      <div className="fr-h2 fr-m-0">
         {nombre}
       </div>
       <div className="font-weight-500">

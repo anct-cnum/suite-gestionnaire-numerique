@@ -35,7 +35,7 @@ describe('utilisateur repository', () => {
       const result = repository.get(uidUtilisateurValue)
 
       // THEN
-      await expect(result).rejects.toThrow('Utilisateur non trouvé')
+      await expect(result).rejects.toThrowError('Utilisateur non trouvé')
     })
 
     it('l’utilisateur est supprimé : erreur', async () => {
@@ -46,7 +46,7 @@ describe('utilisateur repository', () => {
       const result = repository.get(uidUtilisateurValue)
 
       // THEN
-      await expect(result).rejects.toThrow('Utilisateur non trouvé')
+      await expect(result).rejects.toThrowError('Utilisateur non trouvé')
     })
 
     describe('l’utilisateur existe : les données utilisateur sont reçues', () => {

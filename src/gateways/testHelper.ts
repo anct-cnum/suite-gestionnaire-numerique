@@ -161,16 +161,14 @@ export async function creerUneStructure(
       },
     })
 
-    if (!adresse) {
-      adresse = await client.adresse.create({
-        data: {
-          code_insee,
-          code_postal: cp,
-          nom_commune: ville,
-          nom_voie: nom_voie_unique,
-        },
-      })
-    }
+    adresse ??= await client.adresse.create({
+      data: {
+        code_insee,
+        code_postal: cp,
+        nom_commune: ville,
+        nom_voie: nom_voie_unique,
+      },
+    })
 
     adresse_id = adresse.id
   }

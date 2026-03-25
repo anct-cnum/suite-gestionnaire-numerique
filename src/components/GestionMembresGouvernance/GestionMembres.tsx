@@ -94,9 +94,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         iconClass="fr-icon-user-star-line"
         key={`ajout-${membre.uid}`}
         label="Définir comme coporteur"
-        onClick={async () => {
-          await definirUnCoPorteur(membre)
-        }}
+        onClick={() => { void definirUnCoPorteur(membre) }}
       />,
       <MenuItem
         iconClass="fr-icon-delete-line"
@@ -115,9 +113,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         iconClass="fr-icon-add-line"
         key={`ajout-${membre.uid}`}
         label="Ajouter à la gouvernance"
-        onClick={async () => {
-          await ajouterUnMembre(membre)
-        }}
+        onClick={() => { void ajouterUnMembre(membre) }}
       />,
       <MenuItem
         iconClass="fr-icon-delete-line"
@@ -406,10 +402,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         onCancel={() => {
           setMemberToDelete(undefined)
         }}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (memberToDelete) {
-            await supprimerUnMembreOuCandidat(memberToDelete)
-            setMemberToDelete(undefined)
+            void supprimerUnMembreOuCandidat(memberToDelete).then(() => {
+              setMemberToDelete(undefined)
+            })
           }
         }}
         title={`Retirer ${memberToDelete?.nom ?? ''} des membres de la gouvernance ?`}
@@ -436,10 +433,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         onCancel={() => {
           setMemberToRemoveCoPorteur(undefined)
         }}
-        onConfirm={async () => {
+        onConfirm={() => {
           if (memberToRemoveCoPorteur) {
-            await retirerUnCoPorteur(memberToRemoveCoPorteur)
-            setMemberToRemoveCoPorteur(undefined)
+            void retirerUnCoPorteur(memberToRemoveCoPorteur).then(() => {
+              setMemberToRemoveCoPorteur(undefined)
+            })
           }
         }}
         title={`Retirer ${memberToRemoveCoPorteur?.nom ?? ''} des membres coporteur de la gouvernance ?`}

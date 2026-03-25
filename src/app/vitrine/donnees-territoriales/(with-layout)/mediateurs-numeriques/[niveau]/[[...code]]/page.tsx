@@ -67,20 +67,20 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
 
   return (
     <div
-      className="fr-pr-md-10w"
       style={{ display: 'flex', flexDirection: 'column' }}
     >
       <div className="fr-mb-4w">
-        <h1 className="fr-h3 color-blue-france fr-mb-1w">
+        <h2 className="fr-h2 color-blue-france fr-mb-0">
           Médiateurs numériques
-        </h1>
+        </h2>
         <div>
-          <p className="fr-m-0 font-weight-500">
+          <p className="fr-m-0 fr-text--sm fr-text--semi-bold fr-text-mention--grey">
             L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
           </p>
         </div>
       </div>
       {renderCartesStatistiques(statistiquesMediateursViewModel)}
+      <hr />
       <AsyncLoaderErrorBoundary
         fallback={
           <div className="fr-py-4w">
@@ -126,7 +126,7 @@ function renderCartesStatistiques(
   }
 
   return (
-    <div className="fr-grid-row fr-grid-row--gutters fr-mb-4w">
+    <div className="fr-grid-row fr-grid-row--gutters fr-mb-3v">
       <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
         <CarteStatistiqueMediateurs
           nombre={viewModel.mediateurs.nombre}

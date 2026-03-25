@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext } from 'react'
+import { ReactElement, SyntheticEvent, useContext } from 'react'
 
 import { handleActionResponse, handleActionSubmit } from './actionUtils'
 import { BaseActionForm } from './BaseActionForm'
@@ -25,7 +25,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
   )
 
   async function creerUneAction(
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
     coFinancements: Array<{

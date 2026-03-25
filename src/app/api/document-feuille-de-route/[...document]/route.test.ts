@@ -82,7 +82,7 @@ describe('route de téléchargement de document', () => {
     const result = GET(req, res)
 
     // THEN
-    await expect(result).rejects.toThrow('Region is missing')
+    await expect(result).rejects.toThrowError('Region is missing')
   })
 
   it('devrait retourner 400 quand le chemin contient un path traversal', async () => {

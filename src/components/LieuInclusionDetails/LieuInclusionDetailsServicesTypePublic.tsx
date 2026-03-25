@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { FormEvent, ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useEffect, useState } from 'react'
 
 import sharedStyles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -158,7 +158,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
     setIsToutPublic(allChecked)
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
@@ -281,7 +281,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
   return (
     <form
       className="fr-p-4w"
-      onSubmit={handleSubmit}
+      onSubmit={(event) => { void handleSubmit(event) }}
     >
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col fr-col-12 fr-col-md-8">

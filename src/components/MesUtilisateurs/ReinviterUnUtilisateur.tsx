@@ -32,7 +32,7 @@ export default function ReinviterUnUtilisateur({
           className="fr-btn fr-btn--secondary"
           data-fr-opened="false"
           disabled={isDisabled}
-          onClick={Reinviter}
+          onClick={() => { void reinviter() }}
           type="button"
         >
           {isDisabled ? 'Envois en cours...' : 'Renvoyer cette invitation'}
@@ -41,7 +41,7 @@ export default function ReinviterUnUtilisateur({
     </div>
   )
 
-  async function Reinviter(): Promise<void> {
+  async function reinviter(): Promise<void> {
     setIsDisabled(true)
     const messages = await reinviterUnUtilisateurAction({
       path: pathname,

@@ -73,6 +73,8 @@ export function statistiquesCoopToMediateursData(
         value: item.value,
       })),
     },
+    structures: [],
+    communes: [],
     totalCounts: {
       accompagnements: {
         collectifs: {

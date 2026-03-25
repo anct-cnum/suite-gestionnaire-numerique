@@ -19,7 +19,7 @@ export default function SentryController(): ReactElement {
 
   return (
     <button
-      onClick={generateError}
+      onClick={() => { void generateError() }}
       type="button"
     >
       Générer une erreur

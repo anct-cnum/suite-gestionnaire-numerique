@@ -168,7 +168,7 @@ describe('prisma utilisateur query', () => {
         async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdInexistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
+      await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
     })
 
     it('quand je cherche un utilisateur qui existe par son ssoId et dont le compte a été supprimé alors je ne le trouve pas', async () => {
@@ -181,7 +181,7 @@ describe('prisma utilisateur query', () => {
         async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
+      await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
     })
   })
 
@@ -200,7 +200,7 @@ describe('prisma utilisateur query', () => {
         .findByUid(nouveauSsoIdProConnect, emailUtilisateur)
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrow('Doit etre mis a jour')
+    await expect(utilisateurReadModel).rejects.toThrowError('Doit etre mis a jour')
   })
 
   it('quand le ssoId n\'existe pas et l\'email fourni ne correspond à aucun utilisateur, alors utilisateur non trouvé', async () => {
@@ -215,7 +215,7 @@ describe('prisma utilisateur query', () => {
         .findByUid(ssoIdInexistant, emailInexistant)
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
+    await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
   })
 
   describe('chercher mes utilisateurs', () => {

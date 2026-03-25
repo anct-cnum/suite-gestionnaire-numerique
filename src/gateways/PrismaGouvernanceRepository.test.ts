@@ -26,7 +26,7 @@ describe('gouvernance repository', () => {
     const gouvernance = new PrismaGouvernanceRepository().get(new GouvernanceUid('3'))
 
     // THEN
-    await expect(gouvernance).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernance).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(gouvernance).rejects.toMatchObject({ code: 'P2025' })
   })
 

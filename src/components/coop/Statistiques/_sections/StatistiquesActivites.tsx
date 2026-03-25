@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-
+import Button from '@codegouvfr/react-dsfr/Button'
+import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
+import { Fragment, useState } from 'react'
 import { AccompagnementPieChart } from '../_components/AccompagnementPieChart'
 import { ProgressItemList } from '../_components/ProgressItemList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
@@ -12,208 +13,229 @@ import {
   dureesAccompagnementColors,
   thematiquesAccompagnementColors,
 } from '../colors'
-import styles from './StatistiquesActivites.module.css'
-import type { AccompagnementsStats, ActivitesStats } from '../types'
+import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
 import { numberToString, sPluriel } from '../utils'
-import Information from '@/components/shared/Information/Information'
 
-type ThematiqueCategory = 'demarches' | 'thematiques'
+type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
 
 const desc = (
   { count: countA }: { count: number },
-  { count: countB }: { count: number }
+  { count: countB }: { count: number },
 ) => countB - countA
 
 const toMaxProportion = (
   max: number,
-  { proportion }: { proportion: number }
-) => proportion > max ? proportion : max
+  { proportion }: { proportion: number },
+) => (proportion > max ? proportion : max)
 
-export function StatistiquesActivites({
+export const StatistiquesActivites = ({
   activites,
   totalCounts,
 }: {
-  readonly activites: ActivitesStats
-  readonly totalCounts: AccompagnementsStats
-}) {
-  const [thematiqueCategory, setThematiqueCategory] =
-    useState<ThematiqueCategory>('thematiques')
+  activites: ActivitesStats
+  structures?: QuantifiedShare[]
+  communes?: QuantifiedShare[]
+  totalCounts: AccompagnementsStats
+}) => {
+  const [accompagnementCategory, setAccompagnementCategory] =
+    useState<AccompagnementCategory>('thematiques')
+
+  const accompagnementCategories = [
+    {
+      category: 'thematiques',
+      title: 'Thématiques des accompagnements de médiation numérique',
+      description:
+        "Thématiques sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques.",
+      items: activites.thematiques.sort(desc),
+      colors: thematiquesAccompagnementColors,
+      maxProportion: activites.thematiques.reduce(toMaxProportion, 0),
+    },
+    {
+      category: 'demarches',
+      title: 'Thématiques des accompagnements de démarches administratives',
+      description:
+        "Thématiques des démarches administratives sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques administratives.",
+      items: activites.thematiquesDemarches.sort(desc),
+      colors: thematiquesAccompagnementColors,
+      maxProportion: activites.thematiquesDemarches.reduce(toMaxProportion, 0),
+    }
+  ]
 
   return (
     <>
-      <h2 className="fr-h5 fr-text-mention--grey">
-        <span aria-hidden className="fr-icon-service-line fr-mr-1w" />
-        Statistiques sur les activités
-      </h2>
-      {/* Bloc Types d'activité */}
-      <div
-        className={`fr-background-alt--blue-france fr-mb-3w fr-border-radius--16 ${styles.typesActiviteContainer}`}
-      >
+      <h3 className="fr-h5 fr-text-mention--grey">
+        <span className="ri-service-line fr-mr-1w" aria-hidden />
+        Statistiques sur les accompagnements
+      </h3>
+      <div className="fr-background-alt--blue-france fr-px-8v fr-py-6v fr-mb-3w fr-border-radius--16 fr-grid-row fr-flex-gap-12v fr-position-relative">
         {activites.typeActivites.map(({ count, proportion, value }) => (
           <StatistiqueAccompagnement
-            count={count}
             key={value}
-            proportion={proportion}
+            className="fr-col-xl fr-col-12"
             typeActivite={value}
+            count={count}
+            proportion={proportion}
           >
             {value === 'Collectif' && (
               <span className="fr-text-mention--grey fr-text--sm fr-mb-0">
-                &nbsp;·&nbsp;
+                &nbsp;·&nbsp;sur{' '}
                 <span className="fr-text--bold">
-                  {numberToString(totalCounts.activites.collectifs.participants)}
+                  {numberToString(totalCounts.accompagnements.collectifs.total)}
                 </span>{' '}
-                participant
-                {sPluriel(totalCounts.activites.collectifs.participants)}
+                atelier
+                {sPluriel(totalCounts.accompagnements.collectifs.total)}
               </span>
             )}
           </StatistiqueAccompagnement>
         ))}
       </div>
-
-      {/* Bloc Thématiques (encadré gris) - contient Thématiques + Matériel */}
-      <div
-        className="fr-p-4w fr-mb-3w fr-border-radius--16"
-        style={{ border: '1px solid var(--border-default-grey)' }}
-      >
-        {/* Thématiques des activités */}
-        <div className={`fr-mb-4v ${styles.thematiquesHeader}`}>
-          <h3 className="fr-text--lg fr-mb-0">
-            <span>Thématiques des activités</span>
-            <Information>
-              <p className="fr-mb-0">
-                Thématiques sélectionnées lors de l&apos;enregistrement d&apos;une activité.
-                <br />
-                <em>Une activité peut avoir <strong>plusieurs thématiques</strong>.</em>
-              </p>
-            </Information>
-          </h3>
-          <fieldset className="fr-segmented fr-segmented--sm">
-            <legend className="fr-segmented__legend sr-only">Bascule entre les thématiques</legend>
-            <div className="fr-segmented__elements">
-              <div className="fr-segmented__element">
-                <input
-                  checked={thematiqueCategory === 'thematiques'}
-                  id="cat-mediation"
-                  name="thematique-category"
-                  onChange={() => {
-                    setThematiqueCategory('thematiques')
-                  }}
-                  type="radio"
-                />
-                <label className="fr-label" htmlFor="cat-mediation">
-                  Médiation numérique
-                </label>
-              </div>
-              <div className="fr-segmented__element">
-                <input
-                  checked={thematiqueCategory === 'demarches'}
-                  id="cat-demarches"
-                  name="thematique-category"
-                  onChange={() => {
-                    setThematiqueCategory('demarches')
-                  }}
-                  type="radio"
-                />
-                <label className="fr-label" htmlFor="cat-demarches">
-                  Démarches administratives
-                </label>
-              </div>
-            </div>
-          </fieldset>
+      <div className="fr-border fr-p-4w fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16">
+        <div className="fr-flex">
+          <SegmentedControl
+            className="fr-md-col fr-col-12 fr-ml-auto"
+            hideLegend
+            legend="Bascule entre les thématiques"
+            segments={[
+              {
+                label: 'Médiation numérique',
+                nativeInputProps: {
+                  checked: accompagnementCategory === 'thematiques',
+                  onChange: () => setAccompagnementCategory('thematiques'),
+                },
+              },
+              {
+                label: 'Démarches administratives',
+                nativeInputProps: {
+                  checked: accompagnementCategory === 'demarches',
+                  onChange: () => setAccompagnementCategory('demarches'),
+                },
+              }
+            ]}
+          />
         </div>
-        <ProgressItemList
-          colors={thematiquesAccompagnementColors}
-          items={
-            thematiqueCategory === 'thematiques'
-              ? activites.thematiques.sort(desc)
-              : activites.thematiquesDemarches.sort(desc)
-          }
-          maxProportion={
-            thematiqueCategory === 'thematiques'
-              ? activites.thematiques.reduce(toMaxProportion, 0)
-              : activites.thematiquesDemarches.reduce(toMaxProportion, 0)
-          }
-          oneLineLabel
-        />
-
-        {/* Séparateur */}
-        <hr className="fr-separator-1px fr-my-4w" />
-
-        {/* Matériel utilisé */}
-        <div className="fr-mb-3w">
-          <h3 className="fr-text--lg fr-mb-0">
-            <span>Matériel utilisé</span>
-            <Information>
-              <p className="fr-mb-0">
-                Matériel utilisé lors d&apos;une activité.
-                <br />
-                <em><strong>Plusieurs matériels</strong> peuvent être utilisés lors d&apos;une même activité.</em>
-              </p>
-            </Information>
-          </h3>
+        <hr className="fr-separator-8v" />
+        {accompagnementCategories.map(
+          ({
+            category,
+            title,
+            description,
+            items,
+            colors,
+            maxProportion,
+          }) =>
+            category === accompagnementCategory && (
+              <Fragment key={category}>
+                <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
+                  <div className="fr-mb-0 fr-flex fr-align-items-center">
+                    <h4 className="fr-text--md fr-mb-0 fr-text--nowrap">
+                      {title}
+                    </h4>
+                    <Button
+                      className="fr-px-1v fr-ml-1v"
+                      title={`Plus d'information à propos des ${title.toLowerCase()}`}
+                      priority="tertiary no outline"
+                      size="small"
+                      type="button"
+                      aria-describedby={`tooltip-accompagnement-${category}`}
+                    >
+                      <span
+                        className="ri-information-line fr-text--lg"
+                        aria-hidden
+                      />
+                    </Button>
+                    <span
+                      className="fr-tooltip fr-placement"
+                      id={`tooltip-accompagnement-${category}`}
+                      role="tooltip"
+                      aria-hidden
+                    >
+                      {description}
+                    </span>
+                  </div>
+                </div>
+                <ProgressItemList
+                  items={items}
+                  colors={colors}
+                  maxProportion={maxProportion}
+                  oneLineLabel
+                  tooltipKey={category}
+                />
+              </Fragment>
+            ),
+        )}
+      </div>
+      <div className="fr-border fr-p-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
+        <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
+          <h4 className="fr-text--md fr-mb-0">
+            Matériel utilisé lors des accompagnements
+          </h4>
+          <Button
+            className="fr-px-1v fr-ml-1v"
+            title="Plus d'information à propos du matériel utilisé"
+            priority="tertiary no outline"
+            size="small"
+            type="button"
+            aria-describedby="tooltip-meteriel-utilise"
+          >
+            <span className="ri-information-line fr-text--lg" aria-hidden />
+          </Button>
+          <span
+            className="fr-tooltip fr-placement"
+            id="tooltip-meteriel-utilise"
+            role="tooltip"
+            aria-hidden
+          >
+            Matériel utilisé lors d'un accompagnement de médiation numérique. À
+            noter&nbsp;: Plusieurs matériels ont pu être utilisés lors d'un même
+            accompagnement.
+          </span>
         </div>
-        <div className="fr-grid-row fr-grid-row--gutters">
-          {activites.materiels.map(({ count, label, proportion, value }) => (
+        <div className="fr-flex fr-flex-wrap fr-justify-content-space-between fr-flex-gap-6v fr-px-4v">
+          {activites.materiels.map(({ value, label, count, proportion }) => (
             <StatistiqueMateriel
-              className="fr-col-6 fr-col-lg-3"
-              count={count}
               key={value}
-              label={label}
-              proportion={proportion}
               value={value}
+              label={label}
+              count={count}
+              proportion={proportion}
             />
           ))}
         </div>
       </div>
-
-      {/* Canaux et Durées */}
-      <div
-        className="fr-p-4w fr-border-radius--16"
-        style={{ border: '1px solid var(--border-default-grey)' }}
-      >
-        <div className={styles.canauxDureesContainer}>
-          <div className={styles.canauxDureesItem}>
-            <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
-              <span>Canaux des activités</span>
-              <Information>
-                <p className="fr-mb-0">
-                  Répartition des activités enregistrées par <strong>canal</strong>.
-                </p>
-              </Information>
-            </h3>
-            <div className={styles.canauxDureesContent}>
+      <div className="fr-border fr-p-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
+        <div className="fr-flex fr-flex-wrap fr-flex-gap-16v">
+          <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
+            <h4 className="fr-text--md fr-mb-4v">Canaux des accompagnements</h4>
+            <div className="fr-flex fr-align-items-center">
               <AccompagnementPieChart
-                colors={canauxAccompagnementColors}
-                data={activites.typeLieu}
+                className="fr-flex-shrink-0"
                 size={80}
                 width={18}
+                data={activites.typeLieu}
+                colors={canauxAccompagnementColors}
               />
               <QuantifiedShareLegend
-                colors={canauxAccompagnementColors}
+                className="fr-pl-3w"
                 quantifiedShares={activites.typeLieu}
+                colors={canauxAccompagnementColors}
               />
             </div>
           </div>
-          <div className={styles.canauxDureesItem}>
-            <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
-              <span>Durées des activités</span>
-              <Information>
-                <p className="fr-mb-0">
-                  Répartition des activités enregistrées par <strong>durée</strong>.
-                </p>
-              </Information>
-            </h3>
-            <div className={styles.canauxDureesContent}>
+          <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
+            <h4 className="fr-text--md fr-mb-4v">Durée des accompagnements</h4>
+            <div className="fr-flex fr-align-items-center">
               <AccompagnementPieChart
-                colors={dureesAccompagnementColors}
-                data={activites.durees}
+                className="fr-flex-shrink-0"
                 size={80}
                 width={18}
+                data={activites.durees}
+                colors={dureesAccompagnementColors}
               />
               <QuantifiedShareLegend
+                className="fr-pl-3w"
+                quantifiedShares={activites.durees}
                 colors={dureesAccompagnementColors}
                 oneLineLabel
-                quantifiedShares={activites.durees}
               />
             </div>
           </div>

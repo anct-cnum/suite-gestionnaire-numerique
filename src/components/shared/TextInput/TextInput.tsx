@@ -1,4 +1,4 @@
-import React, { FormEvent, PropsWithChildren, ReactElement, ReactNode } from 'react'
+import { ChangeEvent, PropsWithChildren, ReactElement, ReactNode } from 'react'
 
 export default function TextInput({
   ariaDescribedById,
@@ -57,7 +57,7 @@ type Props = PropsWithChildren<Readonly<{
   }>
   id: string
   name: string
-  onChange?(event: FormEvent<HTMLInputElement>): void
+  onChange?(event: ChangeEvent<HTMLInputElement>): void
   pattern?: string
   placeholder?: string
   required?: boolean

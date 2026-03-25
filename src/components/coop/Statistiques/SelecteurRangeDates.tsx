@@ -124,9 +124,9 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
         >
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-6">
-              <h4 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
+              <h5 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
                 Début
-              </h4>
+              </h5>
               <input
                 className={cx('fr-input', styles.dateInput)}
                 id={`${id}-debut`}
@@ -138,9 +138,9 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
               />
             </div>
             <div className="fr-col-6">
-              <h4 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
+              <h5 className="fr-text--bold fr-text--md fr-mb-2v" style={{ textAlign: 'center' }}>
                 Fin
-              </h4>
+              </h5>
               <input
                 className={cx('fr-input', styles.dateInput)}
                 id={`${id}-fin`}

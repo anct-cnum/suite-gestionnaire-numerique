@@ -9,7 +9,7 @@ describe('supprimer une note de contextualisation', () => {
   it('quand une note de contextualisation est supprimée avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerUneNoteDeContextualisation.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

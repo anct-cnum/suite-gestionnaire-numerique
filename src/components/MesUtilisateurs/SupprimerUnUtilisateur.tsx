@@ -49,7 +49,7 @@ export default function SupprimerUnUtilisateur({
             aria-controls={id}
             className="fr-btn red-button"
             disabled={isDisabled}
-            onClick={async () => supprimer(utilisateurASupprimer.uid)}
+            onClick={() => { void supprimer(utilisateurASupprimer.uid) }}
             type="button"
           >
             {isDisabled ? 'Suppression en cours...' : 'Confirmer'}

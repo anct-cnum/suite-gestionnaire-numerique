@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { FormEvent } from 'react'
+import { SyntheticEvent } from 'react'
 import { describe, expect, it, Mock } from 'vitest'
 
 import AjouterUneAction from './AjouterUneAction'
@@ -16,7 +16,7 @@ import { epochTime } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
-vi.mock('next/navigation', () => ({
+vi.mock(import('next/navigation'), () => ({
   redirect: vi.fn<(url: string) => never>(),
 }))
 
@@ -730,7 +730,7 @@ function afficherFormulaireDeCreationValidation(
   ajouterUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
 ): void {
   const validerFormulaire = async (
-    event: FormEvent<HTMLFormElement>,
+    event: SyntheticEvent<HTMLFormElement>,
     contexte: string,
     description: string,
     coFinancements: ReadonlyArray<{

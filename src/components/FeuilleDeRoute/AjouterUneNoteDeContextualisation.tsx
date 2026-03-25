@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import FormulaireNoteDeContextualisation from './FormulaireNoteDeContextualisation'
 import { clientContext } from '../shared/ClientContext'
@@ -48,7 +48,7 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
           contenu={contenu}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
-          validerFormulaire={creerUneNoteDeContextualisation}
+          validerFormulaire={(event) => { void creerUneNoteDeContextualisation(event) }}
         >
           <div className="fr-btns-group fr-mt-2w">
             <SubmitButton
@@ -63,7 +63,7 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
     </>
   )
 
-  async function creerUneNoteDeContextualisation(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function creerUneNoteDeContextualisation(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     setIsDisabled(true)

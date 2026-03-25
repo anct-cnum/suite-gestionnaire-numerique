@@ -1,4 +1,4 @@
-import { FormEvent, PropsWithChildren, ReactElement } from 'react'
+import { PropsWithChildren, ReactElement, SyntheticEvent } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import TextArea from '@/components/shared/TextArea/TextArea'
@@ -38,5 +38,5 @@ export default function FormulaireNotePrivee({
 type Props = PropsWithChildren<Readonly<{
   labelId: string
   texte: string
-  validerFormulaire(event: FormEvent<HTMLFormElement>): void
+  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
 }>>

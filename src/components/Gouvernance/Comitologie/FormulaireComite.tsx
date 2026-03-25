@@ -1,4 +1,4 @@
-import { FormEvent, PropsWithChildren, ReactElement } from 'react'
+import { PropsWithChildren, ReactElement, SyntheticEvent } from 'react'
 
 import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
@@ -89,5 +89,5 @@ type Props = PropsWithChildren<Readonly<{
   label: string
   labelId: string
   peutGerer?: boolean
-  validerFormulaire(event: FormEvent<HTMLFormElement>): void
+  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
 }>>

@@ -6,6 +6,7 @@ import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
@@ -26,7 +27,7 @@ describe('gestion des membres gouvernance', () => {
 
     // THEN
     const allHeadings = screen.getAllByRole('heading', { level: 1 })
-    const titre = allHeadings.find((heading) => heading.textContent?.includes('Gérer les membres') ?? false)
+    const titre = allHeadings.find((heading) => heading.textContent.includes('Gérer les membres'))
     expect(titre).toBeDefined()
     const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un candidat' })
     expect(titre).toBeInTheDocument()
@@ -35,12 +36,12 @@ describe('gestion des membres gouvernance', () => {
     const navigationTypesMembres = screen.getByRole('list')
     const ongletsStatutMembre = within(navigationTypesMembres).getAllByRole('listitem')
     const allTabsInFirstItem = within(ongletsStatutMembre[0]).getAllByRole('tab')
-    const ongletMembresConfirmes = allTabsInFirstItem.find((tab) => tab.textContent?.includes('Membres') ?? false)
+    const ongletMembresConfirmes = allTabsInFirstItem.find((tab) => tab.textContent.includes('Membres'))
     expect(ongletMembresConfirmes).toBeDefined()
     expect(ongletMembresConfirmes).toHaveAttribute('aria-current', 'page')
 
     const allTabsInSecondItem = within(ongletsStatutMembre[1]).getAllByRole('tab')
-    const ongletMembresCandidats = allTabsInSecondItem.find((tab) => tab.textContent?.includes('Candidats') ?? false)
+    const ongletMembresCandidats = allTabsInSecondItem.find((tab) => tab.textContent.includes('Candidats'))
     expect(ongletMembresCandidats).toBeDefined()
     expect(ongletMembresCandidats).toHaveAttribute('aria-current', 'false')
     expect(ongletsStatutMembre).toHaveLength(2)

@@ -1,87 +1,46 @@
+import { materielIcons, Materiel } from '../mappings'
 import { numberToPercentage, numberToString } from '../utils'
-import { NoMaterialIcon } from '@/shared/pictograms/material/NoMaterialIcon'
+import classNames from 'classnames'
 
+const defaultIcon = { icon: 'ri-question-line' }
 
-
-type MaterielIconConfig =
-  | { component: React.ComponentType<{ height?: number; style?: React.CSSProperties; width?: number }>; type: 'svg' }
-  | { icon: string; rotation?: number; type: 'dsfr' }
-
-const materielIcons: Record<string, MaterielIconConfig> = {
-  Aucun: { component: NoMaterialIcon, type: 'svg' },
-  Autre: { icon: 'fr-icon-install-line', type: 'dsfr' },
-  AutreMateriel: { icon: 'fr-icon-remote-control-line', type: 'dsfr' },
-  Ordinateur: { icon: 'fr-icon-computer-line', type: 'dsfr' },
-  Tablette: { icon: 'fr-icon-tablet-line', rotation: -90, type: 'dsfr' },
-  Telephone: { icon: 'fr-icon-smartphone-line', type: 'dsfr' },
-}
-
-export function StatistiqueMateriel({
-  className,
-  count,
+export const StatistiqueMateriel = ({
   label,
-  proportion,
   value,
+  count,
+  proportion,
+  className,
 }: {
-  readonly className?: string
-  readonly count: number
-  readonly label: string
-  readonly proportion: number
-  readonly value: string
-}) {
-  const materialConfig = materielIcons[value] || { icon: 'fr-icon-device-line', type: 'dsfr' }
+  label: string
+  value: string
+  count: number
+  proportion: number
+  className?: string
+}) => {
+  const iconConfig = value in materielIcons ? materielIcons[value as Materiel] : defaultIcon
 
   return (
-    <div className={className}>
+    <div className={classNames('fr-text--center fr-text--sm fr-mb-0', className)}>
       <div
-        style={{
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+        className="fr-background-alt--blue-france fr-p-3v fr-mb-3v fr-border-radius--8 fr-display-inline-block"
+        aria-hidden
       >
         <div
-          aria-hidden
-          className="fr-background-alt--blue-france fr-border-radius--8"
-          style={{
-            display: 'inline-flex',
-            marginBottom: '12px',
-            padding: '16px',
-          }}
-        >
-          {materialConfig.type === 'svg' ? (
-            <materialConfig.component
-              height={32}
-              style={{ color: 'var(--text-label-blue-france)' }}
-              width={32}
-            />
-          ) : (
-            <span
-              className={`${materialConfig.icon} fr-text-label--blue-france`}
-              style={{
-                display: 'inline-block',
-                fontSize: '2rem',
-                lineHeight: 1,
-                ...'rotation' in materialConfig && materialConfig.rotation
-                  ? { transform: `rotate(${materialConfig.rotation}deg)` }
-                  : {},
-              }}
-            />
-          )}
-        </div>
-        <div>
-          <span className="fr-text--bold">
-            {numberToString(count)}
-          </span>
-          {' '}
-          <span className="fr-text-mention--grey">
-            {numberToPercentage(proportion)}
-          </span>
-        </div>
-        <div className="fr-text--sm">
-          {label}
-        </div>
+          style={
+            'rotation' in iconConfig && iconConfig.rotation
+              ? { transform: `rotate(${iconConfig.rotation}deg)` }
+              : {}
+          }
+          className={`${iconConfig.icon} ri-2x fr-line-height-1 fr-text-label--blue-france`}
+        />
       </div>
+      <div className="fr-flex fr-flex-gap-2v fr-justify-content-center fr-text--nowrap">
+        <span className="fr-text--bold">{numberToString(count)}</span>
+        <span className="fr-text-mention--grey">
+          {numberToPercentage(proportion)}
+        </span>
+      </div>
+      {label}
     </div>
   )
 }

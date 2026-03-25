@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ChangeEvent, ReactElement, SyntheticEvent } from 'react'
 
 import SubmitButton from '../SubmitButton/SubmitButton'
 
@@ -58,9 +58,9 @@ export default function Search({
 type Props = Readonly<{
   labelBouton: string
   placeholder: string
-  rechercher(event: React.ChangeEvent<HTMLInputElement>): void
+  rechercher(event: ChangeEvent<HTMLInputElement>): void
   reinitialiserBouton: string
   reinitialiserLesTermesDeRechercheNomOuEmail(): void
-  soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void
+  soumettreLaRecherche(event: SyntheticEvent<HTMLFormElement>): void
   termesDeRechercheNomOuEmail: string
 }>

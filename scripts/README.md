@@ -68,13 +68,11 @@ yarn optimize:images:dry-run
 ### Ce que fait le script
 
 1. **PNG** :
-
    - Optimisation avec perte via `pngquant` (qualité 65-80%)
    - Optimisation sans perte supplémentaire via `optipng`
    - Ne remplace que si le fichier optimisé est plus petit
 
 2. **JPEG** :
-
    - Optimisation via `jpegoptim` (qualité max 80%)
    - Suppression des métadonnées (EXIF, etc.)
 
@@ -296,7 +294,6 @@ Le script `update-subvention-status.ts` permet de mettre à jour les statuts de 
 ### Prérequis
 
 1. **devbox** activé avec les packages suivants dans `devbox.json` :
-
    - `nodejs@22`
    - `minio-client`
 

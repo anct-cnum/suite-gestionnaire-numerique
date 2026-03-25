@@ -98,7 +98,7 @@ describe('réinviter un utilisateur', () => {
     })
 
     // THEN
-    await expect(asyncResult).rejects.toThrow('dateDInvitationInvalide')
+    await expect(asyncResult).rejects.toThrowError('dateDInvitationInvalide')
   })
 })
 

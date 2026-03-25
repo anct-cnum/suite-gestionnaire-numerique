@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { MouseEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
@@ -29,7 +29,7 @@ export default function ModifierNoteDeContexte({
       <form
         aria-labelledby={labelId}
         method="dialog"
-        onSubmit={modifierUneNoteDeContexte}
+        onSubmit={(event) => { void modifierUneNoteDeContexte(event) }}
       >
         <DrawerTitle id={labelId}>
           {label}
@@ -75,7 +75,7 @@ export default function ModifierNoteDeContexte({
     </>
   )
 
-  async function modifierUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierUneNoteDeContexte(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
     if (contenu === '') {
@@ -105,7 +105,7 @@ export default function ModifierNoteDeContexte({
     setIsDisabled(false)
   }
 
-  function viderLEditeur(event: FormEvent<HTMLButtonElement>): void {
+  function viderLEditeur(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault()
     viderLeContenu()
   }

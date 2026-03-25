@@ -44,6 +44,6 @@ describe('rechercherUneEntreprise', () => {
 
     // When & Then
     await expect(rechercherUneEntreprise.handle({ siret: '12345678901234' }))
-      .rejects.toThrow('SIRET inexistant')
+      .rejects.toThrowError('SIRET inexistant')
   })
 })

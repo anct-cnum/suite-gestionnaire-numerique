@@ -148,7 +148,7 @@ export default function FeuillesDeRouteDeposees({
           </p>
         </div>
         <DownloadButton 
-          onClick={handleDownload}
+          onClick={() => { void handleDownload() }}
           title="Feuilles de route"
         />
       </div>

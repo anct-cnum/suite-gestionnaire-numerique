@@ -48,7 +48,7 @@ export default function SupprimerUneAction({
             aria-controls={id}
             className="fr-btn red-button"
             disabled={isDisabled}
-            onClick={async () => supprimer(actionASupprimer.uid)}
+            onClick={() => { void supprimer(actionASupprimer.uid) }}
             type="button"
           >
             {isDisabled ? 'Suppression en cours...' : 'Confirmer'}

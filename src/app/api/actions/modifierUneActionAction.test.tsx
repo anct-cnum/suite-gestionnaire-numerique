@@ -9,7 +9,7 @@ describe('modifier une action action', () => {
   it('quand une action est modifiée, alors cela renvoie un succès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUneAction.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

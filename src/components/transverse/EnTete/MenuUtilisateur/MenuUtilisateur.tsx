@@ -81,7 +81,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
         <button
           className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}
           name="deconnexion"
-          onClick={async () => signOut({ callbackUrl: '/connexion' })}
+          onClick={() => { void signOut({ callbackUrl: '/connexion' }) }}
           type="button"
         >
           Se déconnecter

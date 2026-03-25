@@ -321,7 +321,7 @@ describe('feuille de route repository', () => {
     const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('111')
 
     // THEN
-    await expect(feuilleDeRoute).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(feuilleDeRoute).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(feuilleDeRoute).rejects.toMatchObject({ code: 'P2025' })
   })
 
@@ -340,7 +340,7 @@ describe('feuille de route repository', () => {
     const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('1')
 
     // THEN
-    await expect(feuilleDeRoute).rejects.toThrow('perimetreGeographiqueInvalide')
+    await expect(feuilleDeRoute).rejects.toThrowError('perimetreGeographiqueInvalide')
   })
 
   it('quand je modifie une note de contextualisation d’une feuille de route', async () => {

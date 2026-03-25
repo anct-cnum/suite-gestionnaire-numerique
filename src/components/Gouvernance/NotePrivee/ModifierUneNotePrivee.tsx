@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { MouseEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import FormulaireNotePrivee from './FormulaireNotePrivee'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -20,7 +20,7 @@ export default function ModifierUneNotePrivee({
     <FormulaireNotePrivee
       labelId={labelId}
       texte={texte}
-      validerFormulaire={modifierLaNotePrivee}
+      validerFormulaire={(event) => { void modifierLaNotePrivee(event) }}
     >
       <div className="fr-btns-group">
         <SubmitButton
@@ -43,7 +43,7 @@ export default function ModifierUneNotePrivee({
     </FormulaireNotePrivee>
   )
 
-  async function modifierLaNotePrivee(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierLaNotePrivee(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
 
@@ -77,7 +77,7 @@ export default function ModifierUneNotePrivee({
     setIsDisabled(false)
   }
 
-  function viderLeContenu(event: FormEvent<HTMLButtonElement>): void {
+  function viderLeContenu(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault()
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

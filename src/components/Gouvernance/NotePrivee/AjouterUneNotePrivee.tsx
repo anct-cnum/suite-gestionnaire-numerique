@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import FormulaireNotePrivee from './FormulaireNotePrivee'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -18,7 +18,7 @@ export default function AjouterUneNotePrivee({
     <FormulaireNotePrivee
       labelId={labelId}
       texte=""
-      validerFormulaire={creerUneNotePrivee}
+      validerFormulaire={(event) => { void creerUneNotePrivee(event) }}
     >
       <div className="fr-btns-group">
         <SubmitButton
@@ -31,7 +31,7 @@ export default function AjouterUneNotePrivee({
     </FormulaireNotePrivee>
   )
 
-  async function creerUneNotePrivee(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function creerUneNotePrivee(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

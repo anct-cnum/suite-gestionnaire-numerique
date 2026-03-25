@@ -124,7 +124,7 @@ describe('comité repository', () => {
     const comiteRecord = new PrismaComiteRepository().get('666')
 
     // THEN
-    await expect(comiteRecord).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(comiteRecord).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
     await expect(comiteRecord).rejects.toMatchObject({ code: 'P2025' })
   })
 

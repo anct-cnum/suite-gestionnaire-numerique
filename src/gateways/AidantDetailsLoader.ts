@@ -104,7 +104,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
 
         graphiqueData = graphiqueJourResult.map(row => ({
           date: row.date,
-          totalAccompagnements: Number(row.total_accompagnements),
+          totalAccompagnements: row.total_accompagnements,
         }))
       } else {
         // Requête par mois (par défaut) - 12 derniers mois uniquement
@@ -123,7 +123,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
 
         graphiqueData = graphiqueMoisResult.map(row => ({
           date: row.mois,
-          totalAccompagnements: Number(row.total_accompagnements),
+          totalAccompagnements: row.total_accompagnements,
         }))
       }
 
@@ -163,15 +163,15 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         ORDER BY total_accompagnements DESC;
       `
       const totalAccompagnementsCoop = accompagnementsCoopResult.length > 0 ?
-        Number(accompagnementsCoopResult[0].total_accompagnements) : 0
+        accompagnementsCoopResult[0].total_accompagnements : 0
       const totalAccompagnementsAc = accompagnementsAcResult.length > 0 ?
-        Number(accompagnementsAcResult[0].total_accompagnements_ac) : 0
+        accompagnementsAcResult[0].total_accompagnements_ac : 0
       const totalIndividuels = accompagnementsIndividuelsResult.length > 0 ?
-        Number(accompagnementsIndividuelsResult[0].total_individuels) : 0
+        accompagnementsIndividuelsResult[0].total_individuels : 0
       const nombreAteliers = ateliersResult.length > 0 ?
-        Number(ateliersResult[0].nombre_ateliers) : 0
+        ateliersResult[0].nombre_ateliers : 0
       const totalParticipationsAteliers = ateliersResult.length > 0 ?
-        Number(ateliersResult[0].total_participations) : 0
+        ateliersResult[0].total_participations : 0
 
       return this.mapToReadModel(
         personne,
@@ -281,7 +281,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         }),
         idCoopCarto: lieu.structure_cartographie_nationale_id,
         nom: lieu.nom ?? 'Structure inconnue',
-        nombreAccompagnements: Number(lieu.total_accompagnements),
+        nombreAccompagnements: lieu.total_accompagnements,
       })),
       nom: personne.aidant_nom ?? '',
       prenom: personne.aidant_prenom ?? '',
