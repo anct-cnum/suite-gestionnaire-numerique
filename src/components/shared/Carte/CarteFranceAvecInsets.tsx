@@ -145,12 +145,7 @@ export default function CarteFranceAvecInsets({
       type: 'fill' as const,
     }
 
-    // Ajouter le même filtre que la couche principale si c'est un DOM-TOM
-    // eslint-disable-next-line sonarjs/no-all-duplicated-branches
-    const highlightConfig =
-      isDomTom && domTomCode !== undefined && domTomCode
-        ? { ...highlightLayerConfig, filter: ['==', 'code', ''] } // Commencer avec un filtre vide
-        : { ...highlightLayerConfig, filter: ['==', 'code', ''] } // Commencer avec un filtre vide
+    const highlightConfig = { ...highlightLayerConfig, filter: ['==', 'code', ''] }
 
     map.addLayer(highlightConfig as unknown as AddLayerObject)
 

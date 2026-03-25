@@ -68,7 +68,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   // @ts-expect-error
   headers() {
@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['mjml'],
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   webpack(config): NextJsWebpackConfig | null {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
