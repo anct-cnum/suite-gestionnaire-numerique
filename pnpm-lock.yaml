@@ -8083,11 +8083,11 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@babel/code-frame': 7.29.0
-      '@babel/generator': 7.25.9
+      '@babel/generator': 7.29.1
       '@babel/helper-compilation-targets': 7.28.6
       '@babel/helper-module-transforms': 7.28.6(@babel/core@7.25.9)
       '@babel/helpers': 7.29.2
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.29.2
       '@babel/template': 7.28.6
       '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
@@ -11815,7 +11815,7 @@ snapshots:
 
   angular-html-parser@6.0.2:
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   ansi-colors@4.1.3: {}
 
@@ -15176,7 +15176,7 @@ snapshots:
     dependencies:
       debug: 4.4.3
       module-details-from-path: 1.0.4
-      resolve: 1.22.8
+      resolve: 1.22.11
     transitivePeerDependencies:
       - supports-color
 
@@ -15270,7 +15270,7 @@ snapshots:
 
   rxjs@7.8.2:
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.8.1
 
   safe-array-concat@1.1.3:
     dependencies:
