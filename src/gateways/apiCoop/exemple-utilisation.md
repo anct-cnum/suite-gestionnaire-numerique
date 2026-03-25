@@ -328,10 +328,10 @@ Un script dédié permet de tester différentes configurations :
 
 ```bash
 # Test avec succès instantané
-COOP_TOKEN=FAKE_TOKEN_OK_0 yarn tsx scripts/test-mock-api-coop.ts
+COOP_TOKEN=FAKE_TOKEN_OK_0 pnpm tsx scripts/test-mock-api-coop.ts
 
 # Test avec erreur après 2 secondes
-COOP_TOKEN=FAKE_TOKEN_NOK_2 yarn tsx scripts/test-mock-api-coop.ts
+COOP_TOKEN=FAKE_TOKEN_NOK_2 pnpm tsx scripts/test-mock-api-coop.ts
 ```
 
 ### Intégration dans l'application
@@ -379,7 +379,7 @@ Pour tester l'intégration :
 npx tsx scripts/test-cache-api-coop.ts
 
 # Ou lancer les tests unitaires
-yarn test src/gateways/apiCoop/
+pnpm test src/gateways/apiCoop/
 ```
 
 ## Mapping des données pour la page Vitrine Médiateurs Numériques

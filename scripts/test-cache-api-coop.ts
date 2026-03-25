@@ -4,7 +4,7 @@
  * Script de test du système de cache pour l'API Coop Numérique
  * 
  * Usage:
- *   yarn tsx scripts/test-cache-api-coop.ts
+ *   pnpm tsx scripts/test-cache-api-coop.ts
  *   ou
  *   npx tsx scripts/test-cache-api-coop.ts
  * 

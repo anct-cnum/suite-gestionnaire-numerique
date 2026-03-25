@@ -16,7 +16,7 @@ AND pid <> pg_backend_pid();"
 
 docker compose exec -T postgres-dev psql -U min postgres -c "DROP DATABASE IF EXISTS min;"
 docker compose exec -T postgres-dev psql -U min postgres -c "CREATE DATABASE min OWNER min;"
-yarn prisma:reset
+pnpm prisma:reset
 # Importe le nouveau fichier SQL
 cat "$1" | docker compose exec -T postgres-dev psql -U min min
 

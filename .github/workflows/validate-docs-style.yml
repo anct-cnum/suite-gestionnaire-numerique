@@ -16,6 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: yarn lint:css
-      - run: yarn format:check
-      - run: yarn check:shai-hulud
+      - run: pnpm lint:css
+      - run: pnpm format:check
+      - run: pnpm check:shai-hulud

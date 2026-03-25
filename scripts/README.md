@@ -25,17 +25,17 @@ Outils utilisés (configurés dans `devbox.json`) :
 
 ### Utilisation
 
-#### Option 1 : Scripts yarn
+#### Option 1 : Scripts pnpm
 
 ```bash
 # Optimiser les images de public/vitrine (par défaut)
-yarn optimize:images
+pnpm optimize:images
 
 # Optimiser et générer des versions WebP
-yarn optimize:images:webp
+pnpm optimize:images:webp
 
 # Mode dry-run (voir ce qui serait fait sans modifier)
-yarn optimize:images:dry-run
+pnpm optimize:images:dry-run
 ```
 
 #### Option 2 : Exécution directe
@@ -112,7 +112,7 @@ Répertoire: public/vitrine
 
 ### Bonnes pratiques
 
-1. **Avant de committer** : Lancez `yarn optimize:images` pour optimiser les nouvelles images
+1. **Avant de committer** : Lancez `pnpm optimize:images` pour optimiser les nouvelles images
 2. **Vérification** : Utilisez `--dry-run` pour voir l'impact avant d'optimiser
 3. **WebP** : Utilisez `--webp` si votre application supporte le format WebP (meilleure compression)
 
@@ -134,17 +134,17 @@ Le script `find-unused-assets.sh` permet de détecter les fichiers dans `public/
 
 ### Utilisation
 
-#### Scripts yarn
+#### Scripts pnpm
 
 ```bash
 # Analyser public/ et lister les fichiers inutilisés
-yarn assets:unused
+pnpm assets:unused
 
 # Analyser et supprimer (avec confirmation)
-yarn assets:unused:delete
+pnpm assets:unused:delete
 
 # Sortie JSON (pour intégration CI)
-yarn assets:unused:json
+pnpm assets:unused:json
 ```
 
 #### Exécution directe
@@ -232,7 +232,7 @@ Le script retourne un code d'erreur si des fichiers inutilisés sont trouvés :
 
 ```bash
 # Dans un workflow CI
-yarn assets:unused:json || echo "Des assets inutilisés ont été trouvés"
+pnpm assets:unused:json || echo "Des assets inutilisés ont été trouvés"
 ```
 
 ---
@@ -246,8 +246,8 @@ Le script `test-cache-api-coop.ts` permet de tester le système de cache pour l'
 ### Usage
 
 ```bash
-# Avec yarn
-yarn tsx scripts/test-cache-api-coop.ts
+# Avec pnpm
+pnpm tsx scripts/test-cache-api-coop.ts
 
 # Avec npx
 npx tsx scripts/test-cache-api-coop.ts
@@ -301,7 +301,7 @@ Le script `update-subvention-status.ts` permet de mettre à jour les statuts de 
 
 3. **Dépendances Node.js** installées :
    ```bash
-   yarn install
+   pnpm install
    ```
 
 ### Installation
@@ -366,20 +366,20 @@ Les statuts suivants sont acceptés :
 
 ```bash
 # Depuis la racine du projet
-yarn update-subventions <fichier_csv>
+pnpm update-subventions <fichier_csv>
 ```
 
 #### Option 2 : Script avec fichier d'exemple
 
 ```bash
 # Utiliser le fichier d'exemple inclus
-yarn update-subventions:example
+pnpm update-subventions:example
 ```
 
 #### Option 3 : Exécution directe avec tsx
 
 ```bash
-# Exécution directe sans yarn
+# Exécution directe sans pnpm
 tsx scripts/update-subvention-status.ts <fichier_csv>
 ```
 
@@ -387,10 +387,10 @@ tsx scripts/update-subvention-status.ts <fichier_csv>
 
 ```bash
 # Avec un fichier personnalisé
-yarn update-subventions mon_fichier.csv
+pnpm update-subventions mon_fichier.csv
 
 # Avec le fichier d'exemple
-yarn update-subventions:example
+pnpm update-subventions:example
 
 # Exécution directe
 tsx scripts/update-subvention-status.ts scripts/subventions_exemple.csv
@@ -452,7 +452,7 @@ devbox shell
 
 ```bash
 # Générer le client Prisma
-yarn prisma:generate
+pnpm prisma:generate
 ```
 
 **Erreur : "La variable d'environnement DATABASE_URL n'est pas définie"**
@@ -472,10 +472,10 @@ yarn prisma:generate
 
 Le projet inclut les scripts suivants dans `package.json` :
 
-- `yarn update-subventions <fichier>` : Mise à jour avec un fichier CSV personnalisé
-- `yarn update-subventions:example` : Mise à jour avec le fichier d'exemple
-- `yarn prisma:generate` : Génération du client Prisma
-- `yarn prisma:migrate` : Exécution des migrations
+- `pnpm update-subventions <fichier>` : Mise à jour avec un fichier CSV personnalisé
+- `pnpm update-subventions:example` : Mise à jour avec le fichier d'exemple
+- `pnpm prisma:generate` : Génération du client Prisma
+- `pnpm prisma:migrate` : Exécution des migrations
 
 ### Structure des fichiers
 

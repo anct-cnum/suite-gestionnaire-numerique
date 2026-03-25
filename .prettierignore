@@ -1,9 +1,8 @@
 .env
 .husky
 .nvmrc
-.yarn
 public
-yarn.lock
+pnpm-lock.yaml
 devbox.*
 .devbox/
 .venv
