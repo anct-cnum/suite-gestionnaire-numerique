@@ -2,8 +2,8 @@ import prisma from '../../prisma/prismaClient'
 import { GouvernancesInfosReadModel } from '@/use-cases/queries/RecupererGouvernancesInfos'
 
 export class PrismaGouvernancesInfosLoader {
-  async get(): Promise<GouvernancesInfosReadModel> {
-    const gouvernances = await this.getDepartementParGouvernances()
+  async get(codesDepartements?: ReadonlyArray<string>): Promise<GouvernancesInfosReadModel> {
+    const gouvernances = await this.getDepartementParGouvernances(codesDepartements)
     const membres = await this.getMemberesParGouvernancess()
     const feuilleDeRoutes = await this.getFeuilleDeRouteParGouvernance()
     const dotationsEtat = await this.getDotationEtatParGouvernance()
@@ -75,7 +75,7 @@ export class PrismaGouvernancesInfosLoader {
     }, {})
   }
 
-  private async getDepartementParGouvernances(): Promise<
+  private async getDepartementParGouvernances(codesDepartements?: ReadonlyArray<string>): Promise<
     Array<
       {
         code: string
@@ -94,9 +94,9 @@ export class PrismaGouvernancesInfosLoader {
         relationRegion: true,
       },
       where: {
-        code: {
-          not: 'zzz',
-        },
+        code: codesDepartements !== undefined && codesDepartements.length > 0
+          ? { in: [...codesDepartements] }
+          : { not: 'zzz' },
       },
     })
   }

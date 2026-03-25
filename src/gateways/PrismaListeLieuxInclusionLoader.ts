@@ -20,13 +20,14 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     qpv?: boolean,
     frr?: boolean,
     codeRegion?: string,
-    horsZonePrioritaire?: boolean
+    horsZonePrioritaire?: boolean,
+    codesDepartements?: ReadonlyArray<string>
   ): Promise<RecupererLieuxInclusionReadModel> {
     const offset = page * limite
 
     const whereClause = buildWhereClause(
       [Prisma.sql`s.structure_cartographie_nationale_id IS NOT NULL`],
-      { codeDepartement, codeRegion, typeStructure },
+      { codeDepartement, codeRegion, codesDepartements, typeStructure },
       { frr, horsZonePrioritaire, qpv }
     )
 

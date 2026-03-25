@@ -11,7 +11,7 @@ import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeLieuxInclusionPresenter } from '@/presenters/listeLieuxInclusionPresenter'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
-import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Liste des lieux d\'inclusion numérique',
@@ -38,14 +38,17 @@ export default async function ListeLieuxInclusionController({
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
-  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
-  const territoireResult = await territoireUseCase.handle(utilisateur)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  const codesDepartements = contexte.codesDepartements()
 
-  let territoire: string
-  if (territoireResult.type === 'france') {
-    territoire = 'France'
-  } else if (territoireResult.codes.length > 0) {
-    territoire = territoireResult.codes[0]
+  let territoireDepartement: string | undefined
+  let codesDepartementsScope: ReadonlyArray<string> | undefined
+  if (contexte.estNational()) {
+    territoireDepartement = undefined
+  } else if (codesDepartements.length > 1) {
+    codesDepartementsScope = codesDepartements
+  } else if (codesDepartements.length === 1) {
+    territoireDepartement = codesDepartements[0]
   } else {
     redirect('/')
   }
@@ -55,7 +58,7 @@ export default async function ListeLieuxInclusionController({
   // Utiliser la fonction utilitaire pour construire les filtres
   const filtres = buildFiltresLieuxInclusion(
     resolvedSearchParams,
-    territoire === 'France' ? undefined : territoire
+    territoireDepartement
   )
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
@@ -70,7 +73,8 @@ export default async function ListeLieuxInclusionController({
       filtres.qpv,
       filtres.frr,
       filtres.codeRegion,
-      filtres.horsZonePrioritaire
+      filtres.horsZonePrioritaire,
+      codesDepartementsScope
     ),
     listeLieuxInclusionLoader.getTypesStructure(),
   ])

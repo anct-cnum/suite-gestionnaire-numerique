@@ -12,6 +12,8 @@ export function buildWhereClause(
   // Filtres standards
   if (standardFilters.codeDepartement !== undefined && standardFilters.codeDepartement !== '') {
     conditions.push(Prisma.sql`a.departement = ${standardFilters.codeDepartement}`)
+  } else if (standardFilters.codesDepartements !== undefined && standardFilters.codesDepartements.length > 0) {
+    conditions.push(Prisma.sql`a.departement = ANY(${[...standardFilters.codesDepartements]})`)
   }
 
   if (standardFilters.codeRegion !== undefined && standardFilters.codeRegion !== '') {
@@ -69,5 +71,6 @@ interface ZonageFilters {
 interface StandardFilters {
   codeDepartement?: string
   codeRegion?: string
+  codesDepartements?: ReadonlyArray<string>
   typeStructure?: string
 }

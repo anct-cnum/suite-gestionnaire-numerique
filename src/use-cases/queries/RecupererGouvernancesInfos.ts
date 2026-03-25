@@ -2,8 +2,8 @@ import { PrismaGouvernancesInfosLoader } from '@/gateways/PrismaGouvernancesInfo
 import { QueryHandler } from '@/use-cases/QueryHandler'
 
 export class RecupererGouvernancesInfos implements QueryHandler<Query, GouvernancesInfosReadModel> {
-  async handle(): Promise<GouvernancesInfosReadModel> {
-    return  new PrismaGouvernancesInfosLoader().get()
+  async handle(query?: Query): Promise<GouvernancesInfosReadModel> {
+    return new PrismaGouvernancesInfosLoader().get(query?.codesDepartements)
   }
 }
 
@@ -22,9 +22,6 @@ interface GouvernanceDetails {
   membreCount: number
   montantEngager: Array<number>
 }
- type Query = Readonly<{
-   match: string
-   zone?: Readonly<{
-     code: string
-   }>
- }>
+type Query = Readonly<{
+  codesDepartements?: ReadonlyArray<string>
+}>

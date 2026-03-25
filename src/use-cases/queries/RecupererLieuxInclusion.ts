@@ -35,7 +35,8 @@ export interface RecupererLieuxInclusionPort {
     qpv?: boolean,
     frr?: boolean,
     codeRegion?: string,
-    horsZonePrioritaire?: boolean
+    horsZonePrioritaire?: boolean,
+    codesDepartements?: ReadonlyArray<string>
   ): Promise<RecupererLieuxInclusionReadModel>
   getTypesStructure(): Promise<Array<{ code: string; nom: string }>>
 }

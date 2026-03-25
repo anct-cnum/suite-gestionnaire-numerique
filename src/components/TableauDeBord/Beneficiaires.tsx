@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import BlocCard from './BlocCard'
 import styles from './TableauDeBord.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
@@ -17,10 +18,7 @@ export default function Beneficiaires({
 }: Props): ReactElement {
   if ('type' in beneficiairesViewModel) {
     return (
-      <section
-        aria-labelledby="beneficiaires"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <BlocCard labelledBy="beneficiaires">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="community-line" />
           <h2
@@ -38,17 +36,14 @@ export default function Beneficiaires({
             {beneficiairesViewModel.message}
           </p>
         </div>
-      </section>
+      </BlocCard>
     )
   }
-  
+
   const viewModel = beneficiairesViewModel
-  
+
   return (
-    <section
-      aria-labelledby="beneficiaires"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <BlocCard labelledBy="beneficiaires">
       <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="community-line" />
@@ -115,7 +110,7 @@ export default function Beneficiaires({
                       {' '}
                       {detail.label}
                     </div>
-                    <div 
+                    <div
                       style={{ fontWeight: 700, marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
                     >
                       {detail.total}
@@ -131,7 +126,7 @@ export default function Beneficiaires({
         <InformationLogo />
         Un bénéficiaire peut cumuler plusieurs financements.
       </p>
-    </section>
+    </BlocCard>
   )
 }
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import BlocCard from '../BlocCard'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 
@@ -13,10 +14,7 @@ export default function GouvernanceAdmin({
 }: Props): ReactElement {
   if (isErrorViewModel(gouvernanceViewModel)) {
     return (
-      <section
-        aria-labelledby="gouvernance"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <BlocCard labelledBy="gouvernance">
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="compass-3-line" />
@@ -80,15 +78,12 @@ export default function GouvernanceAdmin({
             </div>
           </div>
         </div>
-      </section>
+      </BlocCard>
     )
   }
 
   return (
-    <section
-      aria-labelledby="gouvernance"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <BlocCard labelledBy="gouvernance">
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="compass-3-line" />
@@ -164,7 +159,7 @@ export default function GouvernanceAdmin({
           </div>
         </div>
       </div>
-    </section>
+    </BlocCard>
   )
 }
 

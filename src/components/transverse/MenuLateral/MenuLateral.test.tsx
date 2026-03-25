@@ -1,11 +1,17 @@
-import { screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
+import { menuActifContext } from './MenuActifContext'
 import MenuLateral from './MenuLateral'
 import styles from './MenuLateral.module.css'
-import { SousMenuGouvernance } from './SousMenuGouvernance'
-import { renderComponent } from '@/components/testHelper'
-import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
+import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+
+const contexteParDefaut = new Contexte('gestionnaire_region', [{ code: '84', type: 'region' }])
+
+const contexteGouvernance = new Contexte('gestionnaire_structure', [
+  { code: '42', type: 'structure' },
+  { code: '93', type: 'coporteur' },
+])
 
 describe('menu lateral', () => {
   it('étant n\'importe qui, quand j\'affiche le menu latéral, alors il s\'affiche avec le lien de mon tableau de bord', () => {
@@ -26,11 +32,11 @@ describe('menu lateral', () => {
     { name: 'Lieux d\'inclusion', url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j\'affiche le menu latéral, alors il s\'affiche avec le lien du menu $name', ({ name, url }) => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement()
+    afficherMenuLateralGouvernance()
 
     // THEN
-    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const pilotage = within(navigation).getByText('PILOTAGE', { selector: 'p' })
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const pilotage = within(nav).getByText('PILOTAGE', { selector: 'p' })
     expect(pilotage).toBeInTheDocument()
     const element = screen.getByRole('link', { name })
     expect(element).toHaveAttribute('href', url)
@@ -41,7 +47,7 @@ describe('menu lateral', () => {
     { name: 'Feuilles de route', url: '/gouvernance/93/feuilles-de-route' },
   ])('étant un gestionnaire de département, quand j\'affiche le menu latéral, alors le sous-menu $name de Gouvernance s\'affiche', ({ name, url }) => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement()
+    afficherMenuLateralGouvernance()
 
     // THEN
     const elements = screen.getAllByRole('link', { name })
@@ -55,19 +61,28 @@ describe('menu lateral', () => {
     { name: 'Aidants et médiateurs', url: '/gouvernance/93/aidants-mediateurs' },
   ])('étant un gestionnaire de département, quand j\'affiche le menu latéral, alors il s\'affiche dans la section A VENIR avec le lien du menu $name', ({ name, url }) => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement()
+    afficherMenuLateralGouvernance()
 
     // THEN
-    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const donneesEtStatistiques = within(navigation).getByText('à venir')
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const donneesEtStatistiques = within(nav).getByText('à venir')
     expect(donneesEtStatistiques).toBeInTheDocument()
     const element = screen.getByRole('link', { name })
     expect(element).toHaveAttribute('href', url)
   })
 
-  it('étant un gestionnaire de département, quand j\'affiche le menu Gouvernance, alors je peux le dérouler', () => {
+  it('étant un gestionnaire de département sur la page d\'accueil, quand j\'affiche le menu latéral, alors le sous-menu Gouvernance est replié', () => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement()
+    afficherMenuLateralGouvernance('/')
+
+    // THEN
+    const menuGouvernance = screen.getByRole('link', { expanded: false, name: 'Gouvernance' })
+    expect(menuGouvernance).toHaveAttribute('aria-controls', 'fr-sidemenu-gouvernance')
+  })
+
+  it('étant un gestionnaire de département sur une page gouvernance, quand j\'affiche le menu latéral, alors le sous-menu Gouvernance est déplié', () => {
+    // WHEN
+    afficherMenuLateralGouvernance('/gouvernance/93/membres')
 
     // THEN
     const menuGouvernance = screen.getByRole('link', { expanded: true, name: 'Gouvernance' })
@@ -87,15 +102,15 @@ describe('menu lateral', () => {
     { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])('étant un utilisateur, quand j\'accède à l\'URL $pathname, alors l\'item $name du menu a le focus', ({ itemIndex, listIndex, name, pathname }) => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement(pathname)
+    afficherMenuLateralGouvernance(pathname)
 
     // THEN
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[listIndex]).getAllByRole('listitem')
-    
+
     // Vérifier que l'item a la classe active
     expect(menuItems[itemIndex]).toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
-    
+
     // Vérifier que le lien a l'attribut aria-current="page"
     const element = within(menuItems[itemIndex]).getByRole('link', { current: 'page', name })
     expect(element).toBeInTheDocument()
@@ -107,8 +122,8 @@ describe('menu lateral', () => {
     afficherMenuLateral()
 
     // THEN
-    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const organisation = within(navigation).getByText('ORGANISATION', { selector: 'p' })
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const organisation = within(nav).getByText('ORGANISATION', { selector: 'p' })
     expect(organisation).toBeInTheDocument()
     const monEquipe = screen.getByRole('link', { name: 'Mon équipe' })
     expect(monEquipe).toHaveAttribute('href', '/mes-utilisateurs')
@@ -116,7 +131,7 @@ describe('menu lateral', () => {
 
   it('étant un gestionnaire de structure avec une structure, quand j\'affiche le menu latéral, alors Ma structure est visible', () => {
     // WHEN
-    afficherMenuLateralGestionnaireDepartement()
+    afficherMenuLateralGouvernance()
 
     // THEN
     const maStructure = screen.getByRole('link', { name: 'Ma structure' })
@@ -132,23 +147,14 @@ describe('menu lateral', () => {
     expect(maStructure).not.toBeInTheDocument()
   })
 
-  it('étant un utilisateur non gestionnaire de structure, quand j\'affiche le menu latéral, alors Ma structure n\'est pas visible même avec un structureId', () => {
+  it('étant un utilisateur non gestionnaire de structure, quand j\'affiche le menu latéral, alors Ma structure n\'est pas visible', () => {
     // WHEN
-    renderComponent(
-      <MenuLateral />,
-      {
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: false,
-            libelle: 'Département',
-            nom: 'Gestionnaire département',
-            pictogramme: 'compass-3-line',
-            rolesGerables: [],
-            type: 'gestionnaire_departement',
-          },
-          structureId: 42,
-        }),
-      }
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral
+          contexte={new Contexte('gestionnaire_departement', [{ code: '93', type: 'departement' }])}
+        />
+      </menuActifContext.Provider>
     )
 
     // THEN
@@ -161,101 +167,28 @@ describe('menu lateral', () => {
     afficherMenuLateral()
 
     // THEN
-    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const gouvernance = within(navigation).queryByRole('link', { name: 'Gouvernance' })
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const gouvernance = within(nav).queryByRole('link', { name: 'Gouvernance' })
     expect(gouvernance).not.toBeInTheDocument()
-  })
-
-  it('étant un utilisateur, quand les totaux sont à 0, alors je vois le menu Gouvernance sans sous menu', () => {
-    // WHEN
-    afficherMenuLateralGestionnaireDepartementSansSousMenu()
-
-    // THEN
-    const lienFeuillesDeRoute = screen.queryByRole('link', { name: 'Feuilles de route' })
-    expect(lienFeuillesDeRoute).not.toBeInTheDocument()
-    const lienMembres = screen.queryByRole('link', { name: 'Membres' })
-    expect(lienMembres).not.toBeInTheDocument()
-  })
-
-  it.each([
-    {
-      expectedMenus: ['Feuilles de route'],
-      feuillesTotal: '1',
-      membresTotal: '0',
-    },
-    {
-      expectedMenus: ['Membres'],
-      feuillesTotal: '0',
-      membresTotal: '1',
-    },
-  ])('étant un utilisateur, quand seul $expectedMenus est présent, alors je le vois', ({ expectedMenus, feuillesTotal, membresTotal }) => {
-    // WHEN
-    renderComponent(
-      <MenuLateral>
-        <SousMenuGouvernance
-          isAfficherSousMenuFeuilleDeRoute={feuillesTotal !== '0'}
-          isAfficherSousMenuMembre={membresTotal !== '0'}
-        />
-      </MenuLateral>,
-      {
-        pathname: '/gouvernance/93',
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          displayLiensGouvernance: true,
-        }),
-      }
-    )
-
-    // THEN
-    const menus = screen.getAllByRole('list')
-    const sousList = within(menus[3]).getAllByRole('listitem')
-    expect(sousList).toHaveLength(expectedMenus.length)
-    expectedMenus.forEach((menuName, index) => {
-      expect(within(sousList[index]).getByText(menuName)).toBeInTheDocument()
-    })
   })
 })
 
 function afficherMenuLateral(): void {
-  renderComponent(<MenuLateral />)
-}
-
-function afficherMenuLateralGestionnaireDepartement(pathname?: string): void {
-  renderComponent(
-    <MenuLateral>
-      <SousMenuGouvernance
-        isAfficherSousMenuFeuilleDeRoute={true}
-        isAfficherSousMenuMembre={true}
+  render(
+    <menuActifContext.Provider value="/">
+      <MenuLateral
+        contexte={contexteParDefaut}
       />
-    </MenuLateral>,
-    {
-      pathname,
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-        structureId: 42,
-      }),
-    },
-    {
-      departement: '93',
-    }
+    </menuActifContext.Provider>
   )
 }
 
-function afficherMenuLateralGestionnaireDepartementSansSousMenu(): void {
-  renderComponent(
-    <MenuLateral>
-      <SousMenuGouvernance
-        isAfficherSousMenuFeuilleDeRoute={false}
-        isAfficherSousMenuMembre={false}
+function afficherMenuLateralGouvernance(pathname?: string): void {
+  render(
+    <menuActifContext.Provider value={pathname ?? '/'}>
+      <MenuLateral
+        contexte={contexteGouvernance}
       />
-    </MenuLateral>,
-    {
-      pathname: '/gouvernance/93',
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    },
-    {
-      departement: '93',
-    }
+    </menuActifContext.Provider>
   )
 }

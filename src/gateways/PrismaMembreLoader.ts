@@ -13,4 +13,24 @@ export class PrismaMembreLoader {
     })
     return membre?.gouvernanceDepartementCode ?? null
   }
+
+  async getToutesAppartenancesParStructureId(
+    structureId: number
+  ): Promise<ReadonlyArray<Readonly<{ codeDepartement: string; estCoporteur: boolean }>>> {
+    const membres = await prisma.membreRecord.findMany({
+      select: {
+        gouvernanceDepartementCode: true,
+        isCoporteur: true,
+      },
+      where: {
+        statut: 'confirme',
+        structureId,
+      },
+    })
+
+    return membres.map((membre) => ({
+      codeDepartement: membre.gouvernanceDepartementCode,
+      estCoporteur: membre.isCoporteur,
+    }))
+  }
 }
