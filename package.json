@@ -6,6 +6,7 @@
   "scripts": {
     "bash:production": "scalingo -a mon-inclusion-numerique run --size XL bash",
     "build": "./build.sh",
+    "postbuild": "npm prune --omit=dev",
     "build:dev": "next build",
     "check": "yarn dedupe --check && yarn deadcode && yarn typecheck && yarn prisma format --check && yarn format:check && yarn lint:css && yarn lint:ts && yarn test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
