@@ -13,7 +13,9 @@ export type IdentifiantBloc =
   | 'sources'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
-  const estGestionnaireStructure = contexte.idStructure() !== 0
+  const estGestionnaireStructure =
+    contexte.aCesRoles('gestionnaire_structure') &&
+    !contexte.estDansGouvernance()
 
   const blocs: Array<IdentifiantBloc> = ['accueil']
 
