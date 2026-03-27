@@ -1,15 +1,14 @@
 # ADR-001 : Mise en place d'une CI GitHub Actions
 
-**Date** : 2026-03-25
-**Statut** : Accepté
-**Décideurs** : Marc Gavanier
+**Date** : 2026-03-25  
+**Statut** : En discussion  
+**Décideurs** : Marc Gavanier, Philippe Martinez, Adrien Turpin
 
 ## Contexte
 
 Le projet ne disposait d'aucun pipeline CI/CD sur GitHub Actions. La seule barrière de qualité était un hook Husky `pre-push` exécutant `yarn check` sur l'intégralité du codebase (lint, typecheck, format, tests, deadcode). Ce design posait deux problèmes majeurs :
 
 1. **Expérience de développement dégradée** : le hook bloquait le push pendant plusieurs minutes pour vérifier des fichiers non modifiés par le développeur. Un simple push de documentation pouvait déclencher des centaines d'erreurs pré-existantes sur des fichiers jamais touchés. Cette friction extrême rendait la contribution au projet pénible et décourageante.
-
 2. **Fausse sécurité** : le mécanisme était contournable via `git push --no-verify`, ce qui a permis à des violations de s'accumuler silencieusement sur `main`. Le build de production (Next.js) ignorait explicitement les erreurs ESLint (`ignoreDuringBuilds: true`) et TypeScript (`ignoreBuildErrors: true`), créant une contradiction entre les règles locales strictes et l'absence de vérification au déploiement.
 
 ## Décision

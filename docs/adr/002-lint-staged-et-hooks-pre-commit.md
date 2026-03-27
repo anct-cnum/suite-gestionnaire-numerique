@@ -1,8 +1,8 @@
 # ADR-002 : lint-staged et hooks pre-commit avec autofix
 
-**Date** : 2026-03-25
-**Statut** : Accepté
-**Décideurs** : Marc Gavanier
+**Date** : 2026-03-25  
+**Statut** : En discussion  
+**Décideurs** : Marc Gavanier, Philippe Martinez, Adrien Turpin
 
 ## Contexte
 

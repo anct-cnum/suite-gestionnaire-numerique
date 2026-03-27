@@ -1,8 +1,8 @@
 # ADR-005 : CommitLint pour les Conventional Commits
 
-**Date** : 2026-03-25
-**Statut** : Accepté
-**Décideurs** : Marc Gavanier
+**Date** : 2026-03-25  
+**Statut** : En discussion  
+**Décideurs** : Marc Gavanier, Philippe Martinez, Adrien Turpin
 
 ## Contexte
 
