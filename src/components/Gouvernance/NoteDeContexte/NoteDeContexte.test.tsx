@@ -78,7 +78,7 @@ describe('note de contexte', () => {
       expect(boutonEnregistrer).toBeDisabled()
       const ajouterUneNoteDeContexteDrawer = await screen.findByRole('dialog', { name: 'Note de contexte' })
       expect(ajouterUneNoteDeContexteDrawer).not.toBeVisible()
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Note de contexte ajoutée')
       expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
     })
@@ -152,7 +152,7 @@ describe('note de contexte', () => {
         path: '/gouvernance/11',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Note de contexte bien modifiée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
@@ -190,7 +190,7 @@ describe('note de contexte', () => {
     expect(enregistrer).toHaveAccessibleName('Modification en cours...')
     expect(enregistrer).toBeDisabled()
     expect(supprimerUneNoteDeContexteAction).toHaveBeenCalledWith({ path: '/gouvernance/11', uidGouvernance: 'gouvernanceFooId' })
-    const notification = await screen.findByRole('alert')
+    const notification = await screen.findByRole('status')
     expect(notification.textContent).toBe('Note de contexte supprimée')
     expect(noteDeContexte.textContent).toBe('')
     expect(drawer).not.toBeVisible()

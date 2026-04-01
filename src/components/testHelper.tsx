@@ -90,7 +90,7 @@ export function renderComponent(
         },
       }}
       >
-        <ToastContainer />
+        <ToastContainer aria-label="Notifications" />
         {children}
       </gouvernanceContext.Provider>
     </clientContext.Provider>

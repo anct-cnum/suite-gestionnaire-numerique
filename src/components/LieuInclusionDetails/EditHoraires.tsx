@@ -91,6 +91,7 @@ export default function EditHoraires(props: Props): ReactElement {
         >
           <div className={styles.timeInputs}>
             <TimeInput
+              ariaLabel={`${JOURS_SEMAINE[day]} ${label} - Heure de début`}
               defaultValue={periodData.startTime ?? ''}
               disabled={!isOpen}
               name={`${day}-${period}-start`}
@@ -98,6 +99,7 @@ export default function EditHoraires(props: Props): ReactElement {
             />
             <div className={styles.separator} />
             <TimeInput
+              ariaLabel={`${JOURS_SEMAINE[day]} ${label} - Heure de fin`}
               defaultValue={periodData.endTime ?? ''}
               disabled={!isOpen}
               name={`${day}-${period}-end`}

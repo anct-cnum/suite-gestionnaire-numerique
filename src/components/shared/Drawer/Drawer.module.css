@@ -52,3 +52,10 @@
   height: 100%;
   margin: 0;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .fr-modal .modal-box,
+  .fr-modal[open] .modal-box {
+    animation: none;
+  }
+}

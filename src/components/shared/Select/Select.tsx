@@ -26,6 +26,7 @@ export default function Select<Value extends number | string>({
         {children}
       </label>
       <select
+        aria-required={required || undefined}
         className="fr-select fr-mb-2w"
         defaultValue={value === undefined ? defaultVal : undefined}
         disabled={disabled}

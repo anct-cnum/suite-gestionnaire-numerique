@@ -19,7 +19,10 @@ export default function StatistiquesAsyncContent({
   if (isErrorViewModel(statistiques)) {
     return (
       <div className="fr-py-4w">
-        <div className="fr-alert fr-alert--error">
+        <div
+          className="fr-alert fr-alert--error"
+          role="alert"
+        >
           <p>
             Erreur de récupération de la donnée depuis la Coop
           </p>

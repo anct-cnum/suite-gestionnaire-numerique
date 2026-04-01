@@ -28,7 +28,10 @@ export default function Beneficiaires({
             Bénéficiaires de financement(s)
           </h2>
         </div>
-        <div className="fr-alert fr-alert--error fr-mt-3w">
+        <div
+          className="fr-alert fr-alert--error fr-mt-3w"
+          role="alert"
+        >
           <p className="fr-alert__title">
             Erreur
           </p>

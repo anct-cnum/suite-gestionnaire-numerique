@@ -14,7 +14,7 @@ import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBe
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
-  title: 'Liste des aidants et médiateurs numriques',
+  title: 'Liste des aidants et médiateurs numériques',
 }
 
 export default async function ListeAidantsMediateursController({

@@ -263,7 +263,7 @@ describe('inviter un utilisateur', () => {
       prenom: 'Martin',
       role: 'Gestionnaire structure',
     })
-    const notification = await screen.findByRole('alert')
+    const notification = await screen.findByRole('status')
     expect(notification.textContent).toBe('Invitation envoyée à martin.tartempion@example.com')
     expect(drawer).not.toBeVisible()
     expect(nom).toHaveValue('')
@@ -272,7 +272,7 @@ describe('inviter un utilisateur', () => {
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })
-    expect(envoyerInvitation).toHaveAccessibleName('Envoyer l’invitation')
+    expect(envoyerInvitation).toHaveAccessibleName('Envoyer l\u2019invitation')
     expect(envoyerInvitation).toBeEnabled()
   })
 
@@ -307,7 +307,7 @@ describe('inviter un utilisateur', () => {
     expect(messageDErreur).toHaveAttribute('id', 'text-input-error-desc-error')
     const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceMessageDErreur).not.toBeInTheDocument()
-    const notification = await screen.findByRole('alert')
+    const notification = await screen.findByRole('status')
     expect(notification.textContent).toBe('Invitation envoyée à martin.tartempion@example.com')
     expect(drawer).not.toBeVisible()
     expect(nom).toHaveValue('')

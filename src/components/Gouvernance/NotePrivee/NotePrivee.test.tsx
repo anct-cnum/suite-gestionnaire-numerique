@@ -98,7 +98,7 @@ describe('note privée', () => {
         path: '/gouvernance/11',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Note privée ajoutée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
@@ -190,7 +190,7 @@ describe('note privée', () => {
         path: '/gouvernance/11',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Note privée modifiée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
@@ -229,7 +229,7 @@ describe('note privée', () => {
         path: '/gouvernance/11',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Note privée supprimée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')

@@ -98,7 +98,7 @@ describe('ajouter une feuille de route', () => {
         uidGouvernance: 'gouvernanceFooId',
         uidPorteur: 'structure-95351745500010-44',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Feuille de route ajoutée')
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()

@@ -107,7 +107,7 @@ describe('comitologie', () => {
         type: 'technique',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Comité ajouté')
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
@@ -257,7 +257,7 @@ describe('comitologie', () => {
         uid: '2',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Comité modifié')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
@@ -324,7 +324,7 @@ describe('comitologie', () => {
         uid: '2',
         uidGouvernance: 'gouvernanceFooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Comité supprimé')
       expect(drawer).not.toBeVisible()
       expect(supprimer).toHaveAccessibleName('Supprimer')

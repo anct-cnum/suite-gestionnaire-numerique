@@ -161,7 +161,10 @@ export default function ListePostesConseillerNumerique({
 
   if ('type' in postesConseillerNumeriqueViewModel) {
     return (
-      <div className="fr-alert fr-alert--error">
+      <div
+        className="fr-alert fr-alert--error"
+        role="alert"
+      >
         <p>
           {postesConseillerNumeriqueViewModel.message}
         </p>

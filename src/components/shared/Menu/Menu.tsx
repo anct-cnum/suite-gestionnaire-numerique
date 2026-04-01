@@ -54,6 +54,43 @@ export default function Menu({ items, label }: Readonly<MenuProps>): ReactElemen
     return (): void => { document.removeEventListener('click', handleClickOutside) }
   }, [])
 
+  useEffect(() => {
+    if (!open) {
+      return undefined
+    }
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === 'Escape') {
+        setOpen(false)
+        buttonRef.current?.focus()
+        return
+      }
+
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+        return
+      }
+
+      event.preventDefault()
+      const menuItems = menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]')
+      if (!menuItems || menuItems.length === 0) {
+        return
+      }
+
+      const currentIndex = Array.from(menuItems).findIndex((item) => item === document.activeElement)
+
+      if (event.key === 'ArrowDown') {
+        const nextIndex = currentIndex < menuItems.length - 1 ? currentIndex + 1 : 0
+        menuItems[nextIndex].focus()
+      } else {
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : menuItems.length - 1
+        menuItems[prevIndex].focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return (): void => { document.removeEventListener('keydown', handleKeyDown) }
+  }, [open])
+
   function closeMenu(): void {
     setOpen(false)
   }
