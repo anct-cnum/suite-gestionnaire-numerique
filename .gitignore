@@ -51,7 +51,6 @@ public/dsfr/
 *.code-workspace
 .cursor/
 .idea
-CLAUDE.md
 .vscode/
 .claude/
 dbs/

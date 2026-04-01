@@ -64,6 +64,20 @@ export class Contexte {
     return this.scopes.some((scope) => scope.type === 'france')
   }
 
+  getScopes(niveau?: 'departemental' | 'national' | 'structure'): ReadonlyArray<Scope> {
+    if (niveau === undefined) {
+      return this.scopes
+    }
+
+    const typesByNiveau = {
+      departemental: ['coporteur', 'departement', 'membre'],
+      national: ['france'],
+      structure: ['structure'],
+    } as const
+
+    return this.scopes.filter((scope) => (typesByNiveau[niveau] as ReadonlyArray<string>).includes(scope.type))
+  }
+
   idStructure(): number {
     const scope = this.scopes.find((scope) => scope.type === 'structure')
     if (scope && 'code' in scope) {

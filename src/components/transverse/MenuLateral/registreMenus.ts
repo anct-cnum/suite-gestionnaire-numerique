@@ -70,59 +70,6 @@ const sectionAdministration: Section = {
   titre: 'ADMINISTRATION',
 }
 
-const sectionPilotage: Section = {
-  menus: [
-    {
-      ariaControls: 'fr-sidemenu-gouvernance',
-      icon: 'compass-3-line',
-      label: 'Gouvernance',
-      sousMenus: [
-        {
-          label: 'Membres',
-          url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}/membres`,
-        },
-        {
-          label: 'Feuilles de route',
-          url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}/feuilles-de-route`,
-        },
-      ],
-      url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}`,
-    },
-    {
-      icon: 'group-line',
-      label: 'Aidants et médiateurs',
-      url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}/aidants-mediateurs`,
-    },
-    {
-      icon: 'map-pin-2-line',
-      label: "Lieux d'inclusion",
-      url: () => '/lieux-inclusion',
-    },
-  ],
-  titre: 'PILOTAGE',
-}
-
-const sectionPilotageMultiGouvernances: Section = {
-  menus: [
-    {
-      icon: 'compass-3-line',
-      label: 'Gouvernances',
-      url: () => '/gouvernances/list',
-    },
-    {
-      icon: 'group-line',
-      label: 'Aidants et médiateurs',
-      url: () => '/liste-aidants-mediateurs',
-    },
-    {
-      icon: 'map-pin-2-line',
-      label: "Lieux d'inclusion",
-      url: () => '/liste-lieux-inclusion',
-    },
-  ],
-  titre: 'PILOTAGE',
-}
-
 const sectionAVenir: Section = {
   badge: true,
   menus: [
@@ -147,10 +94,7 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
     sections.push(sectionAdministration)
   }
 
-  const pilotage = sectionPilotageParContexte(contexte)
-  if (pilotage !== undefined) {
-    sections.push(pilotage)
-  }
+  sections.push(sectionPilotageParContexte(contexte))
 
   sections.push(sectionAVenir)
 
@@ -164,12 +108,89 @@ function sectionOrganisationParContexte(contexte: Contexte): Section {
   return { menus, titre: 'ORGANISATION' }
 }
 
-function sectionPilotageParContexte(contexte: Contexte): Section | undefined {
-  if (!contexte.aCesRoles('gestionnaire_departement', 'gestionnaire_structure')) {
-    return undefined
+function menuGouvernanceParContexte(contexte: Contexte): MenuItem | undefined {
+  if (contexte.aCesRoles('administrateur_dispositif')) {
+    return {
+      icon: 'compass-3-line',
+      label: 'Gouvernances',
+      url: () => '/gouvernances',
+    }
   }
+
   const nb = contexte.nbGouvernances()
-  if (nb === 1) { return sectionPilotage }
-  if (nb > 1) { return sectionPilotageMultiGouvernances }
-  return undefined
+  if (nb === 0) { return undefined }
+  if (nb === 1) {
+    return {
+      ariaControls: 'fr-sidemenu-gouvernance',
+      icon: 'compass-3-line',
+      label: 'Gouvernance',
+      sousMenus: [
+        {
+          label: 'Membres',
+          url: (ctx) => `/gouvernance/${ctx.codeTerritoire()}/membres`,
+        },
+        {
+          label: 'Feuilles de route',
+          url: (ctx) => `/gouvernance/${ctx.codeTerritoire()}/feuilles-de-route`,
+        },
+      ],
+      url: (ctx) => `/gouvernance/${ctx.codeTerritoire()}`,
+    }
+  }
+
+  return {
+    icon: 'compass-3-line',
+    label: 'Gouvernances',
+    url: () => '/gouvernances/list',
+  }
+}
+
+function sectionPilotageParContexte(contexte: Contexte): Section {
+  const menus: Array<MenuItem> = []
+
+  const menuGouvernance = menuGouvernanceParContexte(contexte)
+  if (menuGouvernance !== undefined) {
+    menus.push(menuGouvernance)
+  }
+
+  const nb = contexte.nbGouvernances()
+  const estAdmin = contexte.aCesRoles('administrateur_dispositif')
+
+  if (estAdmin || nb === 0) {
+    menus.push({
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: () => '/aidants-mediateurs',
+    })
+    menus.push({
+      icon: 'map-pin-2-line',
+      label: "Lieux d'inclusion",
+      url: () => '/lieux-inclusion',
+    })
+  }
+  else if (nb === 1) {
+    menus.push({
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: (ctx) => `/gouvernance/${ctx.codeTerritoire()}/aidants-mediateurs`,
+    })
+    menus.push({
+      icon: 'map-pin-2-line',
+      label: "Lieux d'inclusion",
+      url: () => '/lieux-inclusion',
+    })
+  } else {
+    menus.push({
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: () => '/liste-aidants-mediateurs',
+    })
+    menus.push({
+      icon: 'map-pin-2-line',
+      label: "Lieux d'inclusion",
+      url: () => '/liste-lieux-inclusion',
+    })
+  }
+
+  return { menus, titre: 'PILOTAGE' }
 }

@@ -190,7 +190,7 @@ describe('feuille de route', () => {
       path: '/',
       uidFeuilleDeRoute: viewModel.uidFeuilleDeRoute,
     })
-    const notification = await screen.findByRole('alert')
+    const notification = await screen.findByRole('status')
     expect(notification.textContent).toBe('Document supprimé')
   })
 

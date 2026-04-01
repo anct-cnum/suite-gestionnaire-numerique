@@ -17,7 +17,8 @@
       "init_hook": [
         "echo 'Welcome to devbox!' > /dev/null",
         "mkdir -p $HOME/.npm-global",
-        "export PATH=$HOME/.npm-global/bin:$PATH"
+        "export PATH=$HOME/.npm-global/bin:$PATH",
+        "export PATH=$HOME/.local/bin:$PATH"
       ],
       "scripts": {
         "install-dependencies": [
@@ -27,4 +28,3 @@
       }
     }
   }
-  
