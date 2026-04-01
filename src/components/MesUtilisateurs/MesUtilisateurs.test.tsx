@@ -298,7 +298,7 @@ describe('mes utilisateurs', () => {
         path: '/mes-utilisateurs',
         uidUtilisateurAReinviter: '123456',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Invitation envoyée à julien.deschamps@example.com')
       expect(drawer).not.toBeVisible()
       expect(envoyer).toHaveAccessibleName('Renvoyer cette invitation')
@@ -428,7 +428,7 @@ describe('mes utilisateurs', () => {
         path: '/mes-utilisateurs',
         uidUtilisateurASupprimer: '123456',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Utilisateur supprimé')
       expect(supprimer).toHaveAccessibleName('Confirmer')
       expect(supprimer).toBeEnabled()
