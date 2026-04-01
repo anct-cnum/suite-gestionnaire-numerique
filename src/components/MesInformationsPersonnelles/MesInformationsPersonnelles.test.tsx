@@ -427,7 +427,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         prenom: 'Martin',
         telephone: '0102030405',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Informations personnelles modifiées')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')

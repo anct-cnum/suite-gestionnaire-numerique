@@ -1,4 +1,6 @@
-import { PropsWithChildren, ReactElement, useEffect } from 'react'
+import { PropsWithChildren, ReactElement, useCallback, useEffect, useRef } from 'react'
+
+import { useDialogAccessibility } from '@/components/shared/useDialogAccessibility'
 
 export default function Modal({
   children,
@@ -8,6 +10,11 @@ export default function Modal({
   isOpen,
   labelId,
 }: Props): ReactElement {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const stableClose = useCallback(close, [close])
+
+  useDialogAccessibility(isOpen, stableClose, dialogRef)
+
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add('fr-modal-opened')
@@ -28,6 +35,7 @@ export default function Modal({
       data-fr-concealing-backdrop={concealingBackdrop}
       id={id}
       open={isOpen}
+      ref={dialogRef}
     >
       <div className="fr-container fr-container--fluid fr-container-md">
         <div className="fr-grid-row fr-grid-row--center">

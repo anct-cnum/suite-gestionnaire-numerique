@@ -65,8 +65,11 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                 Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)
               </p>
 
-              {erreurRechercheSiret ? 
-                <div className="fr-alert fr-alert--error fr-mt-2w">
+              {erreurRechercheSiret ?
+                <div
+                  className="fr-alert fr-alert--error fr-mt-2w"
+                  role="alert"
+                >
                   <p>
                     {erreurRechercheSiret}
                   </p>

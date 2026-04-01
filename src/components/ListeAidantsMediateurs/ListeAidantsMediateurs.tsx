@@ -158,7 +158,10 @@ export default function ListeAidantsMediateurs({
   const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
   if ('type' in listeAidantsMediateursViewModel) {
     return (
-      <div className="fr-alert fr-alert--error">
+      <div
+        className="fr-alert fr-alert--error"
+        role="alert"
+      >
         <p>
           {listeAidantsMediateursViewModel.message}
         </p>

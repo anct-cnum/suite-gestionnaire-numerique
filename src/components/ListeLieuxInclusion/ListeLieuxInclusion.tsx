@@ -145,7 +145,10 @@ export default function ListeLieuxInclusion({
 
   if ('type' in listeLieuxInclusionViewModel) {
     return (
-      <div className="fr-alert fr-alert--error">
+      <div
+        className="fr-alert fr-alert--error"
+        role="alert"
+      >
         <p>
           {listeLieuxInclusionViewModel.message}
         </p>

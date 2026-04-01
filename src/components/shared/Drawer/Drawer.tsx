@@ -1,6 +1,7 @@
-import { PropsWithChildren, ReactElement, Ref } from 'react'
+import { PropsWithChildren, ReactElement, Ref, useCallback, useRef } from 'react'
 
 import styles from './Drawer.module.css'
+import { useDialogAccessibility } from '@/components/shared/useDialogAccessibility'
 
 export default function Drawer({
   boutonFermeture,
@@ -14,14 +15,26 @@ export default function Drawer({
 }: Props): ReactElement {
   // istanbul ignore next @preserve
   const boxSize = isFixedWidth ? styles['modal-box--fixed-width'] : ''
+  const internalRef = useRef<HTMLDialogElement>(null)
+  const stableClose = useCallback(closeDrawer, [closeDrawer])
+
+  useDialogAccessibility(isOpen, stableClose, internalRef)
 
   return (
     <dialog
       aria-labelledby={labelId}
+      aria-modal="true"
       className={`fr-modal ${styles['fr-modal']}`}
       id={id}
       open={isOpen}
-      ref={ref}
+      ref={(node) => {
+        (internalRef as { current: HTMLDialogElement | null }).current = node
+        if (typeof ref === 'function') {
+          ref(node)
+        } else if (ref) {
+          (ref as { current: HTMLDialogElement | null }).current = node
+        }
+      }}
     >
       <div className={`fr-container ${styles['fr-container']}`}>
         <div className="fr-grid-row fr-grid-row--right">

@@ -43,7 +43,10 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
         utilisateursParPage={config.utilisateursParPage}
       >
         <LienEvitement />
-        <ToastContainer style={{ width: '30rem' }} />
+        <ToastContainer
+          aria-label="Notifications"
+          style={{ width: '30rem' }}
+        />
         <EnTete />
         <main
           className="fr-container--fluid fr-mx-5w"

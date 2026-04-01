@@ -95,7 +95,7 @@ describe('modifier une feuille de route', () => {
         uidGouvernance: 'gouvernanceFooId',
         uidPorteur: 'membre1FooId',
       })
-      const notification = await screen.findByRole('alert')
+      const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Feuille de route modifiée')
       expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')

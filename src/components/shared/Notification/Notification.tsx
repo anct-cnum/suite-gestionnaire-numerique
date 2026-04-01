@@ -17,5 +17,6 @@ export function Notification(status: 'error' | 'success', { description, title }
   {
     className: styles[`toastify-${status}`],
     position: 'top-center',
+    role: status === 'error' ? 'alert' : 'status',
   })
 }

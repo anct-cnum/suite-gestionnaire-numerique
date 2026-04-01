@@ -3,7 +3,7 @@
 import { type ChangeEvent, type KeyboardEvent, type ReactElement, useState } from 'react'
 
 export default function TimeInput(props: TimeInputProps): ReactElement {
-  const { defaultValue, disabled, name, placeholder = 'HH:MM' } = props
+  const { ariaLabel, defaultValue, disabled, id, name, placeholder = 'HH:MM' } = props
   const [value, setValue] = useState(defaultValue ?? '')
 
   function formatTimeValue(input: string): string {
@@ -87,8 +87,10 @@ export default function TimeInput(props: TimeInputProps): ReactElement {
 
   return (
     <input
+      aria-label={ariaLabel}
       className={`fr-input ${!isValid && value !== '' ? 'fr-input--error' : ''}`}
       disabled={disabled}
+      id={id}
       name={name}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
@@ -100,8 +102,10 @@ export default function TimeInput(props: TimeInputProps): ReactElement {
 }
 
 type TimeInputProps = Readonly<{
+  ariaLabel?: string
   defaultValue?: string
   disabled?: boolean
+  id?: string
   name: string
   placeholder?: string
 }>

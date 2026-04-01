@@ -19,7 +19,7 @@
 
   &:disabled {
     color: var(--blue-france-975-75);
-    opacity: 0.3;
+    opacity: 0.5;
   }
 }
 

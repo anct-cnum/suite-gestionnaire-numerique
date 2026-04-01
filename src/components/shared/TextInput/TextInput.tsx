@@ -28,6 +28,7 @@ export default function TextInput({
       </label>
       <input
         aria-describedby={ariaDescribedById}
+        aria-invalid={erreur.className !== '' || undefined}
         aria-required={required}
         className="fr-input"
         defaultValue={isControlled ? undefined : defaultValue}
