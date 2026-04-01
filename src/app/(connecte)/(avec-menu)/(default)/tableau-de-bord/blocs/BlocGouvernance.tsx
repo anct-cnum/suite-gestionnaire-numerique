@@ -7,14 +7,14 @@ import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernan
 import { PrismaGouvernanceAdminLoader } from '@/gateways/tableauDeBord/PrismaGouvernanceAdminLoader'
 import { gouvernanceAdminPresenter } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 import { gouvernancePrefPresenter } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
-import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default async function BlocGouvernance({ contexte }: Props): Promise<ReactElement> {
-  if (contexte.estNational()) {
+export default async function BlocGouvernance({ scope }: Props): Promise<ReactElement> {
+  if (scope.type === 'france') {
     return gouvernanceNationale()
   }
 
-  return gouvernanceDepartement(contexte.codeTerritoire())
+  return gouvernanceDepartement(scope.code)
 }
 
 async function gouvernanceNationale(): Promise<ReactElement> {
@@ -34,5 +34,5 @@ async function gouvernanceDepartement(code: string): Promise<ReactElement> {
 }
 
 type Props = Readonly<{
-  contexte: Contexte
+  scope: Scope
 }>

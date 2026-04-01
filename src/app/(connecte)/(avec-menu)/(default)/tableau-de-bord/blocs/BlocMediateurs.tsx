@@ -6,11 +6,11 @@ import {
   PrismaStatistiquesMediateursLoader,
   StatistiquesMediateursReadModel,
 } from '@/gateways/PrismaStatistiquesMediateursLoader'
-import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default async function BlocMediateurs({ contexte }: Props): Promise<ReactElement> {
+export default async function BlocMediateurs({ scope }: Props): Promise<ReactElement> {
   const loader = new PrismaStatistiquesMediateursLoader()
-  const readModel = await loader.get(contexte.codeTerritoire())
+  const readModel = await loader.get(scope.type === 'france' ? 'France' : scope.code)
 
   if (isErrorReadModel(readModel)) {
     return <MediateursAidants viewModel={viewModelVide} />
@@ -60,5 +60,5 @@ const viewModelVide: MediateursAidantsViewModel = {
 }
 
 type Props = Readonly<{
-  contexte: Contexte
+  scope: Scope
 }>
