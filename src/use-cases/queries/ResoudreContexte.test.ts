@@ -275,7 +275,7 @@ describe('résoudre contexte - scopes', () => {
   })
 })
 
-describe('Contexte.filtrerPourDepartement', () => {
+describe(Contexte, () => {
   it('quand un utilisateur est membre de deux gouvernances, filtrer pour l\'une retourne codeTerritoire de celle-ci', () => {
     // GIVEN
     const contexte = new Contexte('gestionnaire_structure', [
