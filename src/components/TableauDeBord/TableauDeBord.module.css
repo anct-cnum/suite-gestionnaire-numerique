@@ -18,3 +18,22 @@
 .hidden {
   display: none;
 }
+
+.bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.indicateurValeur {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 2.25rem;
+}
+
+.demi-doughnut {
+  height: 12rem;
+  margin: 0 auto;
+  max-width: 20rem;
+  width: 100%;
+}

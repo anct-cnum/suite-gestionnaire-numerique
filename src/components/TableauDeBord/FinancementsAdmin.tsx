@@ -1,7 +1,9 @@
+import classNames from 'classnames'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
+import styles from './TableauDeBord.module.css'
 import VentilationFinancements from './VentilationFinancements'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -11,9 +13,9 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
   if (isErrorViewModel(financementViewModel)) {
     return (
       <BlocCard labelledBy="financements">
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+        <div className="fr-grid-row fr-grid-row--top space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="pen-nib-line" />
+            <TitleIcon icon="pen-nib-line" size="medium-large" />
             <div>
               <h2 className="fr-h4 color-blue-france fr-m-0" id="financements">
                 Financements
@@ -39,9 +41,9 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
 
   return (
     <BlocCard labelledBy="financements">
-      <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+      <div className="fr-grid-row fr-grid-row--top space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="pen-nib-line" />
+          <TitleIcon icon="pen-nib-line" size="medium-large" />
           <div>
             <h2 className="fr-h4 color-blue-france fr-m-0" id="financements">
               Financements
@@ -57,11 +59,11 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>
             <TitleIcon background="white" icon="download-line" />
             {financementViewModel.montantTotalEnveloppes}
           </div>
-          <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
+          <div className="fr-text--md fr-mt-1v fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
             Montant global des enveloppes
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
@@ -69,12 +71,12 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>
             <TitleIcon background="white" icon="upload-line" />
             {financementViewModel.creditsEngages}
           </div>
-          <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
-            Crédits engagés par l&apos;État
+          <div className="fr-text--md fr-mt-1v fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
+            Crédits engagés par l&apos;état
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Sur {financementViewModel.nombreEnveloppesUtilisees} enveloppes de financement

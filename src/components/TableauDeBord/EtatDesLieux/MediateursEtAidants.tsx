@@ -1,6 +1,8 @@
+import classNames from 'classnames'
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
@@ -8,12 +10,12 @@ import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediate
 export default function MediateursEtAidants({ viewModel }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
     return (
-      <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-        <div className="fr-h1 fr-m-0">
+      <div className={classNames(styles.bloc, 'background-blue-france fr-p-4w fr-mb-1w fr-ml-1w')}>
+        <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>
           <TitleIcon background="white" icon="error-warning-line" />—
         </div>
-        <div className="font-weight-500">
-          <span>Médiateurs et aidants numériques</span>
+        <div className="font-weight-500 fr-mt-1v">
+          <span>Médiateurs et Aidants Connect</span>
           <Information>
             <p className="fr-mb-0">
               Professionnels inscrits sur <strong>la Coop</strong> et/ou labellisés <strong>Aidants Connect.</strong>
@@ -26,13 +28,13 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
   }
 
   return (
-    <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-      <div className="fr-h1 fr-m-0">
+    <div className={classNames(styles.bloc, 'background-blue-france fr-p-4w fr-mb-1w fr-ml-1w')}>
+      <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>
         <TitleIcon background="white" icon="map-pin-user-line" />
         {viewModel.total}
       </div>
-      <div className="font-weight-500">
-        <span>Médiateurs et aidants numériques</span>
+      <div className="font-weight-500 fr-mt-1v">
+        <span>Médiateurs et Aidants Connect</span>
         <Information>
           <p className="fr-mb-0">Professionnels inscrits sur la Coop et/ou labellisés Aidants Connect</p>
         </Information>

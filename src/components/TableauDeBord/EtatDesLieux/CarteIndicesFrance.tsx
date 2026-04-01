@@ -1,16 +1,30 @@
 'use client'
-import { ReactElement, useEffect, useRef, useState } from 'react'
+
+import classNames from 'classnames'
+import { type ReactElement, useEffect, useMemo, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'
 import CarteFranceAvecInsets from '../../shared/Carte/CarteFranceAvecInsets'
 import Legend from '../../shared/Carte/Legend'
+import LegendConfiance from '../../shared/Carte/LegendConfiance'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import { DepartementFragilite, transformerDonneesCarteFrance } from '@/presenters/tableauDeBord/indicesPresenter'
+import {
+  type DepartementConfiance,
+  type DepartementFragilite,
+  type StatistiquesIcp,
+  transformerDonneesCarteConfiance,
+  transformerDonneesCarteFrance,
+} from '@/presenters/tableauDeBord/indicesPresenter'
 
-export default function CarteIndicesFrance({ departementsFragilite }: Props): ReactElement {
+export default function CarteIndicesFrance({
+  departementsConfiance,
+  departementsFragilite,
+  statistiquesIcp,
+}: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
+  const [ongletActif, setOngletActif] = useState<Onglet>('confiance')
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -21,7 +35,6 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
     let resizeTimeout: NodeJS.Timeout
 
     const resizeObserver = new ResizeObserver(() => {
-      // Attendre que la taille se stabilise
       clearTimeout(resizeTimeout)
       resizeTimeout = setTimeout(() => {
         setIsReady(true)
@@ -38,32 +51,34 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
 
   const isFragiliteError = isErrorViewModel(departementsFragilite)
 
-  if (isFragiliteError) {
+  const donneesCarte = useMemo(() => {
+    if (ongletActif === 'confiance' && departementsConfiance) {
+      return transformerDonneesCarteConfiance(departementsConfiance)
+    }
+    if (!isFragiliteError) {
+      return transformerDonneesCarteFrance(departementsFragilite)
+    }
+    return []
+  }, [departementsConfiance, departementsFragilite, isFragiliteError, ongletActif])
+
+  if (isFragiliteError && !departementsConfiance) {
     return (
-      <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
-        <div
-          className="fr-p-0w"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-            height: '100%',
-          }}
-        >
-          <div style={{ padding: '1rem' }}>
-            <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-              <div className="font-weight-700 color-blue-france">
-                <span> Indice de Fragilité numérique</span>
-                <Information>
-                  <p className="fr-mb-0">
-                    L&apos;Indice de Fragilité Numérique est issu des données de la <strong>Mednum</strong>, calculées
-                    en <strong>2021.</strong>
-                  </p>
-                </Information>
-              </div>
+      <div
+        className={classNames('fr-col-12 fr-col-xl-8 background-blue-france', styles.carteContainer)}
+        ref={containerRef}
+      >
+        <div className={classNames('fr-p-0w', styles.carteContent)}>
+          <div>
+            <div className="font-weight-700 color-blue-france">
+              <span>Indice de Fragilité numérique</span>
+              <Information>
+                <p className="fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
+                </p>
+              </Information>
             </div>
           </div>
-          <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
+          <div className={styles.carteErrorCenter}>
             <div style={{ textAlign: 'center' }}>
               <TitleIcon background="white" icon="error-warning-line" />
               <div className="fr-text--sm color-blue-france fr-mt-2w">{departementsFragilite.message}</div>
@@ -74,36 +89,78 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
     )
   }
 
-  const departementsViewModel = transformerDonneesCarteFrance(departementsFragilite)
-
   return (
-    <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
-      <div
-        className="fr-p-0w"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          height: '100%',
-        }}
-      >
-        <div style={{ padding: '1rem' }}>
-          <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+    <div
+      className={classNames('fr-col-12 fr-col-xl-8 background-blue-france', styles.carteContainer)}
+      ref={containerRef}
+    >
+      <div className={classNames('fr-p-0w', styles.carteContent)}>
+        <div>
+          {departementsConfiance ? (
+            <OngletsCarte ongletActif={ongletActif} setOngletActif={setOngletActif} />
+          ) : (
             <div className="font-weight-700 color-blue-france">
-              <span> Indice de Fragilité numérique</span>
+              <span>Indice de Fragilité numérique</span>
               <Information>
                 <p className="fr-mb-0">
                   L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
                 </p>
               </Information>
             </div>
-          </div>
+          )}
         </div>
         <div style={{ flex: 1 }}>
-          {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ? <CarteFranceAvecInsets donneesDepartements={departementsViewModel} legend={<Legend />} /> : null}
+          {isReady ? (
+            <CarteFranceAvecInsets
+              donneesDepartements={donneesCarte}
+              legend={
+                ongletActif === 'confiance' && statistiquesIcp ? (
+                  <LegendConfiance statistiques={statistiquesIcp} />
+                ) : (
+                  <Legend />
+                )
+              }
+            />
+          ) : null}
         </div>
       </div>
+    </div>
+  )
+}
+
+type Onglet = 'confiance' | 'fragilite'
+
+function OngletsCarte({
+  ongletActif,
+  setOngletActif,
+}: Readonly<{
+  ongletActif: Onglet
+  setOngletActif(onglet: Onglet): void
+}>): ReactElement {
+  return (
+    <div className={styles.ongletsContainer}>
+      <button
+        className={classNames(styles.onglet, styles.ongletGauche, {
+          [styles.ongletActif]: ongletActif === 'confiance',
+        })}
+        onClick={() => {
+          setOngletActif('confiance')
+        }}
+        type="button"
+      >
+        Indice de confiance
+      </button>
+      <button
+        className={classNames(styles.onglet, styles.ongletDroite, {
+          [styles.ongletActif]: ongletActif === 'fragilite',
+        })}
+        onClick={() => {
+          setOngletActif('fragilite')
+        }}
+        type="button"
+      >
+        Indice de fragilité numérique
+      </button>
     </div>
   )
 }
@@ -115,5 +172,7 @@ function isErrorViewModel(
 }
 
 type Props = Readonly<{
+  departementsConfiance?: ReadonlyArray<DepartementConfiance>
   departementsFragilite: ErrorViewModel | ReadonlyArray<DepartementFragilite>
+  statistiquesIcp?: StatistiquesIcp
 }>

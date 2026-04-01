@@ -1,10 +1,51 @@
 .carteContainer {
   min-height: 38rem;
-  padding: 0;
+  padding: 2rem 4rem;
 }
 
 .cardsColumn {
   margin-top: 1.5rem;
+}
+
+.ongletsContainer {
+  display: flex;
+}
+
+.onglet {
+  color: var(--blue-france-sun-113-625);
+  cursor: pointer;
+  flex: 1;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+}
+
+.ongletGauche {
+  border: 0.0625rem solid var(--grey-900-175);
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.ongletDroite {
+  border: 0.0625rem solid var(--grey-900-175);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.ongletActif {
+  border: 0.125rem solid var(--blue-france-sun-113-625);
+}
+
+.carteContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.carteErrorCenter {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
 }
 
 @media (width > 78rem) {

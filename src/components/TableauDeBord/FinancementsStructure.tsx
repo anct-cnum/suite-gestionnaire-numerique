@@ -17,9 +17,9 @@ export default function FinancementsStructure({ lienFinancements, viewModel }: P
   if (isErrorViewModel(viewModel)) {
     return (
       <BlocCard labelledBy="financements-structure">
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+        <div className="fr-grid-row fr-grid-row--top space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="pen-nib-line" />
+            <TitleIcon icon="pen-nib-line" size="medium-large" />
             <div>
               <h2 className="fr-h4 color-blue-france fr-m-0" id="financements-structure">
                 Financements
@@ -55,7 +55,7 @@ export default function FinancementsStructure({ lienFinancements, viewModel }: P
     <BlocCard labelledBy="financements-structure">
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="pen-nib-line" />
+          <TitleIcon icon="pen-nib-line" size="medium-large" />
           <div>
             <h2 className="fr-h4 color-blue-france fr-m-0" id="financements-structure">
               Financements

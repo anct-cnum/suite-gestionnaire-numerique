@@ -180,6 +180,56 @@ export function transformerDonneesCarteFranceVitrine(): Array<DepartementData> {
   }))
 }
 
+export const CONFIANCE_COLORS: Record<string, string> = {
+  'appuis nécessaires': '#E8C85E',
+  'objectifs atteignables': '#8BD0C1',
+  'objectifs compromis': '#9F6EB3',
+  'objectifs sécurisés': '#1D6E5E',
+}
+
+const CONFIANCE_COLOR_NON_ENREGISTRE = '#C8C8C8'
+
+export type StatistiquesIcp = Readonly<{
+  appuinecessaire: number
+  atteignable: number
+  compromis: number
+  nonenregistres: number
+  securise: number
+}>
+
+export type DepartementConfiance = Readonly<{
+  codeDepartement: string
+  couleur: string
+  label: null | string
+}>
+
+export function indiceConfianceDepartementsPresenter(
+  departements: ReadonlyArray<
+    Readonly<{
+      codeDepartement: string
+      indiceConfiance: null | string
+    }>
+  >
+): Array<DepartementConfiance> {
+  return departements.map((departement) => ({
+    codeDepartement: departement.codeDepartement,
+    couleur: departement.indiceConfiance
+      ? (CONFIANCE_COLORS[departement.indiceConfiance] ?? CONFIANCE_COLOR_NON_ENREGISTRE)
+      : CONFIANCE_COLOR_NON_ENREGISTRE,
+    label: departement.indiceConfiance,
+  }))
+}
+
+export function transformerDonneesCarteConfiance(
+  departementsConfiance: ReadonlyArray<DepartementConfiance>
+): Array<DepartementData> {
+  return departementsConfiance.map((dept) => ({
+    codeDepartement: dept.codeDepartement,
+    couleur: dept.couleur,
+    popup: dept.label ?? 'Non enregistré',
+  }))
+}
+
 // il y a 7 couleurs pour un indice de 0 à 10
 function getCouleurFragilite(indice: number): string {
   const nombreDeCouleurs = Object.keys(FRAGILITE_COLORS).length

@@ -1,7 +1,9 @@
 'use client'
 
+import classNames from 'classnames'
 import { ReactElement } from 'react'
 
+import styles from './TableauDeBord.module.css'
 import Bar from '../shared/Bar/Bar'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 
@@ -14,9 +16,9 @@ export default function DonneesStructure({ viewModel }: Props): ReactElement {
             <div className="background-white fr-p-1-5v border-radius fr-mr-2w">
               <span aria-hidden="true" className="fr-icon-map-pin-2-line color-blue-france" />
             </div>
-            <div className="fr-h2 fr-m-0">{viewModel.nombreLieux}</div>
+            <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>{viewModel.nombreLieux}</div>
           </div>
-          <div className="font-weight-500">Lieux d&apos;inclusion numérique</div>
+          <div className="font-weight-500 fr-mt-1v">Lieux d&apos;inclusion numérique</div>
           <div className="fr-text--xs color-blue-france fr-mb-0">gérés par votre structure</div>
         </div>
         <div className="background-blue-france fr-p-3w border-radius">
@@ -24,9 +26,10 @@ export default function DonneesStructure({ viewModel }: Props): ReactElement {
             <div className="background-white fr-p-1-5v border-radius fr-mr-2w">
               <span aria-hidden="true" className="fr-icon-team-line color-blue-france" />
             </div>
+            <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>{viewModel.nombreMediateurs}</div>
             <div className="fr-h2 fr-m-0">{viewModel.nombreMediateurs}</div>
           </div>
-          <div className="font-weight-500">Médiateurs et aidants numériques</div>
+          <div className="font-weight-500 fr-mt-1v">Médiateurs et aidants numériques</div>
           <div className="fr-text--xs color-blue-france fr-mb-0">gérés par votre structure</div>
         </div>
       </div>
@@ -34,8 +37,12 @@ export default function DonneesStructure({ viewModel }: Props): ReactElement {
         <div className="background-blue-france fr-p-3w border-radius" style={{ height: '100%' }}>
           <div className="fr-grid-row fr-grid-row--middle fr-mb-1w">
             <TitleIcon background="white" icon="service-line" />
-            <div className="fr-h2 fr-m-0 fr-ml-2w">{viewModel.accompagnements.total}</div>
+            <div className={classNames(styles.indicateurValeur, 'fr-m-0 fr-ml-2w')}>
+              {viewModel.accompagnements.total}
+            </div>
           </div>
+          <div className="font-weight-500 fr-mt-1v">Accompagnements des 6 derniers mois</div>
+          <div className="fr-text--xs color-blue-france fr-mb-0">Total cumulé des dispositifs</div>
           <div className="font-weight-500">Accompagnements des 6 derniers mois</div>
           <div className="fr-text--xs color-blue-france fr-mb-0">Total cumulé des dispositifs</div>
           {viewModel.accompagnements.repartition.length > 0 ? (

@@ -1,9 +1,11 @@
 'use client'
 
+import classNames from 'classnames'
 import { ReactElement, Suspense } from 'react'
 
 import AccompagnementsRealisesAsyncLoader from './AccompagnementsRealisesAsyncLoader'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
@@ -19,12 +21,12 @@ export default function AccompagnementsRealises({ accompagnementsRealisesPromise
 function AccompagnementsRealisesSkeleton(): ReactElement {
   return (
     <>
-      <div className="background-blue-france fr-p-4w fr-ml-1w">
-        <div className="fr-h1 fr-m-0">
+      <div className={classNames(styles.bloc, 'background-blue-france fr-p-4w fr-ml-1w')}>
+        <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>
           <TitleIcon background="white" icon="compass-3-line" />
           <span className="color-grey">...</span>
         </div>
-        <div className="font-weight-500">
+        <div className="font-weight-500 fr-mt-1v">
           <span> Accompagnements réalisés</span>
           <Information>
             <p className="fr-mb-0">
@@ -35,8 +37,8 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
         </div>
       </div>
       <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
-        <div className="font-weight-500">
-          <span> Accompagnements des 6 derniers mois</span>
+        <div className="font-weight-500 fr-mt-1v">
+          <span>Accompagnements au cours des 6 derniers mois</span>
           <Information>
             <p className="fr-mb-0">
               Accompagnements saisis sur <strong>La Coop.</strong>

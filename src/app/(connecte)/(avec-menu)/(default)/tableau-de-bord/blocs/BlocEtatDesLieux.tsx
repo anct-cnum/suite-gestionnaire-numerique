@@ -8,6 +8,7 @@ import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaI
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
 import {
+  indiceConfianceDepartementsPresenter,
   indiceFragiliteDepartementsPresenter,
   indiceFragilitePresenter,
 } from '@/presenters/tableauDeBord/indicesPresenter'
@@ -55,7 +56,11 @@ async function carteNationale(indicesLoader: PrismaIndicesDeFragiliteLoader): Pr
   }
 
   return (
-    <CarteIndicesFrance departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)} />
+    <CarteIndicesFrance
+      departementsConfiance={indiceConfianceDepartementsPresenter(indicesReadModel.departements)}
+      departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)}
+      statistiquesIcp={indicesReadModel.statistiquesicp}
+    />
   )
 }
 

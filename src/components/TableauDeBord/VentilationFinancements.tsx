@@ -32,7 +32,7 @@ export default function VentilationFinancements({
           <li key={detail.label} style={{ listStyle: 'none' }}>
             <div style={{ alignItems: 'center', display: 'flex' }}>
               <div className="fr-text--sm fr-mb-1w" style={{ flex: '1 1 auto', fontWeight: 400, minWidth: 0 }}>
-                <Dot color={detail.color} /> {detail.label}
+                <Dot className="fr-mr-1w" color={detail.color} /> {detail.label}
               </div>
               <div
                 className="fr-text--sm fr-mb-1w"

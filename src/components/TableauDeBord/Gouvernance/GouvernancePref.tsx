@@ -1,11 +1,13 @@
 'use client'
 
+import classNames from 'classnames'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import styles from './GouvernancePref.module.css'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import BlocCard from '../BlocCard'
+import tableauDeBordStyles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
 
@@ -13,9 +15,9 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
   if (isErrorViewModel(gouvernanceViewModel)) {
     return (
       <BlocCard labelledBy="gouvernance">
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+        <div className="fr-grid-row fr-grid-row--top space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="compass-3-line" />
+            <TitleIcon icon="compass-3-line" size="medium-large" />
             <div>
               <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
                 Gouvernances
@@ -33,25 +35,29 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
         </div>
         <div className={styles.cartesContainer}>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
-            <div className="fr-h1 fr-m-0">
+            <div className={classNames(tableauDeBordStyles.indicateurValeur, 'fr-m-0')}>
               <TitleIcon background="white" icon="bank-line" />-
             </div>
-            <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
+            <div className="fr-text--md fr-mt-1v fr-mb-0" style={{ fontWeight: 500 }}>
               Membres de la gouvernance
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
-            <div className="fr-h1 fr-m-0">
+            <div className={classNames(tableauDeBordStyles.indicateurValeur, 'fr-m-0')}>
               <TitleIcon background="white" icon="community-line" />-
             </div>
+            <div className="font-weight-500 fr-mt-1v">Collectivité impliquées</div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
             <div className="font-weight-500">Collectivité impliquées</div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className={`${styles.carte} background-blue-france fr-p-4w`}>
-            <div className="fr-h1 fr-m-0">
+            <div className={classNames(tableauDeBordStyles.indicateurValeur, 'fr-m-0')}>
               <TitleIcon background="white" icon="file-download-line" />-
             </div>
+            <div className="font-weight-500 fr-mt-1v">Feuilles de route déposées</div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
             <div className="font-weight-500">Feuilles de route déposées</div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
@@ -62,9 +68,9 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
 
   return (
     <BlocCard labelledBy="gouvernance">
-      <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+      <div className="fr-grid-row fr-grid-row--top space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="compass-3-line" />
+          <TitleIcon icon="compass-3-line" size="medium-large" />
           <div>
             <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
               Gouvernances
@@ -79,11 +85,11 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
       </div>
       <div className={styles.cartesContainer}>
         <div className={`${styles.carte} background-blue-france fr-p-4w`}>
-          <div className="fr-h1 fr-m-0">
+          <div className={classNames(tableauDeBordStyles.indicateurValeur, 'fr-m-0')}>
             <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.membre.total}
           </div>
-          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
+          <div className="fr-text--md fr-mt-1v fr-mb-0" style={{ fontWeight: 500 }}>
             Membres de la gouvernance
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
@@ -91,11 +97,11 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
           </div>
         </div>
         <div className={`${styles.carte} background-blue-france fr-p-4w`}>
-          <div className="fr-h1 fr-m-0">
+          <div className={classNames(tableauDeBordStyles.indicateurValeur, 'fr-m-0')}>
             <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
           </div>
-          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
+          <div className="fr-text--md fr-mt-1v fr-mb-0" style={{ fontWeight: 500 }}>
             Feuilles de route déposées
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
