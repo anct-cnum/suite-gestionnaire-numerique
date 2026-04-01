@@ -96,6 +96,16 @@ export class Contexte {
     ).length
   }
 
+  filtrerPourDepartement(codeDepartement: string): Contexte {
+    const scopesFiltres = this.scopes.filter((scope) => {
+      if (scope.type === 'coporteur' || scope.type === 'membre' || scope.type === 'departement') {
+        return 'code' in scope && scope.code === codeDepartement
+      }
+      return true
+    })
+    return new Contexte(this.role, scopesFiltres)
+  }
+
   peutGererGouvernance(codeDepartement: string): boolean {
     return this.scopes.some(
       (scope) =>

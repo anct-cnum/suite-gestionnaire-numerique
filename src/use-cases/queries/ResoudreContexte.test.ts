@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { resoudreContexte, ScopeLoader } from './ResoudreContexte'
+import { Contexte, resoudreContexte, ScopeLoader } from './ResoudreContexte'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import { epochTime } from '@/shared/testHelper'
 
@@ -272,6 +272,52 @@ describe('résoudre contexte - scopes', () => {
 
     // THEN
     expect(contexte.role).toBe('gestionnaire_departement')
+  })
+})
+
+describe('Contexte.filtrerPourDepartement', () => {
+  it('quand un utilisateur est membre de deux gouvernances, filtrer pour l\'une retourne codeTerritoire de celle-ci', () => {
+    // GIVEN
+    const contexte = new Contexte('gestionnaire_structure', [
+      { code: '123', type: 'structure' },
+      { code: '75', type: 'membre' },
+      { code: '69', type: 'coporteur' },
+    ])
+
+    // WHEN
+    const contexteFiltré = contexte.filtrerPourDepartement('69')
+
+    // THEN
+    expect(contexteFiltré.codeTerritoire()).toBe('69')
+    expect(contexteFiltré.estDansGouvernance()).toBe(true)
+  })
+
+  it('conserve le scope structure lors du filtrage', () => {
+    // GIVEN
+    const contexte = new Contexte('gestionnaire_structure', [
+      { code: '123', type: 'structure' },
+      { code: '75', type: 'membre' },
+      { code: '69', type: 'coporteur' },
+    ])
+
+    // WHEN
+    const contexteFiltré = contexte.filtrerPourDepartement('69')
+
+    // THEN
+    expect(contexteFiltré.idStructure()).toBe(123)
+  })
+
+  it('conserve le scope france pour un admin', () => {
+    // GIVEN
+    const contexte = new Contexte('administrateur_dispositif', [
+      { type: 'france' },
+    ])
+
+    // WHEN
+    const contexteFiltré = contexte.filtrerPourDepartement('75')
+
+    // THEN
+    expect(contexteFiltré.estNational()).toBe(true)
   })
 })
 
