@@ -14,10 +14,10 @@ import {
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
-import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default async function BlocEtatDesLieux({ contexte }: Props): Promise<ReactElement> {
-  const code = contexte.codeTerritoire()
+export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactElement> {
+  const code = scope.type === 'france' ? 'France' : scope.code
 
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
@@ -34,9 +34,8 @@ export default async function BlocEtatDesLieux({ contexte }: Props): Promise<Rea
     mediateursEtAidantsPresenter
   )
 
-  const carte = contexte.estNational()
-    ? await carteNationale(indicesLoader)
-    : await carteDepartement(indicesLoader, code)
+  const carte =
+    scope.type === 'france' ? await carteNationale(indicesLoader) : await carteDepartement(indicesLoader, scope.code)
 
   return (
     <EtatDesLieux
@@ -72,5 +71,5 @@ async function carteDepartement(indicesLoader: PrismaIndicesDeFragiliteLoader, c
 }
 
 type Props = Readonly<{
-  contexte: Contexte
+  scope: Scope
 }>

@@ -1,20 +1,44 @@
 import { ReactElement } from 'react'
 
-import PageTitle from '@/components/shared/PageTitle/PageTitle'
-import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+import SelecteurGouvernance from '@/components/transverse/SelecteurGouvernance/SelecteurGouvernance'
+import { gouvernancesSelecteurPresenteur } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
+import { Contexte, Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default function BlocAccueil({ contexte, prenom }: Props): ReactElement {
+export default function BlocAccueil({ contexte, prenom, scope }: Props): ReactElement {
+  const suffixScope = scope.type === 'departement' ? ` · ${scope.code}` : ''
   const sousTitre = contexte.estGestionnaireStructureSansGouvernance()
     ? "Bienvenue sur votre espace structure de l'inclusion numérique"
-    : `Bienvenue sur l'outil de pilotage de l'Inclusion Numérique · ${contexte.codeTerritoire()}`
+    : `Bienvenue sur l'outil de pilotage de l'Inclusion Numérique${suffixScope}`
+  const options = gouvernancesSelecteurPresenteur(contexte)
+  let selectedValue = scope.type === 'departement' ? scope.code : undefined
+  if (selectedValue === undefined) {
+    if (contexte.estNational()) {
+      selectedValue = 'France'
+    } else if (contexte.aCesRoles('gestionnaire_departement')) {
+      const depScope = contexte.scopes.find((scope) => scope.type === 'departement')
+      if (depScope !== undefined && 'code' in depScope) {
+        selectedValue = depScope.code
+      }
+    }
+  }
 
   return (
     <>
-      <PageTitle>
-        <span>👋 Bonjour {prenom}</span>
-        <br />
-        <span className="fr-text--lead color-blue-france">{sousTitre}</span>
-      </PageTitle>
+      <div className="fr-mb-3w" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <h1 className="color-blue-france fr-mt-5w" style={{ marginBottom: 0 }}>
+          👋 Bonjour {prenom}
+        </h1>
+        <div style={{ alignItems: 'flex-end', display: 'flex', gap: '2rem' }}>
+          <p className="fr-text--lead color-blue-france" style={{ flex: '1 0 0', margin: 0 }}>
+            {sousTitre}
+          </p>
+          {options.length >= 2 && (
+            <div style={{ flexShrink: 0 }}>
+              <SelecteurGouvernance options={options} selectedValue={selectedValue} />
+            </div>
+          )}
+        </div>
+      </div>
       <hr className="fr-hr" />
     </>
   )
@@ -23,4 +47,5 @@ export default function BlocAccueil({ contexte, prenom }: Props): ReactElement {
 type Props = Readonly<{
   contexte: Contexte
   prenom: string
+  scope: Scope
 }>

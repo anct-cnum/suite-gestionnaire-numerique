@@ -1,35 +1,28 @@
 import { describe, expect, it } from 'vitest'
 
-import { gouvernancesOptions } from './selecteurGouvernancePresenter'
+import { gouvernancesSelecteurPresenteur } from './selecteurGouvernancePresenter'
+import { Contexte } from '@/use-cases/queries/ResoudreContexte'
 
-describe(gouvernancesOptions, () => {
+describe(gouvernancesSelecteurPresenteur, () => {
   it('transforme des codes département en options label/value', () => {
     // GIVEN
-    const codes = ['01', '75']
+    const contexte = new Contexte('gestionnaire_departement', [
+      { code: '01', type: 'departement' },
+      { code: '75', type: 'departement' },
+    ])
 
     // WHEN
-    const options = gouvernancesOptions(codes)
+    const options = gouvernancesSelecteurPresenteur(contexte)
 
     // THEN
     expect(options).toStrictEqual([
-      { label: '(01) Ain', value: '01' },
-      { label: '(75) Paris', value: '75' },
+      { label: 'Ain - 01', value: '01' },
+      { label: 'Paris - 75', value: '75' },
     ])
   })
 
   it('retourne une liste vide si aucun code', () => {
     // GIVEN / WHEN / THEN
-    expect(gouvernancesOptions([])).toStrictEqual([])
-  })
-
-  it('retourne juste le code si le département est introuvable', () => {
-    // GIVEN
-    const codes = ['99']
-
-    // WHEN
-    const options = gouvernancesOptions(codes)
-
-    // THEN
-    expect(options).toStrictEqual([{ label: '(99)', value: '99' }])
+    expect(gouvernancesSelecteurPresenteur(new Contexte('gestionnaire_departement', []))).toStrictEqual([])
   })
 })

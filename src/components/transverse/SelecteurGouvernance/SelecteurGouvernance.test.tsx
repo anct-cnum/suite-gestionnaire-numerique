@@ -1,14 +1,20 @@
-import { render, screen } from '@testing-library/react'
-import { select } from 'react-select-event'
-import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import SelecteurGouvernance from './SelecteurGouvernance'
 
 const mockPush = vi.hoisted(() => vi.fn<(url: string) => void>())
 
-vi.mock(import('next/navigation'), () => ({
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock('next/navigation', () => ({
+  useParams: vi.fn<() => object>().mockReturnValue({ code: '01' }),
   useRouter: vi.fn<() => object>().mockReturnValue({
+    back: vi.fn<() => void>(),
+    forward: vi.fn<() => void>(),
+    prefetch: vi.fn<() => void>(),
     push: mockPush,
+    refresh: vi.fn<() => void>(),
+    replace: vi.fn<() => void>(),
   }),
 }))
 
@@ -18,44 +24,30 @@ const options = [
 ]
 
 describe('selecteur gouvernance', () => {
-  it('affiche la gouvernance courante sélectionnée', () => {
-    // GIVEN / WHEN
-    render(
-      <>
-        <label htmlFor="gouvernance">
-          Gouvernance
-        </label>
-        <SelecteurGouvernance
-          codeDepartementActuel="01"
-          options={options}
-        />
-      </>
-    )
-
-    // THEN
-    const combobox = screen.getByRole('combobox', { name: 'Gouvernance' })
-    expect(combobox).toBeInTheDocument()
-    expect(screen.getByText('(01) Ain')).toBeInTheDocument()
+  beforeEach(() => {
+    mockPush.mockReset()
   })
 
-  it('navigue vers le tableau de bord de la gouvernance sélectionnée', async () => {
-    // GIVEN
-    render(
-      <>
-        <label htmlFor="gouvernance">
-          Gouvernance
-        </label>
-        <SelecteurGouvernance
-          codeDepartementActuel="01"
-          options={options}
-        />
-      </>
-    )
-
-    // WHEN
-    await select(screen.getByRole('combobox', { name: 'Gouvernance' }), '(75) Paris')
+  it('affiche la gouvernance courante sélectionnée', () => {
+    // GIVEN / WHEN
+    render(<SelecteurGouvernance options={options} />)
 
     // THEN
-    expect(mockPush).toHaveBeenCalledWith('/tableau-de-bord/75')
+    const select = screen.getByRole('combobox', { name: 'Sélectionnez une gouvernance' })
+    expect(select).toBeInTheDocument()
+    expect(select).toHaveValue('')
+  })
+
+  it('navigue vers le tableau de bord de la gouvernance sélectionnée', () => {
+    // GIVEN
+    render(<SelecteurGouvernance options={options} />)
+
+    // WHEN
+    fireEvent.change(screen.getByRole('combobox', { name: 'Sélectionnez une gouvernance' }), {
+      target: { value: '75' },
+    })
+
+    // THEN
+    expect(mockPush).toHaveBeenCalledWith('/tableau-de-bord/departement/75')
   })
 })

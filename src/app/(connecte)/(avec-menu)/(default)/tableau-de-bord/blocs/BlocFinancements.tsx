@@ -10,18 +10,18 @@ import { PrismaFinancementsStructureLoader } from '@/gateways/tableauDeBord/Pris
 import { financementAdminPresenter } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { financementsStructurePresenter } from '@/presenters/tableauDeBord/financementsStructurePresenter'
-import { Contexte } from '@/use-cases/queries/ResoudreContexte'
+import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default async function BlocFinancements({ contexte }: Props): Promise<ReactElement> {
-  if (contexte.estNational()) {
+export default async function BlocFinancements({ scope }: Props): Promise<ReactElement> {
+  if (scope.type === 'france') {
     return financementsNationaux()
   }
 
-  if (contexte.estGestionnaireStructureSansGouvernance()) {
-    return financementsStructure(contexte.idStructure())
+  if (scope.type === 'structure') {
+    return financementsStructure(parseInt(scope.code, 10))
   }
 
-  return financementsDepartement(contexte.codeTerritoire())
+  return financementsDepartement(scope.code)
 }
 
 async function financementsNationaux(): Promise<ReactElement> {
@@ -53,5 +53,5 @@ async function financementsStructure(structureId: number): Promise<ReactElement>
 }
 
 type Props = Readonly<{
-  contexte: Contexte
+  scope: Scope
 }>
