@@ -2,15 +2,8 @@ name: Validate feature branch
 
 on:
   push:
-    branches:
-      - "chore/*"
-      - "ci/*"
-      - "feat/*"
-      - "fix/*"
-      - "perf/*"
-      - "refactor/*"
-      - "revert/*"
-      - "test/*"
+    branches-ignore:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

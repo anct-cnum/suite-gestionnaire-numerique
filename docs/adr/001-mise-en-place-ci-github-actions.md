@@ -13,15 +13,13 @@ Le projet ne disposait d'aucun pipeline CI/CD sur GitHub Actions. La seule barri
 
 ## Décision
 
-Mettre en place deux workflows GitHub Actions déclenchés sur `push` vers des branches nommées selon les Conventional Commits :
+Mettre en place un workflow GitHub Actions **`validate-feature-branch.yml`** déclenché sur `push` vers toutes les branches sauf `main`, avec 5 jobs parallèles :
 
-- **`validate-feature-branch.yml`** (branches `feat/*`, `fix/*`, `refactor/*`, `chore/*`, `ci/*`, `perf/*`, `revert/*`, `test/*`) : 5 jobs parallèles :
-  - **code-check** : ESLint, Stylelint, Prettier
-  - **type-check** : TypeScript
-  - **quality-check** : dedupe, dead code (Knip), Prisma format, Shai-Hulud (supply chain)
-  - **build** : `next build` avec cache `.next/cache` et désactivation de la télémétrie Next.js
-  - **test** : migrations Prisma + tests avec couverture (PostgreSQL PostGIS en service container)
-- **`validate-docs-style.yml`** (branches `docs/*`, `style/*`) : 1 job (code-check + Shai-Hulud)
+- **code-check** : ESLint, Stylelint, Prettier
+- **type-check** : TypeScript
+- **quality-check** : dedupe, dead code (Knip), Prisma format, Shai-Hulud (supply chain)
+- **build** : `next build` avec cache `.next/cache` et désactivation de la télémétrie Next.js
+- **test** : migrations Prisma + tests avec couverture (PostgreSQL PostGIS en service container)
 
 Une action composite `.github/actions/setup` centralise la configuration (pnpm via `pnpm/action-setup@v5`, Node.js via `actions/setup-node@v6`, install, Prisma generate).
 
@@ -32,8 +30,8 @@ Une action composite `.github/actions/setup` centralise la configuration (pnpm v
 
 ## Alternatives envisagées
 
-- **Trigger `pull_request`** au lieu de `push` : envisagé pour les required checks, mais empêche de différencier les jobs par préfixe de branche source. Le choix `push` par préfixe permet d'adapter les checks au type de changement.
-- **Workflow unique pour tous les préfixes** : rejeté car exécute des jobs inutiles (tests, build) pour des branches `docs/*`.
+- **Trigger `pull_request`** au lieu de `push` : envisagé pour les required checks, mais `push` permet une exécution immédiate dès le push sans attendre la création d'une PR.
+- **Filtrage par préfixes de branches** (`feat/*`, `fix/*`, etc.) : configuration initiale, mais trop restrictive — les branches sans préfixe conventionnel n'étaient pas vérifiées. L'exclusion de `main` uniquement couvre tous les cas.
 
 ## Conséquences
 
