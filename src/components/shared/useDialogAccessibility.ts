@@ -33,7 +33,8 @@ export function useDialogAccessibility(
     const dialog = dialogRef.current
     const previouslyFocusedElement = document.activeElement as HTMLElement | null
 
-    const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
     const focusableElements = dialog.querySelectorAll<HTMLElement>(focusableSelector)
     if (focusableElements.length > 0) {
       focusableElements[0].focus()

@@ -89,7 +89,9 @@ export default function Menu({ items, label }: Readonly<MenuProps>): ReactElemen
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    return (): void => { document.removeEventListener('keydown', handleKeyDown) }
+    return (): void => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
   }, [open])
 
   function closeMenu(): void {

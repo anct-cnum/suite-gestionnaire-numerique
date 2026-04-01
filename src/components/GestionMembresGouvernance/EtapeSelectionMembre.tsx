@@ -23,10 +23,10 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
   const isContactSecondaireValide =
     !showContactSecondaire ||
-    contactSecondaire.nom.trim() !== '' &&
+    (contactSecondaire.nom.trim() !== '' &&
       contactSecondaire.prenom.trim() !== '' &&
       contactSecondaire.email.trim() !== '' &&
-      contactSecondaire.fonction.trim() !== ''
+      contactSecondaire.fonction.trim() !== '')
 
   const isFormulairePret =
     entreprise !== null &&
@@ -266,7 +266,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
   function soumettreRechercheSiret(event: SyntheticEvent<HTMLFormElement>): void {
     event.preventDefault()
     // SIRET = 14 chiffres, RIDET = 6 ou 7 chiffres
-    if (siret.length === 14 || siret.length >= 6 && siret.length <= 7) {
+    if (siret.length === 14 || (siret.length >= 6 && siret.length <= 7)) {
       void rechercherEntreprise()
     } else if (siret.length > 0) {
       // Affichage d'un message d'erreur pour les saisies invalides

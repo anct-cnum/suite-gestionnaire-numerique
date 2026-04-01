@@ -286,31 +286,31 @@ export default function ListeLieuxInclusion({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {lieu.idCartographieNationale === null ? 
+                    {lieu.idCartographieNationale === null ? (
                       lieu.adresse
-                      : (
-                        <a
-                          href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          {lieu.adresse}
-                        </a>
-                      )}
-                  </div>
-                </td>
-                <td>
-                  {lieu.siret === null ? 
-                    'Non renseigné'
-                    : (
+                    ) : (
                       <a
-                        href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+                        href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        {lieu.siret}
+                        {lieu.adresse}
                       </a>
                     )}
+                  </div>
+                </td>
+                <td>
+                  {lieu.siret === null ? (
+                    'Non renseigné'
+                  ) : (
+                    <a
+                      href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {lieu.siret}
+                    </a>
+                  )}
                 </td>
                 <td>
                   <div className="fr-tags-group">
