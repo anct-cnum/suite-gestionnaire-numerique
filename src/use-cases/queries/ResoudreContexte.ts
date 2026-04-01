@@ -68,6 +68,16 @@ export class Contexte {
     return this.scopes.some((scope) => scope.type === 'france')
   }
 
+  filtrerPourDepartement(codeDepartement: string): Contexte {
+    const scopesFiltres = this.scopes.filter((scope) => {
+      if (scope.type === 'coporteur' || scope.type === 'membre' || scope.type === 'departement') {
+        return 'code' in scope && scope.code === codeDepartement
+      }
+      return true
+    })
+    return new Contexte(this.role, scopesFiltres)
+  }
+
   getScopes(niveau?: 'departemental' | 'national' | 'structure'): ReadonlyArray<Scope> {
     if (niveau === undefined) {
       return this.scopes
@@ -94,16 +104,6 @@ export class Contexte {
     return this.scopes.filter(
       (scope) => scope.type === 'coporteur' || scope.type === 'departement' || scope.type === 'membre'
     ).length
-  }
-
-  filtrerPourDepartement(codeDepartement: string): Contexte {
-    const scopesFiltres = this.scopes.filter((scope) => {
-      if (scope.type === 'coporteur' || scope.type === 'membre' || scope.type === 'departement') {
-        return 'code' in scope && scope.code === codeDepartement
-      }
-      return true
-    })
-    return new Contexte(this.role, scopesFiltres)
   }
 
   peutGererGouvernance(codeDepartement: string): boolean {
