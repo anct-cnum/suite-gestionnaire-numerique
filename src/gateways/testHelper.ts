@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 // Stryker disable all
 import { Prisma } from '@prisma/client'
 
@@ -89,16 +88,8 @@ export async function creerUneStructure(
   tx?: Prisma.TransactionClient
 ): Promise<void> {
   const client = tx ?? prisma
-  const { adresse,
-    codePostal,
-    commune,
-    contact,
-    departementCode,
-    id,
-    identifiantEtablissement,
-    type,
-    ...rest
-  } = override ?? {}
+  const { adresse, codePostal, commune, contact, departementCode, id, identifiantEtablissement, type, ...rest } =
+    override ?? {}
 
   // Valeurs par défaut de l'ancien structureRecordFactory
   const defaults = {
@@ -280,12 +271,15 @@ export async function creerUnMembre(
     const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
 
-    await creerUneStructure({
-      departementCode: override?.gouvernanceDepartementCode ?? '69',
-      id: structureId,
-      nom: 'Structure auto-générée',
-      siret,
-    }, tx)
+    await creerUneStructure(
+      {
+        departementCode: override?.gouvernanceDepartementCode ?? '69',
+        id: structureId,
+        nom: 'Structure auto-générée',
+        siret,
+      },
+      tx
+    )
 
     await client.membreRecord.create({
       data: membreRecordFactory({ ...override, structureId }),
@@ -310,17 +304,16 @@ export async function creerUnContact(
 
 export async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
   // Helper pour créer structure + membre avec un nom spécifique
-  async function creerMembreAvecNom(
-    id: string,
-    nom: string,
-    type: string,
-    isCoporteur = false
-  ): Promise<void>
-  {
+  async function creerMembreAvecNom(id: string, nom: string, type: string, isCoporteur = false): Promise<void> {
     autoStructureIdCounter += 1
     const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
-    await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
+    await creerUneStructure({
+      departementCode: gouvernanceDepartementCode,
+      id: structureId,
+      nom,
+      siret,
+    })
     const contactId = await creerUnContact({ email: `${id}@example.com`, nom })
     await prisma.contact_structure.create({
       data: { contact_id: contactId, structure_id: structureId },
@@ -337,16 +330,16 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   }
 
   // Helper pour créer structure + candidat avec un nom spécifique
-  async function creerCandidatAvecNom(
-    id: string,
-    nom: string,
-    type: string
-  ): Promise<void>
-  {
+  async function creerCandidatAvecNom(id: string, nom: string, type: string): Promise<void> {
     autoStructureIdCounter += 1
     const structureId = autoStructureIdCounter
     const siret = `${structureId}`.padStart(14, '0')
-    await creerUneStructure({ departementCode: gouvernanceDepartementCode, id: structureId, nom, siret })
+    await creerUneStructure({
+      departementCode: gouvernanceDepartementCode,
+      id: structureId,
+      nom,
+      siret,
+    })
     await prisma.membreRecord.create({
       data: membreRecordFactory({
         gouvernanceDepartementCode,
@@ -361,8 +354,18 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   await creerMembreAvecNom(`commune-blabla-${gouvernanceDepartementCode}`, 'Trévérien', 'Commune', true)
   await creerMembreAvecNom(`commune-94028-${gouvernanceDepartementCode}`, 'Créteil', 'Collectivité, commune', true)
   await creerMembreAvecNom(`epci-241927201-${gouvernanceDepartementCode}`, 'CA Tulle Agglo', 'Collectivité, EPCI')
-  await creerMembreAvecNom(`epci-200072056-${gouvernanceDepartementCode}`, 'CC Porte du Jura', 'Collectivité, EPCI', true)
-  await creerMembreAvecNom(`structure-38012986643097-${gouvernanceDepartementCode}`, 'Orange', 'Entreprise privée', true)
+  await creerMembreAvecNom(
+    `epci-200072056-${gouvernanceDepartementCode}`,
+    'CC Porte du Jura',
+    'Collectivité, EPCI',
+    true
+  )
+  await creerMembreAvecNom(
+    `structure-38012986643097-${gouvernanceDepartementCode}`,
+    'Orange',
+    'Entreprise privée',
+    true
+  )
   await creerMembreAvecNom(`prefecture-${gouvernanceDepartementCode}`, 'Rhône', 'Préfecture départementale', true)
   await creerMembreAvecNom(`departement-69-${gouvernanceDepartementCode}`, 'Rhône', 'Conseil départemental')
   await creerMembreAvecNom(`region-53-${gouvernanceDepartementCode}`, 'Bretagne', 'Préfecture régionale', true)
@@ -406,7 +409,7 @@ export function feuilleDeRouteRecordFactory(
     gouvernanceDepartementCode: '69',
     nom: 'Feuille de route 69',
     oldUUID: null,
-    perimetreGeographique:'departemental',
+    perimetreGeographique: 'departemental',
     pieceJointe: null,
     porteurId: null,
     ...override,

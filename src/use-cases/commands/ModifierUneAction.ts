@@ -1,12 +1,11 @@
-/* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetActionRepository, UpdateActionRepository } from './shared/ActionRepository'
 import { creationDesCoFinancements } from './shared/ActionUtils'
-import { 
+import {
   AddCoFinancementRepository,
   GetCoFinancementRepository,
   SupprimerCoFinancementRepository,
-  UpdateCoFinancementRepository, 
+  UpdateCoFinancementRepository,
 } from './shared/CoFinancementRepository'
 import {
   AddDemandeDeSubventionRepository,
@@ -19,23 +18,21 @@ import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
-import { DemandeDeSubvention , DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class ModifierUneAction implements CommandHandler<Command> {
   readonly #actionRepository: GetActionRepository & UpdateActionRepository
-  readonly #coFinancementRepository: 
-      AddCoFinancementRepository
-      & GetCoFinancementRepository
-      & SupprimerCoFinancementRepository
-      & UpdateCoFinancementRepository
+  readonly #coFinancementRepository: AddCoFinancementRepository &
+    GetCoFinancementRepository &
+    SupprimerCoFinancementRepository &
+    UpdateCoFinancementRepository
   readonly #date: Date
-  readonly #demandeDeSubventionRepository: 
-      AddDemandeDeSubventionRepository
-      & GetDemandeDeSubventionRepository
-      & SupprimerDemandeDeSubventionRepository
-      & UpdateDemandeDeSubventionRepository
+  readonly #demandeDeSubventionRepository: AddDemandeDeSubventionRepository &
+    GetDemandeDeSubventionRepository &
+    SupprimerDemandeDeSubventionRepository &
+    UpdateDemandeDeSubventionRepository
   readonly #feuilleDeRouteRepository: GetFeuilleDeRouteRepository & UpdateFeuilleDeRouteRepository
   readonly #gouvernanceRepository: GetGouvernanceRepository
   readonly #transactionRepository: TransactionRepository
@@ -47,16 +44,14 @@ export class ModifierUneAction implements CommandHandler<Command> {
     utilisateurRepository: GetUtilisateurRepository,
     actionRepository: GetActionRepository & UpdateActionRepository,
     transactionRepository: TransactionRepository,
-    demandeDeSubventionRepository: 
-      AddDemandeDeSubventionRepository
-      & GetDemandeDeSubventionRepository
-      & SupprimerDemandeDeSubventionRepository
-      & UpdateDemandeDeSubventionRepository,
-    coFinancementRepository:
-      AddCoFinancementRepository
-      & GetCoFinancementRepository
-      & SupprimerCoFinancementRepository
-      & UpdateCoFinancementRepository,
+    demandeDeSubventionRepository: AddDemandeDeSubventionRepository &
+      GetDemandeDeSubventionRepository &
+      SupprimerDemandeDeSubventionRepository &
+      UpdateDemandeDeSubventionRepository,
+    coFinancementRepository: AddCoFinancementRepository &
+      GetCoFinancementRepository &
+      SupprimerCoFinancementRepository &
+      UpdateCoFinancementRepository,
     date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
@@ -69,7 +64,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
     this.#date = date
   }
 
-  async handle(command: Command):ResultAsync<Failure> {
+  async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance.peutEtreGereePar(editeur)) {
@@ -90,7 +85,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       let demandeDeSubventionExistante: DemandeDeSubvention | DemandeDeSubventionFailure | undefined
       if (demandeDeSubventionUid) {
         demandeDeSubventionExistante = await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
-        
+
         if (!(demandeDeSubventionExistante instanceof DemandeDeSubvention)) {
           return 'modifierActionErreurDemandeDeSubventionInconnue'
         }
@@ -150,7 +145,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       if (command.coFinancements.length > 0) {
         // Suppression des cofinancements existants
         await this.#coFinancementRepository.supprimer(actionAModifier.state.uid.value, tx)
-        
+
         // Création des nouveaux cofinancements
         const coFinancements = creationDesCoFinancements(command.coFinancements, actionAModifier.state.uid.value)
         if (Array.isArray(coFinancements)) {
@@ -191,10 +186,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
         return 'modifierActionErreurInconnue'
       }
 
-      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(
-        this.#date,
-        editeur
-      )
+      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(this.#date, editeur)
 
       if (!(feuilleDeRouteAJour instanceof FeuilleDeRoute)) {
         return 'modifierActionErreurInconnue'
@@ -234,13 +226,14 @@ type Command = Readonly<{
   uidPorteurs: Array<string>
 }>
 
-type Failure = 'modifierActionErreurDemandeDeSubventionInconnue' 
-| 'modifierActionErreurDemandeDeSubventionStatutInvalide'
-| 'modifierActionErreurEditeurInconnue' 
-| 'modifierActionErreurFeuilleDeRouteInconnue'
-| 'modifierActionErreurGouvernanceInconnue'
-| 'modifierActionErreurInconnue'
-| 'montantInvalide'
-| 'utilisateurNePeutPasAjouterAction'
-| ActionFailure
-| DemandeDeSubventionFailure
+type Failure =
+  | 'modifierActionErreurDemandeDeSubventionInconnue'
+  | 'modifierActionErreurDemandeDeSubventionStatutInvalide'
+  | 'modifierActionErreurEditeurInconnue'
+  | 'modifierActionErreurFeuilleDeRouteInconnue'
+  | 'modifierActionErreurGouvernanceInconnue'
+  | 'modifierActionErreurInconnue'
+  | 'montantInvalide'
+  | 'utilisateurNePeutPasAjouterAction'
+  | ActionFailure
+  | DemandeDeSubventionFailure

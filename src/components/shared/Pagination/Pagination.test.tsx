@@ -5,14 +5,9 @@ import Pagination from './Pagination'
 import { renderComponent } from '@/components/testHelper'
 
 describe('[URL] pagination', () => {
-  it('[URL] quand je suis sur la première page d\'une page', () => {
+  it("[URL] quand je suis sur la première page d'une page", () => {
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={9}
-      />
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={9} />)
 
     // THEN
     const pages = listerLesPages()
@@ -29,12 +24,7 @@ describe('[URL] pagination', () => {
 
   it('[URL] quand je suis sur la première page de six pages', () => {
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={55}
-      />
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={55} />)
 
     // THEN
     const pages = listerLesPages()
@@ -62,13 +52,7 @@ describe('[URL] pagination', () => {
     const searchParams = new URLSearchParams({ page: '2' })
 
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={55}
-      />,
-      { searchParams }
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={55} />, { searchParams })
 
     // THEN
     const pages = listerLesPages()
@@ -96,13 +80,7 @@ describe('[URL] pagination', () => {
     const searchParams = new URLSearchParams({ page: '4' })
 
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={75}
-      />,
-      { searchParams }
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={75} />, { searchParams })
 
     // THEN
     const pages = listerLesPages()
@@ -130,13 +108,7 @@ describe('[URL] pagination', () => {
     const searchParams = new URLSearchParams({ page: '5' })
 
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={55}
-      />,
-      { searchParams }
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={55} />, { searchParams })
 
     // THEN
     const pages = listerLesPages()
@@ -164,13 +136,7 @@ describe('[URL] pagination', () => {
     const searchParams = new URLSearchParams({ page: '320' })
 
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={3230}
-      />,
-      { searchParams }
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={3230} />, { searchParams })
 
     // THEN
     const pages = listerLesPages()
@@ -193,18 +159,12 @@ describe('[URL] pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 323')
   })
 
-  it('[URL] quand je suis sur une page quelconque et avec un autre paramètre dans l\'url', () => {
+  it("[URL] quand je suis sur une page quelconque et avec un autre paramètre dans l'url", () => {
     // GIVEN
     const searchParams = new URLSearchParams({ fakeParam: 'fakeValue' })
 
     // WHEN
-    renderComponent(
-      <Pagination
-        pathname="/mes-utilisateurs"
-        totalUtilisateurs={9}
-      />,
-      { searchParams }
-    )
+    renderComponent(<Pagination pathname="/mes-utilisateurs" totalUtilisateurs={9} />, { searchParams })
 
     // THEN
     const pages = listerLesPages()

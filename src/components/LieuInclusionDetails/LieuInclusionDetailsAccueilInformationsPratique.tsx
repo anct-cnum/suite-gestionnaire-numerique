@@ -57,22 +57,22 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
   return (
     <form
       className="fr-p-4w"
-      onSubmit={(event) => { void handleSubmit(event) }}
+      onSubmit={(event) => {
+        void handleSubmit(event)
+      }}
     >
       <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
         <div className="fr-col">
-          <h3 className="fr-h6 fr-mb-0">
-            Informations pratiques
-          </h3>
-          <p className="fr-text--sm fr-mb-0 fr-text-mention--grey">
-            Horaires, accès et site internet du lieu
-          </p>
+          <h3 className="fr-h6 fr-mb-0">Informations pratiques</h3>
+          <p className="fr-text--sm fr-mb-0 fr-text-mention--grey">Horaires, accès et site internet du lieu</p>
         </div>
         {!isEditing && peutModifier ? (
           <div className="fr-col-auto">
             <button
               className="fr-link fr-icon-edit-fill fr-link--icon-right fr-mt-n2w"
-              onClick={() => { setIsEditing(true) }}
+              onClick={() => {
+                setIsEditing(true)
+              }}
               type="button"
             >
               Modifier
@@ -83,112 +83,74 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
 
       {/* Site internet */}
       <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
-          Site internet du lieu
-        </p>
-        {
-          isEditing
-            ? (
-              <input
-                className="fr-input"
-                defaultValue={websiteUrl}
-                name="websiteUrl"
-                placeholder="https://exemple.fr"
-                type="url"
-              />
-            )
-            : (
-              <UrlDisplay url={websiteUrl} />
-            )
-        }
+        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">Site internet du lieu</p>
+        {isEditing ? (
+          <input
+            className="fr-input"
+            defaultValue={websiteUrl}
+            name="websiteUrl"
+            placeholder="https://exemple.fr"
+            type="url"
+          />
+        ) : (
+          <UrlDisplay url={websiteUrl} />
+        )}
       </div>
 
       {/* Prise de RDV */}
       <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
-          Prise de rendez-vous en ligne
-        </p>
-        {
-          isEditing
-            ? (
-              <input
-                className="fr-input"
-                defaultValue={priseRdvUrl}
-                name="priseRdvUrl"
-                placeholder="https://exemple.fr/rdv"
-                type="url"
-              />
-            )
-            : (
-              <UrlDisplay url={priseRdvUrl} />
-            )
-        }
+        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">Prise de rendez-vous en ligne</p>
+        {isEditing ? (
+          <input
+            className="fr-input"
+            defaultValue={priseRdvUrl}
+            name="priseRdvUrl"
+            placeholder="https://exemple.fr/rdv"
+            type="url"
+          />
+        ) : (
+          <UrlDisplay url={priseRdvUrl} />
+        )}
       </div>
 
       {/* Itinérance */}
       <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
-          Itinérance
-        </p>
+        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">Itinérance</p>
         {isEditing ? (
           <div className="fr-checkbox-group">
-            <input
-              defaultChecked={isItinerant}
-              id="itinerance-checkbox"
-              name="itinerance"
-              type="checkbox"
-            />
-            <label
-              className="fr-label"
-              htmlFor="itinerance-checkbox"
-            >
+            <input defaultChecked={isItinerant} id="itinerance-checkbox" name="itinerance" type="checkbox" />
+            <label className="fr-label" htmlFor="itinerance-checkbox">
               Le lieu propose des services en itinérance
             </label>
           </div>
         ) : (
-          <p className="fr-text--sm">
-            {isItinerant ? 'Oui' : 'Non'}
-          </p>
+          <p className="fr-text--sm">{isItinerant ? 'Oui' : 'Non'}</p>
         )}
       </div>
 
       {/* Horaires */}
       <div className="fr-mb-2w">
-        {
-          isEditing
-            ? (
-              <EditHoraires horaires={horaires ?? ''} />
-            )
-            : (
-              <HorairesOuverture horaires={horaires} />
-            )
-        }
+        {isEditing ? <EditHoraires horaires={horaires ?? ''} /> : <HorairesOuverture horaires={horaires} />}
       </div>
 
       {/* Boutons Annuler/Enregistrer */}
-      {
-        isEditing
-          ? (
-            <div className="fr-btns-group fr-btns-group--inline-sm">
-              <button
-                className="fr-btn fr-btn--secondary"
-                disabled={isDisabled}
-                onClick={() => { setIsEditing(false) }}
-                type="button"
-              >
-                Annuler
-              </button>
-              <button
-                className="fr-btn"
-                disabled={isDisabled}
-                type="submit"
-              >
-                {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
-              </button>
-            </div>
-          )
-          : null
-      }
+      {isEditing ? (
+        <div className="fr-btns-group fr-btns-group--inline-sm">
+          <button
+            className="fr-btn fr-btn--secondary"
+            disabled={isDisabled}
+            onClick={() => {
+              setIsEditing(false)
+            }}
+            type="button"
+          >
+            Annuler
+          </button>
+          <button className="fr-btn" disabled={isDisabled} type="submit">
+            {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
+          </button>
+        </div>
+      ) : null}
     </form>
   )
 }
@@ -200,20 +162,11 @@ function UrlDisplay(props: UrlDisplayProps): ReactElement {
   const isEmptyUrl = url === undefined || url === '' || url.trim() === ''
 
   if (isEmptyUrl) {
-    return (
-      <p className="fr-text--sm">
-        Non renseigné
-      </p>
-    )
+    return <p className="fr-text--sm">Non renseigné</p>
   }
 
   return (
-    <a
-      className="fr-link"
-      href={url}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
+    <a className="fr-link" href={url} rel="noopener noreferrer" target="_blank">
       {url}
     </a>
   )

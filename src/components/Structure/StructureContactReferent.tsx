@@ -22,8 +22,8 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
   const [isExpanded, setIsExpanded] = useState(false)
   const [drawerKey, setDrawerKey] = useState(0)
   const maxContactsAffiches = 4
-  const contactsTries = contacts.toSorted(
-    (contactA, contactB) => contactA.nom.localeCompare(contactB.nom, 'fr', { sensitivity: 'base' })
+  const contactsTries = contacts.toSorted((contactA, contactB) =>
+    contactA.nom.localeCompare(contactB.nom, 'fr', { sensitivity: 'base' })
   )
   const contactsAffiches = isExpanded ? contactsTries : contactsTries.slice(0, maxContactsAffiches)
   const drawerRef = useRef<HTMLDialogElement>(null)
@@ -128,10 +128,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
       >
         <header>
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-            <h2
-              className="fr-h6 fr-mb-0"
-              id="contact"
-            >
+            <h2 className="fr-h6 fr-mb-0" id="contact">
               Contacts
             </h2>
             {peutGererStructure ? (
@@ -175,9 +172,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
               style={{ alignSelf: 'flex-start' }}
               type="button"
             >
-              {isExpanded
-                ? 'Voir moins'
-                : `Afficher tous les contacts (${contacts.length - maxContactsAffiches})`}
+              {isExpanded ? 'Voir moins' : `Afficher tous les contacts (${contacts.length - maxContactsAffiches})`}
             </button>
           </>
         ) : null}
@@ -193,9 +188,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
         ref={drawerRef}
       >
         <FormulaireContactStructure
-          contactReferent={
-            drawerMode === 'modifier' && contactAModifier !== null ? contactAModifier : undefined
-          }
+          contactReferent={drawerMode === 'modifier' && contactAModifier !== null ? contactAModifier : undefined}
           key={drawerKey}
           labelId={drawerLabelId}
           onSubmit={drawerMode === 'modifier' ? modifierContact : ajouterContact}
@@ -224,16 +217,17 @@ function ContactCard({ contact, drawerId, onModifier, onSupprimer }: ContactCard
         <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
           <p
             className="fr-mb-0"
-            style={{ color: 'var(--text-title-blue-france)', fontSize: '1.125rem', fontWeight: 700, lineHeight: '1.75rem' }}
+            style={{
+              color: 'var(--text-title-blue-france)',
+              fontSize: '1.125rem',
+              fontWeight: 700,
+              lineHeight: '1.75rem',
+            }}
           >
-            {contact.nom}
-            {' '}
-            {contact.prenom}
+            {contact.nom} {contact.prenom}
           </p>
           {contact.estReferentFNE ? (
-            <p className="fr-badge fr-badge--blue-cumulus fr-badge--no-icon fr-badge--sm fr-mb-0">
-              Référent FNE
-            </p>
+            <p className="fr-badge fr-badge--blue-cumulus fr-badge--no-icon fr-badge--sm fr-mb-0">Référent FNE</p>
           ) : null}
         </div>
         {onModifier !== undefined || onSupprimer !== undefined ? (
@@ -265,10 +259,7 @@ function ContactCard({ contact, drawerId, onModifier, onSupprimer }: ContactCard
           </div>
         ) : null}
       </div>
-      <p
-        className="fr-text--sm fr-mb-0"
-        style={{ color: 'var(--text-default-grey)' }}
-      >
+      <p className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-default-grey)' }}>
         {contact.fonction}
       </p>
       <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
@@ -277,24 +268,16 @@ function ContactCard({ contact, drawerId, onModifier, onSupprimer }: ContactCard
           className="fr-icon-phone-line fr-icon--sm"
           style={{ color: 'var(--text-mention-grey)' }}
         />
-        <span
-          className="fr-text--sm fr-mb-0"
-          style={{ color: 'var(--text-mention-grey)' }}
-        >
+        <span className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-mention-grey)' }}>
           {contact.telephone}
         </span>
-        <span style={{ color: 'var(--text-mention-grey)' }}>
-          ·
-        </span>
+        <span style={{ color: 'var(--text-mention-grey)' }}>·</span>
         <span
           aria-hidden="true"
           className="fr-icon-mail-line fr-icon--sm"
           style={{ color: 'var(--text-mention-grey)' }}
         />
-        <span
-          className="fr-text--sm fr-mb-0"
-          style={{ color: 'var(--text-mention-grey)' }}
-        >
+        <span className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-mention-grey)' }}>
           {contact.email}
         </span>
       </div>

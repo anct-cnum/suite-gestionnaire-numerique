@@ -13,85 +13,47 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
   return (
     <>
       <DrawerTitle id={labelId}>
-        <TitleIcon
-          background={action.statut.background}
-          icon={action.statut.icon}
-        />
+        <TitleIcon background={action.statut.background} icon={action.statut.icon} />
         <br />
         {action.nom}
       </DrawerTitle>
-      { action.statut.display ?
-        <Badge color={action.statut.variant}>
-          {action.statut.libelle}
-        </Badge>
-        : null }
-      <ul
-        aria-label="Besoins"
-        className="fr-ml-1w"
-      >
+      {action.statut.display ? <Badge color={action.statut.variant}>{action.statut.libelle}</Badge> : null}
+      <ul aria-label="Besoins" className="fr-ml-1w">
         {Object.entries(action.besoins).map(([besoin, label]) => (
-          <li
-            className={`color-grey fr-text--bold fr-text--sm ${styles.besoin}`}
-            key={besoin}
-          >
+          <li className={`color-grey fr-text--bold fr-text--sm ${styles.besoin}`} key={besoin}>
             {label}
           </li>
         ))}
       </ul>
-      <div className="color-grey fr-mt-2w fr-text--bold">
-        {action.libellePorteurs}
-      </div>
+      <div className="color-grey fr-mt-2w fr-text--bold">{action.libellePorteurs}</div>
       {action.porteurs.length === 0 ? (
-        <span>
-          -
-        </span>
-      ) :
+        <span>-</span>
+      ) : (
         action.porteurs.map((porteur) => (
-          <Tag
-            href={porteur.link}
-            key={porteur.link}
-          >
+          <Tag href={porteur.link} key={porteur.link}>
             {porteur.label}
           </Tag>
-        ))}
-      <div className="color-grey fr-mt-2w fr-text--bold">
-        Description de l’action
-      </div>
+        ))
+      )}
+      <div className="color-grey fr-mt-2w fr-text--bold">Description de l’action</div>
       <ReadMore texte={action.description} />
-      <ul
-        aria-label="Budget prévisionnel"
-        className="grey-border"
-      >
+      <ul aria-label="Budget prévisionnel" className="grey-border">
         <li className={`${styles.budget__global} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-p-2w`}>
-          <span role="term">
-            {action.budgetPrevisionnel.global.libelle}
-          </span>
-          <span role="definition">
-            {action.budgetPrevisionnel.global.montant}
-          </span>
+          <span role="term">{action.budgetPrevisionnel.global.libelle}</span>
+          <span role="definition">{action.budgetPrevisionnel.global.montant}</span>
         </li>
         <li className={`${styles.financement} fr-p-2w background-blue-france`}>
-          <p className="fr-mb-1w color-blue-france fr-text--bold">
-            Financement :
-            {' '}
-            {action.libelleEnveloppe}
-          </p>
+          <p className="fr-mb-1w color-blue-france fr-text--bold">Financement : {action.libelleEnveloppe}</p>
           {action.budgetPrevisionnel.subventions.map((subvention) => (
-            <ul key={action.uid+subvention.libelle}>
+            <ul key={action.uid + subvention.libelle}>
               <li
                 className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-ml-1w`}
-                key={action.uid+subvention.libelle+ subvention.montant}
+                key={action.uid + subvention.libelle + subvention.montant}
               >
                 <span role="term">
-                  <span className="fr-text--bold">
-                    ·
-                  </span>
-                  {' '}
-                  {subvention.libelle}
+                  <span className="fr-text--bold">·</span> {subvention.libelle}
                 </span>
-                <span role="definition">
-                  {subvention.montant}
-                </span>
+                <span role="definition">{subvention.montant}</span>
               </li>
             </ul>
           ))}
@@ -101,40 +63,23 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
             ? action.budgetPrevisionnel.coFinancements
             : [{ libelle: 'Co-financement', montant: '0€' }]
           ).map((coFinancement) => (
-            <li
-              className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-              key={coFinancement.libelle}
-            >
-              <span role="term">
-                {coFinancement.libelle}
-              </span>
-              <span role="definition">
-                {coFinancement.montant}
-              </span>
+            <li className="fr-grid-row fr-btns-group--space-between fr-mb-1w" key={coFinancement.libelle}>
+              <span role="term">{coFinancement.libelle}</span>
+              <span role="definition">{coFinancement.montant}</span>
             </li>
           ))}
         </ul>
       </ul>
-      <div className="color-grey  fr-text--bold fr-mt-2w">
-        Bénéficiaires des subventions
-      </div>
-      <ul
-        aria-label="Bénéficiaires des subventions"
-        className="fr-tags-group"
-      >
+      <div className="color-grey  fr-text--bold fr-mt-2w">Bénéficiaires des subventions</div>
+      <ul aria-label="Bénéficiaires des subventions" className="fr-tags-group">
         {action.beneficiaires.map((beneficiaire) => (
           <li key={beneficiaire.label}>
-            <Tag href={beneficiaire.link}>
-              {beneficiaire.label}
-            </Tag>
+            <Tag href={beneficiaire.link}>{beneficiaire.label}</Tag>
           </li>
         ))}
       </ul>
       <div className="fr-btns-group fr-mt-2w">
-        <Link
-          className="fr-btn fr-btn--secondary"
-          href={action.lienPourModifier}
-        >
+        <Link className="fr-btn fr-btn--secondary" href={action.lienPourModifier}>
           Modifier cette action
         </Link>
       </div>

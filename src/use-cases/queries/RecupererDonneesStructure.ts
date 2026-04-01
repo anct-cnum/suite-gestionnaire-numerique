@@ -5,10 +5,12 @@ export interface DonneesStructureLoader {
 }
 
 export type DonneesStructureReadModel = Readonly<{
-  accompagnementsMensuels: ReadonlyArray<Readonly<{
-    mois: string
-    nombre: number
-  }>>
+  accompagnementsMensuels: ReadonlyArray<
+    Readonly<{
+      mois: string
+      nombre: number
+    }>
+  >
   nombreLieux: number
   nombreMediateurs: number
   totalAccompagnements: number

@@ -26,9 +26,7 @@ export type StructureData = Readonly<{
 }>
 
 export interface StructureRepository
-  extends CreateStructureRepository,
-  GetStructureBySiretEmployeuseRepository,
-  GetStructureBySiretRepository {}
+  extends CreateStructureRepository, GetStructureBySiretEmployeuseRepository, GetStructureBySiretRepository {}
 
 interface GetStructureBySiretEmployeuseRepository {
   getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure>

@@ -14,17 +14,20 @@ export const metadata: Metadata = {
 export default async function FeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
   try {
     const codeDepartement = (await params).codeDepartement
-    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance)
-      .get(codeDepartement)
+    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance).get(
+      codeDepartement
+    )
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
-    return  <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
+    return <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
   } catch {
     notFound()
   }
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
+  params: Promise<
+    Readonly<{
+      codeDepartement: string
+    }>
+  >
 }>

@@ -28,10 +28,11 @@ export interface FindUtilisateurByEmailRepository {
   findByEmail(email: string): Promise<undefined | Utilisateur>
 }
 
-export interface UtilisateurRepository extends
-  AddUtilisateurRepository,
-  DropUtilisateurRepository,
-  FindUtilisateurByEmailRepository,
-  GetUtilisateurRepository,
-  UpdateDepartementUtilisateurRepository,
-  UpdateUtilisateurRepository {}
+export interface UtilisateurRepository
+  extends
+    AddUtilisateurRepository,
+    DropUtilisateurRepository,
+    FindUtilisateurByEmailRepository,
+    GetUtilisateurRepository,
+    UpdateDepartementUtilisateurRepository,
+    UpdateUtilisateurRepository {}

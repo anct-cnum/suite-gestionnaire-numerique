@@ -43,8 +43,8 @@ Docker et Docker Compose sont necessaires pour la base de donnees PostgreSQL.
 
 ```bash
 devbox shell
-yarn install
-yarn prisma:generate
+pnpm install
+pnpm prisma:generate
 ```
 
 ### 2. Configuration des variables d'environnement
@@ -55,7 +55,7 @@ Remplacer les variables affectees a `A_REMPLIR` dans `.env.local`.
 
 ```bash
 docker compose up -d
-yarn dev
+pnpm dev
 ```
 
 Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000).
@@ -63,7 +63,7 @@ Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000).
 Pour le site vitrine :
 
 ```bash
-yarn dev:vitrine
+pnpm dev:vitrine
 ```
 
 ### 4. Import des donnees
@@ -96,8 +96,8 @@ Dans un terminal avec `devbox shell` :
 
 ```bash
 docker compose down
-yarn db:start
-yarn prisma:reset
+pnpm db:start
+pnpm prisma:reset
 
 docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA main CASCADE;"
 docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA audit CASCADE;"
@@ -125,7 +125,7 @@ WHERE departement_code = 'zzz'
 #### Étape 6 : Démarrer l'application
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 Se connecter avec `test@fia1.fr`.
@@ -138,46 +138,46 @@ Se connecter avec `test@fia1.fr`.
 
 | Commande           | Description                                  |
 | ------------------ | -------------------------------------------- |
-| `yarn dev`         | Demarre le serveur de dev avec Turbo         |
-| `yarn dev:vitrine` | Demarre le site vitrine                      |
-| `yarn db:start`    | Demarre le conteneur PostgreSQL              |
-| `yarn devmigrate`  | Execute les migrations et demarre le serveur |
+| `pnpm dev`         | Demarre le serveur de dev avec Turbo         |
+| `pnpm dev:vitrine` | Demarre le site vitrine                      |
+| `pnpm db:start`    | Demarre le conteneur PostgreSQL              |
+| `pnpm devmigrate`  | Execute les migrations et demarre le serveur |
 
 ### Tests
 
 | Commande             | Description                                       |
 | -------------------- | ------------------------------------------------- |
-| `yarn test`          | Execute les tests une fois (migre la BDD de test) |
-| `yarn test:watch`    | Execute les tests en mode watch                   |
-| `yarn test:coverage` | Execute les tests avec rapport de couverture      |
+| `pnpm test`          | Execute les tests une fois (migre la BDD de test) |
+| `pnpm test:watch`    | Execute les tests en mode watch                   |
+| `pnpm test:coverage` | Execute les tests avec rapport de couverture      |
 
 ### Qualite du code
 
 | Commande         | Description                                                                         |
 | ---------------- | ----------------------------------------------------------------------------------- |
-| `yarn check`     | Execute toutes les verifications (dedupe, deadcode, typecheck, format, lint, tests) |
-| `yarn typecheck` | Verification TypeScript                                                             |
-| `yarn lint:ts`   | ESLint pour TypeScript                                                              |
-| `yarn lint:css`  | Stylelint pour CSS                                                                  |
-| `yarn format`    | Formatage Prettier (CSS, JSON, markdown)                                            |
+| `pnpm check`     | Execute toutes les verifications (dedupe, deadcode, typecheck, format, lint, tests) |
+| `pnpm typecheck` | Verification TypeScript                                                             |
+| `pnpm lint:ts`   | ESLint pour TypeScript                                                              |
+| `pnpm lint:css`  | Stylelint pour CSS                                                                  |
+| `pnpm format`    | Formatage Prettier (CSS, JSON, markdown)                                            |
 
 ### Base de donnees
 
 | Commande                  | Description                       |
 | ------------------------- | --------------------------------- |
-| `yarn prisma:migrate`     | Cree et applique les migrations   |
-| `yarn prisma:reset`       | Reinitialise completement la base |
-| `yarn prisma:generate`    | Genere le client Prisma           |
-| `yarn prisma:drop:schema` | Supprime les schemas              |
-| `yarn psql:local`         | Acces CLI a la BDD locale         |
-| `yarn psql:test`          | Acces CLI a la BDD de test        |
+| `pnpm prisma:migrate`     | Cree et applique les migrations   |
+| `pnpm prisma:reset`       | Reinitialise completement la base |
+| `pnpm prisma:generate`    | Genere le client Prisma           |
+| `pnpm prisma:drop:schema` | Supprime les schemas              |
+| `pnpm psql:local`         | Acces CLI a la BDD locale         |
+| `pnpm psql:test`          | Acces CLI a la BDD de test        |
 
 ### Autres
 
 | Commande         | Description                      |
 | ---------------- | -------------------------------- |
-| `yarn storybook` | Lance Storybook sur le port 6006 |
-| `yarn deadcode`  | Detecte le code mort avec Knip   |
+| `pnpm storybook` | Lance Storybook sur le port 6006 |
+| `pnpm deadcode`  | Detecte le code mort avec Knip   |
 
 ## Tests
 
@@ -185,13 +185,13 @@ Se connecter avec `test@fia1.fr`.
 
 ```bash
 # Une fois
-yarn test
+pnpm test
 
 # En continu
-yarn test:watch
+pnpm test:watch
 
 # Avec couverture
-yarn test:coverage
+pnpm test:coverage
 ```
 
 ### Conventions
@@ -207,10 +207,10 @@ yarn test:coverage
 
 ```bash
 # BDD locale
-yarn psql:local
+pnpm psql:local
 
 # BDD de test
-yarn psql:test
+pnpm psql:test
 ```
 
 ## Architecture
@@ -354,7 +354,7 @@ Il faut lancer un tunnel SSH. Pour cela, donner une cle SSH publique au DataSpac
 Alternative : se connecter au bastion Scalingo, ouvrir un tunnel SSH puis lancer psql.
 
 ```bash
-yarn bash:production
+pnpm bash:production
 ssh -i .ssh/id_rsa -N -f -L $DS_BDD_IP $DS_BASTION_IP -p $DS_BASTION_PORT
 psql "${DATABASE_URL/?schema=min/?options=--search_path%3dmin}"
 ```
@@ -364,7 +364,7 @@ psql "${DATABASE_URL/?schema=min/?options=--search_path%3dmin}"
 ### Reset de la base de test
 
 ```bash
-yarn dotenv:test -- yarn prisma:reset
+pnpm dotenv:test -- pnpm prisma:reset
 ```
 
 ### Scripts SQL
@@ -380,7 +380,7 @@ SET transaction_timeout = 0;
 Storybook est utilise pour developper et tester les composants UI de maniere isolee.
 
 ```bash
-yarn storybook
+pnpm storybook
 ```
 
 Ouvrir [http://localhost:6006](http://localhost:6006).

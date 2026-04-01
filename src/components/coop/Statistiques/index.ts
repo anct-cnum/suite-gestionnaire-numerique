@@ -3,19 +3,6 @@ import './statistiques.css'
 
 // Components
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Sections
 
 // Colors

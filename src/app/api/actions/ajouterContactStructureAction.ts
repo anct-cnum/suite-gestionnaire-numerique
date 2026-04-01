@@ -6,9 +6,7 @@ import { z } from 'zod'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
-export async function ajouterContactStructureAction(
-  actionParams: ActionParams
-): Promise<ReadonlyArray<string>> {
+export async function ajouterContactStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
@@ -41,12 +39,15 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  email: z.string().regex(emailPattern, { message: 'L\'adresse électronique doit être valide' }),
+  email: z.string().regex(emailPattern, { message: "L'adresse électronique doit être valide" }),
   estReferentFNE: z.boolean(),
   fonction: z.string().min(1, { message: 'La fonction doit être renseignée' }),
   nom: z.string().min(1, { message: 'Le nom doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   prenom: z.string().min(1, { message: 'Le prénom doit être renseigné' }),
-  structureId: z.number().int().positive({ message: 'L\'identifiant de la structure doit être un entier positif' }),
-  telephone: z.string().regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
+  structureId: z.number().int().positive({ message: "L'identifiant de la structure doit être un entier positif" }),
+  telephone: z
+    .string()
+    .regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' })
+    .or(z.literal('')),
 })

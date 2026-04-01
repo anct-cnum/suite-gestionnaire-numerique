@@ -97,15 +97,18 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
         href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
-        metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
-          `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
+        metadonnee: feuilleDeRoute.pieceJointe.metadonnees
+          ? `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.`
+          : '',
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         nom: feuilleDeRoute.pieceJointe.nom.split('/').pop()!,
       },
-      porteur: feuilleDeRoute.structureCoPorteuse ? {
-        label: feuilleDeRoute.structureCoPorteuse.nom,
-        link: membreLink(feuilleDeRoute.structureCoPorteuse.structureId),
-      } : undefined,
+      porteur: feuilleDeRoute.structureCoPorteuse
+        ? {
+            label: feuilleDeRoute.structureCoPorteuse.nom,
+            link: membreLink(feuilleDeRoute.structureCoPorteuse.structureId),
+          }
+        : undefined,
       totaux: {
         budget: formatMontant(feuilleDeRoute.totaux.budget),
         coFinancement: formatMontant(feuilleDeRoute.totaux.coFinancement),
@@ -124,10 +127,13 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       label: nom,
       link: membreLink(structureId),
     })),
-    besoins: action.besoins.reduce((acc, besoin) => ({
-      ...acc,
-      [besoin]: BESOINS_LABELS[besoin],
-    }), {} as Record<BesoinsPossible, string>),
+    besoins: action.besoins.reduce(
+      (acc, besoin) => ({
+        ...acc,
+        [besoin]: BESOINS_LABELS[besoin],
+      }),
+      {} as Record<BesoinsPossible, string>
+    ),
     budgetPrevisionnel: {
       coFinancements: action.coFinancements.map(({ coFinanceur, montant }) => ({
         libelle: coFinanceur.nom,
@@ -137,16 +143,18 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         libelle: 'Budget prévisionnel',
         montant: formatMontant(action.budgetGlobal),
       },
-      subventions: action.subvention ? [
-        {
-          libelle: 'Prestation de service',
-          montant: formatMontant(action.subvention.montants.prestation),
-        },
-        {
-          libelle: 'Ressources humaine',
-          montant: formatMontant(action.subvention.montants.ressourcesHumaines),
-        },
-      ] : [],
+      subventions: action.subvention
+        ? [
+            {
+              libelle: 'Prestation de service',
+              montant: formatMontant(action.subvention.montants.prestation),
+            },
+            {
+              libelle: 'Ressources humaine',
+              montant: formatMontant(action.subvention.montants.ressourcesHumaines),
+            },
+          ]
+        : [],
     },
     description: action.description,
     libelleEnveloppe: action.subvention?.enveloppe ?? 'Aucune enveloppe',

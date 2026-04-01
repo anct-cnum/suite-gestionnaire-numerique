@@ -16,7 +16,7 @@ const meta: Meta<typeof StructureContactReferent> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 const defaultViewModel = createDefaultStructureViewModel()
 
@@ -39,7 +39,7 @@ export const AvecFonctionLongue: Story = {
     contacts: [
       {
         ...defaultViewModel.contacts[0],
-        fonction: 'Directeur adjoint en charge de l\'inclusion numérique et de la médiation sociale',
+        fonction: "Directeur adjoint en charge de l'inclusion numérique et de la médiation sociale",
       },
     ],
     structureId: defaultViewModel.structureId,

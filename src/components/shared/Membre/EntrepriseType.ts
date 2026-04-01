@@ -1,4 +1,3 @@
-
 export type EntrepriseViewModel = Readonly<{
   activitePrincipale: string
   activitePrincipaleLibelle: string

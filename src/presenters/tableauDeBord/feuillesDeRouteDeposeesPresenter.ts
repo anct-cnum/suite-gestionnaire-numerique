@@ -3,7 +3,7 @@ import { FeuillesDeRouteDeposeesReadModel } from '@/use-cases/queries/RecupererF
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export type FeuillesDeRouteDeposeesViewModel = Readonly<{
-  nombreAvecDemandeSubvention : number
+  nombreAvecDemandeSubvention: number
   nombreTotal: number
   ventilationParPerimetre: ReadonlyArray<{
     backgroundColor: string
@@ -38,9 +38,7 @@ export function feuillesDeRouteDeposeesPresenter(
   }
 }
 
-function isErrorReadModel(
-  readModel: ErrorReadModel | FeuillesDeRouteDeposeesReadModel
-): readModel is ErrorReadModel {
+function isErrorReadModel(readModel: ErrorReadModel | FeuillesDeRouteDeposeesReadModel): readModel is ErrorReadModel {
   return 'type' in readModel
 }
 
@@ -52,7 +50,7 @@ function getColorForPerimetre(perimetre: string): string {
     groupementsDeCommunes: 'dot-green-menthe-main-548',
     regional: 'dot-green-emeraude-main-632',
   }
-  
+
   return couleursMappings[perimetre] ?? 'dot-green-archipel-main-648'
 }
 
@@ -63,7 +61,7 @@ function getLibelleForPerimetre(perimetre: string): string {
     groupementsDeCommunes: 'Feuilles de route infra-départementales',
     regional: 'Feuilles de route régionales',
   }
-  
+
   return libelleMappings[perimetre] ?? perimetre
 }
 

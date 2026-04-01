@@ -16,8 +16,7 @@ export const StatistiquesGenerales = ({
   accompagnementsParMois: AccompagnementCountByPeriod
   totalCounts: AccompagnementsStats
 }) => {
-  const [isAccompagnementCountByMonth, setIsAccompagnementCountByMonth] =
-    useState(true)
+  const [isAccompagnementCountByMonth, setIsAccompagnementCountByMonth] = useState(true)
 
   return (
     <div>
@@ -31,9 +30,7 @@ export const StatistiquesGenerales = ({
         <div className="fr-flex fr-direction-column fr-flex-gap-6v fr-col-xl-4 fr-col-12">
           <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-width-full">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
-              <span className="fr-h2 fr-mb-0">
-                {numberToString(totalCounts.accompagnements.total)}
-              </span>
+              <span className="fr-h2 fr-mb-0">{numberToString(totalCounts.accompagnements.total)}</span>
               <span
                 className="ri-service-line ri-2x"
                 style={{
@@ -60,40 +57,27 @@ export const StatistiquesGenerales = ({
                 role="tooltip"
                 aria-hidden
               >
-                {numberToString(totalCounts.accompagnements.total)}{' '}
-                accompagnements au total dont&nbsp;:
+                {numberToString(totalCounts.accompagnements.total)} accompagnements au total dont&nbsp;:
                 <ul>
                   <li>
-                    {numberToString(
-                      totalCounts.accompagnements.individuels.total,
-                    )}{' '}
-                    accompagnement
-                    {sPluriel(totalCounts.accompagnements.individuels.total)}{' '}
-                    individuel
+                    {numberToString(totalCounts.accompagnements.individuels.total)} accompagnement
+                    {sPluriel(totalCounts.accompagnements.individuels.total)} individuel
                     {sPluriel(totalCounts.accompagnements.individuels.total)}
                   </li>
                   <li>
-                    {numberToString(
-                      totalCounts.activites.collectifs.participants,
-                    )}{' '}
-                    participation
-                    {sPluriel(totalCounts.activites.collectifs.participants)}{' '}
-                    lors de{' '}
-                    {numberToString(totalCounts.activites.collectifs.total)}{' '}
-                    ateliers*
+                    {numberToString(totalCounts.activites.collectifs.participants)} participation
+                    {sPluriel(totalCounts.activites.collectifs.participants)} lors de{' '}
+                    {numberToString(totalCounts.activites.collectifs.total)} ateliers*
                   </li>
                 </ul>
-                *Les ateliers collectifs comptent pour 1 accompagnement par
-                participant. Ex&nbsp;: Un atelier collectif avec 10 participants
-                compte pour 10 accompagnements.
+                *Les ateliers collectifs comptent pour 1 accompagnement par participant. Ex&nbsp;: Un atelier collectif
+                avec 10 participants compte pour 10 accompagnements.
               </span>
             </div>
           </div>
           <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-flex-grow-1">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
-              <span className="fr-h2 fr-mb-0 fr-text--nowrap">
-                {numberToString(totalCounts.beneficiaires.total)}
-              </span>
+              <span className="fr-h2 fr-mb-0 fr-text--nowrap">{numberToString(totalCounts.beneficiaires.total)}</span>
               <span
                 className="ri-user-heart-line ri-2x"
                 style={{
@@ -104,24 +88,18 @@ export const StatistiquesGenerales = ({
             </div>
             <div className="fr-mt-2v">
               <div className="fr-text--sm fr-text--bold fr-mb-0">
-                Bénéficiaire{sPluriel(totalCounts.beneficiaires.total)}{' '}
-                accompagné{sPluriel(totalCounts.beneficiaires.total)}
+                Bénéficiaire{sPluriel(totalCounts.beneficiaires.total)} accompagné
+                {sPluriel(totalCounts.beneficiaires.total)}
               </div>
             </div>
             <div className="fr-text-mention--grey fr-text--sm fr-mb-0 fr-mt-4v">
               <div>
-                <strong>
-                  {numberToString(totalCounts.beneficiaires.suivis)}
-                </strong>{' '}
-                bénéficiaire
+                <strong>{numberToString(totalCounts.beneficiaires.suivis)}</strong> bénéficiaire
                 {sPluriel(totalCounts.beneficiaires.suivis)} suivi
                 {sPluriel(totalCounts.beneficiaires.suivis)}
               </div>
               <div className="fr-whitespace-nowrap">
-                <strong>
-                  {numberToString(totalCounts.beneficiaires.anonymes)}
-                </strong>{' '}
-                bénéficiaire
+                <strong>{numberToString(totalCounts.beneficiaires.anonymes)}</strong> bénéficiaire
                 {sPluriel(totalCounts.beneficiaires.anonymes)} anonyme
                 {sPluriel(totalCounts.beneficiaires.anonymes)}
                 <Button
@@ -132,10 +110,7 @@ export const StatistiquesGenerales = ({
                   type="button"
                   aria-describedby="tooltip-nombre-beneficiaires-anonymes"
                 >
-                  <span
-                    className="ri-information-line fr-text--lg"
-                    aria-hidden
-                  />
+                  <span className="ri-information-line fr-text--lg" aria-hidden />
                 </Button>
                 <span
                   className="fr-tooltip fr-placement"
@@ -143,8 +118,7 @@ export const StatistiquesGenerales = ({
                   role="tooltip"
                   aria-hidden
                 >
-                  Les bénéficiaires anonymes sont comptabilisés comme 1 nouveau
-                  bénéficiaire à chaque accompagnement.
+                  Les bénéficiaires anonymes sont comptabilisés comme 1 nouveau bénéficiaire à chaque accompagnement.
                 </span>
               </div>
             </div>
@@ -164,19 +138,12 @@ export const StatistiquesGenerales = ({
               >
                 <span className="ri-information-line fr-text--lg" aria-hidden />
               </Button>
-              <span
-                className="fr-tooltip fr-placement"
-                id="tooltip-nombre-accompagnements"
-                role="tooltip"
-                aria-hidden
-              >
-                Le nombre d'accompagnements correspond à la somme des 2 types
-                d'activités enregistrées&nbsp;: accompagnement individuel et
-                atelier collectif.
+              <span className="fr-tooltip fr-placement" id="tooltip-nombre-accompagnements" role="tooltip" aria-hidden>
+                Le nombre d'accompagnements correspond à la somme des 2 types d'activités enregistrées&nbsp;:
+                accompagnement individuel et atelier collectif.
                 <br />
-                <br />À noter&nbsp;: Les ateliers collectifs comptent pour 1
-                accompagnement par participant. Ex&nbsp;: Un atelier collectif
-                avec 10 participants compte pour 10 accompagnements.
+                <br />À noter&nbsp;: Les ateliers collectifs comptent pour 1 accompagnement par participant. Ex&nbsp;:
+                Un atelier collectif avec 10 participants compte pour 10 accompagnements.
               </span>
             </div>
             <SegmentedControl
@@ -204,11 +171,7 @@ export const StatistiquesGenerales = ({
           </div>
           <div className="fr-flex-grow-1">
             <AccompagnementBarChart
-              data={
-                isAccompagnementCountByMonth
-                  ? accompagnementsParMois
-                  : accompagnementsParJour
-              }
+              data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}
             />
           </div>
         </div>

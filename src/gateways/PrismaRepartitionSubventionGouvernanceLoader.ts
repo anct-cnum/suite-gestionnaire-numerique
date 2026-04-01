@@ -15,25 +15,23 @@ export class PrismaRepartitionSubventionGouvernanceLoader implements Repartition
           },
         },
         statut: {
-          in: [
-            StatutSubvention.ACCEPTEE,
-            StatutSubvention.EN_COURS,
-            StatutSubvention.DEPOSEE,
-          ],
+          in: [StatutSubvention.ACCEPTEE, StatutSubvention.EN_COURS, StatutSubvention.DEPOSEE],
         },
       },
     })
 
     // cumul des subventions acceptées par enveloppe
-    const repartitionParEnveloppe =
-            demandesDeSubventionsValides.reduce<Record<string, number>>((acc, demandeDeSubvention) => {
-              const enveloppeId = String(demandeDeSubvention.enveloppeFinancementId)
-              const montantActuel = acc[enveloppeId] ?? 0
-              return {
-                ...acc,
-                [enveloppeId]: montantActuel + demandeDeSubvention.subventionDemandee,
-              }
-            }, {})
+    const repartitionParEnveloppe = demandesDeSubventionsValides.reduce<Record<string, number>>(
+      (acc, demandeDeSubvention) => {
+        const enveloppeId = String(demandeDeSubvention.enveloppeFinancementId)
+        const montantActuel = acc[enveloppeId] ?? 0
+        return {
+          ...acc,
+          [enveloppeId]: montantActuel + demandeDeSubvention.subventionDemandee,
+        }
+      },
+      {}
+    )
 
     return new Map(Object.entries(repartitionParEnveloppe))
   }

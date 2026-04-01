@@ -9,11 +9,7 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
   readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(
-    utilisateurRepository: UtilisateurRepository,
-    emailGatewayFactory: EmailGatewayFactory,
-    date: Date
-  ) {
+  constructor(utilisateurRepository: UtilisateurRepository, emailGatewayFactory: EmailGatewayFactory, date: Date) {
     this.#utilisateurRepository = utilisateurRepository
     this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date
@@ -34,10 +30,7 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       structureUid: utilisateurCourantState.structureUid?.value,
       telephone: '',
       uid: { email: command.email, value: command.email },
-    }).create(
-      command.role?.type ?? utilisateurCourantState.role.nom,
-      command.role?.codeOrganisation
-    )
+    }).create(command.role?.type ?? utilisateurCourantState.role.nom, command.role?.codeOrganisation)
 
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'utilisateurNePeutPasGererUtilisateurACreer'

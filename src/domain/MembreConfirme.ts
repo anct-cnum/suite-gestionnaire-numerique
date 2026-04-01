@@ -24,7 +24,7 @@ export class MembreConfirme extends Membre {
     return new MembreSupprimer(
       this.uid,
       this.nom,
-      this.state.roles.filter( role=> role !== 'coporteur').map(role => new Role(role)),
+      this.state.roles.filter((role) => role !== 'coporteur').map((role) => new Role(role)),
       this.uidGouvernance,
       new Statut('supprimer'),
       date,

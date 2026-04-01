@@ -176,65 +176,57 @@ describe('inviter un utilisateur action', () => {
     })
   })
 
-  describe(
-    '[URL] étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de l’invitation est ou n’est pas un "super admin"',
-    () => {
-      it.each([
-        {
-          desc: 'quand l’email est envoyé par un super admin',
-          expectedParams: {
-            auth: undefined,
-            host: '0.0.0.0',
-            port: '1025',
-            secure: false,
-          },
-          isSuperAdmin: true,
+  describe('[URL] étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de l’invitation est ou n’est pas un "super admin"', () => {
+    it.each([
+      {
+        desc: 'quand l’email est envoyé par un super admin',
+        expectedParams: {
+          auth: undefined,
+          host: '0.0.0.0',
+          port: '1025',
+          secure: false,
         },
-        {
-          desc: 'quand l’email est envoyé par un utilisateur qui n’est pas un super admin',
-          expectedParams: {
-            auth: undefined,
-            host: '0.0.0.0',
-            port: '1025',
-            secure: false,
-          },
-
-          isSuperAdmin: false,
+        isSuperAdmin: true,
+      },
+      {
+        desc: 'quand l’email est envoyé par un utilisateur qui n’est pas un super admin',
+        expectedParams: {
+          auth: undefined,
+          host: '0.0.0.0',
+          port: '1025',
+          secure: false,
         },
-      ])(
-        '$desc, alors l’email est envoyé avec le paramétrage approprié',
-        async ({ expectedParams, isSuperAdmin }) => {
-          // GIVEN
-          vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
-          vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('sub')
-          vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-            utilisateurFactory({ isSuperAdmin })
-          )
-          vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
-          const spiedMailerTransport = vi
-            .spyOn(nodemailer, 'createTransport')
-            // @ts-expect-error
-            .mockReturnValueOnce({ sendMail: vi.fn<() => void>() })
-          const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
-          // WHEN
-          await inviterUnUtilisateurAction({
-            codeOrganisation: '21',
-            email: 'martin.tartempion@example.com',
-            nom: 'Tartempion',
-            path: '/',
-            prenom: 'Martin',
-          })
+        isSuperAdmin: false,
+      },
+    ])('$desc, alors l’email est envoyé avec le paramétrage approprié', async ({ expectedParams, isSuperAdmin }) => {
+      // GIVEN
+      vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
+      vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('sub')
+      vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
+      vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
+      const spiedMailerTransport = vi
+        .spyOn(nodemailer, 'createTransport')
+        // @ts-expect-error
+        .mockReturnValueOnce({ sendMail: vi.fn<() => void>() })
+      const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
-          // THEN
-          expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
-          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com/connexion', {
-            email: 'martin.tartempion@example.com',
-            nom: 'Tartempion',
-            prenom: 'Martin',
-          })
-        }
-      )
-    }
-  )
+      // WHEN
+      await inviterUnUtilisateurAction({
+        codeOrganisation: '21',
+        email: 'martin.tartempion@example.com',
+        nom: 'Tartempion',
+        path: '/',
+        prenom: 'Martin',
+      })
+
+      // THEN
+      expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
+      expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com/connexion', {
+        email: 'martin.tartempion@example.com',
+        nom: 'Tartempion',
+        prenom: 'Martin',
+      })
+    })
+  })
 })

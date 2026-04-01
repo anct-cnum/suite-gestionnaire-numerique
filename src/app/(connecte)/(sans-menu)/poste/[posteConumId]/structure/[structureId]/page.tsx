@@ -32,22 +32,20 @@ export default async function PosteConseillerNumeriqueController({ params }: Pro
     return (
       <div className="fr-container fr-py-4w">
         <div className="fr-alert fr-alert--error">
-          <p>
-            {viewModel.message}
-          </p>
+          <p>{viewModel.message}</p>
         </div>
       </div>
     )
   }
 
-  return (
-    <Poste viewModel={viewModel} />
-  )
+  return <Poste viewModel={viewModel} />
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    posteConumId: string
-    structureId: string
-  }>>
+  params: Promise<
+    Readonly<{
+      posteConumId: string
+      structureId: string
+    }>
+  >
 }>

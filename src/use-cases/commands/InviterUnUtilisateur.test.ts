@@ -111,61 +111,54 @@ describe('inviter un utilisateur', () => {
           uid: 'utilisateurGestionnaireUid',
         },
       },
-    ])(
-      '$desc puis un e-mail lui est envoyé',
-      async ({ utilisateurAInviter, utilisateurCourant }) => {
-        // GIVEN
-        const date = epochTime
-        const repository = new RepositorySpy(
-          utilisateurFactory({
-            codeOrganisation: utilisateurCourant.codeOrganisation,
-            inviteLe: date,
-            isSuperAdmin: utilisateurCourant.isSuperAdmin,
-            role: utilisateurCourant.role,
-          })
-        )
-        const inviterUnUtilisateur = new InviterUnUtilisateur(
-          repository,
-          emailGatewayFactorySpy,
-          date
-        )
-
-        // WHEN
-        const result = await inviterUnUtilisateur.handle({
-          email: 'martine.dugenoux@example.com',
-          nom: 'Dugenoux',
-          prenom: 'Martine',
-          role: {
-            codeOrganisation: utilisateurAInviter.codeOrganisation,
-            type: utilisateurAInviter.role,
-          },
-          uidUtilisateurCourant: utilisateurCourant.uid,
-        })
-
-        // THEN
-        const expectedUtilisateurInvite = utilisateurFactory({
-          codeOrganisation: utilisateurAInviter.codeOrganisation,
-          derniereConnexion: undefined,
-          emailDeContact: 'martine.dugenoux@example.com',
+    ])('$desc puis un e-mail lui est envoyé', async ({ utilisateurAInviter, utilisateurCourant }) => {
+      // GIVEN
+      const date = epochTime
+      const repository = new RepositorySpy(
+        utilisateurFactory({
+          codeOrganisation: utilisateurCourant.codeOrganisation,
           inviteLe: date,
-          isSuperAdmin: false,
-          nom: 'Dugenoux',
-          prenom: 'Martine',
-          role: utilisateurAInviter.role,
-          telephone: '',
-          uid: { email: 'martine.dugenoux@example.com', value: 'martine.dugenoux@example.com' },
+          isSuperAdmin: utilisateurCourant.isSuperAdmin,
+          role: utilisateurCourant.role,
         })
-        expect(result).toBe('OK')
-        expect(spiedUidToFind).toBe(utilisateurCourant.uid)
-        expect(spiedUtilisateurToAdd?.state).toStrictEqual(expectedUtilisateurInvite.state)
-        expect(spiedDestinataire).toStrictEqual({
-          email: 'martine.dugenoux@example.com',
-          nom: 'Dugenoux',
-          prenom: 'Martine',
-        })
-        expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
-      }
-    )
+      )
+      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactorySpy, date)
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: {
+          codeOrganisation: utilisateurAInviter.codeOrganisation,
+          type: utilisateurAInviter.role,
+        },
+        uidUtilisateurCourant: utilisateurCourant.uid,
+      })
+
+      // THEN
+      const expectedUtilisateurInvite = utilisateurFactory({
+        codeOrganisation: utilisateurAInviter.codeOrganisation,
+        derniereConnexion: undefined,
+        emailDeContact: 'martine.dugenoux@example.com',
+        inviteLe: date,
+        isSuperAdmin: false,
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: utilisateurAInviter.role,
+        telephone: '',
+        uid: { email: 'martine.dugenoux@example.com', value: 'martine.dugenoux@example.com' },
+      })
+      expect(result).toBe('OK')
+      expect(spiedUidToFind).toBe(utilisateurCourant.uid)
+      expect(spiedUtilisateurToAdd?.state).toStrictEqual(expectedUtilisateurInvite.state)
+      expect(spiedDestinataire).toStrictEqual({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+      })
+      expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
+    })
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
@@ -264,10 +257,10 @@ class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
 
 function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
   spiedIsSuperAdmin = isSuperAdmin
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }
-  }()
+  })()
 }

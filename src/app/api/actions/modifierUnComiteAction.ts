@@ -11,9 +11,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModifierUnComite } from '@/use-cases/commands/ModifierUnComite'
 
-export async function modifierUnComiteAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function modifierUnComiteAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {

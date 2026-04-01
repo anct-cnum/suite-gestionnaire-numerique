@@ -25,36 +25,31 @@ export default function ModifierUnComite({
         label={label}
         labelId={labelId}
         peutGerer={peutGerer}
-        validerFormulaire={(event) => { void modifierUnComite(event) }}
+        validerFormulaire={(event) => {
+          void modifierUnComite(event)
+        }}
       >
-        {peutGerer ?
+        {peutGerer ? (
           <>
-            <SubmitButton
-              ariaControls={id}
-              isDisabled={isDisabled}
-            >
+            <SubmitButton ariaControls={id} isDisabled={isDisabled}>
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
             <button
               aria-controls={id}
               className="fr-btn red-button"
               disabled={isDisabled}
-              onClick={() => { void supprimerUnComite() }}
+              onClick={() => {
+                void supprimerUnComite()
+              }}
               type="button"
             >
               {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
             </button>
           </>
-          : null}
+        ) : null}
       </FormulaireComite>
       <p className="fr-text--xs center">
-        Modifié le
-        {' '}
-        {comite.derniereEdition}
-        {' '}
-        par
-        {' '}
-        {comite.editeur}
+        Modifié le {comite.derniereEdition} par {comite.editeur}
       </p>
     </>
   )

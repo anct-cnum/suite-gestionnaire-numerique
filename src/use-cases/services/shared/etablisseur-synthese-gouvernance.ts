@@ -8,7 +8,8 @@ export type Gouvernance = Readonly<{
 
 export type SyntheseGouvernance = Readonly<{
   feuillesDeRoute: ReadonlyArray<SyntheseFeuilleDeRoute>
-}> & Synthese
+}> &
+  Synthese
 
 export type Finances = Readonly<{
   budget: Montant
@@ -45,14 +46,17 @@ type Action = Readonly<{
 
 type SyntheseFeuilleDeRoute = Readonly<{
   actions: ReadonlyArray<SyntheseAction>
-}> & Synthese & Unique
+}> &
+  Synthese &
+  Unique
 
 type SyntheseAction = Synthese & Unique
 
-type Synthese = Finances & Readonly<{
-  beneficiaires: Denombrement
-  coFinanceurs: Denombrement
-}>
+type Synthese = Finances &
+  Readonly<{
+    beneficiaires: Denombrement
+    coFinanceurs: Denombrement
+  }>
 
 type Unique = Readonly<{ uid: string }>
 

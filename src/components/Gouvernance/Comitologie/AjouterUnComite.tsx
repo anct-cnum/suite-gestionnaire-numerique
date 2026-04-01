@@ -23,16 +23,15 @@ export default function AjouterUnComite({
       label="Ajouter un comité"
       labelId={labelId}
       peutGerer={peutGerer}
-      validerFormulaire={(event) => { void creerUnComite(event) }}
+      validerFormulaire={(event) => {
+        void creerUnComite(event)
+      }}
     >
-      {peutGerer ?
-        <SubmitButton
-          ariaControls={id}
-          isDisabled={isDisabled}
-        >
+      {peutGerer ? (
+        <SubmitButton ariaControls={id} isDisabled={isDisabled}>
           {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
         </SubmitButton>
-        : null}
+      ) : null}
     </FormulaireComite>
   )
 
@@ -55,8 +54,8 @@ export default function AjouterUnComite({
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-    closeDrawer();
-    (event.target as HTMLFormElement).reset()
+    closeDrawer()
+    ;(event.target as HTMLFormElement).reset()
     setIsDisabled(false)
   }
 }

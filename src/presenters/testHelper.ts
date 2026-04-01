@@ -72,9 +72,7 @@ export function sessionUtilisateurViewModelFactory(
   }
 }
 
-export function gouvernanceViewModelFactory(
-  override?: Partial<GouvernanceViewModel>
-): GouvernanceViewModel {
+export function gouvernanceViewModelFactory(override?: Partial<GouvernanceViewModel>): GouvernanceViewModel {
   return {
     comiteARemplir: {
       commentaire: '',
@@ -170,7 +168,8 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       formationsProfessionnels: [
         {
           isSelected: false,
-          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+          label:
+            'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
           value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
         },
       ],
@@ -219,9 +218,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: 'Structurer une filière de reconditionnement locale 1',
     nomFeuilleDeRoute: 'Feuille de route 69',
-    porteurs: [
-
-    ],
+    porteurs: [],
     statut: {
       background: 'pink',
       display: true,
@@ -264,11 +261,14 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
           value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
         },
       ],
-      formationsProfessionnels: [{
-        isSelected: false,
-        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-        value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
-      }],
+      formationsProfessionnels: [
+        {
+          isSelected: false,
+          label:
+            'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+          value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
+        },
+      ],
       outillages: [
         {
           isSelected: false,
@@ -327,10 +327,12 @@ export function feuilleDeRouteViewModelFactory(
         icone: actionStatutViewModelByStatut.enCours,
         modifiable: false,
         nom: 'Structurer une filière de reconditionnement locale',
-        porteurs: [{
-          label: 'CC des Monts du Lyonnais',
-          link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
-        }],
+        porteurs: [
+          {
+            label: 'CC des Monts du Lyonnais',
+            link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
+          },
+        ],
         statut: actionStatutViewModelByStatut.acceptee,
         supprimable: false,
         uid: 'actionFooId1',
@@ -349,10 +351,12 @@ export function feuilleDeRouteViewModelFactory(
         icone: actionStatutViewModelByStatut.enCours,
         modifiable: false,
         nom: 'Formation Aidants Connect',
-        porteurs: [{
-          label: 'CC des Monts du Lyonnais',
-          link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
-        }],
+        porteurs: [
+          {
+            label: 'CC des Monts du Lyonnais',
+            link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
+          },
+        ],
         statut: actionStatutViewModelByStatut.refusee,
         supprimable: false,
         uid: 'actionFooId2',

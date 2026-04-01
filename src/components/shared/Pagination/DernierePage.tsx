@@ -11,10 +11,7 @@ export default function DernierePage({
   urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat, utilisateursParPage)))
 
   return (
-    <Link
-      className="fr-pagination__link fr-pagination__link--last"
-      href={urlAvecParametres}
-    >
+    <Link className="fr-pagination__link fr-pagination__link--last" href={urlAvecParametres}>
       Dernière page
     </Link>
   )

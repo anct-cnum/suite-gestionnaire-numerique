@@ -82,7 +82,6 @@ class EmptyOptional<Value> extends Optional<Value> {
 }
 
 class ValuatedOptional<Value> extends Optional<Value> {
-  // eslint-disable-next-line @typescript-eslint/parameter-properties
   constructor(private readonly value: Value) {
     super()
   }

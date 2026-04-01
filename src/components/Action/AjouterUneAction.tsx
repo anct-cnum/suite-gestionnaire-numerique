@@ -48,7 +48,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
         path: pathname,
       }
     )
-    
+
     const messages = await ajouterUneActionAction(data)
     return handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, false)
   }

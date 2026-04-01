@@ -1,10 +1,7 @@
 import { EntrepriseNonTrouvee, EntrepriseReadModel, SireneLoader } from '@/use-cases/queries/RechercherUneEntreprise'
 
 export class RidetApiLoader implements SireneLoader {
-  static transformerEtablissementRidet(
-    etablissement: RidetEtablissement,
-    ridetOriginal?: string
-  ): EntrepriseReadModel {
+  static transformerEtablissementRidet(etablissement: RidetEtablissement, ridetOriginal?: string): EntrepriseReadModel {
     // Construire l'adresse à partir des informations disponibles
     const adresseComplete = `${etablissement.libelle_commune}, ${etablissement.province}`.toUpperCase()
 
@@ -43,7 +40,7 @@ export class RidetApiLoader implements SireneLoader {
         return { estTrouvee: false }
       }
 
-      const data = await response.json() as { results: Array<RidetEtablissement> }
+      const data = (await response.json()) as { results: Array<RidetEtablissement> }
 
       if (data.results.length === 0) {
         return { estTrouvee: false }

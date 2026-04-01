@@ -1,0 +1,73 @@
+name: Validate feature branch
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm lint:ts
+      - run: pnpm lint:css
+      - run: pnpm format:check
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm typecheck
+
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm dedupe --check
+      - run: pnpm deadcode
+      - run: pnpm prisma format --check
+      - run: pnpm check:shai-hulud
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-cache-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: nextjs-cache-${{ hashFiles('pnpm-lock.yaml') }}-
+      - run: pnpm build:dev
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.5-alpine
+        env:
+          POSTGRES_USER: min
+          POSTGRES_PASSWORD: min
+          POSTGRES_DB: min
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd "pg_isready -U min"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm dotenv:test -- pnpm prisma:migrate
+      - run: pnpm dotenv:test -- vitest run --coverage

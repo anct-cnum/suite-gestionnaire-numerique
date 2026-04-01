@@ -5,12 +5,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
-export default function AjouterUneNotePrivee({
-  closeDrawer,
-  id,
-  labelId,
-  uidGouvernance,
-}: Props): ReactElement {
+export default function AjouterUneNotePrivee({ closeDrawer, id, labelId, uidGouvernance }: Props): ReactElement {
   const { ajouterUneNotePriveeAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
@@ -18,13 +13,12 @@ export default function AjouterUneNotePrivee({
     <FormulaireNotePrivee
       labelId={labelId}
       texte=""
-      validerFormulaire={(event) => { void creerUneNotePrivee(event) }}
+      validerFormulaire={(event) => {
+        void creerUneNotePrivee(event)
+      }}
     >
       <div className="fr-btns-group">
-        <SubmitButton
-          ariaControls={id}
-          isDisabled={isDisabled}
-        >
+        <SubmitButton ariaControls={id} isDisabled={isDisabled}>
           {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
         </SubmitButton>
       </div>

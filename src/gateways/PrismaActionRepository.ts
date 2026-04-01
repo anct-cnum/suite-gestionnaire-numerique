@@ -13,7 +13,7 @@ import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 // istanbul ignore next @preserve
 export class PrismaActionRepository
-implements AddActionRepository, GetActionRepository, SupprimerActionRepository, UpdateActionRepository
+  implements AddActionRepository, GetActionRepository, SupprimerActionRepository, UpdateActionRepository
 {
   readonly #dataResource = prisma.actionRecord
 
@@ -69,7 +69,8 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
       },
     })
     const destinataires = actionRecord.demandesDeSubvention.flatMap((demande) =>
-      demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
+      demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId)
+    )
 
     const action = Action.create({
       besoins: actionRecord.besoins,
@@ -78,7 +79,8 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
       dateDeCreation: actionRecord.creation,
       dateDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
       dateDeFin: actionRecord.dateDeFin.getFullYear().toString(),
-      demandeDeSubventionUid: actionRecord.demandesDeSubvention.length > 0 ? actionRecord.demandesDeSubvention[0].id.toString() : '',
+      demandeDeSubventionUid:
+        actionRecord.demandesDeSubvention.length > 0 ? actionRecord.demandesDeSubvention[0].id.toString() : '',
       description: actionRecord.description,
       destinataires,
       nom: actionRecord.nom,
@@ -97,9 +99,9 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
 
   async supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid): Promise<boolean> {
     const result = await prisma.$transaction([
-      prisma.beneficiaireSubventionRecord.deleteMany(
-        { where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) } }
-      ),
+      prisma.beneficiaireSubventionRecord.deleteMany({
+        where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) },
+      }),
       prisma.demandeDeSubventionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
       prisma.coFinancementRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
       prisma.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
@@ -110,7 +112,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
     return result[result.length - 1].count === 1
   }
 
-  async update(action: Action,  tx?: Prisma.TransactionClient): Promise<boolean> {
+  async update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
     // eslint-disable-next-line no-restricted-syntax

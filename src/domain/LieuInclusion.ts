@@ -24,9 +24,11 @@ export class LieuInclusion {
     }
 
     // Les gestionnaires de département peuvent modifier les lieux de leur département
-    if (utilisateur instanceof GestionnaireDepartement
-      && codeDepartementLieu !== undefined
-      && codeDepartementLieu === utilisateur.state.departement.code) {
+    if (
+      utilisateur instanceof GestionnaireDepartement &&
+      codeDepartementLieu !== undefined &&
+      codeDepartementLieu === utilisateur.state.departement.code
+    ) {
       return true
     }
 

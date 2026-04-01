@@ -16,7 +16,10 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     expect(informations).toBeInTheDocument()
     const titre = screen.getByRole('heading', { level: 1, name: 'Se connecter' })
     expect(titre).toBeInTheDocument()
-    const sousTitre = screen.getByText('Accédez à ce service grâce à ProConnect, votre identifiant unique pour accéder à plusieurs services de l’État.', { selector: 'p' })
+    const sousTitre = screen.getByText(
+      'Accédez à ce service grâce à ProConnect, votre identifiant unique pour accéder à plusieurs services de l’État.',
+      { selector: 'p' }
+    )
     expect(sousTitre).toBeInTheDocument()
     const boutonSeConnecter = screen.getByRole('button', { name: 'S’identifier avec ProConnect' })
     expect(boutonSeConnecter).toHaveAttribute('type', 'button')

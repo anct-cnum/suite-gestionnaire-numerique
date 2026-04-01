@@ -30,8 +30,9 @@ export default async function ActionAjouterController({ params }: Props): Promis
   const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
   const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
   const enveloppesDisponibles = await new PrismaEnveloppesLoader().get(feuilleDeRoute.state.uidGouvernance)
-  const repartitionSubventionGouvernance = await new PrismaRepartitionSubventionGouvernanceLoader()
-    .get(feuilleDeRoute.state.uidGouvernance)
+  const repartitionSubventionGouvernance = await new PrismaRepartitionSubventionGouvernanceLoader().get(
+    feuilleDeRoute.state.uidGouvernance
+  )
 
   try {
     return (
@@ -41,12 +42,14 @@ export default async function ActionAjouterController({ params }: Props): Promis
         </div>
         <div className="fr-col-10 fr-pl-7w">
           <AjouterUneAction
-            action={actionARemplir(undefined, 
-              { enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe => 
-                enveloppePresenter(date, enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))),
+            action={actionARemplir(undefined, {
+              enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
+                enveloppePresenter(date, enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))
+              ),
               nomFeuilleDeRoute,
               urlFeuilleDeRoute,
-              urlGestionMembresGouvernance })}
+              urlGestionMembresGouvernance,
+            })}
             date={date}
             uidFeuilleDeRoute={uidFeuilleDeRoute}
           />
@@ -59,8 +62,10 @@ export default async function ActionAjouterController({ params }: Props): Promis
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-    uidFeuilleDeRoute: string
-  }>>
+  params: Promise<
+    Readonly<{
+      codeDepartement: string
+      uidFeuilleDeRoute: string
+    }>
+  >
 }>

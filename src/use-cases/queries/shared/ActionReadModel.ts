@@ -9,5 +9,5 @@ export enum BesoinsPossible {
   REDIGER_LA_FEUILLE_DE_ROUTE = 'rediger_la_feuille_de_route',
   SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS = 'sensibiliser_les_acteurs_aux_outils_existants',
   STRUCTURER_UN_FONDS = 'structurer_un_fonds',
-  STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT = 'structurer_une_filiere_de_reconditionnement'
+  STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT = 'structurer_une_filiere_de_reconditionnement',
 }

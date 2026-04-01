@@ -58,11 +58,13 @@ export type BeneficiaireStats = {
 }
 
 export type BeneficiairesStatsWithCommunes = {
-  communes: Array<{
-    codeInsee: null | string
-    codePostal: null | string
-    nom: null | string
-  } & QuantifiedShare>
+  communes: Array<
+    {
+      codeInsee: null | string
+      codePostal: null | string
+      nom: null | string
+    } & QuantifiedShare
+  >
 } & BeneficiaireStats
 
 export type AccompagnementCountByPeriod = Array<{

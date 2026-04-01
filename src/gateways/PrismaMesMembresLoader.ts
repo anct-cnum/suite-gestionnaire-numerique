@@ -33,7 +33,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
         .toSorted(alphaAsc('nom'))
         .toSorted(byPredicate(isCoporteur))
         .toSorted(byPredicate(isPrefectureDepartementale))
-        .map(membre => toMesMembresReadModel(membre)),
+        .map((membre) => toMesMembresReadModel(membre)),
       roles: [],
       typologies: [],
       uidGouvernance: codeDepartementGouvernance,

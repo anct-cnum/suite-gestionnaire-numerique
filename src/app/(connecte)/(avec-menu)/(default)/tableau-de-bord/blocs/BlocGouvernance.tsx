@@ -20,33 +20,17 @@ export default async function BlocGouvernance({ contexte }: Props): Promise<Reac
 async function gouvernanceNationale(): Promise<ReactElement> {
   const gouvernanceAdminLoader = new PrismaGouvernanceAdminLoader()
   const gouvernanceReadModel = await gouvernanceAdminLoader.get()
-  const gouvernanceViewModel = handleReadModelOrError(
-    gouvernanceReadModel,
-    gouvernanceAdminPresenter
-  )
+  const gouvernanceViewModel = handleReadModelOrError(gouvernanceReadModel, gouvernanceAdminPresenter)
 
-  return (
-    <GouvernanceAdmin
-      gouvernanceViewModel={gouvernanceViewModel}
-      lienGouvernance="/gouvernances"
-    />
-  )
+  return <GouvernanceAdmin gouvernanceViewModel={gouvernanceViewModel} lienGouvernance="/gouvernances" />
 }
 
 async function gouvernanceDepartement(code: string): Promise<ReactElement> {
   const gouvernanceLoader = new PrismaGouvernanceTableauDeBordLoader()
   const gouvernanceReadModel = await gouvernanceLoader.get(code)
-  const gouvernanceViewModel = handleReadModelOrError(
-    gouvernanceReadModel,
-    gouvernancePrefPresenter
-  )
+  const gouvernanceViewModel = handleReadModelOrError(gouvernanceReadModel, gouvernancePrefPresenter)
 
-  return (
-    <GouvernancePref
-      gouvernanceViewModel={gouvernanceViewModel}
-      lienGouvernance={`/gouvernance/${code}`}
-    />
-  )
+  return <GouvernancePref gouvernanceViewModel={gouvernanceViewModel} lienGouvernance={`/gouvernance/${code}`} />
 }
 
 type Props = Readonly<{

@@ -7,12 +7,7 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
-export default function FormulaireContactStructure({
-  contactReferent,
-  labelId,
-  onSubmit,
-  titre,
-}: Props): ReactElement {
+export default function FormulaireContactStructure({ contactReferent, labelId, onSubmit, titre }: Props): ReactElement {
   const [isDisabled, setIsDisabled] = useState(false)
   const nomId = useId()
   const prenomId = useId()
@@ -23,19 +18,11 @@ export default function FormulaireContactStructure({
 
   return (
     <>
-      <DrawerTitle id={labelId}>
-        {titre}
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>{titre}</DrawerTitle>
       <p className="fr-text--sm color-grey fr-mt-0">
         Responsable ou contact technique de votre structure.
         <br />
-        Les champs avec
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-        {' '}
-        sont obligatoires.
+        Les champs avec <span className="color-red">*</span> sont obligatoires.
       </p>
       <div
         className="fr-mb-3w"
@@ -54,12 +41,8 @@ export default function FormulaireContactStructure({
           style={{ color: 'var(--background-flat-info)', flexShrink: 0 }}
         />
         <p className="fr-mb-0">
-          Si vous souhaitez ajouter des utilisateurs pour accéder à votre espace Mon Inclusion Numérique cliquez sur
-          {' '}
-          <a
-            className="fr-link"
-            href="/mes-utilisateurs"
-          >
+          Si vous souhaitez ajouter des utilisateurs pour accéder à votre espace Mon Inclusion Numérique cliquez sur{' '}
+          <a className="fr-link" href="/mes-utilisateurs">
             Gérer mon équipe
           </a>
         </p>
@@ -67,31 +50,15 @@ export default function FormulaireContactStructure({
       <form
         aria-label={titre}
         method="dialog"
-        onSubmit={(event) => { void submitContact(event) }}
+        onSubmit={(event) => {
+          void submitContact(event)
+        }}
       >
-        <TextInput
-          defaultValue={contactReferent?.nom}
-          id={nomId}
-          name="nom"
-          required={true}
-        >
-          Nom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput defaultValue={contactReferent?.nom} id={nomId} name="nom" required={true}>
+          Nom <span className="color-red">*</span>
         </TextInput>
-        <TextInput
-          defaultValue={contactReferent?.prenom}
-          id={prenomId}
-          name="prenom"
-          required={true}
-        >
-          Prénom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput defaultValue={contactReferent?.prenom} id={prenomId} name="prenom" required={true}>
+          Prénom <span className="color-red">*</span>
         </TextInput>
         <TextInput
           defaultValue={contactReferent?.email}
@@ -101,11 +68,7 @@ export default function FormulaireContactStructure({
           required={true}
           type="email"
         >
-          Adresse électronique
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+          Adresse électronique <span className="color-red">*</span>
         </TextInput>
         <TextInput
           defaultValue={contactReferent?.telephone}
@@ -117,17 +80,8 @@ export default function FormulaireContactStructure({
         >
           Téléphone
         </TextInput>
-        <TextInput
-          defaultValue={contactReferent?.fonction}
-          id={fonctionId}
-          name="fonction"
-          required={true}
-        >
-          Fonction
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput defaultValue={contactReferent?.fonction} id={fonctionId} name="fonction" required={true}>
+          Fonction <span className="color-red">*</span>
         </TextInput>
         <div className="fr-fieldset__element fr-mb-3w">
           <div className="fr-checkbox-group">
@@ -137,10 +91,7 @@ export default function FormulaireContactStructure({
               name="estReferentFNE"
               type="checkbox"
             />
-            <label
-              className="fr-label"
-              htmlFor={referentFNEId}
-            >
+            <label className="fr-label" htmlFor={referentFNEId}>
               Contact référent FNE
             </label>
           </div>

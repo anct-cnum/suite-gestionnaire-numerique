@@ -1,6 +1,9 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { AccompagnementsRealisesParACLoader, AccompagnementsRealisesParACReadModel } from '@/use-cases/queries/RecupererAccompagnementsRealises'
+import {
+  AccompagnementsRealisesParACLoader,
+  AccompagnementsRealisesParACReadModel,
+} from '@/use-cases/queries/RecupererAccompagnementsRealises'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaAccompagnementsRealisesParACLoader implements AccompagnementsRealisesParACLoader {

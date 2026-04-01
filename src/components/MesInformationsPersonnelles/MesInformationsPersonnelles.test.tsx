@@ -20,7 +20,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(sousTitre).toBeInTheDocument()
 
     const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
-    const titreInfosPersos = within(mesInformationsPersonnelles).getByRole('heading', { level: 2, name: 'Mes informations personnelles' })
+    const titreInfosPersos = within(mesInformationsPersonnelles).getByRole('heading', {
+      level: 2,
+      name: 'Mes informations personnelles',
+    })
     expect(titreInfosPersos).toBeInTheDocument()
     const modifierMesInfosPersos = within(mesInformationsPersonnelles).getByRole('button', { name: 'Modifier' })
     expect(modifierMesInfosPersos).toHaveAttribute('type', 'button')
@@ -44,7 +47,12 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     const monRole = screen.getByRole('region', { name: 'Mon rôle' })
     const titreMonRole = within(monRole).getByRole('heading', { level: 2, name: 'Mon rôle' })
     expect(titreMonRole).toBeInTheDocument()
-    const sousTitreMonRole = screen.getByText(matchWithoutMarkup('Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques. Contacter le support pour le modifier.'), { selector: 'p' })
+    const sousTitreMonRole = screen.getByText(
+      matchWithoutMarkup(
+        'Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques. Contacter le support pour le modifier.'
+      ),
+      { selector: 'p' }
+    )
     const lienContacterLeSupport = within(sousTitreMonRole).getByRole('link', { name: 'Contacter le support' })
     expect(lienContacterLeSupport).toHaveAttribute('href', 'https://aide.conseiller-numerique.gouv.fr/fr/')
     expect(lienContacterLeSupport).toOpenInNewTab('Aide')
@@ -52,9 +60,15 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(role).toBeInTheDocument()
 
     const supprimerMonCompte = screen.getByRole('region', { name: 'Supprimer mon compte' })
-    const titreSupprimerMonCompte = within(supprimerMonCompte).getByRole('heading', { level: 2, name: 'Supprimer mon compte' })
+    const titreSupprimerMonCompte = within(supprimerMonCompte).getByRole('heading', {
+      level: 2,
+      name: 'Supprimer mon compte',
+    })
     expect(titreSupprimerMonCompte).toBeInTheDocument()
-    const sousTitreSupprimerMonCompte = screen.getByText('En supprimant votre compte, vous n’aurez plus la possibilité d’accéder à cette plateforme.', { selector: 'p' })
+    const sousTitreSupprimerMonCompte = screen.getByText(
+      'En supprimant votre compte, vous n’aurez plus la possibilité d’accéder à cette plateforme.',
+      { selector: 'p' }
+    )
     expect(sousTitreSupprimerMonCompte).toBeInTheDocument()
     const boutonSupprimerMonCompte = within(supprimerMonCompte).getByRole('button', { name: 'Supprimer mon compte' })
     expect(boutonSupprimerMonCompte).toHaveAttribute('type', 'button')
@@ -70,84 +84,92 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(telephone).toBeInTheDocument()
   })
 
-  it.each([
-    'Administrateur dispositif',
-    'Gestionnaire département',
-    'Gestionnaire région',
-  ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
-    // WHEN
-    afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ role }))
+  it.each(['Administrateur dispositif', 'Gestionnaire département', 'Gestionnaire région'])(
+    'étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas',
+    (role) => {
+      // WHEN
+      afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ role }))
 
-    // THEN
-    const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
-    expect(maStructure).not.toBeInTheDocument()
-  })
+      // THEN
+      const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
+      expect(maStructure).not.toBeInTheDocument()
+    }
+  )
 
-  it.each([
-    'Gestionnaire structure',
-    'Gestionnaire groupement',
-  ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
-    // WHEN
-    afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({
-      role,
-      structure: {
-        adresse: '201 bis rue de la plaine, 69000 Lyon',
-        contact: {
-          email: 'manon.verminac@example.com',
-          fonction: 'Chargée de mission',
-          nom: 'Verninac',
-          prenom: 'Manon',
-        },
-        numeroDeSiret: '62520260000023',
-        raisonSociale: 'Préfecture du Rhône',
-        typeDeStructure: 'Administration',
-      },
-    }))
+  it.each(['Gestionnaire structure', 'Gestionnaire groupement'])(
+    'étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche',
+    (role) => {
+      // WHEN
+      afficherMesInformationsPersonnelles(
+        {},
+        mesInformationsPersonnellesReadModelFactory({
+          role,
+          structure: {
+            adresse: '201 bis rue de la plaine, 69000 Lyon',
+            contact: {
+              email: 'manon.verminac@example.com',
+              fonction: 'Chargée de mission',
+              nom: 'Verninac',
+              prenom: 'Manon',
+            },
+            numeroDeSiret: '62520260000023',
+            raisonSociale: 'Préfecture du Rhône',
+            typeDeStructure: 'Administration',
+          },
+        })
+      )
 
-    // THEN
-    const maStructure = screen.getByRole('region', { name: 'Ma structure' })
-    const titreMaStructure = within(maStructure).getByRole('heading', { level: 2, name: 'Ma structure' })
-    expect(titreMaStructure).toBeInTheDocument()
-    const raisonSocialeLabel = within(maStructure).getByText('Raison sociale')
-    expect(raisonSocialeLabel).toBeInTheDocument()
-    const raisonSociale = within(maStructure).getByText('Préfecture du Rhône')
-    expect(raisonSociale).toBeInTheDocument()
-    const typeDeStructureLabel = within(maStructure).getByText('Type de structure')
-    expect(typeDeStructureLabel).toBeInTheDocument()
-    const typeDeStructure = within(maStructure).getByText('Administration')
-    expect(typeDeStructure).toBeInTheDocument()
-    const numeroDeSiretLabel = within(maStructure).getByText(matchWithoutMarkup('Numéro de SIRET/RIDET'))
-    expect(numeroDeSiretLabel).toBeInTheDocument()
-    const abreviationSiret = within(numeroDeSiretLabel).getByText('SIRET', { selector: 'abbr' })
-    expect(abreviationSiret).toHaveAttribute('title', 'Système d’Identification du Répertoire des ÉTablissements')
-    const abreviationRidet = within(numeroDeSiretLabel).getByText('RIDET', { selector: 'abbr' })
-    expect(abreviationRidet).toHaveAttribute('title', 'Répertoire d’Identification des Entreprises et des ÉTablissements')
-    const numeroDeSiret = within(maStructure).getByText('62520260000023')
-    expect(numeroDeSiret).toBeInTheDocument()
-    const adresseLabel = within(maStructure).getByText('Adresse')
-    expect(adresseLabel).toBeInTheDocument()
-    const adresse = within(maStructure).getByText('201 bis rue de la plaine, 69000 Lyon')
-    expect(adresse).toBeInTheDocument()
+      // THEN
+      const maStructure = screen.getByRole('region', { name: 'Ma structure' })
+      const titreMaStructure = within(maStructure).getByRole('heading', { level: 2, name: 'Ma structure' })
+      expect(titreMaStructure).toBeInTheDocument()
+      const raisonSocialeLabel = within(maStructure).getByText('Raison sociale')
+      expect(raisonSocialeLabel).toBeInTheDocument()
+      const raisonSociale = within(maStructure).getByText('Préfecture du Rhône')
+      expect(raisonSociale).toBeInTheDocument()
+      const typeDeStructureLabel = within(maStructure).getByText('Type de structure')
+      expect(typeDeStructureLabel).toBeInTheDocument()
+      const typeDeStructure = within(maStructure).getByText('Administration')
+      expect(typeDeStructure).toBeInTheDocument()
+      const numeroDeSiretLabel = within(maStructure).getByText(matchWithoutMarkup('Numéro de SIRET/RIDET'))
+      expect(numeroDeSiretLabel).toBeInTheDocument()
+      const abreviationSiret = within(numeroDeSiretLabel).getByText('SIRET', { selector: 'abbr' })
+      expect(abreviationSiret).toHaveAttribute('title', 'Système d’Identification du Répertoire des ÉTablissements')
+      const abreviationRidet = within(numeroDeSiretLabel).getByText('RIDET', { selector: 'abbr' })
+      expect(abreviationRidet).toHaveAttribute(
+        'title',
+        'Répertoire d’Identification des Entreprises et des ÉTablissements'
+      )
+      const numeroDeSiret = within(maStructure).getByText('62520260000023')
+      expect(numeroDeSiret).toBeInTheDocument()
+      const adresseLabel = within(maStructure).getByText('Adresse')
+      expect(adresseLabel).toBeInTheDocument()
+      const adresse = within(maStructure).getByText('201 bis rue de la plaine, 69000 Lyon')
+      expect(adresse).toBeInTheDocument()
 
-    const contactStructure = within(maStructure).getByRole('heading', { level: 3, name: 'Contact principal de la structure' })
-    expect(contactStructure).toBeInTheDocument()
-    const nomDuContactLabel = within(maStructure).getByText('Nom')
-    expect(nomDuContactLabel).toBeInTheDocument()
-    const nomDuContact = within(maStructure).getByText('Verninac')
-    expect(nomDuContact).toBeInTheDocument()
-    const prenomDuContactLabel = within(maStructure).getByText('Prénom')
-    expect(prenomDuContactLabel).toBeInTheDocument()
-    const prenomDuContact = within(maStructure).getByText('Manon')
-    expect(prenomDuContact).toBeInTheDocument()
-    const fonctionDuContactLabel = within(maStructure).getByText('Fonction dans la structure')
-    expect(fonctionDuContactLabel).toBeInTheDocument()
-    const fonctionDuContact = within(maStructure).getByText('Chargée de mission')
-    expect(fonctionDuContact).toBeInTheDocument()
-    const emailDuContactLabel = within(maStructure).getByText('Adresse électronique')
-    expect(emailDuContactLabel).toBeInTheDocument()
-    const emailDuContact = within(maStructure).getByText('manon.verminac@example.com')
-    expect(emailDuContact).toBeInTheDocument()
-  })
+      const contactStructure = within(maStructure).getByRole('heading', {
+        level: 3,
+        name: 'Contact principal de la structure',
+      })
+      expect(contactStructure).toBeInTheDocument()
+      const nomDuContactLabel = within(maStructure).getByText('Nom')
+      expect(nomDuContactLabel).toBeInTheDocument()
+      const nomDuContact = within(maStructure).getByText('Verninac')
+      expect(nomDuContact).toBeInTheDocument()
+      const prenomDuContactLabel = within(maStructure).getByText('Prénom')
+      expect(prenomDuContactLabel).toBeInTheDocument()
+      const prenomDuContact = within(maStructure).getByText('Manon')
+      expect(prenomDuContact).toBeInTheDocument()
+      const fonctionDuContactLabel = within(maStructure).getByText('Fonction dans la structure')
+      expect(fonctionDuContactLabel).toBeInTheDocument()
+      const fonctionDuContact = within(maStructure).getByText('Chargée de mission')
+      expect(fonctionDuContact).toBeInTheDocument()
+      const emailDuContactLabel = within(maStructure).getByText('Adresse électronique')
+      expect(emailDuContactLabel).toBeInTheDocument()
+      const emailDuContact = within(maStructure).getByText('manon.verminac@example.com')
+      expect(emailDuContact).toBeInTheDocument()
+    }
+  )
 
   describe('quand je clique sur la suppression de compte alors la modale s’ouvre', () => {
     it('me présentant les instructions à suivre afin de supprimer mon compte', () => {
@@ -164,12 +186,16 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       const titre = within(modal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
       expect(titre).toBeInTheDocument()
 
-      const avertissement = within(modal).getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
+      const avertissement = within(modal).getByText(
+        'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.'
+      )
       expect(avertissement).toBeInTheDocument()
 
       const formulaire = within(modal).getByRole('form', { name: 'Supprimer' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
-      const saisie = within(formulaire).getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' })
+      const saisie = within(formulaire).getByRole('textbox', {
+        name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous',
+      })
       expect(saisie).toBeRequired()
       expect(saisie).toHaveAttribute('type', 'email')
       expect(saisie).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
@@ -219,7 +245,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         jeSaisieMonEMail('julien.deschamps@')
 
         // THEN
-        const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
+        const messageEmailKo = screen.queryByText(
+          'L’adresse électronique saisie n’est pas reliée au compte utilisateur',
+          { selector: 'p' }
+        )
         expect(messageEmailKo).not.toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
       })
@@ -233,7 +262,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         jeSaisieMonEMail('deschamps.julien@example.com')
 
         // THEN
-        const messageEmailKo = screen.getByRole('textbox', { description: 'L’adresse électronique saisie n’est pas reliée au compte utilisateur' })
+        const messageEmailKo = screen.getByRole('textbox', {
+          description: 'L’adresse électronique saisie n’est pas reliée au compte utilisateur',
+        })
         expect(messageEmailKo).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
       })
@@ -250,9 +281,14 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreLeFormulairePourSupprimerMonCompte()
 
       // THEN
-      const email = screen.getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' })
+      const email = screen.getByRole('textbox', {
+        name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous',
+      })
       expect(email).toHaveValue('')
-      const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
+      const messageEmailKo = screen.queryByText(
+        'L’adresse électronique saisie n’est pas reliée au compte utilisateur',
+        { selector: 'p' }
+      )
       expect(messageEmailKo).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
     })
@@ -296,7 +332,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     }
 
     function jeSaisieMonEMail(value: string): void {
-      fireEvent.input(screen.getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' }), { target: { value } })
+      fireEvent.input(
+        screen.getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' }),
+        { target: { value } }
+      )
     }
 
     function jeSupprimeMonCompte(): void {
@@ -327,7 +366,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       const titre = within(drawer).getByRole('heading', { level: 3, name: 'Mes informations personnelles' })
       expect(titre).toBeInTheDocument()
 
-      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
+      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), {
+        selector: 'p',
+      })
       expect(champsObligatoires).toBeInTheDocument()
 
       const formulaire = within(drawer).getByRole('form', { name: 'Modifier' })
@@ -342,13 +383,17 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
       expect(prenom).toHaveValue('Julien')
-      const email = within(formulaire).getByRole('textbox', { name: 'Adresse électronique * Seuls les administateurs et les préfectures verront votre adresse électronique.' })
+      const email = within(formulaire).getByRole('textbox', {
+        name: 'Adresse électronique * Seuls les administateurs et les préfectures verront votre adresse électronique.',
+      })
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
       expect(email).toHaveAttribute('type', 'email')
       expect(email).toHaveValue('julien.deschamps@example.com')
-      const telephone = within(formulaire).getByRole('textbox', { name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
+      const telephone = within(formulaire).getByRole('textbox', {
+        name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455',
+      })
       expect(telephone).toHaveAttribute('name', 'telephone')
       expect(telephone).toHaveAttribute('pattern', '^(\\+\\d{11,12}|\\d{10})$')
       expect(telephone).toHaveAttribute('type', 'tel')
@@ -373,7 +418,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreMesInformationsPersonnelles()
 
       // THEN
-      const telephone = screen.getByRole('textbox', { name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
+      const telephone = screen.getByRole('textbox', {
+        name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455',
+      })
       expect(telephone).toHaveValue('')
     })
 
@@ -406,7 +453,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     it('quand je modifie mes informations personnelles, alors le drawer se ferme, une notification s’affiche et mes informations personnelles sont mises à jour', async () => {
       // GIVEN
       const modifierMesInformationsPersonnellesAction = stubbedServerAction(['OK'])
-      afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' })
+      afficherMesInformationsPersonnelles({
+        modifierMesInformationsPersonnellesAction,
+        pathname: '/mes-informations-personnelles',
+      })
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
@@ -486,12 +536,11 @@ function afficherMesInformationsPersonnelles(
   options: Partial<Parameters<typeof renderComponent>[1]> = { pathname: '/mes-informations-personnelles' },
   mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelFactory()
 ): void {
-  const mesInformationsPersonnellesViewModel =
-    mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
+  const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(
+    mesInformationsPersonnellesReadModel
+  )
   renderComponent(
-    <MesInformationsPersonnelles
-      mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel}
-    />,
+    <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
     options
   )
 }

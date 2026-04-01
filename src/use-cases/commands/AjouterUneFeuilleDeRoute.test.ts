@@ -1,4 +1,3 @@
-
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUneFeuilleDeRoute } from './AjouterUneFeuilleDeRoute'
@@ -41,24 +40,22 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedFeuilleDeRouteToAdd?.state).toStrictEqual(
-      feuilleDeRouteFactory(
-        {
-          dateDeModification: epochTime,
-          nom,
-          perimetreGeographique,
-          uid: {
-            value: 'identifiantPourLaCreation',
-          },
-          uidEditeur: {
-            email: 'martin.tartempion@example.net',
-            value: uidEditeur,
-          },
-          uidGouvernance: {
-            value: uidGouvernance,
-          },
-          uidPorteur: 'porteurFooId',
-        }
-      ).state
+      feuilleDeRouteFactory({
+        dateDeModification: epochTime,
+        nom,
+        perimetreGeographique,
+        uid: {
+          value: 'identifiantPourLaCreation',
+        },
+        uidEditeur: {
+          email: 'martin.tartempion@example.net',
+          value: uidEditeur,
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
+        },
+        uidPorteur: 'porteurFooId',
+      }).state
     )
     expect(result).toBe('OK')
   })
@@ -76,28 +73,31 @@ describe('ajouter une feuille de route à une gouvernance', () => {
       intention: 'd’un périmètre géographique invalide',
       perimetreGeographique: 'invalide' as PerimetreGeographiqueTypes,
     },
-  ])('étant donné une gouvernance, quand une feuille de route est créé par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
-    // GIVEN
-    const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
-      dateDeModification
-    )
+  ])(
+    'étant donné une gouvernance, quand une feuille de route est créé par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée',
+    async ({ dateDeModification, expectedFailure, perimetreGeographique }) => {
+      // GIVEN
+      const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        new FeuilleDeRouteRepositorySpy(),
+        dateDeModification
+      )
 
-    // WHEN
-    const result = await ajouterFeuilleDeRoute.handle({
-      nom,
-      perimetreGeographique,
-      uidEditeur,
-      uidGouvernance,
-      uidPorteur,
-    })
+      // WHEN
+      const result = await ajouterFeuilleDeRoute.handle({
+        nom,
+        perimetreGeographique,
+        uidEditeur,
+        uidGouvernance,
+        uidPorteur,
+      })
 
-    // THEN
-    expect(spiedFeuilleDeRouteToAdd).toBeNull()
-    expect(result).toBe(expectedFailure)
-  })
+      // THEN
+      expect(spiedFeuilleDeRouteToAdd).toBeNull()
+      expect(result).toBe(expectedFailure)
+    }
+  )
 
   it('étant donné une gouvernance, quand une feuille de route est créée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN

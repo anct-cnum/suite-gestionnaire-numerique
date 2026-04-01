@@ -24,8 +24,8 @@ export function financementAdminPresenter(
       ({ enveloppeTotale, label, total }) => {
         const montantUtilise = Number(total)
         const montantTotal = Number(enveloppeTotale)
-        const pourcentageConsomme = montantTotal > 0 ? Math.round(montantUtilise / montantTotal * 100) : 0
-        
+        const pourcentageConsomme = montantTotal > 0 ? Math.round((montantUtilise / montantTotal) * 100) : 0
+
         return {
           color: obtenirCouleurEnveloppe(label),
           label,
@@ -51,7 +51,8 @@ export type FinancementAdminViewModel = Readonly<{
   }>
 }>
 
-function isErrorReadModel(readModel: ErrorReadModel | TableauDeBordLoaderFinancementsAdmin)
-  : readModel is ErrorReadModel {
+function isErrorReadModel(
+  readModel: ErrorReadModel | TableauDeBordLoaderFinancementsAdmin
+): readModel is ErrorReadModel {
   return 'type' in readModel
 }

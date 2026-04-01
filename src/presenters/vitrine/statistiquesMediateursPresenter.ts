@@ -20,13 +20,10 @@ export function statistiquesMediateursPresenter(
 ): StatistiquesMediateursViewModel {
   const { nombreAidantsConnect, nombreConseillersNumeriques, nombreCoordinateurs, nombreMediateurs } = readModel
 
-  const pourcentageConseillers = nombreMediateurs > 0
-    ? Math.round(nombreConseillersNumeriques / nombreMediateurs * 100)
-    : 0
+  const pourcentageConseillers =
+    nombreMediateurs > 0 ? Math.round((nombreConseillersNumeriques / nombreMediateurs) * 100) : 0
 
-  const pourcentageAidants = nombreMediateurs > 0
-    ? Math.round(nombreAidantsConnect / nombreMediateurs * 100)
-    : 0
+  const pourcentageAidants = nombreMediateurs > 0 ? Math.round((nombreAidantsConnect / nombreMediateurs) * 100) : 0
 
   return {
     aidantsConnect: {

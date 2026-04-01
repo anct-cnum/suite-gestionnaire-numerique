@@ -9,7 +9,7 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [action, setAction] = useState<FeuilleDeRouteViewModel['actions'][number]>(actions[0])
+  const [action, setAction] = useState(actions[0])
   const drawerId = `drawerActionId${uidFeuilleDeRoute}`
   const labelId = useId()
 
@@ -18,16 +18,10 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
       <ul aria-label="actions">
         {actions.map((action) => (
           <li key={action.uid}>
-            <div
-              className="fr-grid-row fr-grid-row--middle space-between"
-              style={{ alignItems: 'flex-start' }}
-            >
+            <div className="fr-grid-row fr-grid-row--middle space-between" style={{ alignItems: 'flex-start' }}>
               <div className="fr-col-auto">
                 <div style={{ alignItems: 'flex-start', display: 'flex', minHeight: '100%' }}>
-                  <TitleIcon
-                    background={action.statut.background}
-                    icon={action.statut.icon}
-                  />
+                  <TitleIcon background={action.statut.background} icon={action.statut.icon} />
                 </div>
               </div>
               <div className="fr-col">
@@ -48,13 +42,8 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
                 </div>
                 <div>
                   {action.porteurs.length > 0 && (
-                    <p
-                      className="fr-text--sm fr-mb-0"
-                      style={{ color: '#666666' }}
-                    >
-                      Coporteur de l&apos;action :
-                      {' '}
-                      {action.porteurs.map((porteur) => porteur.label).join(', ')}
+                    <p className="fr-text--sm fr-mb-0" style={{ color: '#666666' }}>
+                      Coporteur de l&apos;action : {action.porteurs.map((porteur) => porteur.label).join(', ')}
                     </p>
                   )}
                 </div>
@@ -74,10 +63,7 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
         isOpen={isDrawerOpen}
         labelId={labelId}
       >
-        <DetailActionVitrine
-          action={action}
-          labelId={labelId}
-        />
+        <DetailActionVitrine action={action} labelId={labelId} />
       </Drawer>
     </>
   )

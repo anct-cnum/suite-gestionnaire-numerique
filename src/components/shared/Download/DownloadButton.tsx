@@ -1,9 +1,6 @@
 import React from 'react'
 
-export function DownloadButton({ 
-  onClick,
-  title,
-}: DownloadButtonProps): React.ReactElement {
+export function DownloadButton({ onClick, title }: DownloadButtonProps): React.ReactElement {
   return (
     <div>
       <button
@@ -21,9 +18,7 @@ export function DownloadButton({
         title={title}
         type="button"
       >
-        <span className="fr-sr-only">
-          {`Télécharger le graphique${  title}`}
-        </span>
+        <span className="fr-sr-only">{`Télécharger le graphique${title}`}</span>
       </button>
     </div>
   )

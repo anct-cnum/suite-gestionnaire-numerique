@@ -1,7 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnMembre, creerUnUtilisateur } from './testHelper'
+import {
+  creerUnContact,
+  creerUnDepartement,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnGroupement,
+  creerUnMembre,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -68,45 +77,48 @@ describe('prisma utilisateur query', () => {
           type: 'gestionnaire_region',
         },
       },
-    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ displayMenusPilotage, isGestionnaireDepartement, role, roleReadModel }) => {
-      // GIVEN
-      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await creerUneRegion()
-      await creerUnDepartement()
-      await creerUneStructure()
-      await creerUnGroupement()
-      await creerUnUtilisateur({
-        departementCode: '75',
-        groupementId: 10,
-        regionCode: '11',
-        role,
-        ssoId: ssoIdExistant,
-        structureId: 10,
-      })
+    ] as const)(
+      'quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve',
+      async ({ displayMenusPilotage, isGestionnaireDepartement, role, roleReadModel }) => {
+        // GIVEN
+        const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+        await creerUneRegion()
+        await creerUnDepartement()
+        await creerUneStructure()
+        await creerUnGroupement()
+        await creerUnUtilisateur({
+          departementCode: '75',
+          groupementId: 10,
+          regionCode: '11',
+          role,
+          ssoId: ssoIdExistant,
+          structureId: 10,
+        })
 
-      // WHEN
-      const utilisateurReadModel = await new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
+        // WHEN
+        const utilisateurReadModel = await new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
 
-      // THEN
-      expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
-        departementCode: '75',
-        derniereConnexion: epochTime,
-        displayMenusPilotage,
-        email: 'martin.tartempion@example.net',
-        groupementId: 10,
-        inviteLe: epochTime,
-        isActive: true,
-        isGestionnaireDepartement,
-        isSuperAdmin: false,
-        nom: 'Tartempion',
-        prenom: 'Martin',
-        regionCode: '11',
-        role: roleReadModel,
-        structureId: 10,
-        telephone: '0102030405',
-        uid: ssoIdExistant,
-      })
-    })
+        // THEN
+        expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
+          departementCode: '75',
+          derniereConnexion: epochTime,
+          displayMenusPilotage,
+          email: 'martin.tartempion@example.net',
+          groupementId: 10,
+          inviteLe: epochTime,
+          isActive: true,
+          isGestionnaireDepartement,
+          isSuperAdmin: false,
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          regionCode: '11',
+          role: roleReadModel,
+          structureId: 10,
+          telephone: '0102030405',
+          uid: ssoIdExistant,
+        })
+      }
+    )
 
     it('quand je cherche un utilisateur Gestionnaire structure qui existe par son ssoId alors je le trouve avec le département de sa gouvernance', async () => {
       // GIVEN
@@ -158,17 +170,17 @@ describe('prisma utilisateur query', () => {
       })
     })
 
-    it('quand je cherche un utilisateur qui n\'existe pas par son ssoId alors je ne le trouve pas', async () => {
+    it("quand je cherche un utilisateur qui n'existe pas par son ssoId alors je ne le trouve pas", async () => {
       // GIVEN
       const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await creerUnUtilisateur({ ssoId: '1234567890' })
 
       // WHEN
-      const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdInexistant)
+      const utilisateurReadModel = async (): Promise<UnUtilisateurReadModel> =>
+        new PrismaUtilisateurLoader().findByUid(ssoIdInexistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
+      await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
     })
 
     it('quand je cherche un utilisateur qui existe par son ssoId et dont le compte a été supprimé alors je ne le trouve pas', async () => {
@@ -177,17 +189,17 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ isSupprime: true, ssoId: ssoIdExistant })
 
       // WHEN
-      const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
+      const utilisateurReadModel = async (): Promise<UnUtilisateurReadModel> =>
+        new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
+      await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
     })
   })
 
   // Ticket #681 : https://github.com/anct-cnum/suite-gestionnaire-numerique/issues/681
   // Scénario : le ssoId a changé côté ProConnect mais l'utilisateur existe avec le même email
-  it('quand le ssoId a changé mais l\'utilisateur existe avec le même email, alors on demande la mise à jour du ssoId', async () => {
+  it("quand le ssoId a changé mais l'utilisateur existe avec le même email, alors on demande la mise à jour du ssoId", async () => {
     // GIVEN
     const nouveauSsoIdProConnect = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const ancienSsoId = 'ancien-sso-id-12345'
@@ -195,27 +207,25 @@ describe('prisma utilisateur query', () => {
     await creerUnUtilisateur({ isSupprime: false, ssoEmail: emailUtilisateur, ssoId: ancienSsoId })
 
     // WHEN
-    const utilisateurReadModel =
-      async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader()
-        .findByUid(nouveauSsoIdProConnect, emailUtilisateur)
+    const utilisateurReadModel = async (): Promise<UnUtilisateurReadModel> =>
+      new PrismaUtilisateurLoader().findByUid(nouveauSsoIdProConnect, emailUtilisateur)
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrowError('Doit etre mis a jour')
+    await expect(utilisateurReadModel).rejects.toThrow('Doit etre mis a jour')
   })
 
-  it('quand le ssoId n\'existe pas et l\'email fourni ne correspond à aucun utilisateur, alors utilisateur non trouvé', async () => {
+  it("quand le ssoId n'existe pas et l'email fourni ne correspond à aucun utilisateur, alors utilisateur non trouvé", async () => {
     // GIVEN
     const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const emailInexistant = 'inconnu@example.net'
     await creerUnUtilisateur({ ssoEmail: 'autre@example.net', ssoId: 'autre-sso-id' })
 
     // WHEN
-    const utilisateurReadModel =
-      async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader()
-        .findByUid(ssoIdInexistant, emailInexistant)
+    const utilisateurReadModel = async (): Promise<UnUtilisateurReadModel> =>
+      new PrismaUtilisateurLoader().findByUid(ssoIdInexistant, emailInexistant)
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrowError('Utilisateur non trouvé')
+    await expect(utilisateurReadModel).rejects.toThrow('Utilisateur non trouvé')
   })
 
   describe('chercher mes utilisateurs', () => {
@@ -321,9 +331,25 @@ describe('prisma utilisateur query', () => {
       })
       await creerUneRegion({ code: regionCode })
       await creerUnDepartement({ code: departementCode, regionCode })
-      await creerUnUtilisateur({ departementCode, nom: 'Tartempion', role: 'gestionnaire_departement', ssoId })
-      await creerUnUtilisateur({ departementCode, nom: 'Dupont', role: 'gestionnaire_departement', ssoEmail: 'alois.leroy@example.com', ssoId: '123456' })
-      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
+      await creerUnUtilisateur({
+        departementCode,
+        nom: 'Tartempion',
+        role: 'gestionnaire_departement',
+        ssoId,
+      })
+      await creerUnUtilisateur({
+        departementCode,
+        nom: 'Dupont',
+        role: 'gestionnaire_departement',
+        ssoEmail: 'alois.leroy@example.com',
+        ssoId: '123456',
+      })
+      await creerUnUtilisateur({
+        nom: 'Durant',
+        role: 'administrateur_dispositif',
+        ssoEmail: 'martin.tartempion@example.fr',
+        ssoId: 'fakeSsoId',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -361,9 +387,25 @@ describe('prisma utilisateur query', () => {
         uid: ssoId,
       })
       await creerUneRegion({ code: regionCode })
-      await creerUnUtilisateur({ nom: 'Tartempion', regionCode, role: 'gestionnaire_region', ssoId })
-      await creerUnUtilisateur({ nom: 'Dupont', regionCode, role: 'gestionnaire_region', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456' })
-      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
+      await creerUnUtilisateur({
+        nom: 'Tartempion',
+        regionCode,
+        role: 'gestionnaire_region',
+        ssoId,
+      })
+      await creerUnUtilisateur({
+        nom: 'Dupont',
+        regionCode,
+        role: 'gestionnaire_region',
+        ssoEmail: 'martin.tartempion@example.org',
+        ssoId: '123456',
+      })
+      await creerUnUtilisateur({
+        nom: 'Durant',
+        role: 'administrateur_dispositif',
+        ssoEmail: 'martin.tartempion@example.fr',
+        ssoId: 'fakeSsoId',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -401,9 +443,25 @@ describe('prisma utilisateur query', () => {
         uid: ssoId,
       })
       await creerUnGroupement({ id: groupementId })
-      await creerUnUtilisateur({ groupementId, nom: 'Tartempion', role: 'gestionnaire_groupement', ssoId })
-      await creerUnUtilisateur({ groupementId, nom: 'Dupont', role: 'gestionnaire_groupement', ssoEmail: 'martin.tartempion@example.com', ssoId: '123456' })
-      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
+      await creerUnUtilisateur({
+        groupementId,
+        nom: 'Tartempion',
+        role: 'gestionnaire_groupement',
+        ssoId,
+      })
+      await creerUnUtilisateur({
+        groupementId,
+        nom: 'Dupont',
+        role: 'gestionnaire_groupement',
+        ssoEmail: 'martin.tartempion@example.com',
+        ssoId: '123456',
+      })
+      await creerUnUtilisateur({
+        nom: 'Durant',
+        role: 'administrateur_dispositif',
+        ssoEmail: 'fakeSsoEmail@example.com',
+        ssoId: 'fakeSsoId',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -443,9 +501,25 @@ describe('prisma utilisateur query', () => {
       await creerUneRegion()
       await creerUnDepartement()
       await creerUneStructure({ id: structureId })
-      await creerUnUtilisateur({ nom: 'Tartempion', role: 'gestionnaire_structure', ssoId, structureId })
-      await creerUnUtilisateur({ nom: 'Dupont', role: 'gestionnaire_structure', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456', structureId })
-      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
+      await creerUnUtilisateur({
+        nom: 'Tartempion',
+        role: 'gestionnaire_structure',
+        ssoId,
+        structureId,
+      })
+      await creerUnUtilisateur({
+        nom: 'Dupont',
+        role: 'gestionnaire_structure',
+        ssoEmail: 'martin.tartempion@example.org',
+        ssoId: '123456',
+        structureId,
+      })
+      await creerUnUtilisateur({
+        nom: 'Durant',
+        role: 'administrateur_dispositif',
+        ssoEmail: 'fakeSsoEmail@example.com',
+        ssoId: 'fakeSsoId',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -470,7 +544,11 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
       // GIVEN
       await creerUnUtilisateur({ nom: 'Tartempion', ssoId })
-      await creerUnUtilisateur({ nom: 'Dupont', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({
+        nom: 'Dupont',
+        ssoEmail: 'anthony.parquet@example.com',
+        ssoId: '123456',
+      })
       const pageCourante = 1
       const utilisateursParPage = 1
 
@@ -494,7 +572,11 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
       // GIVEN
       await creerUnUtilisateur({ isSupprime: false, ssoId })
-      await creerUnUtilisateur({ isSupprime: true, ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({
+        isSupprime: true,
+        ssoEmail: 'anthony.parquet@example.com',
+        ssoId: '123456',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -517,7 +599,12 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
       await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
-      await creerUnUtilisateur({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({
+        derniereConnexion: null,
+        nom: 'b',
+        ssoEmail: 'anthony.parquet@example.com',
+        ssoId: '123456',
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -538,7 +625,12 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs actifs alors je trouve tous ceux qui sont actifs', async () => {
       // GIVEN
       await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
-      await creerUnUtilisateur({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({
+        derniereConnexion: null,
+        nom: 'b',
+        ssoEmail: 'anthony.parquet@example.com',
+        ssoId: '123456',
+      })
       const isActive = true
 
       // WHEN
@@ -562,7 +654,12 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
       await creerUnUtilisateur({ nom: 'a', role: 'administrateur_dispositif', ssoId })
-      await creerUnUtilisateur({ nom: 'c', role: 'gestionnaire_structure', ssoEmail: 'nicolas.james@example.com', ssoId: '67890' })
+      await creerUnUtilisateur({
+        nom: 'c',
+        role: 'gestionnaire_structure',
+        ssoEmail: 'nicolas.james@example.com',
+        ssoId: '67890',
+      })
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 
       // WHEN
@@ -595,10 +692,29 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement({ code: '75' })
       await creerUneStructure({ departementCode: '75' })
       await creerUneStructure({ departementCode: codeDepartement, id: 11 })
-      await creerUnUtilisateur({ departementCode: codeDepartement, nom: 'a', role: 'gestionnaire_departement', ssoId })
-      await creerUnUtilisateur({ departementCode: '75', nom: 'b', role: 'gestionnaire_departement', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' })
-      await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.net', ssoId: '1234567', structureId: 10 })
-      await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 })
+      await creerUnUtilisateur({
+        departementCode: codeDepartement,
+        nom: 'a',
+        role: 'gestionnaire_departement',
+        ssoId,
+      })
+      await creerUnUtilisateur({
+        departementCode: '75',
+        nom: 'b',
+        role: 'gestionnaire_departement',
+        ssoEmail: 'nicolas.james@example.com',
+        ssoId: '123456',
+      })
+      await creerUnUtilisateur({
+        ssoEmail: 'nicolas.james@example.net',
+        ssoId: '1234567',
+        structureId: 10,
+      })
+      await creerUnUtilisateur({
+        ssoEmail: 'nicolas.james@example.org',
+        ssoId: '1234568',
+        structureId: 11,
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -632,12 +748,43 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement({ code: '10', regionCode: '21' })
       await creerUneStructure({ departementCode: '75' })
       await creerUneStructure({ departementCode: '10', id: 11 })
-      await creerUnUtilisateur({ nom: 'a', regionCode: codeRegion, role: 'gestionnaire_region', ssoId })
-      await creerUnUtilisateur({ nom: 'b', regionCode: '21', role: 'gestionnaire_region', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' })
-      await creerUnUtilisateur({ departementCode: '75', nom: 'c', role: 'gestionnaire_departement', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' })
-      await creerUnUtilisateur({ departementCode: '10', nom: 'D', role: 'gestionnaire_departement', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' })
-      await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.net', ssoId: 'uiopq', structureId: 10 })
-      await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 })
+      await creerUnUtilisateur({
+        nom: 'a',
+        regionCode: codeRegion,
+        role: 'gestionnaire_region',
+        ssoId,
+      })
+      await creerUnUtilisateur({
+        nom: 'b',
+        regionCode: '21',
+        role: 'gestionnaire_region',
+        ssoEmail: 'kevin.durand@example.com',
+        ssoId: '123456',
+      })
+      await creerUnUtilisateur({
+        departementCode: '75',
+        nom: 'c',
+        role: 'gestionnaire_departement',
+        ssoEmail: 'jean.lebrun@example.com',
+        ssoId: '67890',
+      })
+      await creerUnUtilisateur({
+        departementCode: '10',
+        nom: 'D',
+        role: 'gestionnaire_departement',
+        ssoEmail: 'anthony.parquet@example.com',
+        ssoId: 'azerty',
+      })
+      await creerUnUtilisateur({
+        ssoEmail: 'anthony.parquet@example.net',
+        ssoId: 'uiopq',
+        structureId: 10,
+      })
+      await creerUnUtilisateur({
+        ssoEmail: 'anthony.parquet@example.org',
+        ssoId: 'sdfghj',
+        structureId: 11,
+      })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
@@ -765,7 +912,7 @@ describe('prisma utilisateur query', () => {
       expect(result.utilisateursCourants[0].email).toBe('gregory.logeais@example.net')
     })
 
-    it('quand je cherche un utilisateur par son email de contact et qu\'un autre utilisateur a le même email de contact alors je les trouve en premier', async () => {
+    it("quand je cherche un utilisateur par son email de contact et qu'un autre utilisateur a le même email de contact alors je les trouve en premier", async () => {
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'structure@example.net'
@@ -884,7 +1031,7 @@ describe('prisma utilisateur query', () => {
 })
 
 async function creationDesUtilisateurs(structureId: number): Promise<void> {
-  await creerUneRegion({ code: '92', nom: 'Provence-Alpes-Côte d\'Azur' })
+  await creerUneRegion({ code: '92', nom: "Provence-Alpes-Côte d'Azur" })
 
   await creerUnDepartement({ code: '07', nom: 'Alpes-Maritimes', regionCode: '92' })
 

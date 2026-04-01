@@ -20,10 +20,7 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
     entreprise: null,
   })
 
-  const etapes = [
-    { title: 'Sélectionnez la structure' },
-    { title: 'Récapitulatif' },
-  ]
+  const etapes = [{ title: 'Sélectionnez la structure' }, { title: 'Récapitulatif' }]
 
   const numeroEtapeActuelle = etapeActuelle === 'selection' ? 1 : 2
 
@@ -32,18 +29,12 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
       <div className="fr-grid-row fr-grid-row--center">
         <div className="fr-col-12 fr-col-lg-8">
           <div className="fr-container--fluid">
-            <Stepper
-              currentStep={numeroEtapeActuelle}
-              steps={etapes}
-            />
+            <Stepper currentStep={numeroEtapeActuelle} steps={etapes} />
 
             {etapeActuelle === 'selection' && (
-              <EtapeSelectionMembre 
-                donneesMembre={donneesMembre}
-                onContinuer={continuerVersConfirmation} 
-              />
+              <EtapeSelectionMembre donneesMembre={donneesMembre} onContinuer={continuerVersConfirmation} />
             )}
-            
+
             {etapeActuelle === 'confirmation' && (
               <EtapeConfirmationMembre
                 data={donneesMembre}
@@ -92,24 +83,24 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
       })
 
       if (messages.includes('OK')) {
-        Notification('success', { 
-          description: `${donneesMembre.entreprise.denomination} ajouté avec succès`, 
-          title: 'Membre ', 
+        Notification('success', {
+          description: `${donneesMembre.entreprise.denomination} ajouté avec succès`,
+          title: 'Membre ',
         })
-        
+
         // Retour à la page de gestion des membres avec l'onglet candidats sélectionné
         const basePath = pathname.replace('/ajouter', '')
         router.push(`${basePath}?statut=candidat`)
       } else {
-        Notification('error', { 
-          description: (messages as ReadonlyArray<string>).join(', '), 
-          title: 'Erreur : ', 
+        Notification('error', {
+          description: (messages as ReadonlyArray<string>).join(', '),
+          title: 'Erreur : ',
         })
       }
     } catch {
-      Notification('error', { 
-        description: 'Une erreur est survenue lors de l\'ajout du membre', 
-        title: 'Erreur : ', 
+      Notification('error', {
+        description: "Une erreur est survenue lors de l'ajout du membre",
+        title: 'Erreur : ',
       })
     }
   }

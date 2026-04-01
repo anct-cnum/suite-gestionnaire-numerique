@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { MesUtilisateursLoader, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
+import {
+  MesUtilisateursLoader,
+  RechercherMesUtilisateurs,
+  UtilisateursCourantsEtTotalReadModel,
+} from './RechercherMesUtilisateurs'
 import { utilisateurReadModelFactory } from '../testHelper'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
@@ -36,7 +40,8 @@ const dummyUtilisateur = utilisateurReadModelFactory()
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
   spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
   spiedFindMesUtilisateursEtLeTotalArgs:
-    Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal> | undefined
+    | Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal>
+    | undefined
 
   async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
     this.spiedFindByUidIdArgs = [uid]

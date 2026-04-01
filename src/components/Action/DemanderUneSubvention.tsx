@@ -16,9 +16,7 @@ export default function DemanderUneSubvention({
   montantMaxAction,
   supprimerUneDemandeDeSubvention,
 }: Props): ReactElement {
-  const enveloppeById = enveloppes.length > 0 
-    ? enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {})
-    : {}
+  const enveloppeById = enveloppes.length > 0 ? enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {}) : {}
 
   const labelId = useId()
   const selectEnveloppeId = useId()
@@ -39,7 +37,7 @@ export default function DemanderUneSubvention({
   const [isValid, setIsValid] = useState(false)
   const [montantPresta, setMontantPresta] = useState(demandeDeSubvention?.montantPrestation)
   const [montantRh, setMontantRh] = useState(demandeDeSubvention?.montantRh)
-  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState<string>(demandeDeSubvention?.enveloppeId ?? '')
+  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState(demandeDeSubvention?.enveloppeId ?? '')
   const [isEnveloppeSelectionnee, setIsEnveloppeSelectionnee] = useState(false)
   const isBudgetAction = useMemo(() => montantMaxAction > 0, [montantMaxAction])
   const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
@@ -93,100 +91,86 @@ export default function DemanderUneSubvention({
     const montantPrestaValue = montantPresta ?? 0
     const montantRhValue = montantRh ?? 0
     const total = montantPrestaValue + montantRhValue
-    
+
     const hasErrorValue = total > montantMax
     setHasError(hasErrorValue)
-    
+
     setIsValid(
-      selectedEnveloppeId !== '' && 
-      !hasErrorValue && 
-      (montantPrestaValue > 0 || montantRhValue > 0) &&
-      total <= montantMax
+      selectedEnveloppeId !== '' &&
+        !hasErrorValue &&
+        (montantPrestaValue > 0 || montantRhValue > 0) &&
+        total <= montantMax
     )
   }, [selectedEnveloppeId, montantPresta, montantRh, budgetEnveloppe, montantMaxAction])
 
   return (
     <>
-      {
-        demandeDeSubvention ?
-          <div >
+      {demandeDeSubvention ? (
+        <div>
+          <div className="fr-grid-row space-between">
+            <p className="fr-text--bold fr-mb-0">Subvention demandée</p>
+            <div className={`fr-grid-row ${styles['align-items']}`}>
+              {!isReadOnly && (
+                <button
+                  className="fr-btn fr-btn--tertiary fr-icon-delete-line color-red fr-ml-1w"
+                  onClick={() => {
+                    supprimerUneDemandeDeSubvention?.()
+                  }}
+                  title="Supprimer la demande de subvention"
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="fr-p-2w background-blue-france">
             <div className="fr-grid-row space-between">
-              <p className="fr-text--bold fr-mb-0">
-                Subvention demandée
+              <p className="fr-col-10 fr-mb-0 color-blue-france fr-text--bold">
+                {enveloppeById[demandeDeSubvention.enveloppeId].label}
               </p>
-              <div className={`fr-grid-row ${styles['align-items']}`}>
-                {!isReadOnly && (
-                  <button
-                    className="fr-btn fr-btn--tertiary fr-icon-delete-line color-red fr-ml-1w"
-                    onClick={() => {
-                      supprimerUneDemandeDeSubvention?.()
-                    }}
-                    title="Supprimer la demande de subvention"
-                    type="button"
-                  >
-                    Supprimer
-                  </button>
-                )}
-              </div>
+              <p className="fr-mb-0 fr-mr-2w color-blue-france fr-text--bold">
+                {formatMontant(demandeDeSubvention.total)}
+              </p>
             </div>
-            <div className="fr-p-2w background-blue-france">
-              <div className="fr-grid-row space-between">
-                <p className="fr-col-10 fr-mb-0 color-blue-france fr-text--bold">
-                  {enveloppeById[demandeDeSubvention.enveloppeId].label}
-                </p>
-                <p className="fr-mb-0 fr-mr-2w color-blue-france fr-text--bold">
-                  {formatMontant(demandeDeSubvention.total)}
-                </p>
-              </div>
-              <ul className="color-blue-france fr-mt-1w fr-pl-0 fr-pt-1w">
-                <li>
-                  <div className="fr-grid-row space-between">
-                    <p>
-                      Prestation de service
-                    </p>
-                    <p className="fr-text--lg fr-mr-1w">
-                      {formatMontant(demandeDeSubvention.montantPrestation)}
-                    </p>
-                  </div>
-                </li>
-                <li>
-                  <div className="fr-grid-row space-between">
-                    <p>
-                      Ressources humaines
-                    </p>
-                    <p className="fr-text--lg fr-mr-1w">
-                      {formatMontant(demandeDeSubvention.montantRh)}
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+            <ul className="color-blue-france fr-mt-1w fr-pl-0 fr-pt-1w">
+              <li>
+                <div className="fr-grid-row space-between">
+                  <p>Prestation de service</p>
+                  <p className="fr-text--lg fr-mr-1w">{formatMontant(demandeDeSubvention.montantPrestation)}</p>
+                </div>
+              </li>
+              <li>
+                <div className="fr-grid-row space-between">
+                  <p>Ressources humaines</p>
+                  <p className="fr-text--lg fr-mr-1w">{formatMontant(demandeDeSubvention.montantRh)}</p>
+                </div>
+              </li>
+            </ul>
           </div>
-          :
-          <div className={styles['horizontal-text-input']}>
-            <div className={styles['half-width']}>
-              <label
-                className="fr-label fr-text--bold"
-                htmlFor="subventionsDemandees"
-              >
-                Subvention demandée à l&apos;état
-              </label>
-            </div>
-            <button
-              aria-controls={drawerId}
-              className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-              data-fr-opened="false"
-              disabled={!isBudgetAction}
-              onClick={() => {
-                setIsDrawerOpen(true)
-              }}
-              title="Faire une demande de subvention"
-              type="button"
-            >
-              Demander une subvention
-            </button>
+        </div>
+      ) : (
+        <div className={styles['horizontal-text-input']}>
+          <div className={styles['half-width']}>
+            <label className="fr-label fr-text--bold" htmlFor="subventionsDemandees">
+              Subvention demandée à l&apos;état
+            </label>
           </div>
-      }
+          <button
+            aria-controls={drawerId}
+            className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
+            data-fr-opened="false"
+            disabled={!isBudgetAction}
+            onClick={() => {
+              setIsDrawerOpen(true)
+            }}
+            title="Faire une demande de subvention"
+            type="button"
+          >
+            Demander une subvention
+          </button>
+        </div>
+      )}
       <Drawer
         boutonFermeture="Fermer la demande de subvention"
         closeDrawer={() => {
@@ -205,13 +189,9 @@ export default function DemanderUneSubvention({
           Demander une subvention
         </DrawerTitle>
         <p className="color-grey fr-text--sm">
-          Saisissez le montant de la subvention que vous souhaitez obtenir de l&apos;état.
-          {' '}
-          <span className="color-blue-france">
-            {`Dans la limite de ${formatMontant(montantMaximal())}`}
-          </span>
-          {/**/}
-          .
+          Saisissez le montant de la subvention que vous souhaitez obtenir de l&apos;état.{' '}
+          <span className="color-blue-france">{`Dans la limite de ${formatMontant(montantMaximal())}`}</span>
+          {/**/}.
         </p>
         <Select
           id={selectEnveloppeId}
@@ -226,44 +206,33 @@ export default function DemanderUneSubvention({
               setBudgetEnveloppe(undefined)
             }
           }}
-          options={enveloppes.filter((enveloppe) => enveloppe.available).map((enveloppe) => ({
-            ...enveloppe,
-            isSelected: enveloppe.value === selectedEnveloppeId,
-          }))}
+          options={enveloppes
+            .filter((enveloppe) => enveloppe.available)
+            .map((enveloppe) => ({
+              ...enveloppe,
+              isSelected: enveloppe.value === selectedEnveloppeId,
+            }))}
         >
           Enveloppe de financement concernée
         </Select>
-        {
-          montantInput({
-            children: (
-              <>
-                Montant en prestation de service
-              </>
-            ),
-            errorTextId: inputMontantPrestaErrorTextId,
-            id: inputMontantPrestaId,
-            max: montantMaximal(montantRh),
-            onInput: setMontantPresta,
-            ref: inputMontantPrestaRef,
-            value: demandeDeSubvention?.montantPrestation,
-          })
-        }
+        {montantInput({
+          children: <>Montant en prestation de service</>,
+          errorTextId: inputMontantPrestaErrorTextId,
+          id: inputMontantPrestaId,
+          max: montantMaximal(montantRh),
+          onInput: setMontantPresta,
+          ref: inputMontantPrestaRef,
+          value: demandeDeSubvention?.montantPrestation,
+        })}
         {montantInput({
           children: (
             <>
-              Montant en ressources humaines
-              {' '}
+              Montant en ressources humaines{' '}
               <span className="fr-hint-text">
                 Il s&apos;agit d&apos;une ressource humaine interne à la structure employeuse faisant partie de la
                 gouvernance et récipiendaire des fonds.
                 <br />
-                Format attendu : Montant
-                {' '}
-                <abbr title="Équivalent temps plein">
-                  ETP
-                </abbr>
-                {' '}
-                en euros
+                Format attendu : Montant <abbr title="Équivalent temps plein">ETP</abbr> en euros
               </span>
             </>
           ),
@@ -279,27 +248,15 @@ export default function DemanderUneSubvention({
         >
           {selectedEnveloppeId && enveloppeById[selectedEnveloppeId].limiteLaDemandeSubvention ? (
             <li className="fr-grid-row space-between fr-mb-1w">
-              Vos droits de subvention
-              {' '}
-              <span>
-                {formatMontant(budgetEnveloppe ?? 0)}
-              </span>
+              Vos droits de subvention <span>{formatMontant(budgetEnveloppe ?? 0)}</span>
             </li>
           ) : null}
           <li className="fr-grid-row space-between fr-mb-1w">
-            Maximum autorisé pour cette action
-            {' '}
-            <span>
-              {formatMontant(montantMaxAction)}
-            </span>
+            Maximum autorisé pour cette action <span>{formatMontant(montantMaxAction)}</span>
           </li>
           {subventionsDemandees > 0 ? (
             <li className="fr-text--bold fr-grid-row space-between fr-pt-1w fr-text--lg separator-up">
-              Total subventions demandées
-              {' '}
-              <span>
-                {formatMontant(subventionsDemandees)}
-              </span>
+              Total subventions demandées <span>{formatMontant(subventionsDemandees)}</span>
             </li>
           ) : null}
         </ul>
@@ -333,10 +290,7 @@ export default function DemanderUneSubvention({
 
     return (
       <div className={`fr-input-group input-group--sobre ${inputGroupDisabledStyle} ${inputGroupErrorStyle}`}>
-        <label
-          className="fr-label"
-          htmlFor={id}
-        >
+        <label className="fr-label" htmlFor={id}>
           {children}
         </label>
         <input
@@ -352,15 +306,11 @@ export default function DemanderUneSubvention({
           ref={ref}
           type="number"
         />
-        {
-          hasError ?
-            <p
-              className="fr-error-text"
-              id={errorTextId}
-            >
-              Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention
-            </p> : null
-        }
+        {hasError ? (
+          <p className="fr-error-text" id={errorTextId}>
+            Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention
+          </p>
+        ) : null}
       </div>
     )
   }
@@ -381,14 +331,16 @@ type Enveloppe = ActionViewModel['enveloppes'][number]
 
 type EnveloppeById = Readonly<Record<string, Enveloppe>>
 
-type MontantInputProps = PropsWithChildren<Readonly<{
-  errorTextId: string
-  id: string
-  max: number
-  onInput(montant: number): void
-  ref: RefObject<HTMLInputElement | null>
-  value?: number
-}>>
+type MontantInputProps = PropsWithChildren<
+  Readonly<{
+    errorTextId: string
+    id: string
+    max: number
+    onInput(montant: number): void
+    ref: RefObject<HTMLInputElement | null>
+    value?: number
+  }>
+>
 
 type Props = Readonly<{
   ajouterDemandeDeSubvention?(demandeDeSubvention: DemandeDeSubvention): void

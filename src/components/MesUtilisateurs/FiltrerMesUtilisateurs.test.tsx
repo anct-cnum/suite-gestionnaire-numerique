@@ -24,7 +24,10 @@ describe('filtrer mes utilisateurs', () => {
     const formulaire = within(drawer).getByRole('form', { name: 'Filtrer' })
     expect(formulaire).toHaveAttribute('method', 'dialog')
 
-    const utilisateursActives = within(drawer).getByRole('checkbox', { checked: false, name: 'Uniquement les utilisateurs activés' })
+    const utilisateursActives = within(drawer).getByRole('checkbox', {
+      checked: false,
+      name: 'Uniquement les utilisateurs activés',
+    })
     expect(utilisateursActives).toHaveAttribute('name', 'utilisateursActives')
 
     const zonesGeographiques = within(drawer).getByRole('combobox', { name: 'Par zone géographique' })
@@ -33,15 +36,27 @@ describe('filtrer mes utilisateurs', () => {
     const structure = within(drawer).getByRole('combobox', { name: 'Par structure' })
     expect(structure).toBeInTheDocument()
 
-    const administrateurDispositif = within(formulaire).getByRole('checkbox', { checked: true, name: 'Administrateur dispositif' })
+    const administrateurDispositif = within(formulaire).getByRole('checkbox', {
+      checked: true,
+      name: 'Administrateur dispositif',
+    })
     expect(administrateurDispositif).toHaveAttribute('name', 'roles')
-    const gestionnaireDepartement = within(formulaire).getByRole('checkbox', { checked: true, name: 'Gestionnaire département' })
+    const gestionnaireDepartement = within(formulaire).getByRole('checkbox', {
+      checked: true,
+      name: 'Gestionnaire département',
+    })
     expect(gestionnaireDepartement).toHaveAttribute('name', 'roles')
-    const gestionnaireGroupement = within(formulaire).getByRole('checkbox', { checked: true, name: 'Gestionnaire groupement' })
+    const gestionnaireGroupement = within(formulaire).getByRole('checkbox', {
+      checked: true,
+      name: 'Gestionnaire groupement',
+    })
     expect(gestionnaireGroupement).toHaveAttribute('name', 'roles')
     const gestionnaireRegion = within(formulaire).getByRole('checkbox', { checked: true, name: 'Gestionnaire région' })
     expect(gestionnaireRegion).toHaveAttribute('name', 'roles')
-    const gestionnaireStructure = within(formulaire).getByRole('checkbox', { checked: true, name: 'Gestionnaire structure' })
+    const gestionnaireStructure = within(formulaire).getByRole('checkbox', {
+      checked: true,
+      name: 'Gestionnaire structure',
+    })
     expect(gestionnaireStructure).toHaveAttribute('name', 'roles')
 
     const boutonReinitialiser = within(formulaire).getByRole('button', { name: 'Réinitialiser les filtres' })
@@ -69,7 +84,9 @@ describe('filtrer mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    afficherMesUtilisateurs({ searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement&codeDepartement=978') })
+    afficherMesUtilisateurs({
+      searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement&codeDepartement=978'),
+    })
 
     // WHEN
     jOuvreLeFormulairePourFiltrer()
@@ -77,9 +94,7 @@ describe('filtrer mes utilisateurs', () => {
     // THEN
     const formulaire = screen.getByRole('form', { name: 'Filtrer' })
     expect(formulaire).toHaveFormValues({
-      roles: [
-        'gestionnaire_groupement',
-      ],
+      roles: ['gestionnaire_groupement'],
       utilisateursActives: true,
       zoneGeographique: '00_978',
     })
@@ -114,7 +129,9 @@ describe('filtrer mes utilisateurs', () => {
     afficherMesUtilisateurs({ searchParams: new URLSearchParams('roles=Gestionnaire structure') }, 0)
 
     // THEN
-    const phraseInformative = screen.getByText('Aucun utilisateur ne correspond aux filtres sélectionnés.', { selector: 'p' })
+    const phraseInformative = screen.getByText('Aucun utilisateur ne correspond aux filtres sélectionnés.', {
+      selector: 'p',
+    })
     expect(phraseInformative).toBeInTheDocument()
   })
 
@@ -165,7 +182,9 @@ describe('filtrer mes utilisateurs', () => {
       jeFiltreLesUtilisateurs()
 
       // THEN
-      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure')
+      expect(spiedRouterPush).toHaveBeenCalledWith(
+        'http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure'
+      )
     })
 
     it('[URL] sur un département alors je n’affiche qu’eux', async () => {
@@ -260,7 +279,6 @@ describe('filtrer mes utilisateurs', () => {
           expectedRouterPush: 'http://example.com/mes-utilisateurs?structure=14',
           zoneGeographique: 'Toutes les régions',
         },
-
       ])(
         '$desc, alors je n’affiche que les utilisateurs liés à cette structure',
         async ({ expectedFetchInput, expectedRouterPush, zoneGeographique }) => {
@@ -395,7 +413,13 @@ describe('filtrer mes utilisateurs', () => {
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     totalUtilisateur = 11
   ): void {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure, epochTime)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(
+      [],
+      'fooId',
+      totalUtilisateur,
+      rolesAvecStructure,
+      epochTime
+    )
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
   }
 

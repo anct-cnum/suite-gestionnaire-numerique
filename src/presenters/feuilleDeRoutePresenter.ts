@@ -71,10 +71,12 @@ export function feuilleDeRoutePresenter(
     infosDerniereEdition: `Modifiée le ${formaterEnDateFrancaise(readModel.edition.date)} par ${readModel.edition.prenom} ${readModel.edition.nom}`,
     nom: readModel.nom,
     perimetre: readModel.perimetre,
-    porteur: readModel.porteur ? {
-      label: readModel.porteur.nom,
-      link: membreLink(readModel.porteur.structureId),
-    } : undefined,
+    porteur: readModel.porteur
+      ? {
+          label: readModel.porteur.nom,
+          link: membreLink(readModel.porteur.structureId),
+        }
+      : undefined,
     uidFeuilleDeRoute: readModel.uid,
     uidGouvernance: readModel.uidGouvernance,
     urlAjouterUneAction: `${feuilleDeRouteLink(readModel.uidGouvernance, readModel.uid)}/action/ajouter`,
@@ -119,11 +121,11 @@ interface FeuilleDeRouteActionViewModel {
     total: string
   }>
   icone: ActionStatutViewModel
-  modifiable : boolean
+  modifiable: boolean
   nom: string
   porteurs: ReadonlyArray<HyperLink>
   statut: ActionStatutViewModel
-  supprimable : boolean
+  supprimable: boolean
   uid: string
   urlModifier: string
   urlVisualiser: string
@@ -132,11 +134,12 @@ interface FeuilleDeRouteActionViewModel {
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: UneFeuilleDeRouteReadModel['actions'][number]): FeuilleDeRouteViewModel['actions'][number] => {
     // istanbul ignore next @preserve
-    const icone = action.isEnveloppeFormation ?
-      actionStatutViewModelByStatut.enCours : actionStatutViewModelByStatut.acceptee
+    const icone = action.isEnveloppeFormation
+      ? actionStatutViewModelByStatut.enCours
+      : actionStatutViewModelByStatut.acceptee
 
-    const besoinsLabels = action.besoins.map(besoin => BESOINS_LABELS[besoin])
-    
+    const besoinsLabels = action.besoins.map((besoin) => BESOINS_LABELS[besoin])
+
     const besoinsText = besoinsLabels.length > 0 ? besoinsLabels.join(', ') : '-'
 
     return {
@@ -151,14 +154,14 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         total: formatMontant(action.budgetPrevisionnel),
       },
       icone,
-      modifiable : action.modifiable,
+      modifiable: action.modifiable,
       nom: action.nom,
       porteurs: action.porteurs.map((porteur) => ({
         label: porteur.nom,
         link: membreLink(porteur.structureId),
       })),
       statut: actionStatutViewModelByStatut[action.statut],
-      supprimable : action.modifiable,
+      supprimable: action.modifiable,
       uid: action.uid,
       urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
       urlVisualiser: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/visualiser`,

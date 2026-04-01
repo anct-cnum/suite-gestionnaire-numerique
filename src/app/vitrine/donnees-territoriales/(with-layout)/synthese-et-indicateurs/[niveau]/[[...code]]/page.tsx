@@ -10,7 +10,10 @@ import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSo
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
-import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
+import {
+  indiceFragiliteDepartementsPresenter,
+  indiceFragilitePresenter,
+} from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
@@ -21,8 +24,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const codeDepartement = code?.[0]
 
   return generateTerritoireMetadata(niveau, codeDepartement, {
-    descriptionTemplate: 'Synthèse et indicateurs de l\'inclusion numérique pour {territoire}. Lieux d\'accompagnement, médiateurs numériques, accompagnements réalisés et indices de fragilité numérique.',
-    keywords: ['synthèse', 'indicateurs', 'inclusion numérique', 'fragilité numérique', 'accompagnements', 'statistiques territoriales'],
+    descriptionTemplate:
+      "Synthèse et indicateurs de l'inclusion numérique pour {territoire}. Lieux d'accompagnement, médiateurs numériques, accompagnements réalisés et indices de fragilité numérique.",
+    keywords: [
+      'synthèse',
+      'indicateurs',
+      'inclusion numérique',
+      'fragilité numérique',
+      'accompagnements',
+      'statistiques territoriales',
+    ],
     titleTemplate: 'Synthèse et indicateurs - {territoire} - Inclusion Numérique',
   })
 }
@@ -44,7 +55,7 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
   const codeDepartement = niveau === 'departement' && code !== undefined ? code[0] : undefined
 
   // Déterminer le territoire pour les loaders
-  const territoire = niveau === 'national' ? 'France' : codeDepartement ?? ''
+  const territoire = niveau === 'national' ? 'France' : (codeDepartement ?? '')
 
   // Instancier les loaders
   const lieuxLoader = new PrismaLieuxInclusionNumeriqueLoader()
@@ -77,10 +88,7 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
   }
 
   return (
-    <div
-      className="fr-pr-lg-10w"
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
+    <div className="fr-pr-lg-10w" style={{ display: 'flex', flexDirection: 'column' }}>
       <EtatDesLieux
         accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         afficherLienLieux={false}

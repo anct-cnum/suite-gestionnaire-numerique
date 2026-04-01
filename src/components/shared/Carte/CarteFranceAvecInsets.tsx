@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @stylistic/quote-props */
 'use client'
-import { AddLayerObject, DataDrivenPropertyValueSpecification, LngLatBounds, Map, MapGeoJSONFeature, MapMouseEvent, Popup } from 'maplibre-gl'
+import {
+  AddLayerObject,
+  DataDrivenPropertyValueSpecification,
+  LngLatBounds,
+  Map,
+  MapGeoJSONFeature,
+  MapMouseEvent,
+  Popup,
+} from 'maplibre-gl'
 import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
@@ -48,19 +54,23 @@ const DOM_TOM_CONFIG = {
   },
 }
 
-export default function CarteFranceAvecInsets(
-  { donneesDepartements, legend, onDepartementClick }: Props
-): ReactElement {
+export default function CarteFranceAvecInsets({
+  donneesDepartements,
+  legend,
+  onDepartementClick,
+}: Props): ReactElement {
   const mainMapContainer = useRef<HTMLDivElement>(null)
   const mainMap = useRef<Map | null>(null)
   const domTomMaps = useRef<Record<string, Map>>({})
   const domTomContainers = useRef<Record<string, HTMLDivElement | null>>({})
   const popup = useRef<null | Popup>(null)
-  // eslint-disable-next-line react/hook-use-state
+
   const [, setMapsReady] = useState(0)
 
   function initializeMainMap(): void {
-    if (!mainMap.current) {return}
+    if (!mainMap.current) {
+      return
+    }
 
     // Ajuster les bounds selon le type de légende pour remonter la France
     const southWest: [number, number] = [-5.0, 39.5]
@@ -88,9 +98,7 @@ export default function CarteFranceAvecInsets(
     // Ajouter la source si elle n'existe pas déjà
     if (!map.getSource('decoupage')) {
       map.addSource('decoupage', {
-        tiles: [
-          'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
-        ],
+        tiles: ['https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf'],
         type: 'vector',
       })
     }
@@ -102,10 +110,7 @@ export default function CarteFranceAvecInsets(
         'fill-color': [
           'match',
           ['get', 'code'],
-          ...donneesDepartements.flatMap((dept) => [
-            dept.codeDepartement,
-            dept.couleur,
-          ]),
+          ...donneesDepartements.flatMap((dept) => [dept.codeDepartement, dept.couleur]),
           '#ffffff',
         ] as unknown as DataDrivenPropertyValueSpecification<string>,
         'fill-opacity': 0.8,
@@ -117,9 +122,10 @@ export default function CarteFranceAvecInsets(
     }
 
     // Ajouter le filter seulement si c'est un DOM-TOM
-    const layerConfig = isDomTom && domTomCode !== undefined && domTomCode
-      ? { ...baseConfig, filter: ['==', 'code', domTomCode] }
-      : baseConfig
+    const layerConfig =
+      isDomTom && domTomCode !== undefined && domTomCode
+        ? { ...baseConfig, filter: ['==', 'code', domTomCode] }
+        : baseConfig
 
     map.addLayer(layerConfig as unknown as AddLayerObject)
 
@@ -135,11 +141,7 @@ export default function CarteFranceAvecInsets(
       type: 'fill' as const,
     }
 
-    // Ajouter le même filtre que la couche principale si c'est un DOM-TOM
-    // eslint-disable-next-line sonarjs/no-all-duplicated-branches
-    const highlightConfig = isDomTom && domTomCode !== undefined && domTomCode
-      ? { ...highlightLayerConfig, filter: ['==', 'code', ''] } // Commencer avec un filtre vide
-      : { ...highlightLayerConfig, filter: ['==', 'code', ''] } // Commencer avec un filtre vide
+    const highlightConfig = { ...highlightLayerConfig, filter: ['==', 'code', ''] }
 
     map.addLayer(highlightConfig as unknown as AddLayerObject)
 
@@ -150,7 +152,7 @@ export default function CarteFranceAvecInsets(
         const departement = donneesDepartements.find((dept) => dept.codeDepartement === codeDepartement)
 
         // Mettre à jour le filtre de la couche de highlight seulement si pas de popup
-        // eslint-disable-next-line no-negated-condition
+
         if (!departement?.popup) {
           map.setFilter('departements-highlight', ['==', 'code', codeDepartement])
         } else {
@@ -174,7 +176,9 @@ export default function CarteFranceAvecInsets(
 
     if (onDepartementClick) {
       map.on('click', 'departements-layer', (event) => {
-        if (!event.features?.length) {return}
+        if (!event.features?.length) {
+          return
+        }
         const feature = event.features[0]
         const codeDepartement = feature.properties.code as string
         onDepartementClick(codeDepartement)
@@ -183,14 +187,17 @@ export default function CarteFranceAvecInsets(
   }
 
   useEffect(() => {
-    if (!mainMapContainer.current) {return undefined}
+    if (!mainMapContainer.current) {
+      return undefined
+    }
 
     // Vérifier le support WebGL
     const canvas = document.createElement('canvas')
     const gl = canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl')
 
     if (!gl) {
-      mainMapContainer.current.innerHTML = '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte.</p></div>'
+      mainMapContainer.current.innerHTML =
+        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte.</p></div>'
       return undefined
     }
 
@@ -218,16 +225,20 @@ export default function CarteFranceAvecInsets(
     })
 
     mainMap.current.on('load', () => {
-      if (!mainMap.current) {return}
+      if (!mainMap.current) {
+        return
+      }
       addLayersToMap(mainMap.current)
       initializeMainMap()
-      setMapsReady(prev => prev + 1)
+      setMapsReady((prev) => prev + 1)
     })
 
     // Initialiser les cartes DOM-TOM
     Object.entries(DOM_TOM_CONFIG).forEach(([code]) => {
       const container = domTomContainers.current[code]
-      if (!container) {return}
+      if (!container) {
+        return
+      }
 
       const domTomMap = new Map({
         attributionControl: false,
@@ -249,7 +260,7 @@ export default function CarteFranceAvecInsets(
       domTomMap.on('load', () => {
         addLayersToMap(domTomMap, true, code)
         initializeDomTomMap(code, domTomMap)
-        setMapsReady(prev => prev + 1)
+        setMapsReady((prev) => prev + 1)
       })
 
       domTomMaps.current[code] = domTomMap
@@ -257,7 +268,9 @@ export default function CarteFranceAvecInsets(
 
     return (): void => {
       mainMap.current?.remove()
-      Object.values(domTomMaps.current).forEach(map => { map.remove() })
+      Object.values(domTomMaps.current).forEach((map) => {
+        map.remove()
+      })
     }
   }, [donneesDepartements])
 
@@ -269,29 +282,24 @@ export default function CarteFranceAvecInsets(
           {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {
             const config = DOM_TOM_CONFIG[code]
             return (
-              <div
-                className={styles.insetItem}
-                key={code}
-              >
+              <div className={styles.insetItem} key={code}>
                 {/* Label du DOM-TOM au-dessus de l'inset */}
-                <div className={styles.insetLabel}>
-                  {config.name}
-                </div>
+                <div className={styles.insetLabel}>{config.name}</div>
                 {/* Conteneur de la carte */}
                 <div
                   className={styles.insetMapContainer}
-                  ref={(el) => { domTomContainers.current[code] = el }}
+                  ref={(el) => {
+                    domTomContainers.current[code] = el
+                  }}
                 />
               </div>
-            )})}
+            )
+          })}
         </div>
 
         {/* Carte principale */}
         <div className={styles.carteMainContainer}>
-          <div
-            className={styles.mapWrapper}
-            data-testid="carte-france-wrapper"
-          >
+          <div className={styles.mapWrapper} data-testid="carte-france-wrapper">
             <div
               className={styles.mapContainer}
               data-testid="carte-france-container"
@@ -303,10 +311,7 @@ export default function CarteFranceAvecInsets(
       </div>
 
       {/* Légende en dessous */}
-      <div
-        className={styles.legendBottom}
-        data-testid="legend-wrapper"
-      >
+      <div className={styles.legendBottom} data-testid="legend-wrapper">
         {legend}
       </div>
     </div>
@@ -326,7 +331,9 @@ function gererLeSurvolDepartement(
   popup: RefObject<null | Popup>,
   isDomTom: boolean
 ): void {
-  if (!event.features?.length || !popup.current) {return}
+  if (!event.features?.length || !popup.current) {
+    return
+  }
 
   const feature = event.features[0]
   const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
@@ -344,7 +351,7 @@ function gererLeSurvolDepartement(
   const coordinates = event.lngLat
   const domTomConfig = DOM_TOM_CONFIG[feature.properties.code as keyof typeof DOM_TOM_CONFIG]
   const isCurrentDomTom = isDomTom || domTomConfig
-  const nomDepartement = domTomConfig?.name || feature.properties.nom as string
+  const nomDepartement = domTomConfig?.name || (feature.properties.nom as string)
 
   const htmlContent = isCurrentDomTom
     ? `<div style="font-size: 14px;"><strong>${departement.popup}</strong></div>`
@@ -353,8 +360,5 @@ function gererLeSurvolDepartement(
          <div style="font-size: 14px;">${departement.popup}</div>
        </div>`
 
-  popup.current
-    .setLngLat(coordinates)
-    .setHTML(htmlContent)
-    .addTo(map)
+  popup.current.setLngLat(coordinates).setHTML(htmlContent).addTo(map)
 }

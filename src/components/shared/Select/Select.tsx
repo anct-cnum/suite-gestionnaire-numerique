@@ -19,10 +19,7 @@ export default function Select<Value extends number | string>({
   const defaultVal = options.find(({ isSelected }) => Boolean(isSelected))?.value
   return (
     <div className="fr-select-group">
-      <label
-        className="fr-label"
-        htmlFor={id}
-      >
+      <label className="fr-label" htmlFor={id}>
         {children}
       </label>
       <select
@@ -36,37 +33,32 @@ export default function Select<Value extends number | string>({
         required={required}
         value={value}
       >
-        <option
-          hidden={!isPlaceholderSelectable}
-          value=""
-        >
+        <option hidden={!isPlaceholderSelectable} value="">
           {placeholder}
         </option>
-        {
-          options.map((option): ReactElement => (
-            <option
-              aria-controls={ariaControlsId}
-              key={option.value}
-              value={option.value}
-            >
+        {options.map(
+          (option): ReactElement => (
+            <option aria-controls={ariaControlsId} key={option.value} value={option.value}>
               {option.label}
             </option>
-          ))
-        }
+          )
+        )}
       </select>
     </div>
   )
 }
 
-type Props<Value extends number | string> = PropsWithChildren<Readonly<{
-  ariaControlsId?: string
-  disabled?: boolean
-  id: string
-  isPlaceholderSelectable?: boolean
-  name: string
-  onChange?: ChangeEventHandler<HTMLSelectElement>
-  options: ReadonlyArray<LabelValue<Value>>
-  placeholder?: string
-  required?: boolean
-  value?: Value
-}>>
+type Props<Value extends number | string> = PropsWithChildren<
+  Readonly<{
+    ariaControlsId?: string
+    disabled?: boolean
+    id: string
+    isPlaceholderSelectable?: boolean
+    name: string
+    onChange?: ChangeEventHandler<HTMLSelectElement>
+    options: ReadonlyArray<LabelValue<Value>>
+    placeholder?: string
+    required?: boolean
+    value?: Value
+  }>
+>

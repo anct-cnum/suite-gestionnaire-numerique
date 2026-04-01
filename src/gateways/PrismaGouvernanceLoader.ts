@@ -6,7 +6,13 @@ import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { FeuilleDeRouteReadModel, MembreReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceLoaderReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import {
+  FeuilleDeRouteReadModel,
+  MembreReadModel,
+  TypeDeComite,
+  UneGouvernanceLoader,
+  UneGouvernanceLoaderReadModel,
+} from '@/use-cases/queries/RecupererUneGouvernance'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
@@ -70,56 +76,60 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
     membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>
   ): UneGouvernanceLoaderReadModel {
     const noteDeContexte =
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       gouvernanceRecord.noteDeContexte &&
-        gouvernanceRecord.relationEditeurNoteDeContexte &&
-        gouvernanceRecord.derniereEditionNoteDeContexte
+      gouvernanceRecord.relationEditeurNoteDeContexte &&
+      gouvernanceRecord.derniereEditionNoteDeContexte
         ? {
-          dateDeModification: new Date(gouvernanceRecord.derniereEditionNoteDeContexte),
-          nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
-          prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
-          texte: gouvernanceRecord.noteDeContexte,
-        } : undefined
-    const notePrivee = gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee ? {
-      dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),
-      nomEditeur: gouvernanceRecord.relationEditeurNotePrivee.nom,
-      prenomEditeur: gouvernanceRecord.relationEditeurNotePrivee.prenom,
-      texte: gouvernanceRecord.notePrivee.contenu,
-    } : undefined
-    const comites = gouvernanceRecord.comites.length > 0
-      ? gouvernanceRecord.comites.map((comite) => ({
-        commentaire: comite.commentaire ?? '',
-        date: comite.date ?? undefined,
-        derniereEdition: comite.derniereEdition,
-        frequence: comite.frequence,
-        id: comite.id,
-        nomEditeur: comite.relationUtilisateur.nom,
-        prenomEditeur: comite.relationUtilisateur.prenom,
-        type: comite.type as TypeDeComite,
-      }))
-      : undefined
+            dateDeModification: new Date(gouvernanceRecord.derniereEditionNoteDeContexte),
+            nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
+            prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
+            texte: gouvernanceRecord.noteDeContexte,
+          }
+        : undefined
+    const notePrivee =
+      gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee
+        ? {
+            dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),
+            nomEditeur: gouvernanceRecord.relationEditeurNotePrivee.nom,
+            prenomEditeur: gouvernanceRecord.relationEditeurNotePrivee.prenom,
+            texte: gouvernanceRecord.notePrivee.contenu,
+          }
+        : undefined
+    const comites =
+      gouvernanceRecord.comites.length > 0
+        ? gouvernanceRecord.comites.map((comite) => ({
+            commentaire: comite.commentaire ?? '',
+            date: comite.date ?? undefined,
+            derniereEdition: comite.derniereEdition,
+            frequence: comite.frequence,
+            id: comite.id,
+            nomEditeur: comite.relationUtilisateur.nom,
+            prenomEditeur: comite.relationUtilisateur.prenom,
+            type: comite.type as TypeDeComite,
+          }))
+        : undefined
     const membres = toMembres(membresConfirmesGouvernance)
-    
+
     const synthese = this.#etablisseurSynthese({
-      feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map(feuilleDeRoute => ({
-        actions: feuilleDeRoute.action.map(action => {
-          const demandeDeSubvention =
-            action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
+      feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
+        actions: feuilleDeRoute.action.map((action) => {
+          const demandeDeSubvention = action.demandesDeSubvention[0] as
+            | (typeof action.demandesDeSubvention)[number]
+            | undefined
           return {
-            beneficiaires: beneficiairesSubvention(
-              [action],
-              enveloppe => !isEnveloppeDeFormation(enveloppe)
-            ),
+            beneficiaires: beneficiairesSubvention([action], (enveloppe) => !isEnveloppeDeFormation(enveloppe)),
             budgetGlobal: action.budgetGlobal,
             coFinancements: [],
-            subvention: demandeDeSubvention ? {
-              isFormation: isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe),
-              montants: {
-                prestation: action.demandesDeSubvention[0].subventionPrestation ?? 0,
-                ressourcesHumaines: action.demandesDeSubvention[0].subventionEtp ?? 0,
-              },
-              statut: demandeDeSubvention.statut as StatutSubvention,
-            } : undefined,
+            subvention: demandeDeSubvention
+              ? {
+                  isFormation: isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe),
+                  montants: {
+                    prestation: action.demandesDeSubvention[0].subventionPrestation ?? 0,
+                    ressourcesHumaines: action.demandesDeSubvention[0].subventionEtp ?? 0,
+                  },
+                  statut: demandeDeSubvention.statut as StatutSubvention,
+                }
+              : undefined,
             uid: String(action.id),
           }
         }),
@@ -130,28 +140,25 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       return {
         beneficiairesSubvention: beneficiairesSubvention(
           feuilleDeRoute.action,
-          enveloppe => !isEnveloppeDeFormation(enveloppe)
+          (enveloppe) => !isEnveloppeDeFormation(enveloppe)
         ),
         beneficiairesSubventionAccordee: beneficiairesSubventionAccordee(
           feuilleDeRoute.action,
-          enveloppe => !isEnveloppeDeFormation(enveloppe)
+          (enveloppe) => !isEnveloppeDeFormation(enveloppe)
         ),
-        beneficiairesSubventionFormation: beneficiairesSubvention(
-          feuilleDeRoute.action,
-          isEnveloppeDeFormation
-        ),
+        beneficiairesSubventionFormation: beneficiairesSubvention(feuilleDeRoute.action, isEnveloppeDeFormation),
         beneficiairesSubventionFormationAccordee: beneficiairesSubventionAccordee(
           feuilleDeRoute.action,
           isEnveloppeDeFormation
         ),
-        ...Boolean(feuilleDeRoute.pieceJointe) && {
+        ...(Boolean(feuilleDeRoute.pieceJointe) && {
           pieceJointe: {
             apercu: '',
             emplacement: '',
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             nom: feuilleDeRoute.pieceJointe!,
           },
-        },
+        }),
         budgetGlobal: synthese.feuillesDeRoute[index].budget,
         montantSubventionAccordee: synthese.feuillesDeRoute[index].financemenTotalAccorde,
         montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
@@ -180,18 +187,19 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           .filter(isCoporteur)
           .toSorted(alphaAsc('nom'))
           .map((membre) => {
-            const feuillesDeRoutePortees = feuillesDeRoute
-              .filter(feuilleDeRoute => feuilleDeRoute.porteur?.uid === membre.id)
-            const premierContact = membre.contacts[0] as typeof membre.contacts[number] | undefined
+            const feuillesDeRoutePortees = feuillesDeRoute.filter(
+              (feuilleDeRoute) => feuilleDeRoute.porteur?.uid === membre.id
+            )
+            const premierContact = membre.contacts[0] as (typeof membre.contacts)[number] | undefined
             return {
               contactReferent: premierContact
                 ? {
-                  denomination: 'Contact référent' as const,
-                  mailContact: premierContact.email,
-                  nom: premierContact.nom,
-                  poste: premierContact.fonction,
-                  prenom: premierContact.prenom,
-                }
+                    denomination: 'Contact référent' as const,
+                    mailContact: premierContact.email,
+                    nom: premierContact.nom,
+                    poste: premierContact.fonction,
+                    prenom: premierContact.prenom,
+                  }
                 : undefined,
               feuillesDeRoute: feuillesDeRoutePortees.map(({ nom, uid }) => ({ nom, uid })),
               links: { plusDetails: `/structure/${membre.structureId}` },
@@ -214,7 +222,9 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
 }
 
 function beneficiairesSubvention(
-  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action'],
+  actions: Prisma.GouvernanceRecordGetPayload<{
+    include: typeof include
+  }>['feuillesDeRoute'][number]['action'],
   predicate: (enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>) => boolean
 ): ReadonlyArray<MembreReadModel> {
   return toMembres(
@@ -230,7 +240,9 @@ function beneficiairesSubvention(
 }
 
 function beneficiairesSubventionAccordee(
-  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action'],
+  actions: Prisma.GouvernanceRecordGetPayload<{
+    include: typeof include
+  }>['feuillesDeRoute'][number]['action'],
   predicate: (enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>) => boolean
 ): ReadonlyArray<MembreReadModel> {
   return toMembres(
@@ -255,10 +267,10 @@ function fromMembre(membre: Membre): MembreReadModel {
 
 function calculerTotaux(totaux: Totaux, feuilleDeRoute: FeuilleDeRouteReadModel): Totaux {
   return {
-    totalMontantsSubventionsAccordees: totaux.totalMontantsSubventionsAccordees
-      + feuilleDeRoute.montantSubventionAccordee,
-    totalMontantsSubventionsFormationAccordees: totaux.totalMontantsSubventionsFormationAccordees +
-      feuilleDeRoute.montantSubventionFormationAccordee,
+    totalMontantsSubventionsAccordees:
+      totaux.totalMontantsSubventionsAccordees + feuilleDeRoute.montantSubventionAccordee,
+    totalMontantsSubventionsFormationAccordees:
+      totaux.totalMontantsSubventionsFormationAccordees + feuilleDeRoute.montantSubventionFormationAccordee,
   }
 }
 
@@ -299,9 +311,13 @@ const include = {
   relationEditeurNotePrivee: true,
 }
 
-function fromMembreAvecRoles(
-  { id, nom, roles, structureId, type }: Membre
-): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
+function fromMembreAvecRoles({
+  id,
+  nom,
+  roles,
+  structureId,
+  type,
+}: Membre): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
   return { nom, roles, structureId, type, uid: id }
 }
 

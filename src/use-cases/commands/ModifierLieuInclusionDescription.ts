@@ -17,7 +17,10 @@ export class ModifierLieuInclusionDescription implements CommandHandler<Command>
     } else if (command.itinerance === '') {
       itineranceArray = []
     } else {
-      itineranceArray = command.itinerance.split(',').map(item => item.trim()).filter(item => item !== '')
+      itineranceArray = command.itinerance
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item !== '')
     }
 
     await this.#lieuInclusionRepository.updateDescription({

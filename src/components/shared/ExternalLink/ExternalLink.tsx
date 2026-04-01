@@ -14,8 +14,10 @@ export default function ExternalLink({ children, className = '', href, title }: 
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  className?: string
-  href: string
-  title: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    className?: string
+    href: string
+    title: string
+  }>
+>

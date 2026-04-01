@@ -1,8 +1,5 @@
 import prisma from '../../prisma/prismaClient'
-import {
-  LieuDetailsReadModel,
-  RecupererLieuDetailsLoader,
-} from '@/use-cases/queries/RecupererLieuDetails'
+import { LieuDetailsReadModel, RecupererLieuDetailsLoader } from '@/use-cases/queries/RecupererLieuDetails'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoader {
@@ -59,7 +56,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     const contactInfo = this.extraireContactInfo(structure.contact)
 
     return {
-      conseillerNumeriqueLabellePhase2: structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') ?? false,
+      conseillerNumeriqueLabellePhase2:
+        structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') ?? false,
       conseillerNumeriqueLabellePhase3: false,
       email: contactInfo.email,
       fraisACharge: structure.frais_a_charge ?? [],
@@ -141,11 +139,11 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     modalites_acces: Array<string> | null
     services: Array<string> | null
   }): Array<{
-      description: undefined
-      modalites: Array<string>
-      nom: string
-      thematiques: Array<string>
-    }> {
+    description: undefined
+    modalites: Array<string>
+    nom: string
+    thematiques: Array<string>
+  }> {
     return (structure.services ?? []).map((service) => ({
       description: undefined,
       modalites: structure.modalites_acces ?? [],
@@ -247,13 +245,13 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     nom: string
     prenom: string
   }): {
-      email: string | undefined
-      id: number
-      nom: string
-      prenom: string
-      role: string | undefined
-      telephone: string | undefined
-    } {
+    email: string | undefined
+    id: number
+    nom: string
+    prenom: string
+    role: string | undefined
+    telephone: string | undefined
+  } {
     const contact = personne.contact
     const courriels = contact?.courriels as Record<string, unknown> | undefined
     const email = courriels?.mail_pro as string | undefined

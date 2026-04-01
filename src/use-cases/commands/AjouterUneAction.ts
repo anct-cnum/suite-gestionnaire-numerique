@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
 import { CoFinancementCommand, creationDesCoFinancements } from './shared/ActionUtils'
@@ -10,7 +9,7 @@ import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
 import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
-import { DemandeDeSubvention , DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Utilisateur } from '@/domain/Utilisateur'
@@ -51,9 +50,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
 
   async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.get(
-      new GouvernanceUid(command.uidGouvernance)
-    )
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterAction'
     }
@@ -94,11 +91,10 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
     }
 
-    const coFinancements: Array<CoFinancement> | CoFinancementFailure =
-      creationDesCoFinancements(
-        command.coFinancements ?? [],
-        action.state.uid.value
-      )
+    const coFinancements: Array<CoFinancement> | CoFinancementFailure = creationDesCoFinancements(
+      command.coFinancements ?? [],
+      action.state.uid.value
+    )
 
     if (!Array.isArray(coFinancements)) {
       return coFinancements
@@ -148,9 +144,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       const actionId = await this.#actionRepository.add(action, tx)
 
       if (demandeDeSubvention) {
-        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(
-          actionId.toString()
-        )
+        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
         if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
           return updatedDemandeDeSubvention
         }
@@ -167,10 +161,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
         await this.#coFinancementRepository.add(updatedCoFinancement, tx)
       }
 
-      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(
-        this.#date,
-        editeur
-      )
+      const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(this.#date, editeur)
 
       if (!(feuilleDeRouteAJour instanceof FeuilleDeRoute)) {
         return feuilleDeRouteAJour

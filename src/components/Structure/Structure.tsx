@@ -19,19 +19,10 @@ export default function Structure({ peutGererStructure, viewModel }: Props): Rea
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
         <div className={styles.menuContainer}>
-          <MenuCollant
-            contentId="structure-content"
-            items={items}
-          />
+          <MenuCollant contentId="structure-content" items={items} />
         </div>
-        <div
-          className={styles.contentContainer}
-          id="structure-content"
-        >
-          <StructureHeader
-            gouvernances={viewModel.role.gouvernances}
-            identite={viewModel.identite}
-          />
+        <div className={styles.contentContainer} id="structure-content">
+          <StructureHeader gouvernances={viewModel.role.gouvernances} identite={viewModel.identite} />
 
           <StructureIdentite identite={viewModel.identite} />
 

@@ -21,13 +21,16 @@ export class PrismaFinancementsLoader implements FinancementLoader {
             },
           },
         },
-        where: territoire === 'France' ? {
-          gouvernanceDepartementCode: {
-            not: 'zzz',
-          },
-        } : {
-          gouvernanceDepartementCode: territoire,
-        },
+        where:
+          territoire === 'France'
+            ? {
+                gouvernanceDepartementCode: {
+                  not: 'zzz',
+                },
+              }
+            : {
+                gouvernanceDepartementCode: territoire,
+              },
       })
 
       const totalBudget = feuillesDeRoute.reduce((acc, feuille) => {
@@ -37,16 +40,16 @@ export class PrismaFinancementsLoader implements FinancementLoader {
       const subventionsParEnveloppe = new Map<string, { enveloppeTotale: number; total: number }>()
       let nombreDeFinancementsEngages = 0
 
-      feuillesDeRoute.forEach(feuille => {
-        feuille.action.forEach(action => {
-          action.demandesDeSubvention.forEach(demande => {
-            if (demande.statut as StatutSubvention === StatutSubvention.ACCEPTEE) {
+      feuillesDeRoute.forEach((feuille) => {
+        feuille.action.forEach((action) => {
+          action.demandesDeSubvention.forEach((demande) => {
+            if ((demande.statut as StatutSubvention) === StatutSubvention.ACCEPTEE) {
               nombreDeFinancementsEngages += 1
               const montant = demande.subventionDemandee
               const enveloppe = demande.enveloppe.libelle
               const enveloppeTotale = demande.enveloppe.montant
               const current = subventionsParEnveloppe.get(enveloppe) ?? { enveloppeTotale, total: 0 }
-              subventionsParEnveloppe.set(enveloppe, { 
+              subventionsParEnveloppe.set(enveloppe, {
                 enveloppeTotale,
                 total: current.total + montant,
               })
@@ -56,7 +59,7 @@ export class PrismaFinancementsLoader implements FinancementLoader {
       })
 
       const totalSubventions = Array.from(subventionsParEnveloppe.values()).reduce((acc, val) => acc + val.total, 0)
-      const pourcentageCredit = totalBudget > 0 ? totalSubventions / totalBudget * 100 : 0
+      const pourcentageCredit = totalBudget > 0 ? (totalSubventions / totalBudget) * 100 : 0
 
       return {
         budget: {
@@ -86,4 +89,3 @@ export class PrismaFinancementsLoader implements FinancementLoader {
     }
   }
 }
-

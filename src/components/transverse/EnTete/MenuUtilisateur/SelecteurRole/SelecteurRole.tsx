@@ -13,7 +13,9 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
       ariaControlsId={ariaControlsId}
       id="role"
       name="role"
-      onChange={(event) => { void changerDeRole(event) }}
+      onChange={(event) => {
+        void changerDeRole(event)
+      }}
       options={roles
         .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')
         .map((role) => ({

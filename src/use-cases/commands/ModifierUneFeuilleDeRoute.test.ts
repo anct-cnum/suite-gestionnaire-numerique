@@ -42,25 +42,24 @@ describe('modifier une feuille de route', () => {
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedFeuilleDeRouteUidToFind).toBe(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteToUpdate?.state).toStrictEqual(
-      feuilleDeRouteFactory(
-        {
-          dateDeModification: epochTime,
-          nom,
-          noteDeContextualisation:'<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
-          perimetreGeographique,
-          uid: {
-            value: 'identifiantPourLaCreation',
-          },
-          uidEditeur: {
-            email: 'martin.tartempion@example.net',
-            value: uidEditeur,
-          },
-          uidGouvernance: {
-            value: uidGouvernance,
-          },
-          uidPorteur: 'porteurFooId',
-        }
-      ).state
+      feuilleDeRouteFactory({
+        dateDeModification: epochTime,
+        nom,
+        noteDeContextualisation:
+          '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
+        perimetreGeographique,
+        uid: {
+          value: 'identifiantPourLaCreation',
+        },
+        uidEditeur: {
+          email: 'martin.tartempion@example.net',
+          value: uidEditeur,
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
+        },
+        uidPorteur: 'porteurFooId',
+      }).state
     )
     expect(result).toBe('OK')
   })
@@ -78,29 +77,32 @@ describe('modifier une feuille de route', () => {
       intention: 'd’un périmètre géographique invalide',
       perimetreGeographique: 'invalide' as PerimetreGeographiqueTypes,
     },
-  ])('étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
-    // GIVEN
-    const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
-      new FeuilleDeRouteRepositorySpy(),
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      dateDeModification
-    )
+  ])(
+    'étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée',
+    async ({ dateDeModification, expectedFailure, perimetreGeographique }) => {
+      // GIVEN
+      const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+        new FeuilleDeRouteRepositorySpy(),
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        dateDeModification
+      )
 
-    // WHEN
-    const result = await modifierFeuilleDeRoute.handle({
-      nom,
-      perimetreGeographique,
-      uidEditeur,
-      uidFeuilleDeRoute,
-      uidGouvernance,
-      uidPorteur,
-    })
+      // WHEN
+      const result = await modifierFeuilleDeRoute.handle({
+        nom,
+        perimetreGeographique,
+        uidEditeur,
+        uidFeuilleDeRoute,
+        uidGouvernance,
+        uidPorteur,
+      })
 
-    // THEN
-    expect(spiedFeuilleDeRouteToUpdate).toBeNull()
-    expect(result).toBe(expectedFailure)
-  })
+      // THEN
+      expect(spiedFeuilleDeRouteToUpdate).toBeNull()
+      expect(result).toBe(expectedFailure)
+    }
+  )
 
   it('étant donné une gouvernance, quand une feuille de route est modifiée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
@@ -172,25 +174,24 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
-      feuilleDeRouteFactory(
-        {
-          dateDeModification: epochTime,
-          nom,
-          noteDeContextualisation: '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
-          perimetreGeographique,
-          uid: {
-            value: 'identifiantPourLaCreation',
-          },
-          uidEditeur: {
-            email: 'martin.tartempion@example.net',
-            value: uidEditeur,
-          },
-          uidGouvernance: {
-            value: uidGouvernance,
-          },
-          uidPorteur: 'porteurFooId',
-        }
-      )
+      feuilleDeRouteFactory({
+        dateDeModification: epochTime,
+        nom,
+        noteDeContextualisation:
+          '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
+        perimetreGeographique,
+        uid: {
+          value: 'identifiantPourLaCreation',
+        },
+        uidEditeur: {
+          email: 'martin.tartempion@example.net',
+          value: uidEditeur,
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
+        },
+        uidPorteur: 'porteurFooId',
+      })
     )
   }
 

@@ -14,6 +14,9 @@ export interface UpdateActionRepository {
   update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean>
 }
 export interface SupprimerActionRepository {
-  supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid,
-    tx?: Prisma.TransactionClient): Promise<boolean>
+  supprimer(
+    actionId: ActionUid,
+    demandeDeSubventionId: DemandeDeSubventionUid,
+    tx?: Prisma.TransactionClient
+  ): Promise<boolean>
 }

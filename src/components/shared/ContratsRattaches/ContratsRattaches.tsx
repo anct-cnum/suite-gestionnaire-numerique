@@ -5,15 +5,8 @@ import Table from '@/components/shared/Table/Table'
 
 export default function ContratsRattaches({ contrats }: Props): ReactElement {
   return (
-    <section
-      aria-labelledby="contrats"
-      className="grey-border border-radius fr-mb-2w fr-p-4w"
-      id="contrats"
-    >
-      <h2
-        className="fr-h6"
-        id="contratsRattaches"
-      >
+    <section aria-labelledby="contrats" className="grey-border border-radius fr-mb-2w fr-p-4w" id="contrats">
+      <h2 className="fr-h6" id="contratsRattaches">
         Contrats rattachés au poste
       </h2>
       <article aria-label="Contrats rattachés">
@@ -24,30 +17,16 @@ export default function ContratsRattaches({ contrats }: Props): ReactElement {
           {contrats.map((contrat) => (
             <tr key={`${contrat.mediateur}-${contrat.contrat}-${contrat.dateDebut}`}>
               <td>
-                <div className="font-weight-700">
-                  {contrat.mediateur}
-                </div>
-                <div className="fr-text--sm color-grey">
-                  {contrat.role}
-                </div>
+                <div className="font-weight-700">{contrat.mediateur}</div>
+                <div className="fr-text--sm color-grey">{contrat.role}</div>
               </td>
               <td>
-                <Badge color={contrat.statut.variant}>
-                  {contrat.statut.libelle}
-                </Badge>
+                <Badge color={contrat.statut.variant}>{contrat.statut.libelle}</Badge>
               </td>
-              <td className="color-grey">
-                {contrat.contrat}
-              </td>
-              <td className="color-grey">
-                {contrat.dateDebut}
-              </td>
-              <td className="color-grey">
-                {contrat.dateFin}
-              </td>
-              <td className="color-grey">
-                {contrat.dateRupture}
-              </td>
+              <td className="color-grey">{contrat.contrat}</td>
+              <td className="color-grey">{contrat.dateDebut}</td>
+              <td className="color-grey">{contrat.dateFin}</td>
+              <td className="color-grey">{contrat.dateRupture}</td>
             </tr>
           ))}
         </Table>

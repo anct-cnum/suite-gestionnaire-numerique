@@ -4,7 +4,7 @@ import SectionCartographie from '@/components/vitrine/SyntheseEtIndicateurs/Sect
 
 export default function BlocCartographie(): ReactElement {
   return (
-    <div className="fr-mb-4w" >
+    <div className="fr-mb-4w">
       <SectionCartographie />
     </div>
   )

@@ -26,7 +26,7 @@ const meta: Meta<typeof AidantDetails> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {
@@ -60,7 +60,7 @@ export const AvecPlusieursStructures: Story = {
         createDefaultAidantDetailsData().structuresEmployeuses[0],
         {
           ...createDefaultAidantDetailsData().structuresEmployeuses[0],
-          nom: 'Centre Communal d\'Action Sociale',
+          nom: "Centre Communal d'Action Sociale",
           siret: '98765432109876',
           type: 'Établissement public',
         },

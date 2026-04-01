@@ -34,22 +34,20 @@ describe('réinviter un utilisateur', () => {
       nom: spiedUtilisateurToUpdate?.state.nom,
       prenom: spiedUtilisateurToUpdate?.state.prenom,
     })
-    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
-      derniereConnexion: undefined,
-      inviteLe: epochTimeMinusOneDay,
-      role: 'Gestionnaire structure',
-      uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
-    }).state)
+    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
+      utilisateurFactory({
+        derniereConnexion: undefined,
+        inviteLe: epochTimeMinusOneDay,
+        role: 'Gestionnaire structure',
+        uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
+      }).state
+    )
     expect(result).toBe('OK')
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      epochTime
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, epochTime)
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
@@ -65,11 +63,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      epochTime
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, epochTime)
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
@@ -85,11 +79,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné une date invalide d’invitation d’un utilisateur, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
-      new RepositorySpy(),
-      emailGatewayFactorySpy,
-      invalidDate
-    )
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(new RepositorySpy(), emailGatewayFactorySpy, invalidDate)
 
     // WHEN
     const asyncResult = reinviterUnUtilisateur.handle({
@@ -98,7 +88,7 @@ describe('réinviter un utilisateur', () => {
     })
 
     // THEN
-    await expect(asyncResult).rejects.toThrowError('dateDInvitationInvalide')
+    await expect(asyncResult).rejects.toThrow('dateDInvitationInvalide')
   })
 })
 
@@ -121,7 +111,10 @@ const utilisateursByUid: Record<string, Utilisateur> = {
   }),
   uidUtilisateurCourantAvecRoleDifferent: utilisateurFactory({
     role: 'Gestionnaire département',
-    uid: { email: 'uidUtilisateurCourantAvecRoleDifferent', value: 'uidUtilisateurCourantAvecRoleDifferent' },
+    uid: {
+      email: 'uidUtilisateurCourantAvecRoleDifferent',
+      value: 'uidUtilisateurCourantAvecRoleDifferent',
+    },
   }),
 }
 
@@ -142,10 +135,10 @@ class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurReposi
 }
 
 function emailGatewayFactorySpy(): EmailGateway {
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }
-  }()
+  })()
 }

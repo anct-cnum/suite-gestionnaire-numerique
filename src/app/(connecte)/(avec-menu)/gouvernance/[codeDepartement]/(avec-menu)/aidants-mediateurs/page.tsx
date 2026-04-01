@@ -8,8 +8,14 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
-import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import {
+  accompagnementsEtMediateursPresenter,
+  AccompagnementsEtMediateursViewModel,
+} from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import {
+  niveauDeFormationPresenter,
+  NiveauDeFormationViewModel,
+} from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
@@ -28,8 +34,9 @@ export default async function AidantsMediateursGouvernanceController({ params }:
   const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
     new PrismaAccompagnementsEtMediateursLoader()
   )
-  const accompagnementsEtMediateursReadModel = 
-    await accompagnementsEtMediateursUseCase.execute({ territoire: codeDepartement })
+  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({
+    territoire: codeDepartement,
+  })
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
     accompagnementsEtMediateursPresenter
@@ -37,10 +44,9 @@ export default async function AidantsMediateursGouvernanceController({ params }:
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
   const niveauDeFormationReadModel = await niveauDeFormationLoader.get(codeDepartement)
-  const niveauDeFormationViewModel = handleReadModelOrError(
-    niveauDeFormationReadModel,
-    niveauDeFormationPresenter
-  ) as ErrorViewModel | NiveauDeFormationViewModel
+  const niveauDeFormationViewModel = handleReadModelOrError(niveauDeFormationReadModel, niveauDeFormationPresenter) as
+    | ErrorViewModel
+    | NiveauDeFormationViewModel
 
   const dateGeneration = new Date()
 

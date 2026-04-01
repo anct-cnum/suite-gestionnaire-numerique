@@ -13,8 +13,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const codeDepartement = code?.[0]
 
   return generateTerritoireMetadata(niveau, codeDepartement, {
-    descriptionTemplate: 'Découvrez les feuilles de route de l\'inclusion numérique pour {territoire}. Actions, financements et objectifs du programme France Numérique Ensemble.',
-    keywords: ['feuille de route', 'inclusion numérique', 'France Numérique Ensemble', 'actions territoriales', 'financement'],
+    descriptionTemplate:
+      "Découvrez les feuilles de route de l'inclusion numérique pour {territoire}. Actions, financements et objectifs du programme France Numérique Ensemble.",
+    keywords: [
+      'feuille de route',
+      'inclusion numérique',
+      'France Numérique Ensemble',
+      'actions territoriales',
+      'financement',
+    ],
     titleTemplate: 'Feuilles de route - {territoire} - Inclusion Numérique',
   })
 }
@@ -39,8 +46,9 @@ export default async function FeuilleDeRoute({ params }: Props): Promise<ReactEl
   const codeDepartement = code[0]
 
   try {
-    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance)
-      .get(codeDepartement)
+    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance).get(
+      codeDepartement
+    )
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
 
     return <FeuilleDeRouteVitrine feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
@@ -50,8 +58,10 @@ export default async function FeuilleDeRoute({ params }: Props): Promise<ReactEl
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    code?: ReadonlyArray<string>
-    niveau: string
-  }>>
+  params: Promise<
+    Readonly<{
+      code?: ReadonlyArray<string>
+      niveau: string
+    }>
+  >
 }>

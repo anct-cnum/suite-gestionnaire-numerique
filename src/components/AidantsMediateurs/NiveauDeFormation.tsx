@@ -14,10 +14,7 @@ import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 
-export default function NiveauDeFormation({
-  dateGeneration,
-  niveauDeFormation,
-}: Props): ReactElement {
+export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -48,19 +45,11 @@ export default function NiveauDeFormation({
 
   if (isErrorViewModel(niveauDeFormation)) {
     return (
-      <section
-        aria-labelledby="niveau-de-formation"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
+      <section aria-labelledby="niveau-de-formation" className="fr-mb-4w grey-border border-radius fr-p-4w">
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
-            <TitleIcon
-              background="white"
-              icon="error-warning-line"
-            />
-            <div className="fr-text--sm color-blue-france fr-mt-2w">
-              {niveauDeFormation.message}
-            </div>
+            <TitleIcon background="white" icon="error-warning-line" />
+            <div className="fr-text--sm color-blue-france fr-mt-2w">{niveauDeFormation.message}</div>
           </div>
         </div>
       </section>
@@ -68,40 +57,27 @@ export default function NiveauDeFormation({
   }
 
   return (
-    <section
-      aria-labelledby="niveau-de-formation"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <section aria-labelledby="niveau-de-formation" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
         <div>
-          <h2
-            className="fr-h4 color-blue-france fr-m-0"
-            id="niveau-de-formation"
-          >
+          <h2 className="fr-h4 color-blue-france fr-m-0" id="niveau-de-formation">
             Niveau de formation des aidants et médiateurs numériques
             <Information>
               <p className="fr-mb-0">
-                Les indicateurs sur les formations concernent les médiateurs numériques inscrits
-                sur la Coop de la médiation ainsi que les conseillers numériques de votre
-                territoire
+                Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur la Coop de la
+                médiation ainsi que les conseillers numériques de votre territoire
               </p>
             </Information>
           </h2>
         </div>
       </div>
 
-      <div
-        className="fr-grid-row fr-mb-4w"
-        ref={componentRef}
-      >
+      <div className="fr-grid-row fr-mb-4w" ref={componentRef}>
         <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
           <div>
             <Doughnut
-              backgroundColor={niveauDeFormation.formations.map(
-                (formation) => formation.backgroundColor
-              )}
-              data={niveauDeFormation.formations.map((formation) =>
-                Number(formation.nombre.replace(/\s/g, '')))}
+              backgroundColor={niveauDeFormation.formations.map((formation) => formation.backgroundColor)}
+              data={niveauDeFormation.formations.map((formation) => Number(formation.nombre.replace(/\s/g, '')))}
               isFull={false}
               labels={niveauDeFormation.formations.map((formation) => formation.nom)}
             />
@@ -118,30 +94,17 @@ export default function NiveauDeFormation({
             formés ou certifiés
           </div>
           <div className="color-blue-france fr-pb-4w">
-            Sur 
-            {' '}
-            <strong>
-              {niveauDeFormation.totalAidantsEtMediateurs}
-              {' '}
-              aidants et médiateurs
-            </strong>
+            Sur <strong>{niveauDeFormation.totalAidantsEtMediateurs} aidants et médiateurs</strong>
           </div>
         </div>
         <div className="fr-col">
-          <div className="fr-text--md font-weight-700 fr-mb-2w">
-            Dont
-          </div>
+          <div className="fr-text--md font-weight-700 fr-mb-2w">Dont</div>
           <ul>
             {niveauDeFormation.formations.map((formation) => (
-              <li
-                key={formation.nom}
-                style={{ listStyle: 'none' }}
-              >
+              <li key={formation.nom} style={{ listStyle: 'none' }}>
                 <div className="fr-text--sm fr-grid-row fr-grid-row--middle fr-mb-1w">
                   <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                    <Dot color={formation.couleur} /> 
-                    {' '}
-                    {formation.nom}
+                    <Dot color={formation.couleur} /> {formation.nom}
                   </div>
                   <div
                     className="font-weight-700"
@@ -169,14 +132,12 @@ export default function NiveauDeFormation({
       <hr className="fr-hr fr-mt-3w" />
       <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
         <div style={{ flex: 1 }}>
-          <p className="fr-text--sm fr-mb-0">
-            Données mises à jour le 
-            {' '}
-            {dateGeneration.toLocaleDateString('fr-FR')}
-          </p>
+          <p className="fr-text--sm fr-mb-0">Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}</p>
         </div>
         <DownloadButton
-          onClick={() => { void handleDownload() }}
+          onClick={() => {
+            void handleDownload()
+          }}
           title="Niveau de formation"
         />
       </div>
@@ -184,9 +145,7 @@ export default function NiveauDeFormation({
   )
 }
 
-function isErrorViewModel(
-  viewModel: ErrorViewModel | NiveauDeFormationViewModel
-): viewModel is ErrorViewModel {
+function isErrorViewModel(viewModel: ErrorViewModel | NiveauDeFormationViewModel): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 

@@ -1,4 +1,8 @@
-import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
+import {
+  StatistiquesCoopLoader,
+  StatistiquesCoopReadModel,
+  StatistiquesFilters,
+} from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
   private readonly baseUrl = 'https://coop-numerique.anct.gouv.fr/api/v1'
@@ -12,7 +16,9 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       return this.transformerReponse(donnees)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
-      throw new Error(`Erreur lors de la récupération des statistiques: ${errorMessage}`, { cause: error })
+      throw new Error(`Erreur lors de la récupération des statistiques: ${errorMessage}`, {
+        cause: error,
+      })
     }
   }
 
@@ -42,12 +48,24 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       if (typeof filtres.au === 'string' && filtres.au.trim() !== '') {
         url.searchParams.append('filter[au]', filtres.au)
       }
-      if (filtres.types) {url.searchParams.append('filter[types]', filtres.types.join(','))}
-      if (filtres.mediateurs) {url.searchParams.append('filter[mediateurs]', filtres.mediateurs.join(','))}
-      if (filtres.beneficiaires) {url.searchParams.append('filter[beneficiaires]', filtres.beneficiaires.join(','))}
-      if (filtres.communes) {url.searchParams.append('filter[communes]', filtres.communes.join(','))}
-      if (filtres.departements) {url.searchParams.append('filter[departements]', filtres.departements.join(','))}
-      if (filtres.lieux) {url.searchParams.append('filter[lieux]', filtres.lieux.join(','))}
+      if (filtres.types) {
+        url.searchParams.append('filter[types]', filtres.types.join(','))
+      }
+      if (filtres.mediateurs) {
+        url.searchParams.append('filter[mediateurs]', filtres.mediateurs.join(','))
+      }
+      if (filtres.beneficiaires) {
+        url.searchParams.append('filter[beneficiaires]', filtres.beneficiaires.join(','))
+      }
+      if (filtres.communes) {
+        url.searchParams.append('filter[communes]', filtres.communes.join(','))
+      }
+      if (filtres.departements) {
+        url.searchParams.append('filter[departements]', filtres.departements.join(','))
+      }
+      if (filtres.lieux) {
+        url.searchParams.append('filter[lieux]', filtres.lieux.join(','))
+      }
       if (filtres.conseillerNumerique !== undefined) {
         url.searchParams.append('filter[conseiller_numerique]', filtres.conseillerNumerique ? '1' : '0')
       }
@@ -61,7 +79,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       const texteErreur = await reponse.text()
 
       if (reponse.status === 401) {
-        throw new Error('Token d\'authentification invalide ou expiré')
+        throw new Error("Token d'authentification invalide ou expiré")
       }
 
       if (reponse.status === 403) {
@@ -75,11 +93,10 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       throw new Error(`Erreur API Coop: ${reponse.status} - ${texteErreur}`)
     }
 
-    const donnees = await reponse.json() as unknown
+    const donnees = (await reponse.json()) as unknown
 
     // Debug: afficher la structure de la réponse
     if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
       console.log('Réponse API Coop:', JSON.stringify(donnees, null, 2))
     }
 
@@ -94,7 +111,6 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       try {
         const entetes = this.configurationEntetes()
 
-        // eslint-disable-next-line no-await-in-loop
         reponse = await fetch(url, {
           headers: entetes,
           method: 'GET',
@@ -106,11 +122,12 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         derniereErreur = erreur as Error
 
         if (tentative === 3) {
-          throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`, { cause: erreur })
+          throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`, {
+            cause: erreur,
+          })
         }
 
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
           setTimeout(resolve, tentative * 500)
         })
       }
@@ -127,47 +144,47 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     const attributes = donnees.data.attributes
 
     return {
-      accompagnementsParJour: attributes.accompagnements_par_jour.map(item => ({
+      accompagnementsParJour: attributes.accompagnements_par_jour.map((item) => ({
         count: item.count,
         label: item.label,
       })),
-      accompagnementsParMois: attributes.accompagnements_par_mois.map(item => ({
+      accompagnementsParMois: attributes.accompagnements_par_mois.map((item) => ({
         count: item.count,
         label: item.label,
       })),
       activites: {
-        durees: attributes.activites.durees.map(item => ({
+        durees: attributes.activites.durees.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
-        materiels: attributes.activites.materiels.map(item => ({
+        materiels: attributes.activites.materiels.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
-        thematiques: attributes.activites.thematiques.map(item => ({
+        thematiques: attributes.activites.thematiques.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
-        thematiquesDemarches: attributes.activites.thematiques_demarches.map(item => ({
+        thematiquesDemarches: attributes.activites.thematiques_demarches.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
         total: attributes.activites.total,
-        typeActivites: attributes.activites.type_activites.map(item => ({
+        typeActivites: attributes.activites.type_activites.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
-        typeLieu: attributes.activites.type_lieu.map(item => ({
+        typeLieu: attributes.activites.type_lieu.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
@@ -175,20 +192,20 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         })),
       },
       beneficiaires: {
-        genres: attributes.beneficiaires.genres.map(item => ({
+        genres: attributes.beneficiaires.genres.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
-        statutsSocial: attributes.beneficiaires.statuts_social.map(item => ({
+        statutsSocial: attributes.beneficiaires.statuts_social.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
           value: item.value,
         })),
         total: attributes.beneficiaires.total,
-        trancheAges: attributes.beneficiaires.tranche_ages.map(item => ({
+        trancheAges: attributes.beneficiaires.tranche_ages.map((item) => ({
           count: item.count,
           label: item.label,
           proportion: item.proportion,
@@ -254,14 +271,18 @@ type CoopApiResponse = Readonly<{
 }>
 
 type CoopStatistiquesAttributes = Readonly<{
-  accompagnements_par_jour: ReadonlyArray<Readonly<{
-    count: number
-    label: string
-  }>>
-  accompagnements_par_mois: ReadonlyArray<Readonly<{
-    count: number
-    label: string
-  }>>
+  accompagnements_par_jour: ReadonlyArray<
+    Readonly<{
+      count: number
+      label: string
+    }>
+  >
+  accompagnements_par_mois: ReadonlyArray<
+    Readonly<{
+      count: number
+      label: string
+    }>
+  >
   activites: Readonly<{
     durees: ReadonlyArray<StatistiquesItem>
     materiels: ReadonlyArray<StatistiquesItem>

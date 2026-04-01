@@ -3,36 +3,20 @@ import { ReactElement } from 'react'
 
 import { InformationsPersonnellesData } from './AidantDetails'
 
-export default function InformationsPersonnellesCard({
-  data,
-  onEdit,
-}: Readonly<InfosPersoProps>): ReactElement {
+export default function InformationsPersonnellesCard({ data, onEdit }: Readonly<InfosPersoProps>): ReactElement {
   const { emails, nom, prenom, telephone } = data
   return (
-    <section
-      aria-labelledby="infos-title"
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
-      <div >
+    <section aria-labelledby="infos-title" className="fr-mb-4w grey-border border-radius fr-p-4w">
+      <div>
         {/* En-tête : titre + action Modifier */}
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col">
-            <h2
-              className="fr-h3 fr-mb-0"
-              id="infos-title"
-            >
+            <h2 className="fr-h3 fr-mb-0" id="infos-title">
               Informations personnelles
             </h2>
           </div>
-          <div
-            className="fr-col-auto"
-            style={{ display: 'none' }}
-          >
-            <button
-              className="fr-link fr-link--icon-right fr-icon-pencil-line"
-              onClick={onEdit}
-              type="button"
-            >
+          <div className="fr-col-auto" style={{ display: 'none' }}>
+            <button className="fr-link fr-link--icon-right fr-icon-pencil-line" onClick={onEdit} type="button">
               Modifier
             </button>
           </div>
@@ -42,28 +26,16 @@ export default function InformationsPersonnellesCard({
 
         <div className="fr-grid-row fr-grid-row--gutters">
           <div className="fr-col-12 fr-col-md-6">
-            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-              Nom
-            </p>
-            <p className="fr-text--bold fr-mb-3w">
-              {nom}
-            </p>
+            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">Nom</p>
+            <p className="fr-text--bold fr-mb-3w">{nom}</p>
 
-            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-              Téléphone professionnel
-            </p>
-            <p className="fr-text--bold fr-mb-0">
-              {telephone ?? '—'}
-            </p>
+            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">Téléphone professionnel</p>
+            <p className="fr-text--bold fr-mb-0">{telephone ?? '—'}</p>
           </div>
 
           <div className="fr-col-12 fr-col-md-6">
-            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-              Prénom
-            </p>
-            <p className="fr-text--bold fr-mb-3w">
-              {prenom}
-            </p>
+            <p className="fr-text--sm fr-text-mention--grey fr-mb-0">Prénom</p>
+            <p className="fr-text--bold fr-mb-3w">{prenom}</p>
 
             <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
               {emails.length > 1 ? 'Adresses électroniques' : 'Adresse électronique'}
@@ -71,18 +43,13 @@ export default function InformationsPersonnellesCard({
             {emails.length > 0 ? (
               <div className="fr-text--bold fr-mb-0">
                 {emails.map((email) => (
-                  <p
-                    className="fr-mb-0"
-                    key={email}
-                  >
+                  <p className="fr-mb-0" key={email}>
                     {email}
                   </p>
                 ))}
               </div>
             ) : (
-              <p className="fr-text--bold fr-mb-0">
-                —
-              </p>
+              <p className="fr-text--bold fr-mb-0">—</p>
             )}
           </div>
         </div>

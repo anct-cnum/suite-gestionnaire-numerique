@@ -277,10 +277,7 @@ describe('résoudre contexte - scopes', () => {
 
 function utilisateurAvecRole(
   type: UnUtilisateurReadModel['role']['type'],
-  overrides: Partial<Pick<
-    UnUtilisateurReadModel,
-    'departementCode' | 'regionCode' | 'structureId'
-  >> = {}
+  overrides: Partial<Pick<UnUtilisateurReadModel, 'departementCode' | 'regionCode' | 'structureId'>> = {}
 ): UnUtilisateurReadModel {
   return {
     departementCode: overrides.departementCode ?? null,
@@ -318,10 +315,11 @@ function loaderStub(
   }> = {}
 ): ScopeLoader {
   return {
-    getDepartementCodeByStructureId:
-      vi.fn<() => Promise<null | string>>().mockResolvedValue(options.departementCode ?? null),
-    getToutesAppartenancesParStructureId:
-      vi.fn<() => Promise<ReadonlyArray<AppartenanceStub>>>()
-        .mockResolvedValue(options.appartenances ?? []),
+    getDepartementCodeByStructureId: vi
+      .fn<() => Promise<null | string>>()
+      .mockResolvedValue(options.departementCode ?? null),
+    getToutesAppartenancesParStructureId: vi
+      .fn<() => Promise<ReadonlyArray<AppartenanceStub>>>()
+      .mockResolvedValue(options.appartenances ?? []),
   }
 }

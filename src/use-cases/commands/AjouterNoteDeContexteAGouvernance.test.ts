@@ -57,7 +57,11 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await ajouterNoteDeContexteAGouvernance.handle({
+      contenu,
+      uidEditeur: 'utilisateurUsurpateur',
+      uidGouvernance,
+    })
 
     // THEN
     expect(spiedGouvernanceToUpdate).toBeNull()

@@ -15,4 +15,3 @@ export class Administrateur extends Utilisateur {
 }
 
 type AdministrateurState = UtilisateurState
-  

@@ -27,46 +27,22 @@ export default function ModifierMonCompte({
 
   return (
     <>
-      <DrawerTitle id={labelId}>
-        Mes informations personnelles
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>Mes informations personnelles</DrawerTitle>
       <p className="fr-text--sm color-grey">
-        Les champs avec
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-        {' '}
-        sont obligatoires.
+        Les champs avec <span className="color-red">*</span> sont obligatoires.
       </p>
       <form
         aria-label="Modifier"
         method="dialog"
-        onSubmit={(event) => { void modifierMesInfosPersos(event) }}
+        onSubmit={(event) => {
+          void modifierMesInfosPersos(event)
+        }}
       >
-        <TextInput
-          defaultValue={nom}
-          id={nomId}
-          name="nom"
-          required={true}
-        >
-          Nom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput defaultValue={nom} id={nomId} name="nom" required={true}>
+          Nom <span className="color-red">*</span>
         </TextInput>
-        <TextInput
-          defaultValue={prenom}
-          id={prenomId}
-          name="prenom"
-          required={true}
-        >
-          Prénom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput defaultValue={prenom} id={prenomId} name="prenom" required={true}>
+          Prénom <span className="color-red">*</span>
         </TextInput>
         <TextInput
           defaultValue={email}
@@ -76,12 +52,7 @@ export default function ModifierMonCompte({
           required={true}
           type="email"
         >
-          Adresse électronique
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-          {' '}
+          Adresse électronique <span className="color-red">*</span>{' '}
           <span className="fr-hint-text">
             Seuls les administateurs et les préfectures verront votre adresse électronique.
           </span>
@@ -94,29 +65,20 @@ export default function ModifierMonCompte({
           required={false}
           type="tel"
         >
-          Téléphone professionnel
-          {' '}
+          Téléphone professionnel{' '}
           <span className="fr-hint-text">
-            Seuls les administrateurs et les préfectures verront votre numéro de téléphone. 
-            Formats attendus : 0122334455 ou +33122334455
+            Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus :
+            0122334455 ou +33122334455
           </span>
         </TextInput>
         <div className="fr-btns-group fr-btns-group--space-between">
           <div className="fr-col-5">
-            <button
-              aria-controls={id}
-              className="fr-btn fr-btn--secondary"
-              onClick={closeDrawer}
-              type="reset"
-            >
+            <button aria-controls={id} className="fr-btn fr-btn--secondary" onClick={closeDrawer} type="reset">
               Annuler
             </button>
           </div>
           <div className="fr-col-5">
-            <SubmitButton
-              ariaControls={id}
-              isDisabled={isDisabled}
-            >
+            <SubmitButton ariaControls={id} isDisabled={isDisabled}>
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
           </div>

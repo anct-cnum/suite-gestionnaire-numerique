@@ -48,24 +48,29 @@ export type MembreViewModel = Readonly<{
 }>
 
 function membresParStatut(membres: ReadonlyArray<MembreReadModel>, uidGouvernance: string): MembresByStatut {
-  return membres.reduce<MembresByStatut>((membresByStatut, membre) => ({
-    ...membresByStatut,
-    [nomListeMembresParStatut[membre.statut]]: membresByStatut[nomListeMembresParStatut[membre.statut]]
-      .concat(toMembreViewModel(membre, uidGouvernance)),
-  }), {
-    candidats: [],
-    membres: [],
-    supprimer: [],
-  })
+  return membres.reduce<MembresByStatut>(
+    (membresByStatut, membre) => ({
+      ...membresByStatut,
+      [nomListeMembresParStatut[membre.statut]]: membresByStatut[nomListeMembresParStatut[membre.statut]].concat(
+        toMembreViewModel(membre, uidGouvernance)
+      ),
+    }),
+    {
+      candidats: [],
+      membres: [],
+      supprimer: [],
+    }
+  )
 }
 
 function toMembreViewModel(membre: MembreReadModel, uidGouvernance: string): MembreViewModel {
   return {
     ...membre,
     isDeletable: membre.isDeletable,
-    link: membre.structureId === undefined
-      ? `/gouvernance/${uidGouvernance}/membre/${membre.uid}`
-      : membreLink(membre.structureId),
+    link:
+      membre.structureId === undefined
+        ? `/gouvernance/${uidGouvernance}/membre/${membre.uid}`
+        : membreLink(membre.structureId),
     nombreContacts: membre.nombreContacts,
     roles: membre.roles.map(toRoleViewModel),
     typologie: {

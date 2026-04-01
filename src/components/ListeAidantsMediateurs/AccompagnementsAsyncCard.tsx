@@ -27,15 +27,9 @@ export default function AccompagnementsAsyncCard({
             height: '7rem',
           }}
         >
-          <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-            -
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-            Accompagnements
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-            sur les 30 derniers jours
-          </div>
+          <div className="fr-h5 fr-text-title--blue-france fr-m-0">-</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">Accompagnements</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
         </div>
       </div>
     )
@@ -59,12 +53,8 @@ export default function AccompagnementsAsyncCard({
         <div className="fr-h5 fr-text-title--blue-france fr-m-0">
           {hasActiveFilters ? '-' : formaterEnNombreFrancais(totalAccompagnements)}
         </div>
-        <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-          Accompagnements
-        </div>
-        <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-          sur les 30 derniers jours
-        </div>
+        <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">Accompagnements</div>
+        <div className="fr-text--sm fr-text-title--blue-france fr-m-0">sur les 30 derniers jours</div>
       </div>
     </div>
   )

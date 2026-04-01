@@ -47,15 +47,8 @@ const nextAuthOptions = {
         if (!utilisateurReadModel) {
           return false
         }
-        await corrigerNomPrenomUtilisateur(
-          utilisateurReadModel,
-          profile as Profile,
-          utilisateurRepository
-        )
-        await mettreAJourDateConnexion(
-          profile.sub,
-          utilisateurRepository
-        )
+        await corrigerNomPrenomUtilisateur(utilisateurReadModel, profile as Profile, utilisateurRepository)
+        await mettreAJourDateConnexion(profile.sub, utilisateurRepository)
       }
       return true
     },
@@ -145,11 +138,10 @@ async function recupereretMettreAJourUtilisateur(
     if (error instanceof Error) {
       if (error.message === 'Doit etre mis a jour') {
         try {
-          await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
-            .handle({
-              email: profile.email,
-              uid: profile.sub,
-            })
+          await new MettreAJourUidALaPremiereConnexion(utilisateurRepository).handle({
+            email: profile.email,
+            uid: profile.sub,
+          })
         } catch {
           return null
         }
@@ -167,18 +159,17 @@ async function corrigerNomPrenomUtilisateur(
   profile: Profile,
   utilisateurRepository: PrismaUtilisateurRepository
 ): Promise<string> {
-  return new CorrigerNomPrenomSiAbsents(utilisateurRepository)
-    .handle({
-      actuels: {
-        nom: utilisateurReadModel.nom,
-        prenom: utilisateurReadModel.prenom,
-      },
-      corriges: {
-        nom: profile.usual_name,
-        prenom: profile.given_name,
-      },
-      uidUtilisateurCourant: profile.sub,
-    })
+  return new CorrigerNomPrenomSiAbsents(utilisateurRepository).handle({
+    actuels: {
+      nom: utilisateurReadModel.nom,
+      prenom: utilisateurReadModel.prenom,
+    },
+    corriges: {
+      nom: profile.usual_name,
+      prenom: profile.given_name,
+    },
+    uidUtilisateurCourant: profile.sub,
+  })
 }
 
 async function mettreAJourDateConnexion(

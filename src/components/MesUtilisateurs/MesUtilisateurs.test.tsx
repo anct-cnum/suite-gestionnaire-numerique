@@ -56,14 +56,11 @@ describe('mes utilisateurs', () => {
   it('[URL] étant du groupe admin quand je recherche un utilisateur par son nom alors il s’affiche dans la liste', () => {
     // GIVEN
     const spiedRouterPush = vi.fn<() => void>()
-    afficherMesUtilisateurs(
-      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
-      {
-        router: {
-          push: spiedRouterPush,
-        } as unknown as AppRouterInstance,
-      }
-    )
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel], {
+      router: {
+        push: spiedRouterPush,
+      } as unknown as AppRouterInstance,
+    })
 
     // WHEN
     jeTapeUnNom('martin')
@@ -76,14 +73,11 @@ describe('mes utilisateurs', () => {
   it('[URL] étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
     // GIVEN
     const spiedRouterPush = vi.fn<() => void>()
-    afficherMesUtilisateurs(
-      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
-      {
-        router: {
-          push: spiedRouterPush,
-        } as unknown as AppRouterInstance,
-      }
-    )
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel], {
+      router: {
+        push: spiedRouterPush,
+      } as unknown as AppRouterInstance,
+    })
 
     // WHEN
     jeTapeUnNom('martin')
@@ -107,21 +101,18 @@ describe('mes utilisateurs', () => {
 
   it('étant du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai un autre titre et un sous titre', () => {
     // WHEN
-    afficherMesUtilisateurs(
-      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
-      {
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: false,
-            libelle: 'Rhône',
-            nom: 'Gestionnaire groupement',
-            pictogramme: 'maille',
-            rolesGerables: [],
-            type: 'gestionnaire_groupement',
-          },
-        }),
-      }
-    )
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel], {
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        role: {
+          doesItBelongToGroupeAdmin: false,
+          libelle: 'Rhône',
+          nom: 'Gestionnaire groupement',
+          pictogramme: 'maille',
+          rolesGerables: [],
+          type: 'gestionnaire_groupement',
+        },
+      }),
+    })
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Mon équipe · Rhône' })
@@ -290,7 +281,10 @@ describe('mes utilisateurs', () => {
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme, une notification s’affiche et la liste est mise à jour', async () => {
       // GIVEN
       const reinviterUnUtilisateurAction = stubbedServerAction(['OK'])
-      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], {
+        pathname: '/mes-utilisateurs',
+        reinviterUnUtilisateurAction,
+      })
 
       // WHEN
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
@@ -300,7 +294,10 @@ describe('mes utilisateurs', () => {
       // THEN
       expect(envoyer).toHaveAccessibleName('Envois en cours...')
       expect(envoyer).toBeDisabled()
-      expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
+      expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({
+        path: '/mes-utilisateurs',
+        uidUtilisateurAReinviter: '123456',
+      })
       const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Invitation envoyée à julien.deschamps@example.com')
       expect(drawer).not.toBeVisible()
@@ -322,7 +319,7 @@ describe('mes utilisateurs', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
-    it('si l\'invitation a été envoyée ajourd\'hui alors le titre affiché est "Invitation envoyée aujourd\'hui"', () => {
+    it("si l'invitation a été envoyée ajourd'hui alors le titre affiché est \"Invitation envoyée aujourd'hui\"", () => {
       // GIVEN
       afficherMesUtilisateurs([utilisateurEnAttenteDAujourdhuiReadModel])
 
@@ -415,10 +412,10 @@ describe('mes utilisateurs', () => {
     it('je confirme la suppression, alors le drawer se ferme, une notification s’affiche, la liste est mise à jour', async () => {
       // GIVEN
       const supprimerUnUtilisateurAction = stubbedServerAction(['OK'])
-      afficherMesUtilisateurs(
-        [utilisateurEnAttenteReadModel],
-        { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction }
-      )
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], {
+        pathname: '/mes-utilisateurs',
+        supprimerUnUtilisateurAction,
+      })
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
@@ -427,7 +424,10 @@ describe('mes utilisateurs', () => {
       // THEN
       expect(supprimer).toHaveAccessibleName('Suppression en cours...')
       expect(supprimer).toBeDisabled()
-      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
+      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({
+        path: '/mes-utilisateurs',
+        uidUtilisateurASupprimer: '123456',
+      })
       const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Utilisateur supprimé')
       expect(supprimer).toHaveAccessibleName('Confirmer')
@@ -437,10 +437,7 @@ describe('mes utilisateurs', () => {
     it('je confirme la suppression mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
       const supprimerUnUtilisateurAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
-      afficherMesUtilisateurs(
-        [utilisateurEnAttenteReadModel],
-        { supprimerUnUtilisateurAction }
-      )
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { supprimerUnUtilisateurAction })
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
@@ -479,7 +476,13 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', 10, rolesAvecStructure, epochTime)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(
+      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
+      'fooId',
+      10,
+      rolesAvecStructure,
+      epochTime
+    )
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -547,7 +550,13 @@ function afficherMesUtilisateurs(
   mesUtilisateursReadModel = [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
   options?: Partial<Parameters<typeof renderComponent>[1]>
 ): void {
-  const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, 'fooId', 11, rolesAvecStructure, epochTime)
+  const mesUtilisateursViewModel = mesUtilisateursPresenter(
+    mesUtilisateursReadModel,
+    'fooId',
+    11,
+    rolesAvecStructure,
+    epochTime
+  )
   renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
 }
 

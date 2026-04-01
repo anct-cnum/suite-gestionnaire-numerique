@@ -13,11 +13,8 @@ export default function ModifierUneNoteDeContextualisation({
   contextualisation,
   uidFeuilleDeRoute,
 }: Props): ReactElement {
-  const {
-    modifierUneNoteDeContextualisationAction,
-    pathname,
-    supprimerUneNoteDeContextualisationAction,
-  } = useContext(clientContext)
+  const { modifierUneNoteDeContextualisationAction, pathname, supprimerUneNoteDeContextualisationAction } =
+    useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
@@ -55,26 +52,19 @@ export default function ModifierUneNoteDeContextualisation({
           contenu={contenu}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
-          validerFormulaire={(event) => { void modifierUneNoteDeContextualisation(event) }}
+          validerFormulaire={(event) => {
+            void modifierUneNoteDeContextualisation(event)
+          }}
         >
           <div className="fr-btns-group fr-mt-2w">
-            <SubmitButton
-              ariaControls={drawerId}
-              isDisabled={isDisabled}
-            >
+            <SubmitButton ariaControls={drawerId} isDisabled={isDisabled}>
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
-            {
-              contenu ?
-                <button
-                  className="fr-btn red-button"
-                  onClick={viderLeContenu}
-                  type="button"
-                >
-                  Effacer
-                </button>
-                : null
-            }
+            {contenu ? (
+              <button className="fr-btn red-button" onClick={viderLeContenu} type="button">
+                Effacer
+              </button>
+            ) : null}
           </div>
         </FormulaireNoteDeContextualisation>
       </Drawer>

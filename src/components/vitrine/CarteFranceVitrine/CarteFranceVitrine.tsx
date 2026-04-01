@@ -11,7 +11,9 @@ export default function CarteFranceVitrine(): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current) {return undefined}
+    if (!containerRef.current) {
+      return undefined
+    }
 
     let resizeTimeout: NodeJS.Timeout
 
@@ -31,9 +33,12 @@ export default function CarteFranceVitrine(): ReactElement {
     }
   }, [])
 
-  const handleDepartementClick = useCallback((codeDepartement: string) => {
-    router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/${codeDepartement}`)
-  }, [router])
+  const handleDepartementClick = useCallback(
+    (codeDepartement: string) => {
+      router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/${codeDepartement}`)
+    },
+    [router]
+  )
 
   const departementsViewModel = transformerDonneesCarteFranceVitrine()
 
@@ -63,12 +68,13 @@ export default function CarteFranceVitrine(): ReactElement {
       }}
     >
       {/* On attend que le composant soit prêt avant de charger la carte */}
-      {isReady ?
+      {isReady ? (
         <CarteFranceAvecInsets
           donneesDepartements={departementsViewModel}
           legend={legend}
           onDepartementClick={handleDepartementClick}
-        /> : null}
+        />
+      ) : null}
     </div>
   )
 }

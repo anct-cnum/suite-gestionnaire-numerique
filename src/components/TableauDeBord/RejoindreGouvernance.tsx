@@ -15,22 +15,13 @@ export default function RejoindreGouvernance(): ReactElement {
           />
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-p-5w">
-          <h2 className="fr-h3 color-blue-france">
-            Devenez membre d&apos;une gouvernance territoriale
-          </h2>
+          <h2 className="fr-h3 color-blue-france">Devenez membre d&apos;une gouvernance territoriale</h2>
           <p>
-            <strong>
-              En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique
-            </strong>
-            {' '}
-            , vous êtes invités à rejoindre la dynamique de votre territoire en rejoignant
-            la gouvernance de votre département. Vous pourrez ainsi porter ou contribuer
-            à des actions pensées et mises en oeuvre de façon collégiale.
+            <strong>En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique</strong> , vous êtes invités à
+            rejoindre la dynamique de votre territoire en rejoignant la gouvernance de votre département. Vous pourrez
+            ainsi porter ou contribuer à des actions pensées et mises en oeuvre de façon collégiale.
           </p>
-          <Link
-            className="fr-btn"
-            href="/gouvernances"
-          >
+          <Link className="fr-btn" href="/gouvernances">
             Accéder au formulaire
           </Link>
         </div>

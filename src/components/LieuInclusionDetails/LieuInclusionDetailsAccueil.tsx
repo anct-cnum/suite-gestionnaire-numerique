@@ -13,20 +13,11 @@ export default function LieuInclusionDetailsAccueil(props: Props): ReactElement 
       <LieuInclusionDetailsAccueilHeader />
       <hr className="fr-hr" />
       <div id="lieu-detail-description">
-        <LieuInclusionDetailsAccueilDescription
-          data={data}
-          peutModifier={peutModifier}
-        />
+        <LieuInclusionDetailsAccueilDescription data={data} peutModifier={peutModifier} />
       </div>
-      <hr
-        className="fr-hr fr-mx-4w"
-        style={{ marginTop: '2px' }}
-      />
+      <hr className="fr-hr fr-mx-4w" style={{ marginTop: '2px' }} />
       <div id="lieu-information-pratique">
-        <LieuInclusionDetailsAccueilInformationsPratique
-          data={data}
-          peutModifier={peutModifier}
-        />
+        <LieuInclusionDetailsAccueilInformationsPratique data={data} peutModifier={peutModifier} />
       </div>
     </div>
   )
@@ -36,4 +27,3 @@ type Props = Readonly<{
   data: LieuAccueilPublicData
   peutModifier: boolean
 }>
-

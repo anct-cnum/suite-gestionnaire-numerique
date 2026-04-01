@@ -12,12 +12,10 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
       return {
         ...mesMembres,
-        membres: mesMembres.membres.map((membre) => (
-          {
-            ...membre,
-            isDeletable: !isPrefectureDepartementale(membre),
-          }
-        )),
+        membres: mesMembres.membres.map((membre) => ({
+          ...membre,
+          isDeletable: !isPrefectureDepartementale(membre),
+        })),
         ...rolesEtTypologies(mesMembres.membres),
       }
     })
@@ -60,13 +58,16 @@ function isPrefectureDepartementale(membre: MesMembresReadModel['membres'][numbe
 }
 
 function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypologie {
-  const { roles, typologies } = membres.reduce((rolesEtTypologies, membre) => ({
-    roles: membre.roles.reduce((roles, role) => roles.add(role), rolesEtTypologies.roles),
-    typologies: rolesEtTypologies.typologies.add(membre.typologie),
-  }), {
-    roles: new Set<Role>(),
-    typologies: new Set<string>(),
-  })
+  const { roles, typologies } = membres.reduce(
+    (rolesEtTypologies, membre) => ({
+      roles: membre.roles.reduce((roles, role) => roles.add(role), rolesEtTypologies.roles),
+      typologies: rolesEtTypologies.typologies.add(membre.typologie),
+    }),
+    {
+      roles: new Set<Role>(),
+      typologies: new Set<string>(),
+    }
+  )
   return {
     roles: Array.from(roles).toSorted(alphaAsc()),
     typologies: Array.from(typologies).toSorted(alphaAsc()),

@@ -36,17 +36,16 @@ export default async function MesUtilisateursController({ searchParams }: Props)
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
-  const { total, utilisateursCourants } =
-    await rechercherMesUtilisateurs.handle({
-      uid: sub,
-      utilisateursActives,
-      ...codeDepartement,
-      ...codeRegion,
-      ...pageCourante,
-      ...roles,
-      ...idStructure,
-      prenomOuNomOuEmail,
-    })
+  const { total, utilisateursCourants } = await rechercherMesUtilisateurs.handle({
+    uid: sub,
+    utilisateursActives,
+    ...codeDepartement,
+    ...codeRegion,
+    ...pageCourante,
+    ...roles,
+    ...idStructure,
+    prenomOuNomOuEmail,
+  })
 
   const rolesAvecStructure: RolesAvecStructure = {
     'Gestionnaire département': {
@@ -79,19 +78,21 @@ export default async function MesUtilisateursController({ searchParams }: Props)
     new Date()
   )
 
-  return (
-    <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
-  )
+  return <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
 }
 
 type Props = Readonly<{
-  searchParams: Promise<Partial<Readonly<{
-    codeDepartement: string
-    codeRegion: string
-    page: string
-    prenomOuNomOuEmail: string
-    roles: string
-    structure: string
-    utilisateursActives: string
-  }>>>
+  searchParams: Promise<
+    Partial<
+      Readonly<{
+        codeDepartement: string
+        codeRegion: string
+        page: string
+        prenomOuNomOuEmail: string
+        roles: string
+        structure: string
+        utilisateursActives: string
+      }>
+    >
+  >
 }>

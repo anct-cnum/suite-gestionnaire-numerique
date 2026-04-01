@@ -12,9 +12,8 @@ export function generateTerritoireMetadata(
 ): Metadata {
   const libelle = getLibelleTerritoire(niveau, codeDepartement)
   const libelleCourt = getLibelleTerritoireCourt(niveau, codeDepartement)
-  const nomDepartement = codeDepartement !== undefined && codeDepartement !== ''
-    ? getNomDepartement(codeDepartement)
-    : undefined
+  const nomDepartement =
+    codeDepartement !== undefined && codeDepartement !== '' ? getNomDepartement(codeDepartement) : undefined
 
   const title = config.titleTemplate
     .replace('{territoire}', libelleCourt)
@@ -101,7 +100,6 @@ function getLibelleTerritoireCourt(niveau: string, codeDepartement: string | und
  * Récupère le nom d'un département à partir de son code
  */
 function getNomDepartement(codeDepartement: string): string | undefined {
-  const departement = (departements as ReadonlyArray<DepartementJson>)
-    .find(dept => dept.code === codeDepartement)
+  const departement = (departements as ReadonlyArray<DepartementJson>).find((dept) => dept.code === codeDepartement)
   return departement?.nom
 }

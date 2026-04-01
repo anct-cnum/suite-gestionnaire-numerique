@@ -4,27 +4,16 @@ import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { Notification } from '../shared/Notification/Notification'
 
-export default function ReinviterUnUtilisateur({
-  closeDrawer,
-  drawerId,
-  labelId,
-  utilisateur,
-}: Props): ReactElement {
+export default function ReinviterUnUtilisateur({ closeDrawer, drawerId, labelId, utilisateur }: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
   return (
     <div>
-      <DrawerTitle id={labelId}>
-        {utilisateur.inviteLe}
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>{utilisateur.inviteLe}</DrawerTitle>
       <div className="fr-mb-4w">
-        <div className="color-grey">
-          Adresse électronique
-        </div>
-        <div className="font-weight-700">
-          {utilisateur.email}
-        </div>
+        <div className="color-grey">Adresse électronique</div>
+        <div className="font-weight-700">{utilisateur.email}</div>
       </div>
       <div className="fr-btns-group">
         <button
@@ -32,7 +21,9 @@ export default function ReinviterUnUtilisateur({
           className="fr-btn fr-btn--secondary"
           data-fr-opened="false"
           disabled={isDisabled}
-          onClick={() => { void reinviter() }}
+          onClick={() => {
+            void reinviter()
+          }}
           type="button"
         >
           {isDisabled ? 'Envois en cours...' : 'Renvoyer cette invitation'}

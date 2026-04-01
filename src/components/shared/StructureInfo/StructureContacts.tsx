@@ -14,9 +14,9 @@ export type ContactData = Readonly<{
 
 const MAX_CONTACTS_AFFICHES = 4
 
-export default function StructureContacts(
-  { contacts }: Readonly<{ contacts: ReadonlyArray<ContactData> }>
-): ReactElement {
+export default function StructureContacts({
+  contacts,
+}: Readonly<{ contacts: ReadonlyArray<ContactData> }>): ReactElement {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const contactsAffiches = isExpanded ? contacts : contacts.slice(0, MAX_CONTACTS_AFFICHES)
@@ -40,9 +40,7 @@ export default function StructureContacts(
             style={{ alignSelf: 'flex-start' }}
             type="button"
           >
-            {isExpanded
-              ? 'Voir moins'
-              : `Afficher tous les contacts (${contacts.length - MAX_CONTACTS_AFFICHES})`}
+            {isExpanded ? 'Voir moins' : `Afficher tous les contacts (${contacts.length - MAX_CONTACTS_AFFICHES})`}
           </button>
         </>
       ) : null}
@@ -59,23 +57,21 @@ function ContactCard({ contact }: Readonly<{ contact: ContactData }>): ReactElem
       <div style={{ alignItems: 'center', display: 'flex', gap: '8px' }}>
         <p
           className="fr-mb-0"
-          style={{ color: 'var(--text-title-blue-france)', fontSize: '1.125rem', fontWeight: 700, lineHeight: '1.75rem' }}
+          style={{
+            color: 'var(--text-title-blue-france)',
+            fontSize: '1.125rem',
+            fontWeight: 700,
+            lineHeight: '1.75rem',
+          }}
         >
-          {contact.nom}
-          {' '}
-          {contact.prenom}
+          {contact.nom} {contact.prenom}
         </p>
         {contact.estReferentFNE ? (
-          <p className="fr-badge fr-badge--blue-cumulus fr-badge--no-icon fr-badge--sm fr-mb-0">
-            Référent FNE
-          </p>
+          <p className="fr-badge fr-badge--blue-cumulus fr-badge--no-icon fr-badge--sm fr-mb-0">Référent FNE</p>
         ) : null}
       </div>
       {contact.fonction === '' ? null : (
-        <p
-          className="fr-text--sm fr-mb-0"
-          style={{ color: 'var(--text-default-grey)' }}
-        >
+        <p className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-default-grey)' }}>
           {contact.fonction}
         </p>
       )}
@@ -87,18 +83,13 @@ function ContactCard({ contact }: Readonly<{ contact: ContactData }>): ReactElem
               className="fr-icon-phone-line fr-icon--sm"
               style={{ color: 'var(--text-mention-grey)' }}
             />
-            <span
-              className="fr-text--sm fr-mb-0"
-              style={{ color: 'var(--text-mention-grey)' }}
-            >
+            <span className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-mention-grey)' }}>
               {contact.telephone}
             </span>
           </>
         )}
         {contact.telephone !== '' && contact.email !== '' ? (
-          <span style={{ color: 'var(--text-mention-grey)' }}>
-            ·
-          </span>
+          <span style={{ color: 'var(--text-mention-grey)' }}>·</span>
         ) : null}
         {contact.email === '' ? null : (
           <>
@@ -107,10 +98,7 @@ function ContactCard({ contact }: Readonly<{ contact: ContactData }>): ReactElem
               className="fr-icon-mail-line fr-icon--sm"
               style={{ color: 'var(--text-mention-grey)' }}
             />
-            <span
-              className="fr-text--sm fr-mb-0"
-              style={{ color: 'var(--text-mention-grey)' }}
-            >
+            <span className="fr-text--sm fr-mb-0" style={{ color: 'var(--text-mention-grey)' }}>
               {contact.email}
             </span>
           </>

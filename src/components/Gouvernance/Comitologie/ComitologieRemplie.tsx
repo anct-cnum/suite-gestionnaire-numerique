@@ -6,9 +6,7 @@ import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function ComitologieRemplie(
-  { comites, peutGerer, uidGouvernance }: Props
-): ReactElement {
+export default function ComitologieRemplie({ comites, peutGerer, uidGouvernance }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [comite, setComite] = useState(comites[0])
@@ -18,40 +16,32 @@ export default function ComitologieRemplie(
 
   return (
     <>
-      <Table
-        enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
-        isHeadHidden={true}
-        titre="Comités"
-      >
-        {
-          comites.map((comite) => (
-            <tr key={comite.uid}>
-              <td className="color-blue-france">
-                <Icon icon="calendar-event-line" />
-              </td>
-              <td className="font-weight-700">
-                <button
-                  aria-controls={drawerId}
-                  className="primary font-weight-700 fr-px-0 no-hover"
-                  data-fr-opened="false"
-                  onClick={() => {
-                    // Stryker disable next-line OptionalChaining
-                    // @ts-expect-error
-                    drawerRef.current?.querySelector('form').reset()
-                    setComite(comite)
-                    setIsDrawerOpen(true)
-                  }}
-                  type="button"
-                >
-                  {comite.intitule}
-                </button>
-              </td>
-              <td className="color-grey">
-                {comite.frequence}
-              </td>
-            </tr>
-          ))
-        }
+      <Table enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']} isHeadHidden={true} titre="Comités">
+        {comites.map((comite) => (
+          <tr key={comite.uid}>
+            <td className="color-blue-france">
+              <Icon icon="calendar-event-line" />
+            </td>
+            <td className="font-weight-700">
+              <button
+                aria-controls={drawerId}
+                className="primary font-weight-700 fr-px-0 no-hover"
+                data-fr-opened="false"
+                onClick={() => {
+                  // Stryker disable next-line OptionalChaining
+                  // @ts-expect-error
+                  drawerRef.current?.querySelector('form').reset()
+                  setComite(comite)
+                  setIsDrawerOpen(true)
+                }}
+                type="button"
+              >
+                {comite.intitule}
+              </button>
+            </td>
+            <td className="color-grey">{comite.frequence}</td>
+          </tr>
+        ))}
       </Table>
       <Drawer
         boutonFermeture={`Fermer la modification du ${comite.intitule}`}

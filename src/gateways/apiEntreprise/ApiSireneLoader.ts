@@ -15,8 +15,7 @@ export class ApiSireneLoader implements SireneLoader {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
 
       // Si l'entreprise n'est pas trouvée, retourner EntrepriseNonTrouvee
-      if (errorMessage.includes('Aucun établissement trouvé') ||
-          errorMessage.includes('n\'est plus en activité')) {
+      if (errorMessage.includes('Aucun établissement trouvé') || errorMessage.includes("n'est plus en activité")) {
         return { estTrouvee: false }
       }
 
@@ -53,7 +52,7 @@ export class ApiSireneLoader implements SireneLoader {
       throw new Error(`Erreur API Sirene: ${reponse.status} - ${texteErreur}`)
     }
 
-    return await reponse.json() as InseeApiResponse | SireneErrorResponse
+    return (await reponse.json()) as InseeApiResponse | SireneErrorResponse
   }
 
   private async recupererAvecTentatives(url: string): Promise<Response> {
@@ -65,7 +64,6 @@ export class ApiSireneLoader implements SireneLoader {
       try {
         const entetes = this.configurationEntetes()
 
-        // eslint-disable-next-line no-await-in-loop
         reponse = await fetch(url, {
           headers: entetes,
           // Timeout de 10 secondes
@@ -78,12 +76,14 @@ export class ApiSireneLoader implements SireneLoader {
 
         // Si c'est la dernière tentative, on lance l'erreur
         if (tentative === 3) {
-          throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`, { cause: erreur })
+          throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`, {
+            cause: erreur,
+          })
         }
 
         // Attente avant retry (500ms, puis 1s)
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => {
+
+        await new Promise((resolve) => {
           setTimeout(resolve, tentative * 500)
         })
       }
@@ -128,7 +128,9 @@ export class ApiSireneLoader implements SireneLoader {
       adresseElements.join(' '),
       adresseEtab.codePostalEtablissement,
       adresseEtab.libelleCommuneEtablissement,
-    ].filter(Boolean).join(', ')
+    ]
+      .filter(Boolean)
+      .join(', ')
 
     // Récupération de la dénomination (priorité : dénomination > nom > enseigne)
     const periodeActuelle = etablissement.periodesEtablissement[0]
@@ -139,10 +141,7 @@ export class ApiSireneLoader implements SireneLoader {
       'Dénomination non renseignée'
 
     // Construction du nom de voie propre (type + libellé)
-    const nomVoieElements = [
-      adresseEtab.typeVoieEtablissement,
-      adresseEtab.libelleVoieEtablissement,
-    ].filter(Boolean)
+    const nomVoieElements = [adresseEtab.typeVoieEtablissement, adresseEtab.libelleVoieEtablissement].filter(Boolean)
     const nomVoie = nomVoieElements.join(' ')
 
     return {
@@ -163,12 +162,12 @@ export class ApiSireneLoader implements SireneLoader {
     // Vérification que l'établissement est actif (état dans la période courante)
     const periodeActuelle = etablissement.periodesEtablissement[0]
     if (periodeActuelle.etatAdministratifEtablissement !== 'A') {
-      throw new Error('Cet établissement n\'est plus en activité')
+      throw new Error("Cet établissement n'est plus en activité")
     }
 
     // Vérification que l'unité légale est active
     if (etablissement.uniteLegale.etatAdministratifUniteLegale !== 'A') {
-      throw new Error('Cette entreprise n\'est plus en activité')
+      throw new Error("Cette entreprise n'est plus en activité")
     }
   }
 }
@@ -195,10 +194,12 @@ type SireneEtablissement = Readonly<{
     typeVoieEtablissement: null | string
   }>
   etatAdministratifEtablissement?: string
-  periodesEtablissement: ReadonlyArray<Readonly<{
-    enseigne1Etablissement: null | string
-    etatAdministratifEtablissement: string
-  }>>
+  periodesEtablissement: ReadonlyArray<
+    Readonly<{
+      enseigne1Etablissement: null | string
+      etatAdministratifEtablissement: string
+    }>
+  >
   siret: string
   uniteLegale: SireneUniteLegale
 }>

@@ -6,7 +6,7 @@ import { UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure
 export function structurePresenter(uneStructureReadModel: UneStructureReadModel, now: Date): StructureViewModel {
   return {
     aidantsEtMediateurs: {
-      liste: uneStructureReadModel.aidantsEtMediateurs.liste.map(aidant => ({
+      liste: uneStructureReadModel.aidantsEtMediateurs.liste.map((aidant) => ({
         fonction: aidant.fonction,
         id: aidant.id,
         lienFiche: aidant.lienFiche,
@@ -18,7 +18,7 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       totalMediateur: uneStructureReadModel.aidantsEtMediateurs.totalMediateur,
     },
     contacts: uneStructureReadModel.contacts,
-    contratsRattaches: uneStructureReadModel.contratsRattaches.map(contrat => {
+    contratsRattaches: uneStructureReadModel.contratsRattaches.map((contrat) => {
       const dateFin = contrat.dateFin
       const isEnCours = dateFin ? dateFin > now : true
       const dateRupture = contrat.dateRupture
@@ -37,7 +37,7 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       }
     }),
     conventionsEtFinancements: {
-      conventions: uneStructureReadModel.conventionsEtFinancements.conventions.map(convention => {
+      conventions: uneStructureReadModel.conventionsEtFinancements.conventions.map((convention) => {
         const isEnCours = convention.dateFin > now
 
         return {
@@ -84,7 +84,7 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
     },
     role: {
       feuillesDeRoute: uneStructureReadModel.role.feuillesDeRoute,
-      gouvernances: uneStructureReadModel.role.gouvernances.map(gouvernance => ({
+      gouvernances: uneStructureReadModel.role.gouvernances.map((gouvernance) => ({
         code: gouvernance.code,
         nom: gouvernance.nom,
         roles: gouvernance.roles.map(toRoleViewModel),

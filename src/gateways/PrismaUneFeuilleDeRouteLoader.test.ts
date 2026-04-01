@@ -2,7 +2,22 @@ import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaUneFeuilleDeRouteLoader } from './PrismaUneFeuilleDeRouteLoader'
-import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
+import {
+  creerUnBeneficiaireSubvention,
+  creerUnCoFinancement,
+  creerUnContact,
+  creerUnDepartement,
+  creerUneAction,
+  creerUneDemandeDeSubvention,
+  creerUneEnveloppeFinancement,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnMembre,
+  creerUnPorteurAction,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
@@ -46,8 +61,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
 
     // THEN
     expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
@@ -156,8 +172,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
 
     // THEN
     expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
@@ -253,8 +270,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
 
     // THEN
     expect(readModel.porteur).toBeUndefined()
@@ -275,8 +293,9 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
 
     // THEN
     expect(readModel.document).toBeUndefined()
@@ -300,7 +319,7 @@ describe('récupérer une feuille de route loader', () => {
     const readModel = new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('999')
 
     // THEN
-    await expect(readModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(readModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(readModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })
@@ -384,8 +403,8 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
     budget: 0,
     coFinancement: 0,
     coFinanceurs: 0,
-    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
-      actions: feuilleDeRoute.actions.map(action => ({
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map((feuilleDeRoute) => ({
+      actions: feuilleDeRoute.actions.map((action) => ({
         beneficiaires: 0,
         budget: action.budgetGlobal,
         coFinancement: 0,

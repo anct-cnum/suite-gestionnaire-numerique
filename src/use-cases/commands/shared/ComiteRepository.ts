@@ -16,8 +16,5 @@ export interface DropComiteRepository {
   drop(comite: Comite): Promise<void>
 }
 
-export interface ComiteRepository extends
-  AddComiteRepository,
-  DropComiteRepository,
-  GetComiteRepository,
-  UpdateComiteRepository {}
+export interface ComiteRepository
+  extends AddComiteRepository, DropComiteRepository, GetComiteRepository, UpdateComiteRepository {}

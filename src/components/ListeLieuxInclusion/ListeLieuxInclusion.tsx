@@ -18,7 +18,12 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
-import { buildURLSearchParamsFromLieuxInclusionFilters, getActiveLieuxInclusionFilters, parseURLParamsToFiltresLieuxInclusionInternes, removeLieuxInclusionFilterFromParams } from '@/shared/filtresLieuxInclusionUtils'
+import {
+  buildURLSearchParamsFromLieuxInclusionFilters,
+  getActiveLieuxInclusionFilters,
+  parseURLParamsToFiltresLieuxInclusionInternes,
+  removeLieuxInclusionFilterFromParams,
+} from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
@@ -101,13 +106,13 @@ export default function ListeLieuxInclusion({
     const url = `/api/export/lieux-inclusion-csv?${exportParams.toString()}`
 
     fetch(url)
-      .then(async response => {
+      .then(async (response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         return response.blob()
       })
-      .then(blob => {
+      .then((blob) => {
         // Créer un lien de téléchargement temporaire
         const downloadUrl = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
@@ -119,9 +124,8 @@ export default function ListeLieuxInclusion({
         window.URL.revokeObjectURL(downloadUrl)
       })
       .catch((error: unknown) => {
-        // eslint-disable-next-line no-console
         console.error('Erreur lors du téléchargement:', error)
-        // eslint-disable-next-line no-alert
+
         alert('Erreur lors du téléchargement du fichier')
       })
   }
@@ -145,13 +149,8 @@ export default function ListeLieuxInclusion({
 
   if ('type' in listeLieuxInclusionViewModel) {
     return (
-      <div
-        className="fr-alert fr-alert--error"
-        role="alert"
-      >
-        <p>
-          {listeLieuxInclusionViewModel.message}
-        </p>
+      <div className="fr-alert fr-alert--error">
+        <p>{listeLieuxInclusionViewModel.message}</p>
       </div>
     )
   }
@@ -198,10 +197,7 @@ export default function ListeLieuxInclusion({
         <div className="fr-mb-2w">
           <div className="fr-grid-row fr-grid-row--gutters">
             {getFiltresActifs().map((filtre) => (
-              <div
-                className="fr-col-auto"
-                key={`${filtre.paramKey}-${filtre.paramValue}`}
-              >
+              <div className="fr-col-auto" key={`${filtre.paramKey}-${filtre.paramValue}`}>
                 <button
                   aria-label={`Retirer le filtre ${filtre.label}`}
                   className="fr-tag fr-icon-close-line fr-tag--icon-left"
@@ -234,131 +230,101 @@ export default function ListeLieuxInclusion({
             zIndex: 9999,
           }}
         >
-          <SpinnerSimple
-            size="large"
-            text="Chargement..."
-          />
+          <SpinnerSimple size="large" text="Chargement..." />
         </div>
       ) : null}
 
       {viewModel.lieux.length === 0 ? (
         <div
-          style={{ backgroundColor: 'var(--blue-france-975-75)',
+          style={{
+            backgroundColor: 'var(--blue-france-975-75)',
             borderRadius: '1rem',
             marginBottom: '2rem',
             padding: '3rem',
             textAlign: 'center',
           }}
         >
-          <p
-            className="fr-text--md fr-mb-0"
-            style={{ textAlign: 'center' }}
-          >
-            <span className="fr-text--bold">
-              👻 Aucun lieu d&apos;inclusion numérique trouvé.
-            </span>
+          <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
+            <span className="fr-text--bold">👻 Aucun lieu d&apos;inclusion numérique trouvé.</span>
           </p>
         </div>
       ) : (
         <>
-          <ListeLieuxInclusionInfo infos={{
-            total: viewModel.total,
-            totalConseillerNumerique: viewModel.totalConseillerNumerique,
-            totalLabellise: viewModel.totalLabellise,
-          }}
+          <ListeLieuxInclusionInfo
+            infos={{
+              total: viewModel.total,
+              totalConseillerNumerique: viewModel.totalConseillerNumerique,
+              totalLabellise: viewModel.totalLabellise,
+            }}
           />
           <Table
-            enTetes={[
-              'Lieu',
-              'Adresse',
-              'Siret',
-              'FRR / QPV',
-              'Mandats AC',
-              'Nb Accompagnements',
-              'Action',
-            ]}
+            enTetes={['Lieu', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
             titre="Lieux d'inclusion numérique"
           >
             {viewModel.lieux.map((lieu) => (
               <tr key={lieu.id}>
                 <td style={{ maxWidth: '25vw' }}>
-                  <div style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
+                  <div
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
                   >
-                    <strong
-                      title={lieu.nom}
-                    >
-                      {lieu.nom}
-                    </strong>
+                    <strong title={lieu.nom}>{lieu.nom}</strong>
                     <br />
-                    <span
-                      className="fr-text--sm"
-                      title={lieu.typeStructure}
-                    >
+                    <span className="fr-text--sm" title={lieu.typeStructure}>
                       {lieu.typeStructure}
                     </span>
                   </div>
                 </td>
                 <td style={{ maxWidth: '20vw' }}>
-                  <div style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
+                  <div
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
                   >
-                    {lieu.idCartographieNationale === null ?
+                    {lieu.idCartographieNationale === null ? (
                       lieu.adresse
-                      : (
-                        <a
-                          href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          {lieu.adresse}
-                        </a>
-                      )}
-                  </div>
-                </td>
-                <td>
-                  {lieu.siret === null ? 'Non renseigné' :
-                    (
+                    ) : (
                       <a
-                        href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+                        href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        {lieu.siret}
+                        {lieu.adresse}
                       </a>
-                    ) }
+                    )}
+                  </div>
+                </td>
+                <td>
+                  {lieu.siret === null ? (
+                    'Non renseigné'
+                  ) : (
+                    <a
+                      href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {lieu.siret}
+                    </a>
+                  )}
                 </td>
                 <td>
                   <div className="fr-tags-group">
                     {lieu.tags.map((tag) => (
-                      <Badge
-                        color={tag.couleur}
-                        key={`${lieu.id}-tag-${tag.libelle}`}
-                      >
+                      <Badge color={tag.couleur} key={`${lieu.id}-tag-${tag.libelle}`}>
                         {tag.libelle}
                       </Badge>
                     ))}
                   </div>
                 </td>
+                <td className="fr-cell--center">{lieu.nbMandatsAC}</td>
+                <td className="fr-cell--center">{lieu.nbAccompagnements}</td>
                 <td className="fr-cell--center">
-                  {lieu.nbMandatsAC}
-                </td>
-                <td className="fr-cell--center">
-                  {lieu.nbAccompagnements}
-                </td>
-                <td
-                  className="fr-cell--center"
-                >
-                  <Link
-                    className="fr-btn fr-btn--secondary fr-btn--sm"
-                    href={`/lieu/${lieu.id}`}
-                  >
+                  <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/lieu/${lieu.id}`}>
                     Détail
                   </Link>
                 </td>
@@ -368,10 +334,7 @@ export default function ListeLieuxInclusion({
 
           {viewModel.displayPagination ? (
             <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
-              <Pagination
-                pathname="/liste-lieux-inclusion"
-                totalUtilisateurs={viewModel.total}
-              />
+              <Pagination pathname="/liste-lieux-inclusion" totalUtilisateurs={viewModel.total} />
             </div>
           ) : null}
         </>
@@ -388,9 +351,7 @@ export default function ListeLieuxInclusion({
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <TitleIcon
-            icon="filter-line"
-          />
+          <TitleIcon icon="filter-line" />
           <br />
           Filtrer les lieux
         </DrawerTitle>

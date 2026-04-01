@@ -1,7 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaLesFeuillesDeRouteLoader } from './PrismaLesFeuillesDeRouteLoader'
-import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
+import {
+  creerMembres,
+  creerUnBeneficiaireSubvention,
+  creerUnCoFinancement,
+  creerUnContact,
+  creerUnDepartement,
+  creerUneAction,
+  creerUneDemandeDeSubvention,
+  creerUneEnveloppeFinancement,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUnMembre,
+  creerUnPorteurAction,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
@@ -62,7 +77,8 @@ describe('récupérer les feuilles de route loader', () => {
       creation: epochTime,
       gouvernanceDepartementCode: '75',
       id: 3,
-      nom: 'fdr3' })
+      nom: 'fdr3',
+    })
     await creerUneAction({
       budgetGlobal: 70_000,
       createurId: 1,
@@ -89,7 +105,8 @@ describe('récupérer les feuilles de route loader', () => {
       actionId: 1,
       createurId: 1,
       enveloppeFinancementId: 1,
-      id: 1 })
+      id: 1,
+    })
     await creerUneDemandeDeSubvention({
       actionId: 3,
       createurId: 1,
@@ -111,7 +128,9 @@ describe('récupérer les feuilles de route loader', () => {
     await creerUnCoFinancement({ actionId: 3, memberId: 'structure-79227291600034-93', montant: 25_000 })
 
     // WHEN
-    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('93')
+    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      '93'
+    )
 
     // THEN
     expect(feuillesDeRouteReadModel.feuillesDeRoute[0].nom).to.equal('Feuille de route 2')
@@ -125,8 +144,8 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
     budget: 0,
     coFinancement: 0,
     coFinanceurs: 0,
-    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
-      actions: feuilleDeRoute.actions.map(action => ({
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map((feuilleDeRoute) => ({
+      actions: feuilleDeRoute.actions.map((action) => ({
         beneficiaires: 0,
         budget: action.budgetGlobal,
         coFinancement: 0,

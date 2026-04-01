@@ -11,20 +11,19 @@ export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesC
   // Si le token commence par "FAKE_TOKEN", utiliser le mock loader
   if (coopToken.startsWith('FAKE_TOKEN')) {
     const config = parseFakeToken(coopToken)
-    // eslint-disable-next-line no-console
+
     console.log(`🎭 Mode FAKE_TOKEN activé - ${config.shouldFail ? 'Erreur' : 'Succès'} après ${config.delaySeconds}s`)
     return new MockStatistiquesCoopLoader(config)
   }
-  
+
   // Sinon, utiliser le vrai loader avec ou sans cache
   const baseLoader = new ApiCoopStatistiquesLoader()
-  
+
   if (avecCache) {
-    // eslint-disable-next-line no-console
     console.log('💾 Cache API Coop activé (durée: 1 heure)')
     return new CachedApiCoopStatistiquesLoader(baseLoader)
   }
-  
+
   return baseLoader
 }
 
@@ -39,15 +38,15 @@ export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesC
  */
 function parseFakeToken(token: string): MockConfig {
   const parts = token.split('_')
-  
+
   // Format par défaut si pas de configuration
   if (parts.length < 3) {
     return { delaySeconds: 0.8, shouldFail: false }
   }
-  
+
   const status = parts[2] // OK ou NOK
   const delay = parts.length > 3 ? parseInt(parts[3], 10) : 0
-  
+
   return {
     delaySeconds: isNaN(delay) ? 0 : delay,
     shouldFail: status === 'NOK',

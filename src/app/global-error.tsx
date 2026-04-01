@@ -9,24 +9,14 @@ export default function GlobalError({ error, reset }: Props): ReactElement {
   }, [error])
 
   return (
-    <html
-      dir="ltr"
-      lang="fr"
-    >
+    <html dir="ltr" lang="fr">
       <body>
         <p>
-          Message d’erreur :
-          {' '}
-          {error.message}
+          Message d’erreur : {error.message}
           <br />
-          Digest :
-          {' '}
-          {error.digest}
+          Digest : {error.digest}
         </p>
-        <button
-          onClick={reset}
-          type="button"
-        >
+        <button onClick={reset} type="button">
           Try again
         </button>
       </body>

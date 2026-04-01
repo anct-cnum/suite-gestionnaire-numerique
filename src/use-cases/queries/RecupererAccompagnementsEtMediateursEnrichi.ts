@@ -1,4 +1,7 @@
-import { AccompagnementsEtMediateursLoader, AccompagnementsEtMediateursReadModel } from './RecupererAccompagnementsEtMediateurs'
+import {
+  AccompagnementsEtMediateursLoader,
+  AccompagnementsEtMediateursReadModel,
+} from './RecupererAccompagnementsEtMediateurs'
 import { StatistiquesCoopLoader, StatistiquesFilters } from './RecupererStatistiquesCoop'
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
@@ -14,12 +17,13 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
     this.statistiquesCoopLoader = statistiquesCoopLoader
   }
 
-  async execute(query: RecupererAccompagnementsEtMediateursEnrichiQuery): 
-  Promise<AccompagnementsEtMediateursEnrichiReadModel | ErrorReadModel> {
+  async execute(
+    query: RecupererAccompagnementsEtMediateursEnrichiQuery
+  ): Promise<AccompagnementsEtMediateursEnrichiReadModel | ErrorReadModel> {
     try {
       // 1. Récupérer les données Prisma (accompagnements, médiateurs, etc.)
       const accompagnementsData = await this.accompagnementsLoader.get(query.territoire)
-      
+
       if (isErrorReadModel(accompagnementsData)) {
         return accompagnementsData
       }
@@ -35,8 +39,8 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
       } catch (error) {
         // En cas d'erreur API Coop, on continue avec les données Prisma
         // mais on note l'erreur pour l'affichage
-        erreurApiCoop = error instanceof Error ? error.message : 'Erreur inconnue de l\'API Coop'
-        // eslint-disable-next-line no-console
+        erreurApiCoop = error instanceof Error ? error.message : "Erreur inconnue de l'API Coop"
+
         console.warn('Erreur API Coop, utilisation des données partielles:', erreurApiCoop)
       }
 
@@ -68,10 +72,11 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
   }
 }
 
-type AccompagnementsEtMediateursEnrichiReadModel = AccompagnementsEtMediateursReadModel & Readonly<{
-  beneficiairesAccompagnes: number
-  erreurApiCoop: null | string
-}>
+type AccompagnementsEtMediateursEnrichiReadModel = AccompagnementsEtMediateursReadModel &
+  Readonly<{
+    beneficiairesAccompagnes: number
+    erreurApiCoop: null | string
+  }>
 
 type RecupererAccompagnementsEtMediateursEnrichiQuery = Readonly<{
   territoire?: string

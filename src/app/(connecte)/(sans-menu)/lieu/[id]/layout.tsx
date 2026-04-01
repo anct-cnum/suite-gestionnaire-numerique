@@ -8,15 +8,9 @@ export default function AidantLayout({ children }: Props): ReactElement {
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
         <div className={styles.menuContainer}>
-          <MenuCollant
-            contentId="lieu-content"
-            items={items}
-          />
+          <MenuCollant contentId="lieu-content" items={items} />
         </div>
-        <div
-          className={styles.contentContainer}
-          id="lieu-content"
-        >
+        <div className={styles.contentContainer} id="lieu-content">
           {children}
         </div>
       </div>
@@ -35,7 +29,7 @@ const items: ReadonlyArray<SideMenuItem> = [
   },
   {
     items: [
-      { linkProps: { href: '#lieu-detail-description' }, text: 'Description de l\'activité du lieu' },
+      { linkProps: { href: '#lieu-detail-description' }, text: "Description de l'activité du lieu" },
       { linkProps: { href: '#lieu-information-pratique' }, text: 'Informations pratiques' },
     ],
     linkProps: { href: '#lieu-accueil-public' },
@@ -43,11 +37,11 @@ const items: ReadonlyArray<SideMenuItem> = [
   },
   {
     items: [
-      { linkProps: { href: '#lieu-detail-service-accompagnement' }, text: 'Services & types d\'accompagnement' },
-      { linkProps: { href: '#lieu-detail-service-modalite' }, text: 'Modalités d\'accès au service' },
+      { linkProps: { href: '#lieu-detail-service-accompagnement' }, text: "Services & types d'accompagnement" },
+      { linkProps: { href: '#lieu-detail-service-modalite' }, text: "Modalités d'accès au service" },
       { linkProps: { href: '#lieu-detail-service-public' }, text: 'Types de publics accueillis' },
     ],
     linkProps: { href: '#services-inclusion-numerique' },
-    text: 'Services d\'inclusion numérique',
+    text: "Services d'inclusion numérique",
   },
 ]

@@ -3,7 +3,7 @@ import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererL
 export function listeLieuxInclusionPresenter(
   readModel: RecupererLieuxInclusionReadModel
 ): ListeLieuxInclusionViewModel {
-  const lieux = readModel.lieux.map(lieu => ({
+  const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,

@@ -12,11 +12,13 @@ import {
   UpdateLieuInclusionServicesTypePublicRepository,
 } from '@/use-cases/commands/shared/LieuInclusionRepository'
 
-export class PrismaLieuInclusionRepository implements
-  UpdateLieuInclusionDescriptionRepository,
-  UpdateLieuInclusionServicesModaliteRepository,
-  UpdateLieuInclusionServicesTypeAccompagnementRepository,
-  UpdateLieuInclusionServicesTypePublicRepository {
+export class PrismaLieuInclusionRepository
+  implements
+    UpdateLieuInclusionDescriptionRepository,
+    UpdateLieuInclusionServicesModaliteRepository,
+    UpdateLieuInclusionServicesTypeAccompagnementRepository,
+    UpdateLieuInclusionServicesTypePublicRepository
+{
   async updateDescription(data: UpdateLieuInclusionDescriptionData): Promise<void> {
     const existingStructure = await prisma.main_structure.findUnique({
       select: { contact: true },
@@ -151,14 +153,14 @@ export class PrismaLieuInclusionRepository implements
     data: UpdateLieuInclusionDescriptionData,
     updatedContact: Record<string, unknown>
   ): {
-      contact?: Prisma.InputJsonValue
-      horaires?: null | string
-      itinerance?: Array<string>
-      presentation_detail?: null | string
-      presentation_resume?: null | string
-      prise_rdv?: null | string
-      typologies?: Array<string>
-    } {
+    contact?: Prisma.InputJsonValue
+    horaires?: null | string
+    itinerance?: Array<string>
+    presentation_detail?: null | string
+    presentation_resume?: null | string
+    prise_rdv?: null | string
+    typologies?: Array<string>
+  } {
     const updateData: {
       contact?: Prisma.InputJsonValue
       horaires?: null | string

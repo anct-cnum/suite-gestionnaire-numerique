@@ -1,7 +1,7 @@
 import html2canvas from 'html2canvas'
 import { RefObject } from 'react'
 
-export async function handleDownload(component: RefObject<HTMLDivElement | null>, fileName: string ): Promise<void> {
+export async function handleDownload(component: RefObject<HTMLDivElement | null>, fileName: string): Promise<void> {
   if (component.current) {
     try {
       const canvas = await html2canvas(component.current, {

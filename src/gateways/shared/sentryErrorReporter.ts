@@ -1,10 +1,6 @@
 import * as Sentry from '@sentry/nextjs'
 
-export function reportLoaderError(
-  error: unknown,
-  loaderName: string,
-  context: Record<string, unknown> = {}
-): void {
+export function reportLoaderError(error: unknown, loaderName: string, context: Record<string, unknown> = {}): void {
   Sentry.captureException(error, {
     extra: {
       loaderName,
@@ -16,4 +12,4 @@ export function reportLoaderError(
       type: 'DATA_RETRIEVAL_ERROR',
     },
   })
-} 
+}

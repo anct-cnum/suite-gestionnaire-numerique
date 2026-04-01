@@ -35,13 +35,6 @@
     },
     "types": ["vitest/globals"]
   },
-  "include": [
-    "next-env.d.ts",
-    "vitest.d.ts",
-    "next.config.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": ["node_modules", ".next/**/*", "!.next/types/**/*.ts", "dbs/**/*"]
+  "include": ["next-env.d.ts", "vitest.d.ts", "next.config.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next/**/*", "!.next/types/**/*.ts", "dbs/**/*", "scripts/**/*"]
 }

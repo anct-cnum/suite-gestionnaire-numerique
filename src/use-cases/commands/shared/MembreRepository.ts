@@ -38,11 +38,12 @@ export interface GetStructureContactsRepository {
 }
 
 export interface MembreRepository
-  extends CreateMembreRepository,
-  GetMembreRepository,
-  GetMembreStructureIdRepository,
-  GetStructureContactsRepository,
-  UpdateMembreRepository {}
+  extends
+    CreateMembreRepository,
+    GetMembreRepository,
+    GetMembreStructureIdRepository,
+    GetStructureContactsRepository,
+    UpdateMembreRepository {}
 
 interface GetMembreStructureIdRepository {
   getStructureId(uid: MembreState['uid']['value']): Promise<number>

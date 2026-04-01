@@ -28,7 +28,7 @@ export function useRichTextEditor(contenuInitial = ''): {
     }
   }
 
-  useEffect((): () => void => {
+  useEffect((): (() => void) => {
     window.addEventListener('editorReady', gererEditeurPret)
 
     return (): void => {

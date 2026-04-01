@@ -33,9 +33,7 @@ export async function fetchAccompagnementsRealises(
 
     // Récupérer les statistiques Coop depuis l'API
     const statistiquesCoopLoader = createApiCoopStatistiquesLoader()
-    const filters = territoire === 'France'
-      ? undefined
-      : { departements: [territoire] }
+    const filters = territoire === 'France' ? undefined : { departements: [territoire] }
 
     const statistiquesCoop = await statistiquesCoopLoader.recupererStatistiques(filters)
 
@@ -43,12 +41,10 @@ export async function fetchAccompagnementsRealises(
     const nombreTotal = accompagnementsAC.nombreTotalAC + statistiquesCoop.totaux.accompagnements.total
 
     // Récupérer la répartition mensuelle depuis l'API Coop (6 derniers mois)
-    const repartitionMensuelle = statistiquesCoop.accompagnementsParMois
-      .slice(-6)
-      .map((item) => ({
-        mois: item.label,
-        nombre: item.count,
-      }))
+    const repartitionMensuelle = statistiquesCoop.accompagnementsParMois.slice(-6).map((item) => ({
+      mois: item.label,
+      nombre: item.count,
+    }))
 
     return {
       nombreTotal,
@@ -57,9 +53,7 @@ export async function fetchAccompagnementsRealises(
   } catch (error) {
     reportLoaderError(error, 'fetchAccompagnementsRealises', { territoire })
     return {
-      message: error instanceof Error
-        ? error.message
-        : 'Erreur inconnue lors de la récupération des accompagnements',
+      message: error instanceof Error ? error.message : 'Erreur inconnue lors de la récupération des accompagnements',
       type: 'error',
     } as ErrorViewModel
   }

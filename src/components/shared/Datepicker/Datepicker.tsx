@@ -1,20 +1,11 @@
 import React, { PropsWithChildren, ReactElement, useId } from 'react'
 
-export default function Datepicker({
-  children,
-  defaultValue = '',
-  disable,
-  min,
-  name,
-}: Props): ReactElement {
+export default function Datepicker({ children, defaultValue = '', disable, min, name }: Props): ReactElement {
   const id = useId()
 
   return (
     <div className="fr-input-group">
-      <label
-        className="fr-label"
-        htmlFor={id}
-      >
+      <label className="fr-label" htmlFor={id}>
         {children}
       </label>
       <input
@@ -30,9 +21,11 @@ export default function Datepicker({
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  defaultValue?: string
-  disable?: boolean
-  min?: string
-  name: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    defaultValue?: string
+    disable?: boolean
+    min?: string
+    name: string
+  }>
+>

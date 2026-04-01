@@ -77,7 +77,7 @@ export default async function ListeAidantsMediateursController({
     const viewModel = listeAidantsMediateursViewModel as {
       aidants: Array<{ id: string }>
     }
-    const aidantIds = viewModel.aidants.map(aidant => aidant.id)
+    const aidantIds = viewModel.aidants.map((aidant) => aidant.id)
     accompagnementsPromise = listeAidantsMediateursLoader.getAccompagnementsForPersonnes(aidantIds)
   }
 
@@ -93,12 +93,12 @@ export default async function ListeAidantsMediateursController({
   )
 
   // Créer les promesses séparées pour chaque valeur
-  const totalBeneficiairesPromise = beneficiairesEtAccompagnementsPromise.then(
-    result => 'type' in result ? result : result.beneficiaires
+  const totalBeneficiairesPromise = beneficiairesEtAccompagnementsPromise.then((result) =>
+    'type' in result ? result : result.beneficiaires
   )
 
-  const totalAccompagnementsPromise = beneficiairesEtAccompagnementsPromise.then(
-    result => 'type' in result ? result : result.accompagnements
+  const totalAccompagnementsPromise = beneficiairesEtAccompagnementsPromise.then((result) =>
+    'type' in result ? result : result.accompagnements
   )
 
   // Passer les paramètres actuels pour l'affichage des filtres actifs

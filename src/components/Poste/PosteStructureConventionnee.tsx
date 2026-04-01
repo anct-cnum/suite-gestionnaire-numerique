@@ -4,12 +4,7 @@ import StructureInfo, { type StructureInfoData } from '@/components/shared/Struc
 
 export default function PosteStructureConventionnee({ structure }: Props): ReactElement {
   return (
-    <StructureInfo
-      data={structure}
-      sectionId="structure-conventionnee"
-      showSiretLink
-      titre="Structure conventionnée"
-    />
+    <StructureInfo data={structure} sectionId="structure-conventionnee" showSiretLink titre="Structure conventionnée" />
   )
 }
 

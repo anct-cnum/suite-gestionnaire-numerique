@@ -34,57 +34,54 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'sans date ni commentaire',
       type: typeValide,
     },
-  ])('étant donné une gouvernance, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gouvernance', async ({
-    commentaire,
-    date,
-    expectedDate,
-    frequence,
-    type,
-  }) => {
-    // GIVEN
-    const dateDeCreation = epochTime
-    const ajouterUnComite = new AjouterUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy(),
-      dateDeCreation
-    )
+  ])(
+    'étant donné une gouvernance, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gouvernance',
+    async ({ commentaire, date, expectedDate, frequence, type }) => {
+      // GIVEN
+      const dateDeCreation = epochTime
+      const ajouterUnComite = new AjouterUnComite(
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        new ComiteRepositorySpy(),
+        dateDeCreation
+      )
 
-    // WHEN
-    const result = await ajouterUnComite.handle({
-      commentaire,
-      date,
-      frequence,
-      type,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedComiteToAdd?.state).toStrictEqual(
-      comiteFactory({
+      // WHEN
+      const result = await ajouterUnComite.handle({
         commentaire,
-        date: expectedDate,
-        dateDeCreation,
-        dateDeModification: dateDeCreation,
+        date,
         frequence,
         type,
-        uid: {
-          value: 'identifiantPourLaCreation',
-        },
-        uidEditeur: {
-          email: 'martin.tartempion@example.net',
-          value: 'userFooId',
-        },
-        uidGouvernance: {
-          value: uidGouvernance,
-        },
-      }).state
-    )
-    expect(result).toBe('OK')
-  })
+        uidEditeur,
+        uidGouvernance,
+      })
+
+      // THEN
+      expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
+      expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+      expect(spiedComiteToAdd?.state).toStrictEqual(
+        comiteFactory({
+          commentaire,
+          date: expectedDate,
+          dateDeCreation,
+          dateDeModification: dateDeCreation,
+          frequence,
+          type,
+          uid: {
+            value: 'identifiantPourLaCreation',
+          },
+          uidEditeur: {
+            email: 'martin.tartempion@example.net',
+            value: 'userFooId',
+          },
+          uidGouvernance: {
+            value: uidGouvernance,
+          },
+        }).state
+      )
+      expect(result).toBe('OK')
+    }
+  )
 
   it.each([
     {
@@ -119,28 +116,31 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'de la date de création invalide',
       type: typeValide,
     },
-  ])('étant donné une gouvernance, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
-    // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy(),
-      dateDeCreation
-    )
+  ])(
+    'étant donné une gouvernance, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée',
+    async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
+      // GIVEN
+      const ajouterUnComite = new AjouterUnComite(
+        new GouvernanceRepositorySpy(),
+        new GestionnaireRepositorySpy(),
+        new ComiteRepositorySpy(),
+        dateDeCreation
+      )
 
-    // WHEN
-    const result = await ajouterUnComite.handle({
-      date,
-      frequence,
-      type,
-      uidEditeur,
-      uidGouvernance,
-    })
+      // WHEN
+      const result = await ajouterUnComite.handle({
+        date,
+        frequence,
+        type,
+        uidEditeur,
+        uidGouvernance,
+      })
 
-    // THEN
-    expect(spiedComiteToAdd).toBeNull()
-    expect(result).toBe(expectedFailure)
-  })
+      // THEN
+      expect(spiedComiteToAdd).toBeNull()
+      expect(result).toBe(expectedFailure)
+    }
+  )
 
   it('étant donné une gouvernance, quand un comité est créé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN

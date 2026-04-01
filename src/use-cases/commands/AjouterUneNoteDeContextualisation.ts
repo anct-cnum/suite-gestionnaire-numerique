@@ -27,9 +27,7 @@ export class AjouterUneNoteDeContextualisation implements CommandHandler<Command
   async handle(command: Command): Promise<'OK' | Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
-    const gouvernance = await this.#gouvernanceRepository.get(
-      new GouvernanceUid(feuilleDeRoute.state.uidGouvernance)
-    )
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(feuilleDeRoute.state.uidGouvernance))
     if (!feuilleDeRoute.peutEtreGereePar(editeur, gouvernance.state.membresCoporteurs)) {
       return 'utilisateurNePeutPasAjouterNoteDeContextualisation'
     }

@@ -9,10 +9,7 @@ import Doughnut from '@/components/shared/Doughnut/Doughnut'
 import Table from '@/components/shared/Table/Table'
 
 export default function ConventionsEtFinancements({ data }: Props): ReactElement {
-  ChartJS.register(
-    ArcElement,
-    Tooltip
-  )
+  ChartJS.register(ArcElement, Tooltip)
 
   return (
     <section
@@ -21,10 +18,7 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
       id="conventions"
       style={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
     >
-      <h2
-        className="fr-h6 fr-m-0"
-        id="conventions"
-      >
+      <h2 className="fr-h6 fr-m-0" id="conventions">
         Conventions et financement
       </h2>
 
@@ -34,16 +28,9 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
         style={{ display: 'flex', gap: '3.5rem', width: '100%' }}
       >
         <div style={{ display: 'flex', flex: 1, flexDirection: 'column', gap: '1rem' }}>
-          <div
-            className="fr-h6"
-            style={{ display: 'flex', justifyContent: 'space-between', margin: 0 }}
-          >
-            <span>
-              Crédits engagés par l&apos;état
-            </span>
-            <span>
-              {data.creditsEngagesParLEtat}
-            </span>
+          <div className="fr-h6" style={{ display: 'flex', justifyContent: 'space-between', margin: 0 }}>
+            <span>Crédits engagés par l&apos;état</span>
+            <span>{data.creditsEngagesParLEtat}</span>
           </div>
           <hr className="fr-pb-2w" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -58,15 +45,9 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
                 >
                   <Dot color={colors[enveloppe.color].dot} />
                   {enveloppe.libelle}
-                  <span
-                    aria-label="Information"
-                    style={{ color: '#000091' }}
-                  />
+                  <span aria-label="Information" style={{ color: '#000091' }} />
                 </div>
-                <span
-                  className="fr-text--sm font-weight-700"
-                  style={{ lineHeight: '1.25rem' }}
-                >
+                <span className="fr-text--sm font-weight-700" style={{ lineHeight: '1.25rem' }}>
                   {enveloppe.montantFormate}
                 </span>
               </div>
@@ -75,9 +56,7 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
         </div>
         <div style={{ alignItems: 'center', display: 'flex', height: '8.5rem', padding: '0.5625rem', width: '8.5rem' }}>
           <Doughnut
-            backgroundColor={data.enveloppes.map(
-              (enveloppe) => colors[enveloppe.color].color
-            )}
+            backgroundColor={data.enveloppes.map((enveloppe) => colors[enveloppe.color].color)}
             data={data.enveloppes.map((enveloppe) => enveloppe.montant)}
             labels={data.enveloppes.map((enveloppe) => enveloppe.libelle)}
           />
@@ -92,34 +71,28 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
           Conventions Conseiller Numérique
         </h3>
         <Table
-          enTetes={['Convention', 'Statut', 'Date de début', 'Date de fin', 'Bonification', 'Total conventionné', 'Total versé']}
+          enTetes={[
+            'Convention',
+            'Statut',
+            'Date de début',
+            'Date de fin',
+            'Bonification',
+            'Total conventionné',
+            'Total versé',
+          ]}
           titre="Conventions Conseiller Numérique"
         >
           {data.conventions.map((convention) => (
             <tr key={convention.id}>
-              <td className="font-weight-700">
-                {convention.libelle}
-              </td>
+              <td className="font-weight-700">{convention.libelle}</td>
               <td>
-                <Badge color={convention.statut.variant}>
-                  {convention.statut.libelle}
-                </Badge>
+                <Badge color={convention.statut.variant}>{convention.statut.libelle}</Badge>
               </td>
-              <td className="color-grey">
-                {convention.dateDebut}
-              </td>
-              <td className="color-grey">
-                {convention.dateFin}
-              </td>
-              <td className="color-grey text-right">
-                {convention.montantBonification}
-              </td>
-              <td className="color-grey text-right">
-                {convention.montantTotal}
-              </td>
-              <td className="text-right font-weight-500">
-                {convention.montantVerse}
-              </td>
+              <td className="color-grey">{convention.dateDebut}</td>
+              <td className="color-grey">{convention.dateFin}</td>
+              <td className="color-grey text-right">{convention.montantBonification}</td>
+              <td className="color-grey text-right">{convention.montantTotal}</td>
+              <td className="text-right font-weight-500">{convention.montantVerse}</td>
             </tr>
           ))}
         </Table>

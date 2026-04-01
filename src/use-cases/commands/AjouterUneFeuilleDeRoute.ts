@@ -33,8 +33,8 @@ export class AjouterUneFeuilleDeRoute implements CommandHandler<Command> {
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: this.#date,
       dateDeModification: this.#date,
-      nom :command.nom,
-      perimetreGeographique:command.perimetreGeographique,
+      nom: command.nom,
+      perimetreGeographique: command.perimetreGeographique,
       uid: {
         value: 'identifiantPourLaCreation',
       },

@@ -17,7 +17,7 @@
     "src/gateways/*.test.ts",
     "src/use-cases/commands/*.test.ts",
     "src/use-cases/queries/*.test.ts",
-    "yarn.lock"
+    "pnpm-lock.yaml"
   ],
   "ignoreStatic": true,
   "logLevel": "info",
@@ -30,7 +30,7 @@
   "mutator": {
     "excludedMutations": ["StringLiteral"]
   },
-  "packageManager": "yarn",
+  "packageManager": "pnpm",
   "reporters": ["html", "progress"],
   "testRunner": "vitest"
 }

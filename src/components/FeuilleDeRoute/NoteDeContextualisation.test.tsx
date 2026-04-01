@@ -11,11 +11,19 @@ describe('note de contextualisation', () => {
     afficherUneFeuilleDeRouteSansNoteDeContextualisation()
 
     // THEN
-    const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
+    const sectionContextualisation = screen.getByRole('region', {
+      name: 'Contextualisation des demandes de subvention',
+    })
     const enTeteContextualisation = within(sectionContextualisation).getByRole('banner')
-    const titreContextualisation = within(enTeteContextualisation).getByRole('heading', { level: 2, name: 'Contextualisation des demandes de subvention' })
+    const titreContextualisation = within(enTeteContextualisation).getByRole('heading', {
+      level: 2,
+      name: 'Contextualisation des demandes de subvention',
+    })
     expect(titreContextualisation).toBeInTheDocument()
-    const boutonContextualisation = within(enTeteContextualisation).getByRole('button', { description: 'Ajouter la contextualisation', name: 'Ajouter' })
+    const boutonContextualisation = within(enTeteContextualisation).getByRole('button', {
+      description: 'Ajouter la contextualisation',
+      name: 'Ajouter',
+    })
     expect(boutonContextualisation).toHaveAttribute('type', 'button')
   })
 
@@ -31,11 +39,19 @@ describe('note de contextualisation', () => {
       const drawer = screen.getByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
       expect(drawer).toHaveAttribute('id', 'drawerAjouterNoteDeContextualisationId')
       const formulaire = within(drawer).getByRole('form', { name: 'Contextualisation des demandes de subvention' })
-      const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Contextualisation des demandes de subvention' })
+      const titre = within(formulaire).getByRole('heading', {
+        level: 3,
+        name: 'Contextualisation des demandes de subvention',
+      })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText(
+        'Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
-      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', { name: 'Éditeur de note de contextualisation' })
+      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', {
+        name: 'Éditeur de note de contextualisation',
+      })
       expect(editeurDeTextEnrichi).toBeInTheDocument()
       const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toHaveAttribute('type', 'submit')
@@ -60,7 +76,10 @@ describe('note de contextualisation', () => {
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme et une notification de succès s’affiche', async () => {
       // GIVEN
       const ajouterUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
-      afficherUneFeuilleDeRouteSansNoteDeContextualisation({ ajouterUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      afficherUneFeuilleDeRouteSansNoteDeContextualisation({
+        ajouterUneNoteDeContextualisationAction,
+        pathname: '/gouvernance/11/feuille-de-route/116',
+      })
 
       // WHEN
       jouvreLeDrawerDAjoutDeNoteDeContextualisation()
@@ -81,7 +100,10 @@ describe('note de contextualisation', () => {
     it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
       // GIVEN
       const ajouterUneNoteDeContextualisationAction = stubbedServerAction(['Le contenu doit être renseigné'])
-      afficherUneFeuilleDeRouteSansNoteDeContextualisation({ ajouterUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      afficherUneFeuilleDeRouteSansNoteDeContextualisation({
+        ajouterUneNoteDeContextualisationAction,
+        pathname: '/gouvernance/11/feuille-de-route/116',
+      })
       jouvreLeDrawerDAjoutDeNoteDeContextualisation()
 
       // WHEN
@@ -105,11 +127,19 @@ describe('note de contextualisation', () => {
       const drawer = screen.getByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
       expect(drawer).toHaveAttribute('id', 'drawerModifierNoteDeContextualisationId')
       const formulaire = within(drawer).getByRole('form', { name: 'Contextualisation des demandes de subvention' })
-      const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Contextualisation des demandes de subvention' })
+      const titre = within(formulaire).getByRole('heading', {
+        level: 3,
+        name: 'Contextualisation des demandes de subvention',
+      })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText(
+        'Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
-      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', { name: 'Éditeur de note de contextualisation' })
+      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', {
+        name: 'Éditeur de note de contextualisation',
+      })
       expect(editeurDeTextEnrichi).toBeInTheDocument()
       const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toHaveAttribute('type', 'submit')
@@ -120,7 +150,10 @@ describe('note de contextualisation', () => {
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
       // GIVEN
       const modifierUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ modifierUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
+        modifierUneNoteDeContextualisationAction,
+        pathname: '/gouvernance/11/feuille-de-route/116',
+      })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
@@ -141,7 +174,10 @@ describe('note de contextualisation', () => {
     it('puis que je le modifie mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
       // GIVEN
       const modifierUneNoteDeContextualisationAction = stubbedServerAction(['Le contenu doit être renseigné'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ modifierUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
+        modifierUneNoteDeContextualisationAction,
+        pathname: '/gouvernance/11/feuille-de-route/116',
+      })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
@@ -155,7 +191,10 @@ describe('note de contextualisation', () => {
     it('puis que je veux supprimer la note de contextualisation, alors une notification s‘affiche', async () => {
       // GIVEN
       const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
+        pathname: '/gouvernance/11/feuille-de-route/116',
+        supprimerUneNoteDeContextualisationAction,
+      })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
@@ -176,7 +215,10 @@ describe('note de contextualisation', () => {
     it('puis que je veux supprimer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
       const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
+        pathname: '/gouvernance/11/feuille-de-route/116',
+        supprimerUneNoteDeContextualisationAction,
+      })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
@@ -225,14 +267,20 @@ function afficherUneFeuilleDeRouteAvecNoteDeContextualisation(
 function jouvreLeDrawerDAjoutDeNoteDeContextualisation(): void {
   const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
   const enTeteContextualisation = within(sectionContextualisation).getByRole('banner')
-  const boutonContextualisation = within(enTeteContextualisation).getByRole('button', { description: 'Ajouter la contextualisation', name: 'Ajouter' })
+  const boutonContextualisation = within(enTeteContextualisation).getByRole('button', {
+    description: 'Ajouter la contextualisation',
+    name: 'Ajouter',
+  })
   fireEvent.click(boutonContextualisation)
 }
 
 function jouvreLeDrawerDeModificationDeNoteDeContextualisation(): void {
   const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
   const enTeteContextualisation = within(sectionContextualisation).getByRole('banner')
-  const boutonContextualisation = within(enTeteContextualisation).getByRole('button', { description: 'Modifier la contextualisation', name: 'Modifier' })
+  const boutonContextualisation = within(enTeteContextualisation).getByRole('button', {
+    description: 'Modifier la contextualisation',
+    name: 'Modifier',
+  })
   fireEvent.click(boutonContextualisation)
 }
 
@@ -245,8 +293,12 @@ function jeFermeLeFormulairePourModifierUneNoteDeContextualisation(): HTMLElemen
 }
 
 function jeTapeUneNoteDeContextualisation(): HTMLElement {
-  const editeurDeTextEnrichi = within(screen.getByRole('form', { name: 'Contextualisation des demandes de subvention' })).getByRole('textarea', { name: 'Éditeur de note de contextualisation' })
-  fireEvent.input(editeurDeTextEnrichi, { target: { innerHTML: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>' } })
+  const editeurDeTextEnrichi = within(
+    screen.getByRole('form', { name: 'Contextualisation des demandes de subvention' })
+  ).getByRole('textarea', { name: 'Éditeur de note de contextualisation' })
+  fireEvent.input(editeurDeTextEnrichi, {
+    target: { innerHTML: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>' },
+  })
   return editeurDeTextEnrichi
 }
 

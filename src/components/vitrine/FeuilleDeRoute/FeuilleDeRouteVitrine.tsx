@@ -14,21 +14,12 @@ import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/
 export default function FeuilleDeRouteVitrine({ feuillesDeRouteViewModel }: Props): ReactElement {
   return (
     <div className="fr-pr-md-10w">
-      <ul
-        aria-label="Feuilles de route"
-        className="fr-p-0"
-      >
+      <ul aria-label="Feuilles de route" className="fr-p-0">
         {feuillesDeRouteViewModel.feuillesDeRoute.map((feuilleDeRoute: FeuilleDeRouteViewModel) => (
-          <li
-            key={feuilleDeRoute.uid}
-            style={{ listStyle: 'none' }}
-          >
+          <li key={feuilleDeRoute.uid} style={{ listStyle: 'none' }}>
             <ResumeFeuilleDeRouteVitrine feuilleDeRoute={feuilleDeRoute}>
               {feuilleDeRoute.actions.length > 0 && (
-                <ResumeActionVitrine
-                  actions={feuilleDeRoute.actions}
-                  uidFeuilleDeRoute={feuilleDeRoute.uid}
-                />
+                <ResumeActionVitrine actions={feuilleDeRoute.actions} uidFeuilleDeRoute={feuilleDeRoute.uid} />
               )}
             </ResumeFeuilleDeRouteVitrine>
           </li>

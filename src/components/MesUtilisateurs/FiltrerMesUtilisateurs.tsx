@@ -11,30 +11,24 @@ import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import Toggle from '../shared/Toggle/Toggle'
-import { toutesLesRegions, urlDeFiltrage, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
+import {
+  toutesLesRegions,
+  urlDeFiltrage,
+  ZoneGeographique,
+  zoneGeographiqueToURLSearchParams,
+} from '@/presenters/filtresUtilisateurPresenter'
 
-export default function FiltrerMesUtilisateurs({
-  closeDrawer,
-  id,
-  labelId,
-  resetSearch,
-}: Props): ReactElement {
+export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, resetSearch }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
-  const [structuresSearchParams, setStructuresSearchParams] = useState<URLSearchParams>(new URLSearchParams())
+  const [structuresSearchParams, setStructuresSearchParams] = useState(new URLSearchParams())
   const [structure, setStructure] = useState<null | OrganisationOption>(null)
 
   return (
     <>
-      <DrawerTitle id={labelId}>
-        Filtrer
-      </DrawerTitle>
-      <form
-        aria-label="Filtrer"
-        method="dialog"
-        onSubmit={filtrer}
-      >
+      <DrawerTitle id={labelId}>Filtrer</DrawerTitle>
+      <form aria-label="Filtrer" method="dialog" onSubmit={filtrer}>
         <Toggle
           defaultChecked={areUtilisateursActivesChecked}
           // Stryker disable next-line BooleanLiteral
@@ -44,10 +38,7 @@ export default function FiltrerMesUtilisateurs({
           Uniquement les utilisateurs activés
         </Toggle>
         <hr />
-        <ZonesGeographiques
-          ref={ref}
-          setZoneGeographique={handleZoneGeographiqueChange}
-        />
+        <ZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
         <hr />
         <OrganisationInput
           extraSearchParams={structuresSearchParams}
@@ -60,17 +51,10 @@ export default function FiltrerMesUtilisateurs({
         />
         <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
-          <button
-            className="fr-btn fr-btn--secondary fr-col-5"
-            onClick={reinitialiser}
-            type="reset"
-          >
+          <button className="fr-btn fr-btn--secondary fr-col-5" onClick={reinitialiser} type="reset">
             Réinitialiser les filtres
           </button>
-          <SubmitButton
-            ariaControls={id}
-            className="fr-col-5"
-          >
+          <SubmitButton ariaControls={id} className="fr-col-5">
             Afficher les utilisateurs
           </SubmitButton>
         </div>

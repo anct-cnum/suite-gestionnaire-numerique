@@ -24,9 +24,7 @@ export default function StructureConventions({ conventionsEtFinancements }: Prop
     enveloppes: conventionsEtFinancements.enveloppes,
   }
 
-  return (
-    <ConventionsEtFinancements data={data} />
-  )
+  return <ConventionsEtFinancements data={data} />
 }
 
 function convertirLibelleConvention(libelle: string): string {

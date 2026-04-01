@@ -19,7 +19,12 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
-import { buildURLSearchParamsFromFilters, getActiveFilters, parseURLParamsToFiltresInternes, removeFilterFromParams } from '@/shared/filtresAidantsMediateursUtils'
+import {
+  buildURLSearchParamsFromFilters,
+  getActiveFilters,
+  parseURLParamsToFiltresInternes,
+  removeFilterFromParams,
+} from '@/shared/filtresAidantsMediateursUtils'
 
 // Type pour les searchParams sérialisés depuis le serveur
 type SerializedSearchParams = Array<[string, string]> | URLSearchParams
@@ -35,107 +40,99 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 }
 
 // Composant mémorisé pour chaque ligne d'aidant
-const AidantRow = memo(({
-  accompagnementsPromise,
-  aidant,
-  badgeStyle,
-  getAidantIcons,
-}: {
-  readonly accompagnementsPromise: Promise<Map<string, number>>
-  readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
-  readonly badgeStyle: React.CSSProperties
-  // eslint-disable-next-line @typescript-eslint/method-signature-style
-  readonly getAidantIcons: (labelisations: Array<'aidants connect' | 'conseiller numérique'>) => Array<{ alt: string; src: string }>
-}) => {
-  const icons = useMemo(() => getAidantIcons(aidant.labelisations), [aidant.labelisations, getAidantIcons])
+const AidantRow = memo(
+  ({
+    accompagnementsPromise,
+    aidant,
+    badgeStyle,
+    getAidantIcons,
+  }: {
+    readonly accompagnementsPromise: Promise<Map<string, number>>
+    readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
+    readonly badgeStyle: React.CSSProperties
+    // eslint-disable-next-line @typescript-eslint/method-signature-style
+    readonly getAidantIcons: (
+      labelisations: Array<'aidants connect' | 'conseiller numérique'>
+    ) => Array<{ alt: string; src: string }>
+  }) => {
+    const icons = useMemo(() => getAidantIcons(aidant.labelisations), [aidant.labelisations, getAidantIcons])
 
-  return (
-    <tr style={{ height: '4rem' }}>
-      <td>
-        <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
-          {aidant.nom}
-          {' '}
-          {aidant.prenom}
-          {icons.map((icon) => (
-            <img
-              alt={icon.alt}
-              className="fr-ml-1w"
-              height={24}
-              key={`${aidant.id}-${icon.src}`}
-              src={icon.src}
-              width={24}
-            />
-          ))}
-        </div>
-      </td>
-      <td>
-        <div className="fr-grid-row fr-grid-row--gutters fr-text--sm">
-          {aidant.role.map((roleItem) => (
-            <Badge
-              color={roleItem === 'Coordinateur' ? 'info' : 'grey'}
-              key={`${aidant.id}-role-${roleItem}`}
-              small={true}
-            >
-              {roleItem}
-            </Badge>
-          ))}
-        </div>
-      </td>
-      <td>
-        {aidant.labelisations.length > 0 ? (
-          <div className="fr-grid-row fr-grid-row--gutters">
-            {aidant.labelisations.map((labelisation) => (
-              <div
-                className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
-                key={`${aidant.id}-labelisation-${labelisation}`}
-                style={badgeStyle}
-              >
-                {labelisation}
-              </div>
+    return (
+      <tr style={{ height: '4rem' }}>
+        <td>
+          <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
+            {aidant.nom} {aidant.prenom}
+            {icons.map((icon) => (
+              <img
+                alt={icon.alt}
+                className="fr-ml-1w"
+                height={24}
+                key={`${aidant.id}-${icon.src}`}
+                src={icon.src}
+                width={24}
+              />
             ))}
           </div>
-        ) : (
-          <span>
-            -
-          </span>
-        )}
-      </td>
-      <td>
-        {typeof aidant.formations === 'object' && aidant.formations.length > 0 ? (
-          <div className="fr-grid-row fr-grid-row--gutters">
-            {aidant.formations.map((form) => (
-              <div
-                className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
-                key={`${aidant.id}-formation-${form}`}
-                style={badgeStyle}
+        </td>
+        <td>
+          <div className="fr-grid-row fr-grid-row--gutters fr-text--sm">
+            {aidant.role.map((roleItem) => (
+              <Badge
+                color={roleItem === 'Coordinateur' ? 'info' : 'grey'}
+                key={`${aidant.id}-role-${roleItem}`}
+                small={true}
               >
-                {form}
-              </div>
+                {roleItem}
+              </Badge>
             ))}
           </div>
-        ) : (
-          <span>
-            -
-          </span>
-        )}
-      </td>
-      <td className="fr-cell--center">
-        <AccompagnementsTableCell
-          accompagnementsPromise={accompagnementsPromise}
-          aidantId={aidant.id}
-        />
-      </td>
-      <td className="fr-cell--center">
-        <Link
-          className="fr-btn fr-btn--secondary fr-btn--sm"
-          href={`/aidant/${aidant.id}`}
-        >
-          Détail
-        </Link>
-      </td>
-    </tr>
-  )
-})
+        </td>
+        <td>
+          {aidant.labelisations.length > 0 ? (
+            <div className="fr-grid-row fr-grid-row--gutters">
+              {aidant.labelisations.map((labelisation) => (
+                <div
+                  className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
+                  key={`${aidant.id}-labelisation-${labelisation}`}
+                  style={badgeStyle}
+                >
+                  {labelisation}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span>-</span>
+          )}
+        </td>
+        <td>
+          {typeof aidant.formations === 'object' && aidant.formations.length > 0 ? (
+            <div className="fr-grid-row fr-grid-row--gutters">
+              {aidant.formations.map((form) => (
+                <div
+                  className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
+                  key={`${aidant.id}-formation-${form}`}
+                  style={badgeStyle}
+                >
+                  {form}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <span>-</span>
+          )}
+        </td>
+        <td className="fr-cell--center">
+          <AccompagnementsTableCell accompagnementsPromise={accompagnementsPromise} aidantId={aidant.id} />
+        </td>
+        <td className="fr-cell--center">
+          <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/aidant/${aidant.id}`}>
+            Détail
+          </Link>
+        </td>
+      </tr>
+    )
+  }
+)
 
 AidantRow.displayName = 'AidantRow'
 
@@ -158,13 +155,8 @@ export default function ListeAidantsMediateurs({
   const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
   if ('type' in listeAidantsMediateursViewModel) {
     return (
-      <div
-        className="fr-alert fr-alert--error"
-        role="alert"
-      >
-        <p>
-          {listeAidantsMediateursViewModel.message}
-        </p>
+      <div className="fr-alert fr-alert--error">
+        <p>{listeAidantsMediateursViewModel.message}</p>
       </div>
     )
   }
@@ -242,26 +234,32 @@ export default function ListeAidantsMediateurs({
     router.push(url.pathname + url.search)
   }
 
-  const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
-    const icons: Array<{ alt: string; src: string }> = []
+  const getAidantIcons = useCallback(
+    (labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
+      const icons: Array<{ alt: string; src: string }> = []
 
-    if (labelisations.includes('conseiller numérique')) {
-      icons.push({ alt: 'Conseiller numérique', src: '/conum.svg' })
-    }
+      if (labelisations.includes('conseiller numérique')) {
+        icons.push({ alt: 'Conseiller numérique', src: '/conum.svg' })
+      }
 
-    if (labelisations.includes('aidants connect')) {
-      icons.push({ alt: 'Aidant numérique', src: '/aidant-numerique.svg' })
-    }
+      if (labelisations.includes('aidants connect')) {
+        icons.push({ alt: 'Aidant numérique', src: '/aidant-numerique.svg' })
+      }
 
-    return icons
-  }, [])
+      return icons
+    },
+    []
+  )
 
   // Styles constants mémorisés
-  const badgeStyle = useMemo(() => ({
-    backgroundColor: 'transparent',
-    border: '1px solid var(--border-default-grey)',
-    color: 'var(--text-default-grey)',
-  }), [])
+  const badgeStyle = useMemo(
+    () => ({
+      backgroundColor: 'transparent',
+      border: '1px solid var(--border-default-grey)',
+      color: 'var(--text-default-grey)',
+    }),
+    []
+  )
 
   return (
     <>
@@ -303,10 +301,7 @@ export default function ListeAidantsMediateurs({
         <div className="fr-mb-2w">
           <div className="fr-grid-row fr-grid-row--gutters">
             {getFiltresActifs().map((filtre) => (
-              <div
-                className="fr-col-auto"
-                key={`${filtre.paramKey}-${filtre.paramValue}`}
-              >
+              <div className="fr-col-auto" key={`${filtre.paramKey}-${filtre.paramValue}`}>
                 <button
                   aria-label={`Retirer le filtre ${filtre.label}`}
                   className="fr-tag fr-icon-close-line fr-tag--icon-left"
@@ -339,24 +334,21 @@ export default function ListeAidantsMediateurs({
             zIndex: 9999,
           }}
         >
-          <SpinnerSimple
-            size="large"
-            text="Chargement..."
-          />
+          <SpinnerSimple size="large" text="Chargement..." />
         </div>
       ) : null}
 
       {viewModel.aidants.length === 0 ? (
         <div
-          style={{ backgroundColor: 'var(--blue-france-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
+          style={{
+            backgroundColor: 'var(--blue-france-975-75)',
+            borderRadius: '1rem',
+            padding: '3rem',
+            textAlign: 'center',
+          }}
         >
-          <p
-            className="fr-text--md fr-mb-0"
-            style={{ textAlign: 'center' }}
-          >
-            <span className="fr-text--bold">
-              👻 Aucuns aidants et médiateurs trouvés sur votre territoire
-            </span>
+          <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
+            <span className="fr-text--bold">👻 Aucuns aidants et médiateurs trouvés sur votre territoire</span>
           </p>
         </div>
       ) : (
@@ -372,14 +364,7 @@ export default function ListeAidantsMediateurs({
           />
 
           <Table
-            enTetes={[
-              'Prénom et nom',
-              'Rôle',
-              'Labelisation / habilitation',
-              'Formation',
-              'Nb accomp.',
-              '',
-            ]}
+            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
             titre="Aidants et médiateurs numériques"
           >
             {viewModel.aidants.map((aidant) => (
@@ -392,14 +377,12 @@ export default function ListeAidantsMediateurs({
               />
             ))}
           </Table>
-        </>)}
+        </>
+      )}
 
       {viewModel.displayPagination ? (
         <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
-          <Pagination
-            pathname="/liste-aidants-mediateurs"
-            totalUtilisateurs={viewModel.total}
-          />
+          <Pagination pathname="/liste-aidants-mediateurs" totalUtilisateurs={viewModel.total} />
         </div>
       ) : null}
 
@@ -414,9 +397,7 @@ export default function ListeAidantsMediateurs({
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <TitleIcon
-            icon="filter-line"
-          />
+          <TitleIcon icon="filter-line" />
           <br />
           Filtrer les aidants et médiateurs
         </DrawerTitle>

@@ -7,7 +7,10 @@ import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
-import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
+import {
+  indiceFragiliteDepartementsPresenter,
+  indiceFragilitePresenter,
+} from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
@@ -23,10 +26,7 @@ export default async function BlocEtatDesLieux({ contexte }: Props): Promise<Rea
   const accompagnementsRealisesPromise = fetchAccompagnementsRealises(code)
 
   const lieuxInclusionReadModel = await lieuxInclusionLoader.get(code)
-  const lieuxInclusionViewModel = handleReadModelOrError(
-    lieuxInclusionReadModel,
-    lieuxInclusionNumeriquePresenter
-  )
+  const lieuxInclusionViewModel = handleReadModelOrError(lieuxInclusionReadModel, lieuxInclusionNumeriquePresenter)
 
   const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(code)
   const mediateursEtAidantsViewModel = handleReadModelOrError(
@@ -52,43 +52,23 @@ async function carteNationale(indicesLoader: PrismaIndicesDeFragiliteLoader): Pr
   const indicesReadModel = await indicesLoader.getForFrance()
 
   if (isErrorReadModel(indicesReadModel)) {
-    return (
-      <CarteIndicesFrance departementsFragilite={[]} />
-    )
+    return <CarteIndicesFrance departementsFragilite={[]} />
   }
 
   return (
-    <CarteIndicesFrance
-      departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)}
-    />
+    <CarteIndicesFrance departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)} />
   )
 }
 
-async function carteDepartement(
-  indicesLoader: PrismaIndicesDeFragiliteLoader,
-  code: string
-): Promise<ReactElement> {
+async function carteDepartement(indicesLoader: PrismaIndicesDeFragiliteLoader, code: string): Promise<ReactElement> {
   const indicesReadModel = await indicesLoader.getForDepartement(code)
-  const indicesFragilite = handleReadModelOrError(
-    indicesReadModel,
-    indiceFragilitePresenter
-  )
+  const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
 
   if ('type' in indicesFragilite) {
-    return (
-      <CarteFragiliteDepartement
-        communesFragilite={[]}
-        departement={code}
-      />
-    )
+    return <CarteFragiliteDepartement communesFragilite={[]} departement={code} />
   }
 
-  return (
-    <CarteFragiliteDepartement
-      communesFragilite={indicesFragilite}
-      departement={code}
-    />
-  )
+  return <CarteFragiliteDepartement communesFragilite={indicesFragilite} departement={code} />
 }
 
 type Props = Readonly<{

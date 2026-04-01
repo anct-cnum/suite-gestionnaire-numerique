@@ -3,15 +3,12 @@ import { ReactElement } from 'react'
 export default function NoteDeContexteVide({ drawerNoteDeContexteId, peutAjouter, showDrawer }: Props): ReactElement {
   return (
     <>
-      <p className="fr-h6">
-        Aucune note de contexte
-      </p>
+      <p className="fr-h6">Aucune note de contexte</p>
       <p>
-        Précisez, au sein d’une note qualitative, les spécificités de votre démarche,
-        les éventuelles difficultés que vous rencontrez, ou tout autre élément
-        que vous souhaitez porter à notre connaissance.
+        Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que
+        vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.
       </p>
-      {peutAjouter ?
+      {peutAjouter ? (
         <button
           aria-controls={drawerNoteDeContexteId}
           className="fr-btn fr-btn--icon-left fr-icon-add-line"
@@ -21,7 +18,7 @@ export default function NoteDeContexteVide({ drawerNoteDeContexteId, peutAjouter
         >
           Ajouter une note de contexte
         </button>
-        : null}
+      ) : null}
     </>
   )
 }

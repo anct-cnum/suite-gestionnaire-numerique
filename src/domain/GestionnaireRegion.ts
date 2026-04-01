@@ -38,10 +38,7 @@ export class GestionnaireRegion extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return (
-      this.isSuperAdmin ||
-      autre instanceof GestionnaireRegion && autre.#region.equals(this.#region)
-    )
+    return this.isSuperAdmin || (autre instanceof GestionnaireRegion && autre.#region.equals(this.#region))
   }
 }
 

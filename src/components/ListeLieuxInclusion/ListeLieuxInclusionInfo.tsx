@@ -5,14 +5,11 @@ export default function ListeLieuxInclusionInfo(props: Props): ReactElement {
   const { infos } = props
 
   return (
-    <section
-      aria-labelledby="ListeLieuxInclusionInfo"
-      className="fr-pb-3w"
-    >
+    <section aria-labelledby="ListeLieuxInclusionInfo" className="fr-pb-3w">
       <div className="fr-container-fluid">
         <div className="fr-grid-row fr-grid-row--gutters">
           {renderLieuxInclusionInfoCard({
-            description: 'Lieux d\'inclusion numérique',
+            description: "Lieux d'inclusion numérique",
             indicateur: String(infos.total),
             legends: '',
           })}
@@ -21,18 +18,12 @@ export default function ListeLieuxInclusionInfo(props: Props): ReactElement {
             indicateur: String(infos.totalLabellise),
             legends: `Dont ${infos.totalConseillerNumerique} conseillers numériques`,
           })}
-          <div
-            className="fr-col-12 fr-col-md-4"
-            style={{ height: '7rem' }}
-          >
+          <div className="fr-col-12 fr-col-md-4" style={{ height: '7rem' }}>
             <div
               className="fr-grid-row  fr-mb-4w fr-border-default--grey"
               style={{ borderRadius: '0.5rem', height: '7rem' }}
             >
-              <div
-                className="fr-col-12 fr-col-md-4 fr-pr-1w"
-                style={{ borderRadius: '0.5rem' , position: 'relative' }}
-              >
+              <div className="fr-col-12 fr-col-md-4 fr-pr-1w" style={{ borderRadius: '0.5rem', position: 'relative' }}>
                 <Image
                   alt=""
                   className="fr-mr-2w"
@@ -77,11 +68,7 @@ export default function ListeLieuxInclusionInfo(props: Props): ReactElement {
   )
 }
 
-function renderLieuxInclusionInfoCard({
-  description,
-  indicateur,
-  legends,
-}: LieuxInclusionInfoCard): ReactElement {
+function renderLieuxInclusionInfoCard({ description, indicateur, legends }: LieuxInclusionInfoCard): ReactElement {
   return (
     <div
       className="fr-col-12 fr-col-md-4"
@@ -97,15 +84,9 @@ function renderLieuxInclusionInfoCard({
           height: '7rem',
         }}
       >
-        <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-          {indicateur}
-        </div>
-        <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-          {description}
-        </div>
-        <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-          {legends}
-        </div>
+        <div className="fr-h5 fr-text-title--blue-france fr-m-0">{indicateur}</div>
+        <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">{description}</div>
+        <div className="fr-text--sm fr-text-title--blue-france fr-m-0">{legends}</div>
       </div>
     </div>
   )

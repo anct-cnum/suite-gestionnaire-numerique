@@ -3,14 +3,16 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 export type EtatPoste = 'occupe' | 'rendu' | 'vacant'
 
 export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
-  contrats: ReadonlyArray<Readonly<{
-    dateDebut: Date | null
-    dateFin: Date | null
-    dateRupture: Date | null
-    mediateur: string
-    role: string
-    typeContrat: string
-  }>>
+  contrats: ReadonlyArray<
+    Readonly<{
+      dateDebut: Date | null
+      dateFin: Date | null
+      dateRupture: Date | null
+      mediateur: string
+      role: string
+      typeContrat: string
+    }>
+  >
   conventions: Readonly<{
     creditsEngagesParLEtat: number
     v1: null | Readonly<{
@@ -35,15 +37,17 @@ export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
   statut: EtatPoste
   structure: Readonly<{
     adresse: string
-    contacts: ReadonlyArray<Readonly<{
-      email: string
-      estReferentFNE: boolean
-      fonction: string
-      id: number
-      nom: string
-      prenom: string
-      telephone: string
-    }>>
+    contacts: ReadonlyArray<
+      Readonly<{
+        email: string
+        estReferentFNE: boolean
+        fonction: string
+        id: number
+        nom: string
+        prenom: string
+        telephone: string
+      }>
+    >
     departement: string
     nom: string
     region: string

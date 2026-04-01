@@ -31,39 +31,46 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
     feuilleDeRouteRecord: Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>
   ): UneFeuilleDeRouteReadModel {
     const syntheseFeuilleDeRoute = this.#etablisseurSynthese({
-      feuillesDeRoute: [{
-        actions: feuilleDeRouteRecord.action.map(action => {
-          const demandeDeSubvention = action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined
-          return {
-            beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-            budgetGlobal: action.budgetGlobal,
-            coFinancements: action.coFinancement.map(({ membre, montant }) => ({
-              coFinanceur: fromMembre(toMembre(membre)),
-              montant,
-            })),
-            subvention: demandeDeSubvention ? {
-              isFormation: isSubventionFormation(action),
-              montants: {
-                prestation: demandeDeSubvention.subventionPrestation ?? 0,
-                ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
-              },
-              statut: demandeDeSubvention.statut as StatutSubvention,
-            } : undefined,
-            uid: `${action.id}`,
-          }
-        }),
-        uid: `${feuilleDeRouteRecord.id}`,
-      }],
+      feuillesDeRoute: [
+        {
+          actions: feuilleDeRouteRecord.action.map((action) => {
+            const demandeDeSubvention = action.demandesDeSubvention[0] as
+              | (typeof action)['demandesDeSubvention'][number]
+              | undefined
+            return {
+              beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
+              budgetGlobal: action.budgetGlobal,
+              coFinancements: action.coFinancement.map(({ membre, montant }) => ({
+                coFinanceur: fromMembre(toMembre(membre)),
+                montant,
+              })),
+              subvention: demandeDeSubvention
+                ? {
+                    isFormation: isSubventionFormation(action),
+                    montants: {
+                      prestation: demandeDeSubvention.subventionPrestation ?? 0,
+                      ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
+                    },
+                    statut: demandeDeSubvention.statut as StatutSubvention,
+                  }
+                : undefined,
+              uid: `${action.id}`,
+            }
+          }),
+          uid: `${feuilleDeRouteRecord.id}`,
+        },
+      ],
     }).feuillesDeRoute[0]
     return {
       actions: feuilleDeRouteRecord.action.map((action, index) => {
-        const demandeDeSubvention = action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined
-        const statut = (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) 
-                  ?? 'nonSubventionnee'
+        const demandeDeSubvention = action.demandesDeSubvention[0] as
+          | (typeof action)['demandesDeSubvention'][number]
+          | undefined
+        const statut = (demandeDeSubvention && (demandeDeSubvention.statut as StatutSubvention)) ?? 'nonSubventionnee'
         const isEditableEtModifiable = statut === StatutSubvention.DEPOSEE || statut === 'nonSubventionnee'
         return {
           beneficiaire: syntheseFeuilleDeRoute.actions[index].beneficiaires,
-          besoins: action.besoins.map(besoin => besoin as BesoinsPossible),
+          besoins: action.besoins.map((besoin) => besoin as BesoinsPossible),
           budgetPrevisionnel: action.budgetGlobal,
           coFinancement: {
             financeur: syntheseFeuilleDeRoute.actions[index].coFinanceurs,
@@ -87,10 +94,13 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
       budgetTotalActions: syntheseFeuilleDeRoute.budget,
       coFinanceur: syntheseFeuilleDeRoute.coFinanceurs,
       contextualisation: feuilleDeRouteRecord.noteDeContextualisation ?? undefined,
-      document: feuilleDeRouteRecord.pieceJointe === null ? undefined : {
-        chemin: feuilleDeRouteRecord.pieceJointe,
-        nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],
-      },
+      document:
+        feuilleDeRouteRecord.pieceJointe === null
+          ? undefined
+          : {
+              chemin: feuilleDeRouteRecord.pieceJointe,
+              nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],
+            },
       edition: {
         date: feuilleDeRouteRecord.derniereEdition ?? feuilleDeRouteRecord.creation,
         nom: feuilleDeRouteRecord.relationUtilisateur?.nom ?? '~',
@@ -113,9 +123,13 @@ function fromMembre({ id, nom, structureId }: Membre): NonNullable<UneFeuilleDeR
   return { nom, structureId, uid: id }
 }
 
-function isSubventionFormation(action: Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>['action'][number]): boolean {
-  return Boolean(action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined)
-    && isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe)
+function isSubventionFormation(
+  action: Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>['action'][number]
+): boolean {
+  return (
+    Boolean(action.demandesDeSubvention[0] as (typeof action)['demandesDeSubvention'][number] | undefined) &&
+    isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe)
+  )
 }
 
 const include = {

@@ -44,7 +44,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
       // Vérifier que le filtre demandé correspond bien au scope de l'utilisateur
       if (codeDepartement !== null && codeDepartement !== territoireDepartement) {
-        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' }, { status: 403 })
+        return NextResponse.json(
+          { error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' },
+          { status: 403 }
+        )
       }
       if (codeRegion !== null) {
         return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
@@ -86,8 +89,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erreur lors de l\'export CSV:', error)
+    console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }
@@ -104,8 +106,8 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     'FRR',
     'QPV',
     'Nombre de mandats AC',
-    'Nombre d\'accompagnements AC',
-    'Nombre d\'accompagnements Coop',
+    "Nombre d'accompagnements AC",
+    "Nombre d'accompagnements Coop",
     'Code INSEE',
   ]
 
@@ -122,13 +124,8 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
   }
 
   // Construction des lignes CSV
-  const rows = lieux.map(lieu => {
-    const adresse = [
-      lieu.numero_voie,
-      lieu.nom_voie,
-      lieu.code_postal,
-      lieu.nom_commune,
-    ].filter(Boolean).join(' ')
+  const rows = lieux.map((lieu) => {
+    const adresse = [lieu.numero_voie, lieu.nom_voie, lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')
 
     return [
       escapeCSV(lieu.id),
@@ -147,6 +144,6 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
   })
 
   // Assemblage final avec BOM UTF-8 pour Excel
-  const csvLines = [headers.join(','), ...rows.map(row => row.join(','))]
+  const csvLines = [headers.join(','), ...rows.map((row) => row.join(','))]
   return `\uFEFF${csvLines.join('\n')}`
 }

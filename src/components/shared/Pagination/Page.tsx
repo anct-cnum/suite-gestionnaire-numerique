@@ -14,12 +14,7 @@ export default function Page({
     if (pageCourante === page) {
       return (
         <li key={page}>
-          <Link
-            aria-current="page"
-            className="fr-pagination__link"
-            href="#"
-            title={`Page ${page}`}
-          >
+          <Link aria-current="page" className="fr-pagination__link" href="#" title={`Page ${page}`}>
             {page}
           </Link>
         </li>
@@ -32,11 +27,7 @@ export default function Page({
 
     return (
       <li key={page}>
-        <Link
-          className="fr-pagination__link"
-          href={cloneUrlAvecParametres}
-          title={`Page ${page}`}
-        >
+        <Link className="fr-pagination__link" href={cloneUrlAvecParametres} title={`Page ${page}`}>
           {page}
         </Link>
       </li>

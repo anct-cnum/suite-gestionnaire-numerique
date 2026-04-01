@@ -31,19 +31,17 @@ export default async function MembresController({ params }: Props): Promise<Reac
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const peutGererGouvernance = contexte.peutGererGouvernance(codeDepartement)
 
-  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader())
-    .handle({ codeDepartement })
+  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({ codeDepartement })
 
   return (
-    <GestionMembres
-      membresViewModel={membresPresenter(membresReadModel)}
-      peutGererGouvernance={peutGererGouvernance}
-    />
+    <GestionMembres membresViewModel={membresPresenter(membresReadModel)} peutGererGouvernance={peutGererGouvernance} />
   )
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
+  params: Promise<
+    Readonly<{
+      codeDepartement: string
+    }>
+  >
 }>

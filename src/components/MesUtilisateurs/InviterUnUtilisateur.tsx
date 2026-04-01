@@ -34,44 +34,22 @@ export default function InviterUnUtilisateur({
 
   return (
     <div>
-      <DrawerTitle id={labelId}>
-        Invitez un utilisateur à rejoindre l’espace de gestion
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>Invitez un utilisateur à rejoindre l’espace de gestion</DrawerTitle>
       <p className="fr-text--sm color-grey">
-        Les champs avec
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-        {' '}
-        sont obligatoires.
+        Les champs avec <span className="color-red">*</span> sont obligatoires.
       </p>
       <form
         aria-label="Inviter un utilisateur"
         method="dialog"
-        onSubmit={(event) => { void inviterUtilisateur(event) }}
+        onSubmit={(event) => {
+          void inviterUtilisateur(event)
+        }}
       >
-        <TextInput
-          id={nomId}
-          name="nom"
-          required={true}
-        >
-          Nom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput id={nomId} name="nom" required={true}>
+          Nom <span className="color-red">*</span>
         </TextInput>
-        <TextInput
-          id={prenomId}
-          name="prenom"
-          required={true}
-        >
-          Prénom
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <TextInput id={prenomId} name="prenom" required={true}>
+          Prénom <span className="color-red">*</span>
         </TextInput>
         <TextInput
           ariaDescribedById="text-input-error-desc-error"
@@ -82,56 +60,40 @@ export default function InviterUnUtilisateur({
           required={true}
           type="email"
         >
-          Adresse électronique
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-          <span className="fr-hint-text">
-            Une invitation lui sera envoyée par e-mail
-          </span>
+          Adresse électronique <span className="color-red">*</span>
+          <span className="fr-hint-text">Une invitation lui sera envoyée par e-mail</span>
         </TextInput>
-        {
-          rolesGerables.length > 1 ?
-            <fieldset className="fr-fieldset">
-              <legend className="fr-mb-2w">
-                Quel rôle souhaitez-vous lui attribuer ?
-                {' '}
-                <span className="color-red">
-                  *
-                </span>
-              </legend>
-              <RadioGroup
-                nomGroupe="attributionRole"
-                onChange={(event) => {
-                  setRoleSelectionne(event.target.value)
-                  setOrganisation(null)
-                }}
-                options={rolesGerables}
-                value={roleSelectionne}
-              />
-            </fieldset>
-            :
-            <>
-              <p className="fr-mb-1w">
-                Rôle attribué à cet utilisateur :
-              </p>
-              <Badge color="purple-glycine">
-                {rolesGerables[0]?.label}
-              </Badge>
-            </>
-        }
-        {
-          isOrganisationDisplayed(roleSelectionne, rolesAvecStructure) ?
-            <OrganisationInput
-              label={rolesAvecStructure[roleSelectionne].label}
-              options={rolesAvecStructure[roleSelectionne].options}
-              organisation={organisation}
-              placeholder={rolesAvecStructure[roleSelectionne].placeholder}
-              required={true}
-              setOrganisation={setOrganisation}
-            /> : null
-        }
+        {rolesGerables.length > 1 ? (
+          <fieldset className="fr-fieldset">
+            <legend className="fr-mb-2w">
+              Quel rôle souhaitez-vous lui attribuer ? <span className="color-red">*</span>
+            </legend>
+            <RadioGroup
+              nomGroupe="attributionRole"
+              onChange={(event) => {
+                setRoleSelectionne(event.target.value)
+                setOrganisation(null)
+              }}
+              options={rolesGerables}
+              value={roleSelectionne}
+            />
+          </fieldset>
+        ) : (
+          <>
+            <p className="fr-mb-1w">Rôle attribué à cet utilisateur :</p>
+            <Badge color="purple-glycine">{rolesGerables[0]?.label}</Badge>
+          </>
+        )}
+        {isOrganisationDisplayed(roleSelectionne, rolesAvecStructure) ? (
+          <OrganisationInput
+            label={rolesAvecStructure[roleSelectionne].label}
+            options={rolesAvecStructure[roleSelectionne].options}
+            organisation={organisation}
+            placeholder={rolesAvecStructure[roleSelectionne].placeholder}
+            required={true}
+            setOrganisation={setOrganisation}
+          />
+        ) : null}
         <div className="fr-btns-group fr-mt-2w">
           <SubmitButton isDisabled={isDisabled}>
             {isDisabled ? 'Envois en cours...' : 'Envoyer l’invitation'}
@@ -159,10 +121,7 @@ export default function InviterUnUtilisateur({
       setEmailDejaExistant({
         className: 'fr-input-group--error',
         content: (
-          <p
-            className="fr-error-text"
-            id="text-input-error-desc-error"
-          >
+          <p className="fr-error-text" id="text-input-error-desc-error">
             Cet utilisateur dispose déjà d’un compte
           </p>
         ),

@@ -6,17 +6,8 @@ export function InternetIcon({
   ...props
 }: Readonly<Parameters<Pictogram>[0]>): ReturnType<Pictogram> {
   return (
-    <svg
-      height={height}
-      width={width}
-      // eslint-disable-next-line react/jsx-props-no-spreading -- SVG props needed
-      {...props}
-      viewBox="0 0 80 80"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Représentation d&apos;Internet
-      </title>
+    <svg height={height} width={width} {...props} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <title>Représentation d&apos;Internet</title>
       <path
         className="fr-artwork-decorative"
         d="M68,13c-0.5514,0-1-0.4486-1-1s0.4486-1,1-1s1,0.4486,1,1S68.5514,13,68,13z M30,80c-0.5514,0-1-0.4486-1-1

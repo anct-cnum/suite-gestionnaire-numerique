@@ -43,19 +43,11 @@ export class Gouvernance extends Entity<State> {
     uid,
   }: GouvernanceFactoryParams): Gouvernance {
     const noteDeContexteAjoutee = noteDeContexte
-      ? new NoteDeContexte(
-        noteDeContexte.dateDeModification,
-        noteDeContexte.uidEditeur,
-        noteDeContexte.contenu
-      )
+      ? new NoteDeContexte(noteDeContexte.dateDeModification, noteDeContexte.uidEditeur, noteDeContexte.contenu)
       : undefined
 
     const notePriveeAjoutee = notePrivee
-      ? new NotePrivee(
-        notePrivee.dateDeModification,
-        notePrivee.uidEditeur,
-        notePrivee.contenu
-      )
+      ? new NotePrivee(notePrivee.dateDeModification, notePrivee.uidEditeur, notePrivee.contenu)
       : undefined
 
     return new Gouvernance(
@@ -68,14 +60,17 @@ export class Gouvernance extends Entity<State> {
   }
 
   static laNotePriveePeutEtreGereePar(utilisateur: Utilisateur, codeDepartementGouvernance: string): boolean {
-    return utilisateur instanceof GestionnaireDepartement
-      && codeDepartementGouvernance === utilisateur.state.departement.code
+    return (
+      utilisateur instanceof GestionnaireDepartement &&
+      codeDepartementGouvernance === utilisateur.state.departement.code
+    )
   }
 
-  static peutEtreGereePar(utilisateur: Utilisateur,
+  static peutEtreGereePar(
+    utilisateur: Utilisateur,
     codeDepartement: string,
-    membresCoporteurs: Array<MembreCoporteur> = [])
-    : boolean {
+    membresCoporteurs: Array<MembreCoporteur> = []
+  ): boolean {
     // Administrateurs peuvent toujours gérer
     if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
       return true
@@ -89,8 +84,7 @@ export class Gouvernance extends Entity<State> {
     // Gestionnaire structure dont la structure est co-porteur peut gérer
     if (utilisateur instanceof GestionnaireStructure) {
       const structureUid = utilisateur.state.structureUid.value
-      const membreCoporteur = membresCoporteurs.find(membre =>
-        membre.structureUid === structureUid)
+      const membreCoporteur = membresCoporteurs.find((membre) => membre.structureUid === structureUid)
       // isCoporteur doit être explicitement true (undefined = false par défaut)
       if (membreCoporteur?.isCoporteur === true) {
         return true
@@ -159,11 +153,7 @@ export class GouvernanceUid extends Uid<GouvernanceUidState> {
 }
 
 export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
-  constructor(
-    dateDeModification: Date,
-    uidEditeur: UtilisateurUid,
-    value: string
-  ) {
+  constructor(dateDeModification: Date, uidEditeur: UtilisateurUid, value: string) {
     super({
       dateDeModification: dateDeModification.toJSON(),
       uidEditeur: uidEditeur.state.value,
@@ -174,11 +164,7 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
 
 export class NotePrivee extends ValueObject<NotePriveeState> {
   // eslint-disable-next-line sonarjs/no-identical-functions
-  constructor(
-    dateDeModification: Date,
-    uidEditeur: UtilisateurUid,
-    value: string
-  ) {
+  constructor(dateDeModification: Date, uidEditeur: UtilisateurUid, value: string) {
     super({
       dateDeModification: dateDeModification.toJSON(),
       uidEditeur: uidEditeur.state.value,
@@ -189,7 +175,11 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 
 export type GouvernanceUidState = Readonly<{ value: string }>
 
-export type GouvernanceFailure = 'noteDeContexteDejaExistante' | 'noteDeContexteInexistante' | 'notePriveeDejaExistante' | 'notePriveeInexistante'
+export type GouvernanceFailure =
+  | 'noteDeContexteDejaExistante'
+  | 'noteDeContexteInexistante'
+  | 'notePriveeDejaExistante'
+  | 'notePriveeInexistante'
 
 type MembreCoporteur = Readonly<{
   isCoporteur?: boolean

@@ -46,5 +46,8 @@ type ActionParams = Readonly<{
 
 const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  telephone: z.string().regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
+  telephone: z
+    .string()
+    .regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' })
+    .or(z.literal('')),
 })

@@ -8,8 +8,10 @@ import {
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseillerNumeriqueDetailLoader {
-  async get(posteConumId: number, structureId: number): 
-  Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel> {
+  async get(
+    posteConumId: number,
+    structureId: number
+  ): Promise<ErrorReadModel | PosteConseillerNumeriqueDetailReadModel> {
     try {
       // Récupérer les données du poste depuis la vue synthèse
       const posteResult = await prisma.$queryRaw<Array<PosteVueResult>>`
@@ -101,9 +103,10 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
         structure: {
           adresse: this.formatAdresse(structure),
           contacts,
-          departement: structure.departement_nom !== null && structure.departement_nom !== ''
-            ? `(${structure.code_departement}) ${structure.departement_nom}`
-            : structure.code_departement ?? '',
+          departement:
+            structure.departement_nom !== null && structure.departement_nom !== ''
+              ? `(${structure.code_departement}) ${structure.departement_nom}`
+              : (structure.code_departement ?? ''),
           nom: structure.nom_structure,
           region: structure.region_nom ?? '',
           siret: structure.siret ?? '',
@@ -215,11 +218,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       include: {
         contact: true,
       },
-      orderBy: [
-        { contact: { est_referent_fne: 'desc' } },
-        { contact: { nom: 'asc' } },
-        { contact: { prenom: 'asc' } },
-      ],
+      orderBy: [{ contact: { est_referent_fne: 'desc' } }, { contact: { nom: 'asc' } }, { contact: { prenom: 'asc' } }],
       where: {
         structure_id: structureId,
       },
@@ -239,24 +238,28 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
   private async recupererContrats(
     posteConumId: number,
     structureId: number
-  ): Promise<ReadonlyArray<{
+  ): Promise<
+    ReadonlyArray<{
       dateDebut: Date | null
       dateFin: Date | null
       dateRupture: Date | null
       mediateur: string
       role: string
       typeContrat: string
-    }>> {
-    const result = await prisma.$queryRaw<Array<{
-      date_debut: Date | null
-      date_fin: Date | null
-      date_rupture: Date | null
-      is_coordinateur: boolean | null
-      is_mediateur: boolean | null
-      nom: null | string
-      prenom: null | string
-      type_contrat: null | string
-    }>>`
+    }>
+  > {
+    const result = await prisma.$queryRaw<
+      Array<{
+        date_debut: Date | null
+        date_fin: Date | null
+        date_rupture: Date | null
+        is_coordinateur: boolean | null
+        is_mediateur: boolean | null
+        nom: null | string
+        prenom: null | string
+        type_contrat: null | string
+      }>
+    >`
       SELECT DISTINCT
         c.date_debut,
         c.date_fin,
@@ -286,14 +289,16 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
   }
 
   private async recupererDatesConventions(posteConumId: number, structureId: number): Promise<DatesConventions> {
-    const result = await prisma.$queryRaw<Array<{
-      date_debut_dgcl: Date | null
-      date_debut_dge: Date | null
-      date_debut_ditp: Date | null
-      date_fin_dgcl: Date | null
-      date_fin_dge: Date | null
-      date_fin_ditp: Date | null
-    }>>`
+    const result = await prisma.$queryRaw<
+      Array<{
+        date_debut_dgcl: Date | null
+        date_debut_dge: Date | null
+        date_debut_ditp: Date | null
+        date_fin_dgcl: Date | null
+        date_fin_dge: Date | null
+        date_fin_ditp: Date | null
+      }>
+    >`
       SELECT
         s.date_debut_convention_dgcl as date_debut_dgcl,
         s.date_fin_convention_dgcl as date_fin_dgcl,

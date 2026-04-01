@@ -13,7 +13,6 @@ export default class AsyncLoaderErrorBoundary extends Component<Props, State> {
     this.state = { error: undefined, hasError: false }
   }
 
-  // eslint-disable-next-line react/sort-comp
   static getDerivedStateFromError(error: Error): State {
     // Mettre à jour l'état pour que le prochain rendu affiche l'interface de secours
     return { error, hasError: true }
@@ -26,7 +25,7 @@ export default class AsyncLoaderErrorBoundary extends Component<Props, State> {
       onError(error, errorInfo)
     } else {
       // Logger par défaut si pas de callback
-      // eslint-disable-next-line no-console
+
       console.error('Error caught by ErrorBoundary:', error, errorInfo)
     }
   }
@@ -43,30 +42,21 @@ export default class AsyncLoaderErrorBoundary extends Component<Props, State> {
         }
         return fallback
       }
-      
+
       // Fallback par défaut
-      return (
-        <div className="fr-display--xs fr-mb-0 color-orange">
-          -
-        </div>
-      )
+      return <div className="fr-display--xs fr-mb-0 color-orange">-</div>
     }
 
     return children
   }
 
-  // eslint-disable-next-line react/sort-comp
   override shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
     const { error, hasError } = this.state
     const { error: nextError, hasError: nextHasError } = nextState
     const { children } = this.props
 
     // Re-render si l'état d'erreur change ou si les enfants changent
-    return (
-      hasError !== nextHasError ||
-      error !== nextError ||
-      children !== nextProps.children
-    )
+    return hasError !== nextHasError || error !== nextError || children !== nextProps.children
   }
 }
 

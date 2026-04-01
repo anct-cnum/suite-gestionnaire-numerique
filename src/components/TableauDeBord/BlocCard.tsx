@@ -2,10 +2,7 @@ import { ReactElement, ReactNode } from 'react'
 
 export default function BlocCard({ children, labelledBy }: Props): ReactElement {
   return (
-    <section
-      aria-labelledby={labelledBy}
-      className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
+    <section aria-labelledby={labelledBy} className="fr-mb-4w grey-border border-radius fr-p-4w">
       {children}
     </section>
   )

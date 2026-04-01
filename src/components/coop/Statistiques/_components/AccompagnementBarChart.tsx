@@ -12,11 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipProps<number, string>) =>
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) =>
   active &&
   payload &&
   payload.length > 0 && (
@@ -27,25 +23,15 @@ const CustomTooltip = ({
       <div className="fr-text--bold">{label}</div>
       <div>
         <span className="fr-text--xs">Accompagnements&nbsp;:</span>{' '}
-        <span className="fr-text--bold">
-          {payload[0].value?.toLocaleString('fr-FR')}
-        </span>
+        <span className="fr-text--bold">{payload[0].value?.toLocaleString('fr-FR')}</span>
       </div>
     </div>
   )
 
-export const AccompagnementBarChart = ({
-  data,
-}: {
-  data: { label: string; count: number }[]
-}) => {
+export const AccompagnementBarChart = ({ data }: { data: { label: string; count: number }[] }) => {
   const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
   const emptyData = data.map((item) => ({ ...item, count: 1 }))
-  const displayData = isEmpty
-    ? emptyData
-    : data.length > 12
-      ? data.slice(-30)
-      : data
+  const displayData = isEmpty ? emptyData : data.length > 12 ? data.slice(-30) : data
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -54,12 +40,7 @@ export const AccompagnementBarChart = ({
         margin={{ top: 15, right: 10, left: 5, bottom: 0 }}
         barSize={displayData.length > 18 ? 16 : 20}
       >
-        <CartesianGrid
-          horizontal
-          vertical={false}
-          strokeDasharray="3 3"
-          stroke="#ddd"
-        />
+        <CartesianGrid horizontal vertical={false} strokeDasharray="3 3" stroke="#ddd" />
         <XAxis
           className="fr-text--xxs"
           dataKey="label"
@@ -77,20 +58,10 @@ export const AccompagnementBarChart = ({
           allowDecimals={false}
           domain={isEmpty ? [0, 1] : undefined}
           className="fr-text--xxs"
-          tickFormatter={(value) =>
-            isEmpty
-              ? ''
-              : value >= 1000
-                ? `${(value / 1000).toFixed(1)}k`
-                : value.toString()
-          }
+          tickFormatter={(value) => (isEmpty ? '' : value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toString())}
         />
         {!isEmpty && <Tooltip content={<CustomTooltip />} />}
-        <Bar
-          dataKey="count"
-          fill={isEmpty ? 'var(--blue-france-975-75)' : '#6a6af4'}
-          radius={[4, 4, 0, 0]}
-        >
+        <Bar dataKey="count" fill={isEmpty ? 'var(--blue-france-975-75)' : '#6a6af4'} radius={[4, 4, 0, 0]}>
           {!isEmpty && (
             <LabelList
               dataKey="count"

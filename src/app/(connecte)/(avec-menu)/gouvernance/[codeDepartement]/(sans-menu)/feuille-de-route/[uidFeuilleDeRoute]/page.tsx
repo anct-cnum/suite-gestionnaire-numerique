@@ -22,9 +22,9 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
       redirect('/connexion')
     }
 
-    const feuilleDeRouteReadModel = await new PrismaUneFeuilleDeRouteLoader(
-      etablirSyntheseFinanciereGouvernance
-    ).get(uidFeuilleDeRoute)
+    const feuilleDeRouteReadModel = await new PrismaUneFeuilleDeRouteLoader(etablirSyntheseFinanciereGouvernance).get(
+      uidFeuilleDeRoute
+    )
 
     if (feuilleDeRouteReadModel.uidGouvernance !== codeDepartement) {
       notFound()
@@ -41,17 +41,17 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
       uidUtilisateurCourant: utilisateur.uid,
     })
 
-    return (
-      <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
-    )
+    return <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
   } catch {
     notFound()
   }
 }
 
 type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-    uidFeuilleDeRoute: string
-  }>>
+  params: Promise<
+    Readonly<{
+      codeDepartement: string
+      uidFeuilleDeRoute: string
+    }>
+  >
 }>

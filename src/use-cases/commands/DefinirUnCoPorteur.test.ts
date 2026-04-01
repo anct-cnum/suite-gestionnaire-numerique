@@ -21,14 +21,18 @@ import {
 } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre, MembreState } from '@/domain/Membre'
-import { gouvernanceFactory, membreConfirmeFactory, membrePotentielFactory, utilisateurFactory } from '@/domain/testHelper'
+import {
+  gouvernanceFactory,
+  membreConfirmeFactory,
+  membrePotentielFactory,
+  utilisateurFactory,
+} from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { Destinataire } from '@/gateways/emails/invitationEmail'
 import { epochTime } from '@/shared/testHelper'
 
 // Mock Sentry
 vi.mock(import('@sentry/nextjs'), () => ({
-
   captureMessage: vi.fn(),
 }))
 
@@ -40,7 +44,7 @@ describe('définir un coporteur', () => {
     vi.clearAllMocks()
   })
 
-  describe('cas d\'erreur', () => {
+  describe("cas d'erreur", () => {
     it('utilisateur non autorisé à gérer la gouvernance', async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
@@ -133,7 +137,7 @@ describe('définir un coporteur', () => {
   })
 
   describe('succès du passage en coporteur', () => {
-    it('quand aucun utilisateur n\'existe, les 2 contacts (référent et technique) sont créés et invités', async () => {
+    it("quand aucun utilisateur n'existe, les 2 contacts (référent et technique) sont créés et invités", async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
       const utilisateur = utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
@@ -258,7 +262,7 @@ describe('définir un coporteur', () => {
       expect(spiedDestinataires).toHaveLength(1)
     })
 
-    it('quand le contact référent existe déjà lié à la même structure, il n\'est pas créé', async () => {
+    it("quand le contact référent existe déjà lié à la même structure, il n'est pas créé", async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
       const utilisateur = utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
@@ -317,7 +321,7 @@ describe('définir un coporteur', () => {
       expect(spiedDestinataires[0]?.email).toBe('technique@example.com')
     })
 
-    it('quand le contact existe lié à une autre structure, un message Sentry est envoyé et l\'utilisateur n\'est pas créé', async () => {
+    it("quand le contact existe lié à une autre structure, un message Sentry est envoyé et l'utilisateur n'est pas créé", async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
       const utilisateur = utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
@@ -376,7 +380,7 @@ describe('définir un coporteur', () => {
 
       // Vérifier que Sentry a été appelé
       expect(Sentry.captureMessage).toHaveBeenCalledWith(
-        'Contact coporteur déjà utilisateur d\'une autre structure',
+        "Contact coporteur déjà utilisateur d'une autre structure",
         expect.objectContaining({
           extra: expect.objectContaining({
             contactEmail: 'referent@example.com',
@@ -470,9 +474,7 @@ let spiedMembreToUpdate: Membre | null
 let spiedUtilisateurToAdd: Array<null | Utilisateur>
 let spiedDestinataires: Array<Destinataire>
 
-class MembreRepositorySpy
-implements GetMembreRepository, GetStructureContactsRepository, UpdateMembreRepository
-{
+class MembreRepositorySpy implements GetMembreRepository, GetStructureContactsRepository, UpdateMembreRepository {
   readonly #contacts: ReadonlyArray<ContactData>
   readonly #membre: Membre
 
@@ -492,7 +494,10 @@ implements GetMembreRepository, GetStructureContactsRepository, UpdateMembreRepo
     return Promise.resolve(this.#membre)
   }
 
-  async getContacts(_uid: MembreState['uid']['value'], _tx?: Prisma.TransactionClient): Promise<ReadonlyArray<ContactData>> {
+  async getContacts(
+    _uid: MembreState['uid']['value'],
+    _tx?: Prisma.TransactionClient
+  ): Promise<ReadonlyArray<ContactData>> {
     return Promise.resolve(this.#contacts)
   }
 
@@ -503,7 +508,7 @@ implements GetMembreRepository, GetStructureContactsRepository, UpdateMembreRepo
 }
 
 class UtilisateurRepositorySpy
-implements AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository
+  implements AddUtilisateurRepository, FindUtilisateurByEmailRepository, GetUtilisateurRepository
 {
   readonly #utilisateurCourant: Utilisateur
   readonly #utilisateursExistants: Array<Utilisateur>
@@ -540,10 +545,10 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
 }
 
 function emailGatewayFactorySpy(_: boolean): EmailGateway {
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataires.push(destinataire)
       return Promise.resolve()
     }
-  }()
+  })()
 }

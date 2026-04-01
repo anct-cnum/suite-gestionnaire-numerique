@@ -6,11 +6,7 @@ import { MembreSupprimer } from '@/domain/MembreSupprimer'
 import { Result } from '@/shared/lang'
 
 export class MembreCandidat extends Membre {
-  constructor(uid: MembreUid,
-    nom: string,
-    uidGouvernance: GouvernanceUid,
-    statut: Statut,
-    uidStructure: StructureUid) {
+  constructor(uid: MembreUid, nom: string, uidGouvernance: GouvernanceUid, statut: Statut, uidStructure: StructureUid) {
     super(uid, nom, [], uidGouvernance, statut, undefined, uidStructure)
   }
 
@@ -29,7 +25,7 @@ export class MembreCandidat extends Membre {
     return new MembreSupprimer(
       this.uid,
       this.nom,
-      this.state.roles.filter( role=> role !== 'coporteur').map(role => new Role(role)),
+      this.state.roles.filter((role) => role !== 'coporteur').map((role) => new Role(role)),
       this.uidGouvernance,
       new Statut('supprimer'),
       date,

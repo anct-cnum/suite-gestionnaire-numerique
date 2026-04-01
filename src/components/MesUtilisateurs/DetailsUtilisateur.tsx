@@ -29,20 +29,11 @@ export default function DetailsUtilisateur({ labelId, utilisateur }: Props): Rea
 
   return (
     <div>
-      <DrawerTitle id={labelId}>
-        {utilisateur.prenomEtNom}
-      </DrawerTitle>
+      <DrawerTitle id={labelId}>{utilisateur.prenomEtNom}</DrawerTitle>
       {donneesPersonnelles.map(({ label, value }) => (
-        <div
-          className="fr-mb-2w"
-          key={label}
-        >
-          <div className="color-grey">
-            {label}
-          </div>
-          <div className="font-weight-700">
-            {value}
-          </div>
+        <div className="fr-mb-2w" key={label}>
+          <div className="color-grey">{label}</div>
+          <div className="font-weight-700">{value}</div>
         </div>
       ))}
     </div>

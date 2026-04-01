@@ -3,7 +3,14 @@ import { select } from 'react-select-event'
 import { describe, expect, it } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { matchWithoutMarkup, renderComponent, rolesAvecStructure, structuresFetch, stubbedConceal, stubbedServerAction } from '@/components/testHelper'
+import {
+  matchWithoutMarkup,
+  renderComponent,
+  rolesAvecStructure,
+  structuresFetch,
+  stubbedConceal,
+  stubbedServerAction,
+} from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -17,14 +24,19 @@ describe('inviter un utilisateur', () => {
     jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(drawer).findByRole('heading', { level: 3, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const drawer = screen.getByRole('dialog', {
+      hidden: false,
+      name: 'Invitez un utilisateur à rejoindre l’espace de gestion',
+    })
+    const titre = await within(drawer).findByRole('heading', {
+      level: 3,
+      name: 'Invitez un utilisateur à rejoindre l’espace de gestion',
+    })
     expect(titre).toBeInTheDocument()
 
-    const champsObligatoires = within(drawer).getByText(
-      matchWithoutMarkup('Les champs avec * sont obligatoires.'),
-      { selector: 'p' }
-    )
+    const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), {
+      selector: 'p',
+    })
     expect(champsObligatoires).toBeInTheDocument()
 
     const formulaireInvitation = screen.getByRole('form', { name: 'Inviter un utilisateur' })
@@ -39,7 +51,9 @@ describe('inviter un utilisateur', () => {
     expect(prenom).toHaveAttribute('name', 'prenom')
     expect(prenom).toHaveAttribute('type', 'text')
 
-    const email = within(formulaireInvitation).getByRole('textbox', { name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail' })
+    const email = within(formulaireInvitation).getByRole('textbox', {
+      name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail',
+    })
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
     expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
@@ -47,13 +61,15 @@ describe('inviter un utilisateur', () => {
     expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
     const fieldset = within(formulaireInvitation).getByRole('group')
-    const roleQuestion = within(fieldset).getByText(
-      matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
-      { selector: 'legend' }
-    )
+    const roleQuestion = within(fieldset).getByText(matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'), {
+      selector: 'legend',
+    })
     expect(roleQuestion).toBeInTheDocument()
 
-    const administrateurDispositif = within(fieldset).getByRole('radio', { checked: false, name: 'Administrateur dispositif' })
+    const administrateurDispositif = within(fieldset).getByRole('radio', {
+      checked: false,
+      name: 'Administrateur dispositif',
+    })
     expect(administrateurDispositif).toBeRequired()
     expect(administrateurDispositif).toHaveAttribute('name', 'attributionRole')
     expect(administrateurDispositif).toHaveAttribute('id', 'Administrateur dispositif')
@@ -63,17 +79,26 @@ describe('inviter un utilisateur', () => {
     expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
 
-    const gestionnaireDepartement = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire département' })
+    const gestionnaireDepartement = within(fieldset).getByRole('radio', {
+      checked: false,
+      name: 'Gestionnaire département',
+    })
     expect(gestionnaireDepartement).toBeRequired()
     expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
 
-    const gestionnaireGroupement = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire groupement' })
+    const gestionnaireGroupement = within(fieldset).getByRole('radio', {
+      checked: false,
+      name: 'Gestionnaire groupement',
+    })
     expect(gestionnaireGroupement).toBeRequired()
     expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
 
-    const gestionnaireStructure = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire structure' })
+    const gestionnaireStructure = within(fieldset).getByRole('radio', {
+      checked: false,
+      name: 'Gestionnaire structure',
+    })
     expect(gestionnaireStructure).toBeRequired()
     expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
@@ -153,10 +178,17 @@ describe('inviter un utilisateur', () => {
 
   it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', async () => {
     // GIVEN
-    vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
-      nom: string
-      uid: string
-    }>> => Promise.resolve([]) })))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => ({
+        json: async (): Promise<
+          ReadonlyArray<{
+            nom: string
+            uid: string
+          }>
+        > => Promise.resolve([]),
+      }))
+    )
     afficherMesUtilisateurs()
 
     // WHEN
@@ -189,14 +221,19 @@ describe('inviter un utilisateur', () => {
     jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(drawer).findByRole('heading', { level: 3, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const drawer = screen.getByRole('dialog', {
+      hidden: false,
+      name: 'Invitez un utilisateur à rejoindre l’espace de gestion',
+    })
+    const titre = await within(drawer).findByRole('heading', {
+      level: 3,
+      name: 'Invitez un utilisateur à rejoindre l’espace de gestion',
+    })
     expect(titre).toBeInTheDocument()
 
-    const champsObligatoires = within(drawer).getByText(
-      matchWithoutMarkup('Les champs avec * sont obligatoires.'),
-      { selector: 'p' }
-    )
+    const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), {
+      selector: 'p',
+    })
     expect(champsObligatoires).toBeInTheDocument()
 
     const nom = within(drawer).getByRole('textbox', { name: 'Nom *' })
@@ -209,23 +246,21 @@ describe('inviter un utilisateur', () => {
     expect(prenom).toHaveAttribute('name', 'prenom')
     expect(prenom).toHaveAttribute('type', 'text')
 
-    const email = within(drawer).getByRole('textbox', { name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail' })
+    const email = within(drawer).getByRole('textbox', {
+      name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail',
+    })
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
     expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
     expect(email).toHaveAttribute('type', 'email')
     expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
-    const roleQuestion = within(drawer).getByText(
-      matchWithoutMarkup('Rôle attribué à cet utilisateur :'),
-      { selector: 'p' }
-    )
+    const roleQuestion = within(drawer).getByText(matchWithoutMarkup('Rôle attribué à cet utilisateur :'), {
+      selector: 'p',
+    })
     expect(roleQuestion).toBeInTheDocument()
 
-    const role = within(drawer).getByText(
-      matchWithoutMarkup('Gestionnaire département'),
-      { selector: 'p' }
-    )
+    const role = within(drawer).getByText(matchWithoutMarkup('Gestionnaire département'), { selector: 'p' })
     expect(role).toBeInTheDocument()
 
     const envoyerInvitation = within(drawer).getByRole('button', { name: 'Envoyer l’invitation' })
@@ -284,7 +319,8 @@ describe('inviter un utilisateur', () => {
       'Gestionnaire région': 'Région',
       'Gestionnaire structure': 'Structure',
     }
-    const inviterUnUtilisateurAction = vi.fn<() => Promise<ReadonlyArray<string>>>()
+    const inviterUnUtilisateurAction = vi
+      .fn<() => Promise<ReadonlyArray<string>>>()
       .mockResolvedValueOnce(['emailExistant'])
       .mockResolvedValueOnce(['OK'])
     vi.stubGlobal('dsfr', stubbedConceal())
@@ -356,7 +392,9 @@ describe('inviter un utilisateur', () => {
     jEnvoieLInvitation()
 
     // THEN
-    const erreurEmailDejaExistant = await within(drawer).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const erreurEmailDejaExistant = await within(drawer).findByText('Cet utilisateur dispose déjà d’un compte', {
+      selector: 'p',
+    })
     expect(erreurEmailDejaExistant).toBeInTheDocument()
     expect(drawer).toBeVisible()
   })
@@ -378,7 +416,9 @@ describe('inviter un utilisateur', () => {
     jEnvoieLInvitation()
 
     // THEN
-    const absenceDeMessageDErreur = within(drawer).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const absenceDeMessageDErreur = within(drawer).queryByText('Cet utilisateur dispose déjà d’un compte', {
+      selector: 'p',
+    })
     expect(absenceDeMessageDErreur).not.toBeInTheDocument()
     await waitFor(() => {
       expect(drawer).not.toBeVisible()

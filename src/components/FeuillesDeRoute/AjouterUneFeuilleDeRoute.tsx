@@ -9,11 +9,7 @@ import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function AjouterUneFeuilleDeRoute({
-  membres,
-  perimetres,
-  uidGouvernance,
-}: Props): ReactElement {
+export default function AjouterUneFeuilleDeRoute({ membres, perimetres, uidGouvernance }: Props): ReactElement {
   const { ajouterUneFeuilleDeRouteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
@@ -53,11 +49,11 @@ export default function AjouterUneFeuilleDeRoute({
           nom=""
           perimetres={perimetres}
           resetPerimetre={true}
-          validerFormulaire={(event) => { void ajouterUneFeuilleDeRoute(event) }}
+          validerFormulaire={(event) => {
+            void ajouterUneFeuilleDeRoute(event)
+          }}
         >
-          <SubmitButton isDisabled={isDisabled}>
-            {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-          </SubmitButton>
+          <SubmitButton isDisabled={isDisabled}>{isDisabled ? 'Ajout en cours...' : 'Enregistrer'}</SubmitButton>
         </FormulaireFeuilleDeRoute>
       </Drawer>
     </>
@@ -81,8 +77,8 @@ export default function AjouterUneFeuilleDeRoute({
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-    setIsDrawerOpen(false);
-    (event.target as HTMLFormElement).reset()
+    setIsDrawerOpen(false)
+    ;(event.target as HTMLFormElement).reset()
     window.dsfr(drawerRef.current).modal.conceal()
     setIsDisabled(false)
   }

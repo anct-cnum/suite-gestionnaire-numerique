@@ -9,7 +9,7 @@ import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/u
 describe('feuille de route', () => {
   it('quand je consulte la page du détail d’une feuille de route avec des actions, alors j’accède à ses informations détaillées', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(),gouvernanceReadModelFactory())
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(), gouvernanceReadModelFactory())
 
     // WHEN
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
@@ -29,14 +29,25 @@ describe('feuille de route', () => {
     const derniereEdition = screen.getByText('Modifiée le 01/01/1970 par Lucie Brunot')
     expect(derniereEdition).toBeInTheDocument()
 
-    const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
+    const sectionContextualisation = screen.getByRole('region', {
+      name: 'Contextualisation des demandes de subvention',
+    })
     const enTeteContextualisation = within(sectionContextualisation).getByRole('banner')
-    const titreContextualisation = within(enTeteContextualisation).getByRole('heading', { level: 2, name: 'Contextualisation des demandes de subvention' })
+    const titreContextualisation = within(enTeteContextualisation).getByRole('heading', {
+      level: 2,
+      name: 'Contextualisation des demandes de subvention',
+    })
     expect(titreContextualisation).toBeInTheDocument()
-    const boutonContextualisation = within(enTeteContextualisation).getByRole('button', { description: 'Modifier la contextualisation', name: 'Modifier' })
+    const boutonContextualisation = within(enTeteContextualisation).getByRole('button', {
+      description: 'Modifier la contextualisation',
+      name: 'Modifier',
+    })
     expect(boutonContextualisation).toHaveAttribute('type', 'button')
 
-    const contextualisation1 = within(sectionContextualisation).getAllByText(matchWithoutMarkup('un paragraphe avec du bold.'), { selector: 'p' })
+    const contextualisation1 = within(sectionContextualisation).getAllByText(
+      matchWithoutMarkup('un paragraphe avec du bold.'),
+      { selector: 'p' }
+    )
     expect(contextualisation1[0]).toBeInTheDocument()
     const contextualisation2 = within(sectionContextualisation).getAllByText('bold', { selector: 'b' })
     expect(contextualisation2[0]).toBeInTheDocument()
@@ -60,29 +71,55 @@ describe('feuille de route', () => {
     const budgetActions = within(enTeteActions[0]).getByRole('list')
     const menuItemsActions = within(budgetActions).getAllByRole('listitem')
     expect(menuItemsActions).toHaveLength(3)
-    const ligne1Actions = within(menuItemsActions[0]).getByText(matchWithoutMarkup('Budget total des actions 140 000 €'))
+    const ligne1Actions = within(menuItemsActions[0]).getByText(
+      matchWithoutMarkup('Budget total des actions 140 000 €')
+    )
     expect(ligne1Actions).toBeInTheDocument()
-    const ligne2Actions = within(menuItemsActions[1]).getByText(matchWithoutMarkup('Montant des financements accordés par l’état 30 000 €'))
+    const ligne2Actions = within(menuItemsActions[1]).getByText(
+      matchWithoutMarkup('Montant des financements accordés par l’état 30 000 €')
+    )
     expect(ligne2Actions).toBeInTheDocument()
-    const ligne3Actions = within(menuItemsActions[2]).getByText(matchWithoutMarkup('Montant des co-financements 90 000 €'))
+    const ligne3Actions = within(menuItemsActions[2]).getByText(
+      matchWithoutMarkup('Montant des co-financements 90 000 €')
+    )
     expect(ligne3Actions).toBeInTheDocument()
-    const titreActions = within(enTeteActions[0]).getByRole('heading', { level: 2, name: '2 actions pour cette feuille de route' })
+    const titreActions = within(enTeteActions[0]).getByRole('heading', {
+      level: 2,
+      name: '2 actions pour cette feuille de route',
+    })
     expect(titreActions).toBeInTheDocument()
     const ajouterUneAction = within(sectionActions).getByRole('link', { name: 'Ajouter une action' })
-    expect(ajouterUneAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/ajouter')
+    expect(ajouterUneAction).toHaveAttribute(
+      'href',
+      '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/ajouter'
+    )
 
-    const action1 = within(sectionActions).getByRole('article', { name: 'Structurer une filière de reconditionnement locale 1' })
+    const action1 = within(sectionActions).getByRole('article', {
+      name: 'Structurer une filière de reconditionnement locale 1',
+    })
     const enTeteAction1 = within(action1).getByRole('banner')
-    const lienAction1 = within(action1).getByRole('link', { description: 'Modifier Structurer une filière de reconditionnement locale 1', name: 'Modifier' })
-    expect(lienAction1).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/actionFooId1/modifier')
+    const lienAction1 = within(action1).getByRole('link', {
+      description: 'Modifier Structurer une filière de reconditionnement locale 1',
+      name: 'Modifier',
+    })
+    expect(lienAction1).toHaveAttribute(
+      'href',
+      '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/actionFooId1/modifier'
+    )
     const supprimerAction1 = within(action1).getByRole('button', { name: /supprimer/i })
     expect(supprimerAction1).toBeEnabled()
     expect(supprimerAction1).toHaveAttribute('type', 'button')
-    const titreAction1 = within(enTeteAction1).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale 1' })
+    const titreAction1 = within(enTeteAction1).getByRole('heading', {
+      level: 3,
+      name: 'Structurer une filière de reconditionnement locale 1',
+    })
     expect(titreAction1).toBeInTheDocument()
     const statutAction1 = within(action1).getByText(/demande envoyée/i, { selector: 'p' })
     expect(statutAction1).toBeInTheDocument()
-    const besoinsEtBeneficiairesAction1 = within(action1).getByText('Établir un diagnostic territorial, 2 bénéficiaires', { selector: 'p' })
+    const besoinsEtBeneficiairesAction1 = within(action1).getByText(
+      'Établir un diagnostic territorial, 2 bénéficiaires',
+      { selector: 'p' }
+    )
     expect(besoinsEtBeneficiairesAction1).toBeInTheDocument()
     const porteursAction1 = within(action1).getByText(matchWithoutMarkup('Porteur : CC des Monts du Lyonnais'))
     expect(porteursAction1).toBeInTheDocument()
@@ -91,14 +128,20 @@ describe('feuille de route', () => {
     const budgetAction1 = within(action1).getByRole('list')
     const budgetItemsAction1 = within(budgetAction1).getAllByRole('listitem')
     expect(budgetItemsAction1).toHaveLength(3)
-    const budgetPrevisionnelAction1 = within(budgetItemsAction1[0]).getByText(matchWithoutMarkup('Budget prévisionnel de l’action 100 000 €'))
+    const budgetPrevisionnelAction1 = within(budgetItemsAction1[0]).getByText(
+      matchWithoutMarkup('Budget prévisionnel de l’action 100 000 €')
+    )
     expect(budgetPrevisionnelAction1).toBeInTheDocument()
-    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(matchWithoutMarkup('Subvention demandée pour l’action : Enveloppe test 40 000 €'))
+    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(
+      matchWithoutMarkup('Subvention demandée pour l’action : Enveloppe test 40 000 €')
+    )
     expect(subventionDemandeeAction1).toBeInTheDocument()
     const cofinanceurAction1 = within(budgetItemsAction1[2]).getByText(matchWithoutMarkup('1 co-financeur 80 000 €'))
     expect(cofinanceurAction1).toBeInTheDocument()
 
-    const action2 = within(sectionActions).getByRole('article', { name: 'Structurer une filière de reconditionnement locale 2' })
+    const action2 = within(sectionActions).getByRole('article', {
+      name: 'Structurer une filière de reconditionnement locale 2',
+    })
     expect(action2).toBeInTheDocument()
     const besoinsEtBeneficiairesAction2 = within(action2).getByText('-, 2 bénéficiaires', { selector: 'p' })
     expect(besoinsEtBeneficiairesAction2).toBeInTheDocument()
@@ -109,7 +152,10 @@ describe('feuille de route', () => {
     const enTeteHistorique = within(sectionHistorique).getByRole('banner')
     const titreHistorique = within(enTeteHistorique).getByRole('heading', { level: 2, name: 'Activité et historique' })
     expect(titreHistorique).toBeInTheDocument()
-    const sousTitreHistorique = within(enTeteHistorique).getByText('Historique des dernières activités pour cette feuille de route.', { selector: 'p' })
+    const sousTitreHistorique = within(enTeteHistorique).getByText(
+      'Historique des dernières activités pour cette feuille de route.',
+      { selector: 'p' }
+    )
     expect(sousTitreHistorique).toBeInTheDocument()
 
     const activiteEtHistorique = within(sectionHistorique).getByRole('table', { name: 'Activité et historique' })
@@ -143,10 +189,13 @@ describe('feuille de route', () => {
 
   it('quand je consulte la page du détail d’une feuille de route sans document, alors j’ai l’encart pour en ajouter un', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter({
-      ...feuilleDeRouteReadModelFactory(),
-      document: undefined,
-    }, gouvernanceReadModelFactory())
+    const viewModel = feuilleDeRoutePresenter(
+      {
+        ...feuilleDeRouteReadModelFactory(),
+        document: undefined,
+      },
+      gouvernanceReadModelFactory()
+    )
 
     // WHEN
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
@@ -154,7 +203,10 @@ describe('feuille de route', () => {
     // THEN
     const sectionUpload = screen.getByRole('region', { name: 'Déposez votre document de stratégie' })
     const enTeteUpload = within(sectionUpload).getByRole('banner')
-    const titreUpload = within(enTeteUpload).getByRole('heading', { level: 2, name: 'Déposez votre document de stratégie' })
+    const titreUpload = within(enTeteUpload).getByRole('heading', {
+      level: 2,
+      name: 'Déposez votre document de stratégie',
+    })
     expect(titreUpload).toBeInTheDocument()
     const boutonUpload = within(sectionUpload).getByLabelText('Taille maximale : 25 Mo. Format .pdf')
     expect(boutonUpload).toHaveAttribute('type', 'file')
@@ -162,10 +214,13 @@ describe('feuille de route', () => {
 
   it('quand je consulte la page du détail d’une feuille de route sans porteur, alors j’ai un "-" à la place', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter({
-      ...feuilleDeRouteReadModelFactory(),
-      porteur: undefined,
-    }, gouvernanceReadModelFactory())
+    const viewModel = feuilleDeRoutePresenter(
+      {
+        ...feuilleDeRouteReadModelFactory(),
+        porteur: undefined,
+      },
+      gouvernanceReadModelFactory()
+    )
     // WHEN
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
 

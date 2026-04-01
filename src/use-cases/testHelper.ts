@@ -11,9 +11,7 @@ import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { Roles } from '@/domain/Role'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 
-export function utilisateurReadModelFactory(
-  override?: Partial<UnUtilisateurReadModel>
-): UnUtilisateurReadModel {
+export function utilisateurReadModelFactory(override?: Partial<UnUtilisateurReadModel>): UnUtilisateurReadModel {
   return {
     departementCode: null,
     derniereConnexion: epochTime,
@@ -55,9 +53,7 @@ export function mesInformationsPersonnellesReadModelFactory(
   }
 }
 
-export function gouvernanceReadModelFactory(
-  override?: Partial<UneGouvernanceReadModel>
-): UneGouvernanceReadModel {
+export function gouvernanceReadModelFactory(override?: Partial<UneGouvernanceReadModel>): UneGouvernanceReadModel {
   return {
     comites: [
       {
@@ -146,7 +142,8 @@ export function gouvernanceReadModelFactory(
       dateDeModification: epochTime,
       nomAuteur: 'Deschamps',
       prenomAuteur: 'Jean',
-      texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      texte:
+        '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
     },
     notePrivee: {
       dateDEdition: epochTime,
@@ -156,7 +153,7 @@ export function gouvernanceReadModelFactory(
     },
     peutGererGouvernance: true,
     peutVoirNotePrivee: true,
-    porteursPotentielsNouvellesFeuillesDeRouteOuActions:[],
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
     syntheseMembres: {
       candidats: 0,
       coporteurs: [
@@ -168,7 +165,10 @@ export function gouvernanceReadModelFactory(
             poste: 'chargé de mission',
             prenom: 'Laetitia',
           },
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }, { nom: 'Feuille de route numérique du Rhône', uid: '1' }],
+          feuillesDeRoute: [
+            { nom: 'Feuille de route inclusion', uid: '0' },
+            { nom: 'Feuille de route numérique du Rhône', uid: '1' },
+          ],
           links: { plusDetails: '/structure/10' },
           nom: 'Préfecture du Rhône',
           nombreContacts: 1,
@@ -245,8 +245,10 @@ export function feuillesDeRouteReadModelFactory(
                 montant: 10_000,
               },
             ],
-            contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-            description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            contexte:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            description:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
             nom: 'Structurer une filière de reconditionnement locale 1',
             porteurs: [
               {
@@ -285,8 +287,10 @@ export function feuillesDeRouteReadModelFactory(
             besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.APPUI_JURIDIQUE],
             budgetGlobal: 100_000,
             coFinancements: [],
-            contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-            description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            contexte:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            description:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
             nom: 'Structurer une filière de reconditionnement locale 2',
             porteurs: [],
             totaux: {
@@ -329,8 +333,10 @@ export function feuillesDeRouteReadModelFactory(
                 montant: 20_000,
               },
             ],
-            contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-            description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            contexte:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            description:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
             nom: 'Structurer une filière de reconditionnement locale 3',
             porteurs: [
               {
@@ -378,8 +384,10 @@ export function feuillesDeRouteReadModelFactory(
                 montant: 6_000,
               },
             ],
-            contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-            description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            contexte:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            description:
+              '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
             nom: 'Structurer une filière de reconditionnement locale 3',
             porteurs: [],
             subvention: {
@@ -662,7 +670,14 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
     ],
     roles: ['cofinanceur', 'coporteur', 'beneficiaire', 'observateur', 'recipiendaire'],
-    typologies: ['', 'Collectivité, EPCI', 'Préfecture départementale', 'Collectivité, conseil départemental', 'Entreprise privée', 'Association'],
+    typologies: [
+      '',
+      'Collectivité, EPCI',
+      'Préfecture départementale',
+      'Collectivité, conseil départemental',
+      'Entreprise privée',
+      'Association',
+    ],
     uidGouvernance: '69',
     ...override,
   }

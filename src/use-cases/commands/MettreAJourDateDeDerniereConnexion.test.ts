@@ -25,13 +25,15 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     // THEN
     expect(result).toBe('OK')
     expect(spiedUidToFind).toBe('fooId')
-    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
-      derniereConnexion: date,
-      uid: {
-        email: 'martin.tartempion@example.net',
-        value: uidUtilisateurCourant,
-      },
-    }).state)
+    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
+      utilisateurFactory({
+        derniereConnexion: date,
+        uid: {
+          email: 'martin.tartempion@example.net',
+          value: uidUtilisateurCourant,
+        },
+      }).state
+    )
   })
 
   it('étant donné une date invalide de connexion d’un utilisateur, quand une mise à jour est demandée, alors elle n’est pas mise à jour', async () => {
@@ -44,7 +46,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     const asyncResult = mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })
 
     // THEN
-    await expect(asyncResult).rejects.toThrowError('dateDeDerniereConnexionInvalide')
+    await expect(asyncResult).rejects.toThrow('dateDeDerniereConnexionInvalide')
   })
 })
 
@@ -54,9 +56,11 @@ let spiedUtilisateurToUpdate: null | Utilisateur
 class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      })
+    )
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

@@ -2,7 +2,7 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRouteFailure  } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRouteFailure } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
@@ -28,9 +28,7 @@ export class ModifierUneNoteDeContextualisation implements CommandHandler<Comman
   async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
-    const gouvernance = await this.#gouvernanceRepository.get(
-      new GouvernanceUid(feuilleDeRoute.state.uidGouvernance)
-    )
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(feuilleDeRoute.state.uidGouvernance))
     if (!feuilleDeRoute.peutEtreGereePar(editeur, gouvernance.state.membresCoporteurs)) {
       return 'utilisateurNePeutPasModifierNoteDeContextualisation'
     }
@@ -47,7 +45,7 @@ export class ModifierUneNoteDeContextualisation implements CommandHandler<Comman
   }
 }
 
-interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository { }
+interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {}
 
 type GouvernanceRepository = GetGouvernanceRepository
 

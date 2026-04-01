@@ -118,7 +118,7 @@ describe('ajouter un membre', () => {
     expect(spiedEntrepriseData?.siret).toBe(siret)
   })
 
-  it('étant donné une gouvernance, quand un membre est créé par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
+  it("étant donné une gouvernance, quand un membre est créé par un gestionnaire qui n'a pas ce droit, alors une erreur est renvoyée", async () => {
     // GIVEN
     const ajouterUnMembre = new AjouterUnMembre(
       new GestionnaireAutreRepositorySpy(),
@@ -202,27 +202,39 @@ class TransactionRepositorySpy implements TransactionRepository {
 }
 
 class MembreRepositorySpy implements CreateMembreRepository, GetMembreRepository {
-  async create(membre: Membre, entrepriseData: EntrepriseData, _?: ContactData, __?: ContactData,  ___?: 
-  Prisma.TransactionClient): Promise<void> {
+  async create(
+    membre: Membre,
+    entrepriseData: EntrepriseData,
+    _?: ContactData,
+    __?: ContactData,
+    ___?: Prisma.TransactionClient
+  ): Promise<void> {
     spiedMembreCreated = membre
     spiedEntrepriseData = entrepriseData
     return Promise.resolve()
   }
 
   async get(_uid: string, __?: Prisma.TransactionClient): Promise<Membre> {
-    return Promise.resolve(new MembreCandidat(
-      new MembreUid('test-uid'),
-      'Test',
-      new GouvernanceUid(uidGouvernance),
-      new Statut('candidat'),
-      new StructureUid(1)
-    ))
+    return Promise.resolve(
+      new MembreCandidat(
+        new MembreUid('test-uid'),
+        'Test',
+        new GouvernanceUid(uidGouvernance),
+        new Statut('candidat'),
+        new StructureUid(1)
+      )
+    )
   }
 }
 
 class MembreAvecStructureRepositorySpy extends MembreRepositorySpy {
-  override async create(membre: Membre, entrepriseData: EntrepriseData,_?: ContactData, __?: ContactData,  ___?:
-  Prisma.TransactionClient): Promise<void> {
+  override async create(
+    membre: Membre,
+    entrepriseData: EntrepriseData,
+    _?: ContactData,
+    __?: ContactData,
+    ___?: Prisma.TransactionClient
+  ): Promise<void> {
     spiedMembreCreated = membre
     spiedEntrepriseData = entrepriseData
 
@@ -237,8 +249,13 @@ class MembreAvecStructureRepositorySpy extends MembreRepositorySpy {
 }
 
 class MembreAvecNouvelleStructureRepositorySpy extends MembreRepositorySpy {
-  override async create(membre: Membre,  entrepriseData: EntrepriseData, __?: ContactData, _?: ContactData, ___?: 
-  Prisma.TransactionClient): Promise<void> {
+  override async create(
+    membre: Membre,
+    entrepriseData: EntrepriseData,
+    __?: ContactData,
+    _?: ContactData,
+    ___?: Prisma.TransactionClient
+  ): Promise<void> {
     spiedMembreCreated = membre
     spiedEntrepriseData = entrepriseData
 

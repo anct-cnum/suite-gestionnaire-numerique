@@ -16,7 +16,7 @@ const meta: Meta<typeof StructureConventions> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 const defaultViewModel = createDefaultStructureViewModel()
 

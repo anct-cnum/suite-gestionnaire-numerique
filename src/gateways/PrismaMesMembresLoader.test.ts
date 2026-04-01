@@ -61,36 +61,36 @@ describe('mes membres loader', () => {
       id: 1,
       libelle: 'Enveloppe formation',
     })
-    
+
     await creerUneEnveloppeFinancement({
       id: 2,
       libelle: 'Enveloppe autre',
     })
-    
+
     await creerUneDemandeDeSubvention({
       actionId: 1,
       enveloppeFinancementId: 1,
       id: 1,
     })
-    
+
     await creerUneDemandeDeSubvention({
       actionId: 2,
       enveloppeFinancementId: 2,
       id: 2,
     })
-    
+
     await creerUnBeneficiaireSubvention({
       demandeDeSubventionId: 1,
       membreId: 'commune-blabla-69',
     })
-    
+
     await creerUnBeneficiaireSubvention({
       demandeDeSubventionId: 2,
       membreId: 'epci-200072056-69',
     })
     await creerUnBeneficiaireSubvention({
       demandeDeSubventionId: 1,
-      membreId:'structure-38012986643097-69',
+      membreId: 'structure-38012986643097-69',
     })
     await creerUnCoFinancement({
       actionId: 1,
@@ -141,7 +141,7 @@ describe('mes membres loader', () => {
           isDeletable: true,
           nom: 'CC Porte du Jura',
           nombreContacts: 1,
-          roles: ['coporteur','beneficiaire'],
+          roles: ['coporteur', 'beneficiaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
           structureId: expect.any(Number),
@@ -180,11 +180,7 @@ describe('mes membres loader', () => {
           isDeletable: true,
           nom: 'Trévérien',
           nombreContacts: 1,
-          roles: [
-            'coporteur',
-            'cofinanceur',
-            'recipiendaire',
-          ],
+          roles: ['coporteur', 'cofinanceur', 'recipiendaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
           structureId: expect.any(Number),
@@ -300,7 +296,7 @@ describe('mes membres loader', () => {
     const mesMembresReadModel = new PrismaMesMembresLoader().get(codeDepartementInexistant)
 
     // THEN
-    await expect(mesMembresReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(mesMembresReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(mesMembresReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

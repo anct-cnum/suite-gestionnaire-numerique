@@ -9,11 +9,10 @@ import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisat
 export async function supprimerMonCompteAction(): ResultAsync<ReadonlyArray<string>> {
   const sessionSub = await getSessionSub()
 
-  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
-    .handle({
-      uidUtilisateurASupprimer: sessionSub,
-      uidUtilisateurCourant: sessionSub,
-    })
+  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
+    uidUtilisateurASupprimer: sessionSub,
+    uidUtilisateurCourant: sessionSub,
+  })
 
   return [message]
 }

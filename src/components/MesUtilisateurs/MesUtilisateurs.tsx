@@ -17,11 +17,9 @@ import Search from '../shared/Search/Search'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { clientContext } from '@/components/shared/ClientContext'
-import { DetailsUtilisateurViewModel, MesUtilisateursViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
+import { MesUtilisateursViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
-export default function MesUtilisateurs(
-  { mesUtilisateursViewModel }: Props
-): ReactElement {
+export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): ReactElement {
   const { router, sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
@@ -33,7 +31,7 @@ export default function MesUtilisateurs(
   // Stryker disable next-line BooleanLiteral
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
   const [termesDeRechercheNomOuEmail, setTermesDeRechercheNomOuEmail] = useState('')
-  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
+  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState({
     derniereConnexion: '',
     emailDeContact: '',
     inviteLe: '',
@@ -99,7 +97,9 @@ export default function MesUtilisateurs(
         <div style={{ flex: '1 1 auto', minWidth: 0 }}>
           <PageTitle>
             <TitleIcon icon="team-line" />
-            {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mon équipe' : `Mon équipe · ${sessionUtilisateurViewModel.role.libelle}`}
+            {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin
+              ? 'Gestion de mon équipe'
+              : `Mon équipe · ${sessionUtilisateurViewModel.role.libelle}`}
           </PageTitle>
         </div>
         <button
@@ -136,160 +136,131 @@ export default function MesUtilisateurs(
           rolesAvecStructure={mesUtilisateursViewModel.rolesAvecStructure}
         />
       </Drawer>
-      {
-        sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? (
-          <>
-            <Drawer
-              boutonFermeture="Fermer les filtres"
+      {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? (
+        <>
+          <Drawer
+            boutonFermeture="Fermer les filtres"
+            closeDrawer={() => {
+              setIsDrawerOpen(false)
+            }}
+            id={drawerFiltreId}
+            // Stryker disable next-line BooleanLiteral
+            isFixedWidth={false}
+            isOpen={isDrawerOpen}
+            labelId={labelFiltreId}
+          >
+            <FiltrerMesUtilisateurs
               closeDrawer={() => {
                 setIsDrawerOpen(false)
               }}
               id={drawerFiltreId}
-              // Stryker disable next-line BooleanLiteral
-              isFixedWidth={false}
-              isOpen={isDrawerOpen}
               labelId={labelFiltreId}
-            >
-              <FiltrerMesUtilisateurs
-                closeDrawer={() => {
-                  setIsDrawerOpen(false)
+              resetSearch={() => {
+                setTermesDeRechercheNomOuEmail('')
+              }}
+            />
+          </Drawer>
+          <div className="fr-grid-row space-between fr-grid-row--middle">
+            <div className="fr-col-6">
+              <Search
+                labelBouton="Rechercher"
+                placeholder="Rechercher par nom ou adresse électronique"
+                rechercher={(event) => {
+                  setTermesDeRechercheNomOuEmail(event.target.value)
                 }}
-                id={drawerFiltreId}
-                labelId={labelFiltreId}
-                resetSearch={() => {
-                  setTermesDeRechercheNomOuEmail('')
-                }}
+                reinitialiserBouton="Reinitialiser"
+                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
+                soumettreLaRecherche={soumettreLaRecherche}
+                termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
               />
-            </Drawer>
-            <div className="fr-grid-row space-between fr-grid-row--middle">
-              <div className="fr-col-6">
-                <Search
-                  labelBouton="Rechercher"
-                  placeholder="Rechercher par nom ou adresse électronique"
-                  rechercher={(event) => {
-                    setTermesDeRechercheNomOuEmail(event.target.value)
-                  }}
-                  reinitialiserBouton="Reinitialiser"
-                  reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
-                  soumettreLaRecherche={soumettreLaRecherche}
-                  termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
+            </div>
+            <div>
+              <button
+                aria-controls={drawerFiltreId}
+                className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
+                data-fr-opened="false"
+                onClick={() => {
+                  setIsDrawerOpen(true)
+                }}
+                type="button"
+              >
+                Filtrer
+              </button>
+              <button
+                className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
+                onClick={handleExportCSV}
+                type="button"
+              >
+                Exporter
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <p>Gérez l’accès à l’espace de gestion</p>
+      )}
+      {mesUtilisateursViewModel.totalUtilisateur === 0 ? (
+        <p>Aucun utilisateur ne correspond aux filtres sélectionnés.</p>
+      ) : (
+        <Table
+          enTetes={['', 'Utilisateur', 'Adresse électronique', 'Rôle', 'Dernière connexion', 'Statut', 'Action']}
+          titre="Mes utilisateurs"
+        >
+          {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => (
+            <tr data-row-key={index} id={`table-sm-row-key-${index}`} key={unUtilisateurViewModel.uid}>
+              <td className="fr-cell--center">
+                <Image
+                  alt=""
+                  height={20}
+                  src={`${process.env.NEXT_PUBLIC_HOST}/${unUtilisateurViewModel.picto}.svg`}
+                  width={20}
                 />
-              </div>
-              <div>
+              </td>
+              <td>
                 <button
-                  aria-controls={drawerFiltreId}
-                  className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
+                  aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
+                  className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
-                  onClick={() => {
-                    setIsDrawerOpen(true)
-                  }}
+                  onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
                   type="button"
                 >
-                  Filtrer
+                  {unUtilisateurViewModel.prenomEtNom}
                 </button>
+                {unUtilisateurViewModel.structure}
+              </td>
+              <td>{unUtilisateurViewModel.emailDeContact}</td>
+              <td>
+                <Badge color="info">{unUtilisateurViewModel.role}</Badge>
+              </td>
+              <td>{unUtilisateurViewModel.derniereConnexion}</td>
+              <td>
+                <Badge color={unUtilisateurViewModel.statut.couleur}>{unUtilisateurViewModel.statut.libelle}</Badge>
+              </td>
+              <td className="fr-cell--center">
                 <button
-                  className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
-                  onClick={handleExportCSV}
+                  aria-controls={modalId}
+                  className={`fr-btn fr-btn--tertiary ${unUtilisateurViewModel.deleteButton.color}`}
+                  data-fr-opened="false"
+                  disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
+                  onClick={() => {
+                    setUtilisateurASupprimer(unUtilisateurViewModel)
+                    setIsModaleSuppressionOpen(true)
+                  }}
+                  title="Supprimer"
                   type="button"
                 >
-                  Exporter
+                  <Icon icon="delete-line" />
                 </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <p>
-            Gérez l’accès à l’espace de gestion
-          </p>
-        )
-      }
-      {
-        mesUtilisateursViewModel.totalUtilisateur === 0
-          ? (
-            <p>
-              Aucun utilisateur ne correspond aux filtres sélectionnés.
-            </p>
-          )
-          : (
-            <Table
-              enTetes={['', 'Utilisateur', 'Adresse électronique', 'Rôle', 'Dernière connexion', 'Statut', 'Action']}
-              titre="Mes utilisateurs"
-            >
-              {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => (
-                <tr
-                  data-row-key={index}
-                  id={`table-sm-row-key-${index}`}
-                  key={unUtilisateurViewModel.uid}
-                >
-                  <td className="fr-cell--center">
-                    <Image
-                      alt=""
-                      height={20}
-                      src={`${process.env.NEXT_PUBLIC_HOST}/${unUtilisateurViewModel.picto}.svg`}
-                      width={20}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
-                      className="primary font-weight-700 fr-px-0 no-hover d-block"
-                      data-fr-opened="false"
-                      onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
-                      type="button"
-                    >
-                      {unUtilisateurViewModel.prenomEtNom}
-                    </button>
-                    {unUtilisateurViewModel.structure}
-                  </td>
-                  <td>
-                    {unUtilisateurViewModel.emailDeContact}
-                  </td>
-                  <td>
-                    <Badge color="info">
-                      {unUtilisateurViewModel.role}
-                    </Badge>
-                  </td>
-                  <td>
-                    {unUtilisateurViewModel.derniereConnexion}
-                  </td>
-                  <td>
-                    <Badge color={unUtilisateurViewModel.statut.couleur}>
-                      {unUtilisateurViewModel.statut.libelle}
-                    </Badge>
-                  </td>
-                  <td className="fr-cell--center">
-                    <button
-                      aria-controls={modalId}
-                      className={`fr-btn fr-btn--tertiary ${unUtilisateurViewModel.deleteButton.color}`}
-                      data-fr-opened="false"
-                      disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
-                      onClick={() => {
-                        setUtilisateurASupprimer(unUtilisateurViewModel)
-                        setIsModaleSuppressionOpen(true)
-                      }}
-                      title="Supprimer"
-                      type="button"
-                    >
-                      <Icon icon="delete-line" />
-                    </button>
-
-                  </td>
-                </tr>
-              ))}
-            </Table>
-          )
-      }
-      {
-        mesUtilisateursViewModel.displayPagination ?
-          (
-            <div className="fr-grid-row fr-grid-row--center">
-              <Pagination
-                pathname="/mes-utilisateurs"
-                totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
-              />
-            </div>
-          ) : null
-      }
+              </td>
+            </tr>
+          ))}
+        </Table>
+      )}
+      {mesUtilisateursViewModel.displayPagination ? (
+        <div className="fr-grid-row fr-grid-row--center">
+          <Pagination pathname="/mes-utilisateurs" totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur} />
+        </div>
+      ) : null}
       <SupprimerUnUtilisateur
         closeModal={() => {
           setIsModaleSuppressionOpen(false)
@@ -309,10 +280,7 @@ export default function MesUtilisateurs(
         isOpen={isDrawerOpen}
         labelId={labelDetailsId}
       >
-        <DetailsUtilisateur
-          labelId={labelDetailsId}
-          utilisateur={utilisateurSelectionne}
-        />
+        <DetailsUtilisateur labelId={labelDetailsId} utilisateur={utilisateurSelectionne} />
       </Drawer>
       <Drawer
         boutonFermeture="Fermer la réinvitation"

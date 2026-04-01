@@ -4,23 +4,10 @@ import { AccompagnementPieChart } from '../_components/AccompagnementPieChart'
 import ProgressBar from '../_components/ProgressBar'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
 import { QuantifiedShareList } from '../_components/QuantifiedShareList'
-import {
-  communeColor,
-  genresColors,
-  statusColors,
-  tranchesAgeColors,
-} from '../colors'
+import { communeColor, genresColors, statusColors, tranchesAgeColors } from '../colors'
 import type { BeneficiairesStatsWithCommunes, BeneficiaireStats } from '../types'
 
-const toProgress = ({
-  label,
-  count,
-  proportion,
-}: {
-  label: string
-  count?: number
-  proportion: number
-}) => ({
+const toProgress = ({ label, count, proportion }: { label: string; count?: number; proportion: number }) => ({
   label,
   count,
   percentage: proportion,
@@ -40,10 +27,7 @@ export const StatistiquesBeneficiaires = ({
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-lg-6 fr-col-12">
           <h4 className="fr-text--md fr-text--nowrap fr-mb-4v">Genres</h4>
-          <QuantifiedShareLegend
-            quantifiedShares={beneficiaires.genres}
-            colors={genresColors}
-          />
+          <QuantifiedShareLegend quantifiedShares={beneficiaires.genres} colors={genresColors} />
         </div>
         <div className="fr-col-lg-6 fr-col-12">
           <AccompagnementPieChart
@@ -59,9 +43,7 @@ export const StatistiquesBeneficiaires = ({
       <hr className="fr-separator-1px fr-my-5w" />
       <div className="fr-flex fr-flex-wrap fr-flex-gap-12v">
         <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
-          <h4 className="fr-text--md fr-text--nowrap fr-mb-4v">
-            Tranches d'âge
-          </h4>
+          <h4 className="fr-text--md fr-text--nowrap fr-mb-4v">Tranches d'âge</h4>
           <div className="fr-mb-4v">
             <ProgressBar
               size="large"
@@ -70,10 +52,7 @@ export const StatistiquesBeneficiaires = ({
               tooltipKey="tranches-age"
             />
           </div>
-          <QuantifiedShareLegend
-            quantifiedShares={beneficiaires.trancheAges}
-            colors={tranchesAgeColors}
-          />
+          <QuantifiedShareLegend quantifiedShares={beneficiaires.trancheAges} colors={tranchesAgeColors} />
         </div>
         <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
           <h4 className="fr-text--md fr-text--nowrap fr-mb-4v">Statuts</h4>
@@ -85,28 +64,20 @@ export const StatistiquesBeneficiaires = ({
               tooltipKey="status-beneficiaires"
             />
           </div>
-          <QuantifiedShareLegend
-            quantifiedShares={beneficiaires.statutsSocial}
-            colors={statusColors}
-          />
+          <QuantifiedShareLegend quantifiedShares={beneficiaires.statutsSocial} colors={statusColors} />
         </div>
       </div>
       {'communes' in beneficiaires && (
         <>
           <hr className="fr-separator-1px fr-my-5w" />
-          <h4 className="fr-text--md fr-mb-4v">
-            Commune de résidence des bénéficiaires
-          </h4>
-          {beneficiaires.communes.length === 0 ||
-          beneficiaires.communes.every((c) => c.count === 0) ? (
+          <h4 className="fr-text--md fr-mb-4v">Commune de résidence des bénéficiaires</h4>
+          {beneficiaires.communes.length === 0 || beneficiaires.communes.every((c) => c.count === 0) ? (
             <div className="fr-text--center fr-background-alt--blue-france fr-p-12v fr-border-radius--8">
               Aucune commune de résidence renseignée
             </div>
           ) : (
             <>
-              <div className="fr-text--bold fr-text--uppercase fr-text--xs fr-text-mention--grey fr-mb-1w">
-                Commune
-              </div>
+              <div className="fr-text--bold fr-text--uppercase fr-text--xs fr-text-mention--grey fr-mb-1w">Commune</div>
               <QuantifiedShareList
                 order="desc"
                 limit={{

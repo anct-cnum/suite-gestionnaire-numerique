@@ -54,24 +54,22 @@ describe('modifier mes informations personnelles action', () => {
     expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
   })
 
-  it.each([
-    '1234',
-    '+1234',
-    '+1234567890123478',
-    '1234567890123478',
-  ])('si le téléphone est mal formaté, alors s’affiche un message d’erreur', async (telephoneMalFormate) => {
-    // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({
-      emailDeContact,
-      nom,
-      path,
-      prenom,
-      telephone: telephoneMalFormate,
-    })
+  it.each(['1234', '+1234', '+1234567890123478', '1234567890123478'])(
+    'si le téléphone est mal formaté, alors s’affiche un message d’erreur',
+    async (telephoneMalFormate) => {
+      // WHEN
+      const messages = await modifierMesInformationsPersonnellesAction({
+        emailDeContact,
+        nom,
+        path,
+        prenom,
+        telephone: telephoneMalFormate,
+      })
 
-    // THEN
-    expect(messages).toStrictEqual(['Le téléphone doit être au format 0102030405 ou +33102030405'])
-  })
+      // THEN
+      expect(messages).toStrictEqual(['Le téléphone doit être au format 0102030405 ou +33102030405'])
+    }
+  )
 
   it('si le téléphone est vide, alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN

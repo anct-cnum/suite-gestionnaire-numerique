@@ -1,0 +1,18 @@
+packages:
+  - "."
+
+onlyBuiltDependencies:
+  - esbuild
+  - prisma
+  - "@prisma/client"
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+minimumReleaseAge: 14400
+minimumReleaseAgeExclude:
+  - next
+  - "@next/*"
+  - react
+  - react-dom

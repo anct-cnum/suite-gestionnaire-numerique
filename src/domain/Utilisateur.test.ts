@@ -6,26 +6,21 @@ import { epochTime } from '@/shared/testHelper'
 
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
-    describe(
-      'un Administrateur dispositif peut gérer n’importe quel autre utilisateur',
-      () => {
-        describe.each([
-          'Administrateur dispositif',
-        ] as const)('%s peut gérer', (roleGerant) => {
-          it.each(Roles)('%s', (roleAGerer) => {
-            // GIVEN
-            const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role: roleGerant })
-            const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, role: roleAGerer })
+    describe('un Administrateur dispositif peut gérer n’importe quel autre utilisateur', () => {
+      describe.each(['Administrateur dispositif'] as const)('%s peut gérer', (roleGerant) => {
+        it.each(Roles)('%s', (roleAGerer) => {
+          // GIVEN
+          const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role: roleGerant })
+          const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, role: roleAGerer })
 
-            // WHEN
-            const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
+          // WHEN
+          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
-            // THEN
-            expect(peutGerer).toBe(true)
-          })
+          // THEN
+          expect(peutGerer).toBe(true)
         })
-      }
-    )
+      })
+    })
 
     describe('l’utilisateur appartient au groupe "gestionnaire"', () => {
       describe.each([

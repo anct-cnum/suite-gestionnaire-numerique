@@ -95,11 +95,13 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouver
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: '75',
-      role: 'Gestionnaire département',
-      uid: { email: 'michel.tartempion@example.net', value: 'userFooId2' },
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        codeOrganisation: '75',
+        role: 'Gestionnaire département',
+        uid: { email: 'michel.tartempion@example.net', value: 'userFooId2' },
+      })
+    )
   }
 }
 

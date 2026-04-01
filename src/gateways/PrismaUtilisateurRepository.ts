@@ -22,7 +22,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           ssoEmail: utilisateurState.uid.email.toLowerCase(),
         },
       })
-      if(utilisateurExistant?.isSupprime ?? false){
+      if (utilisateurExistant?.isSupprime ?? false) {
         return await this.#undrop(utilisateurState.uid.email.toLowerCase())
       }
 
@@ -61,7 +61,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async drop(utilisateur: Utilisateur): Promise<boolean> {
     return this.#drop(utilisateur.state.uid.value)
   }
-  
+
   async findByEmail(email: string): Promise<undefined | Utilisateur> {
     const record = await this.#dataResource.findUnique({
       include: {
@@ -213,7 +213,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 }
 
-function mapDepartement(relationDepartement: UtilisateurEtSesRelationsRecord['relationDepartement']): DepartementState | undefined {
+function mapDepartement(
+  relationDepartement: UtilisateurEtSesRelationsRecord['relationDepartement']
+): DepartementState | undefined {
   if (relationDepartement) {
     return {
       code: relationDepartement.code,

@@ -11,23 +11,23 @@ export class PrismaEnveloppesLoader implements EnveloppesLoader {
       },
     })
     return {
-      enveloppes: enveloppes.map(enveloppe => {
+      enveloppes: enveloppes.map((enveloppe) => {
         const estVentile = enveloppe.departementsEnveloppes.length > 0
         const plafondDepartement = enveloppe.departementsEnveloppes.find(
-          de => de.departementCode === uidGouvernance
+          (de) => de.departementCode === uidGouvernance
         )?.plafond
 
         return {
           budget: estVentile
             ? {
-              total: enveloppe.montant,
-              type: 'ventile',
-              ventile: plafondDepartement ?? 0,
-            }
+                total: enveloppe.montant,
+                type: 'ventile',
+                ventile: plafondDepartement ?? 0,
+              }
             : {
-              total: enveloppe.montant,
-              type: 'nonVentile',
-            },
+                total: enveloppe.montant,
+                type: 'nonVentile',
+              },
           dateDeDebut: enveloppe.dateDeDebut,
           dateDeFin: enveloppe.dateDeFin,
           id: enveloppe.id,
@@ -36,4 +36,4 @@ export class PrismaEnveloppesLoader implements EnveloppesLoader {
       }),
     }
   }
-} 
+}

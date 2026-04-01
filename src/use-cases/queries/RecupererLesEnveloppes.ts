@@ -14,13 +14,13 @@ export type EnveloppeReadModel = Readonly<{
   libelle: string
 }>
 
-type EnveloppeBudget = 
+type EnveloppeBudget =
   | Readonly<{
-    total: number
-    type: 'nonVentile'
-  }>
+      total: number
+      type: 'nonVentile'
+    }>
   | Readonly<{
-    total: number
-    type: 'ventile'
-    ventile: number
-  }>
+      total: number
+      type: 'ventile'
+      ventile: number
+    }>

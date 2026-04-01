@@ -19,19 +19,10 @@ export default function Poste({ viewModel }: Props): ReactElement {
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
         <div className={styles.menuContainer}>
-          <MenuCollant
-            contentId="poste-content"
-            items={items}
-          />
+          <MenuCollant contentId="poste-content" items={items} />
         </div>
-        <div
-          className={styles.contentContainer}
-          id="poste-content"
-        >
-          <PosteHeader
-            badges={viewModel.badges}
-            posteId={viewModel.posteId}
-          />
+        <div className={styles.contentContainer} id="poste-content">
+          <PosteHeader badges={viewModel.badges} posteId={viewModel.posteId} />
 
           <PosteStructureConventionnee structure={viewModel.structure} />
           <AlerteConstruction />
@@ -45,10 +36,12 @@ export default function Poste({ viewModel }: Props): ReactElement {
 }
 
 type PosteViewModel = Readonly<{
-  badges: ReadonlyArray<Readonly<{
-    color: string
-    label: string
-  }>>
+  badges: ReadonlyArray<
+    Readonly<{
+      color: string
+      label: string
+    }>
+  >
   contrats: ReadonlyArray<ContratRattacheViewModel>
   conventionsEtFinancements: ConventionsEtFinancementsViewModel
   posteId: number

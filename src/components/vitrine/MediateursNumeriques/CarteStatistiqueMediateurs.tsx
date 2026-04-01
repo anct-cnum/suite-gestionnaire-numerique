@@ -1,23 +1,11 @@
 import { ReactElement } from 'react'
 
-export default function CarteStatistiqueMediateurs({
-  nombre,
-  sousTexte,
-}: Props): ReactElement {
+export default function CarteStatistiqueMediateurs({ nombre, sousTexte }: Props): ReactElement {
   return (
-    <div
-      className="background-blue-france fr-p-3w fr-mb-1w"
-      style={{ flex: 1 }}
-    >
-      <div className="fr-h2 fr-m-0">
-        {nombre}
-      </div>
-      <div className="font-weight-500">
-        Médiateurs numériques
-      </div>
-      <div className="fr-text--xs color-blue-france fr-mb-0">
-        {sousTexte}
-      </div>
+    <div className="background-blue-france fr-p-3w fr-mb-1w" style={{ flex: 1 }}>
+      <div className="fr-h2 fr-m-0">{nombre}</div>
+      <div className="font-weight-500">Médiateurs numériques</div>
+      <div className="fr-text--xs color-blue-france fr-mb-0">{sousTexte}</div>
     </div>
   )
 }

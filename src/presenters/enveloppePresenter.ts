@@ -1,12 +1,15 @@
 import { Enveloppe } from './shared/enveloppe'
 import { EnveloppeReadModel } from '@/use-cases/queries/RecupererLesEnveloppes'
 
-export function enveloppePresenter(aujourdhui: Date, enveloppe: EnveloppeReadModel, 
-  demandeDeSubventionDejaAccordee?: number): Enveloppe {
+export function enveloppePresenter(
+  aujourdhui: Date,
+  enveloppe: EnveloppeReadModel,
+  demandeDeSubventionDejaAccordee?: number
+): Enveloppe {
   const available = aujourdhui >= enveloppe.dateDeDebut && aujourdhui <= enveloppe.dateDeFin
   const budget = enveloppe.budget.type === 'ventile' ? enveloppe.budget.ventile : enveloppe.budget.total
-  const montantRestant = 
-      demandeDeSubventionDejaAccordee === undefined ? budget : budget - demandeDeSubventionDejaAccordee
+  const montantRestant =
+    demandeDeSubventionDejaAccordee === undefined ? budget : budget - demandeDeSubventionDejaAccordee
 
   return {
     available,

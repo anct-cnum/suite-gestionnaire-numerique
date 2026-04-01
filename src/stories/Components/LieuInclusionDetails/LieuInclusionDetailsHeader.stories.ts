@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof LieuInclusionDetailsHeader> = {
   argTypes: {
     data: {
-      description: 'Données d\'en-tête du lieu d\'inclusion numérique',
+      description: "Données d'en-tête du lieu d'inclusion numérique",
     },
   },
   component: LieuInclusionDetailsHeader,
@@ -17,7 +17,7 @@ const meta: Meta<typeof LieuInclusionDetailsHeader> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {
@@ -31,7 +31,13 @@ export const AvecPlusieursLabels: Story = {
       modificationAuteur: 'Jean Dupont',
       modificationDate: '20/04/2024',
       nom: 'Maison des Services Publics de Lyon',
-      tags: ['France Services', 'Conseiller numérique', 'Maison des services publics', 'Point d\'accès au droit', 'Tiers-lieu'],
+      tags: [
+        'France Services',
+        'Conseiller numérique',
+        'Maison des services publics',
+        "Point d'accès au droit",
+        'Tiers-lieu',
+      ],
     },
   },
 }
@@ -63,7 +69,7 @@ export const NomLong: Story = {
     data: {
       modificationAuteur: 'Marie Leroy',
       modificationDate: '15/06/2024',
-      nom: 'Maison des Services Publics et de l\'Inclusion Numérique de Montpellier Métropole - Antenne Nord',
+      nom: "Maison des Services Publics et de l'Inclusion Numérique de Montpellier Métropole - Antenne Nord",
       tags: ['France Services', 'Conseiller numérique', 'Maison des services publics'],
     },
   },

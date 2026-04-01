@@ -102,8 +102,7 @@ export class FeuilleDeRoute extends Entity<State> {
         noteDeContextualisation,
         document
       )
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       return (error as Exception<FeuilleDeRouteFailure>).message as FeuilleDeRouteFailure
     }
   }
@@ -126,10 +125,7 @@ export class FeuilleDeRoute extends Entity<State> {
     return 'OK'
   }
 
-  mettreAjourLaDateDeModificationEtLEditeur(
-    date: Date,
-    editeur: Utilisateur
-  ): this {
+  mettreAjourLaDateDeModificationEtLEditeur(date: Date, editeur: Utilisateur): this {
     this.#dateDeModification = new ValidDate(date, 'dateDeModificationInvalide')
     this.#uidEditeur = new UtilisateurUid(editeur.state.uid)
     return this
@@ -157,16 +153,17 @@ export class FeuilleDeRoute extends Entity<State> {
     }
 
     // Gestionnaire département du même département peut gérer
-    if (this.#uidGouvernance.state.value === utilisateur.state.departement?.code
-      && isGestionnaireDepartement(utilisateur.state.role.nom)) {
+    if (
+      this.#uidGouvernance.state.value === utilisateur.state.departement?.code &&
+      isGestionnaireDepartement(utilisateur.state.role.nom)
+    ) {
       return true
     }
 
     // Gestionnaire structure dont la structure est co-porteur peut gérer
     if (utilisateur instanceof GestionnaireStructure) {
       const structureUid = utilisateur.state.structureUid.value
-      const membreCoporteur = membresCoporteurs.find(membre =>
-        membre.structureUid === structureUid)
+      const membreCoporteur = membresCoporteurs.find((membre) => membre.structureUid === structureUid)
       // isCoporteur doit être explicitement true (undefined = false par défaut)
       if (membreCoporteur?.isCoporteur === true) {
         return true
@@ -185,15 +182,17 @@ export class FeuilleDeRoute extends Entity<State> {
   }
 }
 
-const Types = [
-  'departemental',
-  'groupementsDeCommunes',
-  'regional',
-]
+const Types = ['departemental', 'groupementsDeCommunes', 'regional']
 
-export type PerimetreGeographiqueTypes = typeof Types[number]
+export type PerimetreGeographiqueTypes = (typeof Types)[number]
 
-export type FeuilleDeRouteFailure = 'dateDeModificationInvalide' | 'documentInexistant' | 'noteDeContextualisationDejaExistante' | 'noteDeContextualisationInexistante' | 'perimetreGeographiqueInvalide' | 'utilisateurNePeutPasModifierNoteDeContextualisation'
+export type FeuilleDeRouteFailure =
+  | 'dateDeModificationInvalide'
+  | 'documentInexistant'
+  | 'noteDeContextualisationDejaExistante'
+  | 'noteDeContextualisationInexistante'
+  | 'perimetreGeographiqueInvalide'
+  | 'utilisateurNePeutPasModifierNoteDeContextualisation'
 
 export class FeuilleDeRouteUid extends Uid<UidState> {
   constructor(value: string) {

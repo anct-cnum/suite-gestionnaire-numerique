@@ -27,49 +27,29 @@ export default async function BlocFinancements({ contexte }: Props): Promise<Rea
 async function financementsNationaux(): Promise<ReactElement> {
   const financementsAdminLoader = new PrismaFinancementsAdminLoader()
   const financementsReadModel = await financementsAdminLoader.get()
-  const financementsViewModel = handleReadModelOrError(
-    financementsReadModel,
-    financementAdminPresenter
-  )
+  const financementsViewModel = handleReadModelOrError(financementsReadModel, financementAdminPresenter)
 
   return (
-    <FinancementsAdmin
-      financementViewModel={financementsViewModel}
-      lienFinancements="/gouvernance/01/beneficiaires"
-    />
+    <FinancementsAdmin financementViewModel={financementsViewModel} lienFinancements="/gouvernance/01/beneficiaires" />
   )
 }
 
 async function financementsDepartement(code: string): Promise<ReactElement> {
   const financementsLoader = new PrismaFinancementsLoader()
   const financementsReadModel = await financementsLoader.get(code)
-  const financementsViewModel = handleReadModelOrError(
-    financementsReadModel,
-    financementsPrefPresenter
-  )
+  const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsPrefPresenter)
 
   return (
-    <FinancementsPref
-      conventionnement={financementsViewModel}
-      lienFinancements={`/gouvernance/${code}/financements`}
-    />
+    <FinancementsPref conventionnement={financementsViewModel} lienFinancements={`/gouvernance/${code}/financements`} />
   )
 }
 
 async function financementsStructure(structureId: number): Promise<ReactElement> {
   const financementsLoader = new PrismaFinancementsStructureLoader()
   const financementsReadModel = await financementsLoader.get(structureId)
-  const financementsViewModel = handleReadModelOrError(
-    financementsReadModel,
-    financementsStructurePresenter
-  )
+  const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsStructurePresenter)
 
-  return (
-    <FinancementsStructure
-      lienFinancements="/gouvernance/financements"
-      viewModel={financementsViewModel}
-    />
-  )
+  return <FinancementsStructure lienFinancements="/gouvernance/financements" viewModel={financementsViewModel} />
 }
 
 type Props = Readonly<{

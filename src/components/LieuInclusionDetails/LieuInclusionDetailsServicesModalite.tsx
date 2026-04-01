@@ -32,12 +32,13 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
     },
     {
       label: 'Gratuit sous condition',
-      subLabel: 'La gratuité est conditionnée à des critères (adhésion, situation familiale, convention avec un organisme social, pass numérique...)',
+      subLabel:
+        'La gratuité est conditionnée à des critères (adhésion, situation familiale, convention avec un organisme social, pass numérique...)',
       value: 'Gratuit sous condition',
     },
     {
       label: 'Payant',
-      subLabel: 'L\'accès au lieu et/ou à ses services est payant',
+      subLabel: "L'accès au lieu et/ou à ses services est payant",
       value: 'Payant',
     },
   ]
@@ -63,7 +64,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
     })
 
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifiées', title: 'Modalités d\'accès au service ' })
+      Notification('success', { description: 'modifiées', title: "Modalités d'accès au service " })
       setIsEditing(false)
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
@@ -81,18 +82,12 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
   }
 
   function getRenderMail(): ReactElement {
-    if(isEditing){
+    if (isEditing) {
       return (
         <div className="fr-input-group">
-          <label
-            className="fr-label"
-            htmlFor="email"
-          >
-            Précisez l&apos;adresse mail de contact
-            {' '}
-            <span className="fr-hint-text">
-              Format attendu : nom@domaine.fr
-            </span>
+          <label className="fr-label" htmlFor="email">
+            Précisez l&apos;adresse mail de contact{' '}
+            <span className="fr-hint-text">Format attendu : nom@domaine.fr</span>
           </label>
           <input
             className="fr-input"
@@ -107,34 +102,20 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
     }
     if (typeof email === 'string' && email.length > 0) {
       return (
-        <a
-          className="fr-link"
-          href={`mailto:${email}`}
-        >
+        <a className="fr-link" href={`mailto:${email}`}>
           {email}
         </a>
       )
     }
-    return (
-      <p className="fr-text--sm">
-        Non renseigné
-      </p>
-    )
+    return <p className="fr-text--sm">Non renseigné</p>
   }
 
   function getRenderTel(): ReactElement {
-    if(isEditing) {
+    if (isEditing) {
       return (
         <div className="fr-input-group">
-          <label
-            className="fr-label"
-            htmlFor="telephone"
-          >
-            Précisez le téléphone de contact
-            {' '}
-            <span className="fr-hint-text">
-              Exemple: 06 00 00 00 00 ou 0600000000
-            </span>
+          <label className="fr-label" htmlFor="telephone">
+            Précisez le téléphone de contact <span className="fr-hint-text">Exemple: 06 00 00 00 00 ou 0600000000</span>
           </label>
           <input
             className="fr-input"
@@ -145,33 +126,28 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
             type="text"
           />
         </div>
-      )}
-    if(typeof telephone === 'string' && telephone.length > 0 ) {
+      )
+    }
+    if (typeof telephone === 'string' && telephone.length > 0) {
       return (
-        <a
-          className="fr-link fr-text--md"
-          href={`tel:${telephone}`}
-        >
+        <a className="fr-link fr-text--md" href={`tel:${telephone}`}>
           {telephone}
         </a>
-      )}
-    return (
-      <p className="fr-text--sm">
-        Non renseigné
-      </p>
-    )
+      )
+    }
+    return <p className="fr-text--sm">Non renseigné</p>
   }
 
   return (
     <form
       className="fr-p-4w"
-      onSubmit={(event) => { void handleSubmit(event) }}
+      onSubmit={(event) => {
+        void handleSubmit(event)
+      }}
     >
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
         <div className="fr-col fr-col-12 fr-col-md-8">
-          <h4 className="fr-h6 fr-mb-1v">
-            Modalités d&apos;accès au service
-          </h4>
+          <h4 className="fr-h6 fr-mb-1v">Modalités d&apos;accès au service</h4>
           <p className={`fr-text--sm fr-mb-2w ${sharedStyles.subtitleGrey}`}>
             Indiquez comment bénéficier des services d&apos;inclusion numérique.
           </p>
@@ -191,18 +167,12 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
         </div>
       </div>
 
-      {isEditing
-        ? (
-          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
-            Ces champs sont optionnels
-          </p>
-        )
-        : null}
+      {isEditing ? (
+        <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>Ces champs sont optionnels</p>
+      ) : null}
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Modalités d&apos;accès
-        </h5>
+        <h5 className="fr-text--md fr-mb-1w">Modalités d&apos;accès</h5>
         <p className="fr-text--sm fr-mb-2w">
           Indiquez comment bénéficier de vos services. Sélectionnez un ou plusieurs choix.
         </p>
@@ -210,10 +180,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
           <fieldset className="fr-fieldset">
             <div className="fr-fieldset__content">
               {modalitesAccesOptions.map((option) => (
-                <div
-                  className="fr-checkbox-group"
-                  key={option.value}
-                >
+                <div className="fr-checkbox-group" key={option.value}>
                   <input
                     defaultChecked={modalitesAcces?.includes(option.value)}
                     id={option.value}
@@ -221,10 +188,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
                     type="checkbox"
                     value={option.value}
                   />
-                  <label
-                    className="fr-label"
-                    htmlFor={option.value}
-                  >
+                  <label className="fr-label" htmlFor={option.value}>
                     {option.label}
                   </label>
                 </div>
@@ -233,52 +197,37 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
           </fieldset>
         ) : (
           <div className="fr-tags-group">
-            {modalitesAcces && modalitesAcces.length > 0 ?
+            {modalitesAcces && modalitesAcces.length > 0 ? (
               modalitesAcces.map((modalite) => (
-                <span
-                  className="fr-tag fr-tag--mg"
-                  key={modalite}
-                >
+                <span className="fr-tag fr-tag--mg" key={modalite}>
                   {modalite}
                 </span>
-              )) : (
-                <span className="fr-tag fr-tag--mg">
-                  Non renseigné
-                </span>
-              )}
+              ))
+            ) : (
+              <span className="fr-tag fr-tag--mg">Non renseigné</span>
+            )}
           </div>
         )}
       </div>
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Téléphone de contact
-        </h5>
+        <h5 className="fr-text--md fr-mb-1w">Téléphone de contact</h5>
         {getRenderTel()}
       </div>
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Adresse mail de contact
-        </h5>
+        <h5 className="fr-text--md fr-mb-1w">Adresse mail de contact</h5>
         {getRenderMail()}
       </div>
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Frais à charge
-        </h5>
-        <p className="fr-text--sm fr-mb-2w">
-          Indiquez les conditions financières d&apos;accès aux services.
-        </p>
+        <h5 className="fr-text--md fr-mb-1w">Frais à charge</h5>
+        <p className="fr-text--sm fr-mb-2w">Indiquez les conditions financières d&apos;accès aux services.</p>
         {isEditing ? (
           <fieldset className="fr-fieldset">
             <div className="fr-fieldset__content">
               {fraisAChargeOptions.map((option) => (
-                <div
-                  className="fr-checkbox-group"
-                  key={option.value}
-                >
+                <div className="fr-checkbox-group" key={option.value}>
                   <input
                     defaultChecked={fraisACharge?.includes(option.value)}
                     id={option.value}
@@ -286,14 +235,9 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
                     type="checkbox"
                     value={option.value}
                   />
-                  <label
-                    className="fr-label"
-                    htmlFor={option.value}
-                  >
+                  <label className="fr-label" htmlFor={option.value}>
                     {option.label}
-                    <span className="fr-hint-text">
-                      {option.subLabel}
-                    </span>
+                    <span className="fr-hint-text">{option.subLabel}</span>
                   </label>
                 </div>
               ))}
@@ -302,10 +246,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
         ) : (
           <div className="fr-tags-group">
             {(fraisACharge && fraisACharge.length > 0 ? fraisACharge : ['Non renseigné']).map((frais) => (
-              <span
-                className="fr-tag fr-tag--mg"
-                key={frais}
-              >
+              <span className="fr-tag fr-tag--mg" key={frais}>
                 {frais}
               </span>
             ))}
@@ -313,27 +254,16 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
         )}
       </div>
 
-      {isEditing
-        ? (
-          <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
-            <button
-              className="fr-btn fr-btn--secondary"
-              disabled={isDisabled}
-              onClick={handleCancel}
-              type="button"
-            >
-              Annuler
-            </button>
-            <button
-              className="fr-btn"
-              disabled={isDisabled}
-              type="submit"
-            >
-              {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
-            </button>
-          </div>
-        )
-        : null}
+      {isEditing ? (
+        <div className="fr-btns-group fr-btns-group--inline-sm fr-mt-3w">
+          <button className="fr-btn fr-btn--secondary" disabled={isDisabled} onClick={handleCancel} type="button">
+            Annuler
+          </button>
+          <button className="fr-btn" disabled={isDisabled} type="submit">
+            {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
+          </button>
+        </div>
+      ) : null}
     </form>
   )
 }

@@ -5,10 +5,7 @@ import { CSSProperties, useMemo, useState } from 'react'
 import { QuantifiedShare } from '../types'
 import { ProgressItemList } from './ProgressItemList'
 
-const orderQuantifiedShares = (
-  quantifiedShares: QuantifiedShare[],
-  order?: 'asc' | 'desc',
-) => {
+const orderQuantifiedShares = (quantifiedShares: QuantifiedShare[], order?: 'asc' | 'desc') => {
   if (!order) return quantifiedShares
   return quantifiedShares.sort((a, b) => {
     if (a.count > b.count) {
@@ -58,27 +55,23 @@ export const QuantifiedShareList = ({
     progressBar?: CSSProperties
   }
 }) => {
-  const listShouldBeTruncacted =
-    !!limit?.count && quantifiedShares.length > limit.count
+  const listShouldBeTruncacted = !!limit?.count && quantifiedShares.length > limit.count
 
   const [displayFullList, setdisplayFullList] = useState(false)
 
   const maxProportion = useMemo(
     () =>
       quantifiedShares.reduce(
-        (max, quantifiedShare) =>
-          quantifiedShare.proportion > max ? quantifiedShare.proportion : max,
-        0,
+        (max, quantifiedShare) => (quantifiedShare.proportion > max ? quantifiedShare.proportion : max),
+        0
       ),
-    [quantifiedShares],
+    [quantifiedShares]
   )
 
   const orderedQuantifiedShares = orderQuantifiedShares(quantifiedShares, order)
 
   const quantifiedSharesToDisplay =
-    !listShouldBeTruncacted || displayFullList
-      ? orderedQuantifiedShares
-      : orderedQuantifiedShares.slice(0, limit.count)
+    !listShouldBeTruncacted || displayFullList ? orderedQuantifiedShares : orderedQuantifiedShares.slice(0, limit.count)
 
   return (
     <>
@@ -109,11 +102,7 @@ export const QuantifiedShareList = ({
             </>
           )}
           <span
-            className={
-              displayFullList
-                ? 'fr-ml-1w ri-arrow-up-s-line'
-                : 'fr-ml-1w ri-arrow-down-s-line'
-            }
+            className={displayFullList ? 'fr-ml-1w ri-arrow-up-s-line' : 'fr-ml-1w ri-arrow-down-s-line'}
             aria-hidden
           />
         </Button>

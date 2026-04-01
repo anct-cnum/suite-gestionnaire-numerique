@@ -13,7 +13,7 @@ export function financementsPrefPresenter(
       type: 'error',
     }
   }
-  
+
   return {
     budget: {
       feuillesDeRouteWording: `${readModel.budget.feuillesDeRoute} feuille${readModel.budget.feuillesDeRoute > 1 ? 's' : ''} de route`,
@@ -28,8 +28,8 @@ export function financementsPrefPresenter(
       ({ enveloppeTotale, label, total }) => {
         const montantUtilise = Number(total)
         const montantTotal = Number(enveloppeTotale)
-        const pourcentageConsomme = montantTotal > 0 ? Math.round(montantUtilise / montantTotal * 100) : 0
-        
+        const pourcentageConsomme = montantTotal > 0 ? Math.round((montantUtilise / montantTotal) * 100) : 0
+
         return {
           color: obtenirCouleurEnveloppe(label),
           label,

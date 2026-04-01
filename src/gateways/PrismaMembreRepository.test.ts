@@ -2,7 +2,14 @@ import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMembreRepository } from './PrismaMembreRepository'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre } from './testHelper'
+import {
+  creerUnContact,
+  creerUnDepartement,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnMembre,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MembreUid } from '@/domain/Membre'
 import { membreConfirmeFactory } from '@/domain/testHelper'
@@ -12,7 +19,7 @@ describe('membre repository', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('rechercher un membre qui n\'existe pas', async () => {
+  it("rechercher un membre qui n'existe pas", async () => {
     // GIVEN
     await creerUneRegion()
     await creerUnDepartement({ code: '69' })
@@ -25,7 +32,7 @@ describe('membre repository', () => {
     const membre = new PrismaMembreRepository().get(new MembreUid('prefecture-93').state.value)
 
     // THEN
-    await expect(membre).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(membre).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(membre).rejects.toMatchObject({ code: 'P2025' })
   })
 
@@ -208,23 +215,26 @@ describe('membre repository', () => {
       statut: 'candidat',
       structureId: 11,
       type: 'Préfecture départementale',
-
     })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
 
     // WHEN
-    await new PrismaMembreRepository().update(membreConfirmeFactory({
-      statut: 'confirme',
-      uid: {
-        value: 'structure-69-69',
-      },
-      uidGouvernance: {
-        value: '69',
-      },
-    }))
+    await new PrismaMembreRepository().update(
+      membreConfirmeFactory({
+        statut: 'confirme',
+        uid: {
+          value: 'structure-69-69',
+        },
+        uidGouvernance: {
+          value: '69',
+        },
+      })
+    )
 
     // THEN
-    const modifiedRecord = await prisma.membreRecord.findUnique({ where: { id: 'structure-69-69' } })
+    const modifiedRecord = await prisma.membreRecord.findUnique({
+      where: { id: 'structure-69-69' },
+    })
     expect(modifiedRecord).toMatchObject({
       categorieMembre: 'Préfecture départementale',
       dateSuppression: null,

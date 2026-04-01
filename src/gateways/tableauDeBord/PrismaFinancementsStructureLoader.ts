@@ -49,21 +49,16 @@ export class PrismaFinancementsStructureLoader implements FinancementsStructureL
         })
       })
 
-      const totalFinancements = Array.from(subventionsParEnveloppe.values()).reduce(
-        (acc, val) => acc + val.total,
-        0
-      )
+      const totalFinancements = Array.from(subventionsParEnveloppe.values()).reduce((acc, val) => acc + val.total, 0)
 
       return {
         nombreDeFinancementsEngagesParLEtat: nombreDeFinancementsEngages,
         totalFinancements: totalFinancements.toString(),
-        ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(
-          ([label, data]) => ({
-            enveloppeTotale: data.enveloppeTotale.toString(),
-            label,
-            total: data.total.toString(),
-          })
-        ),
+        ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, data]) => ({
+          enveloppeTotale: data.enveloppeTotale.toString(),
+          label,
+          total: data.total.toString(),
+        })),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaFinancementsStructureLoader', {

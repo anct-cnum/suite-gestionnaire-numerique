@@ -7,7 +7,7 @@ import { StatistiquesActivitesData } from './AidantDetails'
 import Bar from '@/components/shared/Bar/Bar'
 import Information from '@/components/shared/Information/Information'
 
-export default function AidantDetailsActivites(props: Props) : ReactElement {
+export default function AidantDetailsActivites(props: Props): ReactElement {
   const { data, nom, prenom } = props
   const statistiques = data
   const router = useRouter()
@@ -25,28 +25,18 @@ export default function AidantDetailsActivites(props: Props) : ReactElement {
       params.set('periode', nouvellePeriode)
     }
     const newUrl = params.toString() ? `?${params.toString()}` : ''
-    router.push(`${window.location.pathname + newUrl }#activites`)
+    router.push(`${window.location.pathname + newUrl}#activites`)
   }
 
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--between fr-grid-row--top ">
         <div className="fr-col">
-          <h2 className="fr-h3 fr-m-0">
-            Activités
-          </h2>
-          <p className="fr-text--sm fr-text-mention--grey fr-m-0">
-            Statistiques des activités du médiateur
-          </p>
+          <h2 className="fr-h3 fr-m-0">Activités</h2>
+          <p className="fr-text--sm fr-text-mention--grey fr-m-0">Statistiques des activités du médiateur</p>
         </div>
-        <div
-          className="fr-col-auto"
-          style={{ display: 'none' }}
-        >
-          <button
-            className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
-            type="button"
-          >
+        <div className="fr-col-auto" style={{ display: 'none' }}>
+          <button className="fr-link fr-icon-arrow-right-line fr-link--icon-right" type="button">
             Voir plus de statistiques
           </button>
         </div>
@@ -61,10 +51,7 @@ export default function AidantDetailsActivites(props: Props) : ReactElement {
           />
         </div>
       ) : (
-        <EmptyState
-          nom={nom}
-          prenom={prenom}
-        />
+        <EmptyState nom={nom} prenom={prenom} />
       )}
     </section>
   )
@@ -74,21 +61,15 @@ function EmptyState({ nom, prenom }: Readonly<{ nom: string; prenom: string }>):
   return (
     <div
       className="fr-mt-2w"
-      style={{ backgroundColor: 'var(--brown-caramel-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
+      style={{
+        backgroundColor: 'var(--brown-caramel-975-75)',
+        borderRadius: '1rem',
+        padding: '3rem',
+        textAlign: 'center',
+      }}
     >
-      <p
-        className="fr-text--md fr-mb-0"
-        style={{ textAlign: 'center' }}
-      >
-        <span className="fr-text--bold">
-          👻 Aucune activité trouvée
-        </span>
-        {' '}
-        pour
-        {' '}
-        {nom}
-        {' '}
-        {prenom}
+      <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
+        <span className="fr-text--bold">👻 Aucune activité trouvée</span> pour {nom} {prenom}
       </p>
     </div>
   )
@@ -104,15 +85,9 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
   return (
     <div className="fr-col-12 fr-col-md-4">
       <div className="d-flex flex-column">
-        <div
-          className="fr-p-3w fr-background-alt--brown-caramel"
-          style={{ borderRadius: '1rem' }}
-        >
+        <div className="fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
           <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
-            <p
-              className="fr-text--xl fr-mb-1w fr-text--heavy"
-              style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}
-            >
+            <p className="fr-text--xl fr-mb-1w fr-text--heavy" style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}>
               {total}
             </p>
             <span
@@ -125,40 +100,17 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
               Accompagnements
               <Information>
                 <div className="fr-mb-0">
-                  <strong>
-                    {total.toLocaleString('fr-FR')}
-                    {' '}
-                    accompagnements
-                  </strong>
-                  {' '}
-                  au total dont :
+                  <strong>{total.toLocaleString('fr-FR')} accompagnements</strong> au total dont :
                   <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
                     <li>
-                      <strong>
-                        {individuels.toLocaleString('fr-FR')}
-                      </strong>
-                      {' '}
-                      accompagnements individuels
+                      <strong>{individuels.toLocaleString('fr-FR')}</strong> accompagnements individuels
                     </li>
                     <li>
-                      <strong>
-                        {participationsAteliers.toLocaleString('fr-FR')}
-                      </strong>
-                      {' '}
-                      participations lors de
-                      {' '}
-                      <strong>
-                        {nombreAteliers.toLocaleString('fr-FR')}
-                      </strong>
-                      {' '}
-                      ateliers
+                      <strong>{participationsAteliers.toLocaleString('fr-FR')}</strong> participations lors de{' '}
+                      <strong>{nombreAteliers.toLocaleString('fr-FR')}</strong> ateliers
                     </li>
                     <li>
-                      <strong>
-                        {avecAidantsConnect.toLocaleString('fr-FR')}
-                      </strong>
-                      {' '}
-                      accompagnements avec Aidants Connect
+                      <strong>{avecAidantsConnect.toLocaleString('fr-FR')}</strong> accompagnements avec Aidants Connect
                     </li>
                   </ul>
                   <em>
@@ -169,13 +121,7 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
                 </div>
               </Information>
             </p>
-            <p className="fr-text--xs fr-mt-0">
-              Dont
-              {' '}
-              {avecAidantsConnect}
-              {' '}
-              avec Aidants Connect
-            </p>
+            <p className="fr-text--xs fr-mt-0">Dont {avecAidantsConnect} avec Aidants Connect</p>
           </div>
         </div>
       </div>
@@ -185,24 +131,20 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
 
 function PeriodeSelector({ currentPeriode, onPeriodeChange }: PeriodeSelectorProps): ReactElement {
   return (
-    <fieldset
-      className="fr-segmented fr-segmented--sm fr-mb-3w"
-      style={{ width: '100%' }}
-    >
+    <fieldset className="fr-segmented fr-segmented--sm fr-mb-3w" style={{ width: '100%' }}>
       <div className="fr-segmented__elements">
         <div className="fr-segmented__element">
           <input
             checked={currentPeriode === 'mensuel'}
             id="periode-mensuel"
             name="periode"
-            onChange={() => { onPeriodeChange('mensuel') }}
+            onChange={() => {
+              onPeriodeChange('mensuel')
+            }}
             type="radio"
             value="mensuel"
           />
-          <label
-            className="fr-label"
-            htmlFor="periode-mensuel"
-          >
+          <label className="fr-label" htmlFor="periode-mensuel">
             Par mois
           </label>
         </div>
@@ -211,35 +153,25 @@ function PeriodeSelector({ currentPeriode, onPeriodeChange }: PeriodeSelectorPro
             checked={currentPeriode === 'journalier'}
             id="periode-journalier"
             name="periode"
-            onChange={() => { onPeriodeChange('journalier') }}
+            onChange={() => {
+              onPeriodeChange('journalier')
+            }}
             type="radio"
             value="journalier"
           />
-          <label
-            className="fr-label"
-            htmlFor="periode-journalier"
-          >
+          <label className="fr-label" htmlFor="periode-journalier">
             Par jours
           </label>
-
         </div>
       </div>
-      <div
-        style={{ display: 'block', textAlign: 'right', width: '100%' }}
-      >
+      <div style={{ display: 'block', textAlign: 'right', width: '100%' }}>
         {currentPeriode === 'journalier' && (
-          <p
-            className="fr-text--sm fr-text--right fr-text-mention--grey"
-            style={{ margin: 0 }}
-          >
+          <p className="fr-text--sm fr-text--right fr-text-mention--grey" style={{ margin: 0 }}>
             Les 30 derniers jours
           </p>
         )}
         {currentPeriode === 'mensuel' && (
-          <p
-            className="fr-text--sm fr-text--right fr-text-mention--grey"
-            style={{ margin: 0 }}
-          >
+          <p className="fr-text--sm fr-text--right fr-text-mention--grey" style={{ margin: 0 }}>
             Les 12 derniers mois
           </p>
         )}
@@ -269,20 +201,10 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
             Nombre d&apos;accompagnements
             <Information>
               <div className="fr-mb-0">
-                Somme des 
-                {' '}
-                <strong>
-                  2 types d&apos;activités
-                </strong>
-                {' '}
-                enregistrées :
+                Somme des <strong>2 types d&apos;activités</strong> enregistrées :
                 <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
-                  <li>
-                    Accompagnement individuel
-                  </li>
-                  <li>
-                    Atelier collectif
-                  </li>
+                  <li>Accompagnement individuel</li>
+                  <li>Atelier collectif</li>
                 </ul>
                 <em>
                   Les ateliers collectifs comptent pour 1 accompagnement par participant.
@@ -294,16 +216,9 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
           </h3>
         </div>
 
-        <PeriodeSelector
-          currentPeriode={currentPeriode}
-          onPeriodeChange={onPeriodeChange}
-        />
+        <PeriodeSelector currentPeriode={currentPeriode} onPeriodeChange={onPeriodeChange} />
 
-        <Bar
-          backgroundColor={backgroundColor}
-          data={data}
-          labels={labels}
-        />
+        <Bar backgroundColor={backgroundColor} data={data} labels={labels} />
       </div>
     </div>
   )

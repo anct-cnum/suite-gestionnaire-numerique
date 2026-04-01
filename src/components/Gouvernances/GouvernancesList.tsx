@@ -17,15 +17,15 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
   const [detailsFiltrer, setDetailsFiltrer] = useState(details)
   const [infosFiltrer, setInfosFiltrer] = useState<InfosGouvernances>(() => getInfosFilrer(details))
 
-  const [filterAvance, setFilterAvance] = useState<FilterType>(FilterType.NO_FILTRE)
-  const [filtreGeographique, setFiltreGeographique] = useState<string>('')
+  const [filterAvance, setFilterAvance] = useState(FilterType.NO_FILTRE)
+  const [filtreGeographique, setFiltreGeographique] = useState('')
 
   useEffect(() => {
     const gouvernanceInfo = getInfosFilrer(detailsFiltrer)
     setInfosFiltrer(gouvernanceInfo)
   }, [detailsFiltrer])
 
-  function onFilter(filtreGeographique: string, filterAvance: FilterType ): void {
+  function onFilter(filtreGeographique: string, filterAvance: FilterType): void {
     setFiltreGeographique(filtreGeographique)
     setFilterAvance(filterAvance)
     setDetailsFiltrer(filtrerDetails(details, filtreGeographique, filterAvance))
@@ -46,19 +46,18 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
 
   return (
     <div className="fr-mt-4w">
-
       <GouvernancesHearder
         drawerId={drawerId}
         filterAvance={{
           libeller: filterAvance,
           onRemove() {
-            onFilter(filtreGeographique,FilterType.NO_FILTRE)
+            onFilter(filtreGeographique, FilterType.NO_FILTRE)
           },
           value: filterAvance,
         }}
         filtreGeographique={{
           onRemove() {
-            onFilter('',filterAvance)
+            onFilter('', filterAvance)
           },
           value: filtreGeographique,
         }}
@@ -80,10 +79,7 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <TitleIcon
-            background="blue"
-            icon="filter-line"
-          />
+          <TitleIcon background="blue" icon="filter-line" />
           <br />
           Filtrer des gouvernances
         </DrawerTitle>
@@ -95,7 +91,6 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
           onFilterAction={onFilter}
           onResetAction={onReset}
         />
-
       </Drawer>
     </div>
   )
@@ -118,8 +113,7 @@ export type InfosGouvernances = {
 export enum FilterType {
   MULTI_ROADMAP = 'Départements avec plus d’une Feuille de route',
   NO_ACTIONS = 'Départements sans actions',
-  NO_FILTRE= '',
+  NO_FILTRE = '',
   NO_GOUV = 'Départements sans gouvernance',
-  NO_ROADMAP = 'Départements sans Feuilles de route'
+  NO_ROADMAP = 'Départements sans Feuilles de route',
 }
-

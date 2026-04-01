@@ -10,11 +10,7 @@ export class AjouterUneNotePrivee implements CommandHandler<Command> {
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(
-    gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: UtilisateurRepository,
-    date: Date
-  ) {
+  constructor(gouvernanceRepository: GouvernanceRepository, utilisateurRepository: UtilisateurRepository, date: Date) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
     this.#date = date

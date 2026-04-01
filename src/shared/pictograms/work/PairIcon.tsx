@@ -6,17 +6,8 @@ export function PairIcon({
   ...props
 }: Readonly<Parameters<Pictogram>[0]>): ReturnType<Pictogram> {
   return (
-    <svg
-      height={height}
-      width={width}
-      // eslint-disable-next-line react/jsx-props-no-spreading -- SVG props needed
-      {...props}
-      viewBox="0 0 80 80"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <title>
-        Deux personnes assises avec leurs ordinateurs
-      </title>
+    <svg height={height} width={width} {...props} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <title>Deux personnes assises avec leurs ordinateurs</title>
       <path
         className="fr-artwork-major"
         d="M54.4 39.1c-4.2 0-7.6-3.4-7.6-7.6s3.4-7.6 7.6-7.6 7.6 3.4 7.6 7.6-3.4 7.6-7.6 7.6m0-13.2c-3.1 0-5.6 2.5-5.6 5.6s2.5 5.6 5.6 5.6 5.6-2.5 5.6-5.6-2.5-5.6-5.6-5.6m-.3 27.8H49c-1 0-1.7-.8-1.7-1.7v-2.7c0-.6.4-1 1-1s1 .4 1 1v2.5h4.8c.6 0 1 .4 1 1s-.4.9-1 .9"

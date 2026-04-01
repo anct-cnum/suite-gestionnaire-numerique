@@ -2,10 +2,14 @@ import { RoleUtilisateur, UnUtilisateurReadModel } from './shared/UnUtilisateurR
 
 export interface ScopeLoader {
   getDepartementCodeByStructureId(structureId: number): Promise<null | string>
-  getToutesAppartenancesParStructureId(structureId: number): Promise<ReadonlyArray<Readonly<{
-    codeDepartement: string
-    estCoporteur: boolean
-  }>>>
+  getToutesAppartenancesParStructureId(structureId: number): Promise<
+    ReadonlyArray<
+      Readonly<{
+        codeDepartement: string
+        estCoporteur: boolean
+      }>
+    >
+  >
 }
 
 export class Contexte {
@@ -93,14 +97,24 @@ export class Contexte {
   }
 
   peutGererGouvernance(codeDepartement: string): boolean {
-    return this.scopes.some((scope) => scope.type === 'france'
-      || (scope.type === 'coporteur' || scope.type === 'departement') && 'code' in scope && scope.code === codeDepartement)
+    return this.scopes.some(
+      (scope) =>
+        scope.type === 'france' ||
+        ((scope.type === 'coporteur' || scope.type === 'departement') &&
+          'code' in scope &&
+          scope.code === codeDepartement)
+    )
   }
 
   peutGererStructure(structureId: number, codesDepartements: ReadonlyArray<string>): boolean {
-    return this.scopes.some((scope) => scope.type === 'france'
-      || scope.type === 'structure' && 'code' in scope && scope.code === String(structureId)
-      || (scope.type === 'coporteur' || scope.type === 'departement') && 'code' in scope && codesDepartements.includes(scope.code))
+    return this.scopes.some(
+      (scope) =>
+        scope.type === 'france' ||
+        (scope.type === 'structure' && 'code' in scope && scope.code === String(structureId)) ||
+        ((scope.type === 'coporteur' || scope.type === 'departement') &&
+          'code' in scope &&
+          codesDepartements.includes(scope.code))
+    )
   }
 }
 
@@ -138,7 +152,7 @@ async function construireScopes(
     if (utilisateur.role.type === 'gestionnaire_structure') {
       scopes.push({ code: String(utilisateur.structureId), type: 'structure' })
     }
-    scopes.push(...await scopesAppartenancesGouvernance(utilisateur.structureId, scopeLoader))
+    scopes.push(...(await scopesAppartenancesGouvernance(utilisateur.structureId, scopeLoader)))
   }
 
   return scopes
@@ -152,6 +166,6 @@ async function scopesAppartenancesGouvernance(
 
   return appartenances.map((appartenance) => ({
     code: appartenance.codeDepartement,
-    type: appartenance.estCoporteur ? 'coporteur' as const : 'membre' as const,
+    type: appartenance.estCoporteur ? ('coporteur' as const) : ('membre' as const),
   }))
 }

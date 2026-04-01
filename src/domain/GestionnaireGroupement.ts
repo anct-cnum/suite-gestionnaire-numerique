@@ -39,11 +39,9 @@ export class GestionnaireGroupement extends Utilisateur {
 
   override peutGerer(autre: Utilisateur): boolean {
     return (
-      this.isSuperAdmin ||
-      autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid)
+      this.isSuperAdmin || (autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid))
     )
   }
 }
 
-type GestionnaireGroupementState = Readonly<{ groupementUid: GroupementState['uid'] }> &
-  UtilisateurState
+type GestionnaireGroupementState = Readonly<{ groupementUid: GroupementState['uid'] }> & UtilisateurState

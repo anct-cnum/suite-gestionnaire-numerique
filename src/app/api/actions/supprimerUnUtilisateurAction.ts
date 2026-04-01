@@ -9,20 +9,17 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
 
-export async function supprimerUnUtilisateurAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function supprimerUnUtilisateurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
-    .handle({
-      uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
-      uidUtilisateurCourant: await getSessionSub(),
-    })
+  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
+    uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
+    uidUtilisateurCourant: await getSessionSub(),
+  })
 
   revalidatePath(actionParams.path)
 

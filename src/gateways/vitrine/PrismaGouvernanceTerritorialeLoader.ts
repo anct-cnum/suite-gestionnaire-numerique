@@ -1,6 +1,11 @@
 import prisma from '../../../prisma/prismaClient'
 import { membreInclude, toMembres } from '../shared/MembresGouvernance'
-import { GouvernanceTerritorialeLoader, GouvernanceTerritorialeReadModel, MembreTerritorialReadModel, RoleMembre } from '@/use-cases/queries/vitrine/RecupererGouvernanceTerritoriale'
+import {
+  GouvernanceTerritorialeLoader,
+  GouvernanceTerritorialeReadModel,
+  MembreTerritorialReadModel,
+  RoleMembre,
+} from '@/use-cases/queries/vitrine/RecupererGouvernanceTerritoriale'
 
 export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritorialeLoader {
   async get(codeDepartement: string): Promise<GouvernanceTerritorialeReadModel> {
@@ -52,7 +57,7 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
 
     const membres = toMembres(membresRecords)
 
-    return membres.map(membre => ({
+    return membres.map((membre) => ({
       categorie: this.#determinerCategorie(membre.type),
       details: [
         {
@@ -79,7 +84,7 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
     })
 
     const totalMembres = membresGouvernance.length
-    const coporteurs = membresGouvernance.filter(membre => membre.isCoporteur).length
+    const coporteurs = membresGouvernance.filter((membre) => membre.isCoporteur).length
 
     // Compter les feuilles de route et actions
     const feuillesDeRoute = await prisma.feuilleDeRouteRecord.findMany({

@@ -22,33 +22,34 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         departementCode: uid.state.value,
       },
     })
-    const notePrivee = record.notePrivee && record.relationEditeurNotePrivee ? {
-      contenu: record.notePrivee.contenu,
-      dateDeModification: new Date(record.notePrivee.derniereEdition),
-      uidEditeur: new UtilisateurUid({
-        email: record.relationEditeurNotePrivee.ssoEmail,
-        value: record.relationEditeurNotePrivee.ssoId,
-      }),
-    } : undefined
+    const notePrivee =
+      record.notePrivee && record.relationEditeurNotePrivee
+        ? {
+            contenu: record.notePrivee.contenu,
+            dateDeModification: new Date(record.notePrivee.derniereEdition),
+            uidEditeur: new UtilisateurUid({
+              email: record.relationEditeurNotePrivee.ssoEmail,
+              value: record.relationEditeurNotePrivee.ssoId,
+            }),
+          }
+        : undefined
 
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const noteDeContexte = record.noteDeContexte &&
-      record.relationEditeurNoteDeContexte &&
-      record.derniereEditionNoteDeContexte
-      ? {
-        contenu: record.noteDeContexte,
-        dateDeModification: new Date(record.derniereEditionNoteDeContexte),
-        uidEditeur: new UtilisateurUid({
-          email: record.relationEditeurNoteDeContexte.ssoEmail,
-          value: record.relationEditeurNoteDeContexte.ssoId,
-        }),
-      } : undefined
+    const noteDeContexte =
+      record.noteDeContexte && record.relationEditeurNoteDeContexte && record.derniereEditionNoteDeContexte
+        ? {
+            contenu: record.noteDeContexte,
+            dateDeModification: new Date(record.derniereEditionNoteDeContexte),
+            uidEditeur: new UtilisateurUid({
+              email: record.relationEditeurNoteDeContexte.ssoEmail,
+              value: record.relationEditeurNoteDeContexte.ssoId,
+            }),
+          }
+        : undefined
 
-    const membresCoporteurs = record.membres
-      .map(membre => ({
-        isCoporteur: membre.isCoporteur,
-        structureUid: membre.structureId,
-      }))
+    const membresCoporteurs = record.membres.map((membre) => ({
+      isCoporteur: membre.isCoporteur,
+      structureUid: membre.structureId,
+    }))
 
     return Gouvernance.create({
       departement: {

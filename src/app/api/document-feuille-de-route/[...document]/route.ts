@@ -15,8 +15,11 @@ const s3Config: S3ClientConfig = {
 
 // Pas d'authentification requise : ces documents sont publics (exposés sur le site vitrine).
 // Les opérations d'écriture (upload, suppression) sont protégées dans leurs actions respectives.
-export async function GET(request: NextRequest,
-  _response: NextResponse, s3 = new S3Client(s3Config)): Promise<NextResponse<null | object>> {
+export async function GET(
+  request: NextRequest,
+  _response: NextResponse,
+  s3 = new S3Client(s3Config)
+): Promise<NextResponse<null | object>> {
   try {
     const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
 
@@ -43,10 +46,12 @@ export async function GET(request: NextRequest,
       status: 200,
     })
   } catch (error) {
-    if (error instanceof Error && (error.message === 'The specified key does not exist.' || error.message === 'document_empty_body')) {
-      return NextResponse.json({ message: 'Le document n\'existe pas' }, { status: 404 })
+    if (
+      error instanceof Error &&
+      (error.message === 'The specified key does not exist.' || error.message === 'document_empty_body')
+    ) {
+      return NextResponse.json({ message: "Le document n'existe pas" }, { status: 404 })
     }
     throw error
   }
 }
-

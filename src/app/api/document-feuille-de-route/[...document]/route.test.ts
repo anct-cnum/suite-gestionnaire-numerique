@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { GET } from './route'
 
 describe('route de téléchargement de document', () => {
-  it('devrait retourner une 200 quand l\'utilisateur télécharge un document valide', async () => {
+  it("devrait retourner une 200 quand l'utilisateur télécharge un document valide", async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -16,17 +16,20 @@ describe('route de téléchargement de document', () => {
 
     // WHEN
     const result = await GET(req, res, {
-      send: async () => Promise.resolve({
-        Body: {
-          transformToWebStream: () => ({}),
-        },
-      }),
-    } as unknown as  S3Client)
+      send: async () =>
+        Promise.resolve({
+          Body: {
+            transformToWebStream: () => ({}),
+          },
+        }),
+    } as unknown as S3Client)
 
     // THEN
     expect(result.status).toBe(200)
     expect(result.headers.get('Content-Type')).toBe('application/pdf')
-    expect(result.headers.get('Content-Disposition')).toBe('inline; filename="user%2Ffdr-uid%2Ffeuille-de-route-test.pdf"')
+    expect(result.headers.get('Content-Disposition')).toBe(
+      'inline; filename="user%2Ffdr-uid%2Ffeuille-de-route-test.pdf"'
+    )
   })
 
   it('devrait retourner une erreur quand le document est introuvable', async () => {
@@ -45,7 +48,7 @@ describe('route de téléchargement de document', () => {
 
     // THEN
     expect(result.status).toBe(404)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n\'existe pas' })
+    await expect(result.json()).resolves.toStrictEqual({ message: "Le document n'existe pas" })
   })
 
   it('devrait retourner une erreur quand le corps de la réponse est vide', async () => {
@@ -59,17 +62,18 @@ describe('route de téléchargement de document', () => {
 
     // WHEN
     const result = await GET(req, res, {
-      send: async () => Promise.resolve({
-        Body: null,
-      }),
+      send: async () =>
+        Promise.resolve({
+          Body: null,
+        }),
     } as unknown as S3Client)
 
     // THEN
     expect(result.status).toBe(404)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n\'existe pas' })
+    await expect(result.json()).resolves.toStrictEqual({ message: "Le document n'existe pas" })
   })
 
-  it('devrait retourner une erreur quand l\'erreur n\'est pas gérée', async () => {
+  it("devrait retourner une erreur quand l'erreur n'est pas gérée", async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -82,7 +86,7 @@ describe('route de téléchargement de document', () => {
     const result = GET(req, res)
 
     // THEN
-    await expect(result).rejects.toThrowError('Region is missing')
+    await expect(result).rejects.toThrow('Region is missing')
   })
 
   it('devrait retourner 400 quand le chemin contient un path traversal', async () => {

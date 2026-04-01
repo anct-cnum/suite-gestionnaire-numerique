@@ -6,10 +6,7 @@ import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactR
 import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
 
 export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
-  async ajouterContact(
-    structureId: number,
-    data: ContactStructureData
-  ): Promise<void> {
+  async ajouterContact(structureId: number, data: ContactStructureData): Promise<void> {
     const contact = await prisma.main_contact.create({
       data: {
         email: data.email,
@@ -87,10 +84,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     })
   }
 
-  async modifierContact(
-    contactId: number,
-    data: ContactStructureData
-  ): Promise<void> {
+  async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
     await prisma.main_contact.update({
       data: {
         email: data.email,
@@ -106,10 +100,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     })
   }
 
-  async supprimerContact(
-    structureId: number,
-    contactId: number
-  ): Promise<void> {
+  async supprimerContact(structureId: number, contactId: number): Promise<void> {
     await prisma.contact_structure.deleteMany({
       where: {
         contact_id: contactId,
@@ -150,10 +141,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     })
   }
 
-  private async createWithTransaction(
-    data: StructureData,
-    client: Prisma.TransactionClient
-  ): Promise<Structure> {
+  private async createWithTransaction(data: StructureData, client: Prisma.TransactionClient): Promise<Structure> {
     // Créer ou récupérer l'adresse
     const adresse = await this.getOrCreateAdresse(
       {
@@ -187,9 +175,9 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
   }
 
   private async getOrCreateAdresse(
-    data:  {
-      adresseEnrichie?: 
-      { banClefInterop: string
+    data: {
+      adresseEnrichie?: {
+        banClefInterop: string
         banCodeBan: null | string
         banCodeInsee: string
         banCodePostal: string
@@ -198,8 +186,8 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
         banNomCommune: string
         banNomVoie: string
         banNumeroVoie: null | number
-        banRepetition: null | string } 
-      | null
+        banRepetition: null | string
+      } | null
       codeInsee: string
       codePostal: string
       commune: string
@@ -258,7 +246,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       })
 
       if (!adresseCreee) {
-        throw new Error('Erreur lors de la création de l\'adresse géocodée')
+        throw new Error("Erreur lors de la création de l'adresse géocodée")
       }
 
       return StructureAdresse.create({

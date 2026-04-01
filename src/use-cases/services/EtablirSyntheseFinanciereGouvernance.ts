@@ -4,9 +4,8 @@ import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 export function etablirSyntheseFinanciereGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
   const bilanGouvernance = gouvernance.feuillesDeRoute.reduce(
     makeBilanGouvernance(({ actions, uid }) =>
-      actions
-        .map(makeBilanAction)
-        .reduce(makeBilanFeuilleDeRoute(uid), bilanInitialFeuilleDeRoute)),
+      actions.map(makeBilanAction).reduce(makeBilanFeuilleDeRoute(uid), bilanInitialFeuilleDeRoute)
+    ),
     bilanInitialGouvernance
   )
   return toSynthese(bilanGouvernance)
@@ -17,9 +16,9 @@ function toSynthese(bilan: BilanGouvernance): SyntheseGouvernance {
     ...bilan,
     beneficiaires: bilan.beneficiaires.size,
     coFinanceurs: bilan.coFinanceurs.size,
-    feuillesDeRoute: bilan.feuillesDeRoute.map(feuilleDeRoute => ({
+    feuillesDeRoute: bilan.feuillesDeRoute.map((feuilleDeRoute) => ({
       ...feuilleDeRoute,
-      actions: feuilleDeRoute.actions.map(action => ({
+      actions: feuilleDeRoute.actions.map((action) => ({
         ...action,
         beneficiaires: action.beneficiaires.size,
         coFinanceurs: action.coFinanceurs.size,
@@ -31,7 +30,10 @@ function toSynthese(bilan: BilanGouvernance): SyntheseGouvernance {
 }
 
 function makeBilanGouvernance(bilanFeuilleDeRouteFactory: BilanFeuilleDeRouteFactory) {
-  return (bilanGouvernance: BilanGouvernance, feuilleDeRoute: Gouvernance['feuillesDeRoute'][number]): BilanGouvernance => {
+  return (
+    bilanGouvernance: BilanGouvernance,
+    feuilleDeRoute: Gouvernance['feuillesDeRoute'][number]
+  ): BilanGouvernance => {
     const bilanFeuilleDeRoute = bilanFeuilleDeRouteFactory(feuilleDeRoute)
     return {
       beneficiaires: bilanGouvernance.beneficiaires.union(bilanFeuilleDeRoute.beneficiaires),
@@ -40,8 +42,8 @@ function makeBilanGouvernance(bilanFeuilleDeRouteFactory: BilanFeuilleDeRouteFac
       coFinanceurs: bilanGouvernance.coFinanceurs.union(bilanFeuilleDeRoute.coFinanceurs),
       feuillesDeRoute: bilanGouvernance.feuillesDeRoute.concat({ ...bilanFeuilleDeRoute, uid: feuilleDeRoute.uid }),
       financementDemande: bilanGouvernance.financementDemande + bilanFeuilleDeRoute.financementDemande,
-      financementFormationAccorde: bilanGouvernance.financementFormationAccorde
-        + bilanFeuilleDeRoute.financementFormationAccorde,
+      financementFormationAccorde:
+        bilanGouvernance.financementFormationAccorde + bilanFeuilleDeRoute.financementFormationAccorde,
       financemenTotalAccorde: bilanGouvernance.financemenTotalAccorde + bilanFeuilleDeRoute.financemenTotalAccorde,
     }
   }
@@ -64,22 +66,19 @@ function makeBilanFeuilleDeRoute(uid: string) {
 function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions'][number]): BilanAction {
   const subvention = action.subvention
   const isFormation = Boolean(subvention?.isFormation)
-  const { coFinancement, coFinanceurs } = action.coFinancements
-    .reduce(
-      ({ coFinancement, coFinanceurs }, { coFinanceur: { uid }, montant }) => ({
-        coFinancement: coFinancement + montant,
-        coFinanceurs: new Set(coFinanceurs).add(uid),
-      }),
-      {
-        coFinancement: 0,
-        coFinanceurs: new Set<string>(),
-      }
-    )
+  const { coFinancement, coFinanceurs } = action.coFinancements.reduce(
+    ({ coFinancement, coFinanceurs }, { coFinanceur: { uid }, montant }) => ({
+      coFinancement: coFinancement + montant,
+      coFinanceurs: new Set(coFinanceurs).add(uid),
+    }),
+    {
+      coFinancement: 0,
+      coFinanceurs: new Set<string>(),
+    }
+  )
   const financementDemande = (subvention?.montants.prestation ?? 0) + (subvention?.montants.ressourcesHumaines ?? 0)
   const accorde = subvention?.statut === StatutSubvention.ACCEPTEE ? financementDemande : 0
-  const [financementTotalAccorde, financementFormationAccorde] = isFormation
-    ? [accorde, accorde]
-    : [accorde, 0]
+  const [financementTotalAccorde, financementFormationAccorde] = isFormation ? [accorde, accorde] : [accorde, 0]
   return {
     beneficiaires: new Set(action.beneficiaires.map(({ uid }) => uid)),
     budget: action.budgetGlobal,
@@ -116,20 +115,24 @@ const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
   uid: '',
 }
 
-type BilanGouvernance = Bilan & Readonly<{
-  feuillesDeRoute: ReadonlyArray<BilanFeuilleDeRoute>
-}>
+type BilanGouvernance = Bilan &
+  Readonly<{
+    feuillesDeRoute: ReadonlyArray<BilanFeuilleDeRoute>
+  }>
 
-type BilanFeuilleDeRoute = Bilan & Readonly<{
-  actions: ReadonlyArray<BilanAction>
-}> & Unique
+type BilanFeuilleDeRoute = Bilan &
+  Readonly<{
+    actions: ReadonlyArray<BilanAction>
+  }> &
+  Unique
 
 type BilanAction = Bilan & Readonly<{ isFormation: boolean }> & Unique
 
-type Bilan = Finances & Readonly<{
-  beneficiaires: ReadonlySet<string>
-  coFinanceurs: ReadonlySet<string>
-}>
+type Bilan = Finances &
+  Readonly<{
+    beneficiaires: ReadonlySet<string>
+    coFinanceurs: ReadonlySet<string>
+  }>
 
 type BilanFeuilleDeRouteFactory = (feuilleDeRoute: Gouvernance['feuillesDeRoute'][number]) => BilanFeuilleDeRoute
 

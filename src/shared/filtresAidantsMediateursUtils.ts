@@ -1,5 +1,11 @@
 import { TypologieRole } from '@/domain/Role'
-import { FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import {
+  FiltreFormations,
+  FiltreGeographique,
+  FiltreHabilitations,
+  FiltreRoles,
+  FiltresListeAidants,
+} from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 // Types pour les paramètres d'URL
 export interface FiltresURLParams {
@@ -55,20 +61,18 @@ export function buildFiltresListeAidants(
 
   return {
     codesDepartementsScope,
-    formations: formations !== undefined && formations.length > 0
-      ? formations.split(',') as FiltreFormations
-      : undefined,
+    formations:
+      formations !== undefined && formations.length > 0 ? (formations.split(',') as FiltreFormations) : undefined,
     geographique: filtreGeographique,
-    habilitations: habilitations !== undefined && habilitations.length > 0
-      ? habilitations.split(',') as FiltreHabilitations
-      : undefined,
+    habilitations:
+      habilitations !== undefined && habilitations.length > 0
+        ? (habilitations.split(',') as FiltreHabilitations)
+        : undefined,
     pagination: {
       limite,
       page: Number(page ?? '1'),
     },
-    roles: roles !== undefined && roles.length > 0
-      ? roles.split(',') as FiltreRoles
-      : undefined,
+    roles: roles !== undefined && roles.length > 0 ? (roles.split(',') as FiltreRoles) : undefined,
     territoire,
   }
 }
@@ -130,11 +134,7 @@ export function buildURLSearchParamsFromFilters(params: URLSearchParams): URLSea
 /**
  * Supprime un filtre spécifique des paramètres
  */
-export function removeFilterFromParams(
-  params: URLSearchParams,
-  paramKey: string,
-  paramValue: string
-): URLSearchParams {
+export function removeFilterFromParams(params: URLSearchParams, paramKey: string, paramValue: string): URLSearchParams {
   const newParams = new URLSearchParams(params)
 
   if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
@@ -145,7 +145,7 @@ export function removeFilterFromParams(
     // Pour les autres filtres, retirer la valeur spécifique
     const currentValue = newParams.get(paramKey)
     if (currentValue !== null && currentValue !== '') {
-      const values = currentValue.split(',').filter(value => value !== paramValue)
+      const values = currentValue.split(',').filter((value) => value !== paramValue)
       if (values.length > 0) {
         newParams.set(paramKey, values.join(','))
       } else {
@@ -190,19 +190,19 @@ export function getActiveFilters(params: URLSearchParams): Array<{
 
   // Filtres multiples
   if (roles !== null && roles !== '') {
-    roles.split(',').forEach(role => {
+    roles.split(',').forEach((role) => {
       filtres.push({ label: role, paramKey: 'roles', paramValue: role })
     })
   }
 
   if (habilitations !== null && habilitations !== '') {
-    habilitations.split(',').forEach(habilitation => {
+    habilitations.split(',').forEach((habilitation) => {
       filtres.push({ label: habilitation, paramKey: 'habilitations', paramValue: habilitation })
     })
   }
 
   if (formations !== null && formations !== '') {
-    formations.split(',').forEach(formation => {
+    formations.split(',').forEach((formation) => {
       filtres.push({ label: formation, paramKey: 'formations', paramValue: formation })
     })
   }

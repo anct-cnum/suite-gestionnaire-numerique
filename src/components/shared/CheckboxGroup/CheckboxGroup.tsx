@@ -4,33 +4,25 @@ import { ReactElement } from 'react'
 
 import Checkbox from '../Checkbox/Checkbox'
 
-export default function CheckboxGroup({
-  legend,
-  name,
-  onChange,
-  options,
-  selectedValues,
-}: Props): ReactElement {
+export default function CheckboxGroup({ legend, name, onChange, options, selectedValues }: Props): ReactElement {
   function handleChange(value: string, checked: boolean): void {
     const currentValues = selectedValues ?? []
-    const newValues = checked
-      ? [...currentValues, value]
-      : currentValues.filter(_value => _value !== value)
+    const newValues = checked ? [...currentValues, value] : currentValues.filter((_value) => _value !== value)
     onChange(newValues)
   }
 
   return (
     <fieldset className="fr-fieldset fr-mb-1w">
-      <legend className="fr-fieldset__legend fr-text--regular">
-        {legend}
-      </legend>
+      <legend className="fr-fieldset__legend fr-text--regular">{legend}</legend>
       {options.map((option) => (
         <Checkbox
           id={`${name}-${option.value}`}
           isSelected={(selectedValues ?? []).includes(option.value)}
           key={option.value}
           label={name}
-          onChange={(element) => { handleChange(option.value, element.target.checked) }}
+          onChange={(element) => {
+            handleChange(option.value, element.target.checked)
+          }}
           value={option.value}
         >
           {option.label}

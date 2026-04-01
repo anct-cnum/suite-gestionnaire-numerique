@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { AccompagnementsEtMediateursLoader, AccompagnementsEtMediateursReadModel } from './RecupererAccompagnementsEtMediateurs'
+import {
+  AccompagnementsEtMediateursLoader,
+  AccompagnementsEtMediateursReadModel,
+} from './RecupererAccompagnementsEtMediateurs'
 import { RecupererAccompagnementsEtMediateursEnrichi } from './RecupererAccompagnementsEtMediateursEnrichi'
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel } from './RecupererStatistiquesCoop'
 import { ErrorReadModel } from './shared/ErrorReadModel'
@@ -8,11 +11,11 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 // Mock implementations
 class MockAccompagnementsLoader implements AccompagnementsEtMediateursLoader {
   private mockResult: AccompagnementsEtMediateursReadModel | ErrorReadModel = {} as AccompagnementsEtMediateursReadModel
-  
+
   async get(): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
     return Promise.resolve(this.mockResult)
   }
-  
+
   setMockResult(result: AccompagnementsEtMediateursReadModel | ErrorReadModel): void {
     this.mockResult = result
   }
@@ -22,7 +25,7 @@ class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
   private mockError: Error = new Error('Mock error')
   private mockResult: null | StatistiquesCoopReadModel = null
   private shouldThrow = false
-  
+
   async recupererStatistiques(): Promise<StatistiquesCoopReadModel> {
     if (this.shouldThrow) {
       throw this.mockError
@@ -32,11 +35,11 @@ class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     }
     return Promise.resolve(this.mockResult)
   }
-  
+
   setMockResult(result: StatistiquesCoopReadModel): void {
     this.mockResult = result
   }
-  
+
   setShouldThrow(error: Error): void {
     this.shouldThrow = true
     this.mockError = error
@@ -51,11 +54,8 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
   beforeEach(() => {
     mockAccompagnementsLoader = new MockAccompagnementsLoader()
     mockStatistiquesCoopLoader = new MockStatistiquesCoopLoader()
-    
-    useCase = new RecupererAccompagnementsEtMediateursEnrichi(
-      mockAccompagnementsLoader,
-      mockStatistiquesCoopLoader
-    )
+
+    useCase = new RecupererAccompagnementsEtMediateursEnrichi(mockAccompagnementsLoader, mockStatistiquesCoopLoader)
   })
 
   it('devrait combiner les données Prisma et API Coop avec succès', async () => {
@@ -93,7 +93,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     })
   })
 
-  it('devrait continuer avec des données partielles si l\'API Coop échoue', async () => {
+  it("devrait continuer avec des données partielles si l'API Coop échoue", async () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,

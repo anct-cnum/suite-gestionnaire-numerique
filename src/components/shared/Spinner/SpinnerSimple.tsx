@@ -1,9 +1,9 @@
 import { ReactElement } from 'react'
 
-function SpinnerSimple({ 
+function SpinnerSimple({
   size = 'medium',
   text = 'Chargement...',
-}: { 
+}: {
   readonly size?: 'large' | 'medium' | 'small'
   readonly text?: string
 }): ReactElement {
@@ -12,9 +12,9 @@ function SpinnerSimple({
     medium: { borderWidth: '3px', height: '24px', width: '24px' },
     small: { borderWidth: '2px', height: '16px', width: '16px' },
   }
-  
+
   const currentSize = sizes[size]
-  
+
   return (
     <div className="fr-grid-row fr-grid-row--center fr-py-3w">
       <div className="fr-grid-row fr-grid-row--middle">
@@ -31,11 +31,7 @@ function SpinnerSimple({
             width: currentSize.width,
           }}
         />
-        <span 
-          className="fr-text--sm fr-mb-0"
-        >
-          {text}
-        </span>
+        <span className="fr-text--sm fr-mb-0">{text}</span>
       </div>
       <style>
         {`

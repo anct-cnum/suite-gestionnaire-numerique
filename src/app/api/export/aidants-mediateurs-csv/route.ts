@@ -43,7 +43,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
       // Vérifier que le filtre demandé correspond bien au scope de l'utilisateur
       if (codeDepartementDemande !== undefined && codeDepartementDemande !== territoire) {
-        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' }, { status: 403 })
+        return NextResponse.json(
+          { error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' },
+          { status: 403 }
+        )
       }
       if (codeRegionDemande !== undefined) {
         return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
@@ -65,11 +68,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Utiliser la fonction utilitaire pour construire les filtres
-    const filtres = buildFiltresForExport(
-      params,
-      territoire,
-      utilisateur.role.nom as TypologieRole
-    )
+    const filtres = buildFiltresForExport(params, territoire, utilisateur.role.nom as TypologieRole)
 
     // Récupération des données avec accompagnements pour l'export
     const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
@@ -93,13 +92,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erreur lors de l\'export CSV:', error)
+    console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }
 
-function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>): string  {
+function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>): string {
   // En-têtes CSV
   const headers = [
     'ID',
@@ -123,7 +121,7 @@ function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>)
   }
 
   // Construction des lignes CSV
-  const rows = aidants.map(aidant => [
+  const rows = aidants.map((aidant) => [
     escapeCSV(aidant.id),
     escapeCSV(aidant.nom),
     escapeCSV(aidant.prenom),
@@ -137,6 +135,6 @@ function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>)
   ])
 
   // Assemblage final avec BOM UTF-8 pour Excel
-  const csvLines = [headers.join(','), ...rows.map(row => row.join(','))]
-  return `\uFEFF${  csvLines.join('\n')}`
+  const csvLines = [headers.join(','), ...rows.map((row) => row.join(','))]
+  return `\uFEFF${csvLines.join('\n')}`
 }

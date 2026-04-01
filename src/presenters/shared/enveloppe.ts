@@ -1,9 +1,8 @@
 import { LabelValue } from './labels'
 
-export type Enveloppe = (
-    | (LabelValue & Readonly<{ available: boolean; budget: number; limiteLaDemandeSubvention: true }>)
-    | (LabelValue & Readonly<{ available: boolean; limiteLaDemandeSubvention: false }>)
-  )
+export type Enveloppe =
+  | (LabelValue & Readonly<{ available: boolean; budget: number; limiteLaDemandeSubvention: true }>)
+  | (LabelValue & Readonly<{ available: boolean; limiteLaDemandeSubvention: false }>)
 
 export const couleursEnveloppes = {
   'Conseiller Numérique - initiale - État': 'dot-purple-glycine-850-200',
@@ -21,9 +20,7 @@ export const couleursGraphiqueEnveloppes = {
 } as const
 
 export function obtenirCouleurEnveloppe(label: string): string {
-  return label in couleursEnveloppes 
-    ? couleursEnveloppes[label as keyof typeof couleursEnveloppes] 
-    : 'dot-grey-925-125'
+  return label in couleursEnveloppes ? couleursEnveloppes[label as keyof typeof couleursEnveloppes] : 'dot-grey-925-125'
 }
 
 export function obtenirCouleurGraphique(couleurDot: string): string {
@@ -31,4 +28,3 @@ export function obtenirCouleurGraphique(couleurDot: string): string {
     ? couleursGraphiqueEnveloppes[couleurDot as keyof typeof couleursGraphiqueEnveloppes]
     : '#666666'
 }
-  

@@ -2,7 +2,19 @@ import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { creerMembres, creerUnBeneficiaireSubvention, creerUnComite, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
+import {
+  creerMembres,
+  creerUnBeneficiaireSubvention,
+  creerUnComite,
+  creerUnDepartement,
+  creerUneAction,
+  creerUneDemandeDeSubvention,
+  creerUneEnveloppeFinancement,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -26,7 +38,8 @@ describe('gouvernance loader', () => {
       derniereEditionNoteDeContexte: epochTime.toISOString(),
       editeurNoteDeContexteId: 'userFooId',
       editeurNotePriveeId: 'userFooId',
-      noteDeContexte: '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      noteDeContexte:
+        '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       notePrivee: {
         contenu: 'un contenu quelconque',
         derniereEdition: epochTime.toISOString(),
@@ -69,7 +82,12 @@ describe('gouvernance loader', () => {
     })
     await creerUneEnveloppeFinancement({ id: 1 })
     await creerUneEnveloppeFinancement({ id: 2, libelle: 'Enveloppe de formation' })
-    await creerUneDemandeDeSubvention({ actionId: 1, createurId: 0, enveloppeFinancementId: 1, id: 1 })
+    await creerUneDemandeDeSubvention({
+      actionId: 1,
+      createurId: 0,
+      enveloppeFinancementId: 1,
+      id: 1,
+    })
     await creerUneDemandeDeSubvention({
       actionId: 3,
       createurId: 0,
@@ -116,11 +134,12 @@ describe('gouvernance loader', () => {
     const codeDepartementInexistant = 'zzz'
 
     // WHEN
-    const gouvernanceReadModel = new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(codeDepartementInexistant)
+    const gouvernanceReadModel = new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartementInexistant
+    )
 
     // THEN
-    await expect(gouvernanceReadModel).rejects.toThrowError(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
     await expect(gouvernanceReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 
@@ -189,24 +208,23 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
-      [
-        {
-          commentaire: 'commentaire',
-          date: undefined,
-          derniereEdition: epochTime,
-          frequence: 'trimestrielle',
-          id: 1,
-          nomEditeur: 'Deschamps',
-          prenomEditeur: 'Jean',
-          type: 'stratégique',
-        },
-      ]
-    )
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
+      {
+        commentaire: 'commentaire',
+        date: undefined,
+        derniereEdition: epochTime,
+        frequence: 'trimestrielle',
+        id: 1,
+        nomEditeur: 'Deschamps',
+        prenomEditeur: 'Jean',
+        type: 'stratégique',
+      },
+    ])
   })
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans commentaire, alors elle est renvoyée sans commentaire', async () => {
@@ -229,24 +247,23 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
-      [
-        {
-          commentaire: '',
-          date: epochTime,
-          derniereEdition: epochTime,
-          frequence: 'trimestrielle',
-          id: 1,
-          nomEditeur: 'Deschamps',
-          prenomEditeur: 'Jean',
-          type: 'stratégique',
-        },
-      ]
-    )
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
+      {
+        commentaire: '',
+        date: epochTime,
+        derniereEdition: epochTime,
+        frequence: 'trimestrielle',
+        id: 1,
+        nomEditeur: 'Deschamps',
+        prenomEditeur: 'Jean',
+        type: 'stratégique',
+      },
+    ])
   })
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans éditeur, alors elle est renvoyée sans éditeur', async () => {
@@ -269,24 +286,23 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
-      .get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get(
+      codeDepartement
+    )
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
-      [
-        {
-          commentaire: 'commentaire',
-          date: epochTime,
-          derniereEdition: epochTime,
-          frequence: 'trimestrielle',
-          id: 1,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Martin',
-          type: 'stratégique',
-        },
-      ]
-    )
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>([
+      {
+        commentaire: 'commentaire',
+        date: epochTime,
+        derniereEdition: epochTime,
+        frequence: 'trimestrielle',
+        id: 1,
+        nomEditeur: 'Tartempion',
+        prenomEditeur: 'Martin',
+        type: 'stratégique',
+      },
+    ])
   })
 })
 
@@ -338,8 +354,8 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
     budget: 0,
     coFinancement: 0,
     coFinanceurs: 0,
-    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
-      actions: feuilleDeRoute.actions.map(action => ({
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map((feuilleDeRoute) => ({
+      actions: feuilleDeRoute.actions.map((action) => ({
         beneficiaires: 0,
         budget: action.budgetGlobal,
         coFinancement: 0,

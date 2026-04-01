@@ -15,9 +15,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModifierUneAction } from '@/use-cases/commands/ModifierUneAction'
 
-export async function modifierUneActionAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function modifierUneActionAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
@@ -34,13 +32,15 @@ export async function modifierUneActionAction(
       montant: Number(cofinancement.montant),
     })),
     contexte: actionParams.contexte,
-    demandeDeSubvention: actionParams.demandeDeSubvention ? {
-      beneficiaires: [],
-      enveloppeFinancementId: actionParams.demandeDeSubvention.enveloppeId,
-      subventionDemandee: actionParams.demandeDeSubvention.total,
-      subventionEtp: actionParams.demandeDeSubvention.montantRh,
-      subventionPrestation: actionParams.demandeDeSubvention.montantPrestation,
-    } : undefined,
+    demandeDeSubvention: actionParams.demandeDeSubvention
+      ? {
+          beneficiaires: [],
+          enveloppeFinancementId: actionParams.demandeDeSubvention.enveloppeId,
+          subventionDemandee: actionParams.demandeDeSubvention.total,
+          subventionEtp: actionParams.demandeDeSubvention.montantRh,
+          subventionPrestation: actionParams.demandeDeSubvention.montantPrestation,
+        }
+      : undefined,
     description: actionParams.description,
     destinataires: actionParams.destinataires.map((destinataire) => destinataire),
     nom: actionParams.nom,
@@ -51,7 +51,7 @@ export async function modifierUneActionAction(
     uidGouvernance: actionParams.gouvernance,
     uidPorteurs: [...actionParams.porteurs],
   }
-  
+
   const result = await new ModifierUneAction(
     new PrismaGouvernanceRepository(),
     new PrismaFeuilleDeRouteRepository(),

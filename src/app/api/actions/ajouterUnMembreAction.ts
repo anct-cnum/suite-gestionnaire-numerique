@@ -14,19 +14,15 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUnMembre } from '@/use-cases/commands/AjouterUnMembre'
 
-export async function ajouterUnMembreAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function ajouterUnMembreAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
     // Vérifier si l'erreur concerne les données de l'entreprise
-    const hasEntrepriseError = validationResult.error.issues.some(
-      issue => issue.path[0] === 'entreprise'
-    )
+    const hasEntrepriseError = validationResult.error.issues.some((issue) => issue.path[0] === 'entreprise')
 
     if (hasEntrepriseError) {
-      return ['Un problème est survenu en récupérant les informations de l\'entreprise. Contactez le support ANCT.']
+      return ["Un problème est survenu en récupérant les informations de l'entreprise. Contactez le support ANCT."]
     }
 
     return validationResult.error.issues.map(({ message }) => message)
@@ -84,25 +80,27 @@ type ActionParams = Readonly<{
 const validator = z.object({
   codeDepartement: z.string().min(1, { message: 'Le code département doit être renseigné' }),
   contact: z.object({
-    email: z.string().email({ message: 'L\'email doit être valide' }),
+    email: z.string().email({ message: "L'email doit être valide" }),
     fonction: z.string().min(1, { message: 'La fonction du contact doit être renseignée' }),
     nom: z.string().min(1, { message: 'Le nom du contact doit être renseigné' }),
     prenom: z.string().min(1, { message: 'Le prénom du contact doit être renseigné' }),
   }),
-  contactTechnique: z.object({
-    email: z.string().email({ message: 'L\'email du contact technique doit être valide' }),
-    fonction: z.string().min(1, { message: 'La fonction du contact technique doit être renseignée' }),
-    nom: z.string().min(1, { message: 'Le nom du contact technique doit être renseigné' }),
-    prenom: z.string().min(1, { message: 'Le prénom du contact technique doit être renseigné' }),
-  }).optional(),
+  contactTechnique: z
+    .object({
+      email: z.string().email({ message: "L'email du contact technique doit être valide" }),
+      fonction: z.string().min(1, { message: 'La fonction du contact technique doit être renseignée' }),
+      nom: z.string().min(1, { message: 'Le nom du contact technique doit être renseigné' }),
+      prenom: z.string().min(1, { message: 'Le prénom du contact technique doit être renseigné' }),
+    })
+    .optional(),
   entreprise: z.object({
-    adresse: z.string().min(1, { message: 'L\'adresse doit être renseignée' }),
+    adresse: z.string().min(1, { message: "L'adresse doit être renseignée" }),
     categorieJuridiqueCode: z.string().optional(),
     categorieJuridiqueUniteLegale: z.string().min(1, { message: 'La catégorie juridique doit être renseignée' }),
     codeInsee: z.string().min(1, { message: 'Le code INSEE doit être renseigné' }),
     codePostal: z.string(),
     commune: z.string().min(1, { message: 'La commune doit être renseignée' }),
-    nom: z.string().min(1, { message: 'Le nom de l\'entreprise doit être renseigné' }),
+    nom: z.string().min(1, { message: "Le nom de l'entreprise doit être renseigné" }),
     nomVoie: z.string().min(1, { message: 'Le nom de voie doit être renseigné' }),
     numeroVoie: z.string(),
     siret: z.string().min(1, { message: 'Le SIRET doit être renseigné' }),

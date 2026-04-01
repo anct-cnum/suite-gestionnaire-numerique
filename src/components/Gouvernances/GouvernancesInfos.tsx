@@ -8,10 +8,7 @@ export default function GouvernancesInfos(props: Props): ReactElement {
   const { infos } = props
 
   return (
-    <section
-      aria-labelledby="gouvernance"
-      className="fr-pb-2w"
-    >
+    <section aria-labelledby="gouvernance" className="fr-pb-2w">
       <div className="fr-container-fluid">
         <div className="fr-grid-row fr-grid-row--gutters">
           {renderGouvernanceInfoCart({
@@ -29,8 +26,7 @@ export default function GouvernancesInfos(props: Props): ReactElement {
           {renderGouvernanceInfoCart({
             description: 'Crédits engagés par l’état',
             icon: 'download-line',
-            indicateur: `${MontantPositif
-              .ofNumber(infos.creditEngager.creditEngagerGlobal)
+            indicateur: `${MontantPositif.ofNumber(infos.creditEngager.creditEngagerGlobal)
               .orElse(MontantPositif.Zero)
               .format()} €`,
             legends: `pour **${infos.creditEngager.subventionValiderCompte} demandes de subvention**`,
@@ -41,12 +37,7 @@ export default function GouvernancesInfos(props: Props): ReactElement {
   )
 }
 
-function renderGouvernanceInfoCart({
-  description,
-  icon,
-  indicateur,
-  legends,
-}: GouvernancesInfo): ReactElement {
+function renderGouvernanceInfoCart({ description, icon, indicateur, legends }: GouvernancesInfo): ReactElement {
   return (
     <div className="fr-col-12 fr-col-md-4">
       <div
@@ -77,15 +68,9 @@ function renderGouvernanceInfoCart({
         </div>
 
         <div>
-          <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-            {indicateur}
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-            {description}
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-            {parseTextWithBold(legends)}
-          </div>
+          <div className="fr-h5 fr-text-title--blue-france fr-m-0">{indicateur}</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">{description}</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-m-0">{parseTextWithBold(legends)}</div>
         </div>
       </div>
     </div>

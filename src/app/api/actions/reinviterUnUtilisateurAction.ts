@@ -10,9 +10,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisateur'
 
-export async function reinviterUnUtilisateurAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function reinviterUnUtilisateurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {

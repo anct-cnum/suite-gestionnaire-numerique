@@ -30,9 +30,5 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   )
   const gouvernancesViewModel = gouvernancePresenter(gouvernancesReadModel)
 
-  return (
-    <GouvernancesList
-      details={gouvernancesViewModel.details}
-    />
-  )
+  return <GouvernancesList details={gouvernancesViewModel.details} />
 }

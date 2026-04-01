@@ -19,7 +19,7 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
 export class MockSireneLoader implements SireneLoader {
   async rechercherParIdentifiant(siret: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
     // Simulation d'un délai d'API
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(resolve, 500)
     })
 

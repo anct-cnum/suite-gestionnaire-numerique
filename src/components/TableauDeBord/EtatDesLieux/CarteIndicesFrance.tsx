@@ -9,14 +9,14 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { DepartementFragilite, transformerDonneesCarteFrance } from '@/presenters/tableauDeBord/indicesPresenter'
 
-export default function CarteIndicesFrance({
-  departementsFragilite,
-}: Props): ReactElement {
+export default function CarteIndicesFrance({ departementsFragilite }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current) {return undefined}
+    if (!containerRef.current) {
+      return undefined
+    }
 
     let resizeTimeout: NodeJS.Timeout
 
@@ -40,10 +40,7 @@ export default function CarteIndicesFrance({
 
   if (isFragiliteError) {
     return (
-      <div
-        className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`}
-        ref={containerRef}
-      >
+      <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
         <div
           className="fr-p-0w"
           style={{
@@ -56,23 +53,11 @@ export default function CarteIndicesFrance({
           <div style={{ padding: '1rem' }}>
             <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
               <div className="font-weight-700 color-blue-france">
-                <span>
-                  {' '}
-                  Indice de Fragilité numérique
-                </span>
+                <span> Indice de Fragilité numérique</span>
                 <Information>
                   <p className="fr-mb-0">
-                    L&apos;Indice de Fragilité Numérique est issu des données de
-                    la 
-                    {' '}
-                    <strong>
-                      Mednum
-                    </strong>
-                    , calculées en 
-                    {' '}
-                    <strong>
-                      2021.
-                    </strong>
+                    L&apos;Indice de Fragilité Numérique est issu des données de la <strong>Mednum</strong>, calculées
+                    en <strong>2021.</strong>
                   </p>
                 </Information>
               </div>
@@ -80,13 +65,8 @@ export default function CarteIndicesFrance({
           </div>
           <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
             <div style={{ textAlign: 'center' }}>
-              <TitleIcon
-                background="white"
-                icon="error-warning-line"
-              />
-              <div className="fr-text--sm color-blue-france fr-mt-2w">
-                {departementsFragilite.message}
-              </div>
+              <TitleIcon background="white" icon="error-warning-line" />
+              <div className="fr-text--sm color-blue-france fr-mt-2w">{departementsFragilite.message}</div>
             </div>
           </div>
         </div>
@@ -94,15 +74,10 @@ export default function CarteIndicesFrance({
     )
   }
 
-  const departementsViewModel = transformerDonneesCarteFrance(
-    departementsFragilite
-  )
+  const departementsViewModel = transformerDonneesCarteFrance(departementsFragilite)
 
   return (
-    <div
-      className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`}
-      ref={containerRef}
-    >
+    <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
       <div
         className="fr-p-0w"
         style={{
@@ -115,14 +90,10 @@ export default function CarteIndicesFrance({
         <div style={{ padding: '1rem' }}>
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
             <div className="font-weight-700 color-blue-france">
-              <span>
-                {' '}
-                Indice de Fragilité numérique
-              </span>
+              <span> Indice de Fragilité numérique</span>
               <Information>
                 <p className="fr-mb-0">
-                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en
-                  2021
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
                 </p>
               </Information>
             </div>
@@ -130,12 +101,7 @@ export default function CarteIndicesFrance({
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ? (
-            <CarteFranceAvecInsets
-              donneesDepartements={departementsViewModel}
-              legend={<Legend />}
-            />
-          ) : null}
+          {isReady ? <CarteFranceAvecInsets donneesDepartements={departementsViewModel} legend={<Legend />} /> : null}
         </div>
       </div>
     </div>

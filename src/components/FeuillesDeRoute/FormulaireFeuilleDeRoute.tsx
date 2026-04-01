@@ -41,74 +41,43 @@ export default function FormulaireFeuilleDeRoute({
         {label}
       </DrawerTitle>
       <p className="fr-text--sm color-grey">
-        Les champs avec
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-        {' '}
-        sont obligatoires.
+        Les champs avec <span className="color-red">*</span> sont obligatoires.
       </p>
-      <form
-        aria-label={label}
-        method="dialog"
-        onSubmit={handleSubmit}
-      >
-        <TextInput
-          defaultValue={nom}
-          id={nomId}
-          name="nom"
-          required={true}
-        >
-          Quel est le nom de la feuille de route ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+      <form aria-label={label} method="dialog" onSubmit={handleSubmit}>
+        <TextInput defaultValue={nom} id={nomId} name="nom" required={true}>
+          Quel est le nom de la feuille de route ? <span className="color-red">*</span>
         </TextInput>
-        <Select
-          id="membres"
-          isPlaceholderSelectable={true}
-          name="membre"
-          options={membres}
-          required={true}
-        >
-          Quel membre de la gouvernance porte la feuille de route ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+        <Select id="membres" isPlaceholderSelectable={true} name="membre" options={membres} required={true}>
+          Quel membre de la gouvernance porte la feuille de route ? <span className="color-red">*</span>
         </Select>
         <fieldset className="fr-fieldset">
           <legend className="fr-mb-2w">
-            Quel est le périmètre géographique de la feuille de route ?
-            {' '}
-            <span className="color-red">
-              *
-            </span>
+            Quel est le périmètre géographique de la feuille de route ? <span className="color-red">*</span>
           </legend>
           <RadioGroup
             nomGroupe="perimetre"
-            onChange={(event) => { setPerimetreSelectionne(event.target.value) }}
+            onChange={(event) => {
+              setPerimetreSelectionne(event.target.value)
+            }}
             options={perimetres}
             value={perimetreSelectionne}
           />
         </fieldset>
-        <div className="fr-btns-group">
-          {children}
-        </div>
+        <div className="fr-btns-group">{children}</div>
       </form>
     </>
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  label: string
-  labelId: string
-  membres: ReadonlyArray<LabelValue>
-  nom: string
-  perimetreActuel?: string
-  perimetres: ReadonlyArray<LabelValue>
-  resetPerimetre?: boolean
-  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    label: string
+    labelId: string
+    membres: ReadonlyArray<LabelValue>
+    nom: string
+    perimetreActuel?: string
+    perimetres: ReadonlyArray<LabelValue>
+    resetPerimetre?: boolean
+    validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
+  }>
+>

@@ -21,7 +21,8 @@ const securityHeaders = [
    **/
   {
     key: 'Permissions-Policy',
-    value: 'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
+    value:
+      'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
   },
   /**
    * The HTTP Strict-Transport-Security response header (often abbreviated as HSTS) informs browsers that the site
@@ -68,22 +69,24 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   // @ts-expect-error
   headers() {
-    return process.env.NODE_ENV === 'development' ? [] : [
-      {
-        headers: securityHeaders,
-        source: '/:path*',
-      },
-    ]
+    return process.env.NODE_ENV === 'development'
+      ? []
+      : [
+          {
+            headers: securityHeaders,
+            source: '/:path*',
+          },
+        ]
   },
   poweredByHeader: false,
   reactStrictMode: true,
   serverExternalPackages: ['mjml'],
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   webpack(config): NextJsWebpackConfig | null {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

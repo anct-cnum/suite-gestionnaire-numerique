@@ -16,56 +16,51 @@ export default function OrganisationInput({
 }: Props): ReactElement {
   return (
     <div className="fr-select-group">
-      <label
-        className="fr-label"
-        htmlFor="organisation"
-      >
+      <label className="fr-label" htmlFor="organisation">
         {label}
-        {required ?
+        {required ? (
           <>
             {' '}
-            <span className="color-red">
-              *
-            </span>
-          </> :
-          null}
+            <span className="color-red">*</span>
+          </>
+        ) : null}
       </label>
-      {
-        options.length ?
-          <Select<OrganisationOption>
-            components={{ DropdownIndicator }}
-            formatOptionLabel={formatOptionLabel}
-            inputId="organisation"
-            instanceId="organisation"
-            isClearable={true}
-            menuPlacement="top"
-            name="organisation"
-            noOptionsMessage={() => 'Pas de résultat'}
-            onChange={setOrganisation}
-            options={options}
-            placeholder={placeholder}
-            required={required}
-            styles={styles}
-            value={organisation}
-          /> :
-          <AsyncSelect<OrganisationOption>
-            components={{ DropdownIndicator }}
-            formatOptionLabel={formatOptionLabel}
-            inputId="organisation"
-            instanceId="organisation"
-            isClearable={true}
-            loadOptions={onSearch}
-            loadingMessage={() => 'Chargement des structures...'}
-            menuPlacement="top"
-            name="organisation"
-            noOptionsMessage={() => 'Rechercher une structure'}
-            onChange={setOrganisation}
-            placeholder={placeholder}
-            required={required}
-            styles={styles}
-            value={organisation}
-          />
-      }
+      {options.length ? (
+        <Select<OrganisationOption>
+          components={{ DropdownIndicator }}
+          formatOptionLabel={formatOptionLabel}
+          inputId="organisation"
+          instanceId="organisation"
+          isClearable={true}
+          menuPlacement="top"
+          name="organisation"
+          noOptionsMessage={() => 'Pas de résultat'}
+          onChange={setOrganisation}
+          options={options}
+          placeholder={placeholder}
+          required={required}
+          styles={styles}
+          value={organisation}
+        />
+      ) : (
+        <AsyncSelect<OrganisationOption>
+          components={{ DropdownIndicator }}
+          formatOptionLabel={formatOptionLabel}
+          inputId="organisation"
+          instanceId="organisation"
+          isClearable={true}
+          loadOptions={onSearch}
+          loadingMessage={() => 'Chargement des structures...'}
+          menuPlacement="top"
+          name="organisation"
+          noOptionsMessage={() => 'Rechercher une structure'}
+          onChange={setOrganisation}
+          placeholder={placeholder}
+          required={required}
+          styles={styles}
+          value={organisation}
+        />
+      )}
     </div>
   )
 
@@ -122,35 +117,31 @@ const styles: StylesConfig<OrganisationOption> = {
 function formatOptionLabel(option: OrganisationOption): ReactElement {
   return (
     <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
-      {option.isMembre === true ?
+      {option.isMembre === true ? (
         <span
           aria-label="Membre de la gouvernance"
           className="fr-icon-team-line"
           role="img"
           style={{ color: 'var(--text-default-info)' }}
           title="Membre de la gouvernance"
-        /> :
+        />
+      ) : (
         <span
           aria-label="Structure"
           className="fr-icon-building-line"
           role="img"
           style={{ color: 'var(--text-mention-grey)' }}
           title="Structure"
-        />}
-      <span>
-        {option.label}
-      </span>
+        />
+      )}
+      <span>{option.label}</span>
     </span>
   )
 }
 
 function DropdownIndicator(): ReactElement {
   return (
-    <svg
-      height="24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
       <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
     </svg>
   )

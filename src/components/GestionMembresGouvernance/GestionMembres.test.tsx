@@ -73,13 +73,25 @@ describe('gestion des membres gouvernance', () => {
     expect(optionTypologie).toBeInTheDocument()
     const optionAutre = within(labelFiltreTypologie).getByRole('option', { name: 'Autre', selected: false })
     expect(optionAutre).toBeInTheDocument()
-    const optionCollectivite = within(labelFiltreTypologie).getByRole('option', { name: 'Collectivité, EPCI', selected: false })
+    const optionCollectivite = within(labelFiltreTypologie).getByRole('option', {
+      name: 'Collectivité, EPCI',
+      selected: false,
+    })
     expect(optionCollectivite).toBeInTheDocument()
-    const optionPrefecture = within(labelFiltreTypologie).getByRole('option', { name: 'Préfecture départementale', selected: false })
+    const optionPrefecture = within(labelFiltreTypologie).getByRole('option', {
+      name: 'Préfecture départementale',
+      selected: false,
+    })
     expect(optionPrefecture).toBeInTheDocument()
-    const optionConseilDepartemental = within(labelFiltreTypologie).getByRole('option', { name: 'Collectivité, conseil départemental', selected: false })
+    const optionConseilDepartemental = within(labelFiltreTypologie).getByRole('option', {
+      name: 'Collectivité, conseil départemental',
+      selected: false,
+    })
     expect(optionConseilDepartemental).toBeInTheDocument()
-    const optionEntreprisePrivee = within(labelFiltreTypologie).getByRole('option', { name: 'Entreprise privée', selected: false })
+    const optionEntreprisePrivee = within(labelFiltreTypologie).getByRole('option', {
+      name: 'Entreprise privée',
+      selected: false,
+    })
     expect(optionEntreprisePrivee).toBeInTheDocument()
     const optionAssociation = within(labelFiltreTypologie).getByRole('option', { name: 'Association', selected: false })
     expect(optionAssociation).toBeInTheDocument()
@@ -115,7 +127,7 @@ describe('gestion des membres gouvernance', () => {
       expectedLength: 5,
       expectedRows: [
         'CC des Monts du LyonnaisCollectivité, EPCI',
-        'La Voie du Num\'Association',
+        "La Voie du Num'Association",
         'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
         'Emmaüs ConnectAssociation',
         'Croix Rouge FrançaiseAssociation',
@@ -136,9 +148,10 @@ describe('gestion des membres gouvernance', () => {
       position: 0,
       vue: 'membres',
     },
-  ])('quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné',
+  ])(
+    'quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné',
     ({ expectedAriaCurrents, expectedLength, expectedRows, position }) => {
-    // GIVEN
+      // GIVEN
       afficherMembres()
 
       // WHEN
@@ -159,7 +172,8 @@ describe('gestion des membres gouvernance', () => {
         const columnsBody = membresRow(rowsBody, index)
         expect(columnsBody[0].textContent).toBe(cell0)
       })
-    })
+    }
+  )
 
   it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', () => {
     // GIVEN
@@ -261,22 +275,14 @@ describe('gestion des membres gouvernance', () => {
   })
 })
 
-function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonly<
-  ReadonlyArray<HTMLElement>>
-{
+function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonly<ReadonlyArray<HTMLElement>> {
   return within(rowsBody[rank]).getAllByRole('cell')
 }
 
-function afficherMembres(
-  options?: Partial<Parameters<typeof renderComponent>[1]>,
-  peutGererGouvernance = true
-): void {
+function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>, peutGererGouvernance = true): void {
   const membresViewModel = membresPresenter(membresReadModelFactory())
   renderComponent(
-    <GestionMembres
-      membresViewModel={membresViewModel}
-      peutGererGouvernance={peutGererGouvernance}
-    />,
+    <GestionMembres membresViewModel={membresViewModel} peutGererGouvernance={peutGererGouvernance} />,
     options
   )
 }

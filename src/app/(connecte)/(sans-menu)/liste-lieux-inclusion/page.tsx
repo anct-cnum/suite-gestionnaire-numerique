@@ -14,7 +14,7 @@ import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
-  title: 'Liste des lieux d\'inclusion numérique',
+  title: "Liste des lieux d'inclusion numérique",
 }
 
 export default async function ListeLieuxInclusionController({
@@ -56,10 +56,7 @@ export default async function ListeLieuxInclusionController({
   const resolvedSearchParams = await searchParams
 
   // Utiliser la fonction utilitaire pour construire les filtres
-  const filtres = buildFiltresLieuxInclusion(
-    resolvedSearchParams,
-    territoireDepartement
-  )
+  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, territoireDepartement)
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
 

@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
-import {
-  GetUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
@@ -150,10 +147,12 @@ describe('corriger nom prenom si absents', () => {
       // THEN
       expect(result).toBe('okAvecMiseAJour')
       expect(spiedUidToFind).toBe('fooId')
-      expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
-        nom: nomApresCorrection,
-        prenom: prenomApresCorrection,
-      }).state)
+      expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
+        utilisateurFactory({
+          nom: nomApresCorrection,
+          prenom: prenomApresCorrection,
+        }).state
+      )
     }
   )
 })

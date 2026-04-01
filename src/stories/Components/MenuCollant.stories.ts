@@ -13,7 +13,7 @@ const meta: Meta<typeof MenuCollant> = {
 
 export default meta
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {
@@ -23,7 +23,7 @@ export const Default: Story = {
       { linkProps: { href: '#informations-personnelles' }, text: 'Informations personnelles' },
       { linkProps: { href: '#structures-employeuses' }, text: 'Structures employeuses' },
       { linkProps: { href: '#activites' }, text: 'Activités' },
-      { linkProps: { href: '#lieux-activite' }, text: 'Lieux d\'activité' },
+      { linkProps: { href: '#lieux-activite' }, text: "Lieux d'activité" },
     ],
   },
 }

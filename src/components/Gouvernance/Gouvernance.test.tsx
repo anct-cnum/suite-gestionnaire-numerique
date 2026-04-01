@@ -10,7 +10,10 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 describe('gouvernance', () => {
   it('quand j’affiche une gouvernance, alors elle s’affiche avec son titre et son sous titre', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône' }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ departement: 'Rhône' }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -18,13 +21,19 @@ describe('gouvernance', () => {
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Inclusion numérique · Rhône' })
     expect(titre).toBeInTheDocument()
-    const sousTitre = screen.getByText('Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.', { selector: 'p' })
+    const sousTitre = screen.getByText(
+      'Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.',
+      { selector: 'p' }
+    )
     expect(sousTitre).toBeInTheDocument()
   })
 
   it('quand j’affiche une gouvernance sans comité, alors elle s’affiche avec sa section lui demandant d’en ajouter un', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -35,9 +44,14 @@ describe('gouvernance', () => {
     const titreComitologie = within(enTeteComitologie).getByRole('heading', { level: 2, name: 'Comitologie' })
     expect(titreComitologie).toBeInTheDocument()
     const contenuComitologie = within(sectionComitologie).getByRole('article')
-    const contenuTitreComitologie = within(contenuComitologie).getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
+    const contenuTitreComitologie = within(contenuComitologie).getByText('Actuellement, vous n’avez pas de comité', {
+      selector: 'p',
+    })
     expect(contenuTitreComitologie).toBeInTheDocument()
-    const comitologie = within(contenuComitologie).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent.', { selector: 'p' })
+    const comitologie = within(contenuComitologie).getByText(
+      'Renseignez les comités prévus et la fréquence à laquelle ils se réunissent.',
+      { selector: 'p' }
+    )
     expect(comitologie).toBeInTheDocument()
     const ajouterUnComite = within(sectionComitologie).getByRole('button', { name: 'Ajouter un comité' })
     expect(ajouterUnComite).toHaveAttribute('type', 'button')
@@ -45,7 +59,10 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors s’affiche le formulaire de création', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }),
+      epochTimePlusOneDay
+    )
 
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
@@ -59,7 +76,10 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }),
+      epochTimePlusOneDay
+    )
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
@@ -74,30 +94,33 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          date: epochTime,
-          derniereEdition: epochTime,
-          frequence: 'semestrielle',
-          id: 1,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Michel',
-          type: 'stratégique',
-        },
-        {
-          commentaire: 'commentaire',
-          date: epochTimePlusOneDay,
-          derniereEdition: epochTimePlusOneDay,
-          frequence: 'trimestrielle',
-          id: 2,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Martin',
-          type: 'technique',
-        },
-      ],
-    }), epochTime)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            date: epochTime,
+            derniereEdition: epochTime,
+            frequence: 'semestrielle',
+            id: 1,
+            nomEditeur: 'Tartempion',
+            prenomEditeur: 'Michel',
+            type: 'stratégique',
+          },
+          {
+            commentaire: 'commentaire',
+            date: epochTimePlusOneDay,
+            derniereEdition: epochTimePlusOneDay,
+            frequence: 'trimestrielle',
+            id: 2,
+            nomEditeur: 'Tartempion',
+            prenomEditeur: 'Martin',
+            type: 'technique',
+          },
+        ],
+      }),
+      epochTime
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -134,54 +157,58 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              feuillesDeRoute: [
+                { nom: 'Feuille de route inclusion', uid: '0' },
+                { nom: 'Feuille de route numérique du Rhône', uid: '1' },
+              ],
+              links: { plusDetails: '/structure/10' },
+              nom: 'Préfecture du Rhône',
+              nombreContacts: 2,
+              roles: ['coporteur'],
+              telephone: '+33 4 45 00 45 00',
+              totalMontantsSubventionsAccordees: 0,
+              totalMontantsSubventionsFormationAccordees: 0,
+              type: 'Préfecture départementale',
+              uid: 'membreId',
             },
-            feuillesDeRoute: [
-              { nom: 'Feuille de route inclusion', uid: '0' },
-              { nom: 'Feuille de route numérique du Rhône', uid: '1' }],
-            links: { plusDetails: '/structure/10' },
-            nom: 'Préfecture du Rhône',
-            nombreContacts: 2,
-            roles: ['coporteur'],
-            telephone: '+33 4 45 00 45 00',
-            totalMontantsSubventionsAccordees: 0,
-            totalMontantsSubventionsFormationAccordees: 0,
-            type: 'Préfecture départementale',
-            uid: 'membreId',
-          },
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'didier.durand@exemple.com',
+                nom: 'Didier',
+                poste: 'chargé de mission',
+                prenom: 'Durant',
+              },
+              feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '2' }],
+              links: { plusDetails: '/structure/20' },
+              nom: 'Département du Rhône',
+              nombreContacts: 1,
+              roles: ['coporteur', 'cofinanceur'],
+              telephone: '+33 4 45 00 45 01',
+              totalMontantsSubventionsAccordees: 0,
+              totalMontantsSubventionsFormationAccordees: 0,
+              type: 'Conseil départemental',
+              uid: 'membreId2',
             },
-            feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '2' }],
-            links: { plusDetails: '/structure/20' },
-            nom: 'Département du Rhône',
-            nombreContacts: 1,
-            roles: ['coporteur', 'cofinanceur'],
-            telephone: '+33 4 45 00 45 01',
-            totalMontantsSubventionsAccordees: 0,
-            totalMontantsSubventionsFormationAccordees: 0,
-            type: 'Conseil départemental',
-            uid: 'membreId2',
-          },
-        ],
-        total: 2,
-      },
-    }), epochTimePlusOneDay)
+          ],
+          total: 2,
+        },
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -233,35 +260,39 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              feuillesDeRoute: [
+                { nom: 'Feuille de route inclusion', uid: '0' },
+                { nom: 'Feuille de route numérique du Rhône', uid: '1' },
+              ],
+              links: { plusDetails: '/' },
+              nom: 'Préfecture du Rhône',
+              nombreContacts: 2,
+              roles: ['coporteur'],
+              telephone: '+33 4 45 00 45 00',
+              totalMontantsSubventionsAccordees: 0,
+              totalMontantsSubventionsFormationAccordees: 0,
+              type: 'Préfecture départementale',
+              uid: 'membreId',
             },
-            feuillesDeRoute: [
-              { nom: 'Feuille de route inclusion', uid: '0' },
-              { nom: 'Feuille de route numérique du Rhône', uid: '1' }],
-            links: { plusDetails: '/' },
-            nom: 'Préfecture du Rhône',
-            nombreContacts: 2,
-            roles: ['coporteur'],
-            telephone: '+33 4 45 00 45 00',
-            totalMontantsSubventionsAccordees: 0,
-            totalMontantsSubventionsFormationAccordees: 0,
-            type: 'Préfecture départementale',
-            uid: 'membreId',
-          },
-        ],
-        total: 1,
-      },
-    }), epochTimePlusOneDay)
+          ],
+          total: 1,
+        },
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -280,7 +311,10 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans feuille de route, alors elle s’affiche avec son résumé à 0 et sa section lui demandant d’en ajouter une', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: [] }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: [] }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -291,51 +325,64 @@ describe('gouvernance', () => {
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '0 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '0 feuille de route' })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
+      level: 2,
+      name: '0 feuille de route',
+    })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
     const contenuFeuilleDeRoute = within(sectionFeuilleDeRoute).getAllByRole('article')
-    const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Aucune feuille de route', { selector: 'p' })
+    const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Aucune feuille de route', {
+      selector: 'p',
+    })
     expect(contenuTitreFeuilleDeRoute).toBeInTheDocument()
-    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Cliquez sur le bouton gérer les feuilles de route pour définir votre première feuille de route.', { selector: 'p' })
+    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText(
+      'Cliquez sur le bouton gérer les feuilles de route pour définir votre première feuille de route.',
+      { selector: 'p' }
+    )
     expect(feuilleDeRoute).toBeInTheDocument()
-    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer les feuilles de route' })
+    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('link', {
+      name: 'Gérer les feuilles de route',
+    })
     expect(ajouterDesFeuilleDeRoutes).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuilles-de-route')
   })
 
   it('quand j’affiche une gouvernance avec au moins une feuille de route, alors elle s’affiche avec son résumé et sa section feuille de route', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '0' }],
-          beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '1' }],
-          beneficiairesSubventionFormationAccordee: [],
-          budgetGlobal: 145_000,
-          montantSubventionAccordee: 105_000,
-          montantSubventionDemandee: 120_000,
-          montantSubventionFormationAccordee: 5_000,
-          nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '0' },
-          totalActions: 3,
-          uid: 'feuilleDeRouteFooId1',
-        },
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '2' }],
-          beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '3' }],
-          beneficiairesSubventionFormationAccordee: [],
-          budgetGlobal: 88_030,
-          montantSubventionAccordee: 38_030,
-          montantSubventionDemandee: 50_000,
-          montantSubventionFormationAccordee: 5_000,
-          nom: 'Feuille de route numérique du Rhône',
-          porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '1' },
-          totalActions: 1,
-          uid: 'feuilleDeRouteFooId2',
-        },
-      ],
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        feuillesDeRoute: [
+          {
+            beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '0' }],
+            beneficiairesSubventionAccordee: [],
+            beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '1' }],
+            beneficiairesSubventionFormationAccordee: [],
+            budgetGlobal: 145_000,
+            montantSubventionAccordee: 105_000,
+            montantSubventionDemandee: 120_000,
+            montantSubventionFormationAccordee: 5_000,
+            nom: 'Feuille de route inclusion',
+            porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '0' },
+            totalActions: 3,
+            uid: 'feuilleDeRouteFooId1',
+          },
+          {
+            beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '2' }],
+            beneficiairesSubventionAccordee: [],
+            beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '3' }],
+            beneficiairesSubventionFormationAccordee: [],
+            budgetGlobal: 88_030,
+            montantSubventionAccordee: 38_030,
+            montantSubventionDemandee: 50_000,
+            montantSubventionFormationAccordee: 5_000,
+            nom: 'Feuille de route numérique du Rhône',
+            porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '1' },
+            totalActions: 1,
+            uid: 'feuilleDeRouteFooId2',
+          },
+        ],
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -348,9 +395,14 @@ describe('gouvernance', () => {
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '2 feuilles de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '2 feuilles de route' })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
+      level: 2,
+      name: '2 feuilles de route',
+    })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
-    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('2 feuilles de route, 233 030 €', { selector: 'p' })
+    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('2 feuilles de route, 233 030 €', {
+      selector: 'p',
+    })
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
     const gerer = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuilles-de-route')
@@ -383,24 +435,27 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec qu’une feuille de route, alors elle s’affiche avec son résumé dont le lien est directement vers la feuille de route et certains titres au singulier', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '0' }],
-          beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '1' }],
-          beneficiairesSubventionFormationAccordee: [],
-          budgetGlobal: 145_000,
-          montantSubventionAccordee: 100_000,
-          montantSubventionDemandee: 115_000,
-          montantSubventionFormationAccordee: 5_000,
-          nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '2' },
-          totalActions: 3,
-          uid: 'feuilleDeRouteFooId',
-        },
-      ],
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        feuillesDeRoute: [
+          {
+            beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '0' }],
+            beneficiairesSubventionAccordee: [],
+            beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', structureId: 1, uid: '1' }],
+            beneficiairesSubventionFormationAccordee: [],
+            budgetGlobal: 145_000,
+            montantSubventionAccordee: 100_000,
+            montantSubventionDemandee: 115_000,
+            montantSubventionFormationAccordee: 5_000,
+            nom: 'Feuille de route inclusion',
+            porteur: { nom: 'Préfecture du Rhône', structureId: 1, uid: '2' },
+            totalActions: 3,
+            uid: 'feuilleDeRouteFooId',
+          },
+        ],
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -413,15 +468,23 @@ describe('gouvernance', () => {
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '1 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '1 feuille de route' })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
+      level: 2,
+      name: '1 feuille de route',
+    })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
-    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('1 feuille de route, 145 000 €', { selector: 'p' })
+    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('1 feuille de route, 145 000 €', {
+      selector: 'p',
+    })
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
   })
 
   it('quand j’affiche une gouvernance sans note de contexte, alors elle s’affiche avec sa section lui demandant d’en ajouter une', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -429,27 +492,41 @@ describe('gouvernance', () => {
     // THEN
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
-    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
+    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', {
+      level: 2,
+      name: 'Note de contexte',
+    })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
-    const contenuTitreNoteDeContexte = within(contenuNoteDeContexte).getByText('Aucune note de contexte', { selector: 'p' })
+    const contenuTitreNoteDeContexte = within(contenuNoteDeContexte).getByText('Aucune note de contexte', {
+      selector: 'p',
+    })
     expect(contenuTitreNoteDeContexte).toBeInTheDocument()
-    const noteDeContexte = within(contenuNoteDeContexte).getByText('Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.', { selector: 'p' })
+    const noteDeContexte = within(contenuNoteDeContexte).getByText(
+      'Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
+      { selector: 'p' }
+    )
     expect(noteDeContexte).toBeInTheDocument()
-    const ajouterUneNoteDeContexte = within(sectionNoteDeContexte).getByRole('button', { name: 'Ajouter une note de contexte' })
+    const ajouterUneNoteDeContexte = within(sectionNoteDeContexte).getByRole('button', {
+      name: 'Ajouter une note de contexte',
+    })
     expect(ajouterUneNoteDeContexte).toHaveAttribute('type', 'button')
   })
 
   it('quand j’affiche une gouvernance avec une note de contexte, alors elle s’affiche avec sa section note de contexte repliée', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      noteDeContexte: {
-        dateDeModification: epochTime,
-        nomAuteur: 'Deschamps',
-        prenomAuteur: 'Jean',
-        texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-      },
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        noteDeContexte: {
+          dateDeModification: epochTime,
+          nomAuteur: 'Deschamps',
+          prenomAuteur: 'Jean',
+          texte:
+            '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+        },
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -457,16 +534,24 @@ describe('gouvernance', () => {
     // THEN
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
-    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
+    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', {
+      level: 2,
+      name: 'Note de contexte',
+    })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const modifier = within(sectionNoteDeContexte).getByRole('button', { name: 'Modifier' })
     expect(modifier).toHaveAttribute('type', 'button')
     const auteurDeLaNote = screen.getAllByText('Modifié le 01/01/1970 par Jean Deschamps', { selector: 'p' })[0]
     expect(auteurDeLaNote).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
-    const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText('titre note de contexte', { selector: 'strong' })
+    const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText('titre note de contexte', {
+      selector: 'strong',
+    })
     expect(noteDeContexteElement1).toBeInTheDocument()
-    const noteDeContexteElement2 = within(contenuNoteDeContexte).getAllByText(matchWithoutMarkup('un paragraphe avec du bold.'), { selector: 'p' })
+    const noteDeContexteElement2 = within(contenuNoteDeContexte).getAllByText(
+      matchWithoutMarkup('un paragraphe avec du bold.'),
+      { selector: 'p' }
+    )
     expect(noteDeContexteElement2[0]).toBeInTheDocument()
     const noteDeContexteElement3 = within(contenuNoteDeContexte).getAllByText('bold', { selector: 'b' })
     expect(noteDeContexteElement3[0]).toBeInTheDocument()
@@ -495,14 +580,17 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec une note de contexte, je peux la déplier', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      noteDeContexte: {
-        dateDeModification: epochTime,
-        nomAuteur: 'Deschamps',
-        prenomAuteur: 'Jean',
-        texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p>',
-      },
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        noteDeContexte: {
+          dateDeModification: epochTime,
+          nomAuteur: 'Deschamps',
+          prenomAuteur: 'Jean',
+          texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p>',
+        },
+      }),
+      epochTimePlusOneDay
+    )
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
@@ -516,20 +604,23 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec un comité sans date, alors le comité est affiché sans date', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          date: undefined,
-          derniereEdition: epochTime,
-          frequence: 'semestrielle',
-          id: 1,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Martin',
-          type: 'stratégique',
-        },
-      ],
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            date: undefined,
+            derniereEdition: epochTime,
+            frequence: 'semestrielle',
+            id: 1,
+            nomEditeur: 'Tartempion',
+            prenomEditeur: 'Martin',
+            type: 'stratégique',
+          },
+        ],
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -542,20 +633,23 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché avec sa date', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          date: epochTime,
-          derniereEdition: epochTime,
-          frequence: 'semestrielle',
-          id: 1,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Martin',
-          type: 'stratégique',
-        },
-      ],
-    }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            date: epochTime,
+            derniereEdition: epochTime,
+            frequence: 'semestrielle',
+            id: 1,
+            nomEditeur: 'Tartempion',
+            prenomEditeur: 'Martin',
+            type: 'stratégique',
+          },
+        ],
+      }),
+      epochTimePlusOneDay
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -568,20 +662,23 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec un comité dont la date est le jour même ou dans le futur, alors le comité est affiché avec sa date', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          date: epochTime,
-          derniereEdition: epochTime,
-          frequence: 'semestrielle',
-          id: 1,
-          nomEditeur: 'Tartempion',
-          prenomEditeur: 'Martin',
-          type: 'stratégique',
-        },
-      ],
-    }), epochTime)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            date: epochTime,
+            derniereEdition: epochTime,
+            frequence: 'semestrielle',
+            id: 1,
+            nomEditeur: 'Tartempion',
+            prenomEditeur: 'Martin',
+            type: 'stratégique',
+          },
+        ],
+      }),
+      epochTime
+    )
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)

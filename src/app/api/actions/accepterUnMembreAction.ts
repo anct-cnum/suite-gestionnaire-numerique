@@ -14,9 +14,7 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AccepterUnMembre } from '@/use-cases/commands/AccepterUnMembre'
 import { InviterContactsReferentsFne } from '@/use-cases/commands/InviterContactsReferentsFne'
 
-export async function accepterUnMembreAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function accepterUnMembreAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {

@@ -30,24 +30,28 @@ export function posteConseillerNumeriqueDetailPresenter(
 }
 
 type PosteDetailViewModel = Readonly<{
-  badges: ReadonlyArray<Readonly<{
-    color: string
-    label: string
-  }>>
+  badges: ReadonlyArray<
+    Readonly<{
+      color: string
+      label: string
+    }>
+  >
   contrats: ReadonlyArray<ContratViewModel>
   conventionsEtFinancements: ConventionsViewModel
   posteId: number
   structure: Readonly<{
     adresse: string
-    contacts: ReadonlyArray<Readonly<{
-      email: string
-      estReferentFNE: boolean
-      fonction: string
-      id: number
-      nom: string
-      prenom: string
-      telephone: string
-    }>>
+    contacts: ReadonlyArray<
+      Readonly<{
+        email: string
+        estReferentFNE: boolean
+        fonction: string
+        id: number
+        nom: string
+        prenom: string
+        telephone: string
+      }>
+    >
     departement: string
     nom: string
     region: string
@@ -97,9 +101,7 @@ type ConventionsViewModel = Readonly<{
   enveloppes: ReadonlyArray<EnveloppeDetailViewModel>
 }>
 
-function buildBadges(
-  readModel: PosteConseillerNumeriqueDetailReadModel
-): PosteDetailViewModel['badges'] {
+function buildBadges(readModel: PosteConseillerNumeriqueDetailReadModel): PosteDetailViewModel['badges'] {
   const badges: Array<{ color: string; label: string }> = []
 
   // Badge de statut

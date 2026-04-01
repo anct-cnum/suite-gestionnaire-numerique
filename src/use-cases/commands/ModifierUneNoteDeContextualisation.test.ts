@@ -36,7 +36,8 @@ describe('modifier une note de contextualisation', () => {
     expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteUidToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
-        noteDeContextualisation: '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
+        noteDeContextualisation:
+          '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
         uidGouvernance: {
           value: '75',
         },
@@ -110,7 +111,7 @@ let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteUidToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
 
-class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository ,UpdateFeuilleDeRouteRepository{
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
@@ -170,11 +171,13 @@ class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy imp
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: '75',
-      role: 'Gestionnaire département',
-      uid: { email: 'michel.tartempion@example.net', value: 'userFooId' },
-    }))
+    return Promise.resolve(
+      utilisateurFactory({
+        codeOrganisation: '75',
+        role: 'Gestionnaire département',
+        uid: { email: 'michel.tartempion@example.net', value: 'userFooId' },
+      })
+    )
   }
 }
 

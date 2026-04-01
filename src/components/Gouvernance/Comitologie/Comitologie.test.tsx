@@ -22,11 +22,17 @@ describe('comitologie', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un comité' })
       const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Ajouter un comité' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText(
+        'Renseignez les comités prévus et la fréquence à laquelle ils se réunissent',
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
-      const typeComiteQuestion = within(fieldsets[0]).getByText(matchWithoutMarkup('Quel type de comité allez-vous organiser ? *'), { selector: 'legend' })
+      const typeComiteQuestion = within(fieldsets[0]).getByText(
+        matchWithoutMarkup('Quel type de comité allez-vous organiser ? *'),
+        { selector: 'legend' }
+      )
       expect(typeComiteQuestion).toBeInTheDocument()
       const strategique = within(fieldsets[0]).getByRole('radio', { checked: true, name: 'Stratégique' })
       expect(strategique).toHaveAttribute('value', 'strategique')
@@ -37,7 +43,10 @@ describe('comitologie', () => {
       const autre = within(fieldsets[0]).getByRole('radio', { checked: false, name: 'Autre' })
       expect(autre).toHaveAttribute('value', 'autre')
 
-      const frequenceComiteQuestion = within(fieldsets[1]).getByText(matchWithoutMarkup('À quelle fréquence se réunit le comité ? *'), { selector: 'legend' })
+      const frequenceComiteQuestion = within(fieldsets[1]).getByText(
+        matchWithoutMarkup('À quelle fréquence se réunit le comité ? *'),
+        { selector: 'legend' }
+      )
       expect(frequenceComiteQuestion).toBeInTheDocument()
       const mensuelle = within(fieldsets[1]).getByRole('radio', { checked: true, name: 'Mensuelle' })
       expect(mensuelle).toHaveAttribute('value', 'mensuelle')
@@ -168,13 +177,22 @@ describe('comitologie', () => {
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       expect(drawer).toHaveAttribute('id', 'drawerModifierComiteId')
       const formulaire = within(drawer).getByRole('form', { name: 'Détail du Comité technique : 01/01/1970' })
-      const titre = within(formulaire).getByRole('heading', { level: 3, name: 'Détail du Comité technique : 01/01/1970' })
+      const titre = within(formulaire).getByRole('heading', {
+        level: 3,
+        name: 'Détail du Comité technique : 01/01/1970',
+      })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(formulaire).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent', { selector: 'p' })
+      const sousTitre = within(formulaire).getByText(
+        'Renseignez les comités prévus et la fréquence à laquelle ils se réunissent',
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
-      const typeComiteQuestion = within(fieldsets[0]).getByText(matchWithoutMarkup('Quel type de comité allez-vous organiser ? *'), { selector: 'legend' })
+      const typeComiteQuestion = within(fieldsets[0]).getByText(
+        matchWithoutMarkup('Quel type de comité allez-vous organiser ? *'),
+        { selector: 'legend' }
+      )
       expect(typeComiteQuestion).toBeInTheDocument()
       const strategique = within(fieldsets[0]).getByRole('radio', { checked: false, name: 'Stratégique' })
       expect(strategique).toHaveAttribute('value', 'strategique')
@@ -184,7 +202,10 @@ describe('comitologie', () => {
       expect(consultatif).toHaveAttribute('value', 'consultatif')
       const autre = within(fieldsets[0]).getByRole('radio', { checked: false, name: 'Autre' })
       expect(autre).toHaveAttribute('value', 'autre')
-      const frequenceComiteQuestion = within(fieldsets[1]).getByText(matchWithoutMarkup('À quelle fréquence se réunit le comité ? *'), { selector: 'legend' })
+      const frequenceComiteQuestion = within(fieldsets[1]).getByText(
+        matchWithoutMarkup('À quelle fréquence se réunit le comité ? *'),
+        { selector: 'legend' }
+      )
       expect(frequenceComiteQuestion).toBeInTheDocument()
       const mensuelle = within(fieldsets[1]).getByRole('radio', { checked: false, name: 'Mensuelle' })
       expect(mensuelle).toHaveAttribute('value', 'mensuelle')

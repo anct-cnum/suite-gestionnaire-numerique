@@ -12,9 +12,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const codeDepartement = code?.[0]
 
   return generateTerritoireMetadata(niveau, codeDepartement, {
-    descriptionTemplate: 'Découvrez les lieux d\'inclusion numérique pour {territoire}. Statistiques sur les structures d\'accompagnement, médiathèques, France Services et tiers-lieux.',
-    keywords: ['lieux inclusion numérique', 'structures accompagnement', 'médiathèques', 'France Services', 'tiers-lieux', 'médiation numérique'],
-    titleTemplate: 'Lieux d\'inclusion numérique - {territoire} - Inclusion Numérique',
+    descriptionTemplate:
+      "Découvrez les lieux d'inclusion numérique pour {territoire}. Statistiques sur les structures d'accompagnement, médiathèques, France Services et tiers-lieux.",
+    keywords: [
+      'lieux inclusion numérique',
+      'structures accompagnement',
+      'médiathèques',
+      'France Services',
+      'tiers-lieux',
+      'médiation numérique',
+    ],
+    titleTemplate: "Lieux d'inclusion numérique - {territoire} - Inclusion Numérique",
   })
 }
 
@@ -36,9 +44,8 @@ export default async function LieuxInclusion({ params }: Props): Promise<ReactEl
 
   // Charger les données
   const loader = new PrismaLieuxInclusionNumeriqueLoader()
-  const readModel = codeDepartement === undefined
-    ? await loader.getNational()
-    : await loader.getDepartemental(codeDepartement)
+  const readModel =
+    codeDepartement === undefined ? await loader.getNational() : await loader.getDepartemental(codeDepartement)
 
   const viewModel = lieuxInclusionNumeriquePresenter(readModel)
 

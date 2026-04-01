@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 const meta: Meta<typeof LieuInclusionDetailsInformationsGenerales> = {
   argTypes: {
     data: {
-      description: 'Données des informations générales du lieu d\'inclusion numérique',
+      description: "Données des informations générales du lieu d'inclusion numérique",
     },
   },
   component: LieuInclusionDetailsInformationsGenerales,
@@ -17,7 +17,7 @@ const meta: Meta<typeof LieuInclusionDetailsInformationsGenerales> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj
 
 export const Default: Story = {
   args: {
@@ -70,7 +70,8 @@ export const NomStructureLong: Story = {
     data: {
       adresse: 'Centre Commercial Les Arcades, 101 Rue Berger, 75001 Paris',
       complementAdresse: 'Niveau -1, Porte Lescot, Face au métro Châtelet-Les Halles',
-      nomStructure: 'Maison des Services Publics et de l\'Inclusion Numérique de Paris 1er Arrondissement - Antenne Châtelet-Les Halles',
+      nomStructure:
+        "Maison des Services Publics et de l'Inclusion Numérique de Paris 1er Arrondissement - Antenne Châtelet-Les Halles",
       siret: '13579246801357',
     },
   },

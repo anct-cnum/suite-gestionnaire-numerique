@@ -27,11 +27,7 @@ export default function AjouterDesBesoins({
     <>
       <button
         aria-controls={drawerId}
-        className={
-          hasBesoins ?
-            'fr-btn fr-btn--tertiary' :
-            'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
-        }
+        className={hasBesoins ? 'fr-btn fr-btn--tertiary' : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'}
         data-fr-opened="false"
         onClick={() => {
           setIsDrawerOpen(true)
@@ -54,37 +50,18 @@ export default function AjouterDesBesoins({
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <TitleIcon
-            background="purple"
-            icon="flashlight-line"
-          />
+          <TitleIcon background="purple" icon="flashlight-line" />
           <br />
           Ajouter le(s) besoin(s)
         </DrawerTitle>
-        <p className="fr-text--sm color-grey">
-          Sélectionnez au moins un besoin.
-        </p>
-        <fieldset
-          className={styles['no-border']}
-          ref={fieldset}
-        >
-          <legend className="fr-sr-only">
-            Les différents besoins
-          </legend>
-          <Fieldset
-            checkboxes={formations}
-            titre="Besoin relatif à la formation des feuilles de route"
-          />
+        <p className="fr-text--sm color-grey">Sélectionnez au moins un besoin.</p>
+        <fieldset className={styles['no-border']} ref={fieldset}>
+          <legend className="fr-sr-only">Les différents besoins</legend>
+          <Fieldset checkboxes={formations} titre="Besoin relatif à la formation des feuilles de route" />
           <hr />
-          <Fieldset
-            checkboxes={financements}
-            titre="Besoin relatif au financement du déploiement"
-          />
+          <Fieldset checkboxes={financements} titre="Besoin relatif au financement du déploiement" />
           <hr />
-          <Fieldset
-            checkboxes={outillages}
-            titre="Besoin relatif à l’outillage des acteurs"
-          />
+          <Fieldset checkboxes={outillages} titre="Besoin relatif à l’outillage des acteurs" />
           <hr />
           <Fieldset
             checkboxes={formationsProfesionnels}
@@ -102,11 +79,7 @@ export default function AjouterDesBesoins({
             >
               Enregistrer
             </button>
-            <button
-              className="fr-btn fr-btn--secondary"
-              onClick={toutEffacer(fieldset)}
-              type="button"
-            >
+            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
               Tout effacer
             </button>
           </div>
@@ -116,28 +89,23 @@ export default function AjouterDesBesoins({
   )
 }
 
-function Fieldset(
-  { checkboxes, titre }:
-  Readonly<{ checkboxes: Besoins; titre: string }>
-): ReactElement {
+function Fieldset({ checkboxes, titre }: Readonly<{ checkboxes: Besoins; titre: string }>): ReactElement {
   return (
     <fieldset className="fr-fieldset">
       <legend className="fr-fieldset__legend--regular fr-fieldset__legend color-blue-france font-weight-700">
         {titre}
       </legend>
-      {
-        checkboxes.map((checkbox) => (
-          <Checkbox
-            id={checkbox.value}
-            isSelected={checkbox.isSelected}
-            key={checkbox.value}
-            label="besoins"
-            value={checkbox.value}
-          >
-            {checkbox.label}
-          </Checkbox>
-        ))
-      }
+      {checkboxes.map((checkbox) => (
+        <Checkbox
+          id={checkbox.value}
+          isSelected={checkbox.isSelected}
+          key={checkbox.value}
+          label="besoins"
+          value={checkbox.value}
+        >
+          {checkbox.label}
+        </Checkbox>
+      ))}
     </fieldset>
   )
 }

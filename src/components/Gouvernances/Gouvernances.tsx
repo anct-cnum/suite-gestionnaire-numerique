@@ -22,15 +22,10 @@ export default function Gouvernances({
             <TitleIcon icon="france-line" />
             Gouvernances
           </PageTitle>
-          <p className="fr-text--lg fr-mb-0">
-            Vision globale des gouvernances, des membres et des feuilles de route
-          </p>
+          <p className="fr-text--lg fr-mb-0">Vision globale des gouvernances, des membres et des feuilles de route</p>
         </div>
         <div className="fr-col-auto">
-          <Link
-            className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/gouvernances/list"
-          >
+          <Link className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line" href="/gouvernances/list">
             Voir les 105 gouvernances
           </Link>
         </div>

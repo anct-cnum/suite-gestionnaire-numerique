@@ -61,10 +61,12 @@ export default function Modal({
   )
 }
 
-type Props = PropsWithChildren<Readonly<{
-  close(): void
-  concealingBackdrop?: boolean
-  id: string
-  isOpen: boolean
-  labelId: string
-}>>
+type Props = PropsWithChildren<
+  Readonly<{
+    close(): void
+    concealingBackdrop?: boolean
+    id: string
+    isOpen: boolean
+    labelId: string
+  }>
+>

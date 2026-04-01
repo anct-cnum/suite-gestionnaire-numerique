@@ -12,9 +12,7 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { DefinirUnCoPorteur } from '@/use-cases/commands/DefinirUnCoPorteur'
 
-export async function definirUnCoPorteurAction(
-  actionParams: ActionParams
-): ResultAsync<ReadonlyArray<string>> {
+export async function definirUnCoPorteurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
@@ -29,12 +27,11 @@ export async function definirUnCoPorteurAction(
     new PrismaGouvernanceRepository(),
     emailInvitationGatewayFactory,
     new Date()
-  )
-    .handle({
-      uidGouvernance: actionParams.uidGouvernance,
-      uidMembre: actionParams.uidMembre,
-      uidUtilisateurConnecte: sessionSub,
-    })
+  ).handle({
+    uidGouvernance: actionParams.uidGouvernance,
+    uidMembre: actionParams.uidMembre,
+    uidUtilisateurConnecte: sessionSub,
+  })
 
   revalidatePath(actionParams.path)
 

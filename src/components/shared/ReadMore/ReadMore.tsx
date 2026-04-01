@@ -11,7 +11,6 @@ export default function ReadMore({ texte }: Props): ReactElement {
     <>
       <div
         className={isCollapsed ? styles.collapse : ''}
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: texte,
         }}
@@ -24,7 +23,7 @@ export default function ReadMore({ texte }: Props): ReactElement {
           }}
           type="button"
         >
-          {isCollapsed ? 'Lire plus' : 'Lire moins' }
+          {isCollapsed ? 'Lire plus' : 'Lire moins'}
         </button>
       </div>
     </>

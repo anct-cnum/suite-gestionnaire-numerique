@@ -5,25 +5,15 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 
-export default function LieuxInclusionNumerique({
-  viewModel,
-}: Props): ReactElement {
+export default function LieuxInclusionNumerique({ viewModel }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
     return (
       <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
         <div className="fr-h1 fr-m-0">
-          <TitleIcon
-            background="white"
-            icon="error-warning-line"
-          />
-          —
+          <TitleIcon background="white" icon="error-warning-line" />—
         </div>
-        <div className="font-weight-500">
-          Lieux d&apos;inclusion numérique
-        </div>
-        <div className="fr-text--xs color-blue-france fr-mb-0">
-          {viewModel.message}
-        </div>
+        <div className="font-weight-500">Lieux d&apos;inclusion numérique</div>
+        <div className="fr-text--xs color-blue-france fr-mb-0">{viewModel.message}</div>
       </div>
     )
   }
@@ -31,25 +21,14 @@ export default function LieuxInclusionNumerique({
   return (
     <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
       <div className="fr-h1 fr-m-0">
-        <TitleIcon
-          background="white"
-          icon="map-pin-2-line"
-        />
+        <TitleIcon background="white" icon="map-pin-2-line" />
         {viewModel.nombreLieux}
       </div>
       <div className="font-weight-500">
-        <span>
-          Lieux d&apos;inclusion numérique
-        </span>
+        <span>Lieux d&apos;inclusion numérique</span>
         <Information>
           <p className="fr-mb-0">
-            Lieux référencés sur la 
-            {' '}
-            <strong>
-              Cartographie nationale
-            </strong>
-            {' '}
-            des lieux d&apos;inclusion numérique.
+            Lieux référencés sur la <strong>Cartographie nationale</strong> des lieux d&apos;inclusion numérique.
           </p>
         </Information>
       </div>

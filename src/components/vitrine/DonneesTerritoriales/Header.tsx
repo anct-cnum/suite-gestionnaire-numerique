@@ -19,9 +19,10 @@ export default function Header({ titre }: Props): ReactElement {
   const currentSection = pathParts[2] || 'synthese-et-indicateurs'
 
   // Extraire niveau et code depuis params
-  const niveau = currentSection === 'gouvernances'
-    ? pathParts[3] // 'departement' pour gouvernances
-    : (params.niveau as string | undefined)
+  const niveau =
+    currentSection === 'gouvernances'
+      ? pathParts[3] // 'departement' pour gouvernances
+      : (params.niveau as string | undefined)
 
   const codeArray = params.code as ReadonlyArray<string> | undefined
   const code = codeArray?.[0]
@@ -55,10 +56,7 @@ export default function Header({ titre }: Props): ReactElement {
   const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection)
 
   return (
-    <div
-      className={styles.header}
-      data-donnees-territoriales-header
-    >
+    <div className={styles.header} data-donnees-territoriales-header>
       <FilAriane items={breadcrumbItems} />
 
       <div className={`fr-grid-row fr-grid-row--gutters ${styles.titleRow}`}>
@@ -70,10 +68,7 @@ export default function Header({ titre }: Props): ReactElement {
           </h1>
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <SelecteurZoneGeographique
-            defaultValue={selectedZone}
-            onChange={handleTerritoireChange}
-          />
+          <SelecteurZoneGeographique defaultValue={selectedZone} onChange={handleTerritoireChange} />
         </div>
       </div>
     </div>
@@ -86,14 +81,12 @@ function getTerritoireLabel(niveau?: string, code?: string): string {
   }
 
   if (niveau === 'region') {
-    const region = regions
-      .find((region) => region.code === code)
+    const region = regions.find((region) => region.code === code)
     return region ? region.nom : `Région ${code}`
   }
 
   if (niveau === 'departement') {
-    const departement = departements
-      .find((departement) => departement.code === code)
+    const departement = departements.find((departement) => departement.code === code)
     return departement ? `${departement.nom} · ${code}` : `Département ${code}`
   }
 
@@ -106,8 +99,7 @@ function getSelectedZone(niveau?: string, code?: string): undefined | ZoneGeogra
     return regionsEtDepartements().find((zone) => zone.value === 'all')
   }
 
-  const departement = departements
-    .find((departement) => departement.code === code)
+  const departement = departements.find((departement) => departement.code === code)
 
   if (niveau === 'departement' && departement !== undefined) {
     const region = regions.find((regrion) => regrion.code === departement.regionCode)
@@ -157,7 +149,10 @@ function getBreadcrumbItems(
       if (regionCourante !== undefined) {
         items.push({ label: regionCourante.nom })
       }
-      items.push({ href: `/vitrine/donnees-territoriales/${section}/departement/${code}`, label: `${departementCourant.nom} · ${code}` })
+      items.push({
+        href: `/vitrine/donnees-territoriales/${section}/departement/${code}`,
+        label: `${departementCourant.nom} · ${code}`,
+      })
     }
   }
 

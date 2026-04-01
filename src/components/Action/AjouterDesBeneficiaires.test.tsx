@@ -25,28 +25,43 @@ describe('ajout des bénéficiaires', () => {
     })
 
     // THEN
-    const bouton = screen.getByRole('button', { description: 'Ajouter des bénéficiaires de la subvention', name: 'Ajouter' })
+    const bouton = screen.getByRole('button', {
+      description: 'Ajouter des bénéficiaires de la subvention',
+      name: 'Ajouter',
+    })
     expect(bouton).toBeEnabled()
     expect(bouton).toHaveAttribute('type', 'button')
   })
 
   it('quand il y un bénéficiaire alors tag du bénéficiaire s’affiche sur l action', () => {
     // GIVEN
-    afficherLeFormulaireAction({
-      demandeDeSubvention: {
-        enveloppeId: '1',
-        montantPrestation: 10,
-        montantRh: 10,
-        total: 20,
+    afficherLeFormulaireAction(
+      {
+        demandeDeSubvention: {
+          enveloppeId: '1',
+          montantPrestation: 10,
+          montantRh: 10,
+          total: 20,
+        },
+        destinataires: [],
       },
-      destinataires: [
-      ],
-    }, {
-      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-        { nom: 'Rhône (69) Co-porteur', roles: [], structureId: 69, uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
-        { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], structureId: 200, uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
-      ],
-    })
+      {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+          {
+            nom: 'Rhône (69) Co-porteur',
+            roles: [],
+            structureId: 69,
+            uid: 'rhone_69_id',
+          } as MembreAvecRoleDansLaGouvernance,
+          {
+            nom: 'CC des Monts du Lyonnais Co-porteur',
+            roles: [],
+            structureId: 200,
+            uid: 'cc_mont_du_lyonnais_id',
+          } as MembreAvecRoleDansLaGouvernance,
+        ],
+      }
+    )
 
     // WHEN
     presserLeBouton('Ajouter', 'Ajouter des bénéficiaires de la subvention')
@@ -56,7 +71,12 @@ describe('ajout des bénéficiaires', () => {
     expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
     const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) bénéficiaire(s)' })
     expect(titre).toBeInTheDocument()
-    const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
+    const sousTitre = screen.getByText(
+      matchWithoutMarkup(
+        'Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'
+      ),
+      { selector: 'p' }
+    )
     expect(sousTitre).toBeInTheDocument()
     const lien = screen.getByRole('link', { name: 'cliquant ici' })
     expect(lien).toHaveAttribute('href', '/gouvernance/11')
@@ -65,7 +85,10 @@ describe('ajout des bénéficiaires', () => {
 
     const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
     expect(membre1).not.toBeRequired()
-    const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
+    const membre2 = within(fieldset).getByRole('checkbox', {
+      checked: false,
+      name: 'CC des Monts du Lyonnais Co-porteur',
+    })
     expect(membre2).not.toBeRequired()
 
     fireEvent.click(membre1)
@@ -82,22 +105,33 @@ describe('ajout des bénéficiaires', () => {
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        demandeDeSubvention: {
-          enveloppeId: '1',
-          montantPrestation: 10,
-          montantRh: 10,
-          total: 20,
+      afficherLeFormulaireAction(
+        {
+          demandeDeSubvention: {
+            enveloppeId: '1',
+            montantPrestation: 10,
+            montantRh: 10,
+            total: 20,
+          },
+          destinataires: [{ id: 'rhone_69_id', link: '', nom: 'Rhône (69) Co-porteur', roles: [] }],
         },
-        destinataires: [
-          { id: 'rhone_69_id', link: '', nom: 'Rhône (69) Co-porteur', roles: [] },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'Rhône (69) Co-porteur', roles: [], structureId: 69, uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
-          { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], structureId: 200, uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
-        ],
-      })
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            {
+              nom: 'Rhône (69) Co-porteur',
+              roles: [],
+              structureId: 69,
+              uid: 'rhone_69_id',
+            } as MembreAvecRoleDansLaGouvernance,
+            {
+              nom: 'CC des Monts du Lyonnais Co-porteur',
+              roles: [],
+              structureId: 200,
+              uid: 'cc_mont_du_lyonnais_id',
+            } as MembreAvecRoleDansLaGouvernance,
+          ],
+        }
+      )
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires de la subvention')
@@ -107,7 +141,12 @@ describe('ajout des bénéficiaires', () => {
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
       const titre = screen.getByRole('heading', { level: 3, name: 'Ajouter le(s) bénéficiaire(s)' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
+      const sousTitre = screen.getByText(
+        matchWithoutMarkup(
+          'Sélectionnez un ou plusieurs bénéficiaires de la subvention pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'
+        ),
+        { selector: 'p' }
+      )
       expect(sousTitre).toBeInTheDocument()
       const lien = screen.getByRole('link', { name: 'cliquant ici' })
       expect(lien).toHaveAttribute('href', '/gouvernance/11')
@@ -116,7 +155,10 @@ describe('ajout des bénéficiaires', () => {
 
       const membre1 = within(fieldset).getByRole('checkbox', { checked: true, name: 'Rhône (69) Co-porteur' })
       expect(membre1).not.toBeRequired()
-      const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
+      const membre2 = within(fieldset).getByRole('checkbox', {
+        checked: false,
+        name: 'CC des Monts du Lyonnais Co-porteur',
+      })
       expect(membre2).not.toBeRequired()
 
       const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
@@ -130,26 +172,27 @@ describe('ajout des bénéficiaires', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        demandeDeSubvention: {
-          enveloppeId: '1',
-          montantPrestation: 10,
-          montantRh: 10,
-          total: 20,
+      afficherLeFormulaireAction(
+        {
+          demandeDeSubvention: {
+            enveloppeId: '1',
+            montantPrestation: 10,
+            montantRh: 10,
+            total: 20,
+          },
+          destinataires: [{ id: 'testUID', link: '', nom: 'monFakeNon', roles: [] }],
         },
-        destinataires: [
-          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
-        ],
-      })
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          ],
+        }
+      )
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires de la subvention')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
-      const fermer = presserLeBouton('Fermer l\'ajout des bénéficiaires de la subvention')
+      const fermer = presserLeBouton("Fermer l'ajout des bénéficiaires de la subvention")
 
       // THEN
       expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterDesBeneficiairesId')
@@ -158,22 +201,23 @@ describe('ajout des bénéficiaires', () => {
 
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
-      afficherLeFormulaireAction({
-        demandeDeSubvention: {
-          enveloppeId: '1',
-          montantPrestation: 10,
-          montantRh: 10,
-          total: 20,
-        },
+      afficherLeFormulaireAction(
+        {
+          demandeDeSubvention: {
+            enveloppeId: '1',
+            montantPrestation: 10,
+            montantRh: 10,
+            total: 20,
+          },
 
-        destinataires: [
-          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
-        ],
-      }, {
-        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
-        ],
-      })
+          destinataires: [{ id: 'testUID', link: '', nom: 'monFakeNon', roles: [] }],
+        },
+        {
+          porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+            { nom: 'monFakeNon', roles: [], structureId: 100, uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+          ],
+        }
+      )
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires de la subvention')
       presserLeBouton('Tout effacer')
@@ -194,12 +238,10 @@ describe('ajout des bénéficiaires', () => {
   }
 
   function afficherLeFormulaireAction(
-    overrides: Partial<ActionViewModel> = {}, override?: Partial<UneGouvernanceReadModel>
+    overrides: Partial<ActionViewModel> = {},
+    override?: Partial<UneGouvernanceReadModel>
   ): void {
-    const gouvernanceViewModel = gouvernancePresenter(
-      gouvernanceReadModelFactory(override),
-      epochTime
-    )
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), epochTime)
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory(overrides)}

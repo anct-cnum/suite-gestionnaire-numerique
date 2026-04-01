@@ -6,7 +6,7 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
   readonly #demandeDeSubventionDao = prisma.demandeDeSubventionRecord
-  
+
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderBeneficiaires> {
     try {
       // Récupérer toutes les demandes de subvention acceptées avec leurs bénéficiaires et enveloppes
@@ -22,13 +22,16 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
         },
         where: {
           action: {
-            feuilleDeRoute: territoire === 'France' ? {
-              gouvernanceDepartementCode: {
-                not: 'zzz',
-              },
-            } : {
-              gouvernanceDepartementCode: territoire,
-            },
+            feuilleDeRoute:
+              territoire === 'France'
+                ? {
+                    gouvernanceDepartementCode: {
+                      not: 'zzz',
+                    },
+                  }
+                : {
+                    gouvernanceDepartementCode: territoire,
+                  },
           },
           statut: StatutSubvention.ACCEPTEE,
         },
@@ -37,13 +40,13 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
       // Regrouper les bénéficiaires par enveloppe
       const beneficiairesParEnveloppe = new Map<string, Set<string>>()
 
-      demandesAcceptees.forEach(demande => {
+      demandesAcceptees.forEach((demande) => {
         const enveloppeLabel = demande.enveloppe.libelle
         if (!beneficiairesParEnveloppe.has(enveloppeLabel)) {
           beneficiairesParEnveloppe.set(enveloppeLabel, new Set())
         }
-        
-        demande.beneficiaire.forEach(beneficiaire => {
+
+        demande.beneficiaire.forEach((beneficiaire) => {
           const beneficiairesSet = beneficiairesParEnveloppe.get(enveloppeLabel)
           if (beneficiairesSet) {
             beneficiairesSet.add(beneficiaire.membreId)
@@ -59,8 +62,10 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
 
       // Calculer le total unique de bénéficiaires (tous les bénéficiaires uniques)
       const tousLesBeneficiaires = new Set<string>()
-      beneficiairesParEnveloppe.forEach(beneficiaires => {
-        beneficiaires.forEach(id => { tousLesBeneficiaires.add(id) })
+      beneficiairesParEnveloppe.forEach((beneficiaires) => {
+        beneficiaires.forEach((id) => {
+          tousLesBeneficiaires.add(id)
+        })
       })
 
       return {

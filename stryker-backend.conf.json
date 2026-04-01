@@ -12,12 +12,12 @@
     "src/components",
     "src/presenters",
     "src/instrumentation.ts",
-    "yarn.lock"
+    "pnpm-lock.yaml"
   ],
   "ignoreStatic": true,
   "logLevel": "info",
   "mutate": ["src/**/*.ts", "!src/**/*.test.ts"],
-  "packageManager": "yarn",
+  "packageManager": "pnpm",
   "reporters": ["html", "progress"],
   "testRunner": "vitest"
 }

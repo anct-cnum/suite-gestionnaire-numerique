@@ -8,7 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function MesParametresController(): ReactElement {
-  return (
-    <MesParametres />
-  )
+  return <MesParametres />
 }

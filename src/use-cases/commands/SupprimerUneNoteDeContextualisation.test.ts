@@ -43,7 +43,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
     expect(result).toBe('OK')
   })
 
-  it('quand un note de contextualisation est supprimée par un gestionnaire qui n\'a pas ce droit, alors une erreur est renvoyée', async () => {
+  it("quand un note de contextualisation est supprimée par un gestionnaire qui n'a pas ce droit, alors une erreur est renvoyée", async () => {
     // GIVEN
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
@@ -88,7 +88,9 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' }))
+    return Promise.resolve(
+      utilisateurFactory({ codeOrganisation: 'gouvernanceFooId', role: 'Gestionnaire département' })
+    )
   }
 }
 

@@ -16,40 +16,24 @@ export default function SupprimerContactReferentStructure({
   const labelModaleId = useId()
 
   return (
-    <Modal
-      close={closeModal}
-      id={id}
-      isOpen={isOpen}
-      labelId={labelModaleId}
-    >
+    <Modal close={closeModal} id={id} isOpen={isOpen} labelId={labelModaleId}>
       <div className="fr-modal__content">
         <ModalTitle id={labelModaleId}>
-          Supprimer le contact
-          {' '}
-          {contactASupprimer?.prenom}
-          {' '}
-          {contactASupprimer?.nom}
-          {' '}
-          ?
+          Supprimer le contact {contactASupprimer?.prenom} {contactASupprimer?.nom} ?
         </ModalTitle>
-        <p>
-          En cliquant sur confirmer, ce contact sera définitivement supprimé de votre structure.
-        </p>
+        <p>En cliquant sur confirmer, ce contact sera définitivement supprimé de votre structure.</p>
       </div>
       <div className="fr-modal__footer">
         <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-          <button
-            aria-controls={id}
-            className="fr-btn fr-btn--secondary"
-            onClick={closeModal}
-            type="button"
-          >
+          <button aria-controls={id} className="fr-btn fr-btn--secondary" onClick={closeModal} type="button">
             Annuler
           </button>
           <button
             aria-controls={id}
             className="fr-btn red-button"
-            onClick={() => { void onSupprimer() }}
+            onClick={() => {
+              void onSupprimer()
+            }}
             type="button"
           >
             Confirmer

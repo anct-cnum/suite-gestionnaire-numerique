@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { RechercherUneEntreprise, SireneLoader } from './RechercherUneEntreprise'
 
 describe('rechercherUneEntreprise', () => {
-  it('doit retourner les données d\'une entreprise quand le SIRET existe', async () => {
+  it("doit retourner les données d'une entreprise quand le SIRET existe", async () => {
     // Given
     const mockEntreprise = {
       activitePrincipale: '6201Z - Programmation informatique',
@@ -18,12 +18,13 @@ describe('rechercherUneEntreprise', () => {
       nomVoie: 'RUE DE LONDRES',
       numeroVoie: '8',
     }
-    
+
     const mockSireneLoader: SireneLoader = {
-      rechercherParIdentifiant: vi.fn<(siret: string) => 
-      Promise<typeof mockEntreprise>>().mockResolvedValue(mockEntreprise),
+      rechercherParIdentifiant: vi
+        .fn<(siret: string) => Promise<typeof mockEntreprise>>()
+        .mockResolvedValue(mockEntreprise),
     }
-    
+
     const rechercherUneEntreprise = new RechercherUneEntreprise(mockSireneLoader)
 
     // When
@@ -34,16 +35,17 @@ describe('rechercherUneEntreprise', () => {
     expect(resultat).toStrictEqual(mockEntreprise)
   })
 
-  it('doit propager l\'erreur quand le loader échoue', async () => {
+  it("doit propager l'erreur quand le loader échoue", async () => {
     // Given
     const mockSireneLoader: SireneLoader = {
-      rechercherParIdentifiant: vi.fn<(siret: string) => Promise<never>>().mockRejectedValue(new Error('SIRET inexistant')),
+      rechercherParIdentifiant: vi
+        .fn<(siret: string) => Promise<never>>()
+        .mockRejectedValue(new Error('SIRET inexistant')),
     }
-    
+
     const rechercherUneEntreprise = new RechercherUneEntreprise(mockSireneLoader)
 
     // When & Then
-    await expect(rechercherUneEntreprise.handle({ siret: '12345678901234' }))
-      .rejects.toThrowError('SIRET inexistant')
+    await expect(rechercherUneEntreprise.handle({ siret: '12345678901234' })).rejects.toThrow('SIRET inexistant')
   })
 })

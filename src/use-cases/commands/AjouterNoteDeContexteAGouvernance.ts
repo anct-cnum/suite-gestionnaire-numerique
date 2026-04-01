@@ -10,11 +10,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(
-    gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: UtilisateurRepository,
-    date: Date
-  ) {
+  constructor(gouvernanceRepository: GouvernanceRepository, utilisateurRepository: UtilisateurRepository, date: Date) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
     this.#date = date
@@ -27,11 +23,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
       return 'utilisateurNePeutPasAjouterNoteDeContexte'
     }
     const result = gouvernance.ajouterNoteDeContexte(
-      new NoteDeContexte(
-        this.#date,
-        new UtilisateurUid(editeur.state.uid),
-        command.contenu
-      )
+      new NoteDeContexte(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
     )
     if (isOk(result)) {
       await this.#gouvernanceRepository.update(gouvernance)

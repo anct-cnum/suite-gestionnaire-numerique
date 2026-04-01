@@ -16,10 +16,7 @@ export default function MediateursAidants({ viewModel }: Props): ReactElement {
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="group-line" />
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="mediateursAidants"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="mediateursAidants">
               Médiateurs numériques et Aidants Connect
             </h2>
             <p className="fr-m-0 font-weight-500">
@@ -44,35 +41,20 @@ export default function MediateursAidants({ viewModel }: Props): ReactElement {
               labels={viewModel.details.map((detail) => detail.label)}
             />
           </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-            {viewModel.total}
-          </div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">
-            Médiateurs numériques
-          </div>
+          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{viewModel.total}</div>
+          <div className="fr-text--lg font-weight-700 fr-m-0">Médiateurs numériques</div>
         </div>
         <div className="fr-col">
-          <div className="font-weight-500">
-            Dont
-          </div>
+          <div className="font-weight-500">Dont</div>
           <ul>
-            {
-              viewModel.details.map((detail) => (
-                <li
-                  className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                  key={detail.label}
-                >
-                  <div>
-                    <Dot color={detail.color} />
-                    {' '}
-                    {detail.label}
-                  </div>
-                  <div className="font-weight-700">
-                    {detail.total}
-                  </div>
-                </li>
-              ))
-            }
+            {viewModel.details.map((detail) => (
+              <li className="fr-grid-row fr-btns-group--space-between fr-mb-1w" key={detail.label}>
+                <div>
+                  <Dot color={detail.color} /> {detail.label}
+                </div>
+                <div className="font-weight-700">{detail.total}</div>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -81,11 +63,13 @@ export default function MediateursAidants({ viewModel }: Props): ReactElement {
 }
 
 export type MediateursAidantsViewModel = Readonly<{
-  details: ReadonlyArray<Readonly<{
-    color: string
-    label: string
-    total: number
-  }>>
+  details: ReadonlyArray<
+    Readonly<{
+      color: string
+      label: string
+      total: number
+    }>
+  >
   graphique: Readonly<{
     backgroundColor: ReadonlyArray<string>
   }>

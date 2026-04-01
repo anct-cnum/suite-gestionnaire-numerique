@@ -8,10 +8,7 @@ import BlocCard from '../BlocCard'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 
-export default function GouvernanceAdmin({
-  gouvernanceViewModel,
-  lienGouvernance,
-}: Props): ReactElement {
+export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance }: Props): ReactElement {
   if (isErrorViewModel(gouvernanceViewModel)) {
     return (
       <BlocCard labelledBy="gouvernance">
@@ -19,63 +16,36 @@ export default function GouvernanceAdmin({
           <div className="fr-grid-row fr-grid-row--middle">
             <TitleIcon icon="compass-3-line" />
             <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="gouvernance"
-              >
+              <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
                 Gouvernances
               </h2>
-              <p
-                className="fr-m-0 fr-text--md"
-                style={{ fontWeight: 500 }}
-              >
+              <p className="fr-m-0 fr-text--md" style={{ fontWeight: 500 }}>
                 Acteurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={lienGouvernance}
-          >
+          <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienGouvernance}>
             Les gouvernances
           </Link>
         </div>
         <div className="fr-grid-row">
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
             <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="bank-line"
-              />
-              -
+              <TitleIcon background="white" icon="bank-line" />-
             </div>
-            <div
-              className="fr-text--md fr-mb-0"
-              style={{ fontWeight: 500 }}
-            >
+            <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
               Gouvernances
             </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className="fr-col background-blue-france fr-p-4w">
             <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="file-download-line"
-              />
-              -
+              <TitleIcon background="white" icon="file-download-line" />-
             </div>
-            <div
-              className="fr-text--md fr-mb-0"
-              style={{ fontWeight: 500 }}
-            >
+            <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
               Feuilles de route déposées
             </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
+            <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
         </div>
       </BlocCard>
@@ -88,74 +58,45 @@ export default function GouvernanceAdmin({
         <div className="fr-grid-row fr-grid-row--middle">
           <TitleIcon icon="compass-3-line" />
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="gouvernance"
-            >
+            <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
               Gouvernances
             </h2>
-            <p
-              className="fr-m-0 fr-text--md"
-              style={{ fontWeight: 500 }}
-            >
+            <p className="fr-m-0 fr-text--md" style={{ fontWeight: 500 }}>
               Acteurs de l&apos;inclusion numérique
             </p>
           </div>
         </div>
-        <Link
-          className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-          href={lienGouvernance}
-        >
+        <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienGouvernance}>
           Les gouvernances
         </Link>
       </div>
       <div className="fr-grid-row">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="bank-line"
-            />
+            <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.nombreGouvernances}
           </div>
-          <div
-            className="fr-text--md fr-mb-0"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
             Gouvernances
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            dont
-            {' '}
+            dont{' '}
             <span style={{ fontWeight: 700 }}>
-              {gouvernanceViewModel.nombreGouvernancesCoPortees}
-              {' '}
-              gouvernances co-portées
+              {gouvernanceViewModel.nombreGouvernancesCoPortees} gouvernances co-portées
             </span>
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
           <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="file-download-line"
-            />
+            <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
           </div>
-          <div
-            className="fr-text--md fr-mb-0"
-            style={{ fontWeight: 500 }}
-          >
+          <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
             Feuilles de route déposées
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            comprenant
-            {' '}
-            <span style={{ fontWeight: 700 }}>
-              {gouvernanceViewModel.feuilleDeRoute.action}
-              {' '}
-              actions enregistrées
-            </span>
+            comprenant{' '}
+            <span style={{ fontWeight: 700 }}>{gouvernanceViewModel.feuilleDeRoute.action} actions enregistrées</span>
           </div>
         </div>
       </div>

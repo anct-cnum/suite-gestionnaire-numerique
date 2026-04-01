@@ -7,10 +7,7 @@ import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewM
 import Information from '@/components/shared/Information/Information'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
-export default function BeneficiairesAsyncCard({
-  hasActiveFilters,
-  totalBeneficiairesPromise,
-}: Props): ReactElement {
+export default function BeneficiairesAsyncCard({ hasActiveFilters, totalBeneficiairesPromise }: Props): ReactElement {
   const beneficiaires = use(totalBeneficiairesPromise)
 
   if (isErrorViewModel(beneficiaires) || hasActiveFilters) {
@@ -29,12 +26,8 @@ export default function BeneficiairesAsyncCard({
             height: '7rem',
           }}
         >
-          <div className="fr-h5 fr-text-title--blue-france fr-m-0 color-orange">
-            -
-          </div>
-          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-            Bénéficiaires accompagnés
-          </div>
+          <div className="fr-h5 fr-text-title--blue-france fr-m-0 color-orange">-</div>
+          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">Bénéficiaires accompagnés</div>
           <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
             {parseTextWithBold('sur les 30 derniers jours')}
           </div>
@@ -58,64 +51,28 @@ export default function BeneficiairesAsyncCard({
           height: '7rem',
         }}
       >
-        <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-          {formaterEnNombreFrancais(beneficiaires)}
-        </div>
+        <div className="fr-h5 fr-text-title--blue-france fr-m-0">{formaterEnNombreFrancais(beneficiaires)}</div>
         <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
           Bénéficiaires accompagnés
           <Information>
             <div className="fr-mb-0">
               <p className="fr-mb-1v">
-                Après un accompagnement, le médiateur peut choisir d&apos;enregistrer
-                la personne accompagnée dans sa 
-                {' '}
-                <strong>
-                  liste de bénéficiaires.
-                </strong>
+                Après un accompagnement, le médiateur peut choisir d&apos;enregistrer la personne accompagnée dans sa{' '}
+                <strong>liste de bénéficiaires.</strong>
               </p>
               <p className="fr-mb-1v">
-                <strong>
-                  Exemple sur un mois :
-                </strong>
+                <strong>Exemple sur un mois :</strong>
               </p>
               <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
                 <li>
-                  1 personne 
-                  {' '}
-                  <strong>
-                    suivie
-                  </strong>
-                  , accompagnée 3 fois = 
-                  {' '}
-                  <strong>
-                    1
-                  </strong>
-                  {' '}
-                  accompagnement
+                  1 personne <strong>suivie</strong>, accompagnée 3 fois = <strong>1</strong> accompagnement
                 </li>
                 <li>
-                  1 personne 
-                  {' '}
-                  <strong>
-                    anonyme
-                  </strong>
-                  , accompagnée 2 fois = 
-                  {' '}
-                  <strong>
-                    2
-                  </strong>
-                  {' '}
-                  accompagnements
+                  1 personne <strong>anonyme</strong>, accompagnée 2 fois = <strong>2</strong> accompagnements
                 </li>
               </ul>
               <p className="fr-mb-0">
-                Total affiché :
-                {' '}
-                <strong>
-                  3 accompagnements
-                </strong>
-                {' '}
-                (1 suivi + 2 anonymes)
+                Total affiché : <strong>3 accompagnements</strong> (1 suivi + 2 anonymes)
               </p>
             </div>
           </Information>

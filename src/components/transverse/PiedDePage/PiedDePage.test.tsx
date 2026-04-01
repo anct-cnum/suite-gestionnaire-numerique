@@ -38,7 +38,9 @@ describe('pied de page', () => {
     const liensReglementaires = within(lists[1]).getAllByRole('listitem')
     expect(liensReglementaires).toHaveLength(5)
 
-    const lienAccessibilite = within(liensReglementaires[0]).getByRole('link', { name: 'Accessibilité : partiellement conforme' })
+    const lienAccessibilite = within(liensReglementaires[0]).getByRole('link', {
+      name: 'Accessibilité : partiellement conforme',
+    })
     expect(lienAccessibilite).toHaveAttribute('href', '/accessibilite')
 
     const lienMentionsLegales = within(liensReglementaires[1]).getByRole('link', { name: 'Mentions légales' })
@@ -48,7 +50,10 @@ describe('pied de page', () => {
     expect(lienCodeSource).toHaveAttribute('href', 'https://github.com/anct-cnum/suite-gestionnaire-numerique')
     expect(lienCodeSource).toOpenInNewTab('Code source')
 
-    const licence = within(piedDePage).getByText('Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous', { selector: 'p' })
+    const licence = within(piedDePage).getByText(
+      'Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous',
+      { selector: 'p' }
+    )
     const lienLicence = within(licence).getByRole('link', { name: 'licence etalab-2.0' })
     expect(lienLicence).toHaveAttribute('href', 'https://github.com/etalab/licence-ouverte/blob/master/LO.md')
     expect(lienLicence).toOpenInNewTab('licence etalab-2.0')

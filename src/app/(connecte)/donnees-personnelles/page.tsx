@@ -8,7 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function DonneesPersonnellesController(): ReactElement {
-  return (
-    <DonneesPersonnelles />
-  )
+  return <DonneesPersonnelles />
 }

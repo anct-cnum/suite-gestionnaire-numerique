@@ -13,9 +13,7 @@ export type IdentifiantBloc =
   | 'sources'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
-  const estGestionnaireStructure =
-    contexte.aCesRoles('gestionnaire_structure') &&
-    !contexte.estDansGouvernance()
+  const estGestionnaireStructure = contexte.aCesRoles('gestionnaire_structure') && !contexte.estDansGouvernance()
 
   const blocs: Array<IdentifiantBloc> = ['accueil']
 
@@ -23,12 +21,21 @@ export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantB
     blocs.push('donneesStructure')
   }
 
-  if (contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement', 'gestionnaire_region')
-    || contexte.estDansGouvernance()) {
+  if (
+    contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement', 'gestionnaire_region') ||
+    contexte.estDansGouvernance()
+  ) {
     blocs.push('etatDesLieux', 'gouvernance')
   }
 
-  if (contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement', 'gestionnaire_region', 'gestionnaire_structure')) {
+  if (
+    contexte.aCesRoles(
+      'administrateur_dispositif',
+      'gestionnaire_departement',
+      'gestionnaire_region',
+      'gestionnaire_structure'
+    )
+  ) {
     blocs.push('financements')
   }
 
@@ -36,8 +43,7 @@ export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantB
     blocs.push('beneficiaires')
   }
 
-  if (contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement')
-    || contexte.estDansGouvernance()) {
+  if (contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement') || contexte.estDansGouvernance()) {
     //à rajouter : 'mediateurs', une fois le wording rework
     blocs.push('sources')
   } else if (estGestionnaireStructure) {

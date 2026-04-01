@@ -11,14 +11,18 @@ export type StatistiquesFilters = Readonly<{
 }>
 
 export type StatistiquesCoopReadModel = Readonly<{
-  accompagnementsParJour: ReadonlyArray<Readonly<{
-    count: number
-    label: string
-  }>>
-  accompagnementsParMois: ReadonlyArray<Readonly<{
-    count: number
-    label: string
-  }>>
+  accompagnementsParJour: ReadonlyArray<
+    Readonly<{
+      count: number
+      label: string
+    }>
+  >
+  accompagnementsParMois: ReadonlyArray<
+    Readonly<{
+      count: number
+      label: string
+    }>
+  >
   activites: Readonly<{
     durees: ReadonlyArray<StatistiqueItem>
     materiels: ReadonlyArray<StatistiqueItem>

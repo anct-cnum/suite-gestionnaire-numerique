@@ -35,7 +35,6 @@ export const membreInclude = {
   CoFinancementRecord: true,
   relationStructure: {
     include: {
-      // eslint-disable-next-line camelcase
       contact_structures: {
         include: {
           contact: true,
@@ -61,8 +60,8 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   const beneficiaireSubvention = membre.BeneficiaireSubventionRecord
   if (beneficiaireSubvention.length > 0) {
     // Vérifier si le membre a des demandes de subvention avec des enveloppes de formation
-    const aEnveloppeFormation = beneficiaireSubvention.some(
-      (beneficiaire) => beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    const aEnveloppeFormation = beneficiaireSubvention.some((beneficiaire) =>
+      beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
     )
 
     // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
@@ -128,9 +127,4 @@ type MembreRecord = Prisma.MembreRecordGetPayload<{
   include: typeof membreInclude
 }>
 
-export {
-  isCoporteur,
-  isPrefectureDepartementale,
-  toMembre,
-  toMembres
-}
+export { isCoporteur, isPrefectureDepartementale, toMembre, toMembres }

@@ -33,7 +33,7 @@ export type GouvernanceViewModel = Readonly<{
     coporteur: number
     total: number
   }>
-}> 
+}>
 
 function isErrorReadModel(readModel: ErrorReadModel | GouvernanceReadModel): readModel is ErrorReadModel {
   return 'type' in readModel

@@ -3,9 +3,7 @@ import { UnUtilisateurLoader } from './RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import config from '@/use-cases/config.json'
 
-export class RechercherMesUtilisateurs implements QueryHandler<
-  Query, UtilisateursCourantsEtTotalReadModel
-> {
+export class RechercherMesUtilisateurs implements QueryHandler<Query, UtilisateursCourantsEtTotalReadModel> {
   readonly #mesUtilisateursLoader: MesUtilisateursLoader
 
   constructor(mesUtilisateursLoader: MesUtilisateursLoader) {
@@ -58,15 +56,18 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
   ): Promise<UtilisateursCourantsEtTotalReadModel>
 }
 
-type Query = Partial<Readonly<{
-  codeDepartement: string
-  codeRegion: string
-  idStructure?: number
-  pageCourante: number
-  prenomOuNomOuEmail?: string
-  roles: ReadonlyArray<string>
-  utilisateursActives: boolean
-  utilisateursParPage: number
-}>> & Readonly<{
-  uid: string
-}>
+type Query = Partial<
+  Readonly<{
+    codeDepartement: string
+    codeRegion: string
+    idStructure?: number
+    pageCourante: number
+    prenomOuNomOuEmail?: string
+    roles: ReadonlyArray<string>
+    utilisateursActives: boolean
+    utilisateursParPage: number
+  }>
+> &
+  Readonly<{
+    uid: string
+  }>

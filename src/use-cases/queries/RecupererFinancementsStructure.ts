@@ -7,9 +7,11 @@ export interface FinancementsStructureLoader {
 export type FinancementsStructureReadModel = Readonly<{
   nombreDeFinancementsEngagesParLEtat: number
   totalFinancements: string
-  ventilationSubventionsParEnveloppe: ReadonlyArray<Readonly<{
-    enveloppeTotale: string
-    label: string
-    total: string
-  }>>
+  ventilationSubventionsParEnveloppe: ReadonlyArray<
+    Readonly<{
+      enveloppeTotale: string
+      label: string
+      total: string
+    }>
+  >
 }>
