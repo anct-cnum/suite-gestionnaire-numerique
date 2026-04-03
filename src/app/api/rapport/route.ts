@@ -183,11 +183,38 @@ async function genererDocx(rapport: RapportRegionReadModel): Promise<Blob> {
   )
 
   for (const dep of franceNumerique.departements) {
+    children.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        text: `Gouvernance de ${dep.nom}`,
+      })
+    )
+    if (dep.gouvernance.coporteurs.length > 0) {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ bold: true, text: 'Coporteurs : ' }),
+            new TextRun({ text: dep.gouvernance.coporteurs.join(', ') }),
+          ],
+        })
+      )
+    }
+    if (dep.gouvernance.membres.length > 0) {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ bold: true, text: 'Membres : ' }),
+            new TextRun({ text: dep.gouvernance.membres.join(', ') }),
+          ],
+        })
+      )
+    }
+
     for (const fdr of dep.feuillesDeRoute) {
       children.push(
         new Paragraph({
-          heading: HeadingLevel.HEADING_2,
-          text: `${dep.nom} : ${fdr.nom}`,
+          heading: HeadingLevel.HEADING_3,
+          text: `Feuille de route ${fdr.nom}`,
         })
       )
       children.push(
@@ -319,16 +346,23 @@ function formaterSectionFne(lignes: Array<string>, rapport: RapportRegionReadMod
   lignes.push('=== France Numérique Ensemble ===')
 
   for (const dep of rapport.franceNumerique.departements) {
+    lignes.push('')
+    lignes.push(`--- Gouvernance de ${dep.nom} ---`)
+    if (dep.gouvernance.coporteurs.length > 0) {
+      lignes.push(`Coporteurs : ${dep.gouvernance.coporteurs.join(', ')}`)
+    }
+    if (dep.gouvernance.membres.length > 0) {
+      lignes.push(`Membres : ${dep.gouvernance.membres.join(', ')}`)
+    }
+
     for (const fdr of dep.feuillesDeRoute) {
       lignes.push('')
-      lignes.push(
-        `- ${dep.nom} : la feuille de route ${fdr.nom} est portée par ${fdr.porteur.type} (${fdr.porteur.nom})`
-      )
+      lignes.push(`  - Feuille de route ${fdr.nom}, portée par ${fdr.porteur.type} (${fdr.porteur.nom})`)
 
       for (const env of fdr.enveloppes) {
         const recipiendaires = env.beneficiaires.length > 0 ? ` (récipiendaire : ${env.beneficiaires.join(' & ')})` : ''
         const besoins = formaterBesoins(env.besoins)
-        lignes.push(`    - Enveloppe ${env.type} de ${formaterMontant(env.montant)}${recipiendaires}${besoins}`)
+        lignes.push(`      - Enveloppe ${env.type} de ${formaterMontant(env.montant)}${recipiendaires}${besoins}`)
       }
     }
   }
