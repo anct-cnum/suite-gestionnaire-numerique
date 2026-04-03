@@ -18,17 +18,17 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateursLoader {
   async get(filtres: FiltresListeAidants): Promise<ErrorReadModel | ListeAidantsMediateursReadModel> {
     try {
-      const { pagination, territoire } = filtres
+      const { pagination } = filtres
 
       // Page commence à 1 dans le controller, mais offset doit commencer à 0
       const safePage = Math.max(1, pagination.page) // Garantir que page >= 1
       const offset = (safePage - 1) * pagination.limite // offset = 0 pour page 1
 
       // Récupération des aidants avec pagination
-      const aidantsData = await this.getAidantsPagines(territoire, pagination.limite, offset, filtres)
+      const aidantsData = await this.getAidantsPagines(pagination.limite, offset, filtres)
 
       // Récupération des statistiques
-      const statsData = await this.getStatistiques(territoire, filtres)
+      const statsData = await this.getStatistiques(filtres)
 
       const totalCount = statsData.totalActeursNumerique
       const totalPages = Math.ceil(totalCount / pagination.limite)
@@ -115,10 +115,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     filtres: FiltresListeAidants
   ): Promise<Array<AidantMediateurAvecAccompagnementReadModel> | ErrorReadModel> {
     try {
-      const { territoire } = filtres
-
       // Pour l'export, on récupère toutes les données avec les accompagnements
-      const aidantsData = await this.getAidantsPaginesAvecAccompagnements(territoire, filtres)
+      const aidantsData = await this.getAidantsPaginesAvecAccompagnements(filtres)
 
       return aidantsData
     } catch (error) {
@@ -134,13 +132,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private async avecAccompagnementQuery(
-    territoire: string,
     geographique: FiltresListeAidants['geographique'],
     whereConditions: Prisma.Sql,
     departementFilter: Prisma.Sql,
     limitOffset: Prisma.Sql
   ): Promise<Array<PersonneAvecAccompagnementQueryResult>> {
-    if (territoire === 'France' && !geographique && departementFilter === Prisma.empty) {
+    if (!geographique && departementFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneAvecAccompagnementQueryResult>>`
         SELECT
           pe.id,
@@ -291,14 +288,13 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private async executeAidantsQuery(
-    territoire: string,
     filtres: FiltresListeAidants,
     includeAccompagnements: boolean,
     limite?: number,
     offset?: number
   ): Promise<Array<AidantMediateurAvecAccompagnementReadModel | AidantMediateurReadModel>> {
     try {
-      const { formations, geographique, habilitations, roles } = filtres
+      const { formations, geographique, habilitations, roles, scopeFiltre } = filtres
 
       // Déterminer les conditions de filtre géographique
       let departementsFilter: Array<string> = []
@@ -311,10 +307,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         } else {
           departementsFilter = [geographique.code]
         }
-      } else if (territoire !== 'France') {
-        departementsFilter = [territoire]
-      } else if (filtres.codesDepartementsScope !== undefined && filtres.codesDepartementsScope.length > 0) {
-        departementsFilter = [...filtres.codesDepartementsScope]
+      } else if (scopeFiltre.type === 'departemental') {
+        departementsFilter = [...scopeFiltre.codes]
       }
 
       // Construction des conditions WHERE
@@ -326,8 +320,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         limite !== undefined && offset !== undefined ? Prisma.sql`LIMIT ${limite} OFFSET ${offset}` : Prisma.empty
 
       const personnes = includeAccompagnements
-        ? await this.avecAccompagnementQuery(territoire, geographique, whereConditions, departementFilter, limitOffset)
-        : await this.sansAccompagnementQuery(territoire, geographique, whereConditions, departementFilter, limitOffset)
+        ? await this.avecAccompagnementQuery(geographique, whereConditions, departementFilter, limitOffset)
+        : await this.sansAccompagnementQuery(geographique, whereConditions, departementFilter, limitOffset)
 
       return this.mapPersonnesToAidants(personnes, includeAccompagnements)
     } catch (error) {
@@ -336,57 +330,43 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         filtres,
         limite,
         offset,
-        territoire,
       })
       return []
     }
   }
 
   private async getAidantsPagines(
-    territoire: string,
     limite: number,
     offset: number,
     filtres: FiltresListeAidants
   ): Promise<Array<AidantMediateurReadModel>> {
-    return this.executeAidantsQuery(territoire, filtres, false, limite, offset) as Promise<
-      Array<AidantMediateurReadModel>
-    >
+    return this.executeAidantsQuery(filtres, false, limite, offset) as Promise<Array<AidantMediateurReadModel>>
   }
 
   private async getAidantsPaginesAvecAccompagnements(
-    territoire: string,
     filtres: FiltresListeAidants
   ): Promise<Array<AidantMediateurAvecAccompagnementReadModel>> {
-    return this.executeAidantsQuery(territoire, filtres, true) as Promise<
-      Array<AidantMediateurAvecAccompagnementReadModel>
-    >
+    return this.executeAidantsQuery(filtres, true) as Promise<Array<AidantMediateurAvecAccompagnementReadModel>>
   }
 
-  private async getStatistiques(
-    territoire: string,
-    filtres: FiltresListeAidants
-  ): Promise<{
+  private async getStatistiques(filtres: FiltresListeAidants): Promise<{
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
-    const { formations, geographique, habilitations, roles } = filtres
+    const { formations, geographique, habilitations, roles, scopeFiltre } = filtres
     // Déterminer les conditions de filtre géographique
     let departementsFilter: Array<string> = []
 
     if (geographique) {
       if (geographique.type === 'region') {
-        // Récupérer tous les départements de la région
         departementsFilter = departements
           .filter((dept) => dept.regionCode === geographique.code)
           .map((dept) => dept.code)
       } else {
-        // C'est un code département
         departementsFilter = [geographique.code]
       }
-    } else if (territoire !== 'France') {
-      departementsFilter = [territoire]
-    } else if (filtres.codesDepartementsScope !== undefined && filtres.codesDepartementsScope.length > 0) {
-      departementsFilter = [...filtres.codesDepartementsScope]
+    } else if (scopeFiltre.type === 'departemental') {
+      departementsFilter = [...scopeFiltre.codes]
     }
 
     // Construction des conditions WHERE pour les nouveaux filtres
@@ -396,7 +376,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
     // Statistiques des personnes en poste
     const conseillersResult =
-      territoire === 'France' && !geographique && departementsFilter.length === 0
+      !geographique && departementsFilter.length === 0
         ? await prisma.$queryRaw<Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
           COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
@@ -495,13 +475,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private async sansAccompagnementQuery(
-    territoire: string,
     geographique: FiltresListeAidants['geographique'],
     whereConditions: Prisma.Sql,
     departementFilter: Prisma.Sql,
     limitOffset: Prisma.Sql
   ): Promise<Array<PersonneQueryResult>> {
-    if (territoire === 'France' && !geographique && departementFilter === Prisma.empty) {
+    if (!geographique && departementFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneQueryResult>>`
         SELECT
           pe.id,

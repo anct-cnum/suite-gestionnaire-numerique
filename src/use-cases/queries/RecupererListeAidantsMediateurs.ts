@@ -1,3 +1,4 @@
+import { ScopeFiltre } from './ResoudreContexte'
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export type FiltreGeographique = Readonly<{
@@ -14,7 +15,6 @@ export type FiltreHabilitations = ReadonlyArray<
 export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN' | 'Sans formation'>
 
 export type FiltresListeAidants = Readonly<{
-  codesDepartementsScope?: ReadonlyArray<string>
   formations?: FiltreFormations
   geographique?: FiltreGeographique
   habilitations?: FiltreHabilitations
@@ -23,7 +23,7 @@ export type FiltresListeAidants = Readonly<{
     page: number
   }>
   roles?: FiltreRoles
-  territoire: string
+  scopeFiltre: ScopeFiltre
 }>
 
 export interface ListeAidantsMediateursLoader {

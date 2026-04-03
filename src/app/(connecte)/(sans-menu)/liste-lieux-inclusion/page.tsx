@@ -39,25 +39,17 @@ export default async function ListeLieuxInclusionController({
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const codesDepartements = contexte.codesDepartements()
+  const scopeFiltre = contexte.scopeFiltre()
 
-  let territoireDepartement: string | undefined
-  let codesDepartementsScope: ReadonlyArray<string> | undefined
-  if (contexte.estNational()) {
-    territoireDepartement = undefined
-  } else if (codesDepartements.length > 1) {
-    codesDepartementsScope = codesDepartements
-  } else if (codesDepartements.length === 1) {
-    territoireDepartement = codesDepartements[0]
-  } else {
+  if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
     redirect('/')
   }
 
   const resolvedSearchParams = await searchParams
 
-  // Utiliser la fonction utilitaire pour construire les filtres
-  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, territoireDepartement)
+  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams)
 
+  const estAdmin = scopeFiltre.type === 'national'
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
 
   // Récupérer les lieux et les types de structure en parallèle
@@ -65,13 +57,13 @@ export default async function ListeLieuxInclusionController({
     listeLieuxInclusionLoader.getLieuxWithPagination(
       filtres.page,
       filtres.limite,
-      filtres.codeDepartement,
+      estAdmin ? filtres.codeDepartement : undefined,
       filtres.typeStructure,
       filtres.qpv,
       filtres.frr,
-      filtres.codeRegion,
+      estAdmin ? filtres.codeRegion : undefined,
       filtres.horsZonePrioritaire,
-      codesDepartementsScope
+      scopeFiltre
     ),
     listeLieuxInclusionLoader.getTypesStructure(),
   ])

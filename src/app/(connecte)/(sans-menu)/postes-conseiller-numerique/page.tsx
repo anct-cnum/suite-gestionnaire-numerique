@@ -42,56 +42,29 @@ export default async function PostesConseillerNumeriqueController({
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const codesDepartements = contexte.codesDepartements()
+  const scopeFiltre = contexte.scopeFiltre()
 
-  let territoire: string
-  let codesDepartementsScope: ReadonlyArray<string> | undefined
-  if (contexte.estNational()) {
-    territoire = 'France'
-  } else if (codesDepartements.length > 1) {
-    territoire = 'France'
-    codesDepartementsScope = codesDepartements
-  } else if (codesDepartements.length === 1) {
-    territoire = codesDepartements[0]
-  } else {
+  if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
     redirect('/')
   }
 
-  // Utiliser la fonction utilitaire pour construire les filtres
-  const filtres = buildFiltresPostesConseillerNumerique(
-    resolvedSearchParams,
-    territoire === 'France' ? undefined : territoire,
-    config.utilisateursParPage
-  )
+  const filtres = buildFiltresPostesConseillerNumerique(resolvedSearchParams, config.utilisateursParPage)
 
-  // Déterminer le territoire effectif pour le filtre :
-  // - Si un département est sélectionné dans les filtres, utiliser ce département
-  // - Si une région est sélectionnée dans les filtres, utiliser cette région
-  // - Sinon, utiliser le territoire de l'utilisateur
-  let territoireEffectif = territoire
-  let codeRegionEffectif: string | undefined
-  // Quand un dept est sélectionné, il prend la priorité et annule le scope multi-dept
-  if (filtres.codeDepartement !== undefined) {
-    territoireEffectif = filtres.codeDepartement
-    codesDepartementsScope = undefined
-  } else if (filtres.codeRegion !== undefined) {
-    territoireEffectif = 'France'
-    codesDepartementsScope = undefined
-    codeRegionEffectif = filtres.codeRegion
-  }
+  const estAdmin = scopeFiltre.type === 'national'
+  const codeDepartementEffectif = estAdmin && filtres.codeRegion === undefined ? filtres.codeDepartement : undefined
 
   const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
   const postesReadModel = await postesLoader.get({
     bonification: filtres.bonification,
-    codeRegion: codeRegionEffectif,
-    codesDepartementsScope,
+    codeDepartement: codeDepartementEffectif,
+    codeRegion: filtres.codeRegion,
     conventions: filtres.conventions,
     pagination: {
       limite: filtres.limite,
       page: filtres.page,
     },
+    scopeFiltre,
     statut: filtres.statut,
-    territoire: territoireEffectif,
     typesEmployeur: filtres.typesEmployeur,
     typesPoste: filtres.typesPoste,
   })

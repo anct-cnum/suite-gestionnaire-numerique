@@ -27,7 +27,6 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
  */
 export function buildFiltresLieuxInclusion(
   params: FiltresLieuxInclusionURLParams,
-  territoireDepartement?: string,
   limite = 10
 ): {
   codeDepartement?: string
@@ -42,7 +41,7 @@ export function buildFiltresLieuxInclusion(
   const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = params
 
   return {
-    codeDepartement: codeDepartement ?? territoireDepartement,
+    codeDepartement,
     codeRegion,
     frr: frr === 'true' ? true : undefined,
     horsZonePrioritaire: horsZonePrioritaire === 'true' ? true : undefined,

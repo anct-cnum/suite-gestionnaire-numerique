@@ -104,6 +104,20 @@ describe('résoudre contexte - scopes', () => {
     ])
   })
 
+  it('un gestionnaire département avec une structure ne reçoit que le scope département', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '75', structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [{ codeDepartement: '64', estCoporteur: true }],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopes).toStrictEqual([{ code: '75', type: 'departement' }])
+  })
+
   it('un gestionnaire structure sans structure a un scope vide', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: null })
@@ -244,6 +258,56 @@ describe('résoudre contexte - scopes', () => {
 
     // WHEN / THEN
     expect(contexte.peutGererGouvernance('15')).toBe(false)
+  })
+
+  it('scopeFiltre — administrateur dispositif retourne national', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('administrateur_dispositif')
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.scopeFiltre()).toStrictEqual({ type: 'national' })
+  })
+
+  it('scopeFiltre — gestionnaire département retourne son code', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '69' })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['69'], type: 'departemental' })
+  })
+
+  it('scopeFiltre — gestionnaire structure retourne les codes de ses gouvernances', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [
+        { codeDepartement: '64', estCoporteur: false },
+        { codeDepartement: '75', estCoporteur: true },
+      ],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['64', '75'], type: 'departemental' })
+  })
+
+  it('scopeFiltre — gestionnaire structure sans gouvernance retourne un tableau vide', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.scopeFiltre()).toStrictEqual({ codes: [], type: 'departemental' })
   })
 
   it('le contexte contient le rôle de l utilisateur', async () => {

@@ -26,6 +26,8 @@ export interface LieuInclusionNumeriqueItem {
   type_structure: null | string
 }
 
+import { ScopeFiltre } from './ResoudreContexte'
+
 export interface RecupererLieuxInclusionPort {
   getLieuxWithPagination(
     page: number,
@@ -36,7 +38,7 @@ export interface RecupererLieuxInclusionPort {
     frr?: boolean,
     codeRegion?: string,
     horsZonePrioritaire?: boolean,
-    codesDepartements?: ReadonlyArray<string>
+    scopeFiltre?: ScopeFiltre
   ): Promise<RecupererLieuxInclusionReadModel>
   getTypesStructure(): Promise<Array<{ code: string; nom: string }>>
 }

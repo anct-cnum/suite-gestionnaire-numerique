@@ -35,14 +35,13 @@ export function parseURLParamsToFiltresPostesConseillerNumeriqueInternes(
  */
 export function buildFiltresPostesConseillerNumerique(
   params: FiltresPostesConseillerNumeriqueURLParams,
-  territoireDepartement?: string,
   limite = 10
 ): BuildFiltresResult {
   const { bonification, codeDepartement, codeRegion, conventions, page, statut, typesEmployeur, typesPoste } = params
 
   return {
     bonification: bonification === 'true' ? true : undefined,
-    codeDepartement: codeDepartement ?? territoireDepartement,
+    codeDepartement,
     codeRegion,
     conventions: conventions !== undefined && conventions !== '' ? conventions.split(',') : undefined,
     limite,

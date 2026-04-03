@@ -6,6 +6,7 @@ import {
   FiltreRoles,
   FiltresListeAidants,
 } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 // Types pour les paramètres d'URL
 export interface FiltresURLParams {
@@ -35,10 +36,9 @@ export function parseURLParamsToFiltresInternes(params: URLSearchParams): Filtre
  */
 export function buildFiltresListeAidants(
   params: FiltresURLParams,
-  territoire: string,
+  scopeFiltre: ScopeFiltre,
   utilisateurRole: TypologieRole,
-  limite = 10,
-  codesDepartementsScope?: ReadonlyArray<string>
+  limite = 10
 ): FiltresListeAidants {
   const { codeDepartement, codeRegion, formations, habilitations, page, roles } = params
 
@@ -60,7 +60,6 @@ export function buildFiltresListeAidants(
   }
 
   return {
-    codesDepartementsScope,
     formations:
       formations !== undefined && formations.length > 0 ? (formations.split(',') as FiltreFormations) : undefined,
     geographique: filtreGeographique,
@@ -73,7 +72,7 @@ export function buildFiltresListeAidants(
       page: Number(page ?? '1'),
     },
     roles: roles !== undefined && roles.length > 0 ? (roles.split(',') as FiltreRoles) : undefined,
-    territoire,
+    scopeFiltre,
   }
 }
 
@@ -82,10 +81,10 @@ export function buildFiltresListeAidants(
  */
 export function buildFiltresForExport(
   params: FiltresURLParams,
-  territoire: string,
+  scopeFiltre: ScopeFiltre,
   utilisateurRole: TypologieRole
 ): FiltresListeAidants {
-  const filtres = buildFiltresListeAidants(params, territoire, utilisateurRole)
+  const filtres = buildFiltresListeAidants(params, scopeFiltre, utilisateurRole)
   return {
     ...filtres,
     pagination: {

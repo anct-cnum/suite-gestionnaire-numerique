@@ -12,6 +12,10 @@ export interface ScopeLoader {
   >
 }
 
+export type ScopeFiltre =
+  | Readonly<{ codes: ReadonlyArray<string>; type: 'departemental' }>
+  | Readonly<{ type: 'national' }>
+
 export class Contexte {
   readonly role: RoleUtilisateur
   readonly scopes: ReadonlyArray<Scope>
@@ -116,6 +120,13 @@ export class Contexte {
           codesDepartements.includes(scope.code))
     )
   }
+
+  scopeFiltre(): ScopeFiltre {
+    if (this.estNational()) {
+      return { type: 'national' }
+    }
+    return { codes: this.codesDepartements(), type: 'departemental' }
+  }
 }
 
 export async function resoudreContexte(
@@ -148,10 +159,8 @@ async function construireScopes(
     scopes.push({ code: utilisateur.departementCode, type: 'departement' })
   }
 
-  if (utilisateur.structureId !== null) {
-    if (utilisateur.role.type === 'gestionnaire_structure') {
-      scopes.push({ code: String(utilisateur.structureId), type: 'structure' })
-    }
+  if (utilisateur.structureId !== null && utilisateur.role.type === 'gestionnaire_structure') {
+    scopes.push({ code: String(utilisateur.structureId), type: 'structure' })
     scopes.push(...(await scopesAppartenancesGouvernance(utilisateur.structureId, scopeLoader)))
   }
 

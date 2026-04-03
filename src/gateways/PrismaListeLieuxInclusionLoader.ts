@@ -9,6 +9,7 @@ import {
   RecupererLieuxInclusionPort,
   RecupererLieuxInclusionReadModel,
 } from '@/use-cases/queries/RecupererLieuxInclusion'
+import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionPort {
   async getLieuxWithPagination(
@@ -20,9 +21,12 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     frr?: boolean,
     codeRegion?: string,
     horsZonePrioritaire?: boolean,
-    codesDepartements?: ReadonlyArray<string>
+    scopeFiltre?: ScopeFiltre
   ): Promise<RecupererLieuxInclusionReadModel> {
     const offset = page * limite
+
+    const codesDepartements =
+      scopeFiltre?.type === 'departemental' && scopeFiltre.codes.length > 0 ? scopeFiltre.codes : undefined
 
     const whereClause = buildWhereClause(
       [Prisma.sql`s.structure_cartographie_nationale_id IS NOT NULL`],

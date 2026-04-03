@@ -1,3 +1,4 @@
+import { ScopeFiltre } from './ResoudreContexte'
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export type EtatPoste = 'occupe' | 'rendu' | 'vacant'
@@ -40,15 +41,15 @@ export type PostesConseillerNumeriqueReadModel = Readonly<{
 
 export type FiltresPostesConseillerNumerique = Readonly<{
   bonification?: boolean
+  codeDepartement?: string
   codeRegion?: string
-  codesDepartementsScope?: ReadonlyArray<string>
   conventions?: Array<string>
   pagination: Readonly<{
     limite: number
     page: number
   }>
+  scopeFiltre: ScopeFiltre
   statut?: EtatPoste
-  territoire: string
   typesEmployeur?: Array<string>
   typesPoste?: Array<string>
 }>

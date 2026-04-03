@@ -39,29 +39,13 @@ export default async function ListeAidantsMediateursController({
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const codesDepartements = contexte.codesDepartements()
+  const scopeFiltre = contexte.scopeFiltre()
 
-  let territoire: string
-  let codesDepartementsScope: ReadonlyArray<string> | undefined
-  if (contexte.estNational()) {
-    territoire = 'France'
-  } else if (codesDepartements.length > 1) {
-    territoire = 'France'
-    codesDepartementsScope = codesDepartements
-  } else if (codesDepartements.length === 1) {
-    territoire = codesDepartements[0]
-  } else {
+  if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
     redirect('/')
   }
 
-  // Utiliser la fonction utilitaire pour construire les filtres
-  const filtres = buildFiltresListeAidants(
-    resolvedSearchParams,
-    territoire,
-    utilisateur.role.nom as TypologieRole,
-    undefined,
-    codesDepartementsScope
-  )
+  const filtres = buildFiltresListeAidants(resolvedSearchParams, scopeFiltre, utilisateur.role.nom as TypologieRole)
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
@@ -86,11 +70,14 @@ export default async function ListeAidantsMediateursController({
   const depuis = new Date()
   depuis.setDate(jusqua.getDate() - 30)
 
+  const codeDepartementUnique =
+    scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 1 ? scopeFiltre.codes[0] : undefined
+
   // Récupérer les bénéficiaires et accompagnements depuis l'API Coop
-  const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(
-    territoire === 'France' ? undefined : territoire,
-    { depuis, jusqua }
-  )
+  const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(codeDepartementUnique, {
+    depuis,
+    jusqua,
+  })
 
   // Créer les promesses séparées pour chaque valeur
   const totalBeneficiairesPromise = beneficiairesEtAccompagnementsPromise.then((result) =>

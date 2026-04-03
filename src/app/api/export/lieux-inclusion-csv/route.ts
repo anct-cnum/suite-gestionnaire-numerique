@@ -5,7 +5,7 @@ import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxIncl
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
-import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -18,61 +18,46 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
-    const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
-    const territoireResult = await territoireUseCase.handle(utilisateur)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    const scopeFiltre = contexte.scopeFiltre()
+
+    if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    }
 
     // Récupération des paramètres de filtre depuis l'URL
     const { searchParams } = new URL(request.url)
-    const codeDepartement = searchParams.get('codeDepartement')
-    const codeRegion = searchParams.get('codeRegion')
+    const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
+    const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
     const typeStructure = searchParams.get('typeStructure')
     const qpv = searchParams.get('qpv') === 'true'
     const frr = searchParams.get('frr') === 'true'
     const horsZonePrioritaire = searchParams.get('horsZonePrioritaire') === 'true'
 
-    // Détermination du département à utiliser selon le scope de l'utilisateur
-    let departementFinal: string | undefined
-    let regionFinale: string | undefined
-
-    if (territoireResult.type === 'france') {
-      // Administrateur : peut filtrer par département ou région demandé
-      departementFinal = codeDepartement ?? undefined
-      regionFinale = codeRegion ?? undefined
-    } else if (territoireResult.codes.length > 0) {
-      // Gestionnaire département ou structure : limité à son département
-      const territoireDepartement = territoireResult.codes[0]
-
-      // Vérifier que le filtre demandé correspond bien au scope de l'utilisateur
-      if (codeDepartement !== null && codeDepartement !== territoireDepartement) {
+    if (scopeFiltre.type === 'departemental') {
+      if (codeDepartementDemande !== undefined && !scopeFiltre.codes.includes(codeDepartementDemande)) {
         return NextResponse.json(
           { error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' },
           { status: 403 }
         )
       }
-      if (codeRegion !== null) {
+      if (codeRegionDemande !== undefined) {
         return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
       }
-
-      departementFinal = territoireDepartement
-      regionFinale = undefined
-    } else {
-      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
-    // Utiliser une limite élevée pour récupérer tous les résultats pour l'export
-    const page = 0
-    const limite = 100000
-
+    const estAdmin = scopeFiltre.type === 'national'
     const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
     const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieuxWithPagination(
-      page,
-      limite,
-      departementFinal,
+      0,
+      100000,
+      estAdmin ? codeDepartementDemande : undefined,
       typeStructure ?? undefined,
       qpv ? qpv : undefined,
       frr ? frr : undefined,
-      regionFinale,
-      horsZonePrioritaire ? horsZonePrioritaire : undefined
+      estAdmin ? codeRegionDemande : undefined,
+      horsZonePrioritaire ? horsZonePrioritaire : undefined,
+      scopeFiltre
     )
 
     // Génération du CSV

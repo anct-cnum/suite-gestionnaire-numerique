@@ -16,6 +16,7 @@ import { blocsParContexte, IdentifiantBloc } from './registreBlocs'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { gouvernancesSelecteurPresenteur } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
 import { resoudreContexte, Scope } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
@@ -33,6 +34,12 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+
+  const options = gouvernancesSelecteurPresenteur(contexte)
+  if (options.length >= 2 && options[0].value !== 'France') {
+    redirect(`/tableau-de-bord/departement/${options[0].value}`)
+  }
+
   const blocs = blocsParContexte(contexte)
 
   let scope: Scope | undefined
@@ -40,6 +47,8 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     scope = contexte.scopes.find((scope) => scope.type === 'france')
   } else if (contexte.aCesRoles('gestionnaire_departement')) {
     scope = contexte.scopes.find((scope) => scope.type === 'departement')
+  } else if (options.length === 1 && options[0].value !== 'France') {
+    scope = { code: options[0].value, type: 'departement' }
   } else {
     scope = contexte.scopes.find((scope) => scope.type === 'structure')
   }

@@ -7,7 +7,7 @@ import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
 import { buildFiltresPostesConseillerNumerique } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 import { PosteConseillerNumeriqueReadModel } from '@/use-cases/queries/RecupererLesPostesConseillerNumerique'
-import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -19,15 +19,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
-    const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
-    const territoireResult = await territoireUseCase.handle(utilisateur)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    const scopeFiltre = contexte.scopeFiltre()
 
-    let territoire: string
-    if (territoireResult.type === 'france') {
-      territoire = 'France'
-    } else if (territoireResult.codes.length > 0) {
-      territoire = territoireResult.codes[0]
-    } else {
+    if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
@@ -42,30 +37,32 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         typesEmployeur: searchParams.get('typesEmployeur') ?? undefined,
         typesPoste: searchParams.get('typesPoste') ?? undefined,
       },
-      territoire === 'France' ? undefined : territoire,
       100000
     )
 
-    let territoireEffectif = territoire
-    let codeRegionEffectif: string | undefined
-    if (filtres.codeDepartement !== undefined) {
-      territoireEffectif = filtres.codeDepartement
-    } else if (filtres.codeRegion !== undefined) {
-      territoireEffectif = 'France'
-      codeRegionEffectif = filtres.codeRegion
+    const estAdmin = scopeFiltre.type === 'national'
+
+    if (!estAdmin && filtres.codeDepartement !== undefined && !scopeFiltre.codes.includes(filtres.codeDepartement)) {
+      return NextResponse.json(
+        { error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' },
+        { status: 403 }
+      )
     }
+
+    const codeDepartementEffectif = estAdmin && filtres.codeRegion === undefined ? filtres.codeDepartement : undefined
 
     const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
     const postesReadModel = await postesLoader.get({
       bonification: filtres.bonification,
-      codeRegion: codeRegionEffectif,
+      codeDepartement: codeDepartementEffectif,
+      codeRegion: filtres.codeRegion,
       conventions: filtres.conventions,
       pagination: {
         limite: filtres.limite,
         page: 1,
       },
+      scopeFiltre,
       statut: filtres.statut,
-      territoire: territoireEffectif,
       typesEmployeur: filtres.typesEmployeur,
       typesPoste: filtres.typesPoste,
     })
