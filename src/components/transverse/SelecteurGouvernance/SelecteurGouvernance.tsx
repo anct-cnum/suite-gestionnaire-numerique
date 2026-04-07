@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import { OptionGouvernance } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
+import type { OptionGouvernance } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
 
 export default function SelecteurGouvernance({ options, selectedValue }: Props): ReactElement {
   const router = useRouter()
