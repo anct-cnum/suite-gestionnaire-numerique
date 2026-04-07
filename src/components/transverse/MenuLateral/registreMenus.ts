@@ -44,18 +44,23 @@ const menuMaStructure: MenuItem = {
   url: (contexte) => `/structure/${contexte.idStructure()}`,
 }
 
+function codeTerritoireOuPremierDepartement(contexte: Contexte): string {
+  const code = contexte.codeTerritoire()
+  return code === 'France' ? '01' : code
+}
+
 const sectionAVenir: Section = {
   badge: true,
   menus: [
     {
       icon: 'pen-nib-line',
       label: 'Financements',
-      url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}/financements`,
+      url: (contexte) => `/gouvernance/${codeTerritoireOuPremierDepartement(contexte)}/financements`,
     },
     {
       icon: 'community-line',
       label: 'Bénéficiaires',
-      url: (contexte) => `/gouvernance/${contexte.codeTerritoire()}/beneficiaires`,
+      url: (contexte) => `/gouvernance/${codeTerritoireOuPremierDepartement(contexte)}/beneficiaires`,
     },
   ],
   titre: 'à venir',
