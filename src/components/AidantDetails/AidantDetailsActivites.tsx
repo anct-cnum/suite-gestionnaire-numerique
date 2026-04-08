@@ -113,11 +113,11 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
                       <strong>{avecAidantsConnect.toLocaleString('fr-FR')}</strong> accompagnements avec Aidants Connect
                     </li>
                   </ul>
-                  <em>
+                  <p className="fr-mb-0 fr-mt-1v">
                     Les ateliers collectifs comptent pour 1 accompagnement par participant.
                     <br />
                     Ex : un atelier avec 10 participants = 10 accompagnements.
-                  </em>
+                  </p>
                 </div>
               </Information>
             </p>
@@ -206,11 +206,11 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
                   <li>Accompagnement individuel</li>
                   <li>Atelier collectif</li>
                 </ul>
-                <em>
+                <p className="fr-mb-0 fr-mt-1v">
                   Les ateliers collectifs comptent pour 1 accompagnement par participant.
                   <br />
                   Ex : un atelier avec 10 participants = 10 accompagnements.
-                </em>
+                </p>
               </div>
             </Information>
           </h3>

@@ -34,7 +34,9 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
       <div className="font-weight-500">
         <span>Médiateurs et aidants numériques</span>
         <Information>
-          <p className="fr-mb-0">Professionnels inscrits sur la Coop et/ou labellisés Aidants Connect</p>
+          <p className="fr-mb-0">
+            Professionnels inscrits sur <strong>la Coop</strong> et/ou labellisés <strong>Aidants Connect</strong>
+          </p>
         </Information>
       </div>
     </div>

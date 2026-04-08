@@ -55,7 +55,10 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
         <div className="font-weight-500">
           <span> Accompagnements réalisés</span>
           <Information>
-            <p className="fr-mb-0">Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect</p>
+            <p className="fr-mb-0">
+              Depuis 2021, avec les dispositifs <strong>Conseillers Numériques</strong> et{' '}
+              <strong>Aidants Connect</strong>
+            </p>
           </Information>
         </div>
       </div>
