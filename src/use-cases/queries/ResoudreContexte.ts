@@ -14,6 +14,7 @@ export interface ScopeLoader {
 
 export type ScopeFiltre =
   | Readonly<{ codes: ReadonlyArray<string>; type: 'departemental' }>
+  | Readonly<{ id: number; type: 'structure' }>
   | Readonly<{ type: 'national' }>
 
 export class Contexte {
@@ -124,6 +125,9 @@ export class Contexte {
   scopeFiltre(): ScopeFiltre {
     if (this.estNational()) {
       return { type: 'national' }
+    }
+    if (this.estGestionnaireStructureSansGouvernance()) {
+      return { id: this.idStructure(), type: 'structure' }
     }
     return { codes: this.codesDepartements(), type: 'departemental' }
   }

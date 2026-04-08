@@ -27,9 +27,28 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
 
     const codesDepartements =
       scopeFiltre?.type === 'departemental' && scopeFiltre.codes.length > 0 ? scopeFiltre.codes : undefined
+    const structureId = scopeFiltre?.type === 'structure' ? scopeFiltre.id : undefined
+
+    const baseConditions: Array<Prisma.Sql> = [Prisma.sql`s.structure_cartographie_nationale_id IS NOT NULL`]
+    if (structureId !== undefined) {
+      baseConditions.push(Prisma.sql`(
+        s.id = ${structureId}
+        OR EXISTS (
+          SELECT 1 FROM main.personne_affectations pa_lieu
+          WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
+          AND pa_lieu.personne_id IN (
+            SELECT pa.personne_id FROM main.personne_affectations pa
+            WHERE pa.structure_id = ${structureId} AND pa.est_active = true
+            UNION
+            SELECT pe.id FROM min.personne_enrichie pe
+            WHERE pe.structure_employeuse_id = ${structureId}
+          )
+        )
+      )`)
+    }
 
     const whereClause = buildWhereClause(
-      [Prisma.sql`s.structure_cartographie_nationale_id IS NOT NULL`],
+      baseConditions,
       { codeDepartement, codeRegion, codesDepartements, typeStructure },
       { frr, horsZonePrioritaire, qpv }
     )
@@ -103,7 +122,22 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     // Pour la requête dispositif, on utilise le nom de la catégorie juridique
     const dispositifConditions = [Prisma.sql`dispositif_programmes_nationaux IS NOT NULL`]
 
-    if (codeDepartement) {
+    if (structureId !== undefined) {
+      dispositifConditions.push(Prisma.sql`(
+        s.id = ${structureId}
+        OR EXISTS (
+          SELECT 1 FROM main.personne_affectations pa_lieu
+          WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
+          AND pa_lieu.personne_id IN (
+            SELECT pa.personne_id FROM main.personne_affectations pa
+            WHERE pa.structure_id = ${structureId} AND pa.est_active = true
+            UNION
+            SELECT pe.id FROM min.personne_enrichie pe
+            WHERE pe.structure_employeuse_id = ${structureId}
+          )
+        )
+      )`)
+    } else if (codeDepartement) {
       dispositifConditions.push(Prisma.sql`a.departement = ${codeDepartement}`)
     }
 
