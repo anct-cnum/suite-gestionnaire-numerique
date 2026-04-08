@@ -23,7 +23,8 @@ export default function LieuxInclusionCategory(props: Props): ReactElement {
             Lieux d&apos;inclusion numérique
             <Information>
               <p className="fr-mb-0">
-                Nombre de lieux affichés sur la cartographie nationale des lieux d&apos;inclusion numérique
+                Nombre de lieux affichés sur la <strong>cartographie nationale</strong> des lieux d&apos;inclusion
+                numérique
               </p>
             </Information>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">

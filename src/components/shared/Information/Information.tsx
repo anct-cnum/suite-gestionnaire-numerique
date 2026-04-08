@@ -19,6 +19,8 @@ export default function Information({ children }: Props): ReactElement {
         style={{
           boxShadow: 'var(--shadow-lg)',
           filter: 'drop-shadow(0 6px 16px rgba(0, 0, 18, 0.24))',
+          fontSize: '1rem',
+          fontWeight: 'normal',
           position: 'absolute',
           width: 'max-content',
           zIndex: 99999,

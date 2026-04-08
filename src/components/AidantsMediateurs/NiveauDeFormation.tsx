@@ -64,8 +64,8 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
             Niveau de formation des aidants et médiateurs numériques
             <Information>
               <p className="fr-mb-0">
-                Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur la Coop de la
-                médiation ainsi que les conseillers numériques de votre territoire
+                Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur{' '}
+                <strong>la Coop de la médiation</strong> ainsi que les conseillers numériques de votre territoire
               </p>
             </Information>
           </h2>

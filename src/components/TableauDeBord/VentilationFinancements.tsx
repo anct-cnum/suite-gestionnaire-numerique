@@ -15,15 +15,13 @@ export default function VentilationFinancements({
         {contexte === 'departement' && (
           <Information>
             <p className="fr-mb-0">
-              Nombre de demandes de <strong>subventions validées</strong> des feuilles de route de votre gouvernance.
+              Nombre de demandes de subventions validées des feuilles de route de votre gouvernance.
             </p>
           </Information>
         )}
         {contexte === 'admin' && (
           <Information>
-            <p className="fr-mb-0">
-              Nombre de demandes de <strong>subventions validées</strong> des feuilles de route.
-            </p>
+            <p className="fr-mb-0">Nombre de demandes de subventions validées des feuilles de route.</p>
           </Information>
         )}
       </div>
