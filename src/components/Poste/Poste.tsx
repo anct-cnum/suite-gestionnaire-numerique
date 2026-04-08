@@ -6,7 +6,6 @@ import PosteHeader from './PosteHeader'
 import PosteStructureConventionnee from './PosteStructureConventionnee'
 import MenuCollant, { type SideMenuItem } from '../AidantDetails/MenuCollant'
 import styles from '../AidantDetails/MenuCollant.module.css'
-import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import ContratsRattaches, {
   type ContratRattacheViewModel,
 } from '@/components/shared/ContratsRattaches/ContratsRattaches'
@@ -25,7 +24,6 @@ export default function Poste({ viewModel }: Props): ReactElement {
           <PosteHeader badges={viewModel.badges} posteId={viewModel.posteId} />
 
           <PosteStructureConventionnee structure={viewModel.structure} />
-          <AlerteConstruction />
           <ConventionsEtFinancements data={viewModel.conventionsEtFinancements} />
 
           <ContratsRattaches contrats={viewModel.contrats} />
