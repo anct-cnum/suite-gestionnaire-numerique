@@ -299,7 +299,7 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['64', '75'], type: 'departemental' })
   })
 
-  it('scopeFiltre — gestionnaire structure sans gouvernance retourne un tableau vide', async () => {
+  it('scopeFiltre — gestionnaire structure sans gouvernance retourne son id de structure', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
 
@@ -307,7 +307,7 @@ describe('résoudre contexte - scopes', () => {
     const contexte = await resoudreContexte(utilisateur, loaderStub())
 
     // THEN
-    expect(contexte.scopeFiltre()).toStrictEqual({ codes: [], type: 'departemental' })
+    expect(contexte.scopeFiltre()).toStrictEqual({ id: 42, type: 'structure' })
   })
 
   it('le contexte contient le rôle de l utilisateur', async () => {

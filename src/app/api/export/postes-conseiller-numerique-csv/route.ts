@@ -42,7 +42,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const estAdmin = scopeFiltre.type === 'national'
 
-    if (!estAdmin && filtres.codeDepartement !== undefined && !scopeFiltre.codes.includes(filtres.codeDepartement)) {
+    if (
+      !estAdmin &&
+      scopeFiltre.type === 'departemental' &&
+      filtres.codeDepartement !== undefined &&
+      !scopeFiltre.codes.includes(filtres.codeDepartement)
+    ) {
       return NextResponse.json(
         { error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' },
         { status: 403 }

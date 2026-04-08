@@ -135,7 +135,7 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
   const nb = contexte.nbGouvernances()
   const estAdmin = contexte.aCesRoles('administrateur_dispositif')
 
-  if (estAdmin || nb === 0) {
+  if (estAdmin) {
     menus.push({
       icon: 'group-line',
       label: 'Aidants et médiateurs',

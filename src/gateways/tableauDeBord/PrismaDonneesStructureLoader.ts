@@ -4,21 +4,42 @@ import { DonneesStructureLoader, DonneesStructureReadModel } from '@/use-cases/q
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
-  readonly #structureDao = prisma.main_structure
-
   async get(structureId: number, maintenant: Date): Promise<DonneesStructureReadModel | ErrorReadModel> {
     try {
-      const structure = await this.#structureDao.findUnique({
-        select: {
-          structure_cartographie_nationale_id: true,
-        },
-        where: { id: structureId },
-      })
+      const nombreLieuxResult = await prisma.$queryRaw<Array<{ total: bigint }>>`
+        SELECT COUNT(*)::bigint AS total
+        FROM main.structure s
+        WHERE s.structure_cartographie_nationale_id IS NOT NULL
+          AND (
+            s.id = ${structureId}
+            OR EXISTS (
+              SELECT 1 FROM main.personne_affectations pa_lieu
+              WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
+              AND pa_lieu.personne_id IN (
+                SELECT pa.personne_id FROM main.personne_affectations pa
+                WHERE pa.structure_id = ${structureId} AND pa.est_active = true
+                UNION
+                SELECT pe.id FROM min.personne_enrichie pe
+                WHERE pe.structure_employeuse_id = ${structureId}
+              )
+            )
+          )
+      `
+      const nombreLieux = Number(nombreLieuxResult[0]?.total ?? 0)
 
-      const nombreLieux = structure?.structure_cartographie_nationale_id === null ? 0 : 1
-      const nombreMediateurs = await prisma.personne_affectations.count({
-        where: { est_active: true, structure_id: structureId },
-      })
+      const nombreMediateursResult = await prisma.$queryRaw<Array<{ total: bigint }>>`
+        SELECT COUNT(DISTINCT pe.id)::bigint AS total
+        FROM min.personne_enrichie pe
+        WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+          AND (
+            pe.structure_employeuse_id = ${structureId}
+            OR EXISTS (
+              SELECT 1 FROM main.personne_affectations aff
+              WHERE aff.personne_id = pe.id AND aff.est_active = true AND aff.structure_id = ${structureId}
+            )
+          )
+      `
+      const nombreMediateurs = Number(nombreMediateursResult[0]?.total ?? 0)
 
       const accompagnementsParMois = await prisma.$queryRaw<
         Array<{

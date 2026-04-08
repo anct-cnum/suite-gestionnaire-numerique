@@ -135,9 +135,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     geographique: FiltresListeAidants['geographique'],
     whereConditions: Prisma.Sql,
     departementFilter: Prisma.Sql,
-    limitOffset: Prisma.Sql
+    limitOffset: Prisma.Sql,
+    structureFilter: Prisma.Sql
   ): Promise<Array<PersonneAvecAccompagnementQueryResult>> {
-    if (!geographique && departementFilter === Prisma.empty) {
+    if (!geographique && departementFilter === Prisma.empty && structureFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneAvecAccompagnementQueryResult>>`
         SELECT
           pe.id,
@@ -191,6 +192,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           ${departementFilter}
+          ${structureFilter}
           ${whereConditions}
         GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
         ORDER BY pe.nom, pe.prenom
@@ -315,13 +317,32 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
       const departementFilter =
         departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty
+      const structureFilter =
+        !geographique && scopeFiltre.type === 'structure'
+          ? Prisma.sql`AND (
+              pe.structure_employeuse_id = ${scopeFiltre.id}
+              OR EXISTS (SELECT 1 FROM main.personne_affectations aff WHERE aff.personne_id = pe.id AND aff.est_active = true AND aff.structure_id = ${scopeFiltre.id})
+            )`
+          : Prisma.empty
 
       const limitOffset =
         limite !== undefined && offset !== undefined ? Prisma.sql`LIMIT ${limite} OFFSET ${offset}` : Prisma.empty
 
       const personnes = includeAccompagnements
-        ? await this.avecAccompagnementQuery(geographique, whereConditions, departementFilter, limitOffset)
-        : await this.sansAccompagnementQuery(geographique, whereConditions, departementFilter, limitOffset)
+        ? await this.avecAccompagnementQuery(
+            geographique,
+            whereConditions,
+            departementFilter,
+            limitOffset,
+            structureFilter
+          )
+        : await this.sansAccompagnementQuery(
+            geographique,
+            whereConditions,
+            departementFilter,
+            limitOffset,
+            structureFilter
+          )
 
       return this.mapPersonnesToAidants(personnes, includeAccompagnements)
     } catch (error) {
@@ -373,10 +394,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
     const departementFilterPersonnes =
       departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty
+    const structureFilterPersonnes =
+      !geographique && scopeFiltre.type === 'structure'
+        ? Prisma.sql`AND (
+            pe.structure_employeuse_id = ${scopeFiltre.id}
+            OR EXISTS (SELECT 1 FROM main.personne_affectations aff WHERE aff.personne_id = pe.id AND aff.est_active = true AND aff.structure_id = ${scopeFiltre.id})
+          )`
+        : Prisma.empty
 
     // Statistiques des personnes en poste
     const conseillersResult =
-      !geographique && departementsFilter.length === 0
+      !geographique && departementsFilter.length === 0 && structureFilterPersonnes === Prisma.empty
         ? await prisma.$queryRaw<Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
           COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
@@ -398,6 +426,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
         ${departementFilterPersonnes}
+        ${structureFilterPersonnes}
         ${whereConditions}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
@@ -478,9 +507,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     geographique: FiltresListeAidants['geographique'],
     whereConditions: Prisma.Sql,
     departementFilter: Prisma.Sql,
-    limitOffset: Prisma.Sql
+    limitOffset: Prisma.Sql,
+    structureFilter: Prisma.Sql
   ): Promise<Array<PersonneQueryResult>> {
-    if (!geographique && departementFilter === Prisma.empty) {
+    if (!geographique && departementFilter === Prisma.empty && structureFilter === Prisma.empty) {
       return prisma.$queryRaw<Array<PersonneQueryResult>>`
         SELECT
           pe.id,
@@ -520,6 +550,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           ${departementFilter}
+          ${structureFilter}
           ${whereConditions}
         GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique
         ORDER BY pe.nom, pe.prenom
