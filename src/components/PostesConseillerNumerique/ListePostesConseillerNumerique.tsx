@@ -14,7 +14,6 @@ import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
@@ -232,7 +231,6 @@ export default function ListePostesConseillerNumerique({
         </div>
       ) : null}
 
-      <AlerteConstruction />
       <div className="fr-callout fr-callout--blue-ecume fr-mb-3w">
         <p className="fr-callout__text fr-text--sm fr-mb-0">
           <span className="fr-icon-information-fill fr-mr-1w" />
