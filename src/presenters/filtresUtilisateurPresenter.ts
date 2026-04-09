@@ -42,7 +42,9 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
 export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
   const regionsEtDepartements = [toutesLesRegions]
 
-  regions.forEach((region) => {
+  const regionsSorted = [...regions].sort((regionA, regionB) => regionA.nom.localeCompare(regionB.nom, 'fr'))
+
+  regionsSorted.forEach((region) => {
     regionsEtDepartements.push({
       label: region.nom,
       type: 'region',
@@ -51,9 +53,10 @@ export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
 
     departements
       .filter((departement) => departement.regionCode === region.code)
+      .sort((departementA, departementB) => departementA.nom.localeCompare(departementB.nom, 'fr'))
       .forEach((departement) => {
         regionsEtDepartements.push({
-          label: `(${departement.code}) ${departement.nom}`,
+          label: departement.nom,
           type: 'departement',
           value: `${region.code}${regionDepartementSeparator}${departement.code}`,
         })
