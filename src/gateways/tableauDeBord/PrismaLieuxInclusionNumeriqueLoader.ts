@@ -18,7 +18,6 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
             COUNT(*) AS nb_lieux
           FROM main.structure
           INNER JOIN main.adresse ON structure.adresse_id = adresse.id
-          WHERE structure_cartographie_nationale_id IS NOT NULL
         `
       } else {
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
@@ -26,7 +25,7 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
             COUNT(*) AS nb_lieux
           FROM main.structure
           INNER JOIN main.adresse ON structure.adresse_id = adresse.id
-          WHERE structure_cartographie_nationale_id IS NOT NULL AND adresse.departement = ${territoire}
+          WHERE adresse.departement = ${territoire}
         `
       }
 

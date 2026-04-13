@@ -1,3 +1,6 @@
+import { FiltreGeographiqueLieux, FiltresListeLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
+import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+
 // Types pour les filtres internes utilisés dans les composants
 export interface FiltresLieuxInclusionInternes {
   codeDepartement: null | string
@@ -23,31 +26,32 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
 }
 
 /**
- * Construit les filtres pour le loader à partir des paramètres d'URL
+ * Construit les filtres pour le loader à partir des paramètres d'URL et du scope utilisateur.
+ * Le filtre géographique (département/région) n'est disponible que pour les admins nationaux.
  */
 export function buildFiltresLieuxInclusion(
   params: FiltresLieuxInclusionURLParams,
+  scopeFiltre: ScopeFiltre,
   limite = 10
-): {
-  codeDepartement?: string
-  codeRegion?: string
-  frr?: boolean
-  horsZonePrioritaire?: boolean
-  limite: number
-  page: number
-  qpv?: boolean
-  typeStructure?: string
-} {
+): FiltresListeLieux {
   const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = params
 
+  let geographique: FiltreGeographiqueLieux | undefined
+  if (scopeFiltre.type === 'national') {
+    if (codeRegion) {
+      geographique = { code: codeRegion, type: 'region' }
+    } else if (codeDepartement) {
+      geographique = { code: codeDepartement, type: 'departement' }
+    }
+  }
+
   return {
-    codeDepartement,
-    codeRegion,
     frr: frr === 'true' ? true : undefined,
+    geographique,
     horsZonePrioritaire: horsZonePrioritaire === 'true' ? true : undefined,
-    limite,
-    page: Number(page ?? '1') - 1, // Conversion en index 0-based
+    pagination: { limite, page: Number(page ?? '1') - 1 },
     qpv: qpv === 'true' ? true : undefined,
+    scopeFiltre,
     typeStructure,
   }
 }

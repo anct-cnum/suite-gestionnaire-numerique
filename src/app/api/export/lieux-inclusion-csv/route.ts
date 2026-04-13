@@ -4,12 +4,12 @@ import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGa
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Vérification de l'authentification
     const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
@@ -25,15 +25,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
-    // Récupération des paramètres de filtre depuis l'URL
     const { searchParams } = new URL(request.url)
     const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
-    const typeStructure = searchParams.get('typeStructure')
-    const qpv = searchParams.get('qpv') === 'true'
-    const frr = searchParams.get('frr') === 'true'
-    const horsZonePrioritaire = searchParams.get('horsZonePrioritaire') === 'true'
 
+    // Validation défensive : un gestionnaire département ne peut exporter que son périmètre
     if (scopeFiltre.type === 'departemental') {
       if (codeDepartementDemande !== undefined && !scopeFiltre.codes.includes(codeDepartementDemande)) {
         return NextResponse.json(
@@ -46,30 +42,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    const estAdmin = scopeFiltre.type === 'national'
-    const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
-    const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieuxWithPagination(
-      0,
-      100000,
-      estAdmin ? codeDepartementDemande : undefined,
-      typeStructure ?? undefined,
-      qpv ? qpv : undefined,
-      frr ? frr : undefined,
-      estAdmin ? codeRegionDemande : undefined,
-      horsZonePrioritaire ? horsZonePrioritaire : undefined,
-      scopeFiltre
+    const filtres = buildFiltresLieuxInclusion(
+      {
+        codeDepartement: codeDepartementDemande,
+        codeRegion: codeRegionDemande,
+        frr: searchParams.get('frr') ?? undefined,
+        horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
+        qpv: searchParams.get('qpv') ?? undefined,
+        typeStructure: searchParams.get('typeStructure') ?? undefined,
+      },
+      scopeFiltre,
+      100_000
     )
 
-    // Génération du CSV
-    const csvContent = generateCSV(listeLieuxInclusionReadModel.lieux)
+    const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
+    const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieux(filtres)
 
-    // Nom du fichier avec timestamp
+    const csvContent = generateCSV(listeLieuxInclusionReadModel.lieux)
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
-    const exportFilename = `lieux-inclusion-${timestamp}.csv`
 
     return new NextResponse(csvContent, {
       headers: {
-        'Content-Disposition': `attachment; filename="${exportFilename}"`,
+        'Content-Disposition': `attachment; filename="lieux-inclusion-${timestamp}.csv"`,
         'Content-Type': 'text/csv; charset=utf-8',
       },
     })
@@ -80,7 +74,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
-  // En-têtes CSV
   const headers = [
     'ID',
     'Nom',
@@ -96,7 +89,6 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     'Code INSEE',
   ]
 
-  // Fonction pour échapper les valeurs CSV
   function escapeCSV(value: null | number | string | undefined): string {
     if (value === null || value === undefined) {
       return ''
@@ -108,7 +100,6 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     return stringValue
   }
 
-  // Construction des lignes CSV
   const rows = lieux.map((lieu) => {
     const adresse = [lieu.numero_voie, lieu.nom_voie, lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')
 
@@ -128,7 +119,6 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     ]
   })
 
-  // Assemblage final avec BOM UTF-8 pour Excel
   const csvLines = [headers.join(','), ...rows.map((row) => row.join(','))]
   return `\uFEFF${csvLines.join('\n')}`
 }

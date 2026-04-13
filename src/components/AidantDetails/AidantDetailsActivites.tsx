@@ -96,7 +96,7 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <p className="fr-text--sm fr-text--bold fr-mb-1v">
+            <div className="fr-text--sm fr-text--bold fr-mb-1v">
               Accompagnements
               <Information>
                 <div className="fr-mb-0">
@@ -120,7 +120,7 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
                   </p>
                 </div>
               </Information>
-            </p>
+            </div>
             <p className="fr-text--xs fr-mt-0">Dont {avecAidantsConnect} avec Aidants Connect</p>
           </div>
         </div>

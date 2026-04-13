@@ -42,8 +42,8 @@ export default function InformationsPersonnellesCard({ data, onEdit }: Readonly<
             </p>
             {emails.length > 0 ? (
               <div className="fr-text--bold fr-mb-0">
-                {emails.map((email) => (
-                  <p className="fr-mb-0" key={email}>
+                {emails.map((email, index) => (
+                  <p className="fr-mb-0" key={`${email}-${index}`}>
                     {email}
                   </p>
                 ))}

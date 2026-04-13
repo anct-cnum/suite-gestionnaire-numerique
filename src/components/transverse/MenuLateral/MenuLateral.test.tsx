@@ -29,7 +29,7 @@ describe('menu lateral', () => {
 
   it.each([
     { name: 'Gouvernance', url: '/gouvernance/93' },
-    { name: "Lieux d'inclusion", url: '/lieux-inclusion' },
+    { name: "Lieux d'inclusion", url: '/liste-lieux-inclusion' },
   ])(
     "étant un gestionnaire de département, quand j'affiche le menu latéral, alors il s'affiche avec le lien du menu $name",
     ({ name, url }) => {
@@ -106,7 +106,7 @@ describe('menu lateral', () => {
     { itemIndex: 0, listIndex: 3, name: 'Membres', pathname: '/gouvernance/93/membres' },
     { itemIndex: 1, listIndex: 3, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
     { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
-    { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/lieux-inclusion' },
+    { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/liste-lieux-inclusion' },
     { itemIndex: 0, listIndex: 4, name: 'Financements', pathname: '/gouvernance/93/financements' },
     { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])(
