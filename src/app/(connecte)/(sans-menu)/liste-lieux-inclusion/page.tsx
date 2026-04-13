@@ -46,25 +46,11 @@ export default async function ListeLieuxInclusionController({
   }
 
   const resolvedSearchParams = await searchParams
+  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre)
 
-  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams)
-
-  const estAdmin = scopeFiltre.type === 'national'
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
-
-  // Récupérer les lieux et les types de structure en parallèle
   const [listeLieuxInclusionReadModel, typesStructure] = await Promise.all([
-    listeLieuxInclusionLoader.getLieuxWithPagination(
-      filtres.page,
-      filtres.limite,
-      estAdmin ? filtres.codeDepartement : undefined,
-      filtres.typeStructure,
-      filtres.qpv,
-      filtres.frr,
-      estAdmin ? filtres.codeRegion : undefined,
-      filtres.horsZonePrioritaire,
-      scopeFiltre
-    ),
+    listeLieuxInclusionLoader.getLieux(filtres),
     listeLieuxInclusionLoader.getTypesStructure(),
   ])
 
@@ -73,7 +59,6 @@ export default async function ListeLieuxInclusionController({
     listeLieuxInclusionPresenter
   )
 
-  // Passer les paramètres actuels pour l'affichage des filtres actifs
   const currentSearchParams = new URLSearchParams()
   const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = resolvedSearchParams
   setSearchParams()

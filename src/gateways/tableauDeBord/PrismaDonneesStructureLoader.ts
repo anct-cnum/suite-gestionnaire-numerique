@@ -9,8 +9,7 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
       const nombreLieuxResult = await prisma.$queryRaw<Array<{ total: bigint }>>`
         SELECT COUNT(*)::bigint AS total
         FROM main.structure s
-        WHERE s.structure_cartographie_nationale_id IS NOT NULL
-          AND (
+        WHERE (
             s.id = ${structureId}
             OR EXISTS (
               SELECT 1 FROM main.personne_affectations pa_lieu

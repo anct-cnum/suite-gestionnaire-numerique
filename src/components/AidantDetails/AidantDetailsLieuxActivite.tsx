@@ -1,11 +1,19 @@
-import React, { ReactElement } from 'react'
+'use client'
+
+import React, { ReactElement, useMemo } from 'react'
 
 import { LieuActiviteData } from './AidantDetails'
 import { isNullish } from '@/shared/lang'
 
 export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
   const { data: lieuxActivite, nom, prenom } = props
-  const lieux = lieuxActivite.filter((lieu) => lieu.nom !== 'Structure inconnue')
+  const lieux = useMemo(
+    () =>
+      lieuxActivite
+        .filter((lieu) => lieu.nom !== 'Structure inconnue')
+        .map((lieu) => ({ key: crypto.randomUUID(), lieu })),
+    [lieuxActivite]
+  )
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
       <h2 className="fr-h3 fr-mb-1w">Lieux d&apos;activité</h2>
@@ -27,8 +35,8 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
       ) : (
         <>
           <hr className="fr-hr " />
-          {lieux.map((lieu, index) => (
-            <React.Fragment key={lieu.nom}>
+          {lieux.map(({ key, lieu }, index) => (
+            <React.Fragment key={key}>
               <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
                 <div className="fr-col-12 fr-col-md-10">
                   <div
@@ -76,7 +84,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
                   <div className="fr-text--sm fr-text-mention--grey fr-m-0">Accompagnements (sur 30 j.)</div>
                 </div>
               </div>
-              {index < lieuxActivite.length - 1 && <hr className="fr-hr  fr-mt-2w" />}
+              {index < lieux.length - 1 && <hr className="fr-hr  fr-mt-2w" />}
             </React.Fragment>
           ))}
         </>

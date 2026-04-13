@@ -304,6 +304,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       INNER JOIN min.personne_enrichie pe ON pa.personne_id = pe.id
       WHERE pa.structure_id = ${parseInt(id, 10)}
         AND pa.est_active = true
+        AND pa.type = 'structure_emploi'
     `
   }
 

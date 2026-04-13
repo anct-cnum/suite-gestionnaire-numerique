@@ -155,7 +155,7 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
     menus.push({
       icon: 'map-pin-2-line',
       label: "Lieux d'inclusion",
-      url: () => '/lieux-inclusion',
+      url: () => '/liste-lieux-inclusion',
     })
   } else {
     menus.push({

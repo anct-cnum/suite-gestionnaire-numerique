@@ -1,3 +1,20 @@
+import { ScopeFiltre } from './ResoudreContexte'
+
+export type FiltreGeographiqueLieux = Readonly<{
+  code: string
+  type: 'departement' | 'region'
+}>
+
+export type FiltresListeLieux = Readonly<{
+  frr?: boolean
+  geographique?: FiltreGeographiqueLieux
+  horsZonePrioritaire?: boolean
+  pagination: Readonly<{ limite: number; page: number }>
+  qpv?: boolean
+  scopeFiltre: ScopeFiltre
+  typeStructure?: string
+}>
+
 export interface RecupererLieuxInclusionReadModel {
   lieux: Array<LieuInclusionNumeriqueItem>
   limite: number
@@ -26,19 +43,7 @@ export interface LieuInclusionNumeriqueItem {
   type_structure: null | string
 }
 
-import { ScopeFiltre } from './ResoudreContexte'
-
 export interface RecupererLieuxInclusionPort {
-  getLieuxWithPagination(
-    page: number,
-    limite: number,
-    codeDepartement?: string,
-    typeStructure?: string,
-    qpv?: boolean,
-    frr?: boolean,
-    codeRegion?: string,
-    horsZonePrioritaire?: boolean,
-    scopeFiltre?: ScopeFiltre
-  ): Promise<RecupererLieuxInclusionReadModel>
+  getLieux(filtres: FiltresListeLieux): Promise<RecupererLieuxInclusionReadModel>
   getTypesStructure(): Promise<Array<{ code: string; nom: string }>>
 }

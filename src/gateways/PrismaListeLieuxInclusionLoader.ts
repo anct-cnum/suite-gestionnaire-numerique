@@ -1,193 +1,34 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
-
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
-import { buildWhereClause } from '@/shared/prismaQueryHelpers'
+import departements from '../../ressources/departements.json'
 import {
+  FiltresListeLieux,
   LieuInclusionNumeriqueItem,
   RecupererLieuxInclusionPort,
   RecupererLieuxInclusionReadModel,
 } from '@/use-cases/queries/RecupererLieuxInclusion'
-import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionPort {
-  async getLieuxWithPagination(
-    page: number,
-    limite = 10,
-    codeDepartement?: string,
-    typeStructure?: string,
-    qpv?: boolean,
-    frr?: boolean,
-    codeRegion?: string,
-    horsZonePrioritaire?: boolean,
-    scopeFiltre?: ScopeFiltre
-  ): Promise<RecupererLieuxInclusionReadModel> {
-    const offset = page * limite
+  async getLieux(filtres: FiltresListeLieux): Promise<RecupererLieuxInclusionReadModel> {
+    const { pagination } = filtres
+    const scopeCte = this.buildScopeCte(filtres)
+    const whereConditions = this.buildWhereConditions(filtres)
+    const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
 
-    const codesDepartements =
-      scopeFiltre?.type === 'departemental' && scopeFiltre.codes.length > 0 ? scopeFiltre.codes : undefined
-    const structureId = scopeFiltre?.type === 'structure' ? scopeFiltre.id : undefined
+    const [total, lieux, stats] = await Promise.all([
+      this.queryTotal(scopeCte, whereConditions),
+      this.queryLieux(scopeCte, whereConditions, limitOffset),
+      this.queryStats(scopeCte, whereConditions),
+    ])
 
-    const baseConditions: Array<Prisma.Sql> = [Prisma.sql`s.structure_cartographie_nationale_id IS NOT NULL`]
-    if (structureId !== undefined) {
-      baseConditions.push(Prisma.sql`(
-        s.id = ${structureId}
-        OR EXISTS (
-          SELECT 1 FROM main.personne_affectations pa_lieu
-          WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
-          AND pa_lieu.personne_id IN (
-            SELECT pa.personne_id FROM main.personne_affectations pa
-            WHERE pa.structure_id = ${structureId} AND pa.est_active = true
-            UNION
-            SELECT pe.id FROM min.personne_enrichie pe
-            WHERE pe.structure_employeuse_id = ${structureId}
-          )
-        )
-      )`)
-    }
-
-    const whereClause = buildWhereClause(
-      baseConditions,
-      { codeDepartement, codeRegion, codesDepartements, typeStructure },
-      { frr, horsZonePrioritaire, qpv }
-    )
-
-    // Récupération du nombre total de lieux
-    const totalResult: Array<{ total: number }> = await prisma.$queryRaw`
-      SELECT COUNT(*)::int AS total
-      FROM main.structure s
-      INNER JOIN main.adresse a ON a.id = s.adresse_id
-      LEFT JOIN reference.categories_juridiques ref ON s.categorie_juridique = ref.code
-      ${whereClause}
-    `
-    const total = totalResult[0]?.total ?? 0
-
-    // Récupération des lieux avec leurs informations
-    const lieux: Array<LieuInclusionNumeriqueItem> = await prisma.$queryRaw`
-      WITH structures AS (
-        SELECT s.id, s.nom, s.siret, s.categorie_juridique, s.nb_mandats_ac, s.structure_cartographie_nationale_id, a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
-        FROM main.structure s
-        INNER JOIN main.adresse a ON a.id = s.adresse_id
-        LEFT JOIN reference.categories_juridiques ref ON s.categorie_juridique = ref.code
-        ${whereClause}
-        ORDER BY s.nom ASC
-        OFFSET ${offset}
-        FETCH NEXT ${limite} ROWS ONLY
-      ),
-      accompagnements_ac AS (
-        SELECT aff.structure_id, SUM(p.nb_accompagnements_ac)::int AS nbr
-        FROM structures
-        INNER JOIN main.personne_affectations aff ON structures.id = aff.structure_id
-        INNER JOIN main.personne p ON p.id = aff.personne_id
-        WHERE p.nb_accompagnements_ac IS NOT NULL
-        GROUP BY aff.structure_id
-      )
-      SELECT
-        s.id,
-        s.nom,
-        s.siret,
-        s.structure_cartographie_nationale_id,
-        ref.nom as categorie_juridique,
-        s.numero_voie,
-        s.nom_voie,
-        s.code_postal,
-        s.nom_commune,
-        s.code_insee,
-        CASE
-          WHEN EXISTS (
-            SELECT 1 FROM admin.zonage z
-            WHERE z.type = 'FRR' AND z.code_insee = s.code_insee
-          ) THEN true
-          ELSE false
-        END AS est_frr,
-        CASE
-          WHEN EXISTS (
-            SELECT 1 FROM admin.zonage z
-            WHERE z.type = 'QPV' AND public.st_contains(z.geom, s.geom)
-          ) THEN true
-          ELSE false
-        END AS est_qpv,
-        COALESCE(s.nb_mandats_ac, 0) AS nb_mandats_ac,
-        COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
-        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
-      FROM structures s
-      LEFT join reference.categories_juridiques ref on s.categorie_juridique = ref.code
-      LEFT JOIN main.activites_coop act ON act.structure_id = s.id
-      LEFT JOIN accompagnements_ac acc ON acc.structure_id = s.id
-      GROUP BY s.id, s.nom, s.siret, s.structure_cartographie_nationale_id, ref.nom, s.numero_voie, s.nom_voie, s.code_postal, s.nom_commune, s.code_insee, s.nb_mandats_ac, s.geom, acc.nbr
-      ORDER BY s.nom ASC
-    `
-
-    // Pour la requête dispositif, on utilise le nom de la catégorie juridique
-    const dispositifConditions = [Prisma.sql`dispositif_programmes_nationaux IS NOT NULL`]
-
-    if (structureId !== undefined) {
-      dispositifConditions.push(Prisma.sql`(
-        s.id = ${structureId}
-        OR EXISTS (
-          SELECT 1 FROM main.personne_affectations pa_lieu
-          WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
-          AND pa_lieu.personne_id IN (
-            SELECT pa.personne_id FROM main.personne_affectations pa
-            WHERE pa.structure_id = ${structureId} AND pa.est_active = true
-            UNION
-            SELECT pe.id FROM min.personne_enrichie pe
-            WHERE pe.structure_employeuse_id = ${structureId}
-          )
-        )
-      )`)
-    } else if (codeDepartement) {
-      dispositifConditions.push(Prisma.sql`a.departement = ${codeDepartement}`)
-    }
-
-    if (typeStructure) {
-      dispositifConditions.push(Prisma.sql`ref.nom = ${typeStructure}`)
-    }
-
-    if (qpv === true) {
-      dispositifConditions.push(Prisma.sql`EXISTS (
-        SELECT 1 FROM admin.zonage z
-        WHERE z.type = 'QPV' AND public.st_contains(z.geom, a.geom)
-      )`)
-    }
-
-    if (frr === true) {
-      dispositifConditions.push(Prisma.sql`EXISTS (
-        SELECT 1 FROM admin.zonage z
-        WHERE z.type = 'FRR' AND z.code_insee = a.code_insee
-      )`)
-    }
-
-    if (horsZonePrioritaire === true) {
-      dispositifConditions.push(Prisma.sql`NOT EXISTS (
-        SELECT 1 FROM admin.zonage z
-        WHERE (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
-           OR (z.type = 'FRR' AND z.code_insee = a.code_insee)
-      )`)
-    }
-
-    const dispositifWhereClause =
-      dispositifConditions.length > 0 ? Prisma.sql`WHERE ${Prisma.join(dispositifConditions, ' AND ')}` : Prisma.empty
-
-    const dispositifResult: Array<{ nb_conseillers: bigint; total: bigint }> = await prisma.$queryRaw`
-      SELECT
-        COUNT(*) AS total,
-        SUM(CASE WHEN 'Conseillers numériques' = ANY(s.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_conseillers
-      FROM main.structure AS s
-      LEFT JOIN main.adresse a ON a.id = s.adresse_id
-      LEFT JOIN reference.categories_juridiques ref ON s.categorie_juridique = ref.code
-      ${dispositifWhereClause}
-    `
-
-    const dispositif = dispositifResult[0]
     return {
       lieux,
-      limite,
-      page,
+      limite: pagination.limite,
+      page: pagination.page,
       total,
-      totalConseillerNumerique: Number(dispositif.nb_conseillers ?? 0),
-      totalLabellise: Number(dispositif.total ?? 0),
+      totalConseillerNumerique: stats.totalConseillerNumerique,
+      totalLabellise: stats.totalLabellise,
     }
   }
 
@@ -199,9 +40,188 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       FROM main.structure
       JOIN reference.categories_juridiques
         ON reference.categories_juridiques.code = LEFT(main.structure.categorie_juridique, 2)
-      WHERE main.structure.structure_cartographie_nationale_id IS NOT NULL
-        AND reference.categories_juridiques.nom IS NOT NULL
+      WHERE reference.categories_juridiques.nom IS NOT NULL
       ORDER BY reference.categories_juridiques.nom ASC
     `
+  }
+
+  // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
+  // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
+  private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
+    const { geographique, scopeFiltre } = filtres
+
+    if (geographique) {
+      const codesDepartements =
+        geographique.type === 'region'
+          ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)
+          : [geographique.code]
+      return Prisma.sql`lieux_dans_scope AS (
+        SELECT s.id
+        FROM main.structure s
+        LEFT JOIN main.adresse a ON a.id = s.adresse_id
+        WHERE a.departement = ANY(${codesDepartements})
+      )`
+    }
+
+    if (scopeFiltre.type === 'departemental') {
+      const codesDepartements = [...scopeFiltre.codes]
+      return Prisma.sql`lieux_dans_scope AS (
+        SELECT s.id
+        FROM main.structure s
+        LEFT JOIN main.adresse a ON a.id = s.adresse_id
+        WHERE a.departement = ANY(${codesDepartements})
+      )`
+    }
+
+    if (scopeFiltre.type === 'structure') {
+      return Prisma.sql`lieux_dans_scope AS (
+        SELECT s.id
+        FROM main.structure s
+        WHERE s.id = ${scopeFiltre.id}
+          OR EXISTS (
+            SELECT 1 FROM main.personne_affectations pa_lieu
+            WHERE pa_lieu.structure_id = s.id AND pa_lieu.est_active = true
+              AND pa_lieu.personne_id IN (
+                SELECT pa.personne_id FROM main.personne_affectations pa
+                WHERE pa.structure_id = ${scopeFiltre.id} AND pa.est_active = true
+                UNION
+                SELECT pe.id FROM min.personne_enrichie pe
+                WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
+              )
+          )
+      )`
+    }
+
+    // Scope national : aucune restriction d'accès
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT s.id FROM main.structure s
+    )`
+  }
+
+  // Étape 2 — Filtres UI : "parmi les lieux accessibles, lesquels correspondent à la recherche ?"
+  private buildWhereConditions(filtres: FiltresListeLieux): Prisma.Sql {
+    const conditions: Array<Prisma.Sql> = []
+
+    if (filtres.typeStructure) {
+      conditions.push(Prisma.sql`LEFT(s.categorie_juridique, 2) = ${filtres.typeStructure}`)
+    }
+    if (filtres.qpv === true) {
+      conditions.push(Prisma.sql`EXISTS (
+        SELECT 1 FROM admin.zonage z
+        WHERE z.type = 'QPV' AND public.st_contains(z.geom, a.geom)
+      )`)
+    }
+    if (filtres.frr === true) {
+      conditions.push(Prisma.sql`EXISTS (
+        SELECT 1 FROM admin.zonage z
+        WHERE z.type = 'FRR' AND z.code_insee = a.code_insee
+      )`)
+    }
+    if (filtres.horsZonePrioritaire === true) {
+      conditions.push(Prisma.sql`NOT EXISTS (
+        SELECT 1 FROM admin.zonage z
+        WHERE (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
+           OR (z.type = 'FRR' AND z.code_insee = a.code_insee)
+      )`)
+    }
+
+    return conditions.length > 0 ? Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
+  }
+
+  private async queryLieux(
+    scopeCte: Prisma.Sql,
+    whereConditions: Prisma.Sql,
+    limitOffset: Prisma.Sql
+  ): Promise<Array<LieuInclusionNumeriqueItem>> {
+    return prisma.$queryRaw<Array<LieuInclusionNumeriqueItem>>`
+      WITH ${scopeCte},
+      lieux_page AS (
+        SELECT
+          s.id, s.nom, s.siret, s.structure_cartographie_nationale_id,
+          s.categorie_juridique, s.nb_mandats_ac,
+          a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
+        FROM main.structure s
+        JOIN lieux_dans_scope lds ON lds.id = s.id
+        LEFT JOIN main.adresse a ON a.id = s.adresse_id
+        WHERE true
+          ${whereConditions}
+        ORDER BY s.nom ASC
+        ${limitOffset}
+      ),
+      accompagnements_ac AS (
+        SELECT aff.structure_id, SUM(p.nb_accompagnements_ac)::int AS nbr
+        FROM lieux_page
+        INNER JOIN main.personne_affectations aff ON lieux_page.id = aff.structure_id
+        INNER JOIN main.personne p ON p.id = aff.personne_id
+        WHERE p.nb_accompagnements_ac IS NOT NULL
+        GROUP BY aff.structure_id
+      )
+      SELECT
+        s.id,
+        s.nom,
+        s.siret,
+        s.structure_cartographie_nationale_id,
+        ref.nom AS categorie_juridique,
+        s.numero_voie,
+        s.nom_voie,
+        s.code_postal,
+        s.nom_commune,
+        s.code_insee,
+        CASE
+          WHEN EXISTS (SELECT 1 FROM admin.zonage z WHERE z.type = 'FRR' AND z.code_insee = s.code_insee)
+          THEN true ELSE false
+        END AS est_frr,
+        CASE
+          WHEN EXISTS (SELECT 1 FROM admin.zonage z WHERE z.type = 'QPV' AND public.st_contains(z.geom, s.geom))
+          THEN true ELSE false
+        END AS est_qpv,
+        COALESCE(s.nb_mandats_ac, 0) AS nb_mandats_ac,
+        COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
+        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
+      FROM lieux_page s
+      LEFT JOIN reference.categories_juridiques ref ON s.categorie_juridique = ref.code
+      LEFT JOIN main.activites_coop act ON act.structure_id = s.id
+      LEFT JOIN accompagnements_ac acc ON acc.structure_id = s.id
+      GROUP BY s.id, s.nom, s.siret, s.structure_cartographie_nationale_id, ref.nom,
+               s.numero_voie, s.nom_voie, s.code_postal, s.nom_commune, s.code_insee,
+               s.nb_mandats_ac, s.geom, acc.nbr
+      ORDER BY s.nom ASC
+    `
+  }
+
+  private async queryStats(
+    scopeCte: Prisma.Sql,
+    whereConditions: Prisma.Sql
+  ): Promise<{ totalConseillerNumerique: number; totalLabellise: number }> {
+    const result = await prisma.$queryRaw<Array<{ nb_conseillers: bigint; total: bigint }>>`
+      WITH ${scopeCte}
+      SELECT
+        COUNT(*) AS total,
+        SUM(CASE WHEN 'Conseillers numériques' = ANY(s.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_conseillers
+      FROM main.structure s
+      JOIN lieux_dans_scope lds ON lds.id = s.id
+      LEFT JOIN main.adresse a ON a.id = s.adresse_id
+      WHERE dispositif_programmes_nationaux IS NOT NULL
+        ${whereConditions}
+    `
+
+    return {
+      totalConseillerNumerique: Number(result[0]?.nb_conseillers ?? 0),
+      totalLabellise: Number(result[0]?.total ?? 0),
+    }
+  }
+
+  private async queryTotal(scopeCte: Prisma.Sql, whereConditions: Prisma.Sql): Promise<number> {
+    const result = await prisma.$queryRaw<Array<{ total: bigint }>>`
+      WITH ${scopeCte}
+      SELECT COUNT(*) AS total
+      FROM main.structure s
+      JOIN lieux_dans_scope lds ON lds.id = s.id
+      LEFT JOIN main.adresse a ON a.id = s.adresse_id
+      WHERE true
+        ${whereConditions}
+    `
+
+    return Number(result[0]?.total ?? 0)
   }
 }
