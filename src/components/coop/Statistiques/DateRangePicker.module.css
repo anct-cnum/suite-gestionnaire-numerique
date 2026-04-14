@@ -1,0 +1,130 @@
+/* Boutons de navigation (flèches) */
+.navButton {
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-active-blue-france);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1.25rem;
+  height: 2rem;
+  justify-content: center;
+  padding: 0;
+  width: 2rem;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--background-contrast-grey);
+}
+
+.navButton:disabled {
+  color: var(--text-disabled-grey);
+  cursor: not-allowed;
+}
+
+/* En-tête de la semaine */
+.weekday {
+  align-items: center;
+  color: var(--text-active-blue-france);
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  text-transform: uppercase;
+  width: 36px;
+}
+
+/* Cellule de jour */
+.day {
+  align-items: center;
+  display: flex;
+  height: 36px;
+  justify-content: center;
+  position: relative;
+  width: 36px;
+}
+
+/* Barre de plage (fond continu entre début et fin) */
+.rangeMiddle {
+  background-color: var(--background-action-low-blue-france);
+}
+
+.rangeStart {
+  background: linear-gradient(to right, transparent 50%, var(--background-action-low-blue-france) 50%);
+}
+
+.rangeEnd {
+  background: linear-gradient(to left, transparent 50%, var(--background-action-low-blue-france) 50%);
+}
+
+/* Bouton du jour */
+.dayButton {
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-default-grey);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  position: relative;
+  width: 32px;
+  z-index: 1;
+}
+
+.dayButton:hover:not(:disabled) {
+  background-color: var(--background-contrast-grey);
+}
+
+.dayButton:disabled {
+  color: var(--text-disabled-grey);
+  cursor: not-allowed;
+}
+
+/* Cercle pour début et fin de plage */
+.rangeStart .dayButton,
+.rangeEnd .dayButton {
+  background-color: var(--background-action-high-blue-france);
+  color: var(--text-inverted-grey);
+}
+
+.rangeStart .dayButton:hover,
+.rangeEnd .dayButton:hover {
+  background-color: var(--background-action-high-blue-france-hover);
+}
+
+/* Aujourd'hui */
+.today .dayButton {
+  border: 1px solid var(--border-action-high-blue-france);
+}
+
+/* Jour hors mois — cellule vide, sans contenu */
+.outside {
+  pointer-events: none;
+}
+
+/* Dropdown mois/année */
+.dropdown {
+  background: none;
+  border: none;
+  color: var(--text-default-grey);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+.dropdown:hover {
+  background-color: var(--background-contrast-grey);
+  border-radius: 4px;
+}
+
+/* Nav : espace en haut pour les boutons de navigation */
+.header {
+  min-height: 2rem;
+}

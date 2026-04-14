@@ -66,13 +66,25 @@ const sectionAVenir: Section = {
   titre: 'à venir',
 }
 
+const sectionRapportsEtStatistiques: Section = {
+  menus: [
+    {
+      icon: 'line-chart-line',
+      label: 'Statistiques',
+      url: () => '/statistiques',
+    },
+  ],
+  titre: 'RAPPORTS ET STATISTIQUES',
+}
+
 export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> {
   const sections: Array<Section> = [sectionTableauDeBord, sectionOrganisationParContexte(contexte)]
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  sections.push(sectionAVenir)
+  sections.push(sectionRapportsEtStatistiques)
 
+  sections.push(sectionAVenir)
   return sections
 }
 
