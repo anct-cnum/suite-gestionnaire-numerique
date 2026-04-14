@@ -30,8 +30,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 
 export const AccompagnementBarChart = ({ data }: { data: { label: string; count: number }[] }) => {
   const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
-  const emptyData = data.map((item) => ({ ...item, count: 1 }))
-  const displayData = isEmpty ? emptyData : data.length > 12 ? data.slice(-30) : data
+  const slicedData = data.length > 12 ? data.slice(-30) : data
+  const emptyData = slicedData.map((item) => ({ ...item, count: 1 }))
+  const displayData = isEmpty ? emptyData : slicedData
 
   return (
     <ResponsiveContainer width="100%" height="100%">

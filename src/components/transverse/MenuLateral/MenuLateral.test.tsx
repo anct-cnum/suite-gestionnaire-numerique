@@ -107,8 +107,9 @@ describe('menu lateral', () => {
     { itemIndex: 1, listIndex: 3, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
     { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
     { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/liste-lieux-inclusion' },
-    { itemIndex: 0, listIndex: 4, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+    { itemIndex: 0, listIndex: 4, name: 'Statistiques', pathname: '/statistiques' },
+    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])(
     "étant un utilisateur, quand j'accède à l'URL $pathname, alors l'item $name du menu a le focus",
     ({ itemIndex, listIndex, name, pathname }) => {
@@ -128,6 +129,18 @@ describe('menu lateral', () => {
       expect(element).toHaveAttribute('aria-current', 'page')
     }
   )
+
+  it("étant n'importe qui, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES s'affiche avec les liens Rapports et Statistiques", () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const rapportsEtStatistiques = within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })
+    expect(rapportsEtStatistiques).toBeInTheDocument()
+    const lienStatistiques = screen.getByRole('link', { name: 'Statistiques' })
+    expect(lienStatistiques).toHaveAttribute('href', '/statistiques')
+  })
 
   it("étant n'importe qui, quand j'affiche le menu latéral, alors la section ORGANISATION s'affiche avec Mon équipe", () => {
     // WHEN

@@ -22,10 +22,10 @@
   box-shadow: var(--raised-shadow);
   left: 0;
   margin-top: 0.5rem;
+  min-width: 24rem;
   padding: 2rem;
   position: absolute;
   top: 100%;
-  width: max-content;
   z-index: 1000;
 }
 

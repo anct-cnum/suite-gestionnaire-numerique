@@ -7,6 +7,8 @@ export type StatistiquesFilters = Readonly<{
   du?: string // Date au format YYYY-MM-DD
   lieux?: ReadonlyArray<string> // UUIDs
   mediateurs?: ReadonlyArray<string> // UUIDs
+  thematiqueAdministratives?: ReadonlyArray<string> // clés PascalCase des thématiques démarches administratives
+  thematiqueNonAdministratives?: ReadonlyArray<string> // clés PascalCase des thématiques médiation numérique
   types?: ReadonlyArray<'Collectif' | 'Demarche' | 'Individuel'>
 }>
 
