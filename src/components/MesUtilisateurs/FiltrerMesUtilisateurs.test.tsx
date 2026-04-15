@@ -203,7 +203,7 @@ describe('filtrer mes utilisateurs', () => {
 
       // WHEN
       jOuvreLeFormulairePourFiltrer()
-      await jeSelectionneUneZoneGeographique('(978) Saint-Martin')
+      await jeSelectionneUneZoneGeographique('Saint-Martin')
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -271,7 +271,7 @@ describe('filtrer mes utilisateurs', () => {
           desc: 'sur un département et une structure de ce département',
           expectedFetchInput: '/api/structures?search=tet&departement=06',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?codeDepartement=06&structure=14',
-          zoneGeographique: '(06) Alpes-Maritimes',
+          zoneGeographique: 'Alpes-Maritimes',
         },
         {
           desc: 'sur toutes les zones géographiques et une structure',
@@ -326,7 +326,7 @@ describe('filtrer mes utilisateurs', () => {
 
         // WHEN
         jOuvreLeFormulairePourFiltrer()
-        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        await jeSelectionneUneZoneGeographique('Alpes-Maritimes')
         const structure = jeTapeUneStructure('tet')
         await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
         await clearFirst(screen.getByRole('combobox', { name: 'Par zone géographique' }))
@@ -353,7 +353,7 @@ describe('filtrer mes utilisateurs', () => {
 
         // WHEN
         jOuvreLeFormulairePourFiltrer()
-        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        await jeSelectionneUneZoneGeographique('Alpes-Maritimes')
         const structure = jeTapeUneStructure('tet')
         await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
         await jeSelectionneUneZoneGeographique('Bourgogne-Franche-Comté')

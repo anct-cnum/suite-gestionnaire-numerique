@@ -3,8 +3,8 @@
 import classNames from 'classnames'
 import { ReactElement } from 'react'
 
-import BarHistogramme from '../shared/BarHistogramme/BarHistogramme'
 import styles from './TableauDeBord.module.css'
+import BarHistogramme from '../shared/BarHistogramme/BarHistogramme'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 
 export default function DonneesStructure({ viewModel }: Props): ReactElement {
