@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
+import styles from './TableauDeBord.module.css'
 import VentilationFinancements from './VentilationFinancements'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -57,7 +58,7 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="money-euro-circle-line" />
             {conventionnement.budget.total}
           </div>
@@ -69,7 +70,7 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="download-line" />
             {conventionnement.credit.total}
           </div>

@@ -17,12 +17,12 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
     return (
       <BlocCard labelledBy="beneficiaires">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="community-line" />
+          <TitleIcon icon="community-line" size="medium-large" />
           <h2 className="fr-h4 color-blue-france fr-m-0" id="beneficiaires">
-            Bénéficiaires de financement(s)
+            Bénéficiaires de financements
           </h2>
         </div>
-        <div className="fr-alert fr-alert--error fr-mt-3w">
+        <div className="fr-alert fr-alert--error fr-mt-3w" role="alert">
           <p className="fr-alert__title">Erreur</p>
           <p>{beneficiairesViewModel.message}</p>
         </div>
@@ -34,14 +34,14 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
 
   return (
     <BlocCard labelledBy="beneficiaires">
-      <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
+      <div className="fr-grid-row fr-grid-row--top space-between separator fr-pb-3w fr-mb-3w">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="community-line" />
+          <TitleIcon icon="community-line" size="medium-large" />
           <div>
             <h2 className="fr-h4 color-blue-france fr-m-0" id="beneficiaires">
-              Bénéficiaires de financement(s)
+              Bénéficiaires de financements
             </h2>
-            <p className="fr-m-0 font-weight-500">Chiffres clés sur les bénéficiaires de financement(s)</p>
+            <p className="fr-m-0 font-weight-500">Chiffres clés sur les bénéficiaires de financements</p>
           </div>
         </div>
         <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienBeneficiaires}>
@@ -50,7 +50,7 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-          <div>
+          <div className={styles['demi-doughnut']}>
             <Doughnut
               backgroundColor={viewModel.graphique.backgroundColor}
               data={viewModel.details.map((detail) => detail.total)}
@@ -71,7 +71,7 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
               <li className="fr-mb-1w fr-mt-1w" key={detail.label} style={{ listStyle: 'none' }}>
                 <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
                   <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                    <Dot color={detail.color} /> {detail.label}
+                    <Dot className="fr-mr-1w" color={detail.color} /> {detail.label}
                   </div>
                   <div
                     style={{

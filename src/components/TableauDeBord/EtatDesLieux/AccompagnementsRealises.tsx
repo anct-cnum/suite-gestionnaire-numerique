@@ -4,6 +4,7 @@ import { ReactElement, Suspense } from 'react'
 
 import AccompagnementsRealisesAsyncLoader from './AccompagnementsRealisesAsyncLoader'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
@@ -20,7 +21,7 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
   return (
     <>
       <div className="background-blue-france fr-p-4w fr-ml-1w">
-        <div className="fr-h1 fr-m-0">
+        <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="compass-3-line" />
           <span className="color-grey">...</span>
         </div>

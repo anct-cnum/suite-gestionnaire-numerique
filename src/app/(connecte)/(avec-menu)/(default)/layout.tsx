@@ -20,12 +20,12 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
 
   return (
     <div className="fr-grid-row">
-      <div className="fr-col-2">
+      <div className="fr-col-3">
         <MenuActifProvider>
           <MenuLateral contexte={contexte} />
         </MenuActifProvider>
       </div>
-      <div className="fr-col-10 fr-pl-7w menu-border">{children}</div>
+      <div className="fr-col-9 fr-pl-7w menu-border">{children}</div>
     </div>
   )
 }

@@ -2,13 +2,81 @@
   align-items: center;
   border-radius: 0.5rem;
   display: inline-flex;
-  height: 3rem;
+  flex-shrink: 0;
+  font-weight: normal !important;
   justify-content: center;
-  width: 3rem;
 }
 
 .icon {
   line-height: 1;
+}
+
+.small {
+  height: 2rem;
+  width: 2rem;
+
+  .icon {
+    font-size: 1rem !important;
+    line-height: 1rem !important;
+    max-height: 1rem;
+    max-width: 1rem;
+
+    &::before {
+      max-height: 1rem;
+      max-width: 1rem;
+    }
+  }
+}
+
+.medium {
+  height: 3rem;
+  width: 3rem;
+
+  .icon {
+    font-size: 1.5rem !important;
+    line-height: 1.5rem !important;
+    max-height: 1.5rem;
+    max-width: 1.5rem;
+
+    &::before {
+      max-height: 1.5rem;
+      max-width: 1.5rem;
+    }
+  }
+}
+
+.medium-large {
+  height: 4.25rem;
+  width: 4.25rem;
+
+  .icon {
+    font-size: 1.75rem !important;
+    line-height: 1.75rem !important;
+    max-height: 1.75rem;
+    max-width: 1.75rem;
+
+    &::before {
+      max-height: 1.75rem;
+      max-width: 1.75rem;
+    }
+  }
+}
+
+.large {
+  height: 4rem;
+  width: 4rem;
+
+  .icon {
+    font-size: 2rem !important;
+    line-height: 2rem !important;
+    max-height: 2rem;
+    max-width: 2rem;
+
+    &::before {
+      max-height: 2rem;
+      max-width: 2rem;
+    }
+  }
 }
 
 .blue {

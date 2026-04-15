@@ -1,3 +1,7 @@
 .element-selectionne > a {
   background-color: var(--blue-france-975-75);
 }
+
+.menu {
+  min-width: 20rem;
+}

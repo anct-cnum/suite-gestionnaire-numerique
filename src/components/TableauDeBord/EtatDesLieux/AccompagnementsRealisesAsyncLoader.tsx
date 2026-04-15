@@ -4,6 +4,7 @@ import { ReactElement, use } from 'react'
 
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
@@ -16,7 +17,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
     return (
       <>
         <div className="background-blue-france fr-p-4w fr-ml-1w">
-          <div className="fr-h1 fr-m-0">
+          <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="error-warning-line" />—
           </div>
           <div className="font-weight-500">
@@ -48,7 +49,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
   return (
     <>
       <div className="background-blue-france fr-p-4w fr-ml-1w">
-        <div className="fr-h1 fr-m-0">
+        <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="compass-3-line" />
           {formaterEnNombreFrancais(result.nombreTotal)}
         </div>

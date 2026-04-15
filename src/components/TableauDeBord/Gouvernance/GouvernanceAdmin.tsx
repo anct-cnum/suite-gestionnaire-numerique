@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import BlocCard from '../BlocCard'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 
@@ -30,7 +31,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
         </div>
         <div className="fr-grid-row">
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
+            <div className={`${styles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="bank-line" />-
             </div>
             <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
@@ -39,7 +40,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
           <div className="fr-col background-blue-france fr-p-4w">
-            <div className="fr-h1 fr-m-0">
+            <div className={`${styles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="file-download-line" />-
             </div>
             <div className="fr-text--md fr-mb-0" style={{ fontWeight: 500 }}>
@@ -72,7 +73,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
       </div>
       <div className="fr-grid-row">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.nombreGouvernances}
           </div>
@@ -87,7 +88,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
-          <div className="fr-h1 fr-m-0">
+          <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
           </div>

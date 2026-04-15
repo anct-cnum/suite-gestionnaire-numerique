@@ -1,6 +1,7 @@
 import { Fragment, ReactElement } from 'react'
 
 import { MenuItemLien } from './MenuItemLien'
+import styles from './MenuLateral.module.css'
 import { sectionsParContexte } from './registreMenus'
 import Badge from '@/components/shared/Badge/Badge'
 import { Contexte } from '@/use-cases/queries/ResoudreContexte'
@@ -9,7 +10,7 @@ export default function MenuLateral({ contexte }: Props): ReactElement {
   const sections = sectionsParContexte(contexte)
 
   return (
-    <nav aria-labelledby="fr-sidemenu-title" className="fr-sidemenu fr-pt-5w">
+    <nav aria-labelledby="fr-sidemenu-title" className={`fr-sidemenu fr-pt-5w ${styles.menu}`}>
       <div className="fr-sidemenu__title fr-hidden" id="fr-sidemenu-title">
         Menu inclusion numérique
       </div>

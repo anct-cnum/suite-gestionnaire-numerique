@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import styles from './BlocAccueil.module.css'
 import SelecteurGouvernance from '@/components/transverse/SelecteurGouvernance/SelecteurGouvernance'
 import { gouvernancesSelecteurPresenteur } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
 import { Contexte, Scope } from '@/use-cases/queries/ResoudreContexte'
@@ -25,11 +26,9 @@ export default function BlocAccueil({ contexte, prenom, scope }: Props): ReactEl
   return (
     <>
       <div className="fr-mb-3w" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <h1 className="color-blue-france fr-mt-5w" style={{ marginBottom: 0 }}>
-          👋 Bonjour {prenom}
-        </h1>
+        <h1 className={`color-blue-france fr-mt-5w fr-mb-0 ${styles.titre}`}>👋 Bonjour {prenom}</h1>
         <div style={{ alignItems: 'flex-end', display: 'flex', gap: '2rem' }}>
-          <p className="fr-text--lead color-blue-france" style={{ flex: '1 0 0', margin: 0 }}>
+          <p className={`color-blue-france fr-m-0 ${styles.sousTitre}`} style={{ flex: '1 0 0' }}>
             {sousTitre}
           </p>
           {options.length >= 2 && (
