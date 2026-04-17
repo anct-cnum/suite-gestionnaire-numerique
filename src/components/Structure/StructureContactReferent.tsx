@@ -128,7 +128,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
       >
         <header>
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-            <h2 className="fr-h6 fr-mb-0" id="contact">
+            <h2 className="fr-h6 fr-mb-0" id="contact" style={{ scrollMarginTop: '56px' }}>
               Contacts
             </h2>
             {peutGererStructure ? (

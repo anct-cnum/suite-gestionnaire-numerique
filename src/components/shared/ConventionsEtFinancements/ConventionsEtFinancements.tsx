@@ -16,7 +16,13 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
       aria-labelledby="conventions"
       className="grey-border border-radius fr-mb-2w fr-p-4w"
       id="conventions"
-      style={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+      style={{
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.5rem',
+        scrollMarginTop: '56px',
+      }}
     >
       <h2 className="fr-h6 fr-m-0" id="conventions">
         Conventions et financement

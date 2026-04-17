@@ -7,7 +7,7 @@ export default function StructureIdentite({ identite }: Props): ReactElement {
   return (
     <section aria-labelledby="identite" className="grey-border border-radius fr-mb-2w fr-p-4w">
       <header className="separator fr-mb-6w">
-        <h2 className="fr-h6" id="identite">
+        <h2 className="fr-h6" id="identite" style={{ scrollMarginTop: '56px' }}>
           Identité
         </h2>
       </header>

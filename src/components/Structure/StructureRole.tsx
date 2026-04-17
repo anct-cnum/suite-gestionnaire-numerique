@@ -9,7 +9,7 @@ export default function StructureRole({ role }: Props): ReactElement {
   return (
     <section aria-labelledby="role" className="grey-border border-radius fr-mb-2w fr-p-4w">
       <header className="separator fr-mb-2w">
-        <h2 className="fr-h6 fr-mb-2w" id="role">
+        <h2 className="fr-h6 fr-mb-2w" id="role" style={{ scrollMarginTop: '56px' }}>
           Rôle
         </h2>
       </header>
