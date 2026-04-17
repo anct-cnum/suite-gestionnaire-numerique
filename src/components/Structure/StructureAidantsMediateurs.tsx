@@ -7,7 +7,12 @@ import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Props): ReactElement {
   return (
-    <section aria-labelledby="aidants" className="grey-border border-radius fr-mb-2w fr-p-4w" id="aidants">
+    <section
+      aria-labelledby="aidants"
+      className="grey-border border-radius fr-mb-2w fr-p-4w"
+      id="aidants"
+      style={{ scrollMarginTop: '56px' }}
+    >
       <header className="separator fr-mb-3w">
         <div className="fr-grid-row space-between">
           <div>
