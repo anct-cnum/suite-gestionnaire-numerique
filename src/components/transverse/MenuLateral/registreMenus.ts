@@ -82,7 +82,9 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  sections.push(sectionRapportsEtStatistiques)
+  if (contexte.estSuperAdmin()) {
+    sections.push(sectionRapportsEtStatistiques)
+  }
 
   sections.push(sectionAVenir)
   return sections

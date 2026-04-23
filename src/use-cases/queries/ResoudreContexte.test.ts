@@ -345,6 +345,28 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.estCoporteur()).toBe(false)
   })
 
+  it('estSuperAdmin — un super admin retourne true', async () => {
+    // GIVEN
+    const utilisateur = { ...utilisateurAvecRole('administrateur_dispositif'), isSuperAdmin: true }
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.estSuperAdmin()).toBe(true)
+  })
+
+  it('estSuperAdmin — un utilisateur non super admin retourne false', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('administrateur_dispositif')
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.estSuperAdmin()).toBe(false)
+  })
+
   it('le contexte contient le rôle de l utilisateur', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '69' })
