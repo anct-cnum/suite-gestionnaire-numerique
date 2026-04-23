@@ -310,6 +310,41 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.scopeFiltre()).toStrictEqual({ id: 42, type: 'structure' })
   })
 
+  it('estCoporteur — gestionnaire structure coporteur retourne true', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({ appartenances: [{ codeDepartement: '75', estCoporteur: true }] })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.estCoporteur()).toBe(true)
+  })
+
+  it('estCoporteur — gestionnaire structure membre simple retourne false', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({ appartenances: [{ codeDepartement: '75', estCoporteur: false }] })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.estCoporteur()).toBe(false)
+  })
+
+  it('estCoporteur — gestionnaire structure sans gouvernance retourne false', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.estCoporteur()).toBe(false)
+  })
+
   it('le contexte contient le rôle de l utilisateur', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '69' })
