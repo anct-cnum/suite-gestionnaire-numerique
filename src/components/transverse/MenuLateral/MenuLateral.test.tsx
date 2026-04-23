@@ -13,6 +13,8 @@ const contexteGouvernance = new Contexte('gestionnaire_structure', [
   { code: '93', type: 'coporteur' },
 ])
 
+const contexteSuperAdmin = new Contexte('administrateur_dispositif', [{ type: 'france' }], true)
+
 describe('menu lateral', () => {
   it("étant n'importe qui, quand j'affiche le menu latéral, alors il s'affiche avec le lien de mon tableau de bord", () => {
     // WHEN
@@ -107,9 +109,8 @@ describe('menu lateral', () => {
     { itemIndex: 1, listIndex: 3, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
     { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
     { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/liste-lieux-inclusion' },
-    { itemIndex: 0, listIndex: 4, name: 'Statistiques', pathname: '/statistiques' },
-    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+    { itemIndex: 0, listIndex: 4, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])(
     "étant un utilisateur, quand j'accède à l'URL $pathname, alors l'item $name du menu a le focus",
     ({ itemIndex, listIndex, name, pathname }) => {
@@ -130,9 +131,13 @@ describe('menu lateral', () => {
     }
   )
 
-  it("étant n'importe qui, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES s'affiche avec les liens Rapports et Statistiques", () => {
+  it("étant super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES s'affiche avec le lien Statistiques", () => {
     // WHEN
-    afficherMenuLateral()
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={contexteSuperAdmin} />
+      </menuActifContext.Provider>
+    )
 
     // THEN
     const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
@@ -140,6 +145,18 @@ describe('menu lateral', () => {
     expect(rapportsEtStatistiques).toBeInTheDocument()
     const lienStatistiques = screen.getByRole('link', { name: 'Statistiques' })
     expect(lienStatistiques).toHaveAttribute('href', '/statistiques')
+  })
+
+  it("étant un utilisateur non super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES n'est pas visible", () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const rapportsEtStatistiques = within(nav).queryByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })
+    expect(rapportsEtStatistiques).not.toBeInTheDocument()
+    const lienStatistiques = within(nav).queryByRole('link', { name: 'Statistiques' })
+    expect(lienStatistiques).not.toBeInTheDocument()
   })
 
   it("étant n'importe qui, quand j'affiche le menu latéral, alors la section ORGANISATION s'affiche avec Mon équipe", () => {
