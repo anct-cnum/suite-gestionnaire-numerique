@@ -61,6 +61,10 @@ export class Contexte {
     return ''
   }
 
+  estCoporteur(): boolean {
+    return this.scopes.some((scope) => scope.type === 'coporteur')
+  }
+
   estDansGouvernance(): boolean {
     return this.scopes.some((scope) => scope.type === 'coporteur' || scope.type === 'membre')
   }
