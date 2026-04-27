@@ -10,33 +10,36 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
 
   async get(): Promise<ErrorReadModel | TableauDeBordLoaderFinancementsAdmin> {
     try {
-      // Récupérer les enveloppes hors Conseiller Numérique (gérées séparément)
-      const enveloppes = await this.#enveloppeDao.findMany({
-        where: { libelle: { not: { startsWith: 'Conseiller Numérique' } } },
-      })
+      const [enveloppes, demandesAcceptees, cnConsomme] = await Promise.all([
+        this.#enveloppeDao.findMany(),
+        // Récupérer toutes les demandes de subvention acceptées (en excluant zzz)
+        this.#demandeDeSubventionDao.findMany({
+          include: {
+            enveloppe: true,
+          },
+          where: {
+            action: {
+              feuilleDeRoute: {
+                gouvernanceDepartementCode: {
+                  not: 'zzz',
+                },
+              },
+            },
+            statut: StatutSubvention.ACCEPTEE,
+          },
+        }),
+        prisma.$queryRaw<[{ total: bigint }]>`
+          SELECT (COALESCE(SUM(montant_subvention_v1), 0) + COALESCE(SUM(montant_subvention_v2), 0))::bigint AS total
+          FROM main.subvention
+        `,
+      ])
+
       const montantTotalEnveloppes = enveloppes.reduce((acc, env) => acc + env.montant, 0)
       const nombreEnveloppes = enveloppes.length
 
-      // Récupérer toutes les demandes de subvention acceptées (en excluant zzz)
-      const demandesAcceptees = await this.#demandeDeSubventionDao.findMany({
-        include: {
-          enveloppe: true,
-        },
-        where: {
-          action: {
-            feuilleDeRoute: {
-              gouvernanceDepartementCode: {
-                not: 'zzz',
-              },
-            },
-          },
-          statut: StatutSubvention.ACCEPTEE,
-        },
-      })
-
-      // Calculer les crédits engagés et la ventilation par enveloppe
+      // Calculer les crédits engagés et la ventilation par enveloppe (hors CN)
       const subventionsParEnveloppe = new Map<string, { enveloppeTotale: number; total: number }>()
-      let creditsEngagesTotal = 0
+      let creditsEngagesTotal = Number(cnConsomme[0].total)
 
       demandesAcceptees.forEach((demande) => {
         creditsEngagesTotal += demande.subventionDemandee

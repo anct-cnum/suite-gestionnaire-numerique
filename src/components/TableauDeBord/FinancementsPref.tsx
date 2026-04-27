@@ -2,13 +2,19 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
+import EnveloppesConseillerNumerique from './EnveloppesConseillerNumerique'
 import styles from './TableauDeBord.module.css'
 import VentilationFinancements from './VentilationFinancements'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { EnveloppeConseillerNumeriqueViewModel } from '@/presenters/tableauDeBord/enveloppesConseillerNumeriquePresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 
-export default function FinancementsPref({ conventionnement, lienFinancements }: Props): ReactElement {
+export default function FinancementsPref({
+  conventionnement,
+  enveloppesConseillerNumerique,
+  lienFinancements,
+}: Props): ReactElement {
   if (isErrorViewModel(conventionnement)) {
     return (
       <BlocCard labelledBy="conventionnements">
@@ -90,6 +96,9 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
         nombreDeFinancementsEngagesParLEtat={conventionnement.nombreDeFinancementsEngagesParLEtat}
         ventilationSubventionsParEnveloppe={conventionnement.ventilationSubventionsParEnveloppe}
       />
+      {enveloppesConseillerNumerique !== undefined && enveloppesConseillerNumerique.length > 0 && (
+        <EnveloppesConseillerNumerique enveloppes={enveloppesConseillerNumerique} />
+      )}
     </BlocCard>
   )
 }
@@ -100,5 +109,6 @@ function isErrorViewModel(viewModel: ErrorViewModel | FinancementViewModel): vie
 
 type Props = Readonly<{
   conventionnement: ErrorViewModel | FinancementViewModel
+  enveloppesConseillerNumerique?: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
   lienFinancements: string
 }>

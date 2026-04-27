@@ -9,33 +9,35 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
 
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderBeneficiaires> {
     try {
-      // Récupérer toutes les demandes de subvention acceptées avec leurs bénéficiaires et enveloppes
-      const demandesAcceptees = await this.#demandeDeSubventionDao.findMany({
-        include: {
-          action: {
-            include: {
-              feuilleDeRoute: true,
+      const [demandesAcceptees, beneficiairesCn] = await Promise.all([
+        this.#demandeDeSubventionDao.findMany({
+          include: {
+            action: {
+              include: {
+                feuilleDeRoute: true,
+              },
             },
+            beneficiaire: true,
+            enveloppe: true,
           },
-          beneficiaire: true,
-          enveloppe: true,
-        },
-        where: {
-          action: {
-            feuilleDeRoute:
-              territoire === 'France'
-                ? {
-                    gouvernanceDepartementCode: {
-                      not: 'zzz',
+          where: {
+            action: {
+              feuilleDeRoute:
+                territoire === 'France'
+                  ? {
+                      gouvernanceDepartementCode: {
+                        not: 'zzz',
+                      },
+                    }
+                  : {
+                      gouvernanceDepartementCode: territoire,
                     },
-                  }
-                : {
-                    gouvernanceDepartementCode: territoire,
-                  },
+            },
+            statut: StatutSubvention.ACCEPTEE,
           },
-          statut: StatutSubvention.ACCEPTEE,
-        },
-      })
+        }),
+        this.#queryBeneficiairesCn(territoire),
+      ])
 
       // Regrouper les bénéficiaires par enveloppe
       const beneficiairesParEnveloppe = new Map<string, Set<string>>()
@@ -54,13 +56,11 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
         })
       })
 
-      // Créer le tableau des détails par enveloppe
       const details = Array.from(beneficiairesParEnveloppe.entries()).map(([label, beneficiaires]) => ({
         label,
         total: beneficiaires.size,
       }))
 
-      // Calculer le total unique de bénéficiaires (tous les bénéficiaires uniques)
       const tousLesBeneficiaires = new Set<string>()
       beneficiairesParEnveloppe.forEach((beneficiaires) => {
         beneficiaires.forEach((id) => {
@@ -68,10 +68,17 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
         })
       })
 
+      const detailsCn = beneficiairesCn.map((row) => ({
+        label: row.label,
+        total: Number(row.total),
+      }))
+
+      const totalCn = detailsCn.reduce((acc, row) => acc + row.total, 0)
+
       return {
-        collectivite: 0, // Pour l'instant on ne peut pas catégoriser
-        details,
-        total: tousLesBeneficiaires.size,
+        collectivite: 0,
+        details: [...details, ...detailsCn],
+        total: tousLesBeneficiaires.size + totalCn,
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaBeneficiairesLoader', {
@@ -84,4 +91,50 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
       }
     }
   }
+
+  async #queryBeneficiairesCn(territoire: string): Promise<ReadonlyArray<BeneficiairesCnQueryResult>> {
+    if (territoire === 'France') {
+      return prisma.$queryRaw<Array<BeneficiairesCnQueryResult>>`
+        WITH agg AS (
+          SELECT
+            COUNT(DISTINCT CASE WHEN s.montant_subvention_v1 > 0 THEN p.structure_id END) AS total_v1,
+            COUNT(DISTINCT CASE WHEN s.montant_subvention_v2 > 0 THEN p.structure_id END) AS total_v2
+          FROM main.subvention s
+          JOIN main.poste p ON p.id = s.poste_id
+        )
+        SELECT
+          e.libelle AS label,
+          CASE WHEN e.libelle LIKE '%Renouvellement%' THEN agg.total_v2 WHEN e.libelle LIKE '%Plan France Relance%' THEN agg.total_v1 ELSE 0 END AS total
+        FROM min.enveloppe_financement e
+        CROSS JOIN agg
+        WHERE e.libelle LIKE 'Conseiller Numérique%'
+        ORDER BY e.libelle
+      `
+    }
+
+    return prisma.$queryRaw<Array<BeneficiairesCnQueryResult>>`
+      WITH agg AS (
+        SELECT
+          COUNT(DISTINCT CASE WHEN s.montant_subvention_v1 > 0 THEN p.structure_id END) AS total_v1,
+          COUNT(DISTINCT CASE WHEN s.montant_subvention_v2 > 0 THEN p.structure_id END) AS total_v2
+        FROM main.subvention s
+        JOIN main.poste p ON p.id = s.poste_id
+        JOIN main.structure st ON st.id = p.structure_id
+        JOIN main.adresse a ON a.id = st.adresse_id
+        WHERE a.departement = ${territoire}
+      )
+      SELECT
+        e.libelle AS label,
+        CASE WHEN e.libelle LIKE '%Renouvellement%' THEN agg.total_v2 WHEN e.libelle LIKE '%Plan France Relance%' THEN agg.total_v1 ELSE 0 END AS total
+      FROM min.enveloppe_financement e
+      CROSS JOIN agg
+      WHERE e.libelle LIKE 'Conseiller Numérique%'
+      ORDER BY e.libelle
+    `
+  }
+}
+
+type BeneficiairesCnQueryResult = {
+  label: string
+  total: bigint
 }
