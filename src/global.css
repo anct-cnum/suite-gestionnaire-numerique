@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .color-blue-france {
   color: var(--text-title-blue-france);
 }
