@@ -1,5 +1,6 @@
 export interface EnveloppesConseillerNumeriqueLoader {
   get(codeDepartement: string): Promise<EnveloppesConseillerNumeriqueReadModel>
+  getParStructure(structureId: number): Promise<EnveloppesConseillerNumeriqueReadModel>
 }
 
 export type EnveloppesConseillerNumeriqueReadModel = Readonly<{

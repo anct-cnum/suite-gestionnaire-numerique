@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import Dot from '../shared/Dot/Dot'
 import { EnveloppeConseillerNumeriqueViewModel } from '@/presenters/tableauDeBord/enveloppesConseillerNumeriquePresenter'
 
-export default function EnveloppesConseillerNumerique({ enveloppes }: Props): ReactElement {
+export default function EnveloppesConseillerNumerique({ contexte, enveloppes }: Props): ReactElement {
   return (
     <ul>
       {enveloppes.map((enveloppe) => (
@@ -26,27 +26,29 @@ export default function EnveloppesConseillerNumerique({ enveloppes }: Props): Re
             >
               {enveloppe.total}
             </div>
-            <div style={{ width: '6.25rem' }} title={`${enveloppe.pourcentageConsomme}% de l'enveloppe consommée`}>
-              <div
-                className="fr-text--sm fr-mb-1w"
-                style={{
-                  backgroundColor: 'var(--grey-900-175)',
-                  borderRadius: '4px',
-                  height: '8px',
-                  width: '100%',
-                }}
-              >
+            {contexte === 'admin' && (
+              <div style={{ width: '6.25rem' }} title={`${enveloppe.pourcentageConsomme}% de l'enveloppe consommée`}>
                 <div
+                  className="fr-text--sm fr-mb-1w"
                   style={{
-                    backgroundColor: 'var(--blue-france-main-525)',
+                    backgroundColor: 'var(--grey-900-175)',
                     borderRadius: '4px',
                     height: '8px',
-                    transition: 'width 0.3s ease',
-                    width: `${Math.min(enveloppe.pourcentageConsomme, 100)}%`,
+                    width: '100%',
                   }}
-                />
+                >
+                  <div
+                    style={{
+                      backgroundColor: 'var(--blue-france-main-525)',
+                      borderRadius: '4px',
+                      height: '8px',
+                      transition: 'width 0.3s ease',
+                      width: `${Math.min(enveloppe.pourcentageConsomme, 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </li>
       ))}
@@ -55,5 +57,6 @@ export default function EnveloppesConseillerNumerique({ enveloppes }: Props): Re
 }
 
 type Props = Readonly<{
+  contexte: 'admin' | 'departement'
   enveloppes: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
 }>

@@ -32,6 +32,53 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
     }
   }
 
+  async getParStructure(structureId: number): Promise<EnveloppesConseillerNumeriqueReadModel> {
+    try {
+      const rows = await prisma.$queryRaw<Array<QueryResult>>`
+        WITH agg AS (
+          SELECT
+            COALESCE(SUM(s.montant_subvention_v1), 0)::bigint AS total_v1,
+            COALESCE(SUM(s.montant_subvention_v2), 0)::bigint AS total_v2
+          FROM main.subvention s
+          JOIN main.poste p ON p.id = s.poste_id
+          WHERE p.structure_id = ${structureId}
+        )
+        SELECT
+          e.libelle,
+          e.date_debut AS "dateDeDebut",
+          e.date_fin AS "dateDeFin",
+          0 AS plafond,
+          CASE
+            WHEN e.libelle LIKE '%Renouvellement%' THEN agg.total_v2
+            WHEN e.libelle LIKE '%Plan France Relance%' THEN agg.total_v1
+            ELSE 0
+          END AS consommation
+        FROM min.enveloppe_financement e
+        CROSS JOIN agg
+        WHERE e.libelle LIKE 'Conseiller Numérique%'
+        ORDER BY e.libelle
+      `
+
+      return {
+        enveloppes: rows.map(
+          (row): EnveloppeConseillerNumeriqueReadModel => ({
+            consommation: row.consommation,
+            dateDeDebut: row.dateDeDebut,
+            dateDeFin: row.dateDeFin,
+            libelle: row.libelle,
+            plafond: row.plafond,
+          })
+        ),
+      }
+    } catch (error) {
+      reportLoaderError(error, 'PrismaEnveloppesConseillerNumeriqueLoader', {
+        operation: 'getParStructure',
+        structureId,
+      })
+      return { enveloppes: [] }
+    }
+  }
+
   async #queryDepartement(code: string): Promise<ReadonlyArray<QueryResult>> {
     return prisma.$queryRaw<Array<QueryResult>>`
       WITH agg AS (
