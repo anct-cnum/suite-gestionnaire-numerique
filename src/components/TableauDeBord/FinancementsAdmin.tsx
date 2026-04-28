@@ -94,7 +94,7 @@ export default function FinancementsAdmin({
         ventilationSubventionsParEnveloppe={financementViewModel.ventilationSubventionsParEnveloppe}
       />
       {enveloppesConseillerNumerique !== undefined && enveloppesConseillerNumerique.length > 0 && (
-        <EnveloppesConseillerNumerique enveloppes={enveloppesConseillerNumerique} />
+        <EnveloppesConseillerNumerique contexte="admin" enveloppes={enveloppesConseillerNumerique} />
       )}
     </BlocCard>
   )

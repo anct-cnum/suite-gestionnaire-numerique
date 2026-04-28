@@ -27,7 +27,7 @@ describe(enveloppesConseillerNumeriquePresenter, () => {
         disponible: true,
         label: 'Conseiller Numérique - initiale - État',
         pourcentageConsomme: 50,
-        total: '0,50 M€',
+        total: '500,00 K€',
       },
     ])
   })

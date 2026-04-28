@@ -4,16 +4,22 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
+import EnveloppesConseillerNumerique from './EnveloppesConseillerNumerique'
 import styles from './TableauDeBord.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { EnveloppeConseillerNumeriqueViewModel } from '@/presenters/tableauDeBord/enveloppesConseillerNumeriquePresenter'
 import { FinancementsStructureViewModel } from '@/presenters/tableauDeBord/financementsStructurePresenter'
 
 const COULEUR_VIDE = '#DDDDDD'
 
-export default function FinancementsStructure({ lienFinancements, viewModel }: Props): ReactElement {
+export default function FinancementsStructure({
+  enveloppesConseillerNumerique,
+  lienFinancements,
+  viewModel,
+}: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
     return (
       <BlocCard labelledBy="financements-structure">
@@ -104,6 +110,9 @@ export default function FinancementsStructure({ lienFinancements, viewModel }: P
               </li>
             ))}
           </ul>
+          {enveloppesConseillerNumerique !== undefined && enveloppesConseillerNumerique.length > 0 && (
+            <EnveloppesConseillerNumerique contexte="departement" enveloppes={enveloppesConseillerNumerique} />
+          )}
         </div>
       </div>
     </BlocCard>
@@ -115,6 +124,7 @@ function isErrorViewModel(viewModel: ErrorViewModel | FinancementsStructureViewM
 }
 
 type Props = Readonly<{
+  enveloppesConseillerNumerique?: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
   lienFinancements: string
   viewModel: ErrorViewModel | FinancementsStructureViewModel
 }>

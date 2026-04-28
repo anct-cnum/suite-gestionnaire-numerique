@@ -74,11 +74,21 @@ async function financementsDepartement(code: string): Promise<ReactElement> {
 }
 
 async function financementsStructure(structureId: number): Promise<ReactElement> {
-  const financementsLoader = new PrismaFinancementsStructureLoader()
-  const financementsReadModel = await financementsLoader.get(structureId)
+  const cnLoader = new PrismaEnveloppesConseillerNumeriqueLoader()
+  const [financementsReadModel, enveloppesConumReadModel] = await Promise.all([
+    new PrismaFinancementsStructureLoader().get(structureId),
+    cnLoader.getParStructure(structureId),
+  ])
   const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsStructurePresenter)
+  const enveloppesConum = enveloppesConseillerNumeriquePresenter(enveloppesConumReadModel.enveloppes, new Date())
 
-  return <FinancementsStructure lienFinancements="/gouvernance/financements" viewModel={financementsViewModel} />
+  return (
+    <FinancementsStructure
+      enveloppesConseillerNumerique={enveloppesConum}
+      lienFinancements="/gouvernance/financements"
+      viewModel={financementsViewModel}
+    />
+  )
 }
 
 type Props = Readonly<{

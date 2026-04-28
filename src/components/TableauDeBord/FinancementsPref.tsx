@@ -97,7 +97,7 @@ export default function FinancementsPref({
         ventilationSubventionsParEnveloppe={conventionnement.ventilationSubventionsParEnveloppe}
       />
       {enveloppesConseillerNumerique !== undefined && enveloppesConseillerNumerique.length > 0 && (
-        <EnveloppesConseillerNumerique enveloppes={enveloppesConseillerNumerique} />
+        <EnveloppesConseillerNumerique contexte="departement" enveloppes={enveloppesConseillerNumerique} />
       )}
     </BlocCard>
   )
