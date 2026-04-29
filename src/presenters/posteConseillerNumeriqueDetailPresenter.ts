@@ -13,7 +13,7 @@ export function posteConseillerNumeriqueDetailPresenter(
 
   return {
     badges: buildBadges(readModel),
-    contrats: buildContrats(readModel.contrats, now),
+    contrats: buildContrats(readModel.contrats),
     conventionsEtFinancements: buildConventionsEtFinancements(readModel.conventions, now),
     posteId: readModel.posteConumId,
     structure: {
@@ -134,13 +134,8 @@ function getStatutBadge(statut: string): { color: string; label: string } {
   }
 }
 
-function buildContrats(
-  contrats: PosteConseillerNumeriqueDetailReadModel['contrats'],
-  now: Date
-): ReadonlyArray<ContratViewModel> {
+function buildContrats(contrats: PosteConseillerNumeriqueDetailReadModel['contrats']): ReadonlyArray<ContratViewModel> {
   return contrats.map((contrat) => {
-    const dateFin = contrat.dateFin
-    const isEnCours = dateFin ? dateFin > now : true
     const hasRupture = contrat.dateRupture !== null
 
     return {
@@ -151,8 +146,8 @@ function buildContrats(
       mediateur: contrat.mediateur,
       role: contrat.role,
       statut: {
-        libelle: hasRupture || !isEnCours ? 'Terminé' : 'En cours',
-        variant: hasRupture || !isEnCours ? 'error' : 'success',
+        libelle: hasRupture ? 'Terminé' : 'En cours',
+        variant: hasRupture ? 'error' : 'success',
       },
     }
   })
