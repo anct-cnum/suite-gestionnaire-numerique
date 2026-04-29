@@ -108,6 +108,13 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
+  changerStructure(): Result<UtilisateurFailure> {
+    if (this.#isSuperAdmin) {
+      return 'OK'
+    }
+    return 'utilisateurNonAutoriseAChangerSaStructure'
+  }
+
   changerTelephone(telephone: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
       this.#telephone = new Telephone(telephone)
@@ -148,6 +155,7 @@ export type UtilisateurFailure =
   | 'nomAbsent'
   | 'prenomAbsent'
   | 'telephoneInvalide'
+  | 'utilisateurNonAutoriseAChangerSaStructure'
   | 'utilisateurNonAutoriseAChangerSonDepartement'
   | 'utilisateurNonAutoriseAChangerSonRole'
 

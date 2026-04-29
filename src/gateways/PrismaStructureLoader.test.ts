@@ -22,6 +22,7 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isFne: false,
             isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
@@ -34,6 +35,7 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isFne: false,
             isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
@@ -46,12 +48,14 @@ describe('structures loader', () => {
         expected: [
           {
             commune: 'NOISY-LE-GRAND',
+            isFne: false,
             isMembre: false,
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
           {
             commune: 'GRASSE',
+            isFne: false,
             isMembre: false,
             nom: 'TETRIS',
             uid: '14',
@@ -87,6 +91,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'GRASSE',
+          isFne: false,
           isMembre: false,
           nom: 'TETRIS',
           uid: '14',
@@ -105,6 +110,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'GRASSE',
+          isFne: false,
           isMembre: false,
           nom: 'TETRIS',
           uid: '14',
@@ -132,6 +138,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isFne: false,
           isMembre: false,
           nom: "Conseil départemental de l'Aube",
           uid: '100',
@@ -157,6 +164,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isFne: false,
           isMembre: false,
           nom: "Conseil départemental de l'Aube",
           uid: '100',
@@ -182,6 +190,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isFne: false,
           isMembre: false,
           nom: "Conseil départemental de l'Aube",
           uid: '100',
@@ -232,7 +241,38 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([
         {
           commune: 'TROYES',
+          isFne: false,
           isMembre: true,
+          nom: "Conseil départemental de l'Aube",
+          uid: '100',
+        },
+      ])
+    })
+
+    it('indique si une structure a un contact référent FNE', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
+      const contactId = await creerUnContact({ email: 'referent-fne@aube.fr', est_referent_fne: true })
+      await prisma.contact_structure.create({
+        data: { contact_id: contactId, structure_id: 100 },
+      })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('conseil aube')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'TROYES',
+          isFne: true,
+          isMembre: false,
           nom: "Conseil départemental de l'Aube",
           uid: '100',
         },

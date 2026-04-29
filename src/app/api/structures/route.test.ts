@@ -68,7 +68,7 @@ describe('route /structures', () => {
       vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
       const spiedFind = vi
         .spyOn(RechercherLesStructures.prototype, 'handle')
-        .mockResolvedValueOnce([{ commune: 'TARBES', isMembre: false, nom: 'La Poste', uid: '802' }])
+        .mockResolvedValueOnce([{ commune: 'TARBES', isFne: false, isMembre: false, nom: 'La Poste', uid: '802' }])
 
       const req = {
         nextUrl: {
@@ -83,7 +83,9 @@ describe('route /structures', () => {
       const response = (await result.json()) as unknown
       expect(spiedFind).toHaveBeenCalledWith(expectedFindParams)
       expect(result.status).toBe(200)
-      expect(response).toStrictEqual([{ commune: 'TARBES', isMembre: false, nom: 'La Poste', uid: '802' }])
+      expect(response).toStrictEqual([
+        { commune: 'TARBES', isFne: false, isMembre: false, nom: 'La Poste', uid: '802' },
+      ])
     })
   })
 })

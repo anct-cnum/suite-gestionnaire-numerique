@@ -31,6 +31,7 @@ export function renderComponent(
     ajouterUneNoteDeContextualisationAction: vi.fn(),
     ajouterUneNotePriveeAction: vi.fn(),
     ajouterUnMembreAction: vi.fn(),
+    changerMaStructureAction: vi.fn(),
     changerMonDepartementAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
@@ -103,11 +104,18 @@ export async function structuresFetch(): Promise<Response> {
   return Promise.resolve({
     async json() {
       return Promise.resolve([
-        { commune: '', nom: 'ABC FORMATION', uid: '5001' },
-        { commune: 'PARIS 18', nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
-        { commune: 'GRASSE', nom: 'TETRIS', uid: '14' },
+        { commune: '', isFne: false, isMembre: false, nom: 'ABC FORMATION', uid: '5001' },
+        {
+          commune: 'PARIS 18',
+          isFne: true,
+          isMembre: false,
+          nom: 'AGIRabcd Délégation des Pyrénées Orientales',
+          uid: '1154',
+        },
+        { commune: 'GRASSE', isFne: false, isMembre: false, nom: 'TETRIS', uid: '14' },
       ])
     },
+    ok: true,
   } as Response)
 }
 

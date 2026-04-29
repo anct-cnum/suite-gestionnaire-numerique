@@ -29,6 +29,7 @@ export type StructuresReadModel = ReadonlyArray<UneStructureReadModel>
 
 export type UneStructureReadModel = Readonly<{
   commune: string
+  isFne: boolean
   isMembre: boolean
   nom: string
   uid: string
