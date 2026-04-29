@@ -65,7 +65,12 @@ export class PrismaStructureLoader implements StructureLoader {
         s.id,
         s.nom,
         a.nom_commune as commune,
-        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = s.id) as is_membre
+        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = s.id) as is_membre,
+        EXISTS(
+          SELECT 1 FROM main.contact_structure cs
+          JOIN main.contact c ON cs.contact_id = c.id
+          WHERE cs.structure_id = s.id AND c.est_referent_fne = true
+        ) as is_fne
       FROM main.structure s
       LEFT JOIN main.adresse a ON s.adresse_id = a.id
       WHERE (${conditionsMots})
@@ -77,6 +82,7 @@ export class PrismaStructureLoader implements StructureLoader {
     interface RawResult {
       commune: null | string
       id: number
+      is_fne: boolean
       is_membre: boolean
       nom: string
     }
@@ -86,6 +92,7 @@ export class PrismaStructureLoader implements StructureLoader {
 
     return results.map((row) => ({
       commune: row.commune ?? '',
+      isFne: row.is_fne,
       isMembre: row.is_membre,
       nom: row.nom,
       uid: String(row.id),

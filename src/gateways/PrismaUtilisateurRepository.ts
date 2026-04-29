@@ -156,6 +156,17 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     })
   }
 
+  async updateStructure(uid: UtilisateurUidState['value'], idStructure: null | number): Promise<void> {
+    await this.#dataResource.update({
+      data: {
+        structureId: idStructure,
+      },
+      where: {
+        ssoId: uid,
+      },
+    })
+  }
+
   async updateUid(utilisateur: Utilisateur): Promise<void> {
     const utilisateurState = utilisateur.state
 

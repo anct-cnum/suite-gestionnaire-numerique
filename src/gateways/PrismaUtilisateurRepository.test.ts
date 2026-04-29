@@ -331,6 +331,27 @@ describe('utilisateur repository', () => {
     })
   })
 
+  describe('mise à jour de la structure d’un utilisateur', () => {
+    it('change le structureId de l’utilisateur', async () => {
+      // GIVEN
+      const nouvelleStructureId = 20
+      await creerUneStructure({ id: nouvelleStructureId })
+      await creerUnUtilisateur()
+
+      // WHEN
+      await new PrismaUtilisateurRepository(prisma.utilisateurRecord).updateStructure(
+        uidUtilisateurValue,
+        nouvelleStructureId
+      )
+
+      // THEN
+      const updatedRecord = await prisma.utilisateurRecord.findUnique({
+        where: { ssoId: uidUtilisateurValue },
+      })
+      expect(updatedRecord?.structureId).toBe(nouvelleStructureId)
+    })
+  })
+
   describe('mise à jour de l’identifiant unique d’un utilisateur', () => {
     it('changement de l’identifiant unique', async () => {
       // GIVEN

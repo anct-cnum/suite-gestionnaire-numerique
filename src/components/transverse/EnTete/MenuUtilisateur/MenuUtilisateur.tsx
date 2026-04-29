@@ -9,6 +9,7 @@ import styles from './MenuUtilisateur.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import SelecteurDepartement from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurDepartement/SelecteurDepartement'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
+import SelecteurStructure from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurStructure/SelecteurStructure'
 
 export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
@@ -61,6 +62,10 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
       {sessionUtilisateurViewModel.peutChangerDeRole ? <SelecteurRole ariaControlsId={ariaControlsId} /> : null}
       {sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ? (
         <SelecteurDepartement ariaControlsId={ariaControlsId} />
+      ) : null}
+      {sessionUtilisateurViewModel.role.type === 'gestionnaire_structure' &&
+      sessionUtilisateurViewModel.peutChangerDeRole ? (
+        <SelecteurStructure ariaControlsId={ariaControlsId} />
       ) : null}
       <div className="fr-btns-group--center">
         <button

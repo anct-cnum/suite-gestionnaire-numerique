@@ -123,6 +123,63 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       // THEN
       expect(screen.queryByRole('combobox', { name: 'Rôle' })).not.toBeInTheDocument()
     })
+
+    it('si le rôle est gestionnaire_structure et que je suis superadmin, alors le sélecteur de structure s’affiche', () => {
+      // GIVEN
+      afficherLEnTetePeutChangerDeRole()
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.getByLabelText('Structure')).toBeInTheDocument()
+    })
+
+    it('si le rôle n’est pas gestionnaire_structure, alors le sélecteur de structure ne s’affiche pas', () => {
+      // GIVEN
+      renderComponent(<EnTete />, {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          peutChangerDeRole: true,
+          role: {
+            doesItBelongToGroupeAdmin: true,
+            libelle: 'Mednum',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'support-animation',
+            rolesGerables: [],
+            type: 'administrateur_dispositif',
+          },
+        }),
+      })
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
+    })
+
+    it('si le rôle est gestionnaire_structure mais que je ne suis pas superadmin, alors le sélecteur de structure ne s’affiche pas', () => {
+      // GIVEN
+      renderComponent(<EnTete />, {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          peutChangerDeRole: false,
+          role: {
+            doesItBelongToGroupeAdmin: false,
+            libelle: 'Structure Test',
+            nom: 'Gestionnaire structure',
+            pictogramme: 'support-animation',
+            rolesGerables: [],
+            type: 'gestionnaire_structure',
+          },
+        }),
+      })
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
+    })
   })
 
   function jOuvreLeMenuUtilisateur(): void {
