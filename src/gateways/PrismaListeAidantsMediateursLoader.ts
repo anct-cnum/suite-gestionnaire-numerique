@@ -313,7 +313,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     return {
       ...this.mapToAidant(personne),
       adresseStructure: personne.structure_adresse ?? '',
-      nbAccompagnements: personne.accompagnements + personne.accompagnements_ac,
+      nbAccompagnements: Number(personne.accompagnements) + personne.accompagnements_ac,
       nomStructure: personne.structure_nom ?? '',
       siretStructure: personne.structure_siret ?? '',
     }
@@ -408,7 +408,7 @@ interface PersonneQueryResult {
 }
 
 interface PersonneAvecAccompagnementQueryResult extends PersonneQueryResult {
-  accompagnements: number
+  accompagnements: bigint
   accompagnements_ac: number
   structure_adresse: null | string
   structure_nom: null | string
