@@ -37,14 +37,34 @@ type Story = StoryObj
 export const Default: Story = {
   args: {
     data: createDefaultStatistiquesActivitesData(),
+    estAidantConnect: true,
     nom: 'Dupont',
     prenom: 'Marie',
+  },
+}
+
+export const SansAidantConnect: Story = {
+  args: {
+    data: {
+      ...createDefaultStatistiquesActivitesData(),
+      accompagnements: {
+        avecAidantsConnect: 0,
+        individuels: 82,
+        nombreAteliers: 15,
+        participationsAteliers: 45,
+        total: 127,
+      },
+    },
+    estAidantConnect: false,
+    nom: 'Leroy',
+    prenom: 'Thomas',
   },
 }
 
 export const SansStatistiques: Story = {
   args: {
     data: undefined,
+    estAidantConnect: false,
     nom: 'Martin',
     prenom: 'Paul',
   },
@@ -67,6 +87,7 @@ export const StatistiquesElevees: Story = {
         total: 600,
       },
     },
+    estAidantConnect: true,
     nom: 'Bernard',
     prenom: 'Sophie',
   },
@@ -94,6 +115,7 @@ export const AucuneActivite: Story = {
         labels: ['Aucune donnée'],
       },
     },
+    estAidantConnect: false,
     nom: 'Durand',
     prenom: 'Julien',
   },

@@ -8,7 +8,7 @@ import Bar from '@/components/shared/Bar/Bar'
 import Information from '@/components/shared/Information/Information'
 
 export default function AidantDetailsActivites(props: Props): ReactElement {
-  const { data, nom, prenom } = props
+  const { data, estAidantConnect, nom, prenom } = props
   const statistiques = data
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -43,7 +43,7 @@ export default function AidantDetailsActivites(props: Props): ReactElement {
       </div>
       {hasActivites ? (
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--stretch">
-          <AccompagnementsCard statistiques={statistiques} />
+          <AccompagnementsCard estAidantConnect={estAidantConnect} statistiques={statistiques} />
           <GraphiqueCard
             currentPeriode={currentPeriode}
             onPeriodeChange={handlePeriodeChange}
@@ -75,12 +75,88 @@ function EmptyState({ nom, prenom }: Readonly<{ nom: string; prenom: string }>):
   )
 }
 
-function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: StatistiquesActivitesData }>): ReactElement {
+function AccompagnementsCard({
+  estAidantConnect,
+  statistiques,
+}: Readonly<{ estAidantConnect: boolean; statistiques?: StatistiquesActivitesData }>): ReactElement {
   const total = statistiques?.accompagnements.total ?? 0
   const individuels = statistiques?.accompagnements.individuels ?? 0
   const participationsAteliers = statistiques?.accompagnements.participationsAteliers ?? 0
   const nombreAteliers = statistiques?.accompagnements.nombreAteliers ?? 0
   const avecAidantsConnect = statistiques?.accompagnements.avecAidantsConnect ?? 0
+  const totalCoop = total - avecAidantsConnect
+
+  if (estAidantConnect) {
+    return (
+      <div className="fr-col-12 fr-col-md-4">
+        <div className="d-flex flex-column">
+          <div className="fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
+            <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
+              <p
+                className="fr-text--xl fr-mb-1w fr-text--heavy"
+                style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}
+              >
+                {totalCoop}
+              </p>
+              <span
+                className="fr-icon-heart-line color-orange-terre-battue"
+                style={{ color: 'var(--brown-caramel-sun-425-moon-901-hover)', fontSize: '24px' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className="fr-text--sm fr-text--bold fr-mb-1v">
+                Accompagnements Médiateur Coop
+                <Information>
+                  <div className="fr-mb-0">
+                    <strong>{totalCoop.toLocaleString('fr-FR')} accompagnements</strong> Médiateur Coop dont :
+                    <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
+                      <li>
+                        <strong>{individuels.toLocaleString('fr-FR')}</strong> accompagnements individuels
+                      </li>
+                      <li>
+                        <strong>{participationsAteliers.toLocaleString('fr-FR')}</strong> participations lors de{' '}
+                        <strong>{nombreAteliers.toLocaleString('fr-FR')}</strong> ateliers
+                      </li>
+                    </ul>
+                    <p className="fr-mb-0 fr-mt-1v">
+                      Les ateliers collectifs comptent pour 1 accompagnement par participant.
+                      <br />
+                      Ex : un atelier avec 10 participants = 10 accompagnements.
+                    </p>
+                  </div>
+                </Information>
+              </div>
+            </div>
+          </div>
+          <div className="fr-mt-2w fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
+            <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
+              <p
+                className="fr-text--xl fr-mb-1w fr-text--heavy"
+                style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}
+              >
+                {avecAidantsConnect}
+              </p>
+              <span
+                className="fr-icon-heart-line color-orange-terre-battue"
+                style={{ color: 'var(--brown-caramel-sun-425-moon-901-hover)', fontSize: '24px' }}
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className="fr-text--sm fr-text--bold fr-mb-1v">
+                Accompagnements Aidant Connect
+                <Information>
+                  <div className="fr-mb-0">
+                    <strong>{avecAidantsConnect.toLocaleString('fr-FR')} accompagnements</strong> réalisés via la
+                    plateforme Aidant Connect.
+                  </div>
+                </Information>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fr-col-12 fr-col-md-4">
@@ -109,9 +185,6 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
                       <strong>{participationsAteliers.toLocaleString('fr-FR')}</strong> participations lors de{' '}
                       <strong>{nombreAteliers.toLocaleString('fr-FR')}</strong> ateliers
                     </li>
-                    <li>
-                      <strong>{avecAidantsConnect.toLocaleString('fr-FR')}</strong> accompagnements avec Aidants Connect
-                    </li>
                   </ul>
                   <p className="fr-mb-0 fr-mt-1v">
                     Les ateliers collectifs comptent pour 1 accompagnement par participant.
@@ -121,7 +194,6 @@ function AccompagnementsCard({ statistiques }: Readonly<{ statistiques?: Statist
                 </div>
               </Information>
             </div>
-            <p className="fr-text--xs fr-mt-0">Dont {avecAidantsConnect} avec Aidants Connect</p>
           </div>
         </div>
       </div>
@@ -226,6 +298,7 @@ function GraphiqueCard({ currentPeriode, onPeriodeChange, statistiques }: Graphi
 
 type Props = Readonly<{
   data?: StatistiquesActivitesData
+  estAidantConnect: boolean
   nom: string
   prenom: string
 }>

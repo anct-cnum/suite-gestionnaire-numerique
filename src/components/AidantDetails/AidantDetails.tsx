@@ -113,6 +113,7 @@ export default function AidantDetails(props: Props): ReactElement {
             <div id="activites">
               <AidantDetailsActivites
                 data={data.statistiquesActivites}
+                estAidantConnect={data.header.tags.includes('Aidant Connect')}
                 nom={data.informationsPersonnelles.nom}
                 prenom={data.informationsPersonnelles.prenom}
               />
