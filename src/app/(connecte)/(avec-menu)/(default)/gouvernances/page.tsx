@@ -8,8 +8,12 @@ import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { Administrateur } from '@/domain/Administrateur'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaAutresStructuresLoader } from '@/gateways/tableauDeBord/PrismaAutresStructuresImpliquéesLoader'
+import { PrismaCollectivitesLoader } from '@/gateways/tableauDeBord/PrismaCollectivitesImpliquéesLoader'
 import { PrismaFeuillesDeRouteDeposeesLoader } from '@/gateways/tableauDeBord/PrismaFeuillesDeRouteDeposeesLoader'
 import { PrismaGouvernancesTerritorialesLoader } from '@/gateways/tableauDeBord/PrismaGouvernancesTerritorialesLoader'
+import { autresStructuresPresenter } from '@/presenters/tableauDeBord/autresStructuresImpliquéesPresenter'
+import { collectivitesPresenter } from '@/presenters/tableauDeBord/collectivitesImpliquéesPresenter'
 import { feuillesDeRouteDeposeesPresenter } from '@/presenters/tableauDeBord/feuillesDeRouteDeposeesPresenter'
 import { gouvernancesTerritorialesPresenter } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
 
@@ -46,10 +50,20 @@ export default async function GouvernancesController(): Promise<ReactElement> {
     feuillesDeRouteDeposeesPresenter
   )
 
+  const collectivitesLoader = new PrismaCollectivitesLoader()
+  const collectivitesReadModel = await collectivitesLoader.get()
+  const collectivitesViewModel = handleReadModelOrError(collectivitesReadModel, collectivitesPresenter)
+
+  const autresStructuresLoader = new PrismaAutresStructuresLoader()
+  const autresStructuresReadModel = await autresStructuresLoader.get()
+  const autresStructuresViewModel = handleReadModelOrError(autresStructuresReadModel, autresStructuresPresenter)
+
   const dateGeneration = new Date()
 
   return (
     <Gouvernances
+      autresStructuresViewModel={autresStructuresViewModel}
+      collectivitesViewModel={collectivitesViewModel}
       dateGeneration={dateGeneration}
       feuillesDeRouteDeposeesViewModel={feuillesDeRouteDeposeesViewModel}
       gouvernancesTerritorialesViewModel={gouvernancesTerritorialesViewModel}
