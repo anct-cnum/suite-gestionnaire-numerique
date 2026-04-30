@@ -13,6 +13,16 @@ export default function EnTeteVitrine(): ReactElement {
           <div className="fr-header__body-row">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
+                <div className="fr-header__logo" style={{ alignItems: 'center', alignSelf: 'center', display: 'flex' }}>
+                  <svg aria-hidden="true" height="40" viewBox="0 0 37.1536 42.8571" width="35" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.6291 0L0 10.7143V32.1429L18.6291 42.8571L37.1536 32.1429V10.7143L18.6291 0Z" fill="#E1000F" />
+                    <path
+                      d="M23.914 18.3448H30.9261V14.2682L18.6288 7.16016L6.22684 14.2682V28.4842L18.6288 35.6967L30.9261 28.4842V24.4598H23.914V18.3448Z"
+                      fill="#FFFFFF"
+                    />
+                    <path d="M23.9139 24.46V18.345L18.6287 15.2614L13.2388 18.345V24.46L18.6287 27.5436L23.9139 24.46Z" fill="#000091" />
+                  </svg>
+                </div>
                 <div className="fr-header__navbar">
                   <button
                     aria-controls="navigation"
