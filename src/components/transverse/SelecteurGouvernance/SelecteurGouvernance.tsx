@@ -14,6 +14,7 @@ export default function SelecteurGouvernance({ options, selectedValue }: Props):
         Sélectionnez une gouvernance
       </label>
       <select
+        aria-label="Sélectionnez une gouvernance"
         className="fr-select"
         id="gouvernance"
         name="gouvernance"
