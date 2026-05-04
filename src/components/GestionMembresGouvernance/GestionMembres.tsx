@@ -183,7 +183,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
   return (
     <>
       <div className="fr-grid-row space-between fr-grid-row--middle">
-        <PageTitle>Gérer les membres ·{membresViewModel.departement}</PageTitle>
+        <PageTitle>Gérer les membres · {membresViewModel.departement}</PageTitle>
         {peutGererGouvernance ? (
           <button
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
