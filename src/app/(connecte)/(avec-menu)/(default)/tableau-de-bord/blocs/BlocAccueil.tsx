@@ -26,8 +26,11 @@ export default function BlocAccueil({ contexte, prenom, scope }: Props): ReactEl
     <>
       <div className="fr-mb-3w" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <h1 className="color-blue-france fr-display--xs fr-text--regular fr-mt-5w fr-mb-0">👋 Bonjour {prenom}</h1>
-        <div style={{ alignItems: 'flex-end', display: 'flex', flexWrap: 'wrap'}}>
-          <p className="color-blue-france fr-m-0 fr-text--xl fr-text--regular" style={{ flex: '1 1 auto', minWidth: 'max-content' }}>
+        <div style={{ alignItems: 'flex-end', display: 'flex', flexWrap: 'wrap' }}>
+          <p
+            className="color-blue-france fr-m-0 fr-text--xl fr-text--regular"
+            style={{ flex: '1 1 auto', minWidth: 'max-content' }}
+          >
             {sousTitre}
           </p>
           {options.length >= 2 && (

@@ -26,7 +26,9 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
             <MenuLateral contexte={contexte} />
           </MenuActifProvider>
         </div>
-        <div className="fr-col-12 fr-col-md-9 fr-col-xl-9 fr-pl-md-7w menu-border" style={{ flex: 1, minWidth: 0 }}>{children}</div>
+        <div className="fr-col-12 fr-col-md-9 fr-col-xl-9 fr-pl-md-7w menu-border" style={{ flex: 1, minWidth: 0 }}>
+          {children}
+        </div>
       </div>
     )
   } catch {
