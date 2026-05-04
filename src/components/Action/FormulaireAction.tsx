@@ -164,7 +164,7 @@ export function FormulaireAction({
       }}
     >
       <Tag href={action.urlFeuilleDeRoute}>{action.nomFeuilleDeRoute}</Tag>
-      <PageTitle>{label}</PageTitle>
+      <PageTitle margin="fr-mt-2w">{label}</PageTitle>
       <div className="glycine-background fr-p-4w fr-mt-4w">
         <div className="white-background fr-p-4w fr-mb-2w">
           <div className={styles['align-items']} id="besoinsAction">

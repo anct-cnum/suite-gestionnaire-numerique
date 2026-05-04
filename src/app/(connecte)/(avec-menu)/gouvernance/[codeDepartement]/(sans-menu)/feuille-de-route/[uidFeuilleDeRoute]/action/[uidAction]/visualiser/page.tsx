@@ -36,10 +36,10 @@ export default async function ActionModifierController({ params }: Props): Promi
     )
     return (
       <div className="fr-grid-row">
-        <div className="fr-col-2">
+        <div className="fr-col-2" style={{ flexShrink: 0, minWidth: '320px' }}>
           <MenuLateral />
         </div>
-        <div className="fr-col-10 fr-pl-7w">
+        <div className="fr-col-10 fr-pl-7w" style={{ flex: 1, minWidth: 0 }}>
           <VisualiserUneAction
             action={actionPresenter(actionReadModel, {
               enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
