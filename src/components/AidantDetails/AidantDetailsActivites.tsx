@@ -15,7 +15,10 @@ export default function AidantDetailsActivites(props: Props): ReactElement {
 
   const currentPeriode = searchParams.get('periode') ?? 'mensuel'
   const totalAccompagnements = statistiques?.accompagnements.total ?? 0
+  const avecAidantsConnect = statistiques?.accompagnements.avecAidantsConnect ?? 0
+  const totalCoop = totalAccompagnements - avecAidantsConnect
   const hasActivites = totalAccompagnements > 0
+  const showGraph = !(estAidantConnect && totalCoop === 0)
 
   function handlePeriodeChange(nouvellePeriode: 'journalier' | 'mensuel'): void {
     const params = new URLSearchParams(searchParams.toString())
@@ -44,11 +47,13 @@ export default function AidantDetailsActivites(props: Props): ReactElement {
       {hasActivites ? (
         <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--stretch">
           <AccompagnementsCard estAidantConnect={estAidantConnect} statistiques={statistiques} />
-          <GraphiqueCard
-            currentPeriode={currentPeriode}
-            onPeriodeChange={handlePeriodeChange}
-            statistiques={statistiques}
-          />
+          {showGraph && (
+            <GraphiqueCard
+              currentPeriode={currentPeriode}
+              onPeriodeChange={handlePeriodeChange}
+              statistiques={statistiques}
+            />
+          )}
         </div>
       ) : (
         <EmptyState nom={nom} prenom={prenom} />
@@ -90,45 +95,50 @@ function AccompagnementsCard({
     return (
       <div className="fr-col-12 fr-col-md-4">
         <div className="d-flex flex-column">
-          <div className="fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
-            <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
-              <p
-                className="fr-text--xl fr-mb-1w fr-text--heavy"
-                style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}
-              >
-                {totalCoop}
-              </p>
-              <span
-                className="fr-icon-heart-line color-orange-terre-battue"
-                style={{ color: 'var(--brown-caramel-sun-425-moon-901-hover)', fontSize: '24px' }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div className="fr-text--sm fr-text--bold fr-mb-1v">
-                Accompagnements Médiateur Coop
-                <Information>
-                  <div className="fr-mb-0">
-                    <strong>{totalCoop.toLocaleString('fr-FR')} accompagnements</strong> Médiateur Coop dont :
-                    <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
-                      <li>
-                        <strong>{individuels.toLocaleString('fr-FR')}</strong> accompagnements individuels
-                      </li>
-                      <li>
-                        <strong>{participationsAteliers.toLocaleString('fr-FR')}</strong> participations lors de{' '}
-                        <strong>{nombreAteliers.toLocaleString('fr-FR')}</strong> ateliers
-                      </li>
-                    </ul>
-                    <p className="fr-mb-0 fr-mt-1v">
-                      Les ateliers collectifs comptent pour 1 accompagnement par participant.
-                      <br />
-                      Ex : un atelier avec 10 participants = 10 accompagnements.
-                    </p>
-                  </div>
-                </Information>
+          {totalCoop > 0 && (
+            <div className="fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
+              <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
+                <p
+                  className="fr-text--xl fr-mb-1w fr-text--heavy"
+                  style={{ fontSize: '48px', lineHeight: '1', margin: 0 }}
+                >
+                  {totalCoop}
+                </p>
+                <span
+                  className="fr-icon-heart-line color-orange-terre-battue"
+                  style={{ color: 'var(--brown-caramel-sun-425-moon-901-hover)', fontSize: '24px' }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="fr-text--sm fr-text--bold fr-mb-1v">
+                  Accompagnements de médiation numérique
+                  <Information>
+                    <div className="fr-mb-0">
+                      <strong>{totalCoop.toLocaleString('fr-FR')} accompagnements</strong> de médiation numérique dont :
+                      <ul className="fr-mt-1v fr-mb-1v fr-pl-2w">
+                        <li>
+                          <strong>{individuels.toLocaleString('fr-FR')}</strong> accompagnements individuels
+                        </li>
+                        <li>
+                          <strong>{participationsAteliers.toLocaleString('fr-FR')}</strong> participations lors de{' '}
+                          <strong>{nombreAteliers.toLocaleString('fr-FR')}</strong> ateliers
+                        </li>
+                      </ul>
+                      <p className="fr-mb-0 fr-mt-1v">
+                        Les ateliers collectifs comptent pour 1 accompagnement par participant.
+                        <br />
+                        Ex : un atelier avec 10 participants = 10 accompagnements.
+                      </p>
+                    </div>
+                  </Information>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="fr-mt-2w fr-p-3w fr-background-alt--brown-caramel" style={{ borderRadius: '1rem' }}>
+          )}
+          <div
+            className={`${totalCoop > 0 ? 'fr-mt-2w ' : ''}fr-p-3w fr-background-alt--brown-caramel`}
+            style={{ borderRadius: '1rem' }}
+          >
             <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between' }}>
               <p
                 className="fr-text--xl fr-mb-1w fr-text--heavy"
@@ -143,11 +153,11 @@ function AccompagnementsCard({
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div className="fr-text--sm fr-text--bold fr-mb-1v">
-                Accompagnements Aidant Connect
+                Accompagnements Aidants Connect
                 <Information>
                   <div className="fr-mb-0">
                     <strong>{avecAidantsConnect.toLocaleString('fr-FR')} accompagnements</strong> réalisés via la
-                    plateforme Aidant Connect.
+                    plateforme Aidants Connect.
                   </div>
                 </Information>
               </div>
@@ -173,7 +183,7 @@ function AccompagnementsCard({
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="fr-text--sm fr-text--bold fr-mb-1v">
-              Accompagnements
+              Accompagnements de médiation numérique
               <Information>
                 <div className="fr-mb-0">
                   <strong>{total.toLocaleString('fr-FR')} accompagnements</strong> au total dont :
