@@ -12,13 +12,9 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           <TitleIcon icon="france-line" />
         </div>
         <div className="fr-col fr-grid-row fr-grid-row--middle">
-          <div>
-            <div className="fr-mb-1w">
-              <h2 className="fr-h2 fr-text-label--blue-france" id="etatDesLieux">
-                Gouvernances territoriales
-              </h2>
-            </div>
-          </div>
+          <h2 className="fr-h2 fr-mb-0 fr-text-label--blue-france" id="etatDesLieux">
+            Gouvernances territoriales
+          </h2>
         </div>
         <button
           aria-controls={drawerId}
