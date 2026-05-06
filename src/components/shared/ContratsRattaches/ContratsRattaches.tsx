@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
+import TableauVide from '@/components/shared/TableauVide/TableauVide'
 
 export default function ContratsRattaches({ contrats }: Props): ReactElement {
   return (
@@ -10,26 +11,33 @@ export default function ContratsRattaches({ contrats }: Props): ReactElement {
         Contrats rattachés au poste
       </h2>
       <article aria-label="Contrats rattachés">
-        <Table
-          enTetes={['Médiateur', 'Statut du contrat', 'Contrat', 'Date de début', 'Date de fin', 'Date de rupture']}
-          titre="Contrats rattachés au poste"
-        >
-          {contrats.map((contrat) => (
-            <tr key={`${contrat.mediateur}-${contrat.contrat}-${contrat.dateDebut}`}>
-              <td>
-                <div className="font-weight-700">{contrat.mediateur}</div>
-                <div className="fr-text--sm color-grey">{contrat.role}</div>
-              </td>
-              <td>
-                <Badge color={contrat.statut.variant}>{contrat.statut.libelle}</Badge>
-              </td>
-              <td className="color-grey">{contrat.contrat}</td>
-              <td className="color-grey">{contrat.dateDebut}</td>
-              <td className="color-grey">{contrat.dateFin}</td>
-              <td className="color-grey">{contrat.dateRupture}</td>
-            </tr>
-          ))}
-        </Table>
+        {contrats.length === 0 ? (
+          <TableauVide>
+            <span className="fr-text--bold">👻 Aucun contrat rattaché</span>
+            {' pour cette structure'}
+          </TableauVide>
+        ) : (
+          <Table
+            enTetes={['Médiateur', 'Statut du contrat', 'Contrat', 'Date de début', 'Date de fin', 'Date de rupture']}
+            titre="Contrats rattachés au poste"
+          >
+            {contrats.map((contrat) => (
+              <tr key={`${contrat.mediateur}-${contrat.contrat}-${contrat.dateDebut}`}>
+                <td>
+                  <div className="font-weight-700">{contrat.mediateur}</div>
+                  <div className="fr-text--sm color-grey">{contrat.role}</div>
+                </td>
+                <td>
+                  <Badge color={contrat.statut.variant}>{contrat.statut.libelle}</Badge>
+                </td>
+                <td className="color-grey">{contrat.contrat}</td>
+                <td className="color-grey">{contrat.dateDebut}</td>
+                <td className="color-grey">{contrat.dateFin}</td>
+                <td className="color-grey">{contrat.dateRupture}</td>
+              </tr>
+            ))}
+          </Table>
+        )}
       </article>
     </section>
   )
