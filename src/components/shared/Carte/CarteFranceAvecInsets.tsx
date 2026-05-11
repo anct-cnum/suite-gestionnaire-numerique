@@ -15,20 +15,8 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import styles from './Map.module.css'
 import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
-const EMPTY_STYLE = {
-  glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
-  layers: [
-    {
-      id: 'background',
-      paint: {
-        'background-color': '#f5f5fe',
-      },
-      type: 'background' as const,
-    },
-  ],
-  sources: {},
-  version: 8 as const,
-}
+const COULEUR_FOND_CLAIR = '#f5f5fe'
+const COULEUR_FOND_SOMBRE = '#1b1b35'
 
 // Configuration des DOM-TOM avec leurs bounds réels
 const DOM_TOM_CONFIG = {
@@ -207,6 +195,9 @@ export default function CarteFranceAvecInsets({
       closeOnClick: false,
     })
 
+    const couleurFond =
+      document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+
     // Initialiser la carte principale
     mainMap.current = new Map({
       attributionControl: false,
@@ -220,7 +211,7 @@ export default function CarteFranceAvecInsets({
       maxZoom: 7,
       minZoom: 4,
       scrollZoom: false,
-      style: EMPTY_STYLE,
+      style: creerStyleVide(couleurFond),
       touchZoomRotate: false,
     })
 
@@ -253,7 +244,7 @@ export default function CarteFranceAvecInsets({
         maxZoom: 10,
         minZoom: 3,
         scrollZoom: false,
-        style: EMPTY_STYLE,
+        style: creerStyleVide(couleurFond),
         touchZoomRotate: false,
       })
 
@@ -266,7 +257,18 @@ export default function CarteFranceAvecInsets({
       domTomMaps.current[code] = domTomMap
     })
 
+    const observer = new MutationObserver(() => {
+      const nouvelleCouleur =
+        document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+      mainMap.current?.setPaintProperty('background', 'background-color', nouvelleCouleur)
+      Object.values(domTomMaps.current).forEach((map) => {
+        map.setPaintProperty('background', 'background-color', nouvelleCouleur)
+      })
+    })
+    observer.observe(document.documentElement, { attributeFilter: ['data-fr-theme'] })
+
     return (): void => {
+      observer.disconnect()
       mainMap.current?.remove()
       Object.values(domTomMaps.current).forEach((map) => {
         map.remove()
@@ -323,6 +325,23 @@ type Props = Readonly<{
   legend: ReactElement
   onDepartementClick?(codeDepartement: string): void
 }>
+
+function creerStyleVide(couleurFond: string) {
+  return {
+    glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
+    layers: [
+      {
+        id: 'background',
+        paint: {
+          'background-color': couleurFond,
+        },
+        type: 'background' as const,
+      },
+    ],
+    sources: {},
+    version: 8 as const,
+  }
+}
 
 function gererLeSurvolDepartement(
   event: { features?: Array<MapGeoJSONFeature> } & MapMouseEvent,

@@ -7,20 +7,8 @@ import Legend from './Legend'
 import styles from './Map.module.css'
 import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
-const EMPTY_STYLE = {
-  glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
-  layers: [
-    {
-      id: 'background',
-      paint: {
-        'background-color': '#f5f5fe',
-      },
-      type: 'background' as const,
-    },
-  ],
-  sources: {},
-  version: 8 as const,
-}
+const COULEUR_FOND_CLAIR = '#f5f5fe'
+const COULEUR_FOND_SOMBRE = '#1b1b35'
 
 export default function Carte({ communesFragilite, departement }: Props): ReactElement {
   const mapContainer = useRef<HTMLDivElement>(null)
@@ -231,13 +219,16 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       return undefined
     }
 
+    const couleurFond =
+      document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+
     map.current = new Map({
       attributionControl: false,
       container: mapContainer.current,
       maplibreLogo: false,
       maxZoom: 11,
       minZoom: 6,
-      style: EMPTY_STYLE,
+      style: creerStyleVide(couleurFond),
     })
 
     popup.current = new Popup({
@@ -308,7 +299,15 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       }
     })
 
+    const observer = new MutationObserver(() => {
+      const nouvelleCouleur =
+        document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+      map.current?.setPaintProperty('background', 'background-color', nouvelleCouleur)
+    })
+    observer.observe(document.documentElement, { attributeFilter: ['data-fr-theme'] })
+
     return (): void => {
+      observer.disconnect()
       if (map.current) {
         map.current.remove()
       }
@@ -329,3 +328,20 @@ type Props = Readonly<{
   communesFragilite: Array<CommuneFragilite>
   departement: string
 }>
+
+function creerStyleVide(couleurFond: string) {
+  return {
+    glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
+    layers: [
+      {
+        id: 'background',
+        paint: {
+          'background-color': couleurFond,
+        },
+        type: 'background' as const,
+      },
+    ],
+    sources: {},
+    version: 8 as const,
+  }
+}
