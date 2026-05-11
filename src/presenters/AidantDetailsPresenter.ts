@@ -10,6 +10,7 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
       modificationAutheur: '-',
       modificationDate: '-',
       nom: readModel.nom,
+      prenom: readModel.prenom,
       tags: readModel.tags,
     },
     informationsPersonnelles: {
@@ -48,13 +49,17 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel, today: D
         adresse: readModel.structureEmployeuse.adresse,
         departement: readModel.structureEmployeuse.departement || undefined,
         nom: readModel.structureEmployeuse.nom,
-        referent: {
-          email: readModel.structureEmployeuse.contactReferent.email,
-          nom: readModel.structureEmployeuse.contactReferent.nom,
-          post: readModel.structureEmployeuse.contactReferent.post,
-          prenom: readModel.structureEmployeuse.contactReferent.prenom,
-          telephone: readModel.structureEmployeuse.contactReferent.telephone,
-        },
+        referent:
+          readModel.structureEmployeuse.contactReferent.nom !== '' ||
+          readModel.structureEmployeuse.contactReferent.prenom !== ''
+            ? {
+                email: readModel.structureEmployeuse.contactReferent.email,
+                nom: readModel.structureEmployeuse.contactReferent.nom,
+                post: readModel.structureEmployeuse.contactReferent.post,
+                prenom: readModel.structureEmployeuse.contactReferent.prenom,
+                telephone: readModel.structureEmployeuse.contactReferent.telephone,
+              }
+            : undefined,
         region: readModel.structureEmployeuse.region || undefined,
         siret: readModel.structureEmployeuse.siret || undefined,
         type: readModel.structureEmployeuse.type,
