@@ -68,10 +68,10 @@ function getLibelleForPerimetre(perimetre: string): string {
 // Conversion des classes CSS vers les couleurs hexadécimales pour le graphique
 function getBackgroundColor(cssClass: string): string {
   const colorMappings: Record<string, string> = {
-    'dot-green-archipel-main-648': '#00A95F',
-    'dot-green-emeraude-main-632': '#00AC8C',
+    'dot-green-archipel-main-648': '#009099',
+    'dot-green-emeraude-main-632': '#00a95f',
     'dot-green-menthe-main-548': '#009081',
-    'dot-green-tilleul-verveine-main-707': '#B8E986',
+    'dot-green-tilleul-verveine-main-707': '#b7a73f',
     'dot-grey-sans-coporteur': '#929292',
   }
   return colorMappings[cssClass] ?? '#929292'

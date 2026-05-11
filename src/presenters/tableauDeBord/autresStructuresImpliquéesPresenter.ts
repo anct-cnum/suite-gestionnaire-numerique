@@ -57,9 +57,9 @@ function getColorForCategorie(categorie: string): string {
 function getBackgroundColor(cssClass: string): string {
   const colorMappings: Record<string, string> = {
     'dot-grey-sans-coporteur': '#929292',
-    'dot-orange-terre-battue-850-200': '#e17b47',
-    'dot-pink-tuile-850-200': '#e8a598',
-    'dot-pink-tuile-925-125': '#f3d2ca',
+    'dot-orange-terre-battue-850-200': '#fcc0b0',
+    'dot-pink-tuile-850-200': '#fcbfb7',
+    'dot-pink-tuile-925-125': '#fddfdb',
     'dot-pink-tuile-main-556': '#ce614a',
   }
   return colorMappings[cssClass] ?? '#929292'
