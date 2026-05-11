@@ -56,7 +56,7 @@ function getColorForCategorie(categorie: string): string {
 
 function getBackgroundColor(cssClass: string): string {
   const colorMappings: Record<string, string> = {
-    'dot-blue-france-main-525': '#000091',
+    'dot-blue-france-main-525': '#6a6af4',
     'dot-green-bourgeon-main-640': '#68a532',
     'dot-green-emeraude-main-632': '#00a95f',
     'dot-green-menthe-main-548': '#009081',

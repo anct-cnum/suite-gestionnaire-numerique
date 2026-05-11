@@ -1,3 +1,9 @@
+:root {
+  --graphique-purple-glycine-100-950: hsl(276deg 62% 90%);
+  --graphique-purple-glycine-200-850: hsl(277deg 60% 79%);
+  --graphique-purple-glycine-main-732: hsl(265deg 32% 44%);
+}
+
 html {
   scroll-behavior: smooth;
 }
