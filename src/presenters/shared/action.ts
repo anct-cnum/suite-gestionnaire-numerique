@@ -18,7 +18,7 @@ export const actionStatutViewModelByStatut: Record<'nonSubventionnee' | StatutSu
   enCours: {
     background: 'green',
     display: true,
-    icon: 'user-add-line',
+    icon: 'user-star-line',
     libelle: "Demande en cours d'instruction",
     variant: 'info',
   },
