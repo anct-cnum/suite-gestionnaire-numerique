@@ -12,6 +12,7 @@ export type AidantDetailsHeaderData = Readonly<{
   modificationAutheur?: string
   modificationDate?: string
   nom: string
+  prenom: string
   tags: ReadonlyArray<string>
 }>
 

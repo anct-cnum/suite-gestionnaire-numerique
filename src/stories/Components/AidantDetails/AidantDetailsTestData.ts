@@ -12,6 +12,7 @@ export function createDefaultHeaderData(): AidantDetailsHeaderData {
     modificationAutheur: 'Marie Dupont',
     modificationDate: '15/03/2024',
     nom: 'Martin',
+    prenom: 'Jean',
     tags: ['Aidant Connect', 'France Services', 'ANCT'],
   }
 }

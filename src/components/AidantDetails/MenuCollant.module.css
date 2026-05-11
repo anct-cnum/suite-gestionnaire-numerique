@@ -11,7 +11,7 @@
 .menuFixed {
   overflow: auto;
   position: fixed;
-  width: 16%;
+  width: clamp(12.5rem, 16%, 15rem);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
@@ -26,7 +26,7 @@
 
   .menuContainer {
     flex-shrink: 0;
-    width: 16%;
+    width: clamp(12.5rem, 16%, 15rem);
   }
 
   .contentContainer {
