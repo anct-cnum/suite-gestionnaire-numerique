@@ -148,8 +148,6 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
 
   const nb = contexte.nbGouvernances()
   const estAdmin = contexte.aCesRoles('administrateur_dispositif')
-  const nestPasGestionnaireStructure = !contexte.aCesRoles('gestionnaire_structure')
-  const estCoporteur = contexte.estCoporteur()
 
   if (estAdmin) {
     menus.push({
@@ -186,13 +184,11 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
     })
   }
 
-  if (nestPasGestionnaireStructure || estCoporteur) {
-    menus.push({
-      customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
-      label: 'Suivi des postes CoNum',
-      url: () => '/postes-conseiller-numerique',
-    })
-  }
+  menus.push({
+    customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
+    label: 'Suivi des postes CoNum',
+    url: () => '/postes-conseiller-numerique',
+  })
 
   return { menus, titre: estAdmin ? 'ADMINISTRATION' : 'PILOTAGE' }
 }
