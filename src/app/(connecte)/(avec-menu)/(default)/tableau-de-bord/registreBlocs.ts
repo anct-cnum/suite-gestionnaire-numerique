@@ -10,7 +10,6 @@ export type IdentifiantBloc =
   | 'gouvernance'
   | 'mediateurs'
   | 'rejoindreGouvernance'
-  | 'sources'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
   const estGestionnaireStructure = contexte.aCesRoles('gestionnaire_structure') && !contexte.estDansGouvernance()
@@ -43,10 +42,7 @@ export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantB
     blocs.push('beneficiaires')
   }
 
-  if (contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement') || contexte.estDansGouvernance()) {
-    //à rajouter : 'mediateurs', une fois le wording rework
-    blocs.push('sources')
-  } else if (estGestionnaireStructure) {
+  if (estGestionnaireStructure && !contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement')) {
     blocs.push('rejoindreGouvernance', 'cartographie')
   }
 
