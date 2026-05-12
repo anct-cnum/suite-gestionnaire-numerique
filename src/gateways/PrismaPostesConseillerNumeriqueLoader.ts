@@ -84,6 +84,10 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
   }
 
   private addTerritoireFilter(filtres: FiltresPostesConseillerNumerique, conditions: Array<Prisma.Sql>): void {
+    if (filtres.scopeFiltre.type === 'structure') {
+      conditions.push(Prisma.sql`v.structure_id = ${filtres.scopeFiltre.id}`)
+      return
+    }
     if (filtres.codeDepartement !== undefined) {
       conditions.push(Prisma.sql`a.departement = ${filtres.codeDepartement}`)
     } else if (
