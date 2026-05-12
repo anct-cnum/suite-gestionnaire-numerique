@@ -11,7 +11,6 @@ import StructureIdentite from './StructureIdentite'
 import StructureRole from './StructureRole'
 import MenuCollant, { type SideMenuItem } from '../AidantDetails/MenuCollant'
 import styles from '../AidantDetails/MenuCollant.module.css'
-import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function Structure({ peutGererStructure, viewModel }: Props): ReactElement {
@@ -33,7 +32,6 @@ export default function Structure({ peutGererStructure, viewModel }: Props): Rea
           />
 
           <StructureRole role={viewModel.role} />
-          <AlerteConstruction />
           <StructureConventions conventionsEtFinancements={viewModel.conventionsEtFinancements} />
 
           <StructureContratsRattaches contratsRattaches={viewModel.contratsRattaches} />
