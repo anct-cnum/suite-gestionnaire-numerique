@@ -11,7 +11,6 @@ import BlocFinancements from '../../blocs/BlocFinancements'
 import BlocGouvernance from '../../blocs/BlocGouvernance'
 import BlocMediateurs from '../../blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
-import BlocSources from '../../blocs/BlocSources'
 import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -54,7 +53,6 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
     gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
     mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
-    sources: <BlocSources key="sources" />,
   }
 
   return <>{blocs.map((bloc) => blocsElements[bloc])}</>
