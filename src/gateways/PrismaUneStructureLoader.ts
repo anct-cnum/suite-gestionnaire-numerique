@@ -150,19 +150,6 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
   totalCoordinateur: number
   totalMediateur: number
 } {
-  const totalMediateur = personnesAffectations.filter(
-    (affectation) => affectation.personne.is_mediateur === true
-  ).length
-  const totalCoordinateur = personnesAffectations.filter(
-    (affectation) => affectation.personne.is_coordinateur === true
-  ).length
-  const totalAidant = personnesAffectations.filter(
-    (affectation) =>
-      affectation.source === 'aidant-connect' ||
-      affectation.personne.is_coordinateur === true ||
-      affectation.personne.is_mediateur === true
-  ).length
-
   // Dédupliquer les personnes par ID et collecter les sources par personne
   const personnesUniques = new Map<number, PersonneAffectation>()
   const sourcesParPersonne = new Map<number, Set<string>>()
@@ -175,7 +162,24 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     sourcesParPersonne.set(affectation.personne.id, sources)
   }
 
-  const liste = Array.from(personnesUniques.values()).map((affectation) => {
+  const personnesDedupliquees = Array.from(personnesUniques.values())
+
+  const totalMediateur = personnesDedupliquees.filter(
+    (affectation) => affectation.personne.is_mediateur === true
+  ).length
+  const totalCoordinateur = personnesDedupliquees.filter(
+    (affectation) => affectation.personne.is_coordinateur === true
+  ).length
+  const totalAidant = personnesDedupliquees.filter((affectation) => {
+    const sources = sourcesParPersonne.get(affectation.personne.id) ?? new Set<string>()
+    return (
+      sources.has('aidant-connect') ||
+      affectation.personne.is_coordinateur === true ||
+      affectation.personne.is_mediateur === true
+    )
+  }).length
+
+  const liste = personnesDedupliquees.map((affectation) => {
     const personne = affectation.personne
     const sources = sourcesParPersonne.get(personne.id) ?? new Set<string>()
     const fonctions: Array<string> = []
