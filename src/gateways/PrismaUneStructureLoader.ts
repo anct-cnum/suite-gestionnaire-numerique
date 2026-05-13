@@ -174,7 +174,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
   const totalAidant = personnesDedupliquees.filter((affectation) => {
     const sources = sourcesParPersonne.get(affectation.personne.id) ?? new Set<string>()
     return (
-      sources.has('aidant-connect') ||
+      sources.has('aidants-connect') ||
       affectation.personne.is_coordinateur === true ||
       affectation.personne.is_mediateur === true
     )
@@ -190,7 +190,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (personne.is_mediateur === true) {
       fonctions.push('Médiateur numérique')
     }
-    if (sources.has('aidant-connect')) {
+    if (sources.has('aidants-connect')) {
       fonctions.push('Aidant numérique')
     }
 
@@ -198,7 +198,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
     if (personne.conseiller_numerique_id !== null && personne.conseiller_numerique_id !== '') {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/conum.svg`)
     }
-    if (sources.has('aidant-connect')) {
+    if (sources.has('aidants-connect')) {
       logos.push(`${process.env.NEXT_PUBLIC_HOST}/aidant-numerique.svg`)
     }
     return {
