@@ -549,8 +549,8 @@ async function buildConventionsConseillerNumerique(
   `
 
   // Récupérer toutes les dates en une seule fois pour éviter les await dans la boucle
-  const postesIds = postesConumResult.map((poste) => poste.poste_conum_id)
-  const datesSubventions = await recupererDatesSubventions(postesIds)
+  const posteConumIds = postesConumResult.map((poste) => poste.poste_conum_id)
+  const datesSubventions = await recupererDatesSubventions(posteConumIds)
 
   // Cumuler par enveloppe au niveau de la structure
   const { cumulV1, cumulV2 } = cumulerSubventionsParEnveloppe(postesConumResult, datesSubventions)
@@ -722,7 +722,7 @@ interface CumulEnveloppe {
   montantSubvention: number
 }
 
-async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Promise<
+async function recupererDatesSubventions(posteConumIds: ReadonlyArray<number>): Promise<
   Map<
     number,
     {
@@ -731,7 +731,7 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
     }
   >
 > {
-  if (postesIds.length === 0) {
+  if (posteConumIds.length === 0) {
     return new Map()
   }
 
@@ -743,11 +743,11 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
       date_fin_dgcl: Date | null
       date_fin_dge: Date | null
       date_fin_ditp: Date | null
-      poste_id: number
+      poste_conum_id: number
     }>
   >`
     SELECT
-      s.poste_id,
+      p.poste_conum_id,
       s.date_debut_convention_dgcl as date_debut_dgcl,
       s.date_fin_convention_dgcl as date_fin_dgcl,
       s.date_debut_convention_ditp as date_debut_ditp,
@@ -755,7 +755,8 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
       s.date_debut_convention_dge as date_debut_dge,
       s.date_fin_convention_dge as date_fin_dge
     FROM main.subvention s
-    WHERE s.poste_id = ANY(${postesIds})
+    JOIN main.poste p ON p.id = s.poste_id
+    WHERE p.poste_conum_id = ANY(${posteConumIds})
   `
 
   const datesMap = new Map<
@@ -766,14 +767,14 @@ async function recupererDatesSubventions(postesIds: ReadonlyArray<number>): Prom
     }
   >()
 
-  // Initialiser tous les postes
-  for (const posteId of postesIds) {
-    datesMap.set(posteId, { v1: null, v2: null })
+  // Initialiser tous les postes conum
+  for (const posteConumId of posteConumIds) {
+    datesMap.set(posteConumId, { v1: null, v2: null })
   }
 
   // Remplir avec les données récupérées
   for (const date of datesResult) {
-    const posteDates = datesMap.get(date.poste_id)
+    const posteDates = datesMap.get(date.poste_conum_id)
     if (posteDates !== undefined) {
       // V1 : DGCL
       if (date.date_debut_dgcl !== null || date.date_fin_dgcl !== null) {
