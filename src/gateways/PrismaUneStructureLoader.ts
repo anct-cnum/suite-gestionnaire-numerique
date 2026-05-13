@@ -1,4 +1,5 @@
 import prisma from '../../prisma/prismaClient'
+import { calculerStatutContrat } from '@/domain/Contrat'
 import { RoleType, UneStructureLoader, UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure'
 
 export class PrismaUneStructureLoader implements UneStructureLoader {
@@ -231,14 +232,7 @@ interface ContratRecord {
   type: null | string
 }
 
-function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): ReadonlyArray<{
-  contrat: string
-  dateDebut: Date | undefined
-  dateFin: Date | undefined
-  dateRupture: Date | undefined
-  mediateur: string
-  role: string
-}> {
+function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): UneStructureReadModel['contratsRattaches'] {
   return contrats.map((contrat) => ({
     contrat: contrat.type ?? 'CDD',
     dateDebut: contrat.date_debut ?? undefined,
@@ -246,6 +240,7 @@ function buildContratsRattaches(contrats: ReadonlyArray<ContratRecord>): Readonl
     dateRupture: contrat.date_rupture ?? undefined,
     mediateur: `${contrat.personne.prenom ?? ''} ${contrat.personne.nom ?? ''}`.trim(),
     role: determinerRoleContrat(contrat.personne),
+    statut: calculerStatutContrat(contrat.date_rupture),
   }))
 }
 

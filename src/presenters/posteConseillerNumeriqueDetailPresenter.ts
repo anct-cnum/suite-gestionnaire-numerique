@@ -1,3 +1,4 @@
+import { toStatutContratViewModel } from './shared/contrat'
 import { formaterEnDateFrancaise } from './shared/date'
 import { formatMontant } from './shared/number'
 import { PosteConseillerNumeriqueDetailReadModel } from '@/use-cases/queries/RecupererUnPosteConseillerNumerique'
@@ -135,22 +136,15 @@ function getStatutBadge(statut: string): { color: string; label: string } {
 }
 
 function buildContrats(contrats: PosteConseillerNumeriqueDetailReadModel['contrats']): ReadonlyArray<ContratViewModel> {
-  return contrats.map((contrat) => {
-    const hasRupture = contrat.dateRupture !== null
-
-    return {
-      contrat: contrat.typeContrat,
-      dateDebut: contrat.dateDebut ? formaterEnDateFrancaise(contrat.dateDebut) : '-',
-      dateFin: contrat.dateFin ? formaterEnDateFrancaise(contrat.dateFin) : '-',
-      dateRupture: contrat.dateRupture ? formaterEnDateFrancaise(contrat.dateRupture) : '-',
-      mediateur: contrat.mediateur,
-      role: contrat.role,
-      statut: {
-        libelle: hasRupture ? 'Terminé' : 'En cours',
-        variant: hasRupture ? 'error' : 'success',
-      },
-    }
-  })
+  return contrats.map((contrat) => ({
+    contrat: contrat.typeContrat,
+    dateDebut: contrat.dateDebut ? formaterEnDateFrancaise(contrat.dateDebut) : '-',
+    dateFin: contrat.dateFin ? formaterEnDateFrancaise(contrat.dateFin) : '-',
+    dateRupture: contrat.dateRupture ? formaterEnDateFrancaise(contrat.dateRupture) : '-',
+    mediateur: contrat.mediateur,
+    role: contrat.role,
+    statut: toStatutContratViewModel(contrat.statut),
+  }))
 }
 
 function buildConventionsEtFinancements(

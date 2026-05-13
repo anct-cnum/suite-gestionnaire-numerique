@@ -26,7 +26,7 @@ export default function Poste({ viewModel }: Props): ReactElement {
           <PosteStructureConventionnee structure={viewModel.structure} />
           <ConventionsEtFinancements data={viewModel.conventionsEtFinancements} />
 
-          <ContratsRattaches contrats={viewModel.contrats} />
+          <ContratsRattaches contrats={viewModel.contrats} titre="Contrats rattachés au poste" />
         </div>
       </div>
     </div>

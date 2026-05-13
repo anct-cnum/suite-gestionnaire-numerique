@@ -1,4 +1,5 @@
 import { QueryHandler } from '../QueryHandler'
+import { StatutContrat } from '@/domain/Contrat'
 
 export class RecupererUneStructure implements QueryHandler<Query, UneStructureReadModel> {
   readonly #uneStructureLoader: UneStructureLoader
@@ -46,6 +47,7 @@ export type UneStructureReadModel = Readonly<{
     dateRupture: Date | undefined
     mediateur: string
     role: string
+    statut: StatutContrat
   }>
   conventionsEtFinancements: Readonly<{
     conventions: ReadonlyArray<{

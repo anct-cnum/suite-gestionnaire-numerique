@@ -1,4 +1,5 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
+import { StatutContrat } from '@/domain/Contrat'
 
 export type EtatPoste = 'occupe' | 'rendu' | 'vacant'
 
@@ -10,6 +11,7 @@ export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
       dateRupture: Date | null
       mediateur: string
       role: string
+      statut: StatutContrat
       typeContrat: string
     }>
   >

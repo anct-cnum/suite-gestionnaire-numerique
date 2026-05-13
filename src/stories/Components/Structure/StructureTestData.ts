@@ -62,7 +62,7 @@ export function createDefaultStructureViewModel(): StructureViewModel {
         mediateur: 'Thomas Bernard',
         role: 'Aidant numérique',
         statut: {
-          libelle: 'Expirée',
+          libelle: 'Terminé',
           variant: 'error',
         },
       },

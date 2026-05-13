@@ -81,12 +81,12 @@ export const AvecPlusieursContratsEnCours: Story = {
   },
 }
 
-export const TousContratsExpires: Story = {
+export const TousContratsTermines: Story = {
   args: {
     contratsRattaches: defaultViewModel.contratsRattaches.map((contrat) => ({
       ...contrat,
       statut: {
-        libelle: 'Expirée',
+        libelle: 'Terminé',
         variant: 'error',
       },
     })),
