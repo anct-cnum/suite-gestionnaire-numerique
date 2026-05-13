@@ -4,11 +4,11 @@ import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
 import TableauVide from '@/components/shared/TableauVide/TableauVide'
 
-export default function ContratsRattaches({ contrats }: Props): ReactElement {
+export default function ContratsRattaches({ contrats, titre }: Props): ReactElement {
   return (
     <section aria-labelledby="contrats" className="grey-border border-radius fr-mb-2w fr-p-4w" id="contrats">
       <h2 className="fr-h6" id="contratsRattaches">
-        Contrats rattachés au poste
+        {titre}
       </h2>
       <article aria-label="Contrats rattachés">
         {contrats.length === 0 ? (
@@ -19,7 +19,7 @@ export default function ContratsRattaches({ contrats }: Props): ReactElement {
         ) : (
           <Table
             enTetes={['Médiateur', 'Statut du contrat', 'Contrat', 'Date de début', 'Date de fin', 'Date de rupture']}
-            titre="Contrats rattachés au poste"
+            titre={titre}
           >
             {contrats.map((contrat) => (
               <tr key={`${contrat.mediateur}-${contrat.contrat}-${contrat.dateDebut}`}>
@@ -58,4 +58,5 @@ export type ContratRattacheViewModel = Readonly<{
 
 type Props = Readonly<{
   contrats: ReadonlyArray<ContratRattacheViewModel>
+  titre: string
 }>
