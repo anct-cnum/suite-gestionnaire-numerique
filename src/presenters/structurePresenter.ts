@@ -1,3 +1,4 @@
+import { StatutContratViewModel, toStatutContratViewModel } from './shared/contrat'
 import { formaterEnDateFrancaise } from './shared/date'
 import { formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
@@ -18,24 +19,15 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       totalMediateur: uneStructureReadModel.aidantsEtMediateurs.totalMediateur,
     },
     contacts: uneStructureReadModel.contacts,
-    contratsRattaches: uneStructureReadModel.contratsRattaches.map((contrat) => {
-      const dateFin = contrat.dateFin
-      const isEnCours = dateFin ? dateFin > now : true
-      const dateRupture = contrat.dateRupture
-
-      return {
-        contrat: contrat.contrat,
-        dateDebut: contrat.dateDebut ? formaterEnDateFrancaise(contrat.dateDebut) : '-',
-        dateFin: contrat.dateFin ? formaterEnDateFrancaise(contrat.dateFin) : '-',
-        dateRupture: dateRupture ? formaterEnDateFrancaise(dateRupture) : '-',
-        mediateur: contrat.mediateur,
-        role: contrat.role,
-        statut: {
-          libelle: isEnCours ? 'En cours' : 'Expirée',
-          variant: isEnCours ? 'success' : 'error',
-        },
-      }
-    }),
+    contratsRattaches: uneStructureReadModel.contratsRattaches.map((contrat) => ({
+      contrat: contrat.contrat,
+      dateDebut: contrat.dateDebut ? formaterEnDateFrancaise(contrat.dateDebut) : '-',
+      dateFin: contrat.dateFin ? formaterEnDateFrancaise(contrat.dateFin) : '-',
+      dateRupture: contrat.dateRupture ? formaterEnDateFrancaise(contrat.dateRupture) : '-',
+      mediateur: contrat.mediateur,
+      role: contrat.role,
+      statut: toStatutContratViewModel(contrat.statut),
+    })),
     conventionsEtFinancements: {
       conventions: uneStructureReadModel.conventionsEtFinancements.conventions.map((convention) => {
         const isEnCours = convention.dateFin > now
@@ -126,7 +118,7 @@ export type StructureViewModel = Readonly<{
     dateRupture: string
     mediateur: string
     role: string
-    statut: Statut
+    statut: StatutContratViewModel
   }>
   conventionsEtFinancements: Readonly<{
     conventions: ReadonlyArray<{

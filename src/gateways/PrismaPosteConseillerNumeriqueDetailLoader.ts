@@ -1,5 +1,6 @@
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
+import { calculerStatutContrat } from '@/domain/Contrat'
 import {
   EtatPoste,
   PosteConseillerNumeriqueDetailLoader,
@@ -238,16 +239,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
   private async recupererContrats(
     posteConumId: number,
     structureId: number
-  ): Promise<
-    ReadonlyArray<{
-      dateDebut: Date | null
-      dateFin: Date | null
-      dateRupture: Date | null
-      mediateur: string
-      role: string
-      typeContrat: string
-    }>
-  > {
+  ): Promise<PosteConseillerNumeriqueDetailReadModel['contrats']> {
     const result = await prisma.$queryRaw<
       Array<{
         date_debut: Date | null
@@ -284,6 +276,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       dateRupture: contrat.date_rupture,
       mediateur: `${contrat.prenom ?? ''} ${contrat.nom ?? ''}`.trim(),
       role: this.determinerRole(contrat.is_coordinateur, contrat.is_mediateur),
+      statut: calculerStatutContrat(contrat.date_rupture),
       typeContrat: contrat.type_contrat ?? 'Non renseigné',
     }))
   }
