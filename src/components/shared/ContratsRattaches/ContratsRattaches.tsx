@@ -1,10 +1,10 @@
-import { ReactElement } from 'react'
+import { ReactElement, ReactNode } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
 import TableauVide from '@/components/shared/TableauVide/TableauVide'
 
-export default function ContratsRattaches({ contrats, titre }: Props): ReactElement {
+export default function ContratsRattaches({ bandeau, contrats, titre }: Props): ReactElement {
   return (
     <section aria-labelledby="contrats" className="grey-border border-radius fr-mb-2w fr-p-4w" id="contrats">
       <h2 className="fr-h6" id="contratsRattaches">
@@ -39,6 +39,7 @@ export default function ContratsRattaches({ contrats, titre }: Props): ReactElem
           </Table>
         )}
       </article>
+      {bandeau}
     </section>
   )
 }
@@ -57,6 +58,7 @@ export type ContratRattacheViewModel = Readonly<{
 }>
 
 type Props = Readonly<{
+  bandeau?: ReactNode
   contrats: ReadonlyArray<ContratRattacheViewModel>
   titre: string
 }>
