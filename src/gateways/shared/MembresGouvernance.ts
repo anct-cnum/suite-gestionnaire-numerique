@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client'
 
+import { estEnveloppeDeFormation } from '@/shared/enveloppeFinancement'
+
 export type Membre = Readonly<{
   contacts: ReadonlyArray<ContactMembre>
   id: string
@@ -61,12 +63,12 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   if (beneficiaireSubvention.length > 0) {
     // Vérifier si le membre a des demandes de subvention avec des enveloppes de formation
     const aEnveloppeFormation = beneficiaireSubvention.some((beneficiaire) =>
-      beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+      estEnveloppeDeFormation(beneficiaire.demandeDeSubvention.enveloppe.libelle)
     )
 
     // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
     const aEnveloppeNonFormation = beneficiaireSubvention.some(
-      (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+      (beneficiaire) => !estEnveloppeDeFormation(beneficiaire.demandeDeSubvention.enveloppe.libelle)
     )
 
     if (aEnveloppeFormation) {

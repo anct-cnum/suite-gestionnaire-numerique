@@ -168,6 +168,10 @@ function buildConventionsEtFinancements(
     enveloppes.push(conventionV1.enveloppe)
   }
 
+  // Invariant métier : la vue Poste n'expose que des enveloppes Conseiller Numérique.
+  // Garanti par construction : `enveloppes` n'est alimenté que par buildConventionV1/V2,
+  // et le loader (PrismaPosteConseillerNumeriqueDetailLoader) ne lit jamais de demande
+  // de subvention / enveloppe_financement FNE. Verrouillé par le test de caractérisation.
   return {
     conventions: conventionsList,
     creditsEngagesParLEtat: formatMontant(conventions.creditsEngagesParLEtat),

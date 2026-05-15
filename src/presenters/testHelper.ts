@@ -6,7 +6,10 @@ import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
+import { epochTime, epochTimeMinusOneDay, epochTimePlusOneDay } from '@/shared/testHelper'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
+
+export { epochTime, epochTimeMinusOneDay, epochTimePlusOneDay }
 
 const enveloppes: ActionViewModel['enveloppes'] = [
   {

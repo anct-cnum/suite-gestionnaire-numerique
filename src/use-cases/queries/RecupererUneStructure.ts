@@ -1,5 +1,6 @@
 import { QueryHandler } from '../QueryHandler'
 import { StatutContrat } from '@/domain/Contrat'
+import { TypeEnveloppe } from '@/shared/enveloppeFinancement'
 
 export class RecupererUneStructure implements QueryHandler<Query, UneStructureReadModel> {
   readonly #uneStructureLoader: UneStructureLoader
@@ -63,6 +64,7 @@ export type UneStructureReadModel = Readonly<{
     enveloppes: ReadonlyArray<{
       libelle: string
       montant: number
+      type: TypeEnveloppe
     }>
     lienConventions: string
   }>
