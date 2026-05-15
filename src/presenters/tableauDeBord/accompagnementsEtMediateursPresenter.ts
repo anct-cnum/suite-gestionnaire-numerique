@@ -47,7 +47,7 @@ export function accompagnementsEtMediateursPresenter(
     metriques: [
       {
         chiffre: readModel.mediateursNumeriques.toLocaleString('fr-FR'),
-        sousTitre: `Dont ${readModel.conseillerNumeriques.toLocaleString('fr-FR')} Conseillers numériques`,
+        sousTitre: `Dont ${readModel.conseillerNumeriques.toLocaleString('fr-FR')} conseillers numériques`,
         titre: 'Médiateurs numériques',
       },
       {

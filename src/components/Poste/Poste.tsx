@@ -71,7 +71,7 @@ const items: ReadonlyArray<SideMenuItem> = [
   },
   {
     linkProps: { href: '#conventions' },
-    text: 'Convention et financement',
+    text: 'Conventions et financements',
   },
   {
     linkProps: { href: '#contrats' },

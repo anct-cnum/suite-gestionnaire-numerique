@@ -63,7 +63,7 @@ export default function AidantsMediateurs({
           <div className="fr-col">
             <div className="fr-grid-row fr-grid-row--middle">
               <InformationLogo />
-              <span>Aidants, médiateurs, conseillers numériques, … : Quelles différences ?</span>
+              <span>Aidant, médiateur, Conseiller Numérique : quelles différences ?</span>
             </div>
           </div>
           <div className="fr-col-auto">

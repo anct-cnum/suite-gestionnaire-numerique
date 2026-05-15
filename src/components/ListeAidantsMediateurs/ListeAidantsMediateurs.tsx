@@ -267,7 +267,7 @@ export default function ListeAidantsMediateurs({
         <div className="fr-col">
           <PageTitle>
             <TitleIcon icon="group-line" />
-            Suivi aidants et médiateurs
+            Suivi des aidants et médiateurs
           </PageTitle>
         </div>
         <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
@@ -348,7 +348,7 @@ export default function ListeAidantsMediateurs({
           }}
         >
           <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
-            <span className="fr-text--bold">👻 Aucuns aidants et médiateurs trouvés sur votre territoire</span>
+            <span className="fr-text--bold">👻 Aucun aidant ou médiateur trouvé sur votre territoire</span>
           </p>
         </div>
       ) : (

@@ -69,7 +69,7 @@ export default function AccompagnementsEtMediateurs({
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
         <div>
           <h2 className="fr-h4 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
-            Accompagnements et Médiateurs numériques
+            Accompagnements et médiateurs numériques
             <Information>
               <p className="fr-mb-0">
                 Les indicateurs affichés concernent les médiateurs numériques inscrits sur{' '}
@@ -162,7 +162,7 @@ export default function AccompagnementsEtMediateurs({
               onClick={() => {
                 void handleDownload()
               }}
-              title="Accompagnements et Médiateurs"
+              title="Accompagnements et médiateurs"
             />
           </div>
         </div>
