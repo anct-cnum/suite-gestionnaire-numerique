@@ -1,5 +1,6 @@
 import prisma from '../../prisma/prismaClient'
 import { calculerStatutContrat } from '@/domain/Contrat'
+import { classifierTypeEnveloppe, estEnveloppeDeFormation, TypeEnveloppe } from '@/shared/enveloppeFinancement'
 import { RoleType, UneStructureLoader, UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure'
 
 export class PrismaUneStructureLoader implements UneStructureLoader {
@@ -376,11 +377,11 @@ function ajouterRolesSubvention(
   }
 
   const aEnveloppeFormation = beneficiaires.some((beneficiaire) =>
-    beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    estEnveloppeDeFormation(beneficiaire.demandeDeSubvention.enveloppe.libelle)
   )
 
   const aEnveloppeNonFormation = beneficiaires.some(
-    (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    (beneficiaire) => !estEnveloppeDeFormation(beneficiaire.demandeDeSubvention.enveloppe.libelle)
   )
 
   if (aEnveloppeFormation) {
@@ -485,6 +486,7 @@ async function buildConventionsEtFinancements(
   enveloppes: ReadonlyArray<{
     libelle: string
     montant: number
+    type: TypeEnveloppe
   }>
   lienConventions: string
 }> {
@@ -510,6 +512,7 @@ async function buildConventionsEtFinancements(
   const enveloppes = Array.from(enveloppesMap.entries()).map(([libelle, montant]) => ({
     libelle,
     montant,
+    type: classifierTypeEnveloppe(libelle),
   }))
 
   return {

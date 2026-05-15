@@ -55,6 +55,7 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
           END AS consommation
         FROM min.enveloppe_financement e
         CROSS JOIN agg
+        -- Type « Conseiller Numérique » : règle canonique classifierTypeEnveloppe (@/shared/enveloppeFinancement)
         WHERE e.libelle LIKE 'Conseiller Numérique%'
         ORDER BY e.libelle
       `
@@ -105,6 +106,7 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
       CROSS JOIN agg
       LEFT JOIN min.departement_enveloppe de
         ON de.enveloppe_id = e.id AND de.departement_code = ${code}
+      -- Type « Conseiller Numérique » : règle canonique classifierTypeEnveloppe (@/shared/enveloppeFinancement)
       WHERE e.libelle LIKE 'Conseiller Numérique%'
       ORDER BY e.libelle
     `
@@ -130,6 +132,7 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
         END AS consommation
       FROM min.enveloppe_financement e
       CROSS JOIN agg
+      -- Type « Conseiller Numérique » : règle canonique classifierTypeEnveloppe (@/shared/enveloppeFinancement)
       WHERE e.libelle LIKE 'Conseiller Numérique%'
       ORDER BY e.libelle
     `
