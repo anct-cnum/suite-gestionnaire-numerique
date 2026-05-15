@@ -234,7 +234,7 @@ export default function ListePostesConseillerNumerique({
       <div className="fr-callout fr-callout--blue-ecume fr-mb-3w">
         <p className="fr-callout__text fr-text--sm fr-mb-0">
           <span className="fr-icon-information-fill fr-mr-1w" />
-          {'Pour gérer les postes de conseiller numérique, connectez-vous au tableau de pilotage '}
+          {'Pour gérer les postes de Conseiller Numérique, connectez-vous au tableau de pilotage '}
           <a
             className="fr-link"
             href="https://pilotage.conseiller-numerique.gouv.fr"
@@ -258,7 +258,7 @@ export default function ListePostesConseillerNumerique({
           }}
         >
           <p className="fr-text--md fr-mb-0" style={{ textAlign: 'center' }}>
-            <span className="fr-text--bold">Aucun poste de conseiller numérique trouvé sur votre territoire</span>
+            <span className="fr-text--bold">Aucun poste de Conseiller Numérique trouvé sur votre territoire</span>
           </p>
         </div>
       ) : (

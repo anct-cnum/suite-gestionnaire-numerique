@@ -26,7 +26,7 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
       }}
     >
       <h2 className="fr-h6 fr-m-0" id="conventions">
-        Conventions et financement
+        Conventions et financements
       </h2>
 
       <article aria-label="Résumé des financements">

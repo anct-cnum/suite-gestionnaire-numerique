@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     'inclusion numérique',
     'ANCT',
     'France Numérique Ensemble',
-    'conseiller numérique',
+    'Conseiller Numérique',
     "lieux d'inclusion",
     'gouvernance territoriale',
   ],

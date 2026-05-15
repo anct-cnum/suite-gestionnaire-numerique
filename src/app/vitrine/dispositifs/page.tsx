@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Découvrez les dispositifs d'inclusion numérique : conseillers numériques, Aidants Connect, ateliers de montée en compétences. Répondre collectivement aux besoins d'accompagnement de la population.",
   keywords: [
-    'conseiller numérique',
+    'Conseiller Numérique',
     'Aidants Connect',
     'dispositifs inclusion',
     'accompagnement numérique',

@@ -4,7 +4,7 @@ import ContratsRattaches from '@/components/shared/ContratsRattaches/ContratsRat
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function StructureContratsRattaches({ contratsRattaches }: Props): ReactElement {
-  return <ContratsRattaches contrats={contratsRattaches} titre="Contrat des conseillers numériques" />
+  return <ContratsRattaches contrats={contratsRattaches} titre="Contrats des conseillers numériques" />
 }
 
 type Props = Readonly<{
