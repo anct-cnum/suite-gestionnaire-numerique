@@ -52,6 +52,16 @@ export default function StructureIdentite({ identite }: Props): ReactElement {
           <div style={{ flex: '1 0 0' }} />
         </div>
       </article>
+      <div className="fr-notice fr-notice--info border-radius fr-mt-3w">
+        <div className="fr-notice__body fr-px-3w">
+          <p className="fr-notice__title fr-text--sm fr-text--regular">
+            <span className="fr-text-default--grey">
+              Les informations d’identité de la structure sont récupérées via l’Annuaire des entreprises et ne sont pas
+              éditables
+            </span>
+          </p>
+        </div>
+      </div>
     </section>
   )
 }
