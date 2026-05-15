@@ -69,9 +69,16 @@ const sectionAVenir: Section = {
 const sectionRapportsEtStatistiques: Section = {
   menus: [
     {
+      icon: 'file-text-line',
+      label: 'Rapports',
+      url: () => '/rapports',
+      visible: (contexte) => contexte.aCesRoles('administrateur_dispositif'),
+    },
+    {
       icon: 'line-chart-line',
       label: 'Statistiques',
       url: () => '/statistiques',
+      visible: (contexte) => contexte.estSuperAdmin(),
     },
   ],
   titre: 'RAPPORTS ET STATISTIQUES',
@@ -82,7 +89,7 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  if (contexte.estSuperAdmin()) {
+  if (contexte.estSuperAdmin() || contexte.aCesRoles('administrateur_dispositif')) {
     sections.push(sectionRapportsEtStatistiques)
   }
 

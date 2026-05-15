@@ -157,6 +157,37 @@ describe('menu lateral', () => {
     expect(rapportsEtStatistiques).not.toBeInTheDocument()
     const lienStatistiques = within(nav).queryByRole('link', { name: 'Statistiques' })
     expect(lienStatistiques).not.toBeInTheDocument()
+    const lienRapports = within(nav).queryByRole('link', { name: 'Rapports' })
+    expect(lienRapports).not.toBeInTheDocument()
+  })
+
+  it("étant super admin, quand j'affiche le menu latéral, alors le lien Rapports s'affiche", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={contexteSuperAdmin} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const lienRapports = within(nav).getByRole('link', { name: 'Rapports' })
+    expect(lienRapports).toHaveAttribute('href', '/rapports')
+  })
+
+  it("étant administrateur dispositif non super admin, quand j'affiche le menu latéral, alors Rapports s'affiche mais pas Statistiques", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={new Contexte('administrateur_dispositif', [{ type: 'france' }])} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).toBeInTheDocument()
+    expect(within(nav).getByRole('link', { name: 'Rapports' })).toHaveAttribute('href', '/rapports')
+    expect(within(nav).queryByRole('link', { name: 'Statistiques' })).not.toBeInTheDocument()
   })
 
   it("étant n'importe qui, quand j'affiche le menu latéral, alors la section ORGANISATION s'affiche avec Mon équipe", () => {

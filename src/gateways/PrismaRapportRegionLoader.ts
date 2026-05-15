@@ -1,5 +1,11 @@
+import { Prisma } from '@prisma/client'
+
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
+
+export type RapportPerimetre =
+  | Readonly<{ code: string; type: 'departement' | 'region' }>
+  | Readonly<{ type: 'national' }>
 
 export type AidantsDepartement = Readonly<{
   code: string
@@ -15,7 +21,7 @@ export type ConseillersDepartement = Readonly<{
   nom: string
 }>
 
-export type RapportRegionReadModel = Readonly<{
+export type RapportReadModel = Readonly<{
   aidantsConnect: Readonly<{
     departements: ReadonlyArray<AidantsDepartement>
     totalDontConseillers: number
@@ -28,28 +34,24 @@ export type RapportRegionReadModel = Readonly<{
   franceNumerique: Readonly<{
     departements: ReadonlyArray<FneDepartement>
   }>
-  region: Readonly<{ code: string; nom: string }>
+  perimetre: Readonly<{ nom: string; type: 'departement' | 'national' | 'region' }>
 }>
 
 export class PrismaRapportRegionLoader {
-  async get(codeRegion: string): Promise<null | RapportRegionReadModel> {
+  async get(perimetre: RapportPerimetre): Promise<null | RapportReadModel> {
     try {
-      const regionRows = await prisma.$queryRaw<Array<RegionRow>>`
-        SELECT r.nom
-        FROM min.region r
-        WHERE r.code = ${codeRegion}
-      `
-
-      if (regionRows.length === 0) {
+      const nom = await this.#resoudreNomPerimetre(perimetre)
+      if (nom === null) {
         return null
       }
 
+      const filtreGeo = this.#filtreGeo(perimetre)
       const [conseillers, beneficiaires, aidants, fneRows, membresRows] = await Promise.all([
-        this.#queryConseillers(codeRegion),
-        this.#queryBeneficiaires(codeRegion),
-        this.#queryAidants(codeRegion),
-        this.#queryFne(codeRegion),
-        this.#queryMembresGouvernance(codeRegion),
+        this.#queryConseillers(filtreGeo),
+        this.#queryBeneficiaires(filtreGeo),
+        this.#queryAidants(filtreGeo),
+        this.#queryFne(filtreGeo),
+        this.#queryMembresGouvernance(filtreGeo),
       ])
 
       const conseillersNumeriques = this.#buildConseillers(conseillers, beneficiaires)
@@ -60,13 +62,13 @@ export class PrismaRapportRegionLoader {
         aidantsConnect,
         conseillersNumeriques,
         franceNumerique,
-        region: { code: codeRegion, nom: regionRows[0].nom },
+        perimetre: { nom, type: perimetre.type },
       }
     } catch (error) {
       console.error('[PrismaRapportRegionLoader]', error)
       reportLoaderError(error, 'PrismaRapportRegionLoader', {
-        codeRegion,
         operation: 'get',
+        perimetre: JSON.stringify(perimetre),
       })
       return null
     }
@@ -122,7 +124,7 @@ export class PrismaRapportRegionLoader {
     }
   }
 
-  #buildAidants(rows: Array<AidantsDepartementRow>): RapportRegionReadModel['aidantsConnect'] {
+  #buildAidants(rows: Array<AidantsDepartementRow>): RapportReadModel['aidantsConnect'] {
     const departements = rows.map((row) => ({
       code: row.code_departement,
       dontConseillers: Number(row.dont_conseillers),
@@ -138,7 +140,7 @@ export class PrismaRapportRegionLoader {
   #buildConseillers(
     conseillerRows: Array<ConseillersDepartementRow>,
     beneficiaireRows: Array<BeneficiairesDepartementRow>
-  ): RapportRegionReadModel['conseillersNumeriques'] {
+  ): RapportReadModel['conseillersNumeriques'] {
     const beneficiairesParDep = new Map(
       beneficiaireRows.map((row) => [row.code_departement, Number(row.nb_beneficiaires)])
     )
@@ -153,7 +155,7 @@ export class PrismaRapportRegionLoader {
     return { departements, total }
   }
 
-  #buildFne(rows: Array<FneRow>, membresRows: Array<MembreGouvernanceRow>): RapportRegionReadModel['franceNumerique'] {
+  #buildFne(rows: Array<FneRow>, membresRows: Array<MembreGouvernanceRow>): RapportReadModel['franceNumerique'] {
     const membresParDep = this.#buildGouvernanceMembres(membresRows)
     const departementsMap = new Map<string, DepartementAccumulator>()
 
@@ -215,7 +217,17 @@ export class PrismaRapportRegionLoader {
     return nom.charAt(0).toUpperCase() + nom.slice(1).toLowerCase()
   }
 
-  async #queryAidants(codeRegion: string): Promise<Array<AidantsDepartementRow>> {
+  #filtreGeo(perimetre: RapportPerimetre): Prisma.Sql {
+    if (perimetre.type === 'national') {
+      return Prisma.sql`TRUE`
+    }
+    if (perimetre.type === 'region') {
+      return Prisma.sql`d.region_code = ${perimetre.code}`
+    }
+    return Prisma.sql`d.code = ${perimetre.code}`
+  }
+
+  async #queryAidants(filtre: Prisma.Sql): Promise<Array<AidantsDepartementRow>> {
     return prisma.$queryRaw<Array<AidantsDepartementRow>>`
       SELECT
         d.code AS code_departement,
@@ -227,14 +239,14 @@ export class PrismaRapportRegionLoader {
       JOIN main.structure st ON st.id = pa.structure_id
       JOIN main.adresse a ON a.id = st.adresse_id
       JOIN min.departement d ON d.code = a.departement
-      WHERE d.region_code = ${codeRegion}
+      WHERE ${filtre}
         AND pe.labellisation_aidant_connect = true
       GROUP BY d.code, d.nom
       ORDER BY d.code
     `
   }
 
-  async #queryBeneficiaires(codeRegion: string): Promise<Array<BeneficiairesDepartementRow>> {
+  async #queryBeneficiaires(filtre: Prisma.Sql): Promise<Array<BeneficiairesDepartementRow>> {
     return prisma.$queryRaw<Array<BeneficiairesDepartementRow>>`
       SELECT
         d.code AS code_departement,
@@ -243,12 +255,12 @@ export class PrismaRapportRegionLoader {
       JOIN main.structure st ON st.id = ac.structure_id
       JOIN main.adresse a ON a.id = st.adresse_id
       JOIN min.departement d ON d.code = a.departement
-      WHERE d.region_code = ${codeRegion}
+      WHERE ${filtre}
       GROUP BY d.code
     `
   }
 
-  async #queryConseillers(codeRegion: string): Promise<Array<ConseillersDepartementRow>> {
+  async #queryConseillers(filtre: Prisma.Sql): Promise<Array<ConseillersDepartementRow>> {
     return prisma.$queryRaw<Array<ConseillersDepartementRow>>`
       SELECT
         d.code AS code_departement,
@@ -258,14 +270,14 @@ export class PrismaRapportRegionLoader {
       JOIN main.structure st ON st.id = v.structure_id
       JOIN main.adresse a ON a.id = st.adresse_id
       JOIN min.departement d ON d.code = a.departement
-      WHERE d.region_code = ${codeRegion}
+      WHERE ${filtre}
         AND v.etat = 'occupe'
       GROUP BY d.code, d.nom
       ORDER BY d.code
     `
   }
 
-  async #queryFne(codeRegion: string): Promise<Array<FneRow>> {
+  async #queryFne(filtre: Prisma.Sql): Promise<Array<FneRow>> {
     return prisma.$queryRaw<Array<FneRow>>`
       SELECT
         d.code AS departement_code,
@@ -288,14 +300,14 @@ export class PrismaRapportRegionLoader {
       LEFT JOIN min.beneficiaire_subvention bs ON bs.demande_de_subvention_id = ds.id
       LEFT JOIN min.membre benef_mb ON benef_mb.id = bs.membre_id
       LEFT JOIN main.structure benef_st ON benef_st.id = benef_mb.structure_id
-      WHERE d.region_code = ${codeRegion}
+      WHERE ${filtre}
       GROUP BY d.code, d.nom, fdr.id, fdr.nom, porteur_st.nom, porteur_mb.type,
         ef.libelle, ds.subvention_demandee, ds.statut, act.besoins
       ORDER BY d.code, fdr.id, ef.libelle
     `
   }
 
-  async #queryMembresGouvernance(codeRegion: string): Promise<Array<MembreGouvernanceRow>> {
+  async #queryMembresGouvernance(filtre: Prisma.Sql): Promise<Array<MembreGouvernanceRow>> {
     return prisma.$queryRaw<Array<MembreGouvernanceRow>>`
       SELECT
         m.gouvernance_departement_code AS departement_code,
@@ -304,10 +316,28 @@ export class PrismaRapportRegionLoader {
       FROM min.membre m
       JOIN min.departement d ON d.code = m.gouvernance_departement_code
       JOIN main.structure st ON st.id = m.structure_id
-      WHERE d.region_code = ${codeRegion}
+      WHERE ${filtre}
         AND m.statut = 'confirme'
       ORDER BY d.code, st.nom
     `
+  }
+
+  async #resoudreNomPerimetre(perimetre: RapportPerimetre): Promise<null | string> {
+    if (perimetre.type === 'national') {
+      return "l'ensemble du territoire national"
+    }
+
+    if (perimetre.type === 'region') {
+      const rows = await prisma.$queryRaw<Array<NomRow>>`
+        SELECT r.nom FROM min.region r WHERE r.code = ${perimetre.code}
+      `
+      return rows.length === 0 ? null : `l'ensemble de la Région ${rows[0].nom}`
+    }
+
+    const rows = await prisma.$queryRaw<Array<NomRow>>`
+      SELECT d.nom FROM min.departement d WHERE d.code = ${perimetre.code}
+    `
+    return rows.length === 0 ? null : `l'ensemble du Département ${rows[0].nom}`
   }
 }
 
@@ -371,7 +401,7 @@ type MembreGouvernanceRow = Readonly<{
   structure_nom: string
 }>
 
-type RegionRow = Readonly<{
+type NomRow = Readonly<{
   nom: string
 }>
 

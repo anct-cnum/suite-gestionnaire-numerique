@@ -12,10 +12,14 @@ import {
   WidthType,
 } from 'docx'
 import { NextRequest, NextResponse } from 'next/server'
+import { chromium } from 'playwright'
 
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaRapportRegionLoader, RapportRegionReadModel } from '@/gateways/PrismaRapportRegionLoader'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaRapportRegionLoader, RapportPerimetre, RapportReadModel } from '@/gateways/PrismaRapportRegionLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { BESOINS_LABELS } from '@/presenters/shared/besoins'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -24,26 +28,41 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
     }
 
-    const codeRegion = request.nextUrl.searchParams.get('codeRegion')
-    const format = request.nextUrl.searchParams.get('format')
-
-    if (codeRegion === null || codeRegion === '') {
-      return NextResponse.json({ error: 'Le paramètre codeRegion est requis' }, { status: 400 })
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.aCesRoles('administrateur_dispositif')) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
     }
 
+    const perimetre = resoudrePerimetre(request.nextUrl.searchParams)
+    if (perimetre === null) {
+      return NextResponse.json({ error: 'Le périmètre géographique est invalide' }, { status: 400 })
+    }
+
+    const format = request.nextUrl.searchParams.get('format') ?? 'docx'
+
     const loader = new PrismaRapportRegionLoader()
-    const rapport = await loader.get(codeRegion)
+    const rapport = await loader.get(perimetre)
 
     if (!rapport) {
-      return NextResponse.json({ error: 'Région non trouvée' }, { status: 404 })
+      return NextResponse.json({ error: 'Périmètre non trouvé' }, { status: 404 })
+    }
+
+    if (format === 'pdf') {
+      const buffer = await genererPdf(rapport)
+      return new NextResponse(new Uint8Array(buffer), {
+        headers: {
+          'Content-Disposition': `attachment; filename="${nomFichier(rapport, 'pdf')}"`,
+          'Content-Type': 'application/pdf',
+        },
+      })
     }
 
     if (format === 'docx') {
       const buffer = await genererDocx(rapport)
-      const filename = `rapport-${rapport.region.nom.replace(/\s+/g, '-')}.docx`
       return new NextResponse(buffer, {
         headers: {
-          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Content-Disposition': `attachment; filename="${nomFichier(rapport, 'docx')}"`,
           'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         },
       })
@@ -60,9 +79,37 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(rapport)
   } catch (error) {
-    console.error('Erreur lors de la génération du rapport régional:', error)
+    console.error('Erreur lors de la génération du rapport:', error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
+}
+
+function resoudrePerimetre(searchParams: URLSearchParams): null | RapportPerimetre {
+  // Rétrocompatibilité : ?codeRegion=XX
+  const codeRegion = searchParams.get('codeRegion')
+  if (codeRegion !== null && codeRegion !== '') {
+    return { code: codeRegion, type: 'region' }
+  }
+
+  const type = searchParams.get('type')
+  const code = searchParams.get('code')
+
+  if (type === 'national') {
+    return { type: 'national' }
+  }
+  if ((type === 'region' || type === 'departement') && code !== null && code !== '') {
+    return { code, type }
+  }
+  return null
+}
+
+function nomFichier(rapport: RapportReadModel, extension: string): string {
+  const slug = rapport.perimetre.nom
+    .normalize('NFD')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .toLowerCase()
+  return `rapport-${slug}.${extension}`
 }
 
 const noBorder = {
@@ -91,8 +138,8 @@ function celluleNombre(texte: string, bold = false): TableCell {
   })
 }
 
-async function genererDocx(rapport: RapportRegionReadModel): Promise<Blob> {
-  const { aidantsConnect, conseillersNumeriques, franceNumerique, region } = rapport
+async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
+  const { aidantsConnect, conseillersNumeriques, franceNumerique, perimetre } = rapport
   const children: Array<Paragraph | Table> = []
 
   // Section 1 — Conseillers numériques
@@ -106,7 +153,7 @@ async function genererDocx(rapport: RapportRegionReadModel): Promise<Blob> {
     new Paragraph({
       text:
         `${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés` +
-        ` sur l'ensemble de la Région ${region.nom}.`,
+        ` sur ${perimetre.nom}.`,
     })
   )
   children.push(
@@ -147,7 +194,7 @@ async function genererDocx(rapport: RapportRegionReadModel): Promise<Blob> {
       text:
         "Aidants Connect est le service public numérique qui protège l'aidant et l'usager" +
         " lors de l'accompagnement aux démarches en ligne." +
-        ` Dans l'ensemble de la Région ${region.nom},` +
+        ` Dans ${perimetre.nom},` +
         ` ${formaterNombre(aidantsConnect.totalHabilites)} aidants et référents sont habilités Aidants Connect,` +
         ` dont ${formaterNombre(aidantsConnect.totalDontConseillers)} conseillers numériques.`,
     })
@@ -243,6 +290,108 @@ async function genererDocx(rapport: RapportRegionReadModel): Promise<Blob> {
   return Packer.toBlob(doc)
 }
 
+async function genererPdf(rapport: RapportReadModel): Promise<Buffer> {
+  const navigateur = await chromium.launch()
+  try {
+    const page = await navigateur.newPage()
+    await page.setContent(genererHtml(rapport), { waitUntil: 'load' })
+    return await page.pdf({
+      format: 'A4',
+      margin: { bottom: '20mm', left: '15mm', right: '15mm', top: '20mm' },
+      printBackground: true,
+    })
+  } finally {
+    await navigateur.close()
+  }
+}
+
+function echapperHtml(valeur: string): string {
+  return valeur.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+function genererHtml(rapport: RapportReadModel): string {
+  const { aidantsConnect, conseillersNumeriques, franceNumerique, perimetre } = rapport
+  const sections: Array<string> = []
+
+  const lignesConseillers = conseillersNumeriques.departements
+    .map(
+      (dep) =>
+        `<tr><td>${echapperHtml(dep.nom)}</td>` +
+        `<td class="nb">${formaterNombre(dep.nbConseillers)}</td>` +
+        `<td class="nb">${formaterNombre(dep.nbBeneficiaires)}</td></tr>`
+    )
+    .join('')
+  sections.push(
+    `<h2>Conseillers numériques</h2>` +
+      `<p>${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés sur ` +
+      `${echapperHtml(perimetre.nom)}.</p>` +
+      `<table><thead><tr><th>Départements</th><th class="nb">Nombre de Conseillers numériques</th>` +
+      `<th class="nb">Nombre de bénéficiaires depuis 2021</th></tr></thead>` +
+      `<tbody>${lignesConseillers}</tbody></table>`
+  )
+
+  const lignesAidants = aidantsConnect.departements
+    .map((dep) => {
+      const suffixe =
+        dep.dontConseillers > 0 ? ` dont ${formaterNombre(dep.dontConseillers)} conseillers numériques` : ''
+      return `<tr><td>${echapperHtml(dep.nom)}</td><td>${formaterNombre(dep.nbHabilites)}${suffixe}</td></tr>`
+    })
+    .join('')
+  sections.push(
+    `<h2>Déploiement d'Aidants Connect</h2>` +
+      `<p>Aidants Connect est le service public numérique qui protège l'aidant et l'usager lors de ` +
+      `l'accompagnement aux démarches en ligne. Dans ${echapperHtml(perimetre.nom)}, ` +
+      `${formaterNombre(aidantsConnect.totalHabilites)} aidants et référents sont habilités Aidants Connect, ` +
+      `dont ${formaterNombre(aidantsConnect.totalDontConseillers)} conseillers numériques.</p>` +
+      `<table><thead><tr><th>Départements</th>` +
+      `<th>Aidants et référents habilités Aidants Connect</th></tr></thead>` +
+      `<tbody>${lignesAidants}</tbody></table>`
+  )
+
+  const blocsFne: Array<string> = ['<h2>France Numérique Ensemble</h2>']
+  for (const dep of franceNumerique.departements) {
+    blocsFne.push(`<h3>Gouvernance de ${echapperHtml(dep.nom)}</h3>`)
+    if (dep.gouvernance.coporteurs.length > 0) {
+      blocsFne.push(`<p><strong>Coporteurs : </strong>${echapperHtml(dep.gouvernance.coporteurs.join(', '))}</p>`)
+    }
+    if (dep.gouvernance.membres.length > 0) {
+      blocsFne.push(`<p><strong>Membres : </strong>${echapperHtml(dep.gouvernance.membres.join(', '))}</p>`)
+    }
+    for (const fdr of dep.feuillesDeRoute) {
+      blocsFne.push(`<h4>Feuille de route ${echapperHtml(fdr.nom)}</h4>`)
+      blocsFne.push(`<p>Portée par ${echapperHtml(fdr.porteur.type)} (${echapperHtml(fdr.porteur.nom)})</p>`)
+      const items = fdr.enveloppes
+        .map((env) => {
+          const recipiendaires =
+            env.beneficiaires.length > 0 ? ` (récipiendaire : ${env.beneficiaires.join(' & ')})` : ''
+          return (
+            `<li>Enveloppe ${echapperHtml(env.type)} de ${formaterMontant(env.montant)}` +
+            `${echapperHtml(recipiendaires)}${echapperHtml(formaterBesoins(env.besoins))}</li>`
+          )
+        })
+        .join('')
+      blocsFne.push(`<ul>${items}</ul>`)
+    }
+  }
+  sections.push(blocsFne.join(''))
+
+  return (
+    `<!doctype html><html lang="fr"><head><meta charset="utf-8">` +
+    `<style>` +
+    `body{font-family:Arial,Helvetica,sans-serif;color:#161616;font-size:12px;}` +
+    `h1{color:#000091;font-size:22px;}h2{color:#000091;font-size:18px;margin-top:24px;}` +
+    `h3{font-size:15px;}h4{font-size:13px;}` +
+    `table{width:100%;border-collapse:collapse;margin:8px 0;}` +
+    `th,td{text-align:left;padding:4px 8px;border-bottom:1px solid #ddd;}` +
+    `td.nb,th.nb{text-align:right;}` +
+    `</style></head><body>` +
+    `<h1>Rapports de situation de l'inclusion numérique</h1>` +
+    `<p>Périmètre : ${echapperHtml(perimetre.nom)}.</p>` +
+    sections.join('') +
+    `</body></html>`
+  )
+}
+
 function formaterNombre(nombre: number): string {
   return nombre.toLocaleString('fr-FR')
 }
@@ -268,27 +417,25 @@ function formaterBesoins(besoins: ReadonlyArray<string>): string {
   return `, fléchée sur : ${debut} et ${labels[labels.length - 1]}.`
 }
 
-function formaterEnTexte(rapport: RapportRegionReadModel): string {
+function formaterEnTexte(rapport: RapportReadModel): string {
   const lignes: Array<string> = []
-  const regionNom = rapport.region.nom
 
-  formaterSectionConseillers(lignes, rapport, regionNom)
+  formaterSectionConseillers(lignes, rapport)
   lignes.push('')
-  formaterSectionAidants(lignes, rapport, regionNom)
+  formaterSectionAidants(lignes, rapport)
   lignes.push('')
   formaterSectionFne(lignes, rapport)
 
   return lignes.join('\n')
 }
 
-function formaterSectionConseillers(lignes: Array<string>, rapport: RapportRegionReadModel, regionNom: string): void {
-  const { conseillersNumeriques } = rapport
+function formaterSectionConseillers(lignes: Array<string>, rapport: RapportReadModel): void {
+  const { conseillersNumeriques, perimetre } = rapport
 
   lignes.push('=== Conseillers numériques ===')
   lignes.push('')
   lignes.push(
-    `${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés` +
-      ` sur l'ensemble de la Région ${regionNom}.`
+    `${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés` + ` sur ${perimetre.nom}.`
   )
   lignes.push('')
 
@@ -314,15 +461,15 @@ function formaterSectionConseillers(lignes: Array<string>, rapport: RapportRegio
   }
 }
 
-function formaterSectionAidants(lignes: Array<string>, rapport: RapportRegionReadModel, regionNom: string): void {
-  const { aidantsConnect } = rapport
+function formaterSectionAidants(lignes: Array<string>, rapport: RapportReadModel): void {
+  const { aidantsConnect, perimetre } = rapport
 
   lignes.push("=== Déploiement d'Aidants Connect ===")
   lignes.push('')
   lignes.push(
     "Aidants Connect est le service public numérique qui protège l'aidant et l'usager" +
       " lors de l'accompagnement aux démarches en ligne." +
-      ` Dans l'ensemble de la Région ${regionNom},` +
+      ` Dans ${perimetre.nom},` +
       ` ${formaterNombre(aidantsConnect.totalHabilites)} aidants et référents sont habilités Aidants Connect,` +
       ` dont ${formaterNombre(aidantsConnect.totalDontConseillers)} conseillers numériques.`
   )
@@ -342,7 +489,7 @@ function formaterSectionAidants(lignes: Array<string>, rapport: RapportRegionRea
   }
 }
 
-function formaterSectionFne(lignes: Array<string>, rapport: RapportRegionReadModel): void {
+function formaterSectionFne(lignes: Array<string>, rapport: RapportReadModel): void {
   lignes.push('=== France Numérique Ensemble ===')
 
   for (const dep of rapport.franceNumerique.departements) {
