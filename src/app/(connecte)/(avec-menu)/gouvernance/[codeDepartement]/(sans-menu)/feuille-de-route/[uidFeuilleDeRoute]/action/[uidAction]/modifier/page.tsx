@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import styles from '@/components/Action/Action.module.css'
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -39,7 +40,7 @@ export default async function ActionModifierController({ params }: Props): Promi
         <div className="fr-col-2">
           <MenuLateral />
         </div>
-        <div className="fr-col-10 fr-pl-7w">
+        <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
           <ModifierUneAction
             action={actionPresenter(actionReadModel, {
               enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>

@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import styles from '@/components/Action/Action.module.css'
 import MenuLateral from '@/components/Action/MenuLateral'
 import VisualiserUneAction from '@/components/Action/VisualiserUneAction'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -39,7 +40,7 @@ export default async function ActionModifierController({ params }: Props): Promi
         <div className="fr-col-2" style={{ flexShrink: 0, minWidth: '320px' }}>
           <MenuLateral />
         </div>
-        <div className="fr-col-10 fr-pl-7w" style={{ flex: 1, minWidth: 0 }}>
+        <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`} style={{ flex: 1, minWidth: 0 }}>
           <VisualiserUneAction
             action={actionPresenter(actionReadModel, {
               enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
