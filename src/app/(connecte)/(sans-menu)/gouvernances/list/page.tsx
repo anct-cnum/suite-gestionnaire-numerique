@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import GouvernancesList from '@/components/Gouvernances/GouvernancesList'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -30,5 +31,10 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   )
   const gouvernancesViewModel = gouvernancePresenter(gouvernancesReadModel)
 
-  return <GouvernancesList details={gouvernancesViewModel.details} />
+  return (
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Gouvernances' }]} />
+      <GouvernancesList details={gouvernancesViewModel.details} />
+    </>
+  )
 }

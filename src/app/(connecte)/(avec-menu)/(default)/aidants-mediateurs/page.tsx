@@ -6,6 +6,7 @@ import prisma from '../../../../../../prisma/prismaClient'
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { Administrateur } from '@/domain/Administrateur'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
@@ -62,11 +63,16 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements()
 
   return (
-    <AidantsMediateurs
-      accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
-      beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
-      dateGeneration={dateGeneration}
-      niveauDeFormationViewModel={niveauDeFormationViewModel}
-    />
+    <>
+      <FilAriane
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Aidants et médiateurs numériques' }]}
+      />
+      <AidantsMediateurs
+        accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+        beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
+        dateGeneration={dateGeneration}
+        niveauDeFormationViewModel={niveauDeFormationViewModel}
+      />
+    </>
   )
 }

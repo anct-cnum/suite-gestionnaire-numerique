@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import prisma from '../../../../../../prisma/prismaClient'
 import Gouvernances from '@/components/Gouvernances/Gouvernances'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { Administrateur } from '@/domain/Administrateur'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -61,12 +62,15 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   const dateGeneration = new Date()
 
   return (
-    <Gouvernances
-      autresStructuresViewModel={autresStructuresViewModel}
-      collectivitesViewModel={collectivitesViewModel}
-      dateGeneration={dateGeneration}
-      feuillesDeRouteDeposeesViewModel={feuillesDeRouteDeposeesViewModel}
-      gouvernancesTerritorialesViewModel={gouvernancesTerritorialesViewModel}
-    />
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Gouvernances' }]} />
+      <Gouvernances
+        autresStructuresViewModel={autresStructuresViewModel}
+        collectivitesViewModel={collectivitesViewModel}
+        dateGeneration={dateGeneration}
+        feuillesDeRouteDeposeesViewModel={feuillesDeRouteDeposeesViewModel}
+        gouvernancesTerritorialesViewModel={gouvernancesTerritorialesViewModel}
+      />
+    </>
   )
 }

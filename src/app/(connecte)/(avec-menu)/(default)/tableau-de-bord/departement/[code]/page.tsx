@@ -12,9 +12,11 @@ import BlocGouvernance from '../../blocs/BlocGouvernance'
 import BlocMediateurs from '../../blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
 import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { nomDepartement } from '@/shared/urlHelpers'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
@@ -55,7 +57,12 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
   }
 
-  return <>{blocs.map((bloc) => blocsElements[bloc])}</>
+  return (
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: nomDepartement(code) }]} />
+      {blocs.map((bloc) => blocsElements[bloc])}
+    </>
+  )
 }
 
 type Props = Readonly<{

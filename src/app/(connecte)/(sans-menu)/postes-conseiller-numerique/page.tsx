@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ListePostesConseillerNumerique from '@/components/PostesConseillerNumerique/ListePostesConseillerNumerique'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -76,11 +77,19 @@ export default async function PostesConseillerNumeriqueController({
   setSearchParams()
 
   return (
-    <ListePostesConseillerNumerique
-      postesConseillerNumeriqueViewModel={postesConseillerNumeriqueViewModel}
-      searchParams={currentSearchParams}
-      utilisateurRole={utilisateur.role.nom as TypologieRole}
-    />
+    <>
+      <FilAriane
+        items={[
+          { href: '/tableau-de-bord', label: 'Tableau de bord' },
+          { label: 'Suivi des postes Conseiller Numérique' },
+        ]}
+      />
+      <ListePostesConseillerNumerique
+        postesConseillerNumeriqueViewModel={postesConseillerNumeriqueViewModel}
+        searchParams={currentSearchParams}
+        utilisateurRole={utilisateur.role.nom as TypologieRole}
+      />
+    </>
   )
 
   function setSearchParams(): void {

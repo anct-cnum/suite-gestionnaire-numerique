@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelles/MesInformationsPersonnelles'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMesInformationsPersonnellesLoader } from '@/gateways/PrismaMesInformationsPersonnellesLoader'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
@@ -17,5 +18,12 @@ export default async function MesInformationsPersonnellesController(): Promise<R
     mesInformationsPersonnellesReadModel
   )
 
-  return <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
+  return (
+    <>
+      <FilAriane
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Mes informations personnelles' }]}
+      />
+      <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
+    </>
+  )
 }

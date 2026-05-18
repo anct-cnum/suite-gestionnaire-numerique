@@ -3,8 +3,10 @@ import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import FeuillesDeRoute from '@/components/FeuillesDeRoute/FeuillesDeRoute'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
+import { nomDepartement } from '@/shared/urlHelpers'
 import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
 
 export const metadata: Metadata = {
@@ -18,7 +20,18 @@ export default async function FeuillesDeRouteController({ params }: Props): Prom
       codeDepartement
     )
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
-    return <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
+    return (
+      <>
+        <FilAriane
+          items={[
+            { href: '/tableau-de-bord', label: 'Tableau de bord' },
+            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { label: 'Feuilles de route' },
+          ]}
+        />
+        <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
+      </>
+    )
   } catch {
     notFound()
   }

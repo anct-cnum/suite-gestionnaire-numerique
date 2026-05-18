@@ -3,11 +3,13 @@ import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { membresPresenter } from '@/presenters/membresPresenter'
+import { nomDepartement } from '@/shared/urlHelpers'
 import { RecupererMesMembres } from '@/use-cases/queries/RecupererMesMembres'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
@@ -34,7 +36,19 @@ export default async function MembresController({ params }: Props): Promise<Reac
   const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({ codeDepartement })
 
   return (
-    <GestionMembres membresViewModel={membresPresenter(membresReadModel)} peutGererGouvernance={peutGererGouvernance} />
+    <>
+      <FilAriane
+        items={[
+          { href: '/tableau-de-bord', label: 'Tableau de bord' },
+          { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+          { label: 'Membres' },
+        ]}
+      />
+      <GestionMembres
+        membresViewModel={membresPresenter(membresReadModel)}
+        peutGererGouvernance={peutGererGouvernance}
+      />
+    </>
   )
 }
 

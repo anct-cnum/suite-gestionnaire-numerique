@@ -4,13 +4,14 @@ import { ReactElement } from 'react'
 import styles from '@/components/Action/Action.module.css'
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaRepartitionSubventionGouvernanceLoader'
 import { actionARemplir } from '@/presenters/actionPresenter'
 import { enveloppePresenter } from '@/presenters/enveloppePresenter'
-import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
+import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl, nomDepartement } from '@/shared/urlHelpers'
 
 export default async function ActionAjouterController({ params }: Props): Promise<ReactElement> {
   const { codeDepartement, uidFeuilleDeRoute } = await params
@@ -37,25 +38,35 @@ export default async function ActionAjouterController({ params }: Props): Promis
 
   try {
     return (
-      <div className="fr-grid-row">
-        <div className="fr-col-2">
-          <MenuLateral />
+      <>
+        <FilAriane
+          items={[
+            { href: '/tableau-de-bord', label: 'Tableau de bord' },
+            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { href: urlFeuilleDeRoute, label: nomFeuilleDeRoute },
+            { label: 'Ajouter une action' },
+          ]}
+        />
+        <div className="fr-grid-row">
+          <div className="fr-col-2">
+            <MenuLateral />
+          </div>
+          <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
+            <AjouterUneAction
+              action={actionARemplir(undefined, {
+                enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
+                  enveloppePresenter(date, enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))
+                ),
+                nomFeuilleDeRoute,
+                urlFeuilleDeRoute,
+                urlGestionMembresGouvernance,
+              })}
+              date={date}
+              uidFeuilleDeRoute={uidFeuilleDeRoute}
+            />
+          </div>
         </div>
-        <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
-          <AjouterUneAction
-            action={actionARemplir(undefined, {
-              enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
-                enveloppePresenter(date, enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))
-              ),
-              nomFeuilleDeRoute,
-              urlFeuilleDeRoute,
-              urlGestionMembresGouvernance,
-            })}
-            date={date}
-            uidFeuilleDeRoute={uidFeuilleDeRoute}
-          />
-        </div>
-      </div>
+      </>
     )
   } catch {
     notFound()

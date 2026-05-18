@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 import styles from '@/components/Action/Action.module.css'
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
@@ -11,7 +12,7 @@ import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaR
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 import { enveloppePresenter } from '@/presenters/enveloppePresenter'
-import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
+import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl, nomDepartement } from '@/shared/urlHelpers'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
@@ -36,25 +37,35 @@ export default async function ActionModifierController({ params }: Props): Promi
       feuilleDeRoute.state.uidGouvernance
     )
     return (
-      <div className="fr-grid-row">
-        <div className="fr-col-2">
-          <MenuLateral />
+      <>
+        <FilAriane
+          items={[
+            { href: '/tableau-de-bord', label: 'Tableau de bord' },
+            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { href: urlFeuilleDeRoute, label: actionReadModel.nomFeuilleDeRoute },
+            { label: 'Modifier une action' },
+          ]}
+        />
+        <div className="fr-grid-row">
+          <div className="fr-col-2">
+            <MenuLateral />
+          </div>
+          <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
+            <ModifierUneAction
+              action={actionPresenter(actionReadModel, {
+                enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
+                  enveloppePresenter(new Date(), enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))
+                ),
+                nomFeuilleDeRoute: actionReadModel.nomFeuilleDeRoute,
+                urlFeuilleDeRoute,
+                urlGestionMembresGouvernance,
+              })}
+              date={date}
+              uidFeuilleDeRoute={uidFeuilleDeRoute}
+            />
+          </div>
         </div>
-        <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
-          <ModifierUneAction
-            action={actionPresenter(actionReadModel, {
-              enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
-                enveloppePresenter(new Date(), enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))
-              ),
-              nomFeuilleDeRoute: actionReadModel.nomFeuilleDeRoute,
-              urlFeuilleDeRoute,
-              urlGestionMembresGouvernance,
-            })}
-            date={date}
-            uidFeuilleDeRoute={uidFeuilleDeRoute}
-          />
-        </div>
-      </div>
+      </>
     )
   } catch {
     notFound()
