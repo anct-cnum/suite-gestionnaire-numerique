@@ -15,11 +15,13 @@ export function financementAdminPresenter(
   }
 
   return {
-    creditsEngages: formatMontantEnMillions(Number(readModel.creditsEngages)),
-    montantTotalEnveloppes: formatMontantEnMillions(Number(readModel.montantTotalEnveloppes)),
+    conseillerNumerique: {
+      conventionne: formatMontantEnMillions(Number(readModel.conseillerNumerique.conventionne)),
+      verse: formatMontantEnMillions(Number(readModel.conseillerNumerique.verse)),
+    },
+    fneDisponible: formatMontantEnMillions(Number(readModel.fneDisponible)),
+    fneEngage: formatMontantEnMillions(Number(readModel.fneEngage)),
     nombreDeFinancementsEngagesParLEtat: readModel.nombreDeFinancementsEngagesParLEtat,
-    nombreEnveloppes: readModel.nombreEnveloppes,
-    nombreEnveloppesUtilisees: readModel.nombreEnveloppesUtilisees,
     ventilationSubventionsParEnveloppe: readModel.ventilationSubventionsParEnveloppe.map(
       ({ enveloppeTotale, label, total }) => {
         const montantUtilise = Number(total)
@@ -38,11 +40,13 @@ export function financementAdminPresenter(
 }
 
 export type FinancementAdminViewModel = Readonly<{
-  creditsEngages: string
-  montantTotalEnveloppes: string
+  conseillerNumerique: Readonly<{
+    conventionne: string
+    verse: string
+  }>
+  fneDisponible: string
+  fneEngage: string
   nombreDeFinancementsEngagesParLEtat: number
-  nombreEnveloppes: number
-  nombreEnveloppesUtilisees: number
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     color: string
     label: string

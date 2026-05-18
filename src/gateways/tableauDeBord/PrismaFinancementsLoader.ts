@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -9,29 +11,32 @@ export class PrismaFinancementsLoader implements FinancementLoader {
 
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
     try {
-      const feuillesDeRoute = await this.#feuilleDeRouteDao.findMany({
-        include: {
-          action: {
-            include: {
-              demandesDeSubvention: {
-                include: {
-                  enveloppe: true,
+      const [feuillesDeRoute, conseillerNumerique] = await Promise.all([
+        this.#feuilleDeRouteDao.findMany({
+          include: {
+            action: {
+              include: {
+                demandesDeSubvention: {
+                  include: {
+                    enveloppe: true,
+                  },
                 },
               },
             },
           },
-        },
-        where:
-          territoire === 'France'
-            ? {
-                gouvernanceDepartementCode: {
-                  not: 'zzz',
+          where:
+            territoire === 'France'
+              ? {
+                  gouvernanceDepartementCode: {
+                    not: 'zzz',
+                  },
+                }
+              : {
+                  gouvernanceDepartementCode: territoire,
                 },
-              }
-            : {
-                gouvernanceDepartementCode: territoire,
-              },
-      })
+        }),
+        this.#chargerConseillerNumerique(territoire),
+      ])
 
       const totalBudget = feuillesDeRoute.reduce((acc, feuille) => {
         return acc + feuille.action.reduce((accAction, action) => accAction + action.budgetGlobal, 0)
@@ -59,17 +64,11 @@ export class PrismaFinancementsLoader implements FinancementLoader {
       })
 
       const totalSubventions = Array.from(subventionsParEnveloppe.values()).reduce((acc, val) => acc + val.total, 0)
-      const pourcentageCredit = totalBudget > 0 ? (totalSubventions / totalBudget) * 100 : 0
 
       return {
-        budget: {
-          feuillesDeRoute: feuillesDeRoute.length,
-          total: totalBudget.toString(),
-        },
-        credit: {
-          pourcentage: Math.round(pourcentageCredit),
-          total: totalSubventions.toString(),
-        },
+        budgetGlobalRenseigne: totalBudget.toString(),
+        conseillerNumerique,
+        fneEngage: totalSubventions.toString(),
         nombreDeFinancementsEngagesParLEtat: nombreDeFinancementsEngages,
         ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, data]) => ({
           enveloppeTotale: data.enveloppeTotale.toString(),
@@ -86,6 +85,29 @@ export class PrismaFinancementsLoader implements FinancementLoader {
         message: 'Impossible de récupérer les données de financement',
         type: 'error',
       }
+    }
+  }
+
+  // Montants versé / conventionné des postes Conseiller Numérique liés au territoire.
+  // Source canonique : vue min.postes_conseiller_numerique_synthese (dédoublonnage de
+  // l'historique des postes et cumul V1/V2 déjà gérés par la vue). Filtre territoire
+  // identique à la liste des postes conum (structure -> adresse.departement).
+  async #chargerConseillerNumerique(territoire: string): Promise<{ conventionne: string; verse: string }> {
+    const filtreTerritoire = territoire === 'France' ? Prisma.empty : Prisma.sql`WHERE a.departement = ${territoire}`
+
+    const rows = await prisma.$queryRaw<Array<{ conventionne: bigint; verse: bigint }>>`
+      SELECT
+        COALESCE(SUM(v.montant_subvention_cumule), 0)::bigint AS conventionne,
+        COALESCE(SUM(v.montant_versement_cumule), 0)::bigint AS verse
+      FROM min.postes_conseiller_numerique_synthese v
+      LEFT JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.adresse a ON a.id = st.adresse_id
+      ${filtreTerritoire}
+    `
+
+    return {
+      conventionne: rows[0].conventionne.toString(),
+      verse: rows[0].verse.toString(),
     }
   }
 }

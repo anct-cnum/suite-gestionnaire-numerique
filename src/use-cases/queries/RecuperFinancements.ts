@@ -9,31 +9,28 @@ export interface FinancementAdminLoader {
 }
 
 export interface TableauDeBordLoaderFinancements {
-  budget: Readonly<{
-    feuillesDeRoute: number
-    total: string
-  }>
-  credit: Readonly<{
-    pourcentage: number
-    total: string
-  }>
+  budgetGlobalRenseigne: string
+  conseillerNumerique: ConseillerNumeriqueFinancement
+  fneEngage: string
   nombreDeFinancementsEngagesParLEtat: number
-  ventilationSubventionsParEnveloppe: ReadonlyArray<{
-    enveloppeTotale: string
-    label: string
-    total: string
-  }>
+  ventilationSubventionsParEnveloppe: ReadonlyArray<VentilationEnveloppe>
 }
 
 export interface TableauDeBordLoaderFinancementsAdmin {
-  creditsEngages: string
-  montantTotalEnveloppes: string
+  conseillerNumerique: ConseillerNumeriqueFinancement
+  fneDisponible: string
+  fneEngage: string
   nombreDeFinancementsEngagesParLEtat: number
-  nombreEnveloppes: number
-  nombreEnveloppesUtilisees: number
-  ventilationSubventionsParEnveloppe: ReadonlyArray<{
-    enveloppeTotale: string
-    label: string
-    total: string
-  }>
+  ventilationSubventionsParEnveloppe: ReadonlyArray<VentilationEnveloppe>
 }
+
+type ConseillerNumeriqueFinancement = Readonly<{
+  conventionne: string
+  verse: string
+}>
+
+type VentilationEnveloppe = Readonly<{
+  enveloppeTotale: string
+  label: string
+  total: string
+}>

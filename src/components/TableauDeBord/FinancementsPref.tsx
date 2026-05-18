@@ -65,29 +65,28 @@ export default function FinancementsPref({
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
-            <TitleIcon background="white" icon="money-euro-circle-line" />
-            {conventionnement.budget.total}
+            <TitleIcon background="white" icon="download-line" />
+            {conventionnement.fneEngage}
           </div>
           <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
-            Budget global renseigné
+            Financements FNE engagés par l&apos;État
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            pour <span style={{ fontWeight: 700 }}>{conventionnement.budget.feuillesDeRouteWording}</span>
+            sur <span style={{ fontWeight: 700 }}>{conventionnement.budgetGlobalRenseigne}</span> de votre budget global
+            renseigné
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
-            <TitleIcon background="white" icon="download-line" />
-            {conventionnement.credit.total}
+            <TitleIcon background="white" icon="money-euro-circle-line" />
+            {conventionnement.conseillerNumerique.verse}
           </div>
           <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
-            Financements engagés par l&apos;État
+            Financements Conseiller Numérique versés
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            Soit{' '}
-            <span style={{ fontWeight: 700 }}>
-              {conventionnement.credit.pourcentage} % de votre budget global renseigné
-            </span>
+            sur <span style={{ fontWeight: 700 }}>{conventionnement.conseillerNumerique.conventionne}</span>{' '}
+            conventionnés sur les postes liés à la gouvernance
           </div>
         </div>
       </div>

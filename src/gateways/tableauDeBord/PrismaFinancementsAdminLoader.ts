@@ -1,6 +1,7 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
+import { classifierTypeEnveloppe } from '@/shared/enveloppeFinancement'
 import { FinancementAdminLoader, TableauDeBordLoaderFinancementsAdmin } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
@@ -10,7 +11,7 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
 
   async get(): Promise<ErrorReadModel | TableauDeBordLoaderFinancementsAdmin> {
     try {
-      const [enveloppes, demandesAcceptees, cnConsomme] = await Promise.all([
+      const [enveloppes, demandesAcceptees, conseillerNumerique] = await Promise.all([
         this.#enveloppeDao.findMany(),
         // Récupérer toutes les demandes de subvention acceptées (en excluant zzz)
         this.#demandeDeSubventionDao.findMany({
@@ -28,21 +29,21 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
             statut: StatutSubvention.ACCEPTEE,
           },
         }),
-        prisma.$queryRaw<[{ total: bigint }]>`
-          SELECT (COALESCE(SUM(montant_subvention_v1), 0) + COALESCE(SUM(montant_subvention_v2), 0))::bigint AS total
-          FROM main.subvention
-        `,
+        this.#chargerConseillerNumerique(),
       ])
 
-      const montantTotalEnveloppes = enveloppes.reduce((acc, env) => acc + env.montant, 0)
-      const nombreEnveloppes = enveloppes.length
+      // Disponible FNE : somme des valeurs absolues du montant des enveloppes FNE.
+      const fneDisponible = enveloppes
+        .filter((enveloppe) => classifierTypeEnveloppe(enveloppe.libelle) === 'fne')
+        .reduce((acc, enveloppe) => acc + Math.abs(enveloppe.montant), 0)
 
-      // Calculer les crédits engagés et la ventilation par enveloppe (hors CN)
+      // Engagé FNE et ventilation par enveloppe : demandes de subvention acceptées
+      // (rattachées à une feuille de route, donc exclusivement FNE).
       const subventionsParEnveloppe = new Map<string, { enveloppeTotale: number; total: number }>()
-      let creditsEngagesTotal = Number(cnConsomme[0].total)
+      let fneEngage = 0
 
       demandesAcceptees.forEach((demande) => {
-        creditsEngagesTotal += demande.subventionDemandee
+        fneEngage += demande.subventionDemandee
         const label = demande.enveloppe.libelle
         const enveloppeTotale = demande.enveloppe.montant
 
@@ -53,15 +54,11 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
         })
       })
 
-      // Compter le nombre d'enveloppes utilisées
-      const nombreEnveloppesUtilisees = subventionsParEnveloppe.size
-
       return {
-        creditsEngages: creditsEngagesTotal.toString(),
-        montantTotalEnveloppes: montantTotalEnveloppes.toString(),
+        conseillerNumerique,
+        fneDisponible: fneDisponible.toString(),
+        fneEngage: fneEngage.toString(),
         nombreDeFinancementsEngagesParLEtat: demandesAcceptees.length,
-        nombreEnveloppes,
-        nombreEnveloppesUtilisees,
         ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, data]) => ({
           enveloppeTotale: data.enveloppeTotale.toString(),
           label,
@@ -76,6 +73,22 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
         message: 'Impossible de récupérer les données de financement admin',
         type: 'error',
       }
+    }
+  }
+
+  // Montants versé / conventionné de tous les postes Conseiller Numérique (niveau national).
+  // Source canonique : vue min.postes_conseiller_numerique_synthese.
+  async #chargerConseillerNumerique(): Promise<{ conventionne: string; verse: string }> {
+    const rows = await prisma.$queryRaw<Array<{ conventionne: bigint; verse: bigint }>>`
+      SELECT
+        COALESCE(SUM(v.montant_subvention_cumule), 0)::bigint AS conventionne,
+        COALESCE(SUM(v.montant_versement_cumule), 0)::bigint AS verse
+      FROM min.postes_conseiller_numerique_synthese v
+    `
+
+    return {
+      conventionne: rows[0].conventionne.toString(),
+      verse: rows[0].verse.toString(),
     }
   }
 }

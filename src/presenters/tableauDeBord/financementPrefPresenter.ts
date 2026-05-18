@@ -15,14 +15,12 @@ export function financementsPrefPresenter(
   }
 
   return {
-    budget: {
-      feuillesDeRouteWording: `${readModel.budget.feuillesDeRoute} feuille${readModel.budget.feuillesDeRoute > 1 ? 's' : ''} de route`,
-      total: formatMontant(Number(readModel.budget.total)),
+    budgetGlobalRenseigne: formatMontant(Number(readModel.budgetGlobalRenseigne)),
+    conseillerNumerique: {
+      conventionne: formatMontant(Number(readModel.conseillerNumerique.conventionne)),
+      verse: formatMontant(Number(readModel.conseillerNumerique.verse)),
     },
-    credit: {
-      pourcentage: readModel.credit.pourcentage,
-      total: formatMontant(Number(readModel.credit.total)),
-    },
+    fneEngage: formatMontant(Number(readModel.fneEngage)),
     nombreDeFinancementsEngagesParLEtat: readModel.nombreDeFinancementsEngagesParLEtat,
     ventilationSubventionsParEnveloppe: readModel.ventilationSubventionsParEnveloppe.map(
       ({ enveloppeTotale, label, total }) => {
@@ -42,14 +40,12 @@ export function financementsPrefPresenter(
 }
 
 export type FinancementViewModel = Readonly<{
-  budget: Readonly<{
-    feuillesDeRouteWording: string
-    total: string
+  budgetGlobalRenseigne: string
+  conseillerNumerique: Readonly<{
+    conventionne: string
+    verse: string
   }>
-  credit: Readonly<{
-    pourcentage: number
-    total: string
-  }>
+  fneEngage: string
   nombreDeFinancementsEngagesParLEtat: number
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     color: string
