@@ -295,19 +295,22 @@ export default function DemanderUneSubvention({
         <label className="fr-label" htmlFor={id}>
           {children}
         </label>
-        <input
-          aria-describedby={hasError ? errorTextId : undefined}
-          className="fr-input"
-          disabled={!isEnveloppeSelectionnee}
-          id={id}
-          max={max}
-          min="0"
-          onInput={(event) => {
-            onInput(Number(event.currentTarget.value))
-          }}
-          ref={ref}
-          type="number"
-        />
+        <div className="fr-input-wrap fr-icon-money-euro-circle-line">
+          <input
+            aria-describedby={hasError ? errorTextId : undefined}
+            className="fr-input"
+            disabled={!isEnveloppeSelectionnee}
+            id={id}
+            max={max}
+            min="0"
+            onInput={(event) => {
+              onInput(Number(event.currentTarget.value))
+            }}
+            ref={ref}
+            step={1}
+            type="number"
+          />
+        </div>
         {hasError ? (
           <p className="fr-error-text" id={errorTextId}>
             Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention

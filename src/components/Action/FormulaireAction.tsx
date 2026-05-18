@@ -280,21 +280,24 @@ export function FormulaireAction({
               </label>
             </div>
             <div className={styles['third-width']}>
-              <input
-                className="fr-input"
-                defaultValue={action.budgetGlobal}
-                disabled={isReadOnly}
-                id="budgetGlobal"
-                min={0}
-                name="budgetGlobal"
-                onChange={(event) => {
-                  if (!isReadOnly) {
-                    setBudgetGlobal(Number(event.target.value))
-                  }
-                }}
-                required={!isReadOnly}
-                type="number"
-              />
+              <div className="fr-input-wrap fr-icon-money-euro-circle-line">
+                <input
+                  className="fr-input"
+                  defaultValue={action.budgetGlobal}
+                  disabled={isReadOnly}
+                  id="budgetGlobal"
+                  min={0}
+                  name="budgetGlobal"
+                  onChange={(event) => {
+                    if (!isReadOnly) {
+                      setBudgetGlobal(Number(event.target.value))
+                    }
+                  }}
+                  required={!isReadOnly}
+                  step={1}
+                  type="number"
+                />
+              </div>
             </div>
           </div>
           <hr />

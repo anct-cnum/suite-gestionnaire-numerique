@@ -21,19 +21,21 @@ export default function MontantInput({ id, montantInitial, onChange }: Readonly<
   }
 
   return (
-    <input
-      className="fr-input"
-      id={id}
-      name={id}
-      onChange={onChangeEvent()}
-      required
-      style={{
-        fontVariantNumeric: 'tabular-nums',
-        letterSpacing: '0.1em',
-      }}
-      type="text"
-      value={inputValue.orElse(MontantPositif.Zero).format()}
-    />
+    <div className="fr-input-wrap fr-icon-money-euro-circle-line">
+      <input
+        className="fr-input"
+        id={id}
+        name={id}
+        onChange={onChangeEvent()}
+        required
+        style={{
+          fontVariantNumeric: 'tabular-nums',
+          letterSpacing: '0.1em',
+        }}
+        type="text"
+        value={inputValue.orElse(MontantPositif.Zero).format()}
+      />
+    </div>
   )
 }
 
