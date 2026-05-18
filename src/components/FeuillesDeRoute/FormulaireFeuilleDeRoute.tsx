@@ -1,6 +1,6 @@
 'use client'
 
-import { PropsWithChildren, ReactElement, SyntheticEvent, useEffect, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useEffect, useId, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import RadioGroup from '../shared/Radio/RadioGroup'
@@ -10,7 +10,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export default function FormulaireFeuilleDeRoute({
-  children,
+  formId,
   label,
   labelId,
   membres,
@@ -43,7 +43,7 @@ export default function FormulaireFeuilleDeRoute({
       <p className="fr-text--sm color-grey">
         Les champs avec <span className="color-red">*</span> sont obligatoires.
       </p>
-      <form aria-label={label} method="dialog" onSubmit={handleSubmit}>
+      <form aria-label={label} id={formId} method="dialog" onSubmit={handleSubmit}>
         <TextInput defaultValue={nom} id={nomId} name="nom" required={true}>
           Quel est le nom de la feuille de route ? <span className="color-red">*</span>
         </TextInput>
@@ -63,21 +63,19 @@ export default function FormulaireFeuilleDeRoute({
             value={perimetreSelectionne}
           />
         </fieldset>
-        <div className="fr-btns-group">{children}</div>
       </form>
     </>
   )
 }
 
-type Props = PropsWithChildren<
-  Readonly<{
-    label: string
-    labelId: string
-    membres: ReadonlyArray<LabelValue>
-    nom: string
-    perimetreActuel?: string
-    perimetres: ReadonlyArray<LabelValue>
-    resetPerimetre?: boolean
-    validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
-  }>
->
+type Props = Readonly<{
+  formId?: string
+  label: string
+  labelId: string
+  membres: ReadonlyArray<LabelValue>
+  nom: string
+  perimetreActuel?: string
+  perimetres: ReadonlyArray<LabelValue>
+  resetPerimetre?: boolean
+  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
+}>

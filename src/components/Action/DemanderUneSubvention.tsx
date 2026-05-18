@@ -176,6 +176,28 @@ export default function DemanderUneSubvention({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group fr-mt-2w">
+            <button
+              aria-controls={drawerId}
+              className="fr-btn"
+              disabled={!isValid}
+              onClick={() => {
+                const nouvelleDemandeDeSubvention = {
+                  enveloppeId: selectedEnveloppeId,
+                  montantPrestation: montantPresta ?? 0,
+                  montantRh: montantRh ?? 0,
+                  total: subventionsDemandees,
+                }
+                ajouterDemandeDeSubvention?.(nouvelleDemandeDeSubvention)
+                setIsDrawerOpen(false)
+              }}
+              type="button"
+            >
+              Enregistrer
+            </button>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -260,26 +282,6 @@ export default function DemanderUneSubvention({
             </li>
           ) : null}
         </ul>
-        <div className="fr-btns-group fr-mt-2w">
-          <button
-            aria-controls={drawerId}
-            className="fr-btn"
-            disabled={!isValid}
-            onClick={() => {
-              const nouvelleDemandeDeSubvention = {
-                enveloppeId: selectedEnveloppeId,
-                montantPrestation: montantPresta ?? 0,
-                montantRh: montantRh ?? 0,
-                total: subventionsDemandees,
-              }
-              ajouterDemandeDeSubvention?.(nouvelleDemandeDeSubvention)
-              setIsDrawerOpen(false)
-            }}
-            type="button"
-          >
-            Enregistrer
-          </button>
-        </div>
       </Drawer>
     </>
   )

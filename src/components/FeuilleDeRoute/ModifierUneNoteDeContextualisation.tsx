@@ -22,6 +22,7 @@ export default function ModifierUneNoteDeContextualisation({
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor(contextualisation)
   const drawerId = 'drawerModifierNoteDeContextualisationId'
+  const formId = 'formModifierNoteDeContextualisationId'
   const labelId = useId()
   return (
     <>
@@ -38,26 +39,13 @@ export default function ModifierUneNoteDeContextualisation({
         Modifier
       </button>
       <Drawer
-        boutonFermeture="Fermer le formulaire de modification d‘une note de contextualisation"
+        boutonFermeture="Fermer le formulaire de modification d’une note de contextualisation"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        id={drawerId}
-        // Stryker disable next-line BooleanLiteral
-        isFixedWidth={false}
-        isOpen={isDrawerOpen}
-        labelId={labelId}
-      >
-        <FormulaireNoteDeContextualisation
-          contenu={contenu}
-          gererLeChangementDeContenu={gererLeChangementDeContenu}
-          labelId={labelId}
-          validerFormulaire={(event) => {
-            void modifierUneNoteDeContextualisation(event)
-          }}
-        >
+        footer={
           <div className="fr-btns-group fr-mt-2w">
-            <SubmitButton ariaControls={drawerId} isDisabled={isDisabled}>
+            <SubmitButton ariaControls={drawerId} form={formId} isDisabled={isDisabled}>
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
             {contenu ? (
@@ -66,7 +54,22 @@ export default function ModifierUneNoteDeContextualisation({
               </button>
             ) : null}
           </div>
-        </FormulaireNoteDeContextualisation>
+        }
+        id={drawerId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+      >
+        <FormulaireNoteDeContextualisation
+          contenu={contenu}
+          formId={formId}
+          gererLeChangementDeContenu={gererLeChangementDeContenu}
+          labelId={labelId}
+          validerFormulaire={(event) => {
+            void modifierUneNoteDeContextualisation(event)
+          }}
+        />
       </Drawer>
     </>
   )

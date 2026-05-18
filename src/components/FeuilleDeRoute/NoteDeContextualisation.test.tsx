@@ -45,7 +45,7 @@ describe('note de contextualisation', () => {
       })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText(
-        'Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
+        'Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
         { selector: 'p' }
       )
       expect(sousTitre).toBeInTheDocument()
@@ -53,9 +53,9 @@ describe('note de contextualisation', () => {
         name: 'Éditeur de note de contextualisation',
       })
       expect(editeurDeTextEnrichi).toBeInTheDocument()
-      const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toHaveAttribute('type', 'submit')
-      const boutonEffacer = within(formulaire).queryByRole('button', { name: 'Effacer' })
+      const boutonEffacer = within(drawer).queryByRole('button', { name: 'Effacer' })
       expect(boutonEffacer).not.toBeInTheDocument()
     })
 
@@ -97,7 +97,7 @@ describe('note de contextualisation', () => {
       expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
     })
 
-    it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
+    it('quand je clique sur le bouton enregistrer mais qu’une erreur intervient, alors une notification apparaît', async () => {
       // GIVEN
       const ajouterUneNoteDeContextualisationAction = stubbedServerAction(['Le contenu doit être renseigné'])
       afficherUneFeuilleDeRouteSansNoteDeContextualisation({
@@ -133,7 +133,7 @@ describe('note de contextualisation', () => {
       })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText(
-        'Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
+        'Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
         { selector: 'p' }
       )
       expect(sousTitre).toBeInTheDocument()
@@ -141,9 +141,9 @@ describe('note de contextualisation', () => {
         name: 'Éditeur de note de contextualisation',
       })
       expect(editeurDeTextEnrichi).toBeInTheDocument()
-      const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toHaveAttribute('type', 'submit')
-      const boutonEffacer = within(formulaire).getByRole('button', { name: 'Effacer' })
+      const boutonEffacer = within(drawer).getByRole('button', { name: 'Effacer' })
       expect(boutonEffacer).toBeInTheDocument()
     })
 
@@ -171,7 +171,7 @@ describe('note de contextualisation', () => {
       expect(boutonEnregistrer).toBeEnabled()
     })
 
-    it('puis que je le modifie mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
+    it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
       const modifierUneNoteDeContextualisationAction = stubbedServerAction(['Le contenu doit être renseigné'])
       afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
@@ -188,7 +188,7 @@ describe('note de contextualisation', () => {
       expect(notification.textContent).toBe('Erreur : Le contenu doit être renseigné')
     })
 
-    it('puis que je veux supprimer la note de contextualisation, alors une notification s‘affiche', async () => {
+    it('puis que je veux supprimer la note de contextualisation, alors une notification s’affiche', async () => {
       // GIVEN
       const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
       afficherUneFeuilleDeRouteAvecNoteDeContextualisation({
@@ -285,11 +285,11 @@ function jouvreLeDrawerDeModificationDeNoteDeContextualisation(): void {
 }
 
 function jeFermeLeFormulairePourAjouterUneNoteDeContextualisation(): HTMLElement {
-  return presserLeBouton('Fermer le formulaire de création d‘une note de contextualisation')
+  return presserLeBouton('Fermer le formulaire de création d’une note de contextualisation')
 }
 
 function jeFermeLeFormulairePourModifierUneNoteDeContextualisation(): HTMLElement {
-  return presserLeBouton('Fermer le formulaire de modification d‘une note de contextualisation')
+  return presserLeBouton('Fermer le formulaire de modification d’une note de contextualisation')
 }
 
 function jeTapeUneNoteDeContextualisation(): HTMLElement {
@@ -303,15 +303,15 @@ function jeTapeUneNoteDeContextualisation(): HTMLElement {
 }
 
 function jEnregistreLaNoteDeContextualisation(): HTMLElement {
-  const form = screen.getByRole('form', { name: 'Contextualisation des demandes de subvention' })
-  const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
+  const drawer = screen.getByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
+  const enregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
   fireEvent.click(enregistrer)
   return enregistrer
 }
 
 function jEffaceLaNoteDeContextualisation(): HTMLElement {
-  const form = screen.getByRole('form', { name: 'Contextualisation des demandes de subvention' })
-  const effacer = within(form).getByRole('button', { name: 'Effacer' })
+  const drawer = screen.getByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
+  const effacer = within(drawer).getByRole('button', { name: 'Effacer' })
   fireEvent.click(effacer)
   return effacer
 }

@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement, Ref } from 'react'
+import { PropsWithChildren, ReactElement, ReactNode, Ref } from 'react'
 
 import styles from './Drawer.module.css'
 
@@ -6,6 +6,7 @@ export default function Drawer({
   boutonFermeture,
   children,
   closeDrawer,
+  footer,
   id,
   isFixedWidth,
   isOpen,
@@ -29,6 +30,7 @@ export default function Drawer({
                 type="button"
               />
               <div className={`fr-modal__content ${styles['fr-modal__content']}`}>{children}</div>
+              {footer !== undefined && <div className={styles['fr-modal__footer']}>{footer}</div>}
             </div>
           </div>
         </div>
@@ -41,6 +43,7 @@ type Props = PropsWithChildren<
   Readonly<{
     boutonFermeture: string
     closeDrawer(): void
+    footer?: ReactNode
     id: string
     isFixedWidth: boolean
     isOpen: boolean

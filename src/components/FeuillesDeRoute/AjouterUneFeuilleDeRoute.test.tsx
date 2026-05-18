@@ -60,7 +60,7 @@ describe('ajouter une feuille de route', () => {
       expect(epciGroupement).toBeRequired()
       expect(epciGroupement).toHaveAttribute('value', 'groupementsDeCommunes')
 
-      const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      const enregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
     })
 

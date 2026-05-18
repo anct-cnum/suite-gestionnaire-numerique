@@ -38,11 +38,29 @@ export default function AjouterDesBesoins({
         {hasBesoins ? 'Modifier' : 'Ajouter'}
       </button>
       <Drawer
-        boutonFermeture={hasBesoins ? 'Fermer la modification des besoins' : 'Fermer l‘ajout des besoins'}
+        boutonFermeture={hasBesoins ? 'Fermer la modification des besoins' : 'Fermer l’ajout des besoins'}
         closeDrawer={() => {
           resetToutEffacer(fieldset)
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group">
+            <button
+              aria-controls={drawerId}
+              className="fr-btn"
+              onClick={() => {
+                enregistrerBesoins(fieldset)
+                setIsDrawerOpen(false)
+              }}
+              type="button"
+            >
+              Enregistrer
+            </button>
+            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
+              Tout effacer
+            </button>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -67,22 +85,6 @@ export default function AjouterDesBesoins({
             checkboxes={formationsProfesionnels}
             titre="Besoins relatifs à la formation des professionnels de l’inclusion numérique"
           />
-          <div className="fr-btns-group">
-            <button
-              aria-controls={drawerId}
-              className="fr-btn"
-              onClick={() => {
-                enregistrerBesoins(fieldset)
-                setIsDrawerOpen(false)
-              }}
-              type="button"
-            >
-              Enregistrer
-            </button>
-            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
-              Tout effacer
-            </button>
-          </div>
         </fieldset>
       </Drawer>
     </>

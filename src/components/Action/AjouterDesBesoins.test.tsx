@@ -95,11 +95,11 @@ describe('ajouter des besoins', () => {
       })
       expect(appuyer).not.toBeRequired()
 
-      const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
+      const enregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterDesBesoinsId')
       expect(enregistrer).toHaveAttribute('type', 'button')
-      const effacer = within(fieldset).getByRole('button', { name: 'Tout effacer' })
+      const effacer = within(drawer).getByRole('button', { name: 'Tout effacer' })
       expect(effacer).toBeEnabled()
       expect(effacer).toHaveAttribute('type', 'button')
     })

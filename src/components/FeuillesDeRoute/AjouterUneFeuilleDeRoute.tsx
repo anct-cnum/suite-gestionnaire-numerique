@@ -15,6 +15,7 @@ export default function AjouterUneFeuilleDeRoute({ membres, perimetres, uidGouve
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerId = 'drawerAjouterFeuilleDeRouteId'
+  const formId = 'formAjouterFeuilleDeRouteId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
   return (
@@ -35,6 +36,13 @@ export default function AjouterUneFeuilleDeRoute({ membres, perimetres, uidGouve
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group">
+            <SubmitButton form={formId} isDisabled={isDisabled}>
+              {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+            </SubmitButton>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -43,6 +51,7 @@ export default function AjouterUneFeuilleDeRoute({ membres, perimetres, uidGouve
         ref={drawerRef}
       >
         <FormulaireFeuilleDeRoute
+          formId={formId}
           label="Ajouter une feuille de route"
           labelId={labelId}
           membres={membres}
@@ -52,9 +61,7 @@ export default function AjouterUneFeuilleDeRoute({ membres, perimetres, uidGouve
           validerFormulaire={(event) => {
             void ajouterUneFeuilleDeRoute(event)
           }}
-        >
-          <SubmitButton isDisabled={isDisabled}>{isDisabled ? 'Ajout en cours...' : 'Enregistrer'}</SubmitButton>
-        </FormulaireFeuilleDeRoute>
+        />
       </Drawer>
     </>
   )
