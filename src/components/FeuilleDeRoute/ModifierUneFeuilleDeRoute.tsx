@@ -22,6 +22,7 @@ export default function ModifierUneFeuilleDeRoute({
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerId = 'drawerModifierUneFeuilleDeRouteId'
+  const formId = 'formModifierUneFeuilleDeRouteId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
 
@@ -44,6 +45,13 @@ export default function ModifierUneFeuilleDeRoute({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group">
+            <SubmitButton form={formId} isDisabled={isDisabled}>
+              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+            </SubmitButton>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -52,6 +60,7 @@ export default function ModifierUneFeuilleDeRoute({
         ref={drawerRef}
       >
         <FormulaireFeuilleDeRoute
+          formId={formId}
           label="Modifier une feuille de route"
           labelId={labelId}
           membres={membres}
@@ -61,9 +70,7 @@ export default function ModifierUneFeuilleDeRoute({
           validerFormulaire={(event) => {
             void modifierUneFeuilleDeRoute(event)
           }}
-        >
-          <SubmitButton isDisabled={isDisabled}>{isDisabled ? 'Modification en cours...' : 'Enregistrer'}</SubmitButton>
-        </FormulaireFeuilleDeRoute>
+        />
       </Drawer>
     </>
   )

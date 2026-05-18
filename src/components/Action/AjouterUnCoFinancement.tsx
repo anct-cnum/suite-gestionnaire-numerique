@@ -51,6 +51,18 @@ export default function AjouterUnCoFinancement({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group fr-mt-2w">
+            <button
+              className="fr-btn"
+              disabled={coFinanceur === '' || montant.orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
+              onClick={handleSubmit}
+              type="button"
+            >
+              Enregistrer
+            </button>
+          </div>
+        }
         id="ajouter-un-cofinancement"
         isFixedWidth={false}
         isOpen={isDrawerOpen}
@@ -61,7 +73,7 @@ export default function AjouterUnCoFinancement({
           <br />
           {label}
         </DrawerTitle>
-        <p className="fr-text--sm color-grey">Précisez l‘origine du financement</p>
+        <p className="fr-text--sm color-grey">Précisez l’origine du financement</p>
         <Select
           id="cofinanceur"
           name="cofinanceur"
@@ -104,16 +116,6 @@ export default function AjouterUnCoFinancement({
             setMontant(montant)
           }}
         />
-        <div className="fr-btns-group fr-mt-2w">
-          <button
-            className="fr-btn"
-            disabled={coFinanceur === '' || montant.orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
-            onClick={handleSubmit}
-            type="button"
-          >
-            Enregistrer
-          </button>
-        </div>
       </Drawer>
     </>
   )

@@ -4,6 +4,7 @@ export default function SubmitButton({
   ariaControls,
   children,
   className = '',
+  form,
   isDisabled = false,
   title,
 }: Props): ReactElement {
@@ -12,6 +13,7 @@ export default function SubmitButton({
       aria-controls={ariaControls}
       className={`fr-btn ${className}`}
       disabled={isDisabled}
+      form={form}
       title={title}
       type="submit"
     >
@@ -24,6 +26,7 @@ type Props = PropsWithChildren<
   Readonly<{
     ariaControls?: string
     className?: string
+    form?: string
     isDisabled?: boolean
     title?: string
   }>

@@ -1,25 +1,30 @@
-import { PropsWithChildren, ReactElement, SyntheticEvent } from 'react'
+import { ReactElement, SyntheticEvent } from 'react'
 
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function FormulaireNoteDeContextualisation({
-  children,
   contenu,
+  formId,
   gererLeChangementDeContenu,
   labelId,
   validerFormulaire,
 }: Props): ReactElement {
   return (
-    <form aria-label="Contextualisation des demandes de subvention" method="dialog" onSubmit={validerFormulaire}>
+    <form
+      aria-label="Contextualisation des demandes de subvention"
+      id={formId}
+      method="dialog"
+      onSubmit={validerFormulaire}
+    >
       <DrawerTitle id={labelId}>
         <TitleIcon icon="message-2-line" />
         <br />
         Contextualisation des demandes de subvention
       </DrawerTitle>
       <p className="fr-text--sm color-grey">
-        Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que
+        Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que
         vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.
       </p>
       <TextEditor
@@ -28,16 +33,14 @@ export default function FormulaireNoteDeContextualisation({
         height={380}
         onChange={gererLeChangementDeContenu}
       />
-      {children}
     </form>
   )
 }
 
-type Props = PropsWithChildren<
-  Readonly<{
-    contenu: string
-    gererLeChangementDeContenu(contenu: string): void
-    labelId: string
-    validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
-  }>
->
+type Props = Readonly<{
+  contenu: string
+  formId?: string
+  gererLeChangementDeContenu(contenu: string): void
+  labelId: string
+  validerFormulaire(event: SyntheticEvent<HTMLFormElement>): void
+}>

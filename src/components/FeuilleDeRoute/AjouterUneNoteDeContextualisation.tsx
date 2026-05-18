@@ -17,6 +17,7 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu } = useRichTextEditor('')
   const drawerId = 'drawerAjouterNoteDeContextualisationId'
+  const formId = 'formAjouterNoteDeContextualisationId'
   const labelId = useId()
 
   return (
@@ -34,10 +35,17 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
         Ajouter
       </button>
       <Drawer
-        boutonFermeture="Fermer le formulaire de création d‘une note de contextualisation"
+        boutonFermeture="Fermer le formulaire de création d’une note de contextualisation"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group fr-mt-2w">
+            <SubmitButton ariaControls={drawerId} form={formId} isDisabled={isDisabled}>
+              {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+            </SubmitButton>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -46,18 +54,13 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
       >
         <FormulaireNoteDeContextualisation
           contenu={contenu}
+          formId={formId}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
           validerFormulaire={(event) => {
             void creerUneNoteDeContextualisation(event)
           }}
-        >
-          <div className="fr-btns-group fr-mt-2w">
-            <SubmitButton ariaControls={drawerId} isDisabled={isDisabled}>
-              {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-            </SubmitButton>
-          </div>
-        </FormulaireNoteDeContextualisation>
+        />
       </Drawer>
     </>
   )

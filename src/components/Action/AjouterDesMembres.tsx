@@ -52,6 +52,16 @@ export default function AjouterDesMembres({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        footer={
+          <div className="fr-btns-group">
+            <button aria-controls={drawerId} className="fr-btn" onClick={enregistrer(fieldset)} type="button">
+              Enregistrer
+            </button>
+            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
+              Tout effacer
+            </button>
+          </div>
+        }
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
@@ -100,14 +110,6 @@ export default function AjouterDesMembres({
               </div>
             </Checkbox>
           ))}
-          <div className="fr-btns-group">
-            <button aria-controls={drawerId} className="fr-btn" onClick={enregistrer(fieldset)} type="button">
-              Enregistrer
-            </button>
-            <button className="fr-btn fr-btn--secondary" onClick={toutEffacer(fieldset)} type="button">
-              Tout effacer
-            </button>
-          </div>
         </fieldset>
       </Drawer>
     </>

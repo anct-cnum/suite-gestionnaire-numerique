@@ -62,11 +62,11 @@ describe('ajout des porteurs', () => {
       const membre2 = within(fieldset).getByRole('checkbox', { checked: true, name: 'CC des Monts du Lyonnais' })
       expect(membre2).not.toBeRequired()
 
-      const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
+      const enregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterDesPorteursId')
       expect(enregistrer).toHaveAttribute('type', 'button')
-      const effacer = within(fieldset).getByRole('button', { name: 'Tout effacer' })
+      const effacer = within(drawer).getByRole('button', { name: 'Tout effacer' })
       expect(effacer).toBeEnabled()
       expect(effacer).toHaveAttribute('type', 'button')
     })

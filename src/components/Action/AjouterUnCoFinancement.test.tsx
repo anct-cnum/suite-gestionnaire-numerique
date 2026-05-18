@@ -30,7 +30,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(drawer).toBeInTheDocument()
     const titre = within(drawer).getByRole('heading', { level: 3, name: 'Ajouter un co-financement' })
     expect(titre).toBeInTheDocument()
-    const texteDInstruction = within(drawer).getByText('Précisez l‘origine du financement', { selector: 'p' })
+    const texteDInstruction = within(drawer).getByText('Précisez l’origine du financement', { selector: 'p' })
     expect(texteDInstruction).toBeInTheDocument()
     const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
     const option1 = within(selecteurOrigineDuFinancement).getByRole('option', { hidden: true, name: '' })
