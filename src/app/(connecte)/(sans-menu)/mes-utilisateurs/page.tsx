@@ -5,6 +5,7 @@ import departements from '../../../../../ressources/departements.json'
 import groupements from '../../../../../ressources/groupements.json'
 import regions from '../../../../../ressources/regions.json'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
@@ -78,7 +79,12 @@ export default async function MesUtilisateursController({ searchParams }: Props)
     new Date()
   )
 
-  return <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
+  return (
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Mes utilisateurs' }]} />
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
+    </>
+  )
 }
 
 type Props = Readonly<{

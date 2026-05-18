@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 
 import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxInclusion'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
@@ -64,12 +65,17 @@ export default async function ListeLieuxInclusionController({
   setSearchParams()
 
   return (
-    <ListeLieuxInclusion
-      listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
-      searchParams={currentSearchParams}
-      typesStructure={typesStructure}
-      utilisateurRole={utilisateur.role.nom as TypologieRole}
-    />
+    <>
+      <FilAriane
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: "Liste des lieux d'inclusion" }]}
+      />
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
+        searchParams={currentSearchParams}
+        typesStructure={typesStructure}
+        utilisateurRole={utilisateur.role.nom as TypologieRole}
+      />
+    </>
   )
 
   function setSearchParams(): void {

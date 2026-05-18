@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import Poste from '@/components/Poste/Poste'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { PrismaPosteConseillerNumeriqueDetailLoader } from '@/gateways/PrismaPosteConseillerNumeriqueDetailLoader'
 import { posteConseillerNumeriqueDetailPresenter } from '@/presenters/posteConseillerNumeriqueDetailPresenter'
 
@@ -28,17 +29,35 @@ export default async function PosteConseillerNumeriqueController({ params }: Pro
   const readModel = await loader.get(posteConumIdNumeric, structureIdNumeric)
   const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, new Date())
 
+  const filAriane = (
+    <FilAriane
+      items={[
+        { href: '/tableau-de-bord', label: 'Tableau de bord' },
+        { href: '/postes-conseiller-numerique', label: 'Suivi des postes Conseiller Numérique' },
+        { label: 'Détail du poste' },
+      ]}
+    />
+  )
+
   if ('type' in viewModel) {
     return (
-      <div className="fr-container fr-py-4w">
-        <div className="fr-alert fr-alert--error">
-          <p>{viewModel.message}</p>
+      <>
+        {filAriane}
+        <div className="fr-container fr-py-4w">
+          <div className="fr-alert fr-alert--error">
+            <p>{viewModel.message}</p>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
-  return <Poste viewModel={viewModel} />
+  return (
+    <>
+      {filAriane}
+      <Poste viewModel={viewModel} />
+    </>
+  )
 }
 
 type Props = Readonly<{

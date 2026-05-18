@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import LieuxInclusion from '@/components/LieuxInclusion/LieuxInclusion'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -41,5 +42,10 @@ export default async function LieuxInclusionController(): Promise<ReactElement> 
 
   const viewModel = lieuxInclusionNumeriquePresenter(result)
 
-  return <LieuxInclusion viewModel={viewModel} />
+  return (
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: "Lieux d'inclusion" }]} />
+      <LieuxInclusion viewModel={viewModel} />
+    </>
+  )
 }

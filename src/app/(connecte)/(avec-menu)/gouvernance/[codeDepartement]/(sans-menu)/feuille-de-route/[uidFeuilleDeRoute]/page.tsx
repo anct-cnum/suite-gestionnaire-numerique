@@ -3,12 +3,14 @@ import { ReactElement } from 'react'
 
 import prisma from '../../../../../../../../../prisma/prismaClient'
 import FeuilleDeRoute from '@/components/FeuilleDeRoute/FeuilleDeRoute'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { PrismaUneFeuilleDeRouteLoader } from '@/gateways/PrismaUneFeuilleDeRouteLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
+import { nomDepartement } from '@/shared/urlHelpers'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
 
@@ -41,7 +43,19 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
       uidUtilisateurCourant: utilisateur.uid,
     })
 
-    return <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
+    return (
+      <>
+        <FilAriane
+          items={[
+            { href: '/tableau-de-bord', label: 'Tableau de bord' },
+            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { href: `/gouvernance/${codeDepartement}/feuilles-de-route`, label: 'Feuilles de route' },
+            { label: feuilleDeRouteReadModel.nom },
+          ]}
+        />
+        <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
+      </>
+    )
   } catch {
     notFound()
   }

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
@@ -94,14 +95,19 @@ export default async function ListeAidantsMediateursController({
   setSearchParams()
 
   return (
-    <ListeAidantsMediateurs
-      accompagnementsPromise={accompagnementsPromise}
-      listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
-      searchParams={currentSearchParams}
-      totalAccompagnementsPromise={totalAccompagnementsPromise}
-      totalBeneficiairesPromise={totalBeneficiairesPromise}
-      utilisateurRole={utilisateur.role.nom as TypologieRole}
-    />
+    <>
+      <FilAriane
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Liste des aidants et médiateurs' }]}
+      />
+      <ListeAidantsMediateurs
+        accompagnementsPromise={accompagnementsPromise}
+        listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
+        searchParams={currentSearchParams}
+        totalAccompagnementsPromise={totalAccompagnementsPromise}
+        totalBeneficiairesPromise={totalBeneficiairesPromise}
+        utilisateurRole={utilisateur.role.nom as TypologieRole}
+      />
+    </>
   )
 
   function setSearchParams(): void {

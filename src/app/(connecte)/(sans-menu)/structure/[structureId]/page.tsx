@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import Structure from '@/components/Structure/Structure'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUneStructureLoader } from '@/gateways/PrismaUneStructureLoader'
@@ -40,7 +41,12 @@ export default async function StructureController({ params }: Props): Promise<Re
 
   const viewModel = structurePresenter(uneStructureReadModel, new Date())
 
-  return <Structure peutGererStructure={peutGererStructure} viewModel={viewModel} />
+  return (
+    <>
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Structure' }]} />
+      <Structure peutGererStructure={peutGererStructure} viewModel={viewModel} />
+    </>
+  )
 }
 
 type Props = Readonly<{

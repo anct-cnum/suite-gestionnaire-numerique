@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -16,6 +17,7 @@ import {
   niveauDeFormationPresenter,
   NiveauDeFormationViewModel,
 } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import { nomDepartement } from '@/shared/urlHelpers'
 import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
@@ -53,12 +55,21 @@ export default async function AidantsMediateursGouvernanceController({ params }:
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(codeDepartement)
 
   return (
-    <AidantsMediateurs
-      accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
-      beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
-      dateGeneration={dateGeneration}
-      niveauDeFormationViewModel={niveauDeFormationViewModel}
-    />
+    <>
+      <FilAriane
+        items={[
+          { href: '/tableau-de-bord', label: 'Tableau de bord' },
+          { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+          { label: 'Aidants et médiateurs' },
+        ]}
+      />
+      <AidantsMediateurs
+        accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+        beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
+        dateGeneration={dateGeneration}
+        niveauDeFormationViewModel={niveauDeFormationViewModel}
+      />
+    </>
   )
 }
 

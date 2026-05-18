@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
 import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -53,7 +54,18 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
 
   const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier)
 
-  return <LieuxInclusionDetails data={presentedData} />
+  return (
+    <>
+      <FilAriane
+        items={[
+          { href: '/tableau-de-bord', label: 'Tableau de bord' },
+          { href: '/liste-lieux-inclusion', label: "Liste des lieux d'inclusion" },
+          { label: 'Détail du lieu' },
+        ]}
+      />
+      <LieuxInclusionDetails data={presentedData} />
+    </>
+  )
 }
 
 type Props = Readonly<{
