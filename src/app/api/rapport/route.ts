@@ -12,7 +12,7 @@ import {
   WidthType,
 } from 'docx'
 import { NextRequest, NextResponse } from 'next/server'
-import { chromium } from 'playwright'
+import PDFDocument from 'pdfkit'
 
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -290,106 +290,191 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
   return Packer.toBlob(doc)
 }
 
+const COULEUR_BLEU = '#000091'
+const COULEUR_TEXTE = '#161616'
+const COULEUR_SEPARATEUR = '#dddddd'
+
+type ColonneTableau = Readonly<{
+  align: 'left' | 'right'
+  label: string
+  largeur: number
+}>
+
 async function genererPdf(rapport: RapportReadModel): Promise<Buffer> {
-  const navigateur = await chromium.launch()
-  try {
-    const page = await navigateur.newPage()
-    await page.setContent(genererHtml(rapport), { waitUntil: 'load' })
-    return await page.pdf({
-      format: 'A4',
-      margin: { bottom: '20mm', left: '15mm', right: '15mm', top: '20mm' },
-      printBackground: true,
-    })
-  } finally {
-    await navigateur.close()
-  }
-}
-
-function echapperHtml(valeur: string): string {
-  return valeur.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
-
-function genererHtml(rapport: RapportReadModel): string {
   const { aidantsConnect, conseillersNumeriques, franceNumerique, perimetre } = rapport
-  const sections: Array<string> = []
+  const doc = new PDFDocument({ margin: 48, size: 'A4' })
+  const morceaux: Array<Buffer> = []
+  const fini = new Promise<Buffer>((resolve, reject) => {
+    doc.on('data', (morceau: Buffer) => morceaux.push(morceau))
+    doc.on('end', () => {
+      resolve(Buffer.concat(morceaux))
+    })
+    doc.on('error', reject)
+  })
 
-  const lignesConseillers = conseillersNumeriques.departements
-    .map(
-      (dep) =>
-        `<tr><td>${echapperHtml(dep.nom)}</td>` +
-        `<td class="nb">${formaterNombre(dep.nbConseillers)}</td>` +
-        `<td class="nb">${formaterNombre(dep.nbBeneficiaires)}</td></tr>`
-    )
-    .join('')
-  sections.push(
-    `<h2>Conseillers numériques</h2>` +
-      `<p>${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés sur ` +
-      `${echapperHtml(perimetre.nom)}.</p>` +
-      `<table><thead><tr><th>Départements</th><th class="nb">Nombre de Conseillers numériques</th>` +
-      `<th class="nb">Nombre de bénéficiaires depuis 2021</th></tr></thead>` +
-      `<tbody>${lignesConseillers}</tbody></table>`
+  titre(doc, "Rapports de situation de l'inclusion numérique")
+  paragraphe(doc, `Périmètre : ${perimetre.nom}.`)
+
+  sousTitre(doc, 'Conseillers numériques')
+  paragraphe(
+    doc,
+    `${formaterNombre(conseillersNumeriques.total)} conseillers numériques sont déployés sur ${perimetre.nom}.`
+  )
+  tableau(
+    doc,
+    [
+      { align: 'left', label: 'Départements', largeur: 0.4 },
+      { align: 'right', label: 'Nombre de Conseillers numériques', largeur: 0.3 },
+      { align: 'right', label: 'Nombre de bénéficiaires depuis 2021', largeur: 0.3 },
+    ],
+    conseillersNumeriques.departements.map((dep) => [
+      dep.nom,
+      formaterNombre(dep.nbConseillers),
+      formaterNombre(dep.nbBeneficiaires),
+    ])
   )
 
-  const lignesAidants = aidantsConnect.departements
-    .map((dep) => {
+  sousTitre(doc, "Déploiement d'Aidants Connect")
+  paragraphe(
+    doc,
+    "Aidants Connect est le service public numérique qui protège l'aidant et l'usager lors de" +
+      ` l'accompagnement aux démarches en ligne. Dans ${perimetre.nom},` +
+      ` ${formaterNombre(aidantsConnect.totalHabilites)} aidants et référents sont habilités Aidants Connect,` +
+      ` dont ${formaterNombre(aidantsConnect.totalDontConseillers)} conseillers numériques.`
+  )
+  tableau(
+    doc,
+    [
+      { align: 'left', label: 'Départements', largeur: 0.4 },
+      { align: 'left', label: 'Aidants et référents habilités Aidants Connect', largeur: 0.6 },
+    ],
+    aidantsConnect.departements.map((dep) => {
       const suffixe =
         dep.dontConseillers > 0 ? ` dont ${formaterNombre(dep.dontConseillers)} conseillers numériques` : ''
-      return `<tr><td>${echapperHtml(dep.nom)}</td><td>${formaterNombre(dep.nbHabilites)}${suffixe}</td></tr>`
+      return [dep.nom, `${formaterNombre(dep.nbHabilites)}${suffixe}`]
     })
-    .join('')
-  sections.push(
-    `<h2>Déploiement d'Aidants Connect</h2>` +
-      `<p>Aidants Connect est le service public numérique qui protège l'aidant et l'usager lors de ` +
-      `l'accompagnement aux démarches en ligne. Dans ${echapperHtml(perimetre.nom)}, ` +
-      `${formaterNombre(aidantsConnect.totalHabilites)} aidants et référents sont habilités Aidants Connect, ` +
-      `dont ${formaterNombre(aidantsConnect.totalDontConseillers)} conseillers numériques.</p>` +
-      `<table><thead><tr><th>Départements</th>` +
-      `<th>Aidants et référents habilités Aidants Connect</th></tr></thead>` +
-      `<tbody>${lignesAidants}</tbody></table>`
   )
 
-  const blocsFne: Array<string> = ['<h2>France Numérique Ensemble</h2>']
+  sousTitre(doc, 'France Numérique Ensemble')
   for (const dep of franceNumerique.departements) {
-    blocsFne.push(`<h3>Gouvernance de ${echapperHtml(dep.nom)}</h3>`)
+    sousSousTitre(doc, `Gouvernance de ${dep.nom}`)
     if (dep.gouvernance.coporteurs.length > 0) {
-      blocsFne.push(`<p><strong>Coporteurs : </strong>${echapperHtml(dep.gouvernance.coporteurs.join(', '))}</p>`)
+      paragrapheGras(doc, 'Coporteurs : ', dep.gouvernance.coporteurs.join(', '))
     }
     if (dep.gouvernance.membres.length > 0) {
-      blocsFne.push(`<p><strong>Membres : </strong>${echapperHtml(dep.gouvernance.membres.join(', '))}</p>`)
+      paragrapheGras(doc, 'Membres : ', dep.gouvernance.membres.join(', '))
     }
     for (const fdr of dep.feuillesDeRoute) {
-      blocsFne.push(`<h4>Feuille de route ${echapperHtml(fdr.nom)}</h4>`)
-      blocsFne.push(`<p>Portée par ${echapperHtml(fdr.porteur.type)} (${echapperHtml(fdr.porteur.nom)})</p>`)
-      const items = fdr.enveloppes
-        .map((env) => {
-          const recipiendaires =
-            env.beneficiaires.length > 0 ? ` (récipiendaire : ${env.beneficiaires.join(' & ')})` : ''
-          return (
-            `<li>Enveloppe ${echapperHtml(env.type)} de ${formaterMontant(env.montant)}` +
-            `${echapperHtml(recipiendaires)}${echapperHtml(formaterBesoins(env.besoins))}</li>`
-          )
-        })
-        .join('')
-      blocsFne.push(`<ul>${items}</ul>`)
+      sousSousTitre(doc, `Feuille de route ${fdr.nom}`)
+      paragraphe(doc, `Portée par ${fdr.porteur.type} (${fdr.porteur.nom})`)
+      for (const env of fdr.enveloppes) {
+        const recipiendaires = env.beneficiaires.length > 0 ? ` (récipiendaire : ${env.beneficiaires.join(' & ')})` : ''
+        puce(
+          doc,
+          `Enveloppe ${env.type} de ${formaterMontant(env.montant)}${recipiendaires}${formaterBesoins(env.besoins)}`
+        )
+      }
     }
   }
-  sections.push(blocsFne.join(''))
 
-  return (
-    `<!doctype html><html lang="fr"><head><meta charset="utf-8">` +
-    `<style>` +
-    `body{font-family:Arial,Helvetica,sans-serif;color:#161616;font-size:12px;}` +
-    `h1{color:#000091;font-size:22px;}h2{color:#000091;font-size:18px;margin-top:24px;}` +
-    `h3{font-size:15px;}h4{font-size:13px;}` +
-    `table{width:100%;border-collapse:collapse;margin:8px 0;}` +
-    `th,td{text-align:left;padding:4px 8px;border-bottom:1px solid #ddd;}` +
-    `td.nb,th.nb{text-align:right;}` +
-    `</style></head><body>` +
-    `<h1>Rapports de situation de l'inclusion numérique</h1>` +
-    `<p>Périmètre : ${echapperHtml(perimetre.nom)}.</p>` +
-    sections.join('') +
-    `</body></html>`
+  doc.end()
+  return fini
+}
+
+function titre(doc: PDFKit.PDFDocument, texte: string): void {
+  doc.font('Helvetica-Bold').fontSize(20).fillColor(COULEUR_BLEU).text(texte)
+  doc.moveDown(0.5)
+}
+
+function sousTitre(doc: PDFKit.PDFDocument, texte: string): void {
+  doc.moveDown(0.5)
+  doc.font('Helvetica-Bold').fontSize(15).fillColor(COULEUR_BLEU).text(texte)
+  doc.moveDown(0.3)
+}
+
+function sousSousTitre(doc: PDFKit.PDFDocument, texte: string): void {
+  doc.moveDown(0.3)
+  doc.font('Helvetica-Bold').fontSize(12).fillColor(COULEUR_TEXTE).text(texte)
+  doc.moveDown(0.2)
+}
+
+function paragraphe(doc: PDFKit.PDFDocument, texte: string): void {
+  doc.font('Helvetica').fontSize(10).fillColor(COULEUR_TEXTE).text(texte, { align: 'left' })
+  doc.moveDown(0.4)
+}
+
+function paragrapheGras(doc: PDFKit.PDFDocument, label: string, valeur: string): void {
+  doc.fontSize(10).fillColor(COULEUR_TEXTE)
+  doc.font('Helvetica-Bold').text(label, { continued: true })
+  doc.font('Helvetica').text(valeur)
+  doc.moveDown(0.2)
+}
+
+function puce(doc: PDFKit.PDFDocument, texte: string): void {
+  doc.font('Helvetica').fontSize(10).fillColor(COULEUR_TEXTE).text(`• ${texte}`, { align: 'left', indent: 10 })
+  doc.moveDown(0.2)
+}
+
+function tableau(
+  doc: PDFKit.PDFDocument,
+  colonnes: ReadonlyArray<ColonneTableau>,
+  lignes: ReadonlyArray<ReadonlyArray<string>>
+): void {
+  const gaucheX = doc.page.margins.left
+  const largeurTotale = doc.page.width - doc.page.margins.left - doc.page.margins.right
+  const largeurs = colonnes.map((colonne) => colonne.largeur * largeurTotale)
+  const padding = 4
+
+  function dessinerLigne(cellules: ReadonlyArray<string>, gras: boolean, estEntete: boolean): void {
+    doc
+      .fontSize(9)
+      .font(gras ? 'Helvetica-Bold' : 'Helvetica')
+      .fillColor(COULEUR_TEXTE)
+    const hauteur =
+      Math.max(
+        ...cellules.map((valeur, index) => doc.heightOfString(valeur, { width: largeurs[index] - padding * 2 }))
+      ) +
+      padding * 2
+
+    if (doc.y + hauteur > doc.page.height - doc.page.margins.bottom) {
+      doc.addPage()
+      if (!estEntete) {
+        dessinerLigne(
+          colonnes.map((colonne) => colonne.label),
+          true,
+          true
+        )
+      }
+    }
+
+    const hautY = doc.y
+    let curseurX = gaucheX
+    cellules.forEach((valeur, index) => {
+      doc.text(valeur, curseurX + padding, hautY + padding, {
+        align: colonnes[index].align,
+        width: largeurs[index] - padding * 2,
+      })
+      curseurX += largeurs[index]
+    })
+    const basY = hautY + hauteur
+    doc
+      .moveTo(gaucheX, basY)
+      .lineTo(gaucheX + largeurTotale, basY)
+      .lineWidth(0.5)
+      .strokeColor(COULEUR_SEPARATEUR)
+      .stroke()
+    doc['y'] = basY
+  }
+
+  dessinerLigne(
+    colonnes.map((colonne) => colonne.label),
+    true,
+    true
   )
+  for (const ligne of lignes) {
+    dessinerLigne(ligne, false, false)
+  }
+  doc.moveDown(0.8)
 }
 
 function formaterNombre(nombre: number): string {
