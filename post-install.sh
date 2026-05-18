@@ -13,6 +13,3 @@ else
   echo "* Il faut que tu affectes NEXTAUTH_SECRET à la main. *"
   echo "******************************************************"
 fi
-
-# Navigateur requis par Playwright pour l'export PDF des rapports
-pnpm exec playwright install chromium

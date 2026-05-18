@@ -84,7 +84,7 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ['mjml'],
+  serverExternalPackages: ['mjml', 'pdfkit'],
   typescript: {
     ignoreBuildErrors: false,
   },
