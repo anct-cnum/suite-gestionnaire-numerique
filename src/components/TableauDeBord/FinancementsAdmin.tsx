@@ -66,25 +66,26 @@ export default function FinancementsAdmin({
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="download-line" />
-            {financementViewModel.montantTotalEnveloppes}
+            {financementViewModel.fneEngage}
           </div>
           <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
-            Montant global des enveloppes
+            Financements FNE engagés par l&apos;État
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            Sur {financementViewModel.nombreEnveloppes} enveloppes de financement
+            sur <span style={{ fontWeight: 700 }}>{financementViewModel.fneDisponible}</span> disponible
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
-            <TitleIcon background="white" icon="upload-line" />
-            {financementViewModel.creditsEngages}
+            <TitleIcon background="white" icon="money-euro-circle-line" />
+            {financementViewModel.conseillerNumerique.verse}
           </div>
           <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>
-            Crédits engagés par l&apos;État
+            Financements Conseiller Numérique versés
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
-            Sur {financementViewModel.nombreEnveloppesUtilisees} enveloppes de financement
+            sur <span style={{ fontWeight: 700 }}>{financementViewModel.conseillerNumerique.conventionne}</span>{' '}
+            conventionnés sur les postes liés à la gouvernance
           </div>
         </div>
       </div>
