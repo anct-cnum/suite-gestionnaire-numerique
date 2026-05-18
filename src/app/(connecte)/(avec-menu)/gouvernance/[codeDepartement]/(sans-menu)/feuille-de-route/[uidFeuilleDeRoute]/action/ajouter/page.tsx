@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import styles from '@/components/Action/Action.module.css'
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -40,7 +41,7 @@ export default async function ActionAjouterController({ params }: Props): Promis
         <div className="fr-col-2">
           <MenuLateral />
         </div>
-        <div className="fr-col-10 fr-pl-7w">
+        <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
           <AjouterUneAction
             action={actionARemplir(undefined, {
               enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>

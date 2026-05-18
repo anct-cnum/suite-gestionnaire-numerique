@@ -58,3 +58,7 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.conteneur-formulaire {
+  max-width: 48rem;
+}
