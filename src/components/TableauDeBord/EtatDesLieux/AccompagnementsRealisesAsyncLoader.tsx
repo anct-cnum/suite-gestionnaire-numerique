@@ -16,7 +16,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
   if (isErrorViewModel(result)) {
     return (
       <>
-        <div className="background-blue-france fr-p-4w fr-ml-1w">
+        <div className="background-blue-france fr-p-3w fr-ml-1w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="error-warning-line" />—
           </div>
@@ -31,7 +31,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">{result.message}</div>
         </div>
-        <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
+        <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
           <div className="font-weight-500">
             <span> Accompagnements des 6 derniers mois</span>
             <Information>
@@ -48,7 +48,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
 
   return (
     <>
-      <div className="background-blue-france fr-p-4w fr-ml-1w">
+      <div className="background-blue-france fr-p-3w fr-ml-1w">
         <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="compass-3-line" />
           {formaterEnNombreFrancais(result.nombreTotal)}
@@ -63,7 +63,7 @@ export default function AccompagnementsRealisesAsyncLoader({ accompagnementsReal
           </Information>
         </div>
       </div>
-      <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
+      <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
         <Bar
           backgroundColor={backgroundColor}
           data={result.repartitionMensuelle.map((item) => item.nombre)}

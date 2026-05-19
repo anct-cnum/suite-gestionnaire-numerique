@@ -14,7 +14,7 @@ export default function MediateursAidants({ viewModel }: Props): ReactElement {
     <BlocCard labelledBy="mediateursAidants">
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="group-line" />
+          <TitleIcon icon="group-line" size="medium-large" />
           <div>
             <h2 className="fr-h4 color-blue-france fr-m-0" id="mediateursAidants">
               Médiateurs numériques et Aidants Connect

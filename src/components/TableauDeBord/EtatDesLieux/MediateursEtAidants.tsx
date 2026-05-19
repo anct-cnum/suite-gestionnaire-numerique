@@ -9,7 +9,7 @@ import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediate
 export default function MediateursEtAidants({ viewModel }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
     return (
-      <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
+      <div className="background-blue-france fr-p-3w fr-mb-1w fr-ml-1w">
         <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="error-warning-line" />—
         </div>
@@ -27,7 +27,7 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
   }
 
   return (
-    <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
+    <div className="background-blue-france fr-p-3w fr-mb-1w fr-ml-1w">
       <div className={`${styles.indicateurValeur} fr-m-0`}>
         <TitleIcon background="white" icon="map-pin-user-line" />
         {viewModel.total}

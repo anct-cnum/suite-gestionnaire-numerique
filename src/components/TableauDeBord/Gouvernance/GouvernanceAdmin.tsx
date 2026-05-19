@@ -15,7 +15,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
       <BlocCard labelledBy="gouvernance">
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="compass-3-line" />
+            <TitleIcon icon="compass-3-line" size="medium-large" />
             <div>
               <h2 className="fr-h4 color-blue-france fr-m-0" id="gouvernance">
                 Gouvernances
@@ -30,7 +30,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
           </Link>
         </div>
         <div className="fr-grid-row">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+          <div className="fr-col background-blue-france fr-p-3w fr-mr-4w">
             <div className={`${styles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="bank-line" />-
             </div>
@@ -39,7 +39,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
           </div>
-          <div className="fr-col background-blue-france fr-p-4w">
+          <div className="fr-col background-blue-france fr-p-3w">
             <div className={`${styles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="file-download-line" />-
             </div>
@@ -72,7 +72,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
         </Link>
       </div>
       <div className="fr-grid-row">
-        <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+        <div className="fr-col background-blue-france fr-p-3w fr-mr-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.nombreGouvernances}
@@ -87,7 +87,7 @@ export default function GouvernanceAdmin({ gouvernanceViewModel, lienGouvernance
             </span>
           </div>
         </div>
-        <div className="fr-col background-blue-france fr-p-4w">
+        <div className="fr-col background-blue-france fr-p-3w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
