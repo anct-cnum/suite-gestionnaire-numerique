@@ -68,7 +68,7 @@ export default function AccompagnementsEtMediateurs({
     <section aria-labelledby="accompagnements-et-mediateurs" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
         <div>
-          <h2 className="fr-h4 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
+          <h2 className="fr-h5 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
             Accompagnements et médiateurs numériques
             <Information>
               <p className="fr-mb-0">
@@ -97,9 +97,9 @@ export default function AccompagnementsEtMediateurs({
               <AsyncLoaderErrorBoundary
                 fallback={
                   <div>
-                    <div className="fr-display--xs fr-mb-0">-</div>
+                    <div className="metrique-nombre-grand fr-mb-0">-</div>
                     <div className="fr-text--lg font-weight-700 fr-m-0">Bénéficiaires accompagnés</div>
-                    <div className="color-blue-france fr-pb-4w">
+                    <div className="color-blue-france fr-text--xs fr-m-0 fr-pb-4w">
                       Soit <strong>- accompagnements réalisés</strong>
                     </div>
                   </div>
@@ -108,9 +108,9 @@ export default function AccompagnementsEtMediateurs({
                 <Suspense
                   fallback={
                     <div>
-                      <div className="fr-display--xs fr-mb-0 color-grey">...</div>
+                      <div className="metrique-nombre-grand fr-mb-0 color-grey">...</div>
                       <div className="fr-text--lg font-weight-700 fr-m-0">Bénéficiaires accompagnés</div>
-                      <div className="color-blue-france fr-pb-4w">
+                      <div className="color-blue-france fr-text--xs fr-m-0 fr-pb-4w">
                         Soit <strong>... accompagnements réalisés</strong>
                       </div>
                     </div>

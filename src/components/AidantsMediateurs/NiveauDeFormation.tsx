@@ -60,7 +60,7 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
     <section aria-labelledby="niveau-de-formation" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
         <div>
-          <h2 className="fr-h4 color-blue-france fr-m-0" id="niveau-de-formation">
+          <h2 className="fr-h5 color-blue-france fr-m-0" id="niveau-de-formation">
             Niveau de formation des aidants et médiateurs numériques
             <Information>
               <p className="fr-mb-0">
@@ -83,7 +83,7 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
             />
           </div>
           <div
-            className="fr-display--sm fr-mb-0"
+            className="metrique-nombre-grand fr-mb-0"
             style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
           >
             {niveauDeFormation.aidantsEtMediateursFormes}
@@ -93,7 +93,7 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
             <br />
             formés ou certifiés
           </div>
-          <div className="color-blue-france fr-pb-4w">
+          <div className="color-blue-france fr-text--xs fr-m-0 fr-pb-4w">
             Sur <strong>{niveauDeFormation.totalAidantsEtMediateurs} aidants et médiateurs</strong>
           </div>
         </div>
