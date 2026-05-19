@@ -20,7 +20,7 @@ export default function FinancementsAdmin({
       <BlocCard labelledBy="financements">
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="pen-nib-line" />
+            <TitleIcon icon="pen-nib-line" size="medium-large" />
             <div>
               <h2 className="fr-h4 color-blue-france fr-m-0" id="financements">
                 Financements
@@ -63,7 +63,7 @@ export default function FinancementsAdmin({
         </Link>
       </div>
       <div className="fr-grid-row fr-mb-4w">
-        <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+        <div className="fr-col background-blue-france fr-p-3w fr-mr-4w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="download-line" />
             {financementViewModel.fneEngage}
@@ -75,9 +75,9 @@ export default function FinancementsAdmin({
             sur <span style={{ fontWeight: 700 }}>{financementViewModel.fneDisponible}</span> disponible
           </div>
         </div>
-        <div className="fr-col background-blue-france fr-p-4w">
+        <div className="fr-col background-blue-france fr-p-3w">
           <div className={`${styles.indicateurValeur} fr-m-0`}>
-            <TitleIcon background="white" icon="money-euro-circle-line" />
+            <TitleIcon background="white" icon="upload-line" />
             {financementViewModel.conseillerNumerique.verse}
           </div>
           <div className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle" style={{ fontWeight: 500 }}>

@@ -24,7 +24,7 @@ export default function EtatDesLieux({
     <section aria-labelledby="etatDesLieux" className="fr-mb-4w ">
       <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
         <div className="fr-col-auto" style={{ alignItems: 'stretch', display: 'flex' }}>
-          <TitleIcon icon="france-line" />
+          <TitleIcon icon="france-line" size="medium-large" />
         </div>
         <div className="fr-col">
           <div

@@ -20,7 +20,7 @@ export default function AccompagnementsRealises({ accompagnementsRealisesPromise
 function AccompagnementsRealisesSkeleton(): ReactElement {
   return (
     <>
-      <div className="background-blue-france fr-p-4w fr-ml-1w">
+      <div className="background-blue-france fr-p-3w fr-ml-1w">
         <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="compass-3-line" />
           <span className="color-grey">...</span>
@@ -35,7 +35,7 @@ function AccompagnementsRealisesSkeleton(): ReactElement {
           </Information>
         </div>
       </div>
-      <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
+      <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
         <div className="font-weight-500">
           <span> Accompagnements des 6 derniers mois</span>
           <Information>
