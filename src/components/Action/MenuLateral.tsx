@@ -2,11 +2,19 @@
 
 import { ReactElement, useState } from 'react'
 
+import styles from './Action.module.css'
+import useStickyPosition from '@/shared/hooks/useStickyPosition'
+
 export default function MenuLateral(): ReactElement {
   const [selectedSection, setSelectedSection] = useState('besoinsAction')
+  const { maxHeight, topPosition } = useStickyPosition()
 
   return (
-    <nav aria-labelledby="fr-sidemenu-title" className="fr-sidemenu fr-pt-5w fr-px-1w">
+    <nav
+      aria-labelledby="fr-sidemenu-title"
+      className={`fr-sidemenu fr-px-1w ${styles.menuCollant}`}
+      style={{ maxHeight, top: topPosition }}
+    >
       <div className="fr-sidemenu__title fr-hidden" id="fr-sidemenu-title">
         Menu
       </div>

@@ -46,11 +46,11 @@ export default async function ActionModifierController({ params }: Props): Promi
             { label: 'Modifier une action' },
           ]}
         />
-        <div className="fr-grid-row">
-          <div className="fr-col-2">
+        <div className={styles.layout}>
+          <div className={styles.menuContainer}>
             <MenuLateral />
           </div>
-          <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`}>
+          <div className={`fr-pl-7w ${styles.contentContainer} ${styles['conteneur-formulaire']}`}>
             <ModifierUneAction
               action={actionPresenter(actionReadModel, {
                 enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>

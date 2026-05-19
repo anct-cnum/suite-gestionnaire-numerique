@@ -46,11 +46,11 @@ export default async function ActionModifierController({ params }: Props): Promi
             { label: actionReadModel.nom },
           ]}
         />
-        <div className="fr-grid-row">
-          <div className="fr-col-2" style={{ flexShrink: 0, minWidth: '320px' }}>
+        <div className={styles.layout}>
+          <div className={styles.menuContainer}>
             <MenuLateral />
           </div>
-          <div className={`fr-col-10 fr-pl-7w ${styles['conteneur-formulaire']}`} style={{ flex: 1, minWidth: 0 }}>
+          <div className={`fr-pl-7w ${styles.contentContainer} ${styles['conteneur-formulaire']}`}>
             <VisualiserUneAction
               action={actionPresenter(actionReadModel, {
                 enveloppes: enveloppesDisponibles.enveloppes.map((enveloppe) =>
