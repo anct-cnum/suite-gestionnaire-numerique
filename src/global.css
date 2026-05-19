@@ -219,3 +219,15 @@ address {
 .blue-background {
   background-color: var(--blue-france-975-75);
 }
+
+.metrique-nombre {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 2.25rem;
+}
+
+.metrique-nombre-grand {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+}
