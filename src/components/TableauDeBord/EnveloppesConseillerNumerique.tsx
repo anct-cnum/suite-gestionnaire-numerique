@@ -39,7 +39,7 @@ export default function EnveloppesConseillerNumerique({ contexte, enveloppes }: 
                 >
                   <div
                     style={{
-                      backgroundColor: 'var(--blue-france-main-525)',
+                      backgroundColor: enveloppe.couleurGraphique,
                       borderRadius: '4px',
                       height: '8px',
                       transition: 'width 0.3s ease',

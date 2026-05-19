@@ -1,4 +1,4 @@
-import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '../shared/enveloppe'
 import { formatMontantEnMillions } from '../shared/number'
 import { EnveloppeConseillerNumeriqueReadModel } from '@/use-cases/queries/RecupererLesEnveloppesConseillerNumerique'
 
@@ -11,8 +11,11 @@ export function enveloppesConseillerNumeriquePresenter(
     const plafond = enveloppe.plafond
     const pourcentageConsomme = plafond > 0 ? Math.round((consommation / plafond) * 100) : 0
 
+    const couleur = obtenirCouleurEnveloppe(enveloppe.libelle)
+
     return {
-      color: obtenirCouleurEnveloppe(enveloppe.libelle),
+      color: couleur,
+      couleurGraphique: obtenirCouleurGraphique(couleur),
       disponible: now >= enveloppe.dateDeDebut && now <= enveloppe.dateDeFin,
       label: enveloppe.libelle,
       pourcentageConsomme,
@@ -23,6 +26,7 @@ export function enveloppesConseillerNumeriquePresenter(
 
 export type EnveloppeConseillerNumeriqueViewModel = Readonly<{
   color: string
+  couleurGraphique: string
   disponible: boolean
   label: string
   pourcentageConsomme: number

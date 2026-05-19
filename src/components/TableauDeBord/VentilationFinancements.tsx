@@ -57,7 +57,7 @@ export default function VentilationFinancements({
                   >
                     <div
                       style={{
-                        backgroundColor: 'var(--blue-france-main-525)',
+                        backgroundColor: detail.couleurGraphique,
                         borderRadius: '4px',
                         height: '8px',
                         transition: 'width 0.3s ease',
@@ -82,6 +82,7 @@ type Props = Readonly<{
   nombreDeFinancementsEngagesParLEtat: number
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     color: string
+    couleurGraphique: string
     label: string
     pourcentageConsomme: number
     total: string

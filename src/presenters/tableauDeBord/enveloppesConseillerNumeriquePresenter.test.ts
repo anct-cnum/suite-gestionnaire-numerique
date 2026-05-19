@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { enveloppesConseillerNumeriquePresenter } from './enveloppesConseillerNumeriquePresenter'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '../shared/enveloppe'
 import { EnveloppeConseillerNumeriqueReadModel } from '@/use-cases/queries/RecupererLesEnveloppesConseillerNumerique'
 
 describe(enveloppesConseillerNumeriquePresenter, () => {
@@ -23,7 +24,8 @@ describe(enveloppesConseillerNumeriquePresenter, () => {
     // THEN
     expect(result).toStrictEqual([
       {
-        color: 'dot-purple-glycine-850-200',
+        color: obtenirCouleurEnveloppe('Conseiller Numérique - initiale - État'),
+        couleurGraphique: obtenirCouleurGraphique(obtenirCouleurEnveloppe('Conseiller Numérique - initiale - État')),
         disponible: true,
         label: 'Conseiller Numérique - initiale - État',
         pourcentageConsomme: 50,
