@@ -161,8 +161,13 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
     <div className="fr-grid-row fr-grid-row--center">
       <div className="fr-col-12 fr-col-md-10 fr-col-lg-8">
         <title>{viewModel.nom}</title>
-        <div className="fr-grid-row space-between fr-grid-row--middle">
-          <PageTitle>{viewModel.nom}</PageTitle>
+        <div
+          className="fr-grid-row space-between fr-grid-row--middle fr-mt-5w"
+          style={{ flexWrap: 'nowrap', gap: '1rem' }}
+        >
+          <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+            <PageTitle margin="">{viewModel.nom}</PageTitle>
+          </div>
           {gouvernanceViewModel.peutGererGouvernance ? (
             <ModifierUneFeuilleDeRoute
               membres={viewModel.formulaire.membres}
