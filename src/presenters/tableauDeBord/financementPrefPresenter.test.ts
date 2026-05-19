@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { financementsPrefPresenter } from './financementPrefPresenter'
-import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '../shared/enveloppe'
 import { formatMontant } from '../shared/number'
 import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
@@ -41,6 +41,9 @@ describe('financements pref presenter', () => {
       ventilationSubventionsParEnveloppe: [
         {
           color: obtenirCouleurEnveloppe('Ingénierie France Numérique Ensemble - 2024 - État'),
+          couleurGraphique: obtenirCouleurGraphique(
+            obtenirCouleurEnveloppe('Ingénierie France Numérique Ensemble - 2024 - État')
+          ),
           label: 'Ingénierie France Numérique Ensemble - 2024 - État',
           pourcentageConsomme: 45,
           total: formatMontant(450_000),
@@ -83,6 +86,9 @@ describe('financements pref presenter', () => {
       ventilationSubventionsParEnveloppe: [
         {
           color: obtenirCouleurEnveloppe('Formation Aidant Numérique/Aidants Connect - 2024 - État'),
+          couleurGraphique: obtenirCouleurGraphique(
+            obtenirCouleurEnveloppe('Formation Aidant Numérique/Aidants Connect - 2024 - État')
+          ),
           label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
           pourcentageConsomme: 0,
           total: formatMontant(0),

@@ -52,7 +52,8 @@ function financementAdminViewModelFactory(): FinancementAdminViewModel {
     nombreDeFinancementsEngagesParLEtat: 7,
     ventilationSubventionsParEnveloppe: [
       {
-        color: '#000091',
+        color: 'dot-orange-terre-battue-850-200',
+        couleurGraphique: '#fcc0b0',
         label: 'Ingénierie France Numérique Ensemble - 2024 - État',
         pourcentageConsomme: 64,
         total: '3,20 M€',

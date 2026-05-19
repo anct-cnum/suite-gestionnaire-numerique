@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { financementAdminPresenter } from './financementAdminPresenter'
-import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '../shared/enveloppe'
 import { formatMontantEnMillions } from '../shared/number'
 import { TableauDeBordLoaderFinancementsAdmin } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
@@ -41,6 +41,9 @@ describe('financement admin presenter', () => {
       ventilationSubventionsParEnveloppe: [
         {
           color: obtenirCouleurEnveloppe('Ingénierie France Numérique Ensemble - 2024 - État'),
+          couleurGraphique: obtenirCouleurGraphique(
+            obtenirCouleurEnveloppe('Ingénierie France Numérique Ensemble - 2024 - État')
+          ),
           label: 'Ingénierie France Numérique Ensemble - 2024 - État',
           pourcentageConsomme: 64,
           total: formatMontantEnMillions(3_200_000),

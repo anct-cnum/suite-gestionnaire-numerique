@@ -1,4 +1,4 @@
-import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '../shared/enveloppe'
 import { formatMontantEnMillions } from '../shared/number'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TableauDeBordLoaderFinancementsAdmin } from '@/use-cases/queries/RecuperFinancements'
@@ -28,8 +28,11 @@ export function financementAdminPresenter(
         const montantTotal = Number(enveloppeTotale)
         const pourcentageConsomme = montantTotal > 0 ? Math.round((montantUtilise / montantTotal) * 100) : 0
 
+        const couleur = obtenirCouleurEnveloppe(label)
+
         return {
-          color: obtenirCouleurEnveloppe(label),
+          color: couleur,
+          couleurGraphique: obtenirCouleurGraphique(couleur),
           label,
           pourcentageConsomme,
           total: formatMontantEnMillions(montantUtilise),
@@ -49,6 +52,7 @@ export type FinancementAdminViewModel = Readonly<{
   nombreDeFinancementsEngagesParLEtat: number
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     color: string
+    couleurGraphique: string
     label: string
     pourcentageConsomme: number
     total: string
