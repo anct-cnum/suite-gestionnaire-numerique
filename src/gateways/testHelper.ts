@@ -400,6 +400,22 @@ export async function creerUnPorteurAction(
   })
 }
 
+export async function creerUnePersonne(override?: Partial<Prisma.personneUncheckedCreateInput>): Promise<number> {
+  const personne = await prisma.personne.create({
+    data: personneFactory(override),
+    select: { id: true },
+  })
+  return personne.id
+}
+
+export async function creerUnePersonneAffectation(
+  override?: Partial<Prisma.personne_affectationsUncheckedCreateInput>
+): Promise<void> {
+  await prisma.personne_affectations.create({
+    data: personneAffectationFactory(override),
+  })
+}
+
 export function feuilleDeRouteRecordFactory(
   override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
 ): Prisma.FeuilleDeRouteRecordUncheckedCreateInput {
@@ -550,6 +566,27 @@ function porteurActionRecordFactory(
   return {
     actionId: 1,
     membreId: 'membre1',
+    ...override,
+  }
+}
+
+function personneAffectationFactory(
+  override?: Partial<Prisma.personne_affectationsUncheckedCreateInput>
+): Prisma.personne_affectationsUncheckedCreateInput {
+  return {
+    est_active: true,
+    personne_id: 1,
+    source: 'coop',
+    structure_id: null,
+    type: 'structure_emploi',
+    ...override,
+  }
+}
+
+function personneFactory(override?: Partial<Prisma.personneUncheckedCreateInput>): Prisma.personneUncheckedCreateInput {
+  return {
+    nom: 'Dupont',
+    prenom: 'Alice',
     ...override,
   }
 }

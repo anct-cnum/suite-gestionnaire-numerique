@@ -65,6 +65,7 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
           },
           where: {
             est_active: true,
+            type: 'structure_emploi',
           },
         },
       },
