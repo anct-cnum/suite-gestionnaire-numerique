@@ -9,6 +9,8 @@ import {
   creerUneEnveloppeFinancement,
   creerUneFeuilleDeRoute,
   creerUneGouvernance,
+  creerUnePersonne,
+  creerUnePersonneAffectation,
   creerUneRegion,
   creerUneStructure,
   creerUnMembre,
@@ -105,5 +107,65 @@ describe('une structure loader : caractérisation des enveloppes (accumulation F
     // THEN
     expect(readModel.conventionsEtFinancements.enveloppes).toStrictEqual([])
     expect(readModel.conventionsEtFinancements.creditsEngagesParLEtat).toBe(0)
+  })
+})
+
+describe("une structure loader : aidants et médiateurs (filtre par type d'affectation)", () => {
+  beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
+
+  afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
+
+  it('compte uniquement les personnes avec une affectation de type structure_emploi', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 5001 })
+    const mediateurId = await creerUnePersonne({ is_mediateur: true, nom: 'Dupont', prenom: 'Alice' })
+    await creerUnePersonneAffectation({
+      personne_id: mediateurId,
+      source: 'coop',
+      structure_id: 5001,
+      type: 'structure_emploi',
+    })
+    const lieuActiviteSeulementId = await creerUnePersonne({ is_coordinateur: true, nom: 'Martin', prenom: 'Bob' })
+    await creerUnePersonneAffectation({
+      personne_id: lieuActiviteSeulementId,
+      source: 'coop',
+      structure_id: 5001,
+      type: 'lieu_activite',
+    })
+
+    // WHEN
+    const readModel = await new PrismaUneStructureLoader().get(5001)
+
+    // THEN
+    expect(readModel.aidantsEtMediateurs.liste).toHaveLength(1)
+    expect(readModel.aidantsEtMediateurs.liste[0].prenom).toBe('Alice')
+    expect(readModel.aidantsEtMediateurs.totalAidant).toBe(1)
+    expect(readModel.aidantsEtMediateurs.totalCoordinateur).toBe(0)
+    expect(readModel.aidantsEtMediateurs.totalMediateur).toBe(1)
+  })
+
+  it("compte une personne avec les deux types d'affectation une seule fois", async () => {
+    // GIVEN
+    await creerUneStructure({ id: 5002 })
+    const personneId = await creerUnePersonne({ is_mediateur: true, nom: 'Leroy', prenom: 'Claire' })
+    await creerUnePersonneAffectation({
+      personne_id: personneId,
+      source: 'coop',
+      structure_id: 5002,
+      type: 'lieu_activite',
+    })
+    await creerUnePersonneAffectation({
+      personne_id: personneId,
+      source: 'coop',
+      structure_id: 5002,
+      type: 'structure_emploi',
+    })
+
+    // WHEN
+    const readModel = await new PrismaUneStructureLoader().get(5002)
+
+    // THEN
+    expect(readModel.aidantsEtMediateurs.liste).toHaveLength(1)
+    expect(readModel.aidantsEtMediateurs.totalMediateur).toBe(1)
   })
 })
