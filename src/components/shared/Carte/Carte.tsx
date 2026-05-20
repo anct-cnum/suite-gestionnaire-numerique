@@ -228,6 +228,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       maplibreLogo: false,
       maxZoom: 11,
       minZoom: 6,
+      scrollZoom: false,
       style: creerStyleVide(couleurFond),
     })
 
@@ -260,7 +261,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         type: 'fill',
       })
 
-      map.current.addControl(new NavigationControl(), 'top-right')
+      map.current.addControl(new NavigationControl({ showCompass: false }), 'top-right')
       checkSourceLoaded()
     })
 
