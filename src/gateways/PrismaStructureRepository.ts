@@ -5,6 +5,12 @@ import { Structure, StructureAdresse } from '@/domain/Structure'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
 import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
 
+// Refonte 2026 : MIN écrit désormais dans main.structure_administrative (et
+// non plus dans main.structure legacy). Les notions "lieu" (nom, typologies,
+// horaires…) sont sur main.lieu_inclusion — MIN ne les crée pas ici.
+// Le champ Structure.nom du domain est désormais alimenté depuis
+// SA.denomination_sirene (compatibilité ascendante avec le contrat actuel).
+
 export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
   async ajouterContact(structureId: number, data: ContactStructureData): Promise<void> {
     const contact = await prisma.main_contact.create({
@@ -18,10 +24,10 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       },
     })
 
-    await prisma.contact_structure.create({
+    await prisma.contact_structure_administrative.create({
       data: {
         contact_id: contact.id,
-        structure_id: structureId,
+        structure_administrative_id: structureId,
       },
     })
   }
@@ -39,7 +45,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
 
   async getBySiret(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure> {
     const client = tx ?? prisma
-    const structure = await client.main_structure.findFirst({
+    const structure = await client.main_structure_administrative.findFirst({
       where: {
         siret,
       },
@@ -50,9 +56,9 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     }
 
     return Structure.create({
-      departementCode: '', // main.structure n'a pas de departementCode direct
+      departementCode: '', // structure_administrative n'a pas de departementCode direct
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.nom,
+      nom: structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }
@@ -60,13 +66,12 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
   async getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure> {
     const client = tx ?? prisma
 
-    // Chercher une structure avec le SIRET donné ET qui est une structure employeuse
-    const structure = await client.main_structure.findFirst({
+    // Refonte 2026 : une SA est "employeuse" si elle a au moins une
+    // personne_affectations_emploi (la table dédiée — type implicite).
+    const structure = await client.main_structure_administrative.findFirst({
       where: {
-        personne_affectations: {
-          some: {
-            type: 'structure_emploi',
-          },
+        personne_affectations_emploi: {
+          some: {},
         },
         siret,
       },
@@ -77,9 +82,9 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     }
 
     return Structure.create({
-      departementCode: '', // main.structure n'a pas de departementCode direct
+      departementCode: '',
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.nom,
+      nom: structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }
@@ -101,10 +106,10 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
   }
 
   async supprimerContact(structureId: number, contactId: number): Promise<void> {
-    await prisma.contact_structure.deleteMany({
+    await prisma.contact_structure_administrative.deleteMany({
       where: {
         contact_id: contactId,
-        structure_id: structureId,
+        structure_administrative_id: structureId,
       },
     })
 
@@ -125,7 +130,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       telephone: string
     }
   ): Promise<void> {
-    await prisma.main_structure.update({
+    await prisma.main_structure_administrative.update({
       data: {
         contact: {
           courriels: contactReferent.email,
@@ -155,21 +160,23 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       client
     )
 
-    const structure = await client.main_structure.create({
+    // MIN crée une structure_administrative (entité légale).
+    // Les notions "lieu" (nom métier, typologies, horaires…) ne sont pas
+    // créées ici — elles sont sur main.lieu_inclusion et hors scope MIN.
+    const structure = await client.main_structure_administrative.create({
       data: {
         adresse_id: adresse.state.uid.value,
         categorie_juridique: data.categorieJuridique,
-        nom: data.nom,
+        denomination_sirene: data.nom,
+        edited_by: 'min',
         siret: data.identifiantEtablissement,
-        source: 'min',
-        typologies: [data.categorieJuridiqueLibelle],
       },
     })
 
     return Structure.create({
       departementCode: data.departementCode,
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.nom,
+      nom: structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }

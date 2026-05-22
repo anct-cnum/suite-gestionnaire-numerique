@@ -6,6 +6,12 @@
 -- - Subventions jointes via main.poste pour résoudre poste_id → (poste_conum_id, structure_id)
 -- - Détail par enveloppe : subvention, bonification, versement
 -- - Nombre de contrats de travail en cours pour la personne sélectionnée
+--
+-- Refonte 2026 : la colonne main.poste.structure_id pointe désormais sur
+-- main.structure_administrative(id) (au lieu de main.structure.id legacy)
+-- depuis V078 côté dataspace. La vue reste valide telle quelle — le SQL n'a
+-- pas changé, seule la sémantique de structure_id côté MIN s'aligne sur
+-- la nouvelle entité (= SA = entité légale).
 
 DROP VIEW IF EXISTS min.postes_conseiller_numerique_synthese;
 
