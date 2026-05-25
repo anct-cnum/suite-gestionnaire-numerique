@@ -15,7 +15,7 @@ export class PrismaMediateursCoopLoader {
       personnes = await prisma.$queryRaw<ReadonlyArray<PersonneRow>>`
         SELECT DISTINCT pe.id, pe.prenom, pe.nom
         FROM min.personne_enrichie pe
-        LEFT JOIN main.structure str ON str.id = pe.structure_employeuse_id
+        LEFT JOIN main.structure_administrative str ON str.id = pe.structure_employeuse_id
         LEFT JOIN main.adresse ad ON ad.id = str.adresse_id
         WHERE pe.is_mediateur = true
           AND pe.coop_id IS NOT NULL
@@ -146,7 +146,7 @@ export class PrismaMediateursCoopLoader {
       return prisma.$queryRaw<ReadonlyArray<PersonneRow>>`
         SELECT DISTINCT pe.id, pe.prenom, pe.nom
         FROM min.personne_enrichie pe
-        LEFT JOIN main.structure str ON str.id = pe.structure_employeuse_id
+        LEFT JOIN main.structure_administrative str ON str.id = pe.structure_employeuse_id
         LEFT JOIN main.adresse ad ON ad.id = str.adresse_id
         WHERE pe.is_mediateur = true
           AND pe.coop_id IS NOT NULL

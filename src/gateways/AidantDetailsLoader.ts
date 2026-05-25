@@ -27,10 +27,13 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           min.personne_enrichie.est_actuellement_aidant_numerique_en_poste,
           min.personne_enrichie.est_actuellement_mediateur_en_poste,
           min.personne_enrichie.labellisation_aidant_connect,
-          main.structure.nom as employeur_raison_social,
+          -- Refonte 2026 : personne_enrichie.structure_employeuse_id pointe sur
+          -- main.structure_administrative (V092 dataspace). Le nom employeur =
+          -- denomination_sirene de la SA.
+          main.structure_administrative.denomination_sirene as employeur_raison_social,
           reference.categories_juridiques.nom as employeur_categorie_juridique,
-          main.structure.siret as employeur_siret,
-          main.structure.contact as employeur_contact_referent,
+          main.structure_administrative.siret as employeur_siret,
+          main.structure_administrative.contact as employeur_contact_referent,
           main.adresse.code_postal as employeur_code_postal,
           main.adresse.nom_commune as employeur_nom_commune,
           main.adresse.nom_voie as employeur_nom_voie,
@@ -39,10 +42,10 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           admin.region.nom as employeur_region
 
         FROM min.personne_enrichie
-               LEFT JOIN main.structure ON main.structure.id = min.personne_enrichie.structure_employeuse_id
+               LEFT JOIN main.structure_administrative ON main.structure_administrative.id = min.personne_enrichie.structure_employeuse_id
                LEFT JOIN reference.categories_juridiques
-                         ON reference.categories_juridiques.code = main.structure.categorie_juridique
-               LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+                         ON reference.categories_juridiques.code = main.structure_administrative.categorie_juridique
+               LEFT JOIN main.adresse ON main.adresse.id = main.structure_administrative.adresse_id
                LEFT JOIN admin.departement ON admin.departement.code = main.adresse.departement
                LEFT JOIN admin.region ON admin.region.id = admin.departement.region_id
         WHERE min.personne_enrichie.id = ${personneId}

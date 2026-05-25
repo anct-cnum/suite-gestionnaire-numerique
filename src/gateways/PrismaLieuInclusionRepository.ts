@@ -20,7 +20,7 @@ export class PrismaLieuInclusionRepository
     UpdateLieuInclusionServicesTypePublicRepository
 {
   async updateDescription(data: UpdateLieuInclusionDescriptionData): Promise<void> {
-    const existingStructure = await prisma.main_structure.findUnique({
+    const existingStructure = await prisma.main_lieu_inclusion.findUnique({
       select: { contact: true },
       where: { id: data.structureUid.state.value },
     })
@@ -29,7 +29,7 @@ export class PrismaLieuInclusionRepository
     const updatedContact = this.prepareContactUpdate(existingContact, data.websiteUrl)
     const updateData = this.prepareDescriptionUpdateData(data, updatedContact)
 
-    await prisma.main_structure.update({
+    await prisma.main_lieu_inclusion.update({
       data: updateData,
       where: {
         id: data.structureUid.state.value,
@@ -39,7 +39,7 @@ export class PrismaLieuInclusionRepository
 
   async updateServicesModalite(data: UpdateLieuInclusionServicesModaliteData): Promise<void> {
     // Récupérer la structure existante pour merger le champ contact (JSON)
-    const existingStructure = await prisma.main_structure.findUnique({
+    const existingStructure = await prisma.main_lieu_inclusion.findUnique({
       select: { contact: true },
       where: { id: data.structureUid.state.value },
     })
@@ -80,8 +80,9 @@ export class PrismaLieuInclusionRepository
       updateData.contact = updatedContact as Prisma.InputJsonValue
     }
 
-    // Mettre à jour la structure dans la table main.structure
-    await prisma.main_structure.update({
+    // Refonte 2026 : ces champs lieu (services, modalites, typologies, horaires…)
+    // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
+    await prisma.main_lieu_inclusion.update({
       data: updateData,
       where: {
         id: data.structureUid.state.value,
@@ -106,8 +107,9 @@ export class PrismaLieuInclusionRepository
     // Mettre à jour les types d'accompagnement (modalites_accompagnement)
     updateData.modalites_accompagnement = [...data.typesAccompagnement]
 
-    // Mettre à jour la structure dans la table main.structure
-    await prisma.main_structure.update({
+    // Refonte 2026 : ces champs lieu (services, modalites, typologies, horaires…)
+    // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
+    await prisma.main_lieu_inclusion.update({
       data: updateData,
       where: {
         id: data.structureUid.state.value,
@@ -128,8 +130,9 @@ export class PrismaLieuInclusionRepository
     // Mettre à jour les prises en charge spécifiques
     updateData.prise_en_charge_specifique = [...data.priseEnChargeSpecifique]
 
-    // Mettre à jour la structure dans la table main.structure
-    await prisma.main_structure.update({
+    // Refonte 2026 : ces champs lieu (services, modalites, typologies, horaires…)
+    // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
+    await prisma.main_lieu_inclusion.update({
       data: updateData,
       where: {
         id: data.structureUid.state.value,

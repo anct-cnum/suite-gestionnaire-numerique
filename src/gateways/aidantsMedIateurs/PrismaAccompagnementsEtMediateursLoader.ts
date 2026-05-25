@@ -34,9 +34,11 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
           : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
             WITH thematiques AS (
               SELECT unnest(ac.thematiques) AS thematique, SUM(ac.accompagnements) AS nb_accompagnements
+              -- Refonte 2026 : activites_coop est indexe par lieu_id (V084),
+              -- l'adresse vient du lieu_inclusion.
               FROM main.activites_coop ac
-              JOIN main.structure s ON ac.structure_id = s.id
-              JOIN main.adresse a ON s.adresse_id = a.id
+              JOIN main.lieu_inclusion l ON ac.lieu_id = l.id
+              JOIN main.adresse a ON l.adresse_id = a.id
               WHERE ac.accompagnements > 0 AND a.departement = ${territoire}
               GROUP BY thematique
             )
@@ -106,8 +108,10 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       const structuresHabiliteesList =
         structureEmployeuseIds.length > 0
           ? await prisma.$queryRaw<Array<{ count: bigint }>>`
+            -- Refonte 2026 : structure_employeuse_id pointe sur SA (V092),
+            -- on compte les SA habilitees AC.
             SELECT COUNT(DISTINCT s.id) AS count
-            FROM main.structure s
+            FROM main.structure_administrative s
             WHERE s.structure_ac_id IS NOT NULL
               AND s.id = ANY(${structureEmployeuseIds}::bigint[])
           `
@@ -161,7 +165,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       ),
     ]
 
-    const structures = await prisma.main_structure.findMany({
+    const structures = await prisma.main_structure_administrative.findMany({
       select: { id: true },
       where: {
         adresse: {

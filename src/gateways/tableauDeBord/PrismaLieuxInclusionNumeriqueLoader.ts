@@ -16,15 +16,15 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
           SELECT
             COUNT(*) AS nb_lieux
-          FROM main.structure
-          INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+          FROM main.lieu_inclusion
+          INNER JOIN main.adresse ON lieu_inclusion.adresse_id = adresse.id
         `
       } else {
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
           SELECT
             COUNT(*) AS nb_lieux
-          FROM main.structure
-          INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+          FROM main.lieu_inclusion
+          INNER JOIN main.adresse ON lieu_inclusion.adresse_id = adresse.id
           WHERE adresse.departement = ${territoire}
         `
       }

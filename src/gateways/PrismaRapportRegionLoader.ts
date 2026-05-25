@@ -255,9 +255,11 @@ export class PrismaRapportRegionLoader {
       SELECT
         d.code AS code_departement,
         SUM(ac.accompagnements) AS nb_beneficiaires
+      -- Refonte 2026 : activites_coop est desormais indexe par lieu_id (V084),
+      -- la repartition departementale passe par l'adresse du lieu d'inclusion.
       FROM main.activites_coop ac
-      JOIN main.structure st ON st.id = ac.structure_id
-      JOIN main.adresse a ON a.id = st.adresse_id
+      JOIN main.lieu_inclusion l ON l.id = ac.lieu_id
+      JOIN main.adresse a ON a.id = l.adresse_id
       JOIN min.departement d ON d.code = a.departement
       WHERE ${filtre}
       GROUP BY d.code
@@ -270,8 +272,10 @@ export class PrismaRapportRegionLoader {
         d.code AS code_departement,
         d.nom AS nom_departement,
         COUNT(DISTINCT v.poste_conum_id) AS nb_conseillers
+      -- Refonte 2026 : v.structure_id pointe sur main.structure_administrative.id
+      -- (depuis V078 dataspace).
       FROM min.postes_conseiller_numerique_synthese v
-      JOIN main.structure st ON st.id = v.structure_id
+      JOIN main.structure_administrative st ON st.id = v.structure_id
       JOIN main.adresse a ON a.id = st.adresse_id
       JOIN min.departement d ON d.code = a.departement
       WHERE ${filtre}
@@ -288,24 +292,25 @@ export class PrismaRapportRegionLoader {
         d.nom AS departement_nom,
         fdr.id AS fdr_id,
         fdr.nom AS fdr_nom,
-        porteur_st.nom AS porteur_nom,
+        porteur_st.denomination_sirene AS porteur_nom,
         porteur_mb.type AS porteur_type,
         ef.libelle AS enveloppe_libelle,
         CASE WHEN ds.statut = 'acceptee' THEN ds.subvention_demandee ELSE 0 END AS subvention_demandee,
-        array_to_json(array_agg(DISTINCT benef_st.nom) FILTER (WHERE benef_st.nom IS NOT NULL)) AS beneficiaires,
+        array_to_json(array_agg(DISTINCT benef_st.denomination_sirene) FILTER (WHERE benef_st.denomination_sirene IS NOT NULL)) AS beneficiaires,
         array_to_json(act.besoins) AS besoins
+      -- Refonte 2026 : min.membre.structure_id pointe sur main.structure_administrative.id (V085).
       FROM min.feuille_de_route fdr
       JOIN min.departement d ON d.code = fdr.gouvernance_departement_code
       JOIN min.action act ON act.feuille_de_route_id = fdr.id
       JOIN min.demande_de_subvention ds ON ds.action_id = act.id
       JOIN min.enveloppe_financement ef ON ef.id = ds.enveloppe_financement_id
       LEFT JOIN min.membre porteur_mb ON porteur_mb.id = fdr.porteur_id
-      LEFT JOIN main.structure porteur_st ON porteur_st.id = porteur_mb.structure_id
+      LEFT JOIN main.structure_administrative porteur_st ON porteur_st.id = porteur_mb.structure_id
       LEFT JOIN min.beneficiaire_subvention bs ON bs.demande_de_subvention_id = ds.id
       LEFT JOIN min.membre benef_mb ON benef_mb.id = bs.membre_id
-      LEFT JOIN main.structure benef_st ON benef_st.id = benef_mb.structure_id
+      LEFT JOIN main.structure_administrative benef_st ON benef_st.id = benef_mb.structure_id
       WHERE ${filtre}
-      GROUP BY d.code, d.nom, fdr.id, fdr.nom, porteur_st.nom, porteur_mb.type,
+      GROUP BY d.code, d.nom, fdr.id, fdr.nom, porteur_st.denomination_sirene, porteur_mb.type,
         ef.libelle, ds.subvention_demandee, ds.statut, act.besoins
       ORDER BY d.code, fdr.id, ef.libelle
     `
@@ -313,16 +318,17 @@ export class PrismaRapportRegionLoader {
 
   async #queryMembresGouvernance(filtre: Prisma.Sql): Promise<Array<MembreGouvernanceRow>> {
     return prisma.$queryRaw<Array<MembreGouvernanceRow>>`
+      -- Refonte 2026 : min.membre.structure_id pointe sur main.structure_administrative.id (V085).
       SELECT
         m.gouvernance_departement_code AS departement_code,
         m.is_coporteur,
-        st.nom AS structure_nom
+        st.denomination_sirene AS structure_nom
       FROM min.membre m
       JOIN min.departement d ON d.code = m.gouvernance_departement_code
-      JOIN main.structure st ON st.id = m.structure_id
+      JOIN main.structure_administrative st ON st.id = m.structure_id
       WHERE ${filtre}
         AND m.statut = 'confirme'
-      ORDER BY d.code, st.nom
+      ORDER BY d.code, st.denomination_sirene
     `
   }
 

@@ -66,7 +66,7 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
         COUNT(*) FILTER (WHERE pe.est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
         COUNT(*) FILTER (WHERE pe.labellisation_aidant_connect = true AND pe.est_actuellement_mediateur_en_poste = true) AS aidants_connect
       FROM min.personne_enrichie pe
-      LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+      LEFT JOIN main.structure_administrative s ON s.id = pe.structure_employeuse_id
       LEFT JOIN main.adresse a ON a.id = s.adresse_id
       WHERE pe.est_actuellement_mediateur_en_poste = true
       ${departementCondition}

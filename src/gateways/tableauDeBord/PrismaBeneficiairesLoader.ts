@@ -117,9 +117,10 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
         SELECT
           COUNT(DISTINCT CASE WHEN s.montant_subvention_v1 > 0 THEN p.structure_id END) AS total_v1,
           COUNT(DISTINCT CASE WHEN s.montant_subvention_v2 > 0 THEN p.structure_id END) AS total_v2
+        -- Refonte 2026 : main.poste.structure_id pointe sur SA (V078 dataspace).
         FROM main.subvention s
         JOIN main.poste p ON p.id = s.poste_id
-        JOIN main.structure st ON st.id = p.structure_id
+        JOIN main.structure_administrative st ON st.id = p.structure_id
         JOIN main.adresse a ON a.id = st.adresse_id
         WHERE a.departement = ${territoire}
       )

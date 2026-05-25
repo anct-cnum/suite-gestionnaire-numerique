@@ -3,7 +3,7 @@ import { ContactReferentFne, ContactReferentFneLoader } from '@/use-cases/comman
 
 export class PrismaContactReferentFneLoader implements ContactReferentFneLoader {
   async getContactsReferentFne(structureId: number): Promise<ReadonlyArray<ContactReferentFne>> {
-    const contactStructures = await prisma.contact_structure.findMany({
+    const contactStructures = await prisma.contact_structure_administrative.findMany({
       include: {
         contact: true,
       },
@@ -11,7 +11,7 @@ export class PrismaContactReferentFneLoader implements ContactReferentFneLoader 
         contact: {
           est_referent_fne: true,
         },
-        structure_id: structureId,
+        structure_administrative_id: structureId,
       },
     })
 
