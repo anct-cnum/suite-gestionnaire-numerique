@@ -5,6 +5,8 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoader {
   async recuperer(id: string): Promise<ErrorReadModel | LieuDetailsReadModel> {
     try {
+      // Refonte 2026 : id = main.lieu_inclusion.id (et non plus main.structure.id legacy).
+      // La SA "principale" est resolue via la table d'asso (LATERAL LIMIT 1, cf N8).
       const structureResult = await this.recupererStructure(id)
       if (structureResult.length === 0) {
         return { message: 'Lieu non trouvé', type: 'error' } as ErrorReadModel
@@ -14,7 +16,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       const adresseComplete = this.construireAdresse(structure)
       const personnes = await this.recupererPersonnes(id)
       const tags = this.determinerTags(structure, personnes)
-      const structureId = parseInt(id, 10)
+      // structureId du read model = SA.id (utilise par la page pour les lookups
+      // sur min.membre.structureId et les checks de permission). Fallback sur
+      // lieu_inclusion.id si aucune SA associee (peu probable mais defensif).
+      const structureId = structure.structure_administrative_id ?? parseInt(id, 10)
 
       return this.construireReadModel(structure, adresseComplete, personnes, tags, structureId)
     } catch {
@@ -290,6 +295,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       prenom: string
     }>
   > {
+    // Refonte 2026 : "personnes travaillant sur ce lieu" = personne_affectations_lieu
+    // (anciennement personne_affectations type='lieu_activite'). On distinct sur
+    // pe.id pour eviter les doublons si une personne a plusieurs affectations
+    // sur ce meme lieu (sources differentes).
     return prisma.$queryRaw`
       SELECT DISTINCT
         pe.id,
@@ -300,11 +309,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         pe.is_mediateur,
         pe.conseiller_numerique_id,
         pe.labellisation_aidant_connect as is_aidant_connect
-      FROM main.personne_affectations pa
-      INNER JOIN min.personne_enrichie pe ON pa.personne_id = pe.id
-      WHERE pa.structure_id = ${parseInt(id, 10)}
-        AND pa.est_active = true
-        AND pa.type = 'structure_emploi'
+      FROM main.personne_affectations_lieu pal
+      INNER JOIN min.personne_enrichie pe ON pal.personne_id = pe.id
+      WHERE pal.lieu_id = ${parseInt(id, 10)}
+        AND pal.est_active = true
     `
   }
 
@@ -333,30 +341,36 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
       siret: null | string
+      structure_administrative_id: null | number
       typologies: Array<string> | null
       updated_at: Date | null
     }>
   > {
+    // Refonte 2026 : recupere les champs "lieu" depuis main.lieu_inclusion
+    // (typologies, presentation_*, horaires, services, contact JSON…).
+    // Le SIRET et l'id de la SA "principale" sont resolus via la table d'asso
+    // (LATERAL ordonne par sa.id ASC pour la stabilite, cf N8).
     return prisma.$queryRaw`
       SELECT
-        s.id::text,
-        s.nom,
-        s.siret,
-        s.dispositif_programmes_nationaux,
-        s.horaires,
-        s.itinerance,
-        s.modalites_acces,
-        s.modalites_accompagnement,
-        s.contact,
-        s.typologies,
-        s.presentation_resume,
-        s.presentation_detail,
-        s.prise_en_charge_specifique,
-        s.prise_rdv,
-        s.publics_specifiquement_adresses,
-        s.frais_a_charge,
-        s.services,
-        s.updated_at,
+        l.id::text,
+        l.nom,
+        sa_first.siret,
+        sa_first.structure_administrative_id,
+        l.dispositif_programmes_nationaux,
+        l.horaires,
+        l.itinerance,
+        l.modalites_acces,
+        l.modalites_accompagnement,
+        l.contact,
+        l.typologies,
+        l.presentation_resume,
+        l.presentation_detail,
+        l.prise_en_charge_specifique,
+        l.prise_rdv,
+        l.publics_specifiquement_adresses,
+        l.frais_a_charge,
+        l.services,
+        l.updated_at,
         a.numero_voie,
         a.nom_voie,
         a.code_postal,
@@ -376,9 +390,17 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
           ) THEN true
           ELSE false
         END AS est_qpv
-      FROM main.structure s
-      LEFT JOIN main.adresse a ON s.adresse_id = a.id
-      WHERE s.id = ${parseInt(id, 10)}
+      FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse a ON l.adresse_id = a.id
+      LEFT JOIN LATERAL (
+        SELECT sa.siret, sa.id AS structure_administrative_id
+        FROM main.lieu_inclusion_structure_administrative asso
+        JOIN main.structure_administrative sa ON sa.id = asso.structure_administrative_id
+        WHERE asso.lieu_id = l.id
+        ORDER BY sa.id
+        LIMIT 1
+      ) sa_first ON true
+      WHERE l.id = ${parseInt(id, 10)}
     `
   }
 }

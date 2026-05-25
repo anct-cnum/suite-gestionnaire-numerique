@@ -234,9 +234,13 @@ export class PrismaRapportRegionLoader {
         d.nom AS nom_departement,
         COUNT(DISTINCT pe.id) AS nb_habilites,
         COUNT(DISTINCT pe.id) FILTER (WHERE pe.conseiller_numerique_id IS NOT NULL) AS dont_conseillers
+      -- Refonte 2026 : on rattache l'aidant a la SA qui l'emploie (paf_emploi),
+      -- puis a l'adresse de la SA. Une autre lecture serait de rattacher au lieu
+      -- d'activite (paf_lieu) — a arbitrer cote produit si la repartition
+      -- regionale doit reflechir le lieu plutot que l'employeur.
       FROM min.personne_enrichie pe
-      JOIN main.personne_affectations pa ON pa.personne_id = pe.id AND pa.est_active = true
-      JOIN main.structure st ON st.id = pa.structure_id
+      JOIN main.personne_affectations_emploi pae ON pae.personne_id = pe.id AND pae.est_active = true
+      JOIN main.structure_administrative st ON st.id = pae.structure_administrative_id
       JOIN main.adresse a ON a.id = st.adresse_id
       JOIN min.departement d ON d.code = a.departement
       WHERE ${filtre}

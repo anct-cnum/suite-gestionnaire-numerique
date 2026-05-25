@@ -148,10 +148,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           AND (
             pe.structure_employeuse_id = ${scopeFiltre.id}
             OR EXISTS (
-              SELECT 1 FROM main.personne_affectations aff
-              WHERE aff.personne_id = pe.id
-                AND aff.est_active = true
-                AND aff.structure_id = ${scopeFiltre.id}
+              SELECT 1 FROM main.personne_affectations_emploi pae
+              WHERE pae.personne_id = pe.id
+                AND pae.est_active = true
+                AND pae.structure_administrative_id = ${scopeFiltre.id}
             )
           )
       )`

@@ -38,10 +38,10 @@ export class PrismaMediateursCoopLoader {
           AND (
             pe.structure_employeuse_id = ${scopeFiltre.id}
             OR EXISTS (
-              SELECT 1 FROM main.personne_affectations aff
-              WHERE aff.personne_id = pe.id
-                AND aff.est_active = true
-                AND aff.structure_id = ${scopeFiltre.id}
+              SELECT 1 FROM main.personne_affectations_emploi pae
+              WHERE pae.personne_id = pe.id
+                AND pae.est_active = true
+                AND pae.structure_administrative_id = ${scopeFiltre.id}
             )
           )
         ORDER BY pe.nom, pe.prenom
@@ -92,10 +92,10 @@ export class PrismaMediateursCoopLoader {
       WHERE (
         pe.structure_employeuse_id = ${structureId}
         OR EXISTS (
-          SELECT 1 FROM main.personne_affectations aff
-          WHERE aff.personne_id = pe.id
-            AND aff.est_active = true
-            AND aff.structure_id = ${structureId}
+          SELECT 1 FROM main.personne_affectations_emploi pae
+          WHERE pae.personne_id = pe.id
+            AND pae.est_active = true
+            AND pae.structure_administrative_id = ${structureId}
         )
       )
       AND pe.is_mediateur = true
@@ -168,10 +168,10 @@ export class PrismaMediateursCoopLoader {
           AND (
             pe.structure_employeuse_id = ${scopeFiltre.id}
             OR EXISTS (
-              SELECT 1 FROM main.personne_affectations aff
-              WHERE aff.personne_id = pe.id
-                AND aff.est_active = true
-                AND aff.structure_id = ${scopeFiltre.id}
+              SELECT 1 FROM main.personne_affectations_emploi pae
+              WHERE pae.personne_id = pe.id
+                AND pae.est_active = true
+                AND pae.structure_administrative_id = ${scopeFiltre.id}
             )
           )
         ORDER BY pe.nom, pe.prenom

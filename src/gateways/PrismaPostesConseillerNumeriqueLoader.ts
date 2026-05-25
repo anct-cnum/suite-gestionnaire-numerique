@@ -156,11 +156,13 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
   ): Promise<ReadonlyArray<PosteConseillerNumeriqueReadModel>> {
     const filtersSQL = this.buildFiltersSQL(filtres)
 
+    // Refonte 2026 : v.structure_id pointe sur main.structure_administrative.id.
+    // On joint donc sur SA (et plus main.structure legacy). nom = denomination_sirene.
     const result = await prisma.$queryRaw<Array<PosteQueryResult>>`
       SELECT
         v.poste_conum_id,
         v.structure_id,
-        st.nom AS nom_structure,
+        st.denomination_sirene AS nom_structure,
         a.departement AS code_departement,
         v.etat AS statut,
         v.est_coordinateur,
@@ -172,10 +174,10 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
         v.montant_versement_cumule AS total_verse,
         st.structure_tp_id
       FROM min.postes_conseiller_numerique_synthese v
-      LEFT JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.structure_administrative st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       WHERE 1=1 ${filtersSQL}
-      ORDER BY st.nom, v.poste_conum_id
+      ORDER BY st.denomination_sirene, v.poste_conum_id
       LIMIT ${limite} OFFSET ${offset}
     `
 
@@ -196,7 +198,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
         COALESCE(SUM(v.montant_subvention_cumule), 0) AS budget_total_conventionne,
         COALESCE(SUM(v.montant_versement_cumule), 0) AS budget_total_verse
       FROM min.postes_conseiller_numerique_synthese v
-      LEFT JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.structure_administrative st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       WHERE 1=1 ${filtersSQL}
     `
@@ -219,7 +221,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       dateFinContrat: poste.date_fin_contrat,
       dateFinConvention: poste.date_fin_convention,
       estCoordinateur: poste.est_coordinateur,
-      nomStructure: poste.nom_structure,
+      nomStructure: poste.nom_structure ?? '',
       posteConumId: poste.poste_conum_id,
       sourcesFinancement: poste.enveloppes,
       statut: poste.statut as EtatPoste,
@@ -238,7 +240,7 @@ interface PosteQueryResult {
   date_fin_convention: Date | null
   enveloppes: null | string
   est_coordinateur: boolean
-  nom_structure: string
+  nom_structure: null | string
   poste_conum_id: number
   statut: string
   structure_id: number

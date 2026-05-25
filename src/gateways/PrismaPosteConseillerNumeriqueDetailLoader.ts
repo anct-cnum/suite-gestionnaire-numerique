@@ -48,11 +48,13 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
 
       const poste = posteResult[0]
 
-      // Récupérer les infos de la structure
+      // Refonte 2026 : poste.structure_id pointe sur main.structure_administrative.id
+      // (depuis V078 dataspace). On lit donc la SA (et plus main.structure legacy).
+      // Le "nom" affiche est denomination_sirene (raison sociale legale).
       const structureResult = await prisma.$queryRaw<Array<StructureResult>>`
         SELECT
           st.id as structure_id,
-          st.nom as nom_structure,
+          st.denomination_sirene as nom_structure,
           st.siret,
           cj.nom as categorie_juridique_nom,
           a.numero_voie,
@@ -63,7 +65,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           a.departement as code_departement,
           d.nom as departement_nom,
           r.nom as region_nom
-        FROM main.structure st
+        FROM main.structure_administrative st
         LEFT JOIN main.adresse a ON a.id = st.adresse_id
         LEFT JOIN admin.departement d ON d.code = a.departement
         LEFT JOIN admin.region r ON r.id = d.region_id
@@ -108,7 +110,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
             structure.departement_nom !== null && structure.departement_nom !== ''
               ? `(${structure.code_departement}) ${structure.departement_nom}`
               : (structure.code_departement ?? ''),
-          nom: structure.nom_structure,
+          nom: structure.nom_structure ?? '',
           region: structure.region_nom ?? '',
           siret: structure.siret ?? '',
           structureId: structure.structure_id,
@@ -215,13 +217,13 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
   private async recupererContacts(
     structureId: number
   ): Promise<PosteConseillerNumeriqueDetailReadModel['structure']['contacts']> {
-    const contactStructures = await prisma.contact_structure.findMany({
+    const contactStructures = await prisma.contact_structure_administrative.findMany({
       include: {
         contact: true,
       },
       orderBy: [{ contact: { est_referent_fne: 'desc' } }, { contact: { nom: 'asc' } }, { contact: { prenom: 'asc' } }],
       where: {
-        structure_id: structureId,
+        structure_administrative_id: structureId,
       },
     })
 
@@ -365,7 +367,7 @@ interface StructureResult {
   code_postal: null | string
   departement_nom: null | string
   nom_commune: null | string
-  nom_structure: string
+  nom_structure: null | string
   nom_voie: null | string
   numero_voie: null | number
   region_nom: null | string
