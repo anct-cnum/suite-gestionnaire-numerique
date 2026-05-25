@@ -29,10 +29,10 @@ export class PrismaMembreRepository implements MembreRepository {
         },
       })
 
-      await client.contact_structure.create({
+      await client.contact_structure_administrative.create({
         data: {
           contact_id: contact.id,
-          structure_id: structureId,
+          structure_administrative_id: structureId,
         },
       })
     } else {
@@ -46,10 +46,10 @@ export class PrismaMembreRepository implements MembreRepository {
         },
       })
 
-      await client.contact_structure.create({
+      await client.contact_structure_administrative.create({
         data: {
           contact_id: contact.id,
-          structure_id: structureId,
+          structure_administrative_id: structureId,
         },
       })
     }
@@ -65,10 +65,10 @@ export class PrismaMembreRepository implements MembreRepository {
         },
       })
 
-      await client.contact_structure.create({
+      await client.contact_structure_administrative.create({
         data: {
           contact_id: contactTechnique.id,
-          structure_id: structureId,
+          structure_administrative_id: structureId,
         },
       })
     }
@@ -127,12 +127,12 @@ export class PrismaMembreRepository implements MembreRepository {
       },
     })
 
-    const contactStructures = await client.contact_structure.findMany({
+    const contactStructures = await client.contact_structure_administrative.findMany({
       include: {
         contact: true,
       },
       where: {
-        structure_id: record.structureId,
+        structure_administrative_id: record.structureId,
       },
     })
 

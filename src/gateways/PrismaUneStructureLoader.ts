@@ -4,7 +4,10 @@ import { classifierTypeEnveloppe, estEnveloppeDeFormation, TypeEnveloppe } from 
 import { RoleType, UneStructureLoader, UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure'
 
 export class PrismaUneStructureLoader implements UneStructureLoader {
-  readonly #dataResource = prisma.main_structure
+  // Refonte 2026 : structureId refere desormais a main.structure_administrative.id.
+  // Les "lieux" associes vivent sur main.lieu_inclusion via la table d'asso
+  // main.lieu_inclusion_structure_administrative (cf [N8] / [N12] doc dataspace).
+  readonly #dataResource = prisma.main_structure_administrative
 
   async get(structureId: number): Promise<UneStructureReadModel> {
     const structureRecord = await this.#dataResource.findUniqueOrThrow({
@@ -59,13 +62,12 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
             statut: 'confirme',
           },
         },
-        personne_affectations: {
+        personne_affectations_emploi: {
           include: {
             personne: true,
           },
           where: {
             est_active: true,
-            type: 'structure_emploi',
           },
         },
       },
@@ -84,17 +86,17 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
       SELECT
         admin.departement.nom as departement_nom,
         admin.region.nom as region_nom
-      FROM main.structure
-      LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+      FROM main.structure_administrative
+      LEFT JOIN main.adresse ON main.adresse.id = main.structure_administrative.adresse_id
       LEFT JOIN admin.departement ON admin.departement.code = main.adresse.departement
       LEFT JOIN admin.region ON admin.region.id = admin.departement.region_id
-      WHERE main.structure.id = ${structureId}
+      WHERE main.structure_administrative.id = ${structureId}
     `
 
     const departementNom = departementRegionResult[0]?.departement_nom ?? ''
     const regionNom = departementRegionResult[0]?.region_nom ?? ''
 
-    const aidantsEtMediateurs = buildAidantsEtMediateurs(structureRecord.personne_affectations)
+    const aidantsEtMediateurs = buildAidantsEtMediateurs(structureRecord.personne_affectations_emploi)
     const contratsRattaches = buildContratsRattaches(structureRecord.contrat)
     const gouvernances = extractGouvernances(structureRecord.membres)
     const conventionsEtFinancements = await buildConventionsEtFinancements(structureId, structureRecord.membres)
@@ -113,10 +115,12 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
         departement: departementNom,
         editeur: structureRecord.edited_by ?? '',
         edition: structureRecord.updated_at ?? structureRecord.created_at ?? undefined,
-        nom: structureRecord.nom,
+        // Refonte 2026 : nom legacy -> denomination_sirene (la "raison sociale"
+        // de l'entite). Typologies legacy vit cote lieu_inclusion (cf N12).
+        nom: structureRecord.denomination_sirene ?? '',
         region: regionNom,
         siret: structureRecord.siret ?? undefined,
-        typologie: structureRecord.categories_juridiques?.nom ?? structureRecord.typologies.join(', '),
+        typologie: structureRecord.categories_juridiques?.nom ?? '',
       },
       role: {
         feuillesDeRoute,
@@ -257,13 +261,13 @@ async function buildContacts(structureId: number): Promise<
     telephone: string
   }>
 > {
-  const contactStructures = await prisma.contact_structure.findMany({
+  const contactStructures = await prisma.contact_structure_administrative.findMany({
     include: {
       contact: true,
     },
     orderBy: [{ contact: { est_referent_fne: 'desc' } }, { contact: { nom: 'asc' } }, { contact: { prenom: 'asc' } }],
     where: {
-      structure_id: structureId,
+      structure_administrative_id: structureId,
     },
   })
 

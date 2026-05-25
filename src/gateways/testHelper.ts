@@ -83,15 +83,23 @@ export async function creerUneStructure(
     commune?: string
     departementCode?: string
     identifiantEtablissement?: string
+    nom?: string
     type?: string
-  } & Partial<Prisma.main_structureUncheckedCreateInput>,
+  } & Partial<Prisma.main_structure_administrativeUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
 ): Promise<void> {
   const client = tx ?? prisma
-  const { adresse, codePostal, commune, contact, departementCode, id, identifiantEtablissement, type, ...rest } =
+  // Refonte 2026 : on cree desormais une main_structure_administrative (l'entite
+  // legale) — main.structure legacy n'est plus ecrite par MIN. Le champ "nom"
+  // des tests existants (souvent un nom de commune ou de structure) est mappe
+  // vers denomination_sirene. Les notions "typologies" / "type" vivent
+  // desormais sur lieu_inclusion (hors scope ici, cf [N12] doc dataspace).
+  const { adresse, codePostal, commune, contact, departementCode, id, identifiantEtablissement, nom, ...rest } =
     override ?? {}
+  // Le champ legacy `type` n'a plus de cible sur SA. On le destructure et l'ignore
+  // pour preserver la signature historique.
+  delete (rest as { type?: string }).type
 
-  // Valeurs par défaut de l'ancien structureRecordFactory
   const defaults = {
     adresse: '3 BIS AVENUE CHARLES DE GAULLE',
     codePostal: '84200',
@@ -106,19 +114,22 @@ export async function creerUneStructure(
     id: 10,
     identifiantEtablissement: '41816609600069',
     nom: 'Solidarnum',
-    type: 'COMMUNE',
   }
 
-  // Mapper les anciens champs vers main.structure
-  const siret = identifiantEtablissement ?? defaults.identifiantEtablissement
-
-  // Construire le contact JSON et l'adresse
+  // Refonte 2026 : siret est UNIQUE sur main_structure_administrative (vs
+  // composite (siret, nom, adresse_id) cote main.structure legacy). Pour
+  // les tests qui creent plusieurs structures sans specifier de siret, on
+  // derive un siret distinct a partir de l'id (ou de rest.siret).
+  const idValue = id ?? defaults.id
+  const siret =
+    identifiantEtablissement ??
+    rest.siret ??
+    (id !== undefined ? String(idValue).padStart(14, '0') : defaults.identifiantEtablissement)
   const contactData = contact ?? defaults.contact
   const adresseComplete = adresse ?? defaults.adresse
   const cp = codePostal ?? defaults.codePostal
   const ville = commune ?? defaults.commune
 
-  // Créer l'adresse si nécessaire (pour le moment, on met juste les infos dans contact)
   const finalContact = {
     ...contactData,
     adresse: adresseComplete,
@@ -126,24 +137,13 @@ export async function creerUneStructure(
     commune: ville,
   }
 
-  // Mapper type vers typologies (array)
-  const typologies = type === undefined ? [defaults.type] : [type]
-
-  // Créer une adresse si departementCode est fourni
   let adresse_id: null | number | undefined = rest.adresse_id
   if (departementCode !== undefined && departementCode !== '' && adresse_id === undefined) {
-    // Construire un code_insee valide au format [code_dept][code_commune]
-    // Le département généré sera les 2 premiers caractères du code_insee (ou 3 pour les DOM-TOM 97x/98x)
     const codeCommune = '001'
     const code_insee = departementCode + codeCommune
-
-    // Rendre l'adresse unique en ajoutant le departementCode au nom_voie
-    // pour éviter les conflits de contrainte d'unicité entre différents départements
     const nom_voie_unique = `${adresseComplete} - Dept ${departementCode}`
 
-    // Chercher si l'adresse existe déjà pour éviter les doublons
-    // La contrainte d'unicité est sur: (code_postal, nom_commune, nom_voie, numero_voie, repetition)
-    let adresse = await client.adresse.findFirst({
+    let adresseRow = await client.adresse.findFirst({
       where: {
         code_insee,
         code_postal: cp,
@@ -152,7 +152,7 @@ export async function creerUneStructure(
       },
     })
 
-    adresse ??= await client.adresse.create({
+    adresseRow ??= await client.adresse.create({
       data: {
         code_insee,
         code_postal: cp,
@@ -161,16 +161,15 @@ export async function creerUneStructure(
       },
     })
 
-    adresse_id = adresse.id
+    adresse_id = adresseRow.id
   }
 
-  await client.main_structure.create({
+  await client.main_structure_administrative.create({
     data: {
       contact: finalContact,
+      denomination_sirene: nom ?? defaults.nom,
       id: id ?? defaults.id,
-      nom: rest.nom ?? defaults.nom,
       siret,
-      typologies,
       ...rest,
       adresse_id,
     },
@@ -315,8 +314,8 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
       siret,
     })
     const contactId = await creerUnContact({ email: `${id}@example.com`, nom })
-    await prisma.contact_structure.create({
-      data: { contact_id: contactId, structure_id: structureId },
+    await prisma.contact_structure_administrative.create({
+      data: { contact_id: contactId, structure_administrative_id: structureId },
     })
     await prisma.membreRecord.create({
       data: membreRecordFactory({
@@ -408,11 +407,44 @@ export async function creerUnePersonne(override?: Partial<Prisma.personneUncheck
   return personne.id
 }
 
-export async function creerUnePersonneAffectation(
-  override?: Partial<Prisma.personne_affectationsUncheckedCreateInput>
-): Promise<void> {
-  await prisma.personne_affectations.create({
-    data: personneAffectationFactory(override),
+export async function creerUnePersonneAffectation(override: PersonneAffectationOverride): Promise<void> {
+  // On dispatche selon `type` :
+  //  - 'structure_emploi' -> personne_affectations_emploi (SA)
+  //  - 'lieu_activite'    -> personne_affectations_lieu (lieu_inclusion)
+  // Pour 'lieu_activite', on materialise un lieu_inclusion + asso miroir de la
+  // SA (id partage) pour preserver la semantique des tests historiques qui
+  // passent un structure_id de SA.
+  const { est_active = true, personne_id, source = 'coop', structure_id, type } = override
+
+  if (type === 'structure_emploi') {
+    await prisma.main_personne_affectations_emploi.create({
+      data: {
+        est_active,
+        personne_id,
+        source,
+        structure_administrative_id: structure_id,
+      },
+    })
+    return
+  }
+
+  // Materialise lieu_inclusion + asso si absent (id = SA id pour simplifier).
+  const lieuExistant = await prisma.main_lieu_inclusion.findUnique({ where: { id: structure_id } })
+  if (!lieuExistant) {
+    await prisma.main_lieu_inclusion.create({
+      data: { id: structure_id, nom: `Lieu auto ${String(structure_id)}` },
+    })
+    await prisma.main_lieu_inclusion_structure_administrative.create({
+      data: { lieu_id: structure_id, structure_administrative_id: structure_id },
+    })
+  }
+  await prisma.main_personne_affectations_lieu.create({
+    data: {
+      est_active,
+      lieu_id: structure_id,
+      personne_id,
+      source,
+    },
   })
 }
 
@@ -570,18 +602,16 @@ function porteurActionRecordFactory(
   }
 }
 
-function personneAffectationFactory(
-  override?: Partial<Prisma.personne_affectationsUncheckedCreateInput>
-): Prisma.personne_affectationsUncheckedCreateInput {
-  return {
-    est_active: true,
-    personne_id: 1,
-    source: 'coop',
-    structure_id: null,
-    type: 'structure_emploi',
-    ...override,
-  }
-}
+// Refonte 2026 : personne_affectations legacy (@@ignore'd cote Prisma) a ete
+// splittee en deux tables. On expose ici un type de surface compatible avec
+// l'usage historique des tests.
+type PersonneAffectationOverride = Readonly<{
+  est_active?: boolean
+  personne_id: number
+  source?: string
+  structure_id: number
+  type: 'lieu_activite' | 'structure_emploi'
+}>
 
 function personneFactory(override?: Partial<Prisma.personneUncheckedCreateInput>): Prisma.personneUncheckedCreateInput {
   return {

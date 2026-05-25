@@ -260,8 +260,8 @@ describe('structures loader', () => {
         nom: "Conseil départemental de l'Aube",
       })
       const contactId = await creerUnContact({ email: 'referent-fne@aube.fr', est_referent_fne: true })
-      await prisma.contact_structure.create({
-        data: { contact_id: contactId, structure_id: 100 },
+      await prisma.contact_structure_administrative.create({
+        data: { contact_id: contactId, structure_administrative_id: 100 },
       })
 
       // WHEN
