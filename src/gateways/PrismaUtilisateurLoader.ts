@@ -17,7 +17,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       relationDepartement: true,
       relationGroupement: true,
       relationRegion: true,
-      relationStructure: {
+      relationStructureAdministrative: {
         include: {
           membres: {
             select: {
@@ -106,7 +106,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       relationDepartement: true,
       relationGroupement: true,
       relationRegion: true,
-      relationStructure: {
+      relationStructureAdministrative: {
         include: {
           adresse: true,
           membres: {
@@ -219,12 +219,16 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     if (codeDepartement !== departementInexistant) {
       where.OR = [
         { departementCode: codeDepartement },
-        { relationStructure: { adresse: { departement: codeDepartement } } },
+        { relationStructureAdministrative: { adresse: { departement: codeDepartement } } },
       ]
     } else if (codeRegion !== regionInexistante) {
       where.OR = [
         { relationDepartement: { relationRegion: { code: codeRegion } } },
-        { relationStructure: { adresse: { departement: { in: await this.#getDepartementsInRegion(codeRegion) } } } },
+        {
+          relationStructureAdministrative: {
+            adresse: { departement: { in: await this.#getDepartementsInRegion(codeRegion) } },
+          },
+        },
         { regionCode: codeRegion },
       ]
     }
@@ -309,12 +313,12 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 }
 
 type UtilisateurAvecMembresRecord = {
-  relationStructure:
+  relationStructureAdministrative:
     | ({
         membres: ReadonlyArray<{ gouvernanceDepartementCode: string }>
-      } & UtilisateurEtSesRelationsRecord['relationStructure'])
+      } & UtilisateurEtSesRelationsRecord['relationStructureAdministrative'])
     | null
-} & Omit<UtilisateurEtSesRelationsRecord, 'relationStructure'>
+} & Omit<UtilisateurEtSesRelationsRecord, 'relationStructureAdministrative'>
 
 function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisateurReadModel {
   const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
@@ -335,7 +339,7 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
   // Pour un gestionnaire de structure, récupérer le code département depuis les membres de gouvernance
   const departementCode =
     role.nom === 'Gestionnaire structure'
-      ? (utilisateurRecord.relationStructure?.membres[0]?.gouvernanceDepartementCode ?? null)
+      ? (utilisateurRecord.relationStructureAdministrative?.membres[0]?.gouvernanceDepartementCode ?? null)
       : utilisateurRecord.departementCode
 
   return {

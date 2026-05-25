@@ -35,7 +35,7 @@ export const membreInclude = {
     },
   },
   CoFinancementRecord: true,
-  relationStructure: {
+  relationStructureAdministrative: {
     include: {
       contact_structures: {
         include: {
@@ -83,14 +83,14 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
 }
 
 function determinerNomMembre(membre: MembreRecord): string {
-  return membre.relationStructure.nom
+  return membre.relationStructureAdministrative.denomination_sirene ?? ''
 }
 
 function toMembre(membre: MembreRecord): Membre {
   const roles = deduireRoles(membre)
   const nomMembre = determinerNomMembre(membre)
 
-  const contacts = membre.relationStructure.contact_structures.map((cs) => ({
+  const contacts = membre.relationStructureAdministrative.contact_structures.map((cs) => ({
     email: cs.contact.email,
     estReferentFNE: cs.contact.est_referent_fne,
     fonction: cs.contact.fonction,
