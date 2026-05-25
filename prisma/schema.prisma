@@ -415,6 +415,8 @@ model admin_departement {
   commune    commune[]
   region     admin_region            @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "departement_region_id")
 
+  @@unique([code], map: "departement_code_idx")
+  @@index([nom], map: "departement_nom_idx")
   @@map("departement")
   @@schema("admin")
 }
@@ -476,6 +478,8 @@ model admin_region {
   updated_at  DateTime?               @db.Timestamp(6)
   departement admin_departement[]
 
+  @@unique([code], map: "region_code_idx")
+  @@index([nom], map: "region_nom_idx")
   @@map("region")
   @@schema("admin")
 }
@@ -534,7 +538,11 @@ model activites_coop {
   @@index([lieu_code_insee])
   @@index([periode])
   @@index([personne_id])
-  @@index([lieu_id], map: "idx_activites_coop_lieu_id")
+  // Nom historique conserve : la Flyway V084 dataspace a renomme la colonne
+  // structure_id -> lieu_id mais pas l'index (qui s'appelait deja
+  // idx_activites_coop_structure_id et non activites_coop_structure_id_idx
+  // attendu par la migration). Renommage propre a faire dans une future V09x.
+  @@index([lieu_id], map: "idx_activites_coop_structure_id")
   @@schema("main")
 }
 
@@ -555,6 +563,8 @@ model adresse {
   departement  String?                  @default(dbgenerated("\nCASE\n    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN \"left\"((code_insee)::text, 3)\n    ELSE \"left\"((code_insee)::text, 2)\nEND")) @db.VarChar(3)
   structures_administratives main_structure_administrative[]
   lieux_inclusion            main_lieu_inclusion[]
+  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
+  structures_legacy          main_structure[] @relation("legacy_structure_adresse") @ignore
 
   @@index([geom], type: Gist)
   @@index([code_insee])
@@ -612,6 +622,8 @@ model personne {
   personne_affectations_emploi                                            main_personne_affectations_emploi[]
   personne_affectations_lieu                                              main_personne_affectations_lieu[]
   poste                                                                   poste[]
+  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
+  personne_affectations_legacy                                            personne_affectations[] @relation("legacy_personne_affectations_personne") @ignore
 
   @@index([nom, prenom], map: "personne_patronyme")
   @@schema("main")
@@ -802,6 +814,11 @@ model main_structure {
   edited_by                           String?  @db.VarChar(50)
   deleted_at                          DateTime? @db.Timestamp(6)
   deleted_by                          String[]
+  adresse                             adresse?                @relation("legacy_structure_adresse", fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
+  categories_juridiques               categories_juridiques?  @relation("legacy_structure_categorie_juridique", fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
+
+  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
+  personne_affectations_legacy personne_affectations[] @relation("legacy_personne_affectations_structure")
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
@@ -824,6 +841,8 @@ model personne_affectations {
   updated_at        DateTime? @db.Timestamp(6)
   source            String    @db.VarChar
   est_active        Boolean   @default(true)
+  personne          personne        @relation("legacy_personne_affectations_personne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_personne_id_fkey")
+  structure         main_structure? @relation("legacy_personne_affectations_structure", fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_structure_id_fkey")
 
   @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
   @@index([personne_id], map: "idx_personne_affectations_personne_id")
@@ -981,6 +1000,8 @@ model categories_juridiques {
   created_at DateTime?        @default(now()) @db.Timestamp(6)
   updated_at DateTime?        @db.Timestamp(6)
   structure_administrative main_structure_administrative[]
+  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
+  structures_legacy        main_structure[] @relation("legacy_structure_categorie_juridique") @ignore
 
   @@schema("reference")
 }
