@@ -7,6 +7,7 @@ Application de gestion de la gouvernance de l'inclusion num√©rique en France, d√
 - [A propos](#a-propos)
 - [Environnements](#environnements)
 - [Design et prototype](#design-et-prototype)
+- [Base de donnees](#base-de-donnees)
 - [Contribution](#contribution)
 - [Licence](#licence)
 
@@ -29,6 +30,16 @@ Pour en savoir plus : [Fiche beta.gouv.fr](https://beta.gouv.fr/startups/france-
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Figma - Outil gestionnaire | [Ouvrir](https://www.figma.com/design/IFH80doDOEvJvbMlUnQIOC/%E2%AD%90%EF%B8%8F-Outil-gestionnaire-FNE?node-id=2679-17716&p=f&t=gwvYEe3U5xoWkbX3-0)  |
 | Figma - Site vitrine       | [Ouvrir](https://www.figma.com/design/IFH80doDOEvJvbMlUnQIOC/%E2%AD%90%EF%B8%8F-Outil-gestionnaire-FNE?node-id=10484-10380&p=f&t=gwvYEe3U5xoWkbX3-0) |
+
+## Base de donnees
+
+MIN partage sa base PostgreSQL avec [dataspace](https://gitlab.com/incubateur-territoires/startups/data-inclusion-numerique/dataspace) : MIN possede le schema `min`, dataspace possede `admin`, `main`, `reference`, `audit` (gestion via Flyway). Voir [docs/integration-dataspace.md](docs/integration-dataspace.md) pour le detail du partage et le workflow de resynchronisation des schemas dataspace en local.
+
+Commande utile :
+
+```bash
+pnpm db:sync-dataspace   # regenerer la migration "dataspace_integration" depuis la base dataspace locale
+```
 
 ## Contribution
 
