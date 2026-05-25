@@ -525,6 +525,9 @@ model activites_coop {
   periode                             DateTime?       @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
   created_at_coop                     DateTime?       @db.Timestamp(6)
   updated_at_coop                     DateTime?       @db.Timestamp(6)
+  // Alimente par dataspace (ingest coop), non lu par MIN. Declare pour eviter
+  // un faux drop par prisma migrate dev.
+  beneficiaires                       Json?
   personne                            personne?            @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
   lieu                                main_lieu_inclusion? @relation(fields: [lieu_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "activites_coop_lieu_id_fkey")
 
@@ -594,6 +597,13 @@ model personne {
   edited_by                                                               String?                  @db.VarChar(50)
   deleted_at                                                              DateTime?                @db.Timestamp(6)
   deleted_by                                                              String[]
+  // Colonnes alimentees par dataspace, non lues par MIN. Declarees ici pour
+  // que prisma migrate dev ne propose pas de les dropper (cf snapshot regen).
+  is_referent_ac                                                          Boolean                  @default(false)
+  updated_at_ac                                                           DateTime?                @db.Timestamp(6)
+  is_visible                                                              Boolean?
+  updated_at_coop                                                         DateTime?                @db.Timestamp(6)
+  updated_at_idposte                                                      DateTime?                @db.Timestamp(6)
   activites_coop                                                          activites_coop[]
   contrat                                                                 contrat[]
   coordination_mediation_coordination_mediation_coordinateur_idTopersonne coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
@@ -720,7 +730,9 @@ model main_lieu_inclusion {
 
   @@index([adresse_id], map: "lieu_inclusion_adresse_id_idx")
   @@index([nom], map: "lieu_inclusion_nom_idx")
-  @@index([visible_pour_cartographie_nationale], map: "lieu_inclusion_visible_idx")
+  // L'index lieu_inclusion_visible_idx existe en base mais est partiel
+  // (WHERE visible = true) — non representable en syntaxe Prisma, donc
+  // omis ici pour ne pas declencher de faux diff a chaque prisma migrate.
   @@map("lieu_inclusion")
   @@schema("main")
 }
@@ -741,6 +753,83 @@ model main_lieu_inclusion_structure_administrative {
   @@index([structure_administrative_id], map: "lieu_inclusion_structure_administrative_admin_id_idx")
   @@map("lieu_inclusion_structure_administrative")
   @@schema("main")
+}
+
+/// LEGACY post-refonte 2026 : table conservee en base pour les consommateurs
+/// historiques (dataviz, vues api heritees, ETL externes). MIN ecrit
+/// desormais dans main_structure_administrative + main_lieu_inclusion.
+/// Drop final planifie dans la doc dataspace (refonte-structure-plan.md > Next).
+model main_structure {
+  id                                  Int      @id @default(autoincrement())
+  structure_coop_id                   String?  @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
+  structure_ac_id                     String?  @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
+  structure_tp_id                     Int?     @unique(map: "structure_structure_tp_id_ukey")
+  nom                                 String   @db.VarChar(255)
+  denomination_sirene                 String?  @db.VarChar
+  siret                               String?  @db.VarChar(14)
+  rna                                 String?  @db.VarChar(10)
+  adresse_id                          Int?
+  contact                             Json?
+  etat_administratif                  String?  @db.VarChar
+  code_activite_principale            String?  @db.VarChar(6)
+  categorie_juridique                 String?  @db.VarChar(4)
+  nb_mandats_ac                       Int?
+  publique                            Boolean?
+  structure_cartographie_nationale_id String?  @unique(map: "structure_cartographie_ukey") @db.VarChar
+  visible_pour_cartographie_nationale Boolean?
+  typologies                          String[]
+  presentation_resume                 String?
+  presentation_detail                 String?
+  horaires                            String?  @db.VarChar
+  prise_rdv                           String?  @db.VarChar
+  services                            String[]
+  publics_specifiquement_adresses     String[]
+  prise_en_charge_specifique          String[]
+  frais_a_charge                      String[]
+  dispositif_programmes_nationaux     String[]
+  formations_labels                   String[]
+  autres_formations_labels            String[]
+  itinerance                          String[]
+  modalites_acces                     String[]
+  modalites_accompagnement            String[]
+  mediateurs_en_activite              Int?
+  emplois                             Int?
+  source                              String?  @db.VarChar
+  last_sirene_enrich_at               DateTime? @db.Date
+  created_at                          DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime? @db.Timestamp(6)
+  fiche_acces_libre                   String?  @db.VarChar
+  edited_by                           String?  @db.VarChar(50)
+  deleted_at                          DateTime? @db.Timestamp(6)
+  deleted_by                          String[]
+
+  @@unique([siret, nom, adresse_id], map: "structure_ukey")
+  @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
+  @@map("structure")
+  @@schema("main")
+  @@ignore
+}
+
+/// LEGACY post-refonte 2026 : remplacee par main_personne_affectations_emploi
+/// (type='structure_emploi') et main_personne_affectations_lieu (type='lieu_activite').
+/// Conservee pour consommateurs historiques. Drop final planifie (Next dataspace).
+model personne_affectations {
+  id                Int       @id @default(autoincrement())
+  personne_id       Int
+  structure_id      Int?
+  structure_coop_id String?   @db.Uuid
+  mediateur_coop_id String?   @db.Uuid
+  type              String    @db.VarChar
+  created_at        DateTime? @default(now()) @db.Timestamp(6)
+  updated_at        DateTime? @db.Timestamp(6)
+  source            String    @db.VarChar
+  est_active        Boolean   @default(true)
+
+  @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
+  @@index([personne_id], map: "idx_personne_affectations_personne_id")
+  @@index([structure_id], map: "idx_personne_affectations_structure_id")
+  @@schema("main")
+  @@ignore
 }
 
 model main_contact {
@@ -766,8 +855,8 @@ model contact_structure_administrative {
   structure_administrative_id Int
   contact_id                  Int
   created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
-  contact                     main_contact                  @relation(fields: [contact_id], references: [id], onDelete: Cascade)
-  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: Cascade)
+  contact                     main_contact                  @relation(fields: [contact_id], references: [id], onDelete: Cascade, map: "contact_structure_contact_id_fkey")
+  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: Cascade, map: "contact_structure_administrative_structure_id_fkey")
 
   @@unique([structure_administrative_id, contact_id], map: "contact_structure_administrative_unique")
   @@index([structure_administrative_id], map: "contact_structure_administrative_structure_id_idx")
