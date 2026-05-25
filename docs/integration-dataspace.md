@@ -4,11 +4,11 @@
 
 MIN partage sa base PostgreSQL avec [dataspace](https://gitlab.com/incubateur-territoires/startups/data-inclusion-numerique/dataspace), l'agrégateur de données ETL de l'inclusion numérique. Les deux projets cohabitent dans la même base mais avec des responsabilités distinctes :
 
-| Schéma                           | Propriétaire | Outil de migration         |
-| -------------------------------- | ------------ | -------------------------- |
-| `admin`, `main`, `reference`, `audit` | dataspace    | Flyway (`database/migrations/`) |
-| `min`                            | MIN          | Prisma (`prisma/migrations/`)   |
-| `api`, `auth`, `dataviz`, `import`, `public`, `pseudonymisation` | dataspace | Flyway (non utilisé côté MIN)   |
+| Schéma                                                           | Propriétaire | Outil de migration              |
+| ---------------------------------------------------------------- | ------------ | ------------------------------- |
+| `admin`, `main`, `reference`, `audit`                            | dataspace    | Flyway (`database/migrations/`) |
+| `min`                                                            | MIN          | Prisma (`prisma/migrations/`)   |
+| `api`, `auth`, `dataviz`, `import`, `public`, `pseudonymisation` | dataspace    | Flyway (non utilisé côté MIN)   |
 
 En production, **MIN ne joue plus ses migrations Prisma** : `prisma migrate deploy` est désactivé. Les schémas non-`min` sont entièrement gérés par Flyway côté dataspace. MIN n'a la main que sur le schéma `min`.
 
@@ -33,6 +33,7 @@ pnpm dotenv:test -- pnpm prisma:reset
 ```
 
 Le script `scripts/sync-dataspace-migration.sh` :
+
 - attaque la base locale `postgres-dataspace:5532/dataspace_dev` via `docker exec` (pas besoin de pseudonymisation puisque c'est du dev)
 - reproduit l'esprit des tâches `export`, `clean`, `functions` du DAG `database_pseudonym_export` côté dataspace
 - écrit directement dans `prisma/migrations/20250619151605_2_dataspace_integration/migration.sql`
@@ -42,6 +43,7 @@ Variables d'override (rarement utiles) : `DATASPACE_CONTAINER`, `DATASPACE_DB`, 
 ## Avant l'automatisation
 
 L'ancien workflow nécessitait :
+
 1. déclencher le DAG `database_pseudonym_export` côté Airflow,
 2. récupérer l'archive pseudonymisée sur Nextcloud,
 3. concaténer manuellement les fichiers `*-structure-pre-data-*.sql` et `*-structure-post-data-*.sql`,
@@ -92,6 +94,7 @@ En prod, tous les objets dataspace sont owned par `sonum`. En local, certaines t
 ### Schémas exclus du dump
 
 Liste reprise du DAG `database_pseudonym_export`, complétée :
+
 - `min`, `api`, `auth`, `cache`, `dataviz`, `import`, `public`, `pseudonymisation` (exclusion du DAG)
 - `opendata` (présent en local seulement, pas en prod)
 
