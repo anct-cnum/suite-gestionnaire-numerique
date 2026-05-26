@@ -54,7 +54,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       const structureResult = await prisma.$queryRaw<Array<StructureResult>>`
         SELECT
           st.id as structure_id,
-          st.denomination_sirene as nom_structure,
+          COALESCE(st.denomination_antenne, st.denomination_sirene) as nom_structure,
           st.siret,
           cj.nom as categorie_juridique_nom,
           a.numero_voie,

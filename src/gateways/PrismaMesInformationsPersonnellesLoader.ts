@@ -87,7 +87,7 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
           prenom: contact?.prenom ?? '',
         },
         numeroDeSiret: structure.siret ?? '',
-        raisonSociale: structure.denomination_sirene ?? '',
+        raisonSociale: structure.denomination_antenne ?? structure.denomination_sirene ?? '',
         // Refonte 2026 : typologies vit sur main.lieu_inclusion, plus sur SA.
         // L'utilisateur etant rattache a une SA (entite legale), on n'a plus
         // de typologie directe ici. A reconstruire via les lieux affectes si besoin.

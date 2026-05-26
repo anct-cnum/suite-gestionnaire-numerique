@@ -292,11 +292,11 @@ export class PrismaRapportRegionLoader {
         d.nom AS departement_nom,
         fdr.id AS fdr_id,
         fdr.nom AS fdr_nom,
-        porteur_st.denomination_sirene AS porteur_nom,
+        COALESCE(porteur_st.denomination_antenne, porteur_st.denomination_sirene) AS porteur_nom,
         porteur_mb.type AS porteur_type,
         ef.libelle AS enveloppe_libelle,
         CASE WHEN ds.statut = 'acceptee' THEN ds.subvention_demandee ELSE 0 END AS subvention_demandee,
-        array_to_json(array_agg(DISTINCT benef_st.denomination_sirene) FILTER (WHERE benef_st.denomination_sirene IS NOT NULL)) AS beneficiaires,
+        array_to_json(array_agg(DISTINCT COALESCE(benef_st.denomination_antenne, benef_st.denomination_sirene)) FILTER (WHERE COALESCE(benef_st.denomination_antenne, benef_st.denomination_sirene) IS NOT NULL)) AS beneficiaires,
         array_to_json(act.besoins) AS besoins
       -- Refonte 2026 : min.membre.structure_id pointe sur main.structure_administrative.id (V085).
       FROM min.feuille_de_route fdr
@@ -310,7 +310,7 @@ export class PrismaRapportRegionLoader {
       LEFT JOIN min.membre benef_mb ON benef_mb.id = bs.membre_id
       LEFT JOIN main.structure_administrative benef_st ON benef_st.id = benef_mb.structure_id
       WHERE ${filtre}
-      GROUP BY d.code, d.nom, fdr.id, fdr.nom, porteur_st.denomination_sirene, porteur_mb.type,
+      GROUP BY d.code, d.nom, fdr.id, fdr.nom, COALESCE(porteur_st.denomination_antenne, porteur_st.denomination_sirene), porteur_mb.type,
         ef.libelle, ds.subvention_demandee, ds.statut, act.besoins
       ORDER BY d.code, fdr.id, ef.libelle
     `
@@ -322,13 +322,13 @@ export class PrismaRapportRegionLoader {
       SELECT
         m.gouvernance_departement_code AS departement_code,
         m.is_coporteur,
-        st.denomination_sirene AS structure_nom
+        COALESCE(st.denomination_antenne, st.denomination_sirene) AS structure_nom
       FROM min.membre m
       JOIN min.departement d ON d.code = m.gouvernance_departement_code
       JOIN main.structure_administrative st ON st.id = m.structure_id
       WHERE ${filtre}
         AND m.statut = 'confirme'
-      ORDER BY d.code, st.denomination_sirene
+      ORDER BY d.code, COALESCE(st.denomination_antenne, st.denomination_sirene)
     `
   }
 

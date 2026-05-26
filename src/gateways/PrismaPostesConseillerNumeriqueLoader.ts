@@ -162,7 +162,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       SELECT
         v.poste_conum_id,
         v.structure_id,
-        st.denomination_sirene AS nom_structure,
+        COALESCE(st.denomination_antenne, st.denomination_sirene) AS nom_structure,
         a.departement AS code_departement,
         v.etat AS statut,
         v.est_coordinateur,
@@ -177,7 +177,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       LEFT JOIN main.structure_administrative st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       WHERE 1=1 ${filtersSQL}
-      ORDER BY st.denomination_sirene, v.poste_conum_id
+      ORDER BY COALESCE(st.denomination_antenne, st.denomination_sirene), v.poste_conum_id
       LIMIT ${limite} OFFSET ${offset}
     `
 

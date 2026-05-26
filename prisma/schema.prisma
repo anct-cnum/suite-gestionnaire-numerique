@@ -662,9 +662,13 @@ model poste {
 model main_structure_administrative {
   id                       Int                                          @id @default(autoincrement())
   old_main_structure_id    Int?                                         @unique(map: "structure_administrative_old_main_structure_id_ukey")
-  siret                    String?                                      @unique(map: "structure_administrative_siret_ukey") @db.VarChar(14)
+  siret                    String?                                      @db.VarChar(14)
   ridet                    String?                                      @unique(map: "structure_administrative_ridet_ukey") @db.VarChar(10)
   denomination_sirene      String?                                      @db.VarChar
+  /// Refonte 2026 : discriminant pour le pattern grand reseau (Emmaüs
+  /// Connect, Reconnect Groupe SOS, …). NULL = entite unique pour ce SIRET.
+  /// Cf decision tranchee 2026-05-25 (docs dataspace).
+  denomination_antenne     String?                                      @db.VarChar(255)
   rna                      String?                                      @db.VarChar(10)
   adresse_id               Int?
   structure_coop_id        String?                                      @unique(map: "structure_administrative_structure_coop_id_ukey") @db.Uuid
@@ -695,6 +699,11 @@ model main_structure_administrative {
   membres                  MembreRecord[]
   utilisateurs             UtilisateurRecord[]
 
+  /// Refonte 2026 : remplace l'ancienne UNIQUE (siret) seule. Contrainte
+  /// reelle en base : UNIQUE NULLS NOT DISTINCT (pgsql 15+) — non
+  /// representable en syntaxe Prisma, donc declare ici en NULLS DISTINCT.
+  /// L'invariant NULLS NOT DISTINCT reste garanti cote Flyway V068.
+  @@unique([siret, denomination_antenne], map: "structure_administrative_siret_antenne_ukey")
   @@index([adresse_id], map: "structure_administrative_adresse_id_idx")
   @@index([denomination_sirene], map: "structure_administrative_denomination_sirene_idx")
   @@map("structure_administrative")

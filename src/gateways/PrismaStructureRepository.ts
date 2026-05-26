@@ -58,7 +58,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     return Structure.create({
       departementCode: '', // structure_administrative n'a pas de departementCode direct
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.denomination_sirene ?? '',
+      nom: structure.denomination_antenne ?? structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }
@@ -84,7 +84,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     return Structure.create({
       departementCode: '',
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.denomination_sirene ?? '',
+      nom: structure.denomination_antenne ?? structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }
@@ -176,7 +176,7 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     return Structure.create({
       departementCode: data.departementCode,
       identifiantEtablissement: structure.siret ?? '',
-      nom: structure.denomination_sirene ?? '',
+      nom: structure.denomination_antenne ?? structure.denomination_sirene ?? '',
       uid: { value: structure.id },
     })
   }

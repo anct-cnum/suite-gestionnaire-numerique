@@ -115,9 +115,10 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
         departement: departementNom,
         editeur: structureRecord.edited_by ?? '',
         edition: structureRecord.updated_at ?? structureRecord.created_at ?? undefined,
-        // Refonte 2026 : nom legacy -> denomination_sirene (la "raison sociale"
-        // de l'entite). Typologies legacy vit cote lieu_inclusion (cf N12).
-        nom: structureRecord.denomination_sirene ?? '',
+        // Refonte 2026 : nom legacy -> COALESCE(denomination_antenne, denomination_sirene).
+        // denomination_antenne distingue les antennes d'un grand reseau (Emmaüs,
+        // Reconnect, …). Typologies legacy vit cote lieu_inclusion (cf N12).
+        nom: structureRecord.denomination_antenne ?? structureRecord.denomination_sirene ?? '',
         region: regionNom,
         siret: structureRecord.siret ?? undefined,
         typologie: structureRecord.categories_juridiques?.nom ?? '',

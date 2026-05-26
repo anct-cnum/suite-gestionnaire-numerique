@@ -375,7 +375,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         BOOL_OR(f.remn) AS remn,
         COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
         COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac,
-        MAX(s.denomination_sirene) AS structure_nom,
+        MAX(COALESCE(s.denomination_antenne, s.denomination_sirene)) AS structure_nom,
         MAX(s.siret) AS structure_siret,
         MAX(TRIM(CONCAT_WS(' ', a.numero_voie::text, a.repetition, a.nom_voie, a.code_postal, a.nom_commune))) AS structure_adresse
       FROM min.personne_enrichie pe

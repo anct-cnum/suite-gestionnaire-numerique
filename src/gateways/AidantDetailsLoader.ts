@@ -30,7 +30,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           -- Refonte 2026 : personne_enrichie.structure_employeuse_id pointe sur
           -- main.structure_administrative (V092 dataspace). Le nom employeur =
           -- denomination_sirene de la SA.
-          main.structure_administrative.denomination_sirene as employeur_raison_social,
+          COALESCE(main.structure_administrative.denomination_antenne, main.structure_administrative.denomination_sirene) as employeur_raison_social,
           reference.categories_juridiques.nom as employeur_categorie_juridique,
           main.structure_administrative.siret as employeur_siret,
           main.structure_administrative.contact as employeur_contact_referent,

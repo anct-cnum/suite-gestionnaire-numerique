@@ -39,20 +39,22 @@ export class PrismaStructureLoader implements StructureLoader {
       return []
     }
 
-    // Refonte 2026 : recherche sur main.structure_administrative.denomination_sirene
-    // (anciennement main.structure.nom). Les contacts referents FNE sont
+    // Refonte 2026 : recherche sur COALESCE(denomination_antenne, denomination_sirene)
+    // de main.structure_administrative. denomination_antenne permet de distinguer
+    // les antennes d'un grand reseau partageant le SIRET du siege (Emmaüs
+    // Connect, Reconnect Groupe SOS, …). Les contacts referents FNE sont
     // desormais dans main.contact_structure_administrative.
     const conditionsMots = mots
       .map(
         (_, index) =>
-          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(sa.denomination_sirene))) > 0.3`
+          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(COALESCE(sa.denomination_antenne, sa.denomination_sirene)))) > 0.3`
       )
       .join(' AND ')
 
     const scoreCalcul = mots
       .map(
         (_, index) =>
-          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(sa.denomination_sirene)))`
+          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(COALESCE(sa.denomination_antenne, sa.denomination_sirene))))`
       )
       .join(' + ')
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
@@ -66,7 +68,7 @@ export class PrismaStructureLoader implements StructureLoader {
     const query = `
       SELECT
         sa.id,
-        sa.denomination_sirene AS nom,
+        COALESCE(sa.denomination_antenne, sa.denomination_sirene) AS nom,
         a.nom_commune as commune,
         EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id) as is_membre,
         EXISTS(
@@ -76,10 +78,10 @@ export class PrismaStructureLoader implements StructureLoader {
         ) as is_fne
       FROM main.structure_administrative sa
       LEFT JOIN main.adresse a ON sa.adresse_id = a.id
-      WHERE sa.denomination_sirene IS NOT NULL
+      WHERE COALESCE(sa.denomination_antenne, sa.denomination_sirene) IS NOT NULL
         AND (${conditionsMots})
       ${whereExtra}
-      ORDER BY ${scoreMoyen} DESC, sa.denomination_sirene ASC
+      ORDER BY ${scoreMoyen} DESC, COALESCE(sa.denomination_antenne, sa.denomination_sirene) ASC
       LIMIT 10
     `
 

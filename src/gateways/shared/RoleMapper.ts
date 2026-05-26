@@ -33,7 +33,11 @@ export function organisation(utilisateurRecord: UtilisateurEtSesRelationsRecord)
     case 'Gestionnaire région':
       return `${utilisateurRecord.relationRegion?.nom} (${utilisateurRecord.relationRegion?.code})`
     case 'Gestionnaire structure':
-      return utilisateurRecord.relationStructureAdministrative?.denomination_sirene ?? undefined
+      return (
+        utilisateurRecord.relationStructureAdministrative?.denomination_antenne ??
+        utilisateurRecord.relationStructureAdministrative?.denomination_sirene ??
+        undefined
+      )
     default:
       return undefined
   }

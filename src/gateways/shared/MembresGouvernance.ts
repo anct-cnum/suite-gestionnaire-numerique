@@ -83,7 +83,11 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
 }
 
 function determinerNomMembre(membre: MembreRecord): string {
-  return membre.relationStructureAdministrative.denomination_sirene ?? ''
+  return (
+    membre.relationStructureAdministrative.denomination_antenne ??
+    membre.relationStructureAdministrative.denomination_sirene ??
+    ''
+  )
 }
 
 function toMembre(membre: MembreRecord): Membre {
