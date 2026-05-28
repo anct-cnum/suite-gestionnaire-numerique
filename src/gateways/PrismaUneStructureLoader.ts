@@ -175,11 +175,7 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
   ).length
   const totalAidant = personnesDedupliquees.filter((affectation) => {
     const sources = sourcesParPersonne.get(affectation.personne.id) ?? new Set<string>()
-    return (
-      sources.has('aidants-connect') ||
-      affectation.personne.is_coordinateur === true ||
-      affectation.personne.is_mediateur === true
-    )
+    return sources.has('aidants-connect')
   }).length
 
   const liste = personnesDedupliquees.map((affectation) => {

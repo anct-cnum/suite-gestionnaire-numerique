@@ -45,7 +45,9 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
                     {aidantsEtMediateurs.totalCoordinateur}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">Coordinateur</span>
+                  <span className="font-weight-500 color-blue-france">
+                    {aidantsEtMediateurs.totalCoordinateur > 1 ? 'Coordinateurs' : 'Coordinateur'}
+                  </span>
                 </p>
               </div>
             </div>
