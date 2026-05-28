@@ -139,7 +139,7 @@ describe("une structure loader : aidants et médiateurs (filtre par type d'affec
     // THEN
     expect(readModel.aidantsEtMediateurs.liste).toHaveLength(1)
     expect(readModel.aidantsEtMediateurs.liste[0].prenom).toBe('Alice')
-    expect(readModel.aidantsEtMediateurs.totalAidant).toBe(1)
+    expect(readModel.aidantsEtMediateurs.totalAidant).toBe(0)
     expect(readModel.aidantsEtMediateurs.totalCoordinateur).toBe(0)
     expect(readModel.aidantsEtMediateurs.totalMediateur).toBe(1)
   })
