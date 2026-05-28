@@ -4,7 +4,8 @@ import { TerritoireLoader, TerritoiresReadModel } from '@/use-cases/queries/shar
 export class PrismaTerritoireLoader implements TerritoireLoader {
   async recupererTerritoires(structureIds: ReadonlyArray<number>): Promise<TerritoiresReadModel> {
     // Récupérer les départements des structures (via l'adresse)
-    const structuresRecords = await prisma.main_structure.findMany({
+    // Refonte 2026 : structureIds refere a main.structure_administrative.id.
+    const structuresRecords = await prisma.main_structure_administrative.findMany({
       include: {
         adresse: true,
       },

@@ -83,9 +83,14 @@ describe('mes informations personnelles loader', () => {
           nom: 'Verninac',
           prenom: 'Manon',
         },
-        numeroDeSiret: '41816609600069',
+        numeroDeSiret: '00000000000010',
         raisonSociale: 'Solidarnum',
-        typeDeStructure: 'COMMUNE',
+        // A challenger (refonte 2026, N12 doc dataspace) : valider cette assertion
+        // avec le PO. typologies vit desormais sur main.lieu_inclusion (pas SA).
+        // L'utilisateur est rattache a une SA -> pas de typologie directe ici.
+        // Decision produit a prendre : champ vide / "—" / typologie d'un lieu
+        // associe via la table d'asso (N:N, attention au choix de "principal").
+        typeDeStructure: '',
       },
       telephone: '0102030405',
     })

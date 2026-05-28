@@ -39,18 +39,23 @@ export class PrismaStructureLoader implements StructureLoader {
       return []
     }
 
-    // Construire la condition : chaque mot doit avoir une bonne similarité avec le nom
-    // word_similarity compare un mot à tous les mots d'une chaîne
+    // Refonte 2026 : recherche sur COALESCE(denomination_antenne, denomination_sirene)
+    // de main.structure_administrative. denomination_antenne permet de distinguer
+    // les antennes d'un grand reseau partageant le SIRET du siege (Emmaüs
+    // Connect, Reconnect Groupe SOS, …). Les contacts referents FNE sont
+    // desormais dans main.contact_structure_administrative.
     const conditionsMots = mots
       .map(
         (_, index) =>
-          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(s.nom))) > 0.3`
+          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(COALESCE(sa.denomination_antenne, sa.denomination_sirene)))) > 0.3`
       )
       .join(' AND ')
 
-    // Calcul du score : moyenne des similarités de chaque mot
     const scoreCalcul = mots
-      .map((_, index) => `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(s.nom)))`)
+      .map(
+        (_, index) =>
+          `public.word_similarity(public.unaccent(lower($${index + 1})), public.unaccent(lower(COALESCE(sa.denomination_antenne, sa.denomination_sirene))))`
+      )
       .join(' + ')
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
 
@@ -62,20 +67,21 @@ export class PrismaStructureLoader implements StructureLoader {
 
     const query = `
       SELECT
-        s.id,
-        s.nom,
+        sa.id,
+        COALESCE(sa.denomination_antenne, sa.denomination_sirene) AS nom,
         a.nom_commune as commune,
-        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = s.id) as is_membre,
+        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id) as is_membre,
         EXISTS(
-          SELECT 1 FROM main.contact_structure cs
-          JOIN main.contact c ON cs.contact_id = c.id
-          WHERE cs.structure_id = s.id AND c.est_referent_fne = true
+          SELECT 1 FROM main.contact_structure_administrative csa
+          JOIN main.contact c ON csa.contact_id = c.id
+          WHERE csa.structure_administrative_id = sa.id AND c.est_referent_fne = true
         ) as is_fne
-      FROM main.structure s
-      LEFT JOIN main.adresse a ON s.adresse_id = a.id
-      WHERE (${conditionsMots})
+      FROM main.structure_administrative sa
+      LEFT JOIN main.adresse a ON sa.adresse_id = a.id
+      WHERE COALESCE(sa.denomination_antenne, sa.denomination_sirene) IS NOT NULL
+        AND (${conditionsMots})
       ${whereExtra}
-      ORDER BY ${scoreMoyen} DESC, s.nom ASC
+      ORDER BY ${scoreMoyen} DESC, COALESCE(sa.denomination_antenne, sa.denomination_sirene) ASC
       LIMIT 10
     `
 

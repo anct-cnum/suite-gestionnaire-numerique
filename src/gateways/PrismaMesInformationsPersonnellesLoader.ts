@@ -16,7 +16,7 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: {
+        relationStructureAdministrative: {
           include: {
             adresse: true,
           },
@@ -36,7 +36,7 @@ type UtilisateurAvecStructureEtAdresse = Prisma.UtilisateurRecordGetPayload<{
     relationDepartement: true
     relationGroupement: true
     relationRegion: true
-    relationStructure: {
+    relationStructureAdministrative: {
       include: {
         adresse: true
       }
@@ -53,8 +53,8 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
     telephone: utilisateurRecord.telephone,
   }
 
-  if (utilisateurRecord.relationStructure) {
-    const structure = utilisateurRecord.relationStructure
+  if (utilisateurRecord.relationStructureAdministrative) {
+    const structure = utilisateurRecord.relationStructureAdministrative
 
     // Construire l'adresse depuis la relation adresse uniquement
     const adresseComplete = structure.adresse
@@ -87,8 +87,11 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
           prenom: contact?.prenom ?? '',
         },
         numeroDeSiret: structure.siret ?? '',
-        raisonSociale: structure.nom,
-        typeDeStructure: structure.typologies[0] ?? '',
+        raisonSociale: structure.denomination_antenne ?? structure.denomination_sirene ?? '',
+        // Refonte 2026 : typologies vit sur main.lieu_inclusion, plus sur SA.
+        // L'utilisateur etant rattache a une SA (entite legale), on n'a plus
+        // de typologie directe ici. A reconstruire via les lieux affectes si besoin.
+        typeDeStructure: '',
       },
     }
   }

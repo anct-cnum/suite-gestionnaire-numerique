@@ -1,7 +1,44 @@
+-- PostgreSQL database dump
+
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+-- Name: admin; Type: SCHEMA; Schema: -; Owner: dataspace
+
+
+
+
+-- Name: audit; Type: SCHEMA; Schema: -; Owner: dataspace
+
+
+
+
+-- Name: main; Type: SCHEMA; Schema: -; Owner: sonum
+
+
+
+
+-- Name: reference; Type: SCHEMA; Schema: -; Owner: sonum
+
+
+
+
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA min;
 
 
--- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
@@ -11,7 +48,7 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 
 
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: 
 
 COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
 
@@ -27,7 +64,7 @@ COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
 
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
 
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
 
@@ -37,15 +74,15 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types an
 CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
 
 
--- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: 
 
 COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
--- Name: refresh_coll_terr(); Type: FUNCTION; Schema: admin; Owner: sonum
+-- Name: refresh_coll_terr(); Type: FUNCTION; Schema: admin; Owner: dataspace
 
 CREATE FUNCTION admin.refresh_coll_terr() RETURNS void
-  LANGUAGE plpgsql SECURITY DEFINER
+    LANGUAGE plpgsql SECURITY DEFINER
     AS $$
 BEGIN
     REFRESH MATERIALIZED VIEW admin.coll_terr;
@@ -55,107 +92,630 @@ $$;
 
 ALTER FUNCTION admin.refresh_coll_terr() OWNER TO sonum;
 
--- Name: FUNCTION refresh_coll_terr(); Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: FUNCTION refresh_coll_terr(); Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON FUNCTION admin.refresh_coll_terr() IS 'Fonction permettant de rafraichir la MV admin.coll_terr sans droits de propriétaire';
 
 
--- Name: commune; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: merge_personne(integer, integer); Type: FUNCTION; Schema: main; Owner: dataspace
+
+CREATE FUNCTION main.merge_personne(winner_id integer, loser_id integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    p_winner main.personne;
+    p_loser main.personne;
+BEGIN
+    IF winner_id = loser_id THEN
+        RAISE EXCEPTION 'winner_id et loser_id doivent être différents';
+    END IF;
+
+    -- Lock les deux personnes
+    PERFORM 1 FROM main.personne WHERE id = winner_id FOR UPDATE;
+    PERFORM 1 FROM main.personne WHERE id = loser_id FOR UPDATE;
+
+    -- Récupère les données
+    SELECT * INTO p_winner FROM main.personne WHERE id = winner_id;
+    SELECT * INTO p_loser FROM main.personne WHERE id = loser_id;
+
+    -- 1. Vider les champs uniques sur le loser AVANT de les transférer
+    UPDATE main.personne
+    SET
+        aidant_connect_id = NULL,
+        cn_pg_id = NULL,
+        conseiller_numerique_id = NULL,
+        coop_id = NULL
+    WHERE id = loser_id;
+
+    -- 2. Mettre à jour les champs sur le winner (si manquants)
+    UPDATE main.personne
+    SET
+        aidant_connect_id = COALESCE(p_winner.aidant_connect_id, p_loser.aidant_connect_id),
+        cn_pg_id = COALESCE(p_winner.cn_pg_id, p_loser.cn_pg_id),
+        conseiller_numerique_id = COALESCE(p_winner.conseiller_numerique_id, p_loser.conseiller_numerique_id),
+        nb_accompagnements_ac = COALESCE(p_winner.nb_accompagnements_ac, p_loser.nb_accompagnements_ac),
+        contact = COALESCE(NULLIF(p_winner.contact, '{}'::jsonb), p_loser.contact),
+        profession_ac = COALESCE(p_winner.profession_ac, p_loser.profession_ac),
+        is_active_ac = COALESCE(p_winner.is_active_ac, p_loser.is_active_ac),
+        is_mediateur = COALESCE(p_winner.is_mediateur, p_loser.is_mediateur),
+        coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
+    WHERE id = winner_id;
+
+    -- 3. Supprimer les doublons potentiels dans personne_affectations
+    DELETE FROM main.personne_affectations pa
+    USING main.personne_affectations pb
+    WHERE pa.personne_id = loser_id
+      AND pb.personne_id = winner_id
+      AND pa.structure_id = pb.structure_id
+      AND pa.type = pb.type
+      AND COALESCE(pa.suppression, '1234-01-02 03:04:05+00') = COALESCE(pb.suppression, '1234-01-02 03:04:05+00');
+
+    -- 4. Re-mapper les relations vers le winner
+    UPDATE main.personne_affectations SET personne_id = winner_id WHERE personne_id = loser_id;
+    UPDATE main.activites_coop        SET personne_id = winner_id WHERE personne_id = loser_id;
+    UPDATE main.contrat               SET personne_id = winner_id WHERE personne_id = loser_id;
+    UPDATE main.formation             SET personne_id = winner_id WHERE personne_id = loser_id;
+    UPDATE main.poste                 SET personne_id = winner_id WHERE personne_id = loser_id;
+
+    -- 5. Remplacer dans coordination_mediation les IDs
+    UPDATE main.coordination_mediation
+    SET
+        mediateur_id = winner_id,
+        mediateur_coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
+    WHERE mediateur_id = loser_id;
+
+    UPDATE main.coordination_mediation
+    SET
+        coordinateur_id = winner_id,
+        coordinateur_coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
+    WHERE coordinateur_id = loser_id;
+
+    -- 6. Supprimer définitivement le loser
+    DELETE FROM main.personne WHERE id = loser_id;
+
+    RAISE NOTICE 'Fusion réussie entre winner_id=%, loser_id=%', winner_id, loser_id;
+END;
+$$;
+
+
+ALTER FUNCTION main.merge_personne(winner_id integer, loser_id integer) OWNER TO sonum;
+
+-- Name: merge_structure(integer, integer); Type: FUNCTION; Schema: main; Owner: dataspace
+
+CREATE FUNCTION main.merge_structure(v_winner integer, v_loser integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  v_zero          timestamptz := '1234-01-02 03:04:05+00'::timestamptz; -- sentinelle UNIQUE
+  v_loser_coop    uuid;
+  v_winner_coop   uuid;
+  v_loser_carto   text;   -- structure_cartographie_nationale_id (texte composite)
+  v_winner_carto  text;
+  v_loser_ac      uuid;
+  v_winner_ac     uuid;
+BEGIN
+  ---------------------------------------------------------------------------
+  -- 0) Verrouiller + lire les identifiants uniques (COOP + CARTO) du loser & winner
+  ---------------------------------------------------------------------------
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_loser_coop, v_loser_carto, v_loser_ac
+  FROM main.structure
+  WHERE id = v_loser
+  FOR UPDATE;
+
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_winner_coop, v_winner_carto, v_winner_ac
+  FROM main.structure
+  WHERE id = v_winner
+  FOR UPDATE;
+
+  ---------------------------------------------------------------------------
+  -- 1) TRANSFERTS D’UNICITÉ (loser -> NULL ; winner -> valeur du loser)
+  ---------------------------------------------------------------------------
+  UPDATE main.structure
+  SET structure_coop_id                   = NULL,
+      structure_ac_id                     = NULL,
+      structure_cartographie_nationale_id = NULL
+  WHERE id = v_loser;
+
+  IF v_loser_coop IS NOT NULL THEN
+    UPDATE main.structure SET structure_coop_id = v_loser_coop
+    WHERE id = v_winner;
+  END IF;
+
+  IF v_loser_ac IS NOT NULL THEN
+    UPDATE main.structure SET structure_ac_id = v_loser_ac
+    WHERE id = v_winner;
+  END IF;
+
+  IF v_loser_carto IS NOT NULL THEN
+    UPDATE main.structure SET structure_cartographie_nationale_id = v_loser_carto
+    WHERE id = v_winner;
+  END IF;
+
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_winner_coop, v_winner_carto, v_winner_ac
+  FROM main.structure
+  WHERE id = v_winner;
+
+  ---------------------------------------------------------------------------
+  -- 2) Fusionner les champs informatifs (loser -> winner)
+  --    ⚠️ NE PAS toucher à structure_coop_id / structure_cartographie_nationale_id ici.
+  ---------------------------------------------------------------------------
+  UPDATE main.structure w
+  SET
+    denomination_sirene = COALESCE(w.denomination_sirene, l.denomination_sirene),
+    siret               = COALESCE(w.siret, l.siret),
+    rna                 = COALESCE(w.rna, l.rna),
+    adresse_id          = COALESCE(w.adresse_id, l.adresse_id),
+    etat_administratif  = COALESCE(w.etat_administratif, l.etat_administratif),
+    code_activite_principale = COALESCE(w.code_activite_principale, l.code_activite_principale),
+    categorie_juridique = COALESCE(w.categorie_juridique, l.categorie_juridique),
+    publique            = COALESCE(w.publique, l.publique),
+    visible_pour_cartographie_nationale = COALESCE(w.visible_pour_cartographie_nationale,
+                                                   l.visible_pour_cartographie_nationale),
+    nb_mandats_ac       = COALESCE(w.nb_mandats_ac, l.nb_mandats_ac),
+    contact             = COALESCE(w.contact, l.contact),
+    presentation_resume = COALESCE(w.presentation_resume, l.presentation_resume),
+    presentation_detail = COALESCE(w.presentation_detail, l.presentation_detail),
+    horaires            = COALESCE(w.horaires, l.horaires),
+    prise_rdv           = COALESCE(w.prise_rdv, l.prise_rdv),
+    structure_parente   = COALESCE(w.structure_parente, l.structure_parente),
+    services            = COALESCE(w.services, l.services),
+    publics_specifiquement_adresses = COALESCE(w.publics_specifiquement_adresses, l.publics_specifiquement_adresses),
+    prise_en_charge_specifique      = COALESCE(w.prise_en_charge_specifique, l.prise_en_charge_specifique),
+    typologies = CASE
+      WHEN w.typologies IS NOT NULL AND l.typologies IS NOT NULL THEN (
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.typologies || l.typologies) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
+      )
+      ELSE COALESCE(w.typologies, l.typologies)
+    END,
+    frais_a_charge = CASE
+      WHEN w.frais_a_charge IS NOT NULL AND l.frais_a_charge IS NOT NULL THEN (
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.frais_a_charge || l.frais_a_charge) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
+      )
+      ELSE COALESCE(w.frais_a_charge, l.frais_a_charge)
+    END,
+    dispositif_programmes_nationaux = CASE
+      WHEN w.dispositif_programmes_nationaux IS NOT NULL AND l.dispositif_programmes_nationaux IS NOT NULL THEN (
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.dispositif_programmes_nationaux || l.dispositif_programmes_nationaux) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
+      )
+      ELSE COALESCE(w.dispositif_programmes_nationaux, l.dispositif_programmes_nationaux)
+    END,
+    formations_labels = CASE
+      WHEN w.formations_labels IS NOT NULL AND l.formations_labels IS NOT NULL THEN (
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.formations_labels || l.formations_labels) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
+      )
+      ELSE COALESCE(w.formations_labels, l.formations_labels)
+    END,
+    autres_formations_labels = COALESCE(w.autres_formations_labels, l.autres_formations_labels),
+    itinerance               = COALESCE(w.itinerance, l.itinerance),
+    modalites_acces          = COALESCE(w.modalites_acces, l.modalites_acces),
+    modalites_accompagnement = COALESCE(w.modalites_accompagnement, l.modalites_accompagnement),
+    emplois                  = COALESCE(w.emplois, l.emplois),
+    mediateurs_en_activite   = COALESCE(w.mediateurs_en_activite, l.mediateurs_en_activite),
+    source                   = COALESCE(NULLIF(w.source,''), l.source),
+    last_sirene_enrich_at    = GREATEST(COALESCE(w.last_sirene_enrich_at, '1900-01-01'),
+                                        COALESCE(l.last_sirene_enrich_at, '1900-01-01'))
+  FROM main.structure l
+  WHERE w.id = v_winner AND l.id = v_loser;
+
+  ---------------------------------------------------------------------------
+  -- 3.pre) Mémoriser TOUTES les PA du loser avec une date de suppression
+  ---------------------------------------------------------------------------
+  DROP TABLE IF EXISTS _loser_pa_supp;
+  CREATE TEMP TABLE _loser_pa_supp ON COMMIT DROP AS
+  SELECT
+    personne_id,
+    type,
+    suppression            AS lost_supp,
+    structure_coop_id      AS lost_scoop,
+    mediateur_coop_id      AS lost_mcoop
+  FROM main.personne_affectations
+  WHERE structure_id = v_loser
+    AND suppression IS NOT NULL;
+
+  ---------------------------------------------------------------------------
+  -- 3.pre0) DÉSAMORÇAGE COLLISIONS UK (structure_coop_id, mediateur_coop_id, type, suppression)
+  --         - Si une ligne identique existe winner/loser → on neutralise côté winner
+  --         - Si une ligne orpheline (structure_id IS NULL) porte v_loser_coop et
+  --           collisionne avec une ligne du winner → on neutralise côté winner
+  ---------------------------------------------------------------------------
+  WITH ukey_dups AS (
+    SELECT w.id AS wid
+    FROM main.personne_affectations w
+    JOIN main.personne_affectations l
+      ON l.type = w.type
+     AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+     AND l.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+     AND l.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+    WHERE w.structure_id = v_winner
+      AND l.structure_id = v_loser
+  )
+  UPDATE main.personne_affectations w
+  SET structure_coop_id = NULL,
+      mediateur_coop_id = NULL,
+      updated_at        = NOW()
+  FROM ukey_dups d
+  WHERE w.id = d.wid;
+
+  IF v_loser_coop IS NOT NULL THEN
+    UPDATE main.personne_affectations w
+    SET structure_coop_id = NULL,
+        mediateur_coop_id = NULL,
+        updated_at        = NOW()
+    WHERE w.structure_id = v_winner
+      AND EXISTS (
+        SELECT 1
+        FROM main.personne_affectations o
+        WHERE o.structure_id IS NULL
+          AND o.structure_coop_id = v_loser_coop
+          AND o.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+          AND o.type = w.type
+          AND COALESCE(o.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+      );
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 3) PERSONNE_AFFECTATIONS – NULL pivot → DELETE loser → UPDATE winner
+  ---------------------------------------------------------------------------
+  WITH cand AS (
+    SELECT
+      w.id   AS wid,
+      l.id   AS lid,
+      w.personne_id AS pid,
+      w.type AS type,
+      COALESCE(w.structure_coop_id, l.structure_coop_id) AS tgt_scoop,
+      COALESCE(w.mediateur_coop_id, l.mediateur_coop_id) AS tgt_mcoop,
+      COALESCE(w.suppression,       l.suppression)       AS tgt_supp
+    FROM main.personne_affectations w
+    JOIN main.personne_affectations l
+      ON  l.personne_id = w.personne_id
+      AND l.type        = w.type
+      AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+    WHERE w.structure_id = v_winner
+      AND l.structure_id = v_loser
+  ),
+  null_pivot AS (
+    UPDATE main.personne_affectations w
+    SET structure_coop_id = NULL,
+        mediateur_coop_id = NULL,
+        updated_at        = NOW()
+    FROM cand c
+    WHERE w.id = c.wid
+      AND EXISTS (
+        SELECT 1
+        FROM main.personne_affectations x
+        WHERE x.id <> w.id
+          AND x.type = c.type
+          AND COALESCE(x.suppression, v_zero) = COALESCE(c.tgt_supp, v_zero)
+          AND x.structure_coop_id IS NOT DISTINCT FROM c.tgt_scoop
+          AND x.mediateur_coop_id IS NOT DISTINCT FROM c.tgt_mcoop
+      )
+    RETURNING w.id
+  ),
+  del_l AS (
+    DELETE FROM main.personne_affectations d
+    USING cand c
+    WHERE d.id = c.lid
+    RETURNING c.wid, c.tgt_scoop, c.tgt_mcoop, c.tgt_supp
+  )
+  UPDATE main.personne_affectations w
+  SET structure_coop_id = d.tgt_scoop,
+      mediateur_coop_id = d.tgt_mcoop,
+      suppression       = d.tgt_supp,
+      updated_at        = NOW()
+  FROM del_l d
+  WHERE w.id = d.wid;
+
+  UPDATE main.personne_affectations pa
+  SET structure_id = v_winner,
+      updated_at   = NOW()
+  WHERE pa.structure_id = v_loser
+    AND NOT EXISTS (
+      SELECT 1
+      FROM main.personne_affectations w
+      WHERE w.structure_id = v_winner
+        AND w.personne_id  = pa.personne_id
+        AND w.type         = pa.type
+        AND COALESCE(w.suppression, v_zero) = COALESCE(pa.suppression, v_zero)
+    );
+
+  IF v_loser_coop IS NOT NULL THEN
+    DELETE FROM main.personne_affectations o
+    USING main.personne_affectations w
+    WHERE o.structure_id IS NULL
+      AND o.structure_coop_id = v_loser_coop
+      AND w.structure_id = v_winner
+      AND w.personne_id  = o.personne_id
+      AND w.type         = o.type
+      AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
+      AND w.structure_coop_id IS NOT DISTINCT FROM o.structure_coop_id
+      AND w.mediateur_coop_id IS NOT DISTINCT FROM o.mediateur_coop_id;
+
+    UPDATE main.personne_affectations o
+    SET structure_id = v_winner,
+        updated_at   = NOW()
+    WHERE o.structure_id IS NULL
+      AND o.structure_coop_id = v_loser_coop
+      AND NOT EXISTS (
+        SELECT 1
+        FROM main.personne_affectations w
+        WHERE w.structure_id = v_winner
+          AND w.personne_id  = o.personne_id
+          AND w.type         = o.type
+          AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
+      );
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 3.post) Préserver TOUTES les dates de suppression sans heurter les contraintes
+  --         1) Si FERMÉE existe déjà (clé structurelle), enrichir la FERMÉE, puis supprimer l’ACTIVE.
+  --         2) Sinon, poser la date sur l’ACTIVE (en respectant l’ukey COOP/MEDIATOR).
+  ---------------------------------------------------------------------------
+  WITH desired AS (
+    SELECT
+      w.id AS wid,
+      w.structure_id,
+      w.personne_id,
+      w.type,
+      MAX(s.lost_supp) AS tgt_supp
+    FROM main.personne_affectations w
+    JOIN _loser_pa_supp s
+      ON w.personne_id = s.personne_id
+     AND w.type        = s.type
+    WHERE w.structure_id = v_winner
+      AND w.suppression  IS NULL
+    GROUP BY w.id, w.structure_id, w.personne_id, w.type
+  ),
+  merged_closed AS (
+    UPDATE main.personne_affectations y
+    SET structure_coop_id = COALESCE(y.structure_coop_id, w.structure_coop_id),
+        mediateur_coop_id = COALESCE(y.mediateur_coop_id, w.mediateur_coop_id),
+        updated_at        = NOW()
+    FROM desired d
+    JOIN main.personne_affectations w
+      ON w.id = d.wid
+    WHERE y.structure_id = d.structure_id
+      AND y.personne_id  = d.personne_id
+      AND y.type         = d.type
+      AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+    RETURNING d.wid
+  ),
+  killed_active AS (
+    DELETE FROM main.personne_affectations a
+    USING merged_closed mc
+    WHERE a.id = mc.wid
+    RETURNING 1
+  )
+  UPDATE main.personne_affectations w
+  SET suppression = d.tgt_supp,
+      updated_at  = NOW()
+  FROM desired d
+  WHERE w.id = d.wid
+    AND w.suppression IS NULL
+    AND NOT EXISTS (
+      SELECT 1 FROM main.personne_affectations y
+      WHERE y.structure_id = d.structure_id
+        AND y.personne_id  = d.personne_id
+        AND y.type         = d.type
+        AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+    )
+    AND NOT EXISTS (
+      SELECT 1
+      FROM main.personne_affectations x
+      WHERE x.id <> w.id
+        AND x.type = w.type
+        AND COALESCE(x.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+        AND x.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+        AND x.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+    );
+
+  ---------------------------------------------------------------------------
+  -- 3.collapse) Sur le winner : fusionner paires (active + fermée) par (personne_id, type)
+  ---------------------------------------------------------------------------
+  WITH pairs AS (
+    SELECT
+      c.id  AS closed_id,
+      a.id  AS active_id,
+      COALESCE(c.structure_coop_id, a.structure_coop_id) AS tgt_scoop,
+      COALESCE(c.mediateur_coop_id, a.mediateur_coop_id) AS tgt_mcoop
+    FROM main.personne_affectations c
+    JOIN main.personne_affectations a
+      ON a.structure_id = c.structure_id
+     AND a.personne_id  = c.personne_id
+     AND a.type         = c.type
+    WHERE c.structure_id = v_winner
+      AND c.suppression IS NOT NULL
+      AND a.suppression IS NULL
+  ),
+  up AS (
+    UPDATE main.personne_affectations c
+    SET structure_coop_id = p.tgt_scoop,
+        mediateur_coop_id = p.tgt_mcoop,
+        updated_at        = NOW()
+    FROM pairs p
+    WHERE c.id = p.closed_id
+    RETURNING p.active_id
+  )
+  DELETE FROM main.personne_affectations a
+  USING up
+  WHERE a.id = up.active_id;
+
+  ---------------------------------------------------------------------------
+  -- 3.guard) Déduplication finale sur la clé UNIQUE
+  --          (on garde une seule ligne « porteuse » et on neutralise les autres)
+  ---------------------------------------------------------------------------
+  WITH dups AS (
+    SELECT
+      structure_coop_id,
+      mediateur_coop_id,
+      type,
+      COALESCE(suppression, v_zero) AS k_supp,
+      ARRAY_AGG(id ORDER BY (structure_id IS NULL), id) AS ids
+    FROM main.personne_affectations
+    WHERE (structure_id = v_winner
+           OR (structure_id IS NULL AND structure_coop_id IS NOT NULL))
+    GROUP BY structure_coop_id, mediateur_coop_id, type, COALESCE(suppression, v_zero)
+    HAVING COUNT(*) > 1
+  )
+  UPDATE main.personne_affectations pa
+  SET structure_coop_id = NULL,
+      updated_at        = NOW()
+  WHERE pa.id = ANY (SELECT UNNEST(ids[2:]) FROM dups);
+
+  ---------------------------------------------------------------------------
+  -- 4) Autres tables
+  ---------------------------------------------------------------------------
+  UPDATE main.poste p
+  SET structure_id = v_winner,
+      updated_at   = NOW()
+  WHERE p.structure_id = v_loser;
+
+  UPDATE main.activites_coop a
+  SET structure_id = v_winner
+  WHERE a.structure_id = v_loser;
+
+  UPDATE min.utilisateur
+    SET structure_id = v_winner
+    WHERE structure_id = v_loser;
+
+  UPDATE min.membre
+    SET structure_id = v_winner
+    WHERE structure_id = v_loser;
+
+  ---------------------------------------------------------------------------
+  -- 5) Hiérarchie (structure_parente = UUID COOP) – sécurité
+  ---------------------------------------------------------------------------
+  IF v_loser_coop IS NOT NULL AND v_winner_coop IS NOT NULL THEN
+    UPDATE main.structure
+    SET structure_parente = v_winner_coop
+    WHERE structure_parente = v_loser_coop;
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 6) Supprimer le loser
+  ---------------------------------------------------------------------------
+  DELETE FROM main.structure WHERE id = v_loser;
+
+END;
+$$;
+
+
+ALTER FUNCTION main.merge_structure(v_winner integer, v_loser integer) OWNER TO sonum;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+-- Name: commune; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.commune (
-                             id integer NOT NULL,
-                             geom public.geometry(MultiPolygon,4326) NOT NULL,
-                             departement_id integer NOT NULL,
-                             statut character varying(24),
-                             code_insee character varying(5) NOT NULL,
-                             nom character varying(50) NOT NULL,
-                             population integer,
-                             created_at timestamp without time zone DEFAULT now(),
-                             updated_at timestamp without time zone,
-                             code_insee_cr character varying(5) DEFAULT NULL::character varying
+    id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL,
+    departement_id integer NOT NULL,
+    statut character varying(24),
+    code_insee character varying(5) NOT NULL,
+    nom character varying(50) NOT NULL,
+    population integer,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    code_insee_cr character varying(5) DEFAULT NULL::character varying
 );
 
 
 ALTER TABLE admin.commune OWNER TO sonum;
 
--- Name: COLUMN commune.statut; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN commune.statut; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.commune.statut IS 'Les communes peuvent avoir le statut : Capitale d''état, Préfecture de région, Préfecture, Sous-préfecture, Commune simple,  Arrondissement, Commune associée, Commune déléguée';
 
 
--- Name: COLUMN commune.code_insee_cr; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN commune.code_insee_cr; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.commune.code_insee_cr IS 'Code insee de la commune de rattachement';
 
 
--- Name: departement; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: departement; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.departement (
-                                 id integer NOT NULL,
-                                 geom public.geometry(MultiPolygon,4326) NOT NULL,
-                                 region_id integer NOT NULL,
-                                 code character varying(3) NOT NULL,
-                                 nom character varying(30) NOT NULL,
-                                 created_at timestamp without time zone DEFAULT now(),
-                                 updated_at timestamp without time zone
+    id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL,
+    region_id integer NOT NULL,
+    code character varying(3) NOT NULL,
+    nom character varying(30) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.departement OWNER TO sonum;
 
--- Name: region; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: region; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.region (
-                            id integer NOT NULL,
-                            geom public.geometry(MultiPolygon,4326) NOT NULL,
-                            code character varying(2) NOT NULL,
-                            nom character varying(35) NOT NULL,
-                            created_at timestamp without time zone DEFAULT now(),
-                            updated_at timestamp without time zone
+    id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL,
+    code character varying(2) NOT NULL,
+    nom character varying(35) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.region OWNER TO sonum;
 
--- Name: coll_terr; Type: MATERIALIZED VIEW; Schema: admin; Owner: sonum
+-- Name: coll_terr; Type: MATERIALIZED VIEW; Schema: admin; Owner: dataspace
 
 CREATE MATERIALIZED VIEW admin.coll_terr AS
-SELECT region.id AS region_id,
-       region.code AS region_code,
-       region.nom AS region_nom,
-       departement.id AS departement_id,
-       departement.code AS departement_code,
-       departement.nom AS departement_nom,
-       commune.id AS commune_id,
-       commune.code_insee,
-       commune.nom AS commune_nom
-FROM ((admin.commune commune
-  LEFT JOIN admin.departement departement ON ((commune.departement_id = departement.id)))
-  LEFT JOIN admin.region region ON ((departement.region_id = region.id)))
+ SELECT region.id AS region_id,
+    region.code AS region_code,
+    region.nom AS region_nom,
+    departement.id AS departement_id,
+    departement.code AS departement_code,
+    departement.nom AS departement_nom,
+    commune.id AS commune_id,
+    commune.code_insee,
+    commune.nom AS commune_nom
+   FROM ((admin.commune commune
+     LEFT JOIN admin.departement departement ON ((commune.departement_id = departement.id)))
+     LEFT JOIN admin.region region ON ((departement.region_id = region.id)))
   WITH NO DATA;
 
 
 ALTER MATERIALIZED VIEW admin.coll_terr OWNER TO sonum;
 
--- Name: MATERIALIZED VIEW coll_terr; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: MATERIALIZED VIEW coll_terr; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON MATERIALIZED VIEW admin.coll_terr IS 'Table de regroupement des territoires (région, département, commune) hors EPCI.';
 
 
--- Name: commune_epci; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: commune_epci; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.commune_epci (
-                                  id integer NOT NULL,
-                                  commune_id integer NOT NULL,
-                                  epci_id integer NOT NULL,
-                                  created_at timestamp without time zone DEFAULT now(),
-                                  updated_at timestamp without time zone
+    id integer NOT NULL,
+    commune_id integer NOT NULL,
+    epci_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.commune_epci OWNER TO sonum;
 
--- Name: commune_epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: commune_epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.commune_epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.commune_epci_id_seq
@@ -167,7 +727,7 @@ ALTER TABLE admin.commune_epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENT
 );
 
 
--- Name: commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.commune_id_seq
@@ -179,7 +739,7 @@ ALTER TABLE admin.commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.departement_id_seq
@@ -191,22 +751,22 @@ ALTER TABLE admin.departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTI
 );
 
 
--- Name: epci; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: epci; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.epci (
-                          id integer NOT NULL,
-                          geom public.geometry(MultiPolygon,4326) NOT NULL,
-                          code character varying(9) NOT NULL,
-                          type character varying(32) NOT NULL,
-                          nom character varying(90) NOT NULL,
-                          created_at timestamp without time zone DEFAULT now(),
-                          updated_at timestamp without time zone
+    id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL,
+    code character varying(9) NOT NULL,
+    type character varying(32) NOT NULL,
+    nom character varying(90) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.epci OWNER TO sonum;
 
--- Name: epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.epci_id_seq
@@ -218,32 +778,32 @@ ALTER TABLE admin.epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: icp_departement; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: icp_departement; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.icp_departement (
-                                     id integer NOT NULL,
-                                     code character varying(3) NOT NULL,
-                                     label character varying,
-                                     created_at timestamp without time zone DEFAULT now(),
-                                     updated_at timestamp without time zone
+    id integer NOT NULL,
+    code character varying(3) NOT NULL,
+    label character varying,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.icp_departement OWNER TO sonum;
 
--- Name: TABLE icp_departement; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: TABLE icp_departement; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON TABLE admin.icp_departement IS 'Table de gestion de l’indice de confiance des préfectures par département : https://pilote.modernisation.gouv.fr/';
 
 
--- Name: COLUMN icp_departement.code; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN icp_departement.code; Type: COMMENT; Schema: admin; Owner: dataspace
 
-COMMENT ON COLUMN admin.icp_departement.code IS 'Code département : un code à 2 ou 3 chiffres qui identifie
+COMMENT ON COLUMN admin.icp_departement.code IS 'Code département : un code à 2 ou 3 chiffres qui identifie 
 le département français, en métropole ou en outre-mer.
 Exemple : "13" pour les Bouches-du-Rhône.';
 
 
--- Name: COLUMN icp_departement.label; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN icp_departement.label; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.icp_departement.label IS 'Appréciation qualitative de l’avancement des objectifs :
  - OBJECTIFS SÉCURISÉS : les cibles sont déjà atteintes ou sécurisées.
@@ -253,7 +813,7 @@ COMMENT ON COLUMN admin.icp_departement.label IS 'Appréciation qualitative de l
  - Non renseignée : aucune appréciation n’a été saisie.';
 
 
--- Name: icp_departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: icp_departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.icp_departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.icp_departement_id_seq
@@ -265,35 +825,35 @@ ALTER TABLE admin.icp_departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS ID
 );
 
 
--- Name: ifn_commune; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: ifn_commune; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.ifn_commune (
-                                 id integer NOT NULL,
-                                 code_insee character varying(5) NOT NULL,
-                                 score numeric NOT NULL,
-                                 created_at timestamp without time zone DEFAULT now(),
-                                 updated_at timestamp without time zone
+    id integer NOT NULL,
+    code_insee character varying(5) NOT NULL,
+    score numeric NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.ifn_commune OWNER TO sonum;
 
--- Name: TABLE ifn_commune; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: TABLE ifn_commune; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON TABLE admin.ifn_commune IS 'Table des Indices de Fragilité Numérique communaux : https://fragilite-numerique.fr/.';
 
 
--- Name: COLUMN ifn_commune.code_insee; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN ifn_commune.code_insee; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.ifn_commune.code_insee IS 'Code INSEE de la commune.';
 
 
--- Name: COLUMN ifn_commune.score; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN ifn_commune.score; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.ifn_commune.score IS 'Valeur de 0 à 10 indiquant l''indice de fragilité numérique de la commune. Cette valeur est la somme de plusieurs indicateurs, pour plus d''informations : https://infos.fragilite-numerique.fr/ressources-cgu.';
 
 
--- Name: ifn_commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: ifn_commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.ifn_commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.ifn_commune_id_seq
@@ -305,35 +865,35 @@ ALTER TABLE admin.ifn_commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTI
 );
 
 
--- Name: ifn_departement; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: ifn_departement; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.ifn_departement (
-                                     id integer NOT NULL,
-                                     code character varying(3) NOT NULL,
-                                     score numeric NOT NULL,
-                                     created_at timestamp without time zone DEFAULT now(),
-                                     updated_at timestamp without time zone
+    id integer NOT NULL,
+    code character varying(3) NOT NULL,
+    score numeric NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.ifn_departement OWNER TO sonum;
 
--- Name: TABLE ifn_departement; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: TABLE ifn_departement; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON TABLE admin.ifn_departement IS 'Table de gestion des départements IFN - Indice de Fragilité Numérique : https://fragilite-numerique.fr/';
 
 
--- Name: COLUMN ifn_departement.code; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN ifn_departement.code; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.ifn_departement.code IS 'Code département : un code à 2 ou 3 chiffres qui identifie le département français, en métropole ou en outre-mer. Par exemple, "13" pour les Bouches-du-Rhône.';
 
 
--- Name: COLUMN ifn_departement.score; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN ifn_departement.score; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.ifn_departement.score IS 'Score : Un nombre réel qui varie de [0 - 10] indiquant l''indice de fragilité numérique du département. cette valeur est une somme totale de plusieurs indicateurs, pour plus d''informations, voir le site : https://infos.fragilite-numerique.fr/ressources-cgu';
 
 
--- Name: ifn_departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: ifn_departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.ifn_departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.ifn_departement_id_seq
@@ -345,20 +905,20 @@ ALTER TABLE admin.ifn_departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS ID
 );
 
 
--- Name: insee_cp; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: insee_cp; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.insee_cp (
-                              id integer NOT NULL,
-                              code_insee character varying(5) NOT NULL,
-                              code_postal character varying(5) NOT NULL,
-                              created_at timestamp without time zone DEFAULT now(),
-                              updated_at timestamp without time zone
+    id integer NOT NULL,
+    code_insee character varying(5) NOT NULL,
+    code_postal character varying(5) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.insee_cp OWNER TO sonum;
 
--- Name: insee_cp_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: insee_cp_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.insee_cp ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.insee_cp_id_seq
@@ -370,35 +930,35 @@ ALTER TABLE admin.insee_cp ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
 );
 
 
--- Name: insee_historique; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: insee_historique; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.insee_historique (
-                                      id integer NOT NULL,
-                                      code_insee_ancien character varying(5) NOT NULL,
-                                      code_insee_nouveau character varying(5) NOT NULL,
-                                      created_at timestamp without time zone DEFAULT now(),
-                                      updated_at timestamp without time zone
+    id integer NOT NULL,
+    code_insee_ancien character varying(5) NOT NULL,
+    code_insee_nouveau character varying(5) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.insee_historique OWNER TO sonum;
 
--- Name: TABLE insee_historique; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: TABLE insee_historique; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON TABLE admin.insee_historique IS 'Table d''historisation des modifications des codes INSEE (création, suppression, fusion etc. des communes).';
 
 
--- Name: COLUMN insee_historique.code_insee_ancien; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN insee_historique.code_insee_ancien; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.insee_historique.code_insee_ancien IS 'Ancien code INSEE.';
 
 
--- Name: COLUMN insee_historique.code_insee_nouveau; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN insee_historique.code_insee_nouveau; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.insee_historique.code_insee_nouveau IS 'Nouveau code INSEE.';
 
 
--- Name: insee_historique_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: insee_historique_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.insee_historique ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.insee_historique_id_seq
@@ -410,7 +970,7 @@ ALTER TABLE admin.insee_historique ALTER COLUMN id ADD GENERATED BY DEFAULT AS I
 );
 
 
--- Name: region_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: region_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.region ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.region_id_seq
@@ -422,49 +982,49 @@ ALTER TABLE admin.region ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: zonage; Type: TABLE; Schema: admin; Owner: sonum
+-- Name: zonage; Type: TABLE; Schema: admin; Owner: dataspace
 
 CREATE TABLE admin.zonage (
-                            id integer NOT NULL,
-                            geom public.geometry(MultiPolygon,4326) DEFAULT NULL::public.geometry,
-                            code character varying(8),
-                            libelle character varying(255),
-                            code_insee character varying(5) NOT NULL,
-                            type character varying(3) NOT NULL,
-                            commentaire text,
-                            created_at timestamp without time zone DEFAULT now(),
-                            updated_at timestamp without time zone
+    id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) DEFAULT NULL::public.geometry,
+    code character varying(8),
+    libelle character varying(255),
+    code_insee character varying(5) NOT NULL,
+    type character varying(3) NOT NULL,
+    commentaire text,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE admin.zonage OWNER TO sonum;
 
--- Name: TABLE zonage; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: TABLE zonage; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON TABLE admin.zonage IS 'Table de gestion des zonages administratifs FRR et QPV.';
 
 
--- Name: COLUMN zonage.code; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN zonage.code; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.zonage.code IS 'Identifiant unique du zonage concerne QPV uniquement - généré par l''API.';
 
 
--- Name: COLUMN zonage.libelle; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN zonage.libelle; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.zonage.libelle IS 'Libelle du zonage concerne QPV uniquement - généré par l''API.';
 
 
--- Name: COLUMN zonage.type; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN zonage.type; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.zonage.type IS 'Type de zonage (QPV: Quartier Prioritaire de la Ville, FRR: France Ruralités Revitalisation).';
 
 
--- Name: COLUMN zonage.commentaire; Type: COMMENT; Schema: admin; Owner: sonum
+-- Name: COLUMN zonage.commentaire; Type: COMMENT; Schema: admin; Owner: dataspace
 
 COMMENT ON COLUMN admin.zonage.commentaire IS 'Commentaire sur le zonage - généré par l''API.';
 
 
--- Name: zonage_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+-- Name: zonage_id_seq; Type: SEQUENCE; Schema: admin; Owner: dataspace
 
 ALTER TABLE admin.zonage ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.zonage_id_seq
@@ -479,21 +1039,21 @@ ALTER TABLE admin.zonage ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 -- Name: adresse; Type: TABLE; Schema: main; Owner: sonum
 
 CREATE TABLE main.adresse (
-                            id integer NOT NULL,
-                            geom public.geometry(Point,4326),
-                            clef_interop character varying(50),
-                            code_ban uuid,
-                            code_postal character varying(5) NOT NULL,
-                            code_insee character varying(5) NOT NULL,
-                            nom_commune character varying(255) NOT NULL,
-                            nom_voie character varying(255),
-                            repetition character varying(10),
-                            numero_voie smallint,
-                            created_at timestamp without time zone DEFAULT now(),
-                            updated_at timestamp without time zone,
-                            departement character varying(3) GENERATED ALWAYS AS (
-                              CASE
-                                WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN "left"((code_insee)::text, 3)
+    id integer NOT NULL,
+    geom public.geometry(Point,4326),
+    clef_interop character varying(50),
+    code_ban uuid,
+    code_postal character varying(5) NOT NULL,
+    code_insee character varying(5) NOT NULL,
+    nom_commune character varying(255) NOT NULL,
+    nom_voie character varying(255),
+    repetition character varying(10),
+    numero_voie smallint,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    departement character varying(3) GENERATED ALWAYS AS (
+CASE
+    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN "left"((code_insee)::text, 3)
     ELSE "left"((code_insee)::text, 2)
 END) STORED
 );
@@ -506,281 +1066,447 @@ ALTER TABLE main.adresse OWNER TO sonum;
 COMMENT ON COLUMN main.adresse.departement IS 'Code département, généré à partir du code_insee';
 
 
+-- Name: lieu_inclusion; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.lieu_inclusion (
+    id integer NOT NULL,
+    old_main_structure_id integer,
+    nom character varying(255) NOT NULL,
+    adresse_id integer,
+    structure_cartographie_nationale_id character varying,
+    visible_pour_cartographie_nationale boolean,
+    fiche_acces_libre character varying,
+    presentation_resume text,
+    presentation_detail text,
+    horaires character varying,
+    prise_rdv character varying,
+    itinerance text[],
+    services text[],
+    modalites_acces text[],
+    modalites_accompagnement text[],
+    publics_specifiquement_adresses text[],
+    prise_en_charge_specifique text[],
+    frais_a_charge text[],
+    formations_labels text[],
+    autres_formations_labels text[],
+    dispositif_programmes_nationaux text[],
+    typologies text[],
+    contact jsonb,
+    mediateurs_en_activite integer,
+    emplois integer,
+    source character varying,
+    edited_by character varying(50),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    structure_coop_id uuid,
+    import_warnings jsonb
+);
+
+
+ALTER TABLE main.lieu_inclusion OWNER TO sonum;
+
+-- Name: TABLE lieu_inclusion; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON TABLE main.lieu_inclusion IS 'Lieu physique d''inclusion numérique (bibliothèque, France Services, médiathèque, EPN…). Successeur de main.structure pour ce concept dans la refonte 2026 (cf docs/refonte-structure-plan.md).';
+
+
+-- Name: COLUMN lieu_inclusion.old_main_structure_id; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.lieu_inclusion.old_main_structure_id IS 'Audit / mapping pendant la transition refonte : id de la ligne main.structure d''origine (1:1, pas de fusion côté lieu). À dropper en phase 6.';
+
+
+-- Name: COLUMN lieu_inclusion.structure_cartographie_nationale_id; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.lieu_inclusion.structure_cartographie_nationale_id IS 'Identifiant mednum-cli du lieu — seule clé naturelle externe garantie (pas de SIRET côté lieu, le SIRET appartient à la structure_administrative liée par asso).';
+
+
+-- Name: COLUMN lieu_inclusion.contact; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.lieu_inclusion.contact IS 'Coordonnées publiques anonymes du lieu (telephone, courriels, site_web). Sémantiquement distinct du contact JSONB côté structure_administrative qui contient des référents nommés.';
+
+
+-- Name: COLUMN lieu_inclusion.source; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.lieu_inclusion.source IS 'Origine mednum-cli (Hinaura, Fredo, Paca, Paris, Coop numérique…). Spécifique au lieu, ne s''applique pas à la structure_administrative.';
+
+
+-- Name: lieu_inclusion_structure_administrative; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.lieu_inclusion_structure_administrative (
+    id integer NOT NULL,
+    lieu_id integer NOT NULL,
+    structure_administrative_id integer NOT NULL,
+    edited_by character varying(50),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE main.lieu_inclusion_structure_administrative OWNER TO sonum;
+
+-- Name: TABLE lieu_inclusion_structure_administrative; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON TABLE main.lieu_inclusion_structure_administrative IS 'Association N:N entre lieu_inclusion et structure_administrative. Un lieu peut être porté par plusieurs structures administratives, une structure administrative peut héberger plusieurs lieux. Asso facultative (lieu sans structure ou inverse acceptés).';
+
+
 -- Name: personne; Type: TABLE; Schema: main; Owner: sonum
 
 CREATE TABLE main.personne (
-                             id integer NOT NULL,
-                             prenom character varying(50),
-                             nom character varying(50),
-                             contact jsonb,
-                             aidant_connect_id integer,
-                             conseiller_numerique_id character varying(50),
-                             cn_pg_id integer,
-                             coop_id uuid,
-                             is_coordinateur boolean,
-                             is_mediateur boolean,
-                             formation_fne_ac boolean,
-                             profession_ac character varying,
-                             nb_accompagnements_ac integer,
-                             created_at timestamp without time zone DEFAULT now(),
-                             updated_at timestamp without time zone,
-                             edited_by character varying(50),
-                             deleted_at timestamp without time zone,
-                             deleted_by text[]
+    id integer NOT NULL,
+    prenom character varying(50),
+    nom character varying(50),
+    contact jsonb,
+    aidant_connect_id integer,
+    conseiller_numerique_id character varying(50),
+    cn_pg_id integer,
+    coop_id uuid,
+    is_coordinateur boolean,
+    is_mediateur boolean,
+    formation_fne_ac boolean,
+    profession_ac character varying,
+    nb_accompagnements_ac integer,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    edited_by character varying(50),
+    deleted_at timestamp without time zone,
+    deleted_by text[],
+    is_referent_ac boolean DEFAULT false NOT NULL,
+    updated_at_ac timestamp without time zone,
+    is_visible boolean,
+    updated_at_coop timestamp without time zone,
+    updated_at_idposte timestamp without time zone
 );
 
 
 ALTER TABLE main.personne OWNER TO sonum;
 
--- Name: personne_affectations; Type: TABLE; Schema: main; Owner: sonum
+-- Name: COLUMN personne.is_referent_ac; Type: COMMENT; Schema: main; Owner: sonum
 
-CREATE TABLE main.personne_affectations (
-                                          id integer NOT NULL,
-                                          personne_id integer NOT NULL,
-                                          structure_id integer,
-                                          structure_coop_id uuid,
-                                          mediateur_coop_id uuid,
-                                          type character varying NOT NULL,
-                                          created_at timestamp without time zone DEFAULT now(),
-                                          updated_at timestamp without time zone,
-                                          source character varying NOT NULL,
-                                          est_active boolean DEFAULT true NOT NULL,
-                                          CONSTRAINT personne_affectations_source_check CHECK (((source)::text = ANY ((ARRAY['idposte'::character varying, 'aidants-connect'::character varying, 'coop'::character varying])::text[]))),
-    CONSTRAINT personne_affectations_type_check CHECK (((type)::text = ANY (ARRAY[('structure_emploi'::character varying)::text, ('lieu_activite'::character varying)::text])))
+COMMENT ON COLUMN main.personne.is_referent_ac IS 'Indique si la personne est référente (non aidante active) selon Aidants Connect';
+
+
+-- Name: COLUMN personne.updated_at_ac; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne.updated_at_ac IS 'Dernière date de mise à jour côté API Aidants Connect (updated_at)';
+
+
+-- Name: COLUMN personne.is_visible; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne.is_visible IS 'Détermine si la personne souhaite apparaître publiquement dans les API exposées (notamment api.carto et api.get_carto_mediateur). FALSE => la personne est entièrement exclue des résultats publics ; NULL (défaut) ou TRUE => visible.';
+
+
+-- Name: COLUMN personne.updated_at_coop; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne.updated_at_coop IS 'Dernière date de mise à jour côté API coop-numerique (utilisateurs.updated_at)';
+
+
+-- Name: COLUMN personne.updated_at_idposte; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne.updated_at_idposte IS 'Dernière date de mise à jour côté extract idposte (timestamp du batch)';
+
+
+-- Name: personne_affectations_emploi; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.personne_affectations_emploi (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    structure_administrative_id integer NOT NULL,
+    source character varying NOT NULL,
+    est_active boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT personne_affectations_emploi_source_check CHECK (((source)::text = ANY ((ARRAY['idposte'::character varying, 'aidants-connect'::character varying, 'coop'::character varying, 'min'::character varying])::text[])))
 );
 
 
-ALTER TABLE main.personne_affectations OWNER TO sonum;
+ALTER TABLE main.personne_affectations_emploi OWNER TO sonum;
 
--- Name: TABLE personne_affectations; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: TABLE personne_affectations_emploi; Type: COMMENT; Schema: main; Owner: dataspace
 
-COMMENT ON TABLE main.personne_affectations IS 'Table de lien entre les personnes et les structures employeuses ou lieux d''activités.';
-
-
--- Name: COLUMN personne_affectations.type; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.personne_affectations.type IS 'Type d''affectation personne <-> structure: structure_emploi ou lieu_activite.';
+COMMENT ON TABLE main.personne_affectations_emploi IS 'Relations d''emploi entre une personne et une structure_administrative (employeur ↔ employé). Successeur du type=structure_emploi de main.personne_affectations dans la refonte 2026.';
 
 
--- Name: COLUMN personne_affectations.source; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: COLUMN personne_affectations_emploi.source; Type: COMMENT; Schema: main; Owner: dataspace
 
-COMMENT ON COLUMN main.personne_affectations.source IS 'Source du DAG ayant cree cette affectation : idposte, aidants-connect ou coop.';
-
-
--- Name: COLUMN personne_affectations.est_active; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.personne_affectations.est_active IS 'Indique si l affectation est en cours (TRUE) ou terminee (FALSE).';
+COMMENT ON COLUMN main.personne_affectations_emploi.source IS 'Source d''écriture de l''affectation : idposte (CSV CoNum), aidants-connect (API AC), coop (API Coop), min (création MIN).';
 
 
--- Name: structure; Type: TABLE; Schema: main; Owner: sonum
+-- Name: COLUMN personne_affectations_emploi.est_active; Type: COMMENT; Schema: main; Owner: dataspace
 
-CREATE TABLE main.structure (
-                              id integer NOT NULL,
-                              structure_coop_id uuid,
-                              structure_ac_id uuid,
-                              structure_tp_id integer,
-                              nom character varying(255) NOT NULL,
-                              denomination_sirene character varying,
-                              siret character varying(14),
-                              rna character varying(10),
-                              adresse_id integer,
-                              contact jsonb,
-                              etat_administratif character varying,
-                              code_activite_principale character varying(6),
-                              categorie_juridique character varying(4) DEFAULT NULL::character varying,
-                              nb_mandats_ac integer,
-                              publique boolean,
-                              structure_cartographie_nationale_id character varying,
-                              visible_pour_cartographie_nationale boolean,
-                              typologies text[],
-                              presentation_resume text,
-                              presentation_detail text,
-                              horaires character varying,
-                              prise_rdv character varying,
-                              services text[],
-                              publics_specifiquement_adresses text[],
-                              prise_en_charge_specifique text[],
-                              frais_a_charge text[],
-                              dispositif_programmes_nationaux text[],
-                              formations_labels text[],
-                              autres_formations_labels text[],
-                              itinerance text[],
-                              modalites_acces text[],
-                              modalites_accompagnement text[],
-                              mediateurs_en_activite integer,
-                              emplois integer,
-                              source character varying,
-                              last_sirene_enrich_at date,
-                              created_at timestamp without time zone DEFAULT now(),
-                              updated_at timestamp without time zone,
-                              fiche_acces_libre character varying,
-                              edited_by character varying(50),
-                              deleted_at timestamp without time zone,
-                              deleted_by text[],
-                              CONSTRAINT structure_siret_format_check CHECK (((siret)::text ~ '^\d{14}$'::text))
+COMMENT ON COLUMN main.personne_affectations_emploi.est_active IS 'TRUE si la relation d''emploi est active (employé en poste). FALSE si résiliée (historique).';
+
+
+-- Name: personne_affectations_lieu; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.personne_affectations_lieu (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    lieu_id integer NOT NULL,
+    source character varying NOT NULL,
+    est_active boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT personne_affectations_lieu_source_check CHECK (((source)::text = ANY ((ARRAY['coop'::character varying, 'aidants-connect'::character varying, 'carto'::character varying, 'min'::character varying])::text[])))
 );
 
 
-ALTER TABLE main.structure OWNER TO sonum;
+ALTER TABLE main.personne_affectations_lieu OWNER TO sonum;
+
+-- Name: TABLE personne_affectations_lieu; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON TABLE main.personne_affectations_lieu IS 'Relations de présence d''une personne sur un lieu_inclusion (médiateur intervient / travaille sur le lieu). Successeur du type=lieu_activite de main.personne_affectations dans la refonte 2026.';
+
+
+-- Name: COLUMN personne_affectations_lieu.source; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.personne_affectations_lieu.source IS 'Source d''écriture : coop (API Coop), aidants-connect (rare, principalement employeuse), carto (lien implicite avec lieu), min.';
+
+
+-- Name: COLUMN personne_affectations_lieu.est_active; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.personne_affectations_lieu.est_active IS 'TRUE si le médiateur intervient actuellement sur ce lieu. FALSE si historique.';
+
+
+-- Name: structure_administrative; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.structure_administrative (
+    id integer NOT NULL,
+    old_main_structure_id integer,
+    siret character varying(14),
+    ridet character varying(10),
+    denomination_sirene character varying,
+    rna character varying(10),
+    denomination_antenne character varying(255),
+    adresse_id integer,
+    structure_coop_id uuid,
+    structure_tp_id integer,
+    structure_ac_id uuid,
+    etat_administratif character varying,
+    code_activite_principale character varying(6),
+    categorie_juridique character varying(4) DEFAULT NULL::character varying,
+    publique boolean,
+    nb_mandats_ac integer,
+    contact jsonb,
+    deleted_at timestamp without time zone,
+    deleted_by text[],
+    edited_by character varying(50),
+    last_sirene_enrich_at date,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    updated_at_coop timestamp without time zone,
+    updated_at_idposte timestamp without time zone,
+    updated_at_ac timestamp without time zone,
+    CONSTRAINT structure_administrative_ridet_format_check CHECK (((ridet IS NULL) OR ((ridet)::text ~ '^\d{7,10}$'::text))),
+    CONSTRAINT structure_administrative_siret_format_check CHECK (((siret IS NULL) OR ((siret)::text ~ '^\d{14}$'::text)))
+);
+
+
+ALTER TABLE main.structure_administrative OWNER TO sonum;
+
+-- Name: TABLE structure_administrative; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON TABLE main.structure_administrative IS 'Entité légale (identifiée par SIRET ou RIDET) qui peut employer des médiateurs, bénéficier de subventions, porter une gouvernance, héberger des lieux d''inclusion. Successeur de main.structure dans la refonte 2026 (cf docs/refonte-structure-plan.md).';
+
+
+-- Name: COLUMN structure_administrative.old_main_structure_id; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.old_main_structure_id IS 'Audit / mapping pendant la transition refonte : id de la ligne main.structure choisie lors de la fusion par SIRET (cf phase 2). À dropper en phase 6 quand main.structure est supprimée. Pour le mapping complet des lignes absorbées par fusion, joindre via siret.';
+
+
+-- Name: COLUMN structure_administrative.siret; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.siret IS 'SIRET (métropole, 14 chiffres). NULL accepté pour les structures historiques MIN sans ancrage SIRENE.';
+
+
+-- Name: COLUMN structure_administrative.ridet; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.ridet IS 'RIDET (Nouvelle-Calédonie / Polynésie, 7-10 chiffres). NULL si non applicable.';
+
+
+-- Name: COLUMN structure_administrative.denomination_antenne; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.denomination_antenne IS 'Discriminant pour le pattern "grand réseau" (plusieurs antennes partageant le SIRET du siège : Emmaüs Connect, Reconnect Groupe SOS, Petits Débrouillards…). NULL = entité unique pour ce SIRET. Sinon nom legacy de l''antenne. Sert également de discriminant pour les SA sans SIRET (assos nationales).';
+
+
+-- Name: COLUMN structure_administrative.contact; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.contact IS 'Contact JSONB hérité de main.structure (référent nommé : nom, prenom, courriels, telephone). Dépréciation V047 vers main.contact + main.contact_structure_administrative non close par cette refonte (cf plan §Next N1).';
+
+
+-- Name: COLUMN structure_administrative.deleted_by; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.deleted_by IS 'Liste cumulative des sources ayant marqué la suppression (V033 pattern).';
+
+
+-- Name: COLUMN structure_administrative.edited_by; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.structure_administrative.edited_by IS 'Marqueur de la source d''écriture : coop, id-poste, aidants-connect, carto, min.';
+
 
 -- Name: categories_juridiques; Type: TABLE; Schema: reference; Owner: sonum
 
 CREATE TABLE reference.categories_juridiques (
-                                               id integer NOT NULL,
-                                               code character varying(4) NOT NULL,
-                                               nom character varying(150) NOT NULL,
-                                               niveau smallint NOT NULL,
-                                               created_at timestamp without time zone DEFAULT now(),
-                                               updated_at timestamp without time zone
+    id integer NOT NULL,
+    code character varying(4) NOT NULL,
+    nom character varying(150) NOT NULL,
+    niveau smallint NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE reference.categories_juridiques OWNER TO sonum;
 
--- Name: personne_merge_log; Type: TABLE; Schema: audit; Owner: sonum
+-- Name: personne_merge_log; Type: TABLE; Schema: audit; Owner: dataspace
 
 CREATE TABLE audit.personne_merge_log (
-                                        id bigint NOT NULL,
-                                        merged_at timestamp with time zone DEFAULT now() NOT NULL,
-                                        status text NOT NULL,
-                                        dag_id text,
-                                        run_id text,
-                                        task_id text,
-                                        map_index integer,
-                                        try_number integer,
-                                        winner_id integer NOT NULL,
-                                        loser_id integer NOT NULL,
-                                        similarity_score numeric,
-                                        similarity_threshold numeric,
-                                        winner_before jsonb,
-                                        loser_before jsonb,
-                                        winner_after jsonb,
-                                        moved_identifiers jsonb,
-                                        error_message text,
-                                        match_type text,
-                                        CONSTRAINT personne_merge_log_status_check CHECK ((status = ANY (ARRAY['SUCCESS'::text, 'FAILURE'::text])))
+    id bigint NOT NULL,
+    merged_at timestamp with time zone DEFAULT now() NOT NULL,
+    status text NOT NULL,
+    dag_id text,
+    run_id text,
+    task_id text,
+    map_index integer,
+    try_number integer,
+    winner_id integer NOT NULL,
+    loser_id integer NOT NULL,
+    similarity_score numeric,
+    similarity_threshold numeric,
+    winner_before jsonb,
+    loser_before jsonb,
+    winner_after jsonb,
+    moved_identifiers jsonb,
+    error_message text,
+    match_type text,
+    CONSTRAINT personne_merge_log_status_check CHECK ((status = ANY (ARRAY['SUCCESS'::text, 'FAILURE'::text])))
 );
 
 
 ALTER TABLE audit.personne_merge_log OWNER TO sonum;
 
--- Name: personne_merge_log_id_seq; Type: SEQUENCE; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_id_seq; Type: SEQUENCE; Schema: audit; Owner: dataspace
 
 CREATE SEQUENCE audit.personne_merge_log_id_seq
-  START WITH 1
-  INCREMENT BY 1
-  NO MINVALUE
-  NO MAXVALUE
-  CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE audit.personne_merge_log_id_seq OWNER TO sonum;
 
--- Name: personne_merge_log_id_seq; Type: SEQUENCE OWNED BY; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_id_seq; Type: SEQUENCE OWNED BY; Schema: audit; Owner: dataspace
 
 ALTER SEQUENCE audit.personne_merge_log_id_seq OWNED BY audit.personne_merge_log.id;
 
 
--- Name: structure_merge_log; Type: TABLE; Schema: audit; Owner: sonum
+-- Name: structure_merge_log; Type: TABLE; Schema: audit; Owner: dataspace
 
 CREATE TABLE audit.structure_merge_log (
-                                         id bigint NOT NULL,
-                                         merged_at timestamp with time zone DEFAULT now() NOT NULL,
-                                         status text NOT NULL,
-                                         dag_id text,
-                                         run_id text,
-                                         task_id text,
-                                         map_index integer,
-                                         try_number integer,
-                                         winner_id integer NOT NULL,
-                                         loser_id integer NOT NULL,
-                                         similarity_score numeric,
-                                         similarity_threshold numeric,
-                                         winner_before jsonb,
-                                         loser_before jsonb,
-                                         winner_after jsonb,
-                                         moved_identifiers jsonb,
-                                         error_message text,
-                                         CONSTRAINT structure_merge_log_status_check CHECK ((status = ANY (ARRAY['SUCCESS'::text, 'FAILURE'::text])))
+    id bigint NOT NULL,
+    merged_at timestamp with time zone DEFAULT now() NOT NULL,
+    status text NOT NULL,
+    dag_id text,
+    run_id text,
+    task_id text,
+    map_index integer,
+    try_number integer,
+    winner_id integer NOT NULL,
+    loser_id integer NOT NULL,
+    similarity_score numeric,
+    similarity_threshold numeric,
+    winner_before jsonb,
+    loser_before jsonb,
+    winner_after jsonb,
+    moved_identifiers jsonb,
+    error_message text,
+    CONSTRAINT structure_merge_log_status_check CHECK ((status = ANY (ARRAY['SUCCESS'::text, 'FAILURE'::text])))
 );
 
 
 ALTER TABLE audit.structure_merge_log OWNER TO sonum;
 
--- Name: structure_merge_log_id_seq; Type: SEQUENCE; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_id_seq; Type: SEQUENCE; Schema: audit; Owner: dataspace
 
 CREATE SEQUENCE audit.structure_merge_log_id_seq
-  START WITH 1
-  INCREMENT BY 1
-  NO MINVALUE
-  NO MAXVALUE
-  CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE audit.structure_merge_log_id_seq OWNER TO sonum;
 
--- Name: structure_merge_log_id_seq; Type: SEQUENCE OWNED BY; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_id_seq; Type: SEQUENCE OWNED BY; Schema: audit; Owner: dataspace
 
 ALTER SEQUENCE audit.structure_merge_log_id_seq OWNED BY audit.structure_merge_log.id;
 
 
--- Name: activites_coop; Type: TABLE; Schema: main; Owner: sonum
+-- Name: activites_coop; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.activites_coop (
-                                   id integer NOT NULL,
-                                   coop_id uuid,
-                                   structure_id integer,
-                                   personne_id integer,
-                                   type character varying(100) NOT NULL,
-                                   date date NOT NULL,
-                                   duree integer NOT NULL,
-                                   lieu_code_insee character varying(5),
-                                   type_lieu character varying(100) NOT NULL,
-                                   autonomie character varying(100),
-                                   structure_de_redirection character varying(255),
-                                   oriente_vers_structure boolean,
-                                   precisions_demarche text,
-                                   degre_de_finalisation_demarche character varying(50),
-                                   titre_atelier character varying(255),
-                                   niveau_atelier character varying(50),
-                                   accompagnements integer DEFAULT 0 NOT NULL,
-                                   thematiques text[],
-                                   materiels text[],
-                                   thematiques_demarche_administrative text[],
-                                   created_at timestamp without time zone DEFAULT now(),
-                                   updated_at timestamp without time zone,
-                                   periode date GENERATED ALWAYS AS ((date_trunc('month'::text, (date)::timestamp without time zone))::date) STORED,
+    id integer NOT NULL,
+    coop_id uuid,
+    lieu_id integer,
+    personne_id integer,
+    type character varying(100) NOT NULL,
+    date date NOT NULL,
+    duree integer NOT NULL,
+    lieu_code_insee character varying(5),
+    type_lieu character varying(100) NOT NULL,
+    autonomie character varying(100),
+    structure_de_redirection character varying(255),
+    oriente_vers_structure boolean,
+    precisions_demarche text,
+    degre_de_finalisation_demarche character varying(50),
+    titre_atelier character varying(255),
+    niveau_atelier character varying(50),
+    accompagnements integer DEFAULT 0 NOT NULL,
+    thematiques text[],
+    materiels text[],
+    thematiques_demarche_administrative text[],
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    periode date GENERATED ALWAYS AS ((date_trunc('month'::text, (date)::timestamp without time zone))::date) STORED,
     created_at_coop timestamp without time zone,
-    updated_at_coop timestamp without time zone
+    updated_at_coop timestamp without time zone,
+    beneficiaires jsonb
 );
 
 
 ALTER TABLE main.activites_coop OWNER TO sonum;
 
--- Name: COLUMN activites_coop.duree; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: COLUMN activites_coop.duree; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON COLUMN main.activites_coop.duree IS 'Valeur en minutes';
 
 
--- Name: poste; Type: TABLE; Schema: main; Owner: sonum
+-- Name: COLUMN activites_coop.beneficiaires; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.activites_coop.beneficiaires IS 'Agrégats non nominatifs des bénéficiaires de l''activité (total, genres, tranches_age, statuts). Source: API coop-numerique /api/v1/activites attributes.beneficiaires';
+
+
+-- Name: poste; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.poste (
-                          id integer NOT NULL,
-                          poste_conum_id integer NOT NULL,
-                          structure_id integer,
-                          personne_id integer,
-                          typologie character varying(6),
-                          date_attribution date NOT NULL,
-                          date_rendu_poste date,
-                          poste_renouvele boolean,
-                          action_coselec character varying(255),
-                          origine_transfert integer,
-                          etat character varying(6),
-                          created_at timestamp without time zone DEFAULT now(),
-                          updated_at timestamp without time zone,
-                          etat_instruction_v1 character varying,
-                          etat_instruction_v2 character varying,
-                          CONSTRAINT poste_check CHECK ((NOT (((etat)::text = 'rendu'::text) AND (date_rendu_poste IS NULL)))),
+    id integer NOT NULL,
+    poste_conum_id integer NOT NULL,
+    structure_id integer,
+    personne_id integer,
+    typologie character varying(6),
+    date_attribution date NOT NULL,
+    date_rendu_poste date,
+    poste_renouvele boolean,
+    action_coselec character varying(255),
+    origine_transfert integer,
+    etat character varying(6),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    etat_instruction_v1 character varying,
+    etat_instruction_v2 character varying,
+    CONSTRAINT poste_check CHECK ((NOT (((etat)::text = 'rendu'::text) AND (date_rendu_poste IS NULL)))),
     CONSTRAINT poste_etat_check CHECK (((etat)::text = ANY (ARRAY[('vacant'::character varying)::text, ('occupe'::character varying)::text, ('rendu'::character varying)::text]))),
     CONSTRAINT poste_typologie_check CHECK (((typologie)::text = ANY (ARRAY[('conum'::character varying)::text, ('coordo'::character varying)::text, ('dns'::character varying)::text])))
 );
@@ -788,143 +1514,241 @@ CREATE TABLE main.poste (
 
 ALTER TABLE main.poste OWNER TO sonum;
 
--- Name: formation; Type: TABLE; Schema: main; Owner: sonum
+-- Name: structure; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.structure (
+    id integer NOT NULL,
+    structure_coop_id uuid,
+    structure_ac_id uuid,
+    structure_tp_id integer,
+    nom character varying(255) NOT NULL,
+    denomination_sirene character varying,
+    siret character varying(14),
+    rna character varying(10),
+    adresse_id integer,
+    contact jsonb,
+    etat_administratif character varying,
+    code_activite_principale character varying(6),
+    categorie_juridique character varying(4) DEFAULT NULL::character varying,
+    nb_mandats_ac integer,
+    publique boolean,
+    structure_cartographie_nationale_id character varying,
+    visible_pour_cartographie_nationale boolean,
+    typologies text[],
+    presentation_resume text,
+    presentation_detail text,
+    horaires character varying,
+    prise_rdv character varying,
+    services text[],
+    publics_specifiquement_adresses text[],
+    prise_en_charge_specifique text[],
+    frais_a_charge text[],
+    dispositif_programmes_nationaux text[],
+    formations_labels text[],
+    autres_formations_labels text[],
+    itinerance text[],
+    modalites_acces text[],
+    modalites_accompagnement text[],
+    mediateurs_en_activite integer,
+    emplois integer,
+    source character varying,
+    last_sirene_enrich_at date,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    fiche_acces_libre character varying,
+    edited_by character varying(50),
+    deleted_at timestamp without time zone,
+    deleted_by text[],
+    CONSTRAINT structure_siret_format_check CHECK (((siret)::text ~ '^\d{14}$'::text))
+);
+
+
+ALTER TABLE main.structure OWNER TO sonum;
+
+-- Name: personne_affectations; Type: TABLE; Schema: main; Owner: dataspace
+
+CREATE TABLE main.personne_affectations (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    structure_id integer,
+    structure_coop_id uuid,
+    mediateur_coop_id uuid,
+    type character varying NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    source character varying NOT NULL,
+    est_active boolean DEFAULT true NOT NULL,
+    CONSTRAINT personne_affectations_source_check CHECK (((source)::text = ANY (ARRAY[('idposte'::character varying)::text, ('aidants-connect'::character varying)::text, ('coop'::character varying)::text]))),
+    CONSTRAINT personne_affectations_type_check CHECK (((type)::text = ANY (ARRAY[('structure_emploi'::character varying)::text, ('lieu_activite'::character varying)::text])))
+);
+
+
+ALTER TABLE main.personne_affectations OWNER TO sonum;
+
+-- Name: TABLE personne_affectations; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON TABLE main.personne_affectations IS 'Table de lien entre les personnes et les structures employeuses ou lieux d''activités.';
+
+
+-- Name: COLUMN personne_affectations.type; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.personne_affectations.type IS 'Type d''affectation personne <-> structure: structure_emploi ou lieu_activite.';
+
+
+-- Name: COLUMN personne_affectations.source; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.personne_affectations.source IS 'Source du DAG ayant cree cette affectation : idposte, aidants-connect ou coop.';
+
+
+-- Name: COLUMN personne_affectations.est_active; Type: COMMENT; Schema: main; Owner: dataspace
+
+COMMENT ON COLUMN main.personne_affectations.est_active IS 'Indique si l affectation est en cours (TRUE) ou terminee (FALSE).';
+
+
+-- Name: formation; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.formation (
-                              id integer NOT NULL,
-                              personne_id integer NOT NULL,
-                              label character varying(11),
-                              parcours character varying(4),
-                              lot smallint,
-                              marche_formation character varying(8),
-                              lieu character varying(255),
-                              date_debut date,
-                              date_fin date,
-                              pix boolean,
-                              remn boolean,
-                              observations text,
-                              created_at timestamp without time zone DEFAULT now(),
-                              updated_at timestamp without time zone,
-                              CONSTRAINT formation_label_check CHECK (((label)::text = ANY (ARRAY[('CCP1'::character varying)::text, ('CCP2'::character varying)::text, ('CCP2 & CCP3'::character varying)::text]))),
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    label character varying(11),
+    parcours character varying(4),
+    lot smallint,
+    marche_formation character varying(8),
+    lieu character varying(255),
+    date_debut date,
+    date_fin date,
+    pix boolean,
+    remn boolean,
+    observations text,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT formation_label_check CHECK (((label)::text = ANY (ARRAY[('CCP1'::character varying)::text, ('CCP2'::character varying)::text, ('CCP2 & CCP3'::character varying)::text]))),
     CONSTRAINT formation_parcours_check CHECK (((parcours)::text = ANY (ARRAY[('70h'::character varying)::text, ('175h'::character varying)::text, ('315h'::character varying)::text, ('105h'::character varying)::text, ('420h'::character varying)::text, ('280h'::character varying)::text, ('350h'::character varying)::text])))
 );
 
 
 ALTER TABLE main.formation OWNER TO sonum;
 
--- Name: TABLE formation; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: TABLE formation; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON TABLE main.formation IS 'Table de gestion des formations des Conseillers Numériques.';
 
 
--- Name: COLUMN formation.label; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: COLUMN formation.label; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON COLUMN main.formation.label IS 'Label de la formation, exemple : CCP1, CCP2, CCP2 & CCP3';
 
 
--- Name: COLUMN formation.parcours; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: COLUMN formation.parcours; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON COLUMN main.formation.parcours IS 'Parcours de formation défini après un test de positionnement : débutant (315h), intermédiaire (175h), ou avancé (70h).';
 
 
+-- Name: contact_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+CREATE SEQUENCE main.contact_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE main.contact_id_seq OWNER TO sonum;
+
 -- Name: contact; Type: TABLE; Schema: main; Owner: sonum
 
 CREATE TABLE main.contact (
-                            id integer NOT NULL,
-                            nom character varying(255) NOT NULL,
-                            prenom character varying(255) NOT NULL,
-                            email character varying(255) NOT NULL,
-                            telephone character varying(20) DEFAULT ''::character varying NOT NULL,
-                            fonction character varying(255) DEFAULT ''::character varying NOT NULL,
-                            est_referent_fne boolean DEFAULT false NOT NULL,
-                            created_at timestamp(6) without time zone DEFAULT now(),
-                            updated_at timestamp(6) without time zone DEFAULT now()
+    id integer DEFAULT nextval('main.contact_id_seq'::regclass) NOT NULL,
+    nom character varying(255) NOT NULL,
+    prenom character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    telephone character varying(20) DEFAULT ''::character varying NOT NULL,
+    fonction character varying(255) DEFAULT ''::character varying NOT NULL,
+    est_referent_fne boolean DEFAULT false NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT now(),
+    updated_at timestamp(6) without time zone DEFAULT now()
 );
 
 
 ALTER TABLE main.contact OWNER TO sonum;
 
--- Name: contact_structure; Type: TABLE; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative; Type: TABLE; Schema: main; Owner: dataspace
 
-CREATE TABLE main.contact_structure (
-                                      id integer NOT NULL,
-                                      structure_id integer NOT NULL,
-                                      contact_id integer NOT NULL,
-                                      created_at timestamp(6) without time zone DEFAULT now()
+CREATE TABLE main.contact_structure_administrative (
+    id integer NOT NULL,
+    structure_administrative_id integer NOT NULL,
+    contact_id integer NOT NULL,
+    created_at timestamp(6) without time zone DEFAULT now()
 );
 
 
-ALTER TABLE main.contact_structure OWNER TO sonum;
+ALTER TABLE main.contact_structure_administrative OWNER TO sonum;
 
--- Name: contrat; Type: TABLE; Schema: main; Owner: sonum
+-- Name: contrat; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.contrat (
-                            id integer NOT NULL,
-                            personne_id integer NOT NULL,
-                            date_debut date,
-                            date_fin date,
-                            date_rupture date,
-                            type character varying(3),
-                            created_at timestamp without time zone DEFAULT now(),
-                            updated_at timestamp without time zone,
-                            structure_id integer,
-                            CONSTRAINT contrat_type_check CHECK (((type)::text = ANY (ARRAY[('CDD'::character varying)::text, ('CDI'::character varying)::text, ('CDP'::character varying)::text, ('PEC'::character varying)::text])))
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    date_debut date,
+    date_fin date,
+    date_rupture date,
+    type character varying(3),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    structure_id integer,
+    CONSTRAINT contrat_type_check CHECK (((type)::text = ANY (ARRAY[('CDD'::character varying)::text, ('CDI'::character varying)::text, ('CDP'::character varying)::text, ('PEC'::character varying)::text])))
 );
 
 
 ALTER TABLE main.contrat OWNER TO sonum;
 
--- Name: subvention; Type: TABLE; Schema: main; Owner: sonum
+-- Name: subvention; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.subvention (
-                               id integer NOT NULL,
-                               poste_id integer NOT NULL,
-                               -- DGCL (V1)
-                               date_debut_convention_dgcl date,
-                               date_debut_financement_dgcl date,
-                               date_fin_convention_dgcl date,
-                               date_fin_financement_dgcl date,
-                               mois_utilises_periode_financement_dgcl smallint,
-                               -- DITP (V2)
-                               date_debut_convention_ditp date,
-                               date_debut_financement_ditp date,
-                               date_fin_convention_ditp date,
-                               date_fin_financement_ditp date,
-                               mois_utilises_periode_financement_ditp smallint,
-                               -- DGE (V2)
-                               date_debut_convention_dge date,
-                               date_debut_financement_dge date,
-                               date_fin_convention_dge date,
-                               date_fin_financement_dge date,
-                               mois_utilises_periode_financement_dge smallint,
-                               -- Montants V1
-                               montant_subvention_v1 bigint,
-                               montant_versement_v1 bigint,
-                               montant_avoir_v1 bigint,
-                               -- Montants V2
-                               montant_bonification_v2 bigint,
-                               montant_subvention_v2 bigint,
-                               montant_avoir_v2 bigint,
-                               -- Versements V2
-                               versement_1_v2 bigint,
-                               versement_2_v2 bigint,
-                               versement_3_v2 bigint,
-                               date_versement_1_v2 date,
-                               date_versement_2_v2 date,
-                               date_versement_3_v2 date,
-                               created_at timestamp without time zone DEFAULT now(),
-                               updated_at timestamp without time zone
+    id integer NOT NULL,
+    poste_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    date_debut_convention_dgcl date,
+    date_debut_financement_dgcl date,
+    date_fin_convention_dgcl date,
+    date_fin_financement_dgcl date,
+    mois_utilises_periode_financement_dgcl smallint,
+    date_debut_convention_ditp date,
+    date_debut_financement_ditp date,
+    date_fin_convention_ditp date,
+    date_fin_financement_ditp date,
+    mois_utilises_periode_financement_ditp smallint,
+    date_debut_convention_dge date,
+    date_debut_financement_dge date,
+    date_fin_convention_dge date,
+    date_fin_financement_dge date,
+    mois_utilises_periode_financement_dge smallint,
+    montant_subvention_v1 bigint,
+    montant_versement_v1 bigint,
+    montant_avoir_v1 bigint,
+    montant_bonification_v2 bigint,
+    montant_subvention_v2 bigint,
+    montant_avoir_v2 bigint,
+    versement_1_v2 bigint,
+    versement_2_v2 bigint,
+    versement_3_v2 bigint,
+    date_versement_1_v2 date,
+    date_versement_2_v2 date,
+    date_versement_3_v2 date
 );
 
 
 ALTER TABLE main.subvention OWNER TO sonum;
 
--- Name: TABLE subvention; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: TABLE subvention; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON TABLE main.subvention IS 'Table des subventions par poste. Une ligne par poste avec colonnes spécifiques pour DGCL (V1), DITP (V2) et DGE (V2)';
 
 
--- Name: activites_coop_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: activites_coop_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.activites_coop ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.activites_coop_id_seq
@@ -948,43 +1772,25 @@ ALTER TABLE main.adresse ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: contact_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
-
-CREATE SEQUENCE main.contact_id_seq
-  AS integer
-  START WITH 1
-  INCREMENT BY 1
-  NO MINVALUE
-  NO MAXVALUE
-  CACHE 1;
-
-
-ALTER SEQUENCE main.contact_id_seq OWNER TO sonum;
-
--- Name: contact_id_seq; Type: SEQUENCE OWNED BY; Schema: main; Owner: sonum
-
-ALTER SEQUENCE main.contact_id_seq OWNED BY main.contact.id;
-
-
--- Name: contact_structure_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: contact_structure_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 CREATE SEQUENCE main.contact_structure_id_seq
-  AS integer
-  START WITH 1
-  INCREMENT BY 1
-  NO MINVALUE
-  NO MAXVALUE
-  CACHE 1;
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER SEQUENCE main.contact_structure_id_seq OWNER TO sonum;
 
--- Name: contact_structure_id_seq; Type: SEQUENCE OWNED BY; Schema: main; Owner: sonum
+-- Name: contact_structure_id_seq; Type: SEQUENCE OWNED BY; Schema: main; Owner: dataspace
 
-ALTER SEQUENCE main.contact_structure_id_seq OWNED BY main.contact_structure.id;
+ALTER SEQUENCE main.contact_structure_id_seq OWNED BY main.contact_structure_administrative.id;
 
 
--- Name: contrat_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: contrat_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.contrat ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.contrat_id_seq
@@ -996,28 +1802,28 @@ ALTER TABLE main.contrat ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: coordination_mediation; Type: TABLE; Schema: main; Owner: sonum
+-- Name: coordination_mediation; Type: TABLE; Schema: main; Owner: dataspace
 
 CREATE TABLE main.coordination_mediation (
-                                           id integer NOT NULL,
-                                           coordinateur_id integer NOT NULL,
-                                           mediateur_id integer NOT NULL,
-                                           coordinateur_coop_id uuid NOT NULL,
-                                           mediateur_coop_id uuid NOT NULL,
-                                           created_at timestamp without time zone DEFAULT now(),
-                                           updated_at timestamp without time zone,
-                                           suppression timestamp with time zone
+    id integer NOT NULL,
+    coordinateur_id integer NOT NULL,
+    mediateur_id integer NOT NULL,
+    coordinateur_coop_id uuid NOT NULL,
+    mediateur_coop_id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    suppression timestamp with time zone
 );
 
 
 ALTER TABLE main.coordination_mediation OWNER TO sonum;
 
--- Name: COLUMN coordination_mediation.suppression; Type: COMMENT; Schema: main; Owner: sonum
+-- Name: COLUMN coordination_mediation.suppression; Type: COMMENT; Schema: main; Owner: dataspace
 
 COMMENT ON COLUMN main.coordination_mediation.suppression IS 'Date de suppression de la coordination médiation (NULL si en cours).';
 
 
--- Name: coordination_mediation_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: coordination_mediation_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.coordination_mediation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.coordination_mediation_id_seq
@@ -1029,7 +1835,7 @@ ALTER TABLE main.coordination_mediation ALTER COLUMN id ADD GENERATED BY DEFAULT
 );
 
 
--- Name: formation_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: formation_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.formation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.formation_id_seq
@@ -1041,10 +1847,58 @@ ALTER TABLE main.formation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
 );
 
 
--- Name: personne_affectations_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: lieu_inclusion_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+ALTER TABLE main.lieu_inclusion ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.lieu_inclusion_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+-- Name: lieu_inclusion_structure_administrative_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+ALTER TABLE main.lieu_inclusion_structure_administrative ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.lieu_inclusion_structure_administrative_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+-- Name: personne_affectations_emploi_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+ALTER TABLE main.personne_affectations_emploi ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.personne_affectations_emploi_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+-- Name: personne_affectations_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.personne_affectations ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.personne_affectations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+-- Name: personne_affectations_lieu_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+ALTER TABLE main.personne_affectations_lieu ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.personne_affectations_lieu_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1065,7 +1919,7 @@ ALTER TABLE main.personne ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: poste_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: poste_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.poste ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.poste_id_seq
@@ -1077,7 +1931,19 @@ ALTER TABLE main.poste ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: structure_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: structure_administrative_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
+
+ALTER TABLE main.structure_administrative ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.structure_administrative_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+-- Name: structure_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.structure ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.structure_id_seq
@@ -1089,7 +1955,7 @@ ALTER TABLE main.structure ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
 );
 
 
--- Name: subvention_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+-- Name: subvention_id_seq; Type: SEQUENCE; Schema: main; Owner: dataspace
 
 ALTER TABLE main.subvention ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.subvention_id_seq
@@ -1113,21 +1979,21 @@ ALTER TABLE reference.categories_juridiques ALTER COLUMN id ADD GENERATED BY DEF
 );
 
 
--- Name: naf; Type: TABLE; Schema: reference; Owner: sonum
+-- Name: naf; Type: TABLE; Schema: reference; Owner: dataspace
 
 CREATE TABLE reference.naf (
-                             id integer NOT NULL,
-                             code character varying(6) NOT NULL,
-                             intitule_long character varying(150) NOT NULL,
-                             intitule_court character varying(65) NOT NULL,
-                             created_at timestamp without time zone DEFAULT now(),
-                             updated_at timestamp without time zone
+    id integer NOT NULL,
+    code character varying(6) NOT NULL,
+    intitule_long character varying(150) NOT NULL,
+    intitule_court character varying(65) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
 );
 
 
 ALTER TABLE reference.naf OWNER TO sonum;
 
--- Name: naf_id_seq; Type: SEQUENCE; Schema: reference; Owner: sonum
+-- Name: naf_id_seq; Type: SEQUENCE; Schema: reference; Owner: dataspace
 
 ALTER TABLE reference.naf ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME reference.naf_id_seq
@@ -1139,31 +2005,19 @@ ALTER TABLE reference.naf ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
--- Name: personne_merge_log id; Type: DEFAULT; Schema: audit; Owner: sonum
+-- Name: personne_merge_log id; Type: DEFAULT; Schema: audit; Owner: dataspace
 
 ALTER TABLE ONLY audit.personne_merge_log ALTER COLUMN id SET DEFAULT nextval('audit.personne_merge_log_id_seq'::regclass);
 
 
--- Name: structure_merge_log id; Type: DEFAULT; Schema: audit; Owner: sonum
+-- Name: structure_merge_log id; Type: DEFAULT; Schema: audit; Owner: dataspace
 
 ALTER TABLE ONLY audit.structure_merge_log ALTER COLUMN id SET DEFAULT nextval('audit.structure_merge_log_id_seq'::regclass);
 
 
--- Name: contact id; Type: DEFAULT; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative id; Type: DEFAULT; Schema: main; Owner: dataspace
 
-ALTER TABLE ONLY main.contact ALTER COLUMN id SET DEFAULT nextval('main.contact_id_seq'::regclass);
-
-
--- Name: contact_structure id; Type: DEFAULT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.contact_structure ALTER COLUMN id SET DEFAULT nextval('main.contact_structure_id_seq'::regclass);
-
-
--- Name: SCHEMA admin; Type: ACL; Schema: -; Owner: sonum
-
-GRANT USAGE ON SCHEMA admin TO app_python;
-GRANT USAGE ON SCHEMA admin TO min_scalingo;
-GRANT USAGE ON SCHEMA admin TO min_dev;
+ALTER TABLE ONLY main.contact_structure_administrative ALTER COLUMN id SET DEFAULT nextval('main.contact_structure_id_seq'::regclass);
 
 
 -- Name: SCHEMA main; Type: ACL; Schema: -; Owner: sonum
@@ -1179,155 +2033,27 @@ GRANT USAGE ON SCHEMA reference TO min_scalingo;
 GRANT USAGE ON SCHEMA reference TO min_dev;
 
 
--- Name: FUNCTION refresh_coll_terr(); Type: ACL; Schema: admin; Owner: sonum
-
-GRANT ALL ON FUNCTION admin.refresh_coll_terr() TO app_python;
-
-
--- Name: TABLE commune; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.commune TO min_scalingo;
-GRANT SELECT ON TABLE admin.commune TO min_dev;
-
-
--- Name: TABLE departement; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.departement TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.departement TO min_scalingo;
-GRANT SELECT ON TABLE admin.departement TO min_dev;
-
-
--- Name: TABLE region; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.region TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.region TO min_scalingo;
-GRANT SELECT ON TABLE admin.region TO min_dev;
-
-
--- Name: TABLE coll_terr; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.coll_terr TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.coll_terr TO min_scalingo;
-GRANT SELECT ON TABLE admin.coll_terr TO min_dev;
-
-
--- Name: TABLE commune_epci; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune_epci TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.commune_epci TO min_scalingo;
-GRANT SELECT ON TABLE admin.commune_epci TO min_dev;
-
-
--- Name: SEQUENCE commune_epci_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.commune_epci_id_seq TO app_python;
-
-
--- Name: SEQUENCE commune_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.commune_id_seq TO app_python;
-
-
--- Name: SEQUENCE departement_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.departement_id_seq TO app_python;
-
-
--- Name: TABLE epci; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.epci TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.epci TO min_scalingo;
-GRANT SELECT ON TABLE admin.epci TO min_dev;
-
-
--- Name: SEQUENCE epci_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.epci_id_seq TO app_python;
-
-
--- Name: TABLE icp_departement; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.icp_departement TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.icp_departement TO min_scalingo;
-GRANT SELECT ON TABLE admin.icp_departement TO min_dev;
-
-
--- Name: SEQUENCE icp_departement_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.icp_departement_id_seq TO app_python;
-
-
--- Name: TABLE ifn_commune; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_commune TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.ifn_commune TO min_scalingo;
-GRANT SELECT ON TABLE admin.ifn_commune TO min_dev;
-
-
--- Name: SEQUENCE ifn_commune_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_commune_id_seq TO app_python;
-
-
--- Name: TABLE ifn_departement; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_departement TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.ifn_departement TO min_scalingo;
-GRANT SELECT ON TABLE admin.ifn_departement TO min_dev;
-
-
--- Name: SEQUENCE ifn_departement_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_departement_id_seq TO app_python;
-
-
--- Name: TABLE insee_cp; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_cp TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.insee_cp TO min_scalingo;
-GRANT SELECT ON TABLE admin.insee_cp TO min_dev;
-
-
--- Name: SEQUENCE insee_cp_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.insee_cp_id_seq TO app_python;
-
-
--- Name: TABLE insee_historique; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_historique TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.insee_historique TO min_scalingo;
-GRANT SELECT ON TABLE admin.insee_historique TO min_dev;
-
-
--- Name: SEQUENCE insee_historique_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.insee_historique_id_seq TO app_python;
-
-
--- Name: SEQUENCE region_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.region_id_seq TO app_python;
-
-
--- Name: TABLE zonage; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.zonage TO app_python;
-GRANT SELECT,REFERENCES ON TABLE admin.zonage TO min_scalingo;
-GRANT SELECT ON TABLE admin.zonage TO min_dev;
-
-
--- Name: SEQUENCE zonage_id_seq; Type: ACL; Schema: admin; Owner: sonum
-
-GRANT USAGE,UPDATE ON SEQUENCE admin.zonage_id_seq TO app_python;
-
-
 -- Name: TABLE adresse; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.adresse TO app_python;
 GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.adresse TO min_scalingo;
 GRANT SELECT ON TABLE main.adresse TO min_dev;
+
+
+-- Name: TABLE lieu_inclusion; Type: ACL; Schema: main; Owner: dataspace
+
+GRANT ALL ON TABLE main.lieu_inclusion TO sonum;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.lieu_inclusion TO app_python;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.lieu_inclusion TO min_scalingo;
+GRANT SELECT ON TABLE main.lieu_inclusion TO min_dev;
+
+
+-- Name: TABLE lieu_inclusion_structure_administrative; Type: ACL; Schema: main; Owner: dataspace
+
+GRANT ALL ON TABLE main.lieu_inclusion_structure_administrative TO sonum;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.lieu_inclusion_structure_administrative TO app_python;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.lieu_inclusion_structure_administrative TO min_scalingo;
+GRANT SELECT ON TABLE main.lieu_inclusion_structure_administrative TO min_dev;
 
 
 -- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
@@ -1337,18 +2063,28 @@ GRANT SELECT,REFERENCES ON TABLE main.personne TO min_scalingo;
 GRANT SELECT ON TABLE main.personne TO min_dev;
 
 
--- Name: TABLE personne_affectations; Type: ACL; Schema: main; Owner: sonum
+-- Name: TABLE personne_affectations_emploi; Type: ACL; Schema: main; Owner: dataspace
 
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.personne_affectations TO min_scalingo;
-GRANT SELECT ON TABLE main.personne_affectations TO min_dev;
+GRANT ALL ON TABLE main.personne_affectations_emploi TO sonum;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations_emploi TO app_python;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.personne_affectations_emploi TO min_scalingo;
+GRANT SELECT ON TABLE main.personne_affectations_emploi TO min_dev;
 
 
--- Name: TABLE structure; Type: ACL; Schema: main; Owner: sonum
+-- Name: TABLE personne_affectations_lieu; Type: ACL; Schema: main; Owner: dataspace
 
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.structure TO app_python;
-GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.structure TO min_scalingo;
-GRANT SELECT ON TABLE main.structure TO min_dev;
+GRANT ALL ON TABLE main.personne_affectations_lieu TO sonum;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations_lieu TO app_python;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.personne_affectations_lieu TO min_scalingo;
+GRANT SELECT ON TABLE main.personne_affectations_lieu TO min_dev;
+
+
+-- Name: TABLE structure_administrative; Type: ACL; Schema: main; Owner: dataspace
+
+GRANT ALL ON TABLE main.structure_administrative TO sonum;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.structure_administrative TO app_python;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.structure_administrative TO min_scalingo;
+GRANT SELECT ON TABLE main.structure_administrative TO min_dev;
 
 
 -- Name: TABLE categories_juridiques; Type: ACL; Schema: reference; Owner: sonum
@@ -1357,58 +2093,11 @@ GRANT SELECT,REFERENCES ON TABLE reference.categories_juridiques TO min_scalingo
 GRANT SELECT ON TABLE reference.categories_juridiques TO min_dev;
 
 
--- Name: TABLE activites_coop; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.activites_coop TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.activites_coop TO min_scalingo;
-GRANT SELECT ON TABLE main.activites_coop TO min_dev;
-
-
--- Name: TABLE poste; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.poste TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.poste TO min_scalingo;
-GRANT SELECT ON TABLE main.poste TO min_dev;
-
-
--- Name: TABLE formation; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.formation TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.formation TO min_scalingo;
-GRANT SELECT ON TABLE main.formation TO min_dev;
-
-
 -- Name: TABLE contact; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.contact TO app_python;
-GRANT SELECT ON TABLE main.contact TO min_scalingo;
+GRANT SELECT,INSERT,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE main.contact TO min_scalingo;
 GRANT SELECT ON TABLE main.contact TO min_dev;
-
-
--- Name: TABLE contact_structure; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.contact_structure TO app_python;
-GRANT SELECT ON TABLE main.contact_structure TO min_scalingo;
-GRANT SELECT ON TABLE main.contact_structure TO min_dev;
-
-
--- Name: TABLE contrat; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.contrat TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.contrat TO min_scalingo;
-GRANT SELECT ON TABLE main.contrat TO min_dev;
-
-
--- Name: TABLE subvention; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.subvention TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.subvention TO min_scalingo;
-GRANT SELECT ON TABLE main.subvention TO min_dev;
-
-
--- Name: SEQUENCE activites_coop_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.activites_coop_id_seq TO app_python;
 
 
 -- Name: SEQUENCE adresse_id_seq; Type: ACL; Schema: main; Owner: sonum
@@ -1417,474 +2106,546 @@ GRANT USAGE ON SEQUENCE main.adresse_id_seq TO app_python;
 GRANT USAGE ON SEQUENCE main.adresse_id_seq TO min_scalingo;
 
 
--- Name: SEQUENCE contact_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.contact_id_seq TO app_python;
-
-
--- Name: SEQUENCE contact_structure_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.contact_structure_id_seq TO app_python;
-
-
--- Name: SEQUENCE contrat_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.contrat_id_seq TO app_python;
-
-
--- Name: TABLE coordination_mediation; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.coordination_mediation TO app_python;
-GRANT SELECT,REFERENCES ON TABLE main.coordination_mediation TO min_scalingo;
-GRANT SELECT ON TABLE main.coordination_mediation TO min_dev;
-
-
--- Name: SEQUENCE coordination_mediation_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.coordination_mediation_id_seq TO app_python;
-
-
--- Name: SEQUENCE formation_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.formation_id_seq TO app_python;
-
-
--- Name: SEQUENCE personne_affectations_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.personne_affectations_id_seq TO app_python;
-
-
 -- Name: SEQUENCE personne_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.personne_id_seq TO app_python;
 
 
--- Name: SEQUENCE poste_id_seq; Type: ACL; Schema: main; Owner: sonum
+-- PostgreSQL database dump complete
 
-GRANT USAGE ON SEQUENCE main.poste_id_seq TO app_python;
+CREATE OR REPLACE FUNCTION public.updated_at_column() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
+CREATE OR REPLACE FUNCTION public.edited_by_column() RETURNS TRIGGER AS $$ BEGIN IF NEW.edited_by IS NULL THEN NEW.edited_by = current_user; END IF; RETURN NEW; END; $$ LANGUAGE plpgsql;
+-- PostgreSQL database dump
 
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
--- Name: SEQUENCE structure_id_seq; Type: ACL; Schema: main; Owner: sonum
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
-GRANT USAGE ON SEQUENCE main.structure_id_seq TO app_python;
-GRANT USAGE ON SEQUENCE main.structure_id_seq TO min_scalingo;
+SET default_tablespace = '';
 
-
--- Name: SEQUENCE subvention_id_seq; Type: ACL; Schema: main; Owner: sonum
-
-GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
-
-
--- Name: TABLE naf; Type: ACL; Schema: reference; Owner: sonum
-
-GRANT SELECT,REFERENCES ON TABLE reference.naf TO min_scalingo;
-GRANT SELECT ON TABLE reference.naf TO min_dev;
-
-
--- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.commune_epci
-  ADD CONSTRAINT commune_epci_pkey PRIMARY KEY (id);
-
-
--- Name: commune_epci commune_epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.commune_epci
-  ADD CONSTRAINT commune_epci_ukey UNIQUE (commune_id, epci_id);
+    ADD CONSTRAINT commune_epci_pkey PRIMARY KEY (id);
 
 
--- Name: commune commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: commune_epci commune_epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.commune_epci
+    ADD CONSTRAINT commune_epci_ukey UNIQUE (commune_id, epci_id);
+
+
+-- Name: commune commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.commune
-  ADD CONSTRAINT commune_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT commune_pkey PRIMARY KEY (id);
 
 
--- Name: commune commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: commune commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.commune
-  ADD CONSTRAINT commune_ukey UNIQUE (code_insee);
+    ADD CONSTRAINT commune_ukey UNIQUE (code_insee);
 
 
--- Name: departement departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.departement
-  ADD CONSTRAINT departement_pkey PRIMARY KEY (id);
-
-
--- Name: departement departement_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: departement departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.departement
-  ADD CONSTRAINT departement_ukey UNIQUE (code);
+    ADD CONSTRAINT departement_pkey PRIMARY KEY (id);
 
 
--- Name: epci epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: departement departement_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.departement
+    ADD CONSTRAINT departement_ukey UNIQUE (code);
+
+
+-- Name: epci epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.epci
-  ADD CONSTRAINT epci_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT epci_pkey PRIMARY KEY (id);
 
 
--- Name: epci epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: epci epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.epci
-  ADD CONSTRAINT epci_ukey UNIQUE (code);
+    ADD CONSTRAINT epci_ukey UNIQUE (code);
 
 
--- Name: icp_departement icp_departement_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.icp_departement
-  ADD CONSTRAINT icp_departement_code_ukey UNIQUE (code);
-
-
--- Name: icp_departement icp_departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: icp_departement icp_departement_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.icp_departement
-  ADD CONSTRAINT icp_departement_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT icp_departement_code_ukey UNIQUE (code);
 
 
--- Name: ifn_commune ifn_commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: icp_departement icp_departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.icp_departement
+    ADD CONSTRAINT icp_departement_pkey PRIMARY KEY (id);
+
+
+-- Name: ifn_commune ifn_commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.ifn_commune
-  ADD CONSTRAINT ifn_commune_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT ifn_commune_pkey PRIMARY KEY (id);
 
 
--- Name: ifn_commune ifn_commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: ifn_commune ifn_commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.ifn_commune
-  ADD CONSTRAINT ifn_commune_ukey UNIQUE (code_insee);
+    ADD CONSTRAINT ifn_commune_ukey UNIQUE (code_insee);
 
 
--- Name: ifn_departement ifn_departement_code_dept_unique; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.ifn_departement
-  ADD CONSTRAINT ifn_departement_code_dept_unique UNIQUE (code);
-
-
--- Name: ifn_departement ifn_departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: ifn_departement ifn_departement_code_dept_unique; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.ifn_departement
-  ADD CONSTRAINT ifn_departement_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT ifn_departement_code_dept_unique UNIQUE (code);
 
 
--- Name: insee_cp insee_cp_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: ifn_departement ifn_departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.ifn_departement
+    ADD CONSTRAINT ifn_departement_pkey PRIMARY KEY (id);
+
+
+-- Name: insee_cp insee_cp_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.insee_cp
-  ADD CONSTRAINT insee_cp_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT insee_cp_pkey PRIMARY KEY (id);
 
 
--- Name: insee_cp insee_cp_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: insee_cp insee_cp_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.insee_cp
-  ADD CONSTRAINT insee_cp_ukey UNIQUE (code_postal, code_insee);
+    ADD CONSTRAINT insee_cp_ukey UNIQUE (code_postal, code_insee);
 
 
--- Name: insee_historique insee_historique_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.insee_historique
-  ADD CONSTRAINT insee_historique_pkey PRIMARY KEY (id);
-
-
--- Name: insee_historique insee_historique_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: insee_historique insee_historique_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.insee_historique
-  ADD CONSTRAINT insee_historique_ukey UNIQUE (code_insee_ancien, code_insee_nouveau);
+    ADD CONSTRAINT insee_historique_pkey PRIMARY KEY (id);
 
 
--- Name: region region_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: insee_historique insee_historique_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.insee_historique
+    ADD CONSTRAINT insee_historique_ukey UNIQUE (code_insee_ancien, code_insee_nouveau);
+
+
+-- Name: region region_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.region
-  ADD CONSTRAINT region_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT region_pkey PRIMARY KEY (id);
 
 
--- Name: region region_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: region region_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.region
-  ADD CONSTRAINT region_ukey UNIQUE (code);
+    ADD CONSTRAINT region_ukey UNIQUE (code);
 
 
--- Name: zonage zonage_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.zonage
-  ADD CONSTRAINT zonage_code_ukey UNIQUE (code, code_insee);
-
-
--- Name: zonage zonage_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: zonage zonage_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.zonage
-  ADD CONSTRAINT zonage_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT zonage_code_ukey UNIQUE (code, code_insee);
 
 
--- Name: personne_merge_log personne_merge_log_pkey; Type: CONSTRAINT; Schema: audit; Owner: sonum
+-- Name: zonage zonage_pkey; Type: CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.zonage
+    ADD CONSTRAINT zonage_pkey PRIMARY KEY (id);
+
+
+-- Name: personne_merge_log personne_merge_log_pkey; Type: CONSTRAINT; Schema: audit; Owner: dataspace
 
 ALTER TABLE ONLY audit.personne_merge_log
-  ADD CONSTRAINT personne_merge_log_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT personne_merge_log_pkey PRIMARY KEY (id);
 
 
--- Name: structure_merge_log structure_merge_log_pkey; Type: CONSTRAINT; Schema: audit; Owner: sonum
+-- Name: structure_merge_log structure_merge_log_pkey; Type: CONSTRAINT; Schema: audit; Owner: dataspace
 
 ALTER TABLE ONLY audit.structure_merge_log
-  ADD CONSTRAINT structure_merge_log_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT structure_merge_log_pkey PRIMARY KEY (id);
 
 
--- Name: activites_coop activites_coop_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.activites_coop
-  ADD CONSTRAINT activites_coop_coop_id_ukey UNIQUE (coop_id);
-
-
--- Name: activites_coop activites_coop_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: activites_coop activites_coop_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.activites_coop
-  ADD CONSTRAINT activites_coop_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT activites_coop_coop_id_ukey UNIQUE (coop_id);
+
+
+-- Name: activites_coop activites_coop_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.activites_coop
+    ADD CONSTRAINT activites_coop_pkey PRIMARY KEY (id);
 
 
 -- Name: adresse adresse_code_ban_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.adresse
-  ADD CONSTRAINT adresse_code_ban_ukey UNIQUE (code_ban);
+    ADD CONSTRAINT adresse_code_ban_ukey UNIQUE (code_ban);
 
 
 -- Name: adresse adresse_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.adresse
-  ADD CONSTRAINT adresse_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT adresse_pkey PRIMARY KEY (id);
 
 
 -- Name: contact contact_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.contact
-  ADD CONSTRAINT contact_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT contact_pkey PRIMARY KEY (id);
 
 
--- Name: contact_structure contact_structure_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative contact_structure_administrative_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
-ALTER TABLE ONLY main.contact_structure
-  ADD CONSTRAINT contact_structure_pkey PRIMARY KEY (id);
-
-
--- Name: contact_structure contact_structure_unique; Type: CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.contact_structure
-  ADD CONSTRAINT contact_structure_unique UNIQUE (structure_id, contact_id);
+ALTER TABLE ONLY main.contact_structure_administrative
+    ADD CONSTRAINT contact_structure_administrative_pkey PRIMARY KEY (id);
 
 
--- Name: contrat contrat_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative contact_structure_administrative_unique; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.contact_structure_administrative
+    ADD CONSTRAINT contact_structure_administrative_unique UNIQUE (structure_administrative_id, contact_id);
+
+
+-- Name: contrat contrat_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.contrat
-  ADD CONSTRAINT contrat_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT contrat_pkey PRIMARY KEY (id);
 
 
--- Name: coordination_mediation coordination_mediation_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: coordination_mediation coordination_mediation_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.coordination_mediation
-  ADD CONSTRAINT coordination_mediation_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT coordination_mediation_pkey PRIMARY KEY (id);
 
 
--- Name: formation formation_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: formation formation_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.formation
-  ADD CONSTRAINT formation_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT formation_pkey PRIMARY KEY (id);
 
 
--- Name: personne_affectations personne_affectations_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: lieu_inclusion lieu_inclusion_carto_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion
+    ADD CONSTRAINT lieu_inclusion_carto_id_ukey UNIQUE (structure_cartographie_nationale_id);
+
+
+-- Name: lieu_inclusion lieu_inclusion_old_main_structure_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion
+    ADD CONSTRAINT lieu_inclusion_old_main_structure_id_ukey UNIQUE (old_main_structure_id);
+
+
+-- Name: lieu_inclusion lieu_inclusion_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion
+    ADD CONSTRAINT lieu_inclusion_pkey PRIMARY KEY (id);
+
+
+-- Name: lieu_inclusion_structure_administrative lieu_inclusion_structure_administrative_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion_structure_administrative
+    ADD CONSTRAINT lieu_inclusion_structure_administrative_pkey PRIMARY KEY (id);
+
+
+-- Name: lieu_inclusion_structure_administrative lieu_inclusion_structure_administrative_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion_structure_administrative
+    ADD CONSTRAINT lieu_inclusion_structure_administrative_ukey UNIQUE (lieu_id, structure_administrative_id);
+
+
+-- Name: lieu_inclusion lieu_inclusion_structure_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion
+    ADD CONSTRAINT lieu_inclusion_structure_coop_id_ukey UNIQUE (structure_coop_id);
+
+
+-- Name: personne_affectations_emploi personne_affectations_emploi_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_emploi
+    ADD CONSTRAINT personne_affectations_emploi_pkey PRIMARY KEY (id);
+
+
+-- Name: personne_affectations_lieu personne_affectations_lieu_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_lieu
+    ADD CONSTRAINT personne_affectations_lieu_pkey PRIMARY KEY (id);
+
+
+-- Name: personne_affectations personne_affectations_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.personne_affectations
-  ADD CONSTRAINT personne_affectations_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT personne_affectations_pkey PRIMARY KEY (id);
 
 
 -- Name: personne personne_aidant_connect_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-  ADD CONSTRAINT personne_aidant_connect_id_ukey UNIQUE (aidant_connect_id);
+    ADD CONSTRAINT personne_aidant_connect_id_ukey UNIQUE (aidant_connect_id);
 
 
 -- Name: personne personne_cn_pg_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-  ADD CONSTRAINT personne_cn_pg_id_ukey UNIQUE (cn_pg_id);
+    ADD CONSTRAINT personne_cn_pg_id_ukey UNIQUE (cn_pg_id);
 
 
 -- Name: personne personne_conseiller_numerique_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-  ADD CONSTRAINT personne_conseiller_numerique_id_ukey UNIQUE (conseiller_numerique_id);
+    ADD CONSTRAINT personne_conseiller_numerique_id_ukey UNIQUE (conseiller_numerique_id);
 
 
 -- Name: personne personne_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-  ADD CONSTRAINT personne_coop_id_ukey UNIQUE (coop_id);
+    ADD CONSTRAINT personne_coop_id_ukey UNIQUE (coop_id);
 
 
 -- Name: personne personne_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-  ADD CONSTRAINT personne_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT personne_pkey PRIMARY KEY (id);
 
 
--- Name: poste poste_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.poste
-  ADD CONSTRAINT poste_pkey PRIMARY KEY (id);
-
-
--- Name: poste poste_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: poste poste_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.poste
-  ADD CONSTRAINT poste_ukey UNIQUE (poste_conum_id, structure_id, personne_id);
+    ADD CONSTRAINT poste_pkey PRIMARY KEY (id);
 
 
--- Name: structure structure_cartographie_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: poste poste_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.poste
+    ADD CONSTRAINT poste_ukey UNIQUE (poste_conum_id, structure_id, personne_id);
+
+
+-- Name: structure_administrative structure_administrative_old_main_structure_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_old_main_structure_id_ukey UNIQUE (old_main_structure_id);
+
+
+-- Name: structure_administrative structure_administrative_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_pkey PRIMARY KEY (id);
+
+
+-- Name: structure_administrative structure_administrative_ridet_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_ridet_ukey UNIQUE (ridet);
+
+
+-- Name: structure_administrative structure_administrative_siret_antenne_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_siret_antenne_ukey UNIQUE NULLS NOT DISTINCT (siret, denomination_antenne);
+
+
+-- Name: structure_administrative structure_administrative_structure_ac_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_structure_ac_id_ukey UNIQUE (structure_ac_id);
+
+
+-- Name: structure_administrative structure_administrative_structure_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_structure_coop_id_ukey UNIQUE (structure_coop_id);
+
+
+-- Name: structure_administrative structure_administrative_structure_tp_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_structure_tp_id_ukey UNIQUE (structure_tp_id);
+
+
+-- Name: structure structure_cartographie_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_cartographie_ukey UNIQUE (structure_cartographie_nationale_id);
+    ADD CONSTRAINT structure_cartographie_ukey UNIQUE (structure_cartographie_nationale_id);
 
 
--- Name: structure structure_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_pkey PRIMARY KEY (id);
-
-
--- Name: structure structure_structure_ac_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: structure structure_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_structure_ac_id_ukey UNIQUE (structure_ac_id);
+    ADD CONSTRAINT structure_pkey PRIMARY KEY (id);
 
 
--- Name: structure structure_structure_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_structure_coop_id_ukey UNIQUE (structure_coop_id);
-
-
--- Name: structure structure_structure_tp_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: structure structure_structure_ac_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_structure_tp_id_ukey UNIQUE (structure_tp_id);
+    ADD CONSTRAINT structure_structure_ac_id_ukey UNIQUE (structure_ac_id);
 
 
--- Name: structure structure_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: structure structure_structure_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_ukey UNIQUE (siret, nom, adresse_id);
+    ADD CONSTRAINT structure_structure_coop_id_ukey UNIQUE (structure_coop_id);
 
 
--- Name: subvention subvention_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+-- Name: structure structure_structure_tp_id_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure
+    ADD CONSTRAINT structure_structure_tp_id_ukey UNIQUE (structure_tp_id);
+
+
+-- Name: structure structure_ukey; Type: CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure
+    ADD CONSTRAINT structure_ukey UNIQUE (siret, nom, adresse_id);
+
+
+-- Name: subvention subvention_pkey; Type: CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.subvention
-  ADD CONSTRAINT subvention_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT subvention_pkey PRIMARY KEY (id);
 
 
 -- Name: categories_juridiques categories_juridiques_pkey; Type: CONSTRAINT; Schema: reference; Owner: sonum
 
 ALTER TABLE ONLY reference.categories_juridiques
-  ADD CONSTRAINT categories_juridiques_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT categories_juridiques_pkey PRIMARY KEY (id);
 
 
 -- Name: categories_juridiques categories_juridiques_ukey; Type: CONSTRAINT; Schema: reference; Owner: sonum
 
 ALTER TABLE ONLY reference.categories_juridiques
-  ADD CONSTRAINT categories_juridiques_ukey UNIQUE (code);
+    ADD CONSTRAINT categories_juridiques_ukey UNIQUE (code);
 
 
--- Name: naf naf_pkey; Type: CONSTRAINT; Schema: reference; Owner: sonum
-
-ALTER TABLE ONLY reference.naf
-  ADD CONSTRAINT naf_pkey PRIMARY KEY (id);
-
-
--- Name: naf naf_ukey; Type: CONSTRAINT; Schema: reference; Owner: sonum
+-- Name: naf naf_pkey; Type: CONSTRAINT; Schema: reference; Owner: dataspace
 
 ALTER TABLE ONLY reference.naf
-  ADD CONSTRAINT naf_ukey UNIQUE (code);
+    ADD CONSTRAINT naf_pkey PRIMARY KEY (id);
 
 
--- Name: commune_geom_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: naf naf_ukey; Type: CONSTRAINT; Schema: reference; Owner: dataspace
+
+ALTER TABLE ONLY reference.naf
+    ADD CONSTRAINT naf_ukey UNIQUE (code);
+
+
+-- Name: commune_geom_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX commune_geom_idx ON admin.commune USING gist (geom);
 
 
--- Name: commune_nom_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: commune_nom_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX commune_nom_idx ON admin.commune USING btree (nom);
 
 
--- Name: ifn_commune_code_insee_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: departement_code_idx; Type: INDEX; Schema: admin; Owner: dataspace
+
+CREATE UNIQUE INDEX departement_code_idx ON admin.departement USING btree (code);
+
+
+-- Name: departement_nom_idx; Type: INDEX; Schema: admin; Owner: dataspace
+
+CREATE INDEX departement_nom_idx ON admin.departement USING btree (nom);
+
+
+-- Name: ifn_commune_code_insee_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX ifn_commune_code_insee_idx ON admin.ifn_commune USING btree (code_insee);
 
 
--- Name: ifn_departement_code_dept_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: ifn_departement_code_dept_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX ifn_departement_code_dept_idx ON admin.ifn_departement USING btree (code);
 
 
--- Name: zonage_code_insee_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: region_code_idx; Type: INDEX; Schema: admin; Owner: dataspace
+
+CREATE UNIQUE INDEX region_code_idx ON admin.region USING btree (code);
+
+
+-- Name: region_nom_idx; Type: INDEX; Schema: admin; Owner: dataspace
+
+CREATE INDEX region_nom_idx ON admin.region USING btree (nom);
+
+
+-- Name: zonage_code_insee_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX zonage_code_insee_idx ON admin.zonage USING btree (code_insee);
 
 
--- Name: zonage_frr_ukey; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: zonage_frr_ukey; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE UNIQUE INDEX zonage_frr_ukey ON admin.zonage USING btree (code_insee) WHERE ((type)::text = 'FRR'::text);
 
 
--- Name: zonage_geom_idx; Type: INDEX; Schema: admin; Owner: sonum
+-- Name: zonage_geom_idx; Type: INDEX; Schema: admin; Owner: dataspace
 
 CREATE INDEX zonage_geom_idx ON admin.zonage USING gist (geom);
 
 
--- Name: personne_merge_log_loser_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_loser_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX personne_merge_log_loser_idx ON audit.personne_merge_log USING btree (loser_id);
 
 
--- Name: personne_merge_log_merged_at_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_merged_at_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX personne_merge_log_merged_at_idx ON audit.personne_merge_log USING btree (merged_at);
 
 
--- Name: personne_merge_log_run_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_run_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX personne_merge_log_run_idx ON audit.personne_merge_log USING btree (run_id);
 
 
--- Name: personne_merge_log_winner_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: personne_merge_log_winner_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX personne_merge_log_winner_idx ON audit.personne_merge_log USING btree (winner_id);
 
 
--- Name: structure_merge_log_loser_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_loser_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX structure_merge_log_loser_idx ON audit.structure_merge_log USING btree (loser_id);
 
 
--- Name: structure_merge_log_merged_at_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_merged_at_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX structure_merge_log_merged_at_idx ON audit.structure_merge_log USING btree (merged_at);
 
 
--- Name: structure_merge_log_run_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_run_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX structure_merge_log_run_idx ON audit.structure_merge_log USING btree (run_id);
 
 
--- Name: structure_merge_log_winner_idx; Type: INDEX; Schema: audit; Owner: sonum
+-- Name: structure_merge_log_winner_idx; Type: INDEX; Schema: audit; Owner: dataspace
 
 CREATE INDEX structure_merge_log_winner_idx ON audit.structure_merge_log USING btree (winner_id);
 
 
--- Name: activites_coop_lieu_code_insee_idx; Type: INDEX; Schema: main; Owner: sonum
+-- Name: activites_coop_lieu_code_insee_idx; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX activites_coop_lieu_code_insee_idx ON main.activites_coop USING btree (lieu_code_insee);
 
 
--- Name: activites_coop_periode_idx; Type: INDEX; Schema: main; Owner: sonum
+-- Name: activites_coop_periode_idx; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX activites_coop_periode_idx ON main.activites_coop USING btree (periode);
 
 
--- Name: activites_coop_personne_id_idx; Type: INDEX; Schema: main; Owner: sonum
+-- Name: activites_coop_personne_id_idx; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX activites_coop_personne_id_idx ON main.activites_coop USING btree (personne_id);
 
@@ -1901,60 +2662,120 @@ CREATE INDEX adresse_geom_idx ON main.adresse USING gist (geom);
 
 -- Name: adresse_ukey; Type: INDEX; Schema: main; Owner: sonum
 
-CREATE UNIQUE INDEX adresse_ukey ON main.adresse USING btree (code_postal, nom_commune, nom_voie, COALESCE((numero_voie)::integer, 0), COALESCE(repetition, ''::character varying));
+CREATE UNIQUE INDEX adresse_ukey ON main.adresse USING btree (code_postal, nom_commune, nom_voie, COALESCE((numero_voie)::integer, 0), COALESCE(repetition, ''::character varying)) NULLS NOT DISTINCT;
 
 
--- Name: contact_structure_contact_id_idx; Type: INDEX; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative_structure_id_idx; Type: INDEX; Schema: main; Owner: dataspace
 
-CREATE INDEX contact_structure_contact_id_idx ON main.contact_structure USING btree (contact_id);
-
-
--- Name: contact_structure_structure_id_idx; Type: INDEX; Schema: main; Owner: sonum
-
-CREATE INDEX contact_structure_structure_id_idx ON main.contact_structure USING btree (structure_id);
+CREATE INDEX contact_structure_administrative_structure_id_idx ON main.contact_structure_administrative USING btree (structure_administrative_id);
 
 
--- Name: coordination_mediation_ukey; Type: INDEX; Schema: main; Owner: sonum
+-- Name: contact_structure_contact_id_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX contact_structure_contact_id_idx ON main.contact_structure_administrative USING btree (contact_id);
+
+
+-- Name: coordination_mediation_ukey; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE UNIQUE INDEX coordination_mediation_ukey ON main.coordination_mediation USING btree (coordinateur_id, mediateur_id, COALESCE(suppression, '1234-01-02 03:04:05+00'::timestamp with time zone));
 
 
--- Name: formation_personne_id_idx; Type: INDEX; Schema: main; Owner: sonum
+-- Name: formation_personne_id_idx; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX formation_personne_id_idx ON main.formation USING btree (personne_id);
 
 
--- Name: idx_activites_coop_structure_id; Type: INDEX; Schema: main; Owner: sonum
+-- Name: idx_activites_coop_structure_id; Type: INDEX; Schema: main; Owner: dataspace
 
-CREATE INDEX idx_activites_coop_structure_id ON main.activites_coop USING btree (structure_id);
+CREATE INDEX idx_activites_coop_structure_id ON main.activites_coop USING btree (lieu_id);
 
 
--- Name: idx_contrat_structure_id; Type: INDEX; Schema: main; Owner: sonum
+-- Name: idx_contrat_structure_id; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX idx_contrat_structure_id ON main.contrat USING btree (structure_id);
 
 
--- Name: idx_personne_affectations_personne_id; Type: INDEX; Schema: main; Owner: sonum
+-- Name: idx_personne_affectations_emploi_active; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_emploi_active ON main.personne_affectations_emploi USING btree (structure_administrative_id, est_active) WHERE (est_active = true);
+
+
+-- Name: idx_personne_affectations_emploi_personne_id; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_emploi_personne_id ON main.personne_affectations_emploi USING btree (personne_id);
+
+
+-- Name: idx_personne_affectations_emploi_structure_administrative_id; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_emploi_structure_administrative_id ON main.personne_affectations_emploi USING btree (structure_administrative_id);
+
+
+-- Name: idx_personne_affectations_lieu_active; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_lieu_active ON main.personne_affectations_lieu USING btree (lieu_id, est_active) WHERE (est_active = true);
+
+
+-- Name: idx_personne_affectations_lieu_lieu_id; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_lieu_lieu_id ON main.personne_affectations_lieu USING btree (lieu_id);
+
+
+-- Name: idx_personne_affectations_lieu_personne_id; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX idx_personne_affectations_lieu_personne_id ON main.personne_affectations_lieu USING btree (personne_id);
+
+
+-- Name: idx_personne_affectations_personne_id; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX idx_personne_affectations_personne_id ON main.personne_affectations USING btree (personne_id);
 
 
--- Name: idx_personne_affectations_structure_id; Type: INDEX; Schema: main; Owner: sonum
+-- Name: idx_personne_affectations_structure_id; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX idx_personne_affectations_structure_id ON main.personne_affectations USING btree (structure_id);
 
 
--- Name: idx_poste_structure_id; Type: INDEX; Schema: main; Owner: sonum
+-- Name: idx_poste_structure_id; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE INDEX idx_poste_structure_id ON main.poste USING btree (structure_id);
 
 
--- Name: personne_affectations_ukey; Type: INDEX; Schema: main; Owner: sonum
+-- Name: lieu_inclusion_adresse_id_idx; Type: INDEX; Schema: main; Owner: dataspace
 
-CREATE UNIQUE INDEX personne_affectations_ukey ON main.personne_affectations USING btree (structure_coop_id, mediateur_coop_id, type);
+CREATE INDEX lieu_inclusion_adresse_id_idx ON main.lieu_inclusion USING btree (adresse_id);
 
 
--- Name: personne_affectations_unique_key; Type: INDEX; Schema: main; Owner: sonum
+-- Name: lieu_inclusion_nom_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX lieu_inclusion_nom_idx ON main.lieu_inclusion USING btree (nom);
+
+
+-- Name: lieu_inclusion_structure_administrative_admin_id_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX lieu_inclusion_structure_administrative_admin_id_idx ON main.lieu_inclusion_structure_administrative USING btree (structure_administrative_id);
+
+
+-- Name: lieu_inclusion_structure_administrative_lieu_id_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX lieu_inclusion_structure_administrative_lieu_id_idx ON main.lieu_inclusion_structure_administrative USING btree (lieu_id);
+
+
+-- Name: lieu_inclusion_visible_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX lieu_inclusion_visible_idx ON main.lieu_inclusion USING btree (visible_pour_cartographie_nationale) WHERE (visible_pour_cartographie_nationale = true);
+
+
+-- Name: personne_affectations_emploi_ukey; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE UNIQUE INDEX personne_affectations_emploi_ukey ON main.personne_affectations_emploi USING btree (personne_id, structure_administrative_id, source);
+
+
+-- Name: personne_affectations_lieu_ukey; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE UNIQUE INDEX personne_affectations_lieu_ukey ON main.personne_affectations_lieu USING btree (personne_id, lieu_id, source);
+
+
+-- Name: personne_affectations_unique_key; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE UNIQUE INDEX personne_affectations_unique_key ON main.personne_affectations USING btree (structure_id, personne_id, type, source);
 
@@ -1969,152 +2790,404 @@ CREATE INDEX personne_patronyme ON main.personne USING btree (nom, prenom);
 CREATE INDEX personne_trgm_idx ON main.personne USING gist (((((prenom)::text || ' '::text) || (nom)::text)) public.gist_trgm_ops (siglen='64'));
 
 
--- Name: structure_carto_ukey; Type: INDEX; Schema: main; Owner: sonum
+-- Name: structure_administrative_adresse_id_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX structure_administrative_adresse_id_idx ON main.structure_administrative USING btree (adresse_id);
+
+
+-- Name: structure_administrative_denomination_sirene_idx; Type: INDEX; Schema: main; Owner: dataspace
+
+CREATE INDEX structure_administrative_denomination_sirene_idx ON main.structure_administrative USING btree (denomination_sirene);
+
+
+-- Name: structure_carto_ukey; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE UNIQUE INDEX structure_carto_ukey ON main.structure USING btree (structure_cartographie_nationale_id, source);
 
 
--- Name: structure_nom_ukey; Type: INDEX; Schema: main; Owner: sonum
+-- Name: structure_nom_ukey; Type: INDEX; Schema: main; Owner: dataspace
 
 CREATE UNIQUE INDEX structure_nom_ukey ON main.structure USING btree (siret, nom, COALESCE(adresse_id, 0));
 
 
--- Name: commune commune_departement_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: icp_departement admin_icp_departement_updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER admin_icp_departement_updated_at BEFORE UPDATE ON admin.icp_departement FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: ifn_departement admin_ifn_departement_updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER admin_ifn_departement_updated_at BEFORE UPDATE ON admin.ifn_departement FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: commune updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.commune FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: commune_epci updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.commune_epci FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: departement updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.departement FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: epci updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.epci FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: ifn_commune updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.ifn_commune FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: insee_cp updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.insee_cp FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: insee_historique updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.insee_historique FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: region updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.region FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: zonage updated_at; Type: TRIGGER; Schema: admin; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON admin.zonage FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne edited_by; Type: TRIGGER; Schema: main; Owner: sonum
+
+CREATE TRIGGER edited_by BEFORE INSERT OR UPDATE ON main.personne FOR EACH ROW EXECUTE FUNCTION public.edited_by_column();
+
+
+-- Name: structure edited_by; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER edited_by BEFORE INSERT OR UPDATE ON main.structure FOR EACH ROW EXECUTE FUNCTION public.edited_by_column();
+
+
+-- Name: activites_coop updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.activites_coop FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: adresse updated_at; Type: TRIGGER; Schema: main; Owner: sonum
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.adresse FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: contrat updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.contrat FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: coordination_mediation updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.coordination_mediation FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: formation updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.formation FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: lieu_inclusion updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.lieu_inclusion FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: lieu_inclusion_structure_administrative updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.lieu_inclusion_structure_administrative FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne updated_at; Type: TRIGGER; Schema: main; Owner: sonum
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.personne FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne_affectations updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.personne_affectations FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne_affectations_emploi updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.personne_affectations_emploi FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne_affectations_lieu updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.personne_affectations_lieu FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: poste updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.poste FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: structure updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.structure FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: structure_administrative updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.structure_administrative FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: subvention updated_at; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON main.subvention FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: activites_coop updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.activites_coop FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: adresse updated_at_insert; Type: TRIGGER; Schema: main; Owner: sonum
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.adresse FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: contrat updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.contrat FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: coordination_mediation updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.coordination_mediation FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: formation updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.formation FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne updated_at_insert; Type: TRIGGER; Schema: main; Owner: sonum
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.personne FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: personne_affectations updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.personne_affectations FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: poste updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.poste FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: structure updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.structure FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: subvention updated_at_insert; Type: TRIGGER; Schema: main; Owner: dataspace
+
+CREATE TRIGGER updated_at_insert BEFORE INSERT ON main.subvention FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: categories_juridiques updated_at; Type: TRIGGER; Schema: reference; Owner: sonum
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON reference.categories_juridiques FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: naf updated_at; Type: TRIGGER; Schema: reference; Owner: dataspace
+
+CREATE TRIGGER updated_at BEFORE UPDATE ON reference.naf FOR EACH ROW EXECUTE FUNCTION public.updated_at_column();
+
+
+-- Name: commune commune_departement_id; Type: FK CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.commune
-  ADD CONSTRAINT commune_departement_id FOREIGN KEY (departement_id) REFERENCES admin.departement(id);
+    ADD CONSTRAINT commune_departement_id FOREIGN KEY (departement_id) REFERENCES admin.departement(id);
 
 
--- Name: commune_epci commune_epci_commune_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.commune_epci
-  ADD CONSTRAINT commune_epci_commune_id FOREIGN KEY (commune_id) REFERENCES admin.commune(id);
-
-
--- Name: commune_epci commune_epci_epci_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: commune_epci commune_epci_commune_id; Type: FK CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.commune_epci
-  ADD CONSTRAINT commune_epci_epci_id FOREIGN KEY (epci_id) REFERENCES admin.epci(id);
+    ADD CONSTRAINT commune_epci_commune_id FOREIGN KEY (commune_id) REFERENCES admin.commune(id);
 
 
--- Name: departement departement_region_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: commune_epci commune_epci_epci_id; Type: FK CONSTRAINT; Schema: admin; Owner: dataspace
+
+ALTER TABLE ONLY admin.commune_epci
+    ADD CONSTRAINT commune_epci_epci_id FOREIGN KEY (epci_id) REFERENCES admin.epci(id);
+
+
+-- Name: departement departement_region_id; Type: FK CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.departement
-  ADD CONSTRAINT departement_region_id FOREIGN KEY (region_id) REFERENCES admin.region(id);
+    ADD CONSTRAINT departement_region_id FOREIGN KEY (region_id) REFERENCES admin.region(id);
 
 
--- Name: zonage zonage_code_insee_fkey; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
+-- Name: zonage zonage_code_insee_fkey; Type: FK CONSTRAINT; Schema: admin; Owner: dataspace
 
 ALTER TABLE ONLY admin.zonage
-  ADD CONSTRAINT zonage_code_insee_fkey FOREIGN KEY (code_insee) REFERENCES admin.commune(code_insee);
+    ADD CONSTRAINT zonage_code_insee_fkey FOREIGN KEY (code_insee) REFERENCES admin.commune(code_insee);
 
 
--- Name: activites_coop activites_coop_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.activites_coop
-  ADD CONSTRAINT activites_coop_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
-
-
--- Name: activites_coop activites_coop_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: activites_coop activites_coop_lieu_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.activites_coop
-  ADD CONSTRAINT activites_coop_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+    ADD CONSTRAINT activites_coop_lieu_id_fkey FOREIGN KEY (lieu_id) REFERENCES main.lieu_inclusion(id) ON DELETE SET NULL;
 
 
--- Name: contact_structure contact_structure_contact_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: activites_coop activites_coop_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
-ALTER TABLE ONLY main.contact_structure
-  ADD CONSTRAINT contact_structure_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES main.contact(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
--- Name: contact_structure contact_structure_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.contact_structure
-  ADD CONSTRAINT contact_structure_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY main.activites_coop
+    ADD CONSTRAINT activites_coop_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
--- Name: contrat contrat_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: contact_structure_administrative contact_structure_administrative_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.contact_structure_administrative
+    ADD CONSTRAINT contact_structure_administrative_structure_id_fkey FOREIGN KEY (structure_administrative_id) REFERENCES main.structure_administrative(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Name: contact_structure_administrative contact_structure_contact_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.contact_structure_administrative
+    ADD CONSTRAINT contact_structure_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES main.contact(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Name: contrat contrat_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.contrat
-  ADD CONSTRAINT contrat_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT contrat_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
--- Name: contrat contrat_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: contrat contrat_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.contrat
-  ADD CONSTRAINT contrat_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+    ADD CONSTRAINT contrat_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure_administrative(id);
 
 
--- Name: coordination_mediation coordination_mediation_coodinateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.coordination_mediation
-  ADD CONSTRAINT coordination_mediation_coodinateur_id_fkey FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
-
-
--- Name: coordination_mediation coordination_mediation_mediateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: coordination_mediation coordination_mediation_coodinateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.coordination_mediation
-  ADD CONSTRAINT coordination_mediation_mediateur_id_fkey FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT coordination_mediation_coodinateur_id_fkey FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
 
 
--- Name: formation formation_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: coordination_mediation coordination_mediation_mediateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.coordination_mediation
+    ADD CONSTRAINT coordination_mediation_mediateur_id_fkey FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
+
+
+-- Name: formation formation_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.formation
-  ADD CONSTRAINT formation_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT formation_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
--- Name: personne_affectations personne_affectations_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: lieu_inclusion lieu_inclusion_adresse_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion
+    ADD CONSTRAINT lieu_inclusion_adresse_fkey FOREIGN KEY (adresse_id) REFERENCES main.adresse(id);
+
+
+-- Name: lieu_inclusion_structure_administrative lieu_inclusion_structure_administrative_admin_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion_structure_administrative
+    ADD CONSTRAINT lieu_inclusion_structure_administrative_admin_fkey FOREIGN KEY (structure_administrative_id) REFERENCES main.structure_administrative(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Name: lieu_inclusion_structure_administrative lieu_inclusion_structure_administrative_lieu_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.lieu_inclusion_structure_administrative
+    ADD CONSTRAINT lieu_inclusion_structure_administrative_lieu_fkey FOREIGN KEY (lieu_id) REFERENCES main.lieu_inclusion(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Name: personne_affectations_emploi personne_affectations_emploi_admin_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_emploi
+    ADD CONSTRAINT personne_affectations_emploi_admin_fkey FOREIGN KEY (structure_administrative_id) REFERENCES main.structure_administrative(id);
+
+
+-- Name: personne_affectations_emploi personne_affectations_emploi_personne_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_emploi
+    ADD CONSTRAINT personne_affectations_emploi_personne_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: personne_affectations_lieu personne_affectations_lieu_lieu_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_lieu
+    ADD CONSTRAINT personne_affectations_lieu_lieu_fkey FOREIGN KEY (lieu_id) REFERENCES main.lieu_inclusion(id);
+
+
+-- Name: personne_affectations_lieu personne_affectations_lieu_personne_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.personne_affectations_lieu
+    ADD CONSTRAINT personne_affectations_lieu_personne_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: personne_affectations personne_affectations_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.personne_affectations
-  ADD CONSTRAINT personne_affectations_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT personne_affectations_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
--- Name: personne_affectations personne_affectations_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: personne_affectations personne_affectations_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.personne_affectations
-  ADD CONSTRAINT personne_affectations_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+    ADD CONSTRAINT personne_affectations_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
 
 
--- Name: poste poste_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.poste
-  ADD CONSTRAINT poste_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
-
-
--- Name: poste poste_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: poste poste_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.poste
-  ADD CONSTRAINT poste_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+    ADD CONSTRAINT poste_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
--- Name: structure structure_adresse_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: poste poste_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.poste
+    ADD CONSTRAINT poste_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure_administrative(id);
+
+
+-- Name: structure_administrative structure_administrative_adresse_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_adresse_fkey FOREIGN KEY (adresse_id) REFERENCES main.adresse(id);
+
+
+-- Name: structure_administrative structure_administrative_categorie_juridique_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
+
+ALTER TABLE ONLY main.structure_administrative
+    ADD CONSTRAINT structure_administrative_categorie_juridique_fkey FOREIGN KEY (categorie_juridique) REFERENCES reference.categories_juridiques(code);
+
+
+-- Name: structure structure_adresse_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_adresse_fkey FOREIGN KEY (adresse_id) REFERENCES main.adresse(id);
+    ADD CONSTRAINT structure_adresse_fkey FOREIGN KEY (adresse_id) REFERENCES main.adresse(id);
 
 
--- Name: structure structure_categorie_juridique_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: structure structure_categorie_juridique_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.structure
-  ADD CONSTRAINT structure_categorie_juridique_fkey FOREIGN KEY (categorie_juridique) REFERENCES reference.categories_juridiques(code);
+    ADD CONSTRAINT structure_categorie_juridique_fkey FOREIGN KEY (categorie_juridique) REFERENCES reference.categories_juridiques(code);
 
 
--- Name: subvention subvention_poste_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: subvention subvention_poste_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: dataspace
 
 ALTER TABLE ONLY main.subvention
-  ADD CONSTRAINT subvention_poste_id_fkey FOREIGN KEY (poste_id) REFERENCES main.poste(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
--- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: admin; Owner: sonum
-
-ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT USAGE,UPDATE ON SEQUENCES TO app_python;
-
-
--- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: admin; Owner: sonum
-
-ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLES TO app_python;
-ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT SELECT ON TABLES TO min_scalingo;
-ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT SELECT ON TABLES TO min_dev;
+    ADD CONSTRAINT subvention_poste_id_fkey FOREIGN KEY (poste_id) REFERENCES main.poste(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: main; Owner: sonum
@@ -2135,527 +3208,10 @@ ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABL
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABLES TO min_dev;
 
 
+-- Name: coll_terr; Type: MATERIALIZED VIEW DATA; Schema: admin; Owner: dataspace
 
--- Name: merge_personne(integer, integer); Type: FUNCTION; Schema: main; Owner: sonum
-
-CREATE FUNCTION main.merge_personne(winner_id integer, loser_id integer) RETURNS void
-  LANGUAGE plpgsql
-    AS $$
-DECLARE
-p_winner main.personne;
-    p_loser main.personne;
-BEGIN
-    IF winner_id = loser_id THEN
-        RAISE EXCEPTION 'winner_id et loser_id doivent être différents';
-END IF;
-
-    -- Lock les deux personnes
-    PERFORM 1 FROM main.personne WHERE id = winner_id FOR UPDATE;
-PERFORM 1 FROM main.personne WHERE id = loser_id FOR UPDATE;
-
--- Récupère les données
-SELECT * INTO p_winner FROM main.personne WHERE id = winner_id;
-SELECT * INTO p_loser FROM main.personne WHERE id = loser_id;
-
--- 1. Vider les champs uniques sur le loser AVANT de les transférer
-UPDATE main.personne
-SET
-  aidant_connect_id = NULL,
-  cn_pg_id = NULL,
-  conseiller_numerique_id = NULL,
-  coop_id = NULL
-WHERE id = loser_id;
-
--- 2. Mettre à jour les champs sur le winner (si manquants)
-UPDATE main.personne
-SET
-  aidant_connect_id = COALESCE(p_winner.aidant_connect_id, p_loser.aidant_connect_id),
-  cn_pg_id = COALESCE(p_winner.cn_pg_id, p_loser.cn_pg_id),
-  conseiller_numerique_id = COALESCE(p_winner.conseiller_numerique_id, p_loser.conseiller_numerique_id),
-  nb_accompagnements_ac = COALESCE(p_winner.nb_accompagnements_ac, p_loser.nb_accompagnements_ac),
-  contact = COALESCE(NULLIF(p_winner.contact, '{}'::jsonb), p_loser.contact),
-  profession_ac = COALESCE(p_winner.profession_ac, p_loser.profession_ac),
-  is_active_ac = COALESCE(p_winner.is_active_ac, p_loser.is_active_ac),
-  is_mediateur = COALESCE(p_winner.is_mediateur, p_loser.is_mediateur),
-  coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
-WHERE id = winner_id;
-
--- 3. Supprimer les doublons potentiels dans personne_affectations
-DELETE FROM main.personne_affectations pa
-  USING main.personne_affectations pb
-WHERE pa.personne_id = loser_id
-  AND pb.personne_id = winner_id
-  AND pa.structure_id = pb.structure_id
-  AND pa.type = pb.type
-  AND COALESCE(pa.suppression, '1234-01-02 03:04:05+00') = COALESCE(pb.suppression, '1234-01-02 03:04:05+00');
-
--- 4. Re-mapper les relations vers le winner
-UPDATE main.personne_affectations SET personne_id = winner_id WHERE personne_id = loser_id;
-UPDATE main.activites_coop        SET personne_id = winner_id WHERE personne_id = loser_id;
-UPDATE main.contrat               SET personne_id = winner_id WHERE personne_id = loser_id;
-UPDATE main.formation             SET personne_id = winner_id WHERE personne_id = loser_id;
-UPDATE main.poste                 SET personne_id = winner_id WHERE personne_id = loser_id;
-
--- 5. Remplacer dans coordination_mediation les IDs
-UPDATE main.coordination_mediation
-SET
-  mediateur_id = winner_id,
-  mediateur_coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
-WHERE mediateur_id = loser_id;
-
-UPDATE main.coordination_mediation
-SET
-  coordinateur_id = winner_id,
-  coordinateur_coop_id = COALESCE(p_winner.coop_id, p_loser.coop_id)
-WHERE coordinateur_id = loser_id;
-
--- 6. Supprimer définitivement le loser
-DELETE FROM main.personne WHERE id = loser_id;
-
-RAISE NOTICE 'Fusion réussie entre winner_id=%, loser_id=%', winner_id, loser_id;
-END;
-$$;
+REFRESH MATERIALIZED VIEW admin.coll_terr;
 
 
-ALTER FUNCTION main.merge_personne(winner_id integer, loser_id integer) OWNER TO sonum;
-
--- Name: merge_structure(integer, integer); Type: FUNCTION; Schema: main; Owner: sonum
-
-CREATE FUNCTION main.merge_structure(v_winner integer, v_loser integer) RETURNS void
-  LANGUAGE plpgsql
-    AS $$
-DECLARE
-v_zero          timestamptz := '1234-01-02 03:04:05+00'::timestamptz; -- sentinelle UNIQUE
-  v_loser_coop    uuid;
-  v_winner_coop   uuid;
-  v_loser_carto   text;   -- structure_cartographie_nationale_id (texte composite)
-  v_winner_carto  text;
-  v_loser_ac      uuid;
-  v_winner_ac     uuid;
-BEGIN
-  ---------------------------------------------------------------------------
-  -- 0) Verrouiller + lire les identifiants uniques (COOP + CARTO) du loser & winner
-  ---------------------------------------------------------------------------
-SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
-INTO v_loser_coop, v_loser_carto, v_loser_ac
-FROM main.structure
-WHERE id = v_loser
-  FOR UPDATE;
-
-SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
-INTO v_winner_coop, v_winner_carto, v_winner_ac
-FROM main.structure
-WHERE id = v_winner
-  FOR UPDATE;
-
----------------------------------------------------------------------------
--- 1) TRANSFERTS D’UNICITÉ (loser -> NULL ; winner -> valeur du loser)
----------------------------------------------------------------------------
-UPDATE main.structure
-SET structure_coop_id                   = NULL,
-    structure_ac_id                     = NULL,
-    structure_cartographie_nationale_id = NULL
-WHERE id = v_loser;
-
-IF v_loser_coop IS NOT NULL THEN
-UPDATE main.structure SET structure_coop_id = v_loser_coop
-WHERE id = v_winner;
-END IF;
-
-  IF v_loser_ac IS NOT NULL THEN
-UPDATE main.structure SET structure_ac_id = v_loser_ac
-WHERE id = v_winner;
-END IF;
-
-  IF v_loser_carto IS NOT NULL THEN
-UPDATE main.structure SET structure_cartographie_nationale_id = v_loser_carto
-WHERE id = v_winner;
-END IF;
-
-SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
-INTO v_winner_coop, v_winner_carto, v_winner_ac
-FROM main.structure
-WHERE id = v_winner;
-
----------------------------------------------------------------------------
--- 2) Fusionner les champs informatifs (loser -> winner)
---    ⚠️ NE PAS toucher à structure_coop_id / structure_cartographie_nationale_id ici.
----------------------------------------------------------------------------
-UPDATE main.structure w
-SET
-  denomination_sirene = COALESCE(w.denomination_sirene, l.denomination_sirene),
-  siret               = COALESCE(w.siret, l.siret),
-  rna                 = COALESCE(w.rna, l.rna),
-  adresse_id          = COALESCE(w.adresse_id, l.adresse_id),
-  etat_administratif  = COALESCE(w.etat_administratif, l.etat_administratif),
-  code_activite_principale = COALESCE(w.code_activite_principale, l.code_activite_principale),
-  categorie_juridique = COALESCE(w.categorie_juridique, l.categorie_juridique),
-  publique            = COALESCE(w.publique, l.publique),
-  visible_pour_cartographie_nationale = COALESCE(w.visible_pour_cartographie_nationale,
-                                                 l.visible_pour_cartographie_nationale),
-  nb_mandats_ac       = COALESCE(w.nb_mandats_ac, l.nb_mandats_ac),
-  contact             = COALESCE(w.contact, l.contact),
-  presentation_resume = COALESCE(w.presentation_resume, l.presentation_resume),
-  presentation_detail = COALESCE(w.presentation_detail, l.presentation_detail),
-  horaires            = COALESCE(w.horaires, l.horaires),
-  prise_rdv           = COALESCE(w.prise_rdv, l.prise_rdv),
-  structure_parente   = COALESCE(w.structure_parente, l.structure_parente),
-  services            = COALESCE(w.services, l.services),
-  publics_specifiquement_adresses = COALESCE(w.publics_specifiquement_adresses, l.publics_specifiquement_adresses),
-  prise_en_charge_specifique      = COALESCE(w.prise_en_charge_specifique, l.prise_en_charge_specifique),
-  typologies = CASE
-                 WHEN w.typologies IS NOT NULL AND l.typologies IS NOT NULL THEN (
-                   SELECT ARRAY(
-                            SELECT DISTINCT e FROM unnest(w.typologies || l.typologies) AS t(e)
-          WHERE e IS NOT NULL AND e <> ''
-        )
-                 )
-                 ELSE COALESCE(w.typologies, l.typologies)
-    END,
-  frais_a_charge = CASE
-                     WHEN w.frais_a_charge IS NOT NULL AND l.frais_a_charge IS NOT NULL THEN (
-                       SELECT ARRAY(
-                                SELECT DISTINCT e FROM unnest(w.frais_a_charge || l.frais_a_charge) AS t(e)
-          WHERE e IS NOT NULL AND e <> ''
-        )
-                     )
-                     ELSE COALESCE(w.frais_a_charge, l.frais_a_charge)
-    END,
-  dispositif_programmes_nationaux = CASE
-                                      WHEN w.dispositif_programmes_nationaux IS NOT NULL AND l.dispositif_programmes_nationaux IS NOT NULL THEN (
-                                        SELECT ARRAY(
-                                                 SELECT DISTINCT e FROM unnest(w.dispositif_programmes_nationaux || l.dispositif_programmes_nationaux) AS t(e)
-          WHERE e IS NOT NULL AND e <> ''
-        )
-                                      )
-                                      ELSE COALESCE(w.dispositif_programmes_nationaux, l.dispositif_programmes_nationaux)
-    END,
-  formations_labels = CASE
-                        WHEN w.formations_labels IS NOT NULL AND l.formations_labels IS NOT NULL THEN (
-                          SELECT ARRAY(
-                                   SELECT DISTINCT e FROM unnest(w.formations_labels || l.formations_labels) AS t(e)
-          WHERE e IS NOT NULL AND e <> ''
-        )
-                        )
-                        ELSE COALESCE(w.formations_labels, l.formations_labels)
-    END,
-  autres_formations_labels = COALESCE(w.autres_formations_labels, l.autres_formations_labels),
-  itinerance               = COALESCE(w.itinerance, l.itinerance),
-  modalites_acces          = COALESCE(w.modalites_acces, l.modalites_acces),
-  modalites_accompagnement = COALESCE(w.modalites_accompagnement, l.modalites_accompagnement),
-  emplois                  = COALESCE(w.emplois, l.emplois),
-  mediateurs_en_activite   = COALESCE(w.mediateurs_en_activite, l.mediateurs_en_activite),
-  source                   = COALESCE(NULLIF(w.source,''), l.source),
-  last_sirene_enrich_at    = GREATEST(COALESCE(w.last_sirene_enrich_at, '1900-01-01'),
-                                      COALESCE(l.last_sirene_enrich_at, '1900-01-01'))
-  FROM main.structure l
-WHERE w.id = v_winner AND l.id = v_loser;
-
----------------------------------------------------------------------------
--- 3.pre) Mémoriser TOUTES les PA du loser avec une date de suppression
----------------------------------------------------------------------------
-DROP TABLE IF EXISTS _loser_pa_supp;
-CREATE TEMP TABLE _loser_pa_supp ON COMMIT DROP AS
-SELECT
-  personne_id,
-  type,
-  suppression            AS lost_supp,
-  structure_coop_id      AS lost_scoop,
-  mediateur_coop_id      AS lost_mcoop
-FROM main.personne_affectations
-WHERE structure_id = v_loser
-  AND suppression IS NOT NULL;
-
----------------------------------------------------------------------------
--- 3.pre0) DÉSAMORÇAGE COLLISIONS UK (structure_coop_id, mediateur_coop_id, type, suppression)
---         - Si une ligne identique existe winner/loser → on neutralise côté winner
---         - Si une ligne orpheline (structure_id IS NULL) porte v_loser_coop et
---           collisionne avec une ligne du winner → on neutralise côté winner
----------------------------------------------------------------------------
-WITH ukey_dups AS (
-  SELECT w.id AS wid
-  FROM main.personne_affectations w
-         JOIN main.personne_affectations l
-              ON l.type = w.type
-                AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
-                AND l.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
-  AND l.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
-WHERE w.structure_id = v_winner
-  AND l.structure_id = v_loser
-  )
-UPDATE main.personne_affectations w
-SET structure_coop_id = NULL,
-    mediateur_coop_id = NULL,
-    updated_at        = NOW()
-  FROM ukey_dups d
-WHERE w.id = d.wid;
-
-IF v_loser_coop IS NOT NULL THEN
-UPDATE main.personne_affectations w
-SET structure_coop_id = NULL,
-    mediateur_coop_id = NULL,
-    updated_at        = NOW()
-WHERE w.structure_id = v_winner
-  AND EXISTS (
-  SELECT 1
-  FROM main.personne_affectations o
-  WHERE o.structure_id IS NULL
-    AND o.structure_coop_id = v_loser_coop
-    AND o.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
-    AND o.type = w.type
-    AND COALESCE(o.suppression, v_zero) = COALESCE(w.suppression, v_zero)
-);
-END IF;
-
-  ---------------------------------------------------------------------------
-  -- 3) PERSONNE_AFFECTATIONS – NULL pivot → DELETE loser → UPDATE winner
-  ---------------------------------------------------------------------------
-WITH cand AS (
-  SELECT
-    w.id   AS wid,
-    l.id   AS lid,
-    w.personne_id AS pid,
-    w.type AS type,
-    COALESCE(w.structure_coop_id, l.structure_coop_id) AS tgt_scoop,
-    COALESCE(w.mediateur_coop_id, l.mediateur_coop_id) AS tgt_mcoop,
-    COALESCE(w.suppression,       l.suppression)       AS tgt_supp
-  FROM main.personne_affectations w
-         JOIN main.personne_affectations l
-              ON  l.personne_id = w.personne_id
-                AND l.type        = w.type
-                AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
-  WHERE w.structure_id = v_winner
-    AND l.structure_id = v_loser
-),
-     null_pivot AS (
-UPDATE main.personne_affectations w
-SET structure_coop_id = NULL,
-    mediateur_coop_id = NULL,
-    updated_at        = NOW()
-  FROM cand c
-WHERE w.id = c.wid
-  AND EXISTS (
-  SELECT 1
-  FROM main.personne_affectations x
-  WHERE x.id <> w.id
-  AND x.type = c.type
-  AND COALESCE(x.suppression, v_zero) = COALESCE(c.tgt_supp, v_zero)
-  AND x.structure_coop_id IS NOT DISTINCT FROM c.tgt_scoop
-  AND x.mediateur_coop_id IS NOT DISTINCT FROM c.tgt_mcoop
-  )
-  RETURNING w.id
-  ),
-  del_l AS (
-DELETE FROM main.personne_affectations d
-  USING cand c
-WHERE d.id = c.lid
-  RETURNING c.wid, c.tgt_scoop, c.tgt_mcoop, c.tgt_supp
-  )
-UPDATE main.personne_affectations w
-SET structure_coop_id = d.tgt_scoop,
-    mediateur_coop_id = d.tgt_mcoop,
-    suppression       = d.tgt_supp,
-    updated_at        = NOW()
-  FROM del_l d
-WHERE w.id = d.wid;
-
-UPDATE main.personne_affectations pa
-SET structure_id = v_winner,
-    updated_at   = NOW()
-WHERE pa.structure_id = v_loser
-  AND NOT EXISTS (
-  SELECT 1
-  FROM main.personne_affectations w
-  WHERE w.structure_id = v_winner
-    AND w.personne_id  = pa.personne_id
-    AND w.type         = pa.type
-    AND COALESCE(w.suppression, v_zero) = COALESCE(pa.suppression, v_zero)
-);
-
-IF v_loser_coop IS NOT NULL THEN
-DELETE FROM main.personne_affectations o
-  USING main.personne_affectations w
-WHERE o.structure_id IS NULL
-  AND o.structure_coop_id = v_loser_coop
-  AND w.structure_id = v_winner
-  AND w.personne_id  = o.personne_id
-  AND w.type         = o.type
-  AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
-  AND w.structure_coop_id IS NOT DISTINCT FROM o.structure_coop_id
-  AND w.mediateur_coop_id IS NOT DISTINCT FROM o.mediateur_coop_id;
-
-UPDATE main.personne_affectations o
-SET structure_id = v_winner,
-    updated_at   = NOW()
-WHERE o.structure_id IS NULL
-  AND o.structure_coop_id = v_loser_coop
-  AND NOT EXISTS (
-  SELECT 1
-  FROM main.personne_affectations w
-  WHERE w.structure_id = v_winner
-    AND w.personne_id  = o.personne_id
-    AND w.type         = o.type
-    AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
-);
-END IF;
-
-  ---------------------------------------------------------------------------
-  -- 3.post) Préserver TOUTES les dates de suppression sans heurter les contraintes
-  --         1) Si FERMÉE existe déjà (clé structurelle), enrichir la FERMÉE, puis supprimer l’ACTIVE.
-  --         2) Sinon, poser la date sur l’ACTIVE (en respectant l’ukey COOP/MEDIATOR).
-  ---------------------------------------------------------------------------
-WITH desired AS (
-  SELECT
-    w.id AS wid,
-    w.structure_id,
-    w.personne_id,
-    w.type,
-    MAX(s.lost_supp) AS tgt_supp
-  FROM main.personne_affectations w
-         JOIN _loser_pa_supp s
-              ON w.personne_id = s.personne_id
-                AND w.type        = s.type
-  WHERE w.structure_id = v_winner
-    AND w.suppression  IS NULL
-  GROUP BY w.id, w.structure_id, w.personne_id, w.type
-),
-     merged_closed AS (
-UPDATE main.personne_affectations y
-SET structure_coop_id = COALESCE(y.structure_coop_id, w.structure_coop_id),
-    mediateur_coop_id = COALESCE(y.mediateur_coop_id, w.mediateur_coop_id),
-    updated_at        = NOW()
-  FROM desired d
-    JOIN main.personne_affectations w
-ON w.id = d.wid
-WHERE y.structure_id = d.structure_id
-  AND y.personne_id  = d.personne_id
-  AND y.type         = d.type
-  AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-  RETURNING d.wid
-  ),
-  killed_active AS (
-DELETE FROM main.personne_affectations a
-  USING merged_closed mc
-WHERE a.id = mc.wid
-  RETURNING 1
-  )
-UPDATE main.personne_affectations w
-SET suppression = d.tgt_supp,
-    updated_at  = NOW()
-  FROM desired d
-WHERE w.id = d.wid
-  AND w.suppression IS NULL
-  AND NOT EXISTS (
-  SELECT 1 FROM main.personne_affectations y
-  WHERE y.structure_id = d.structure_id
-  AND y.personne_id  = d.personne_id
-  AND y.type         = d.type
-  AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-  )
-  AND NOT EXISTS (
-  SELECT 1
-  FROM main.personne_affectations x
-  WHERE x.id <> w.id
-  AND x.type = w.type
-  AND COALESCE(x.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-  AND x.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
-  AND x.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
-  );
-
----------------------------------------------------------------------------
--- 3.collapse) Sur le winner : fusionner paires (active + fermée) par (personne_id, type)
----------------------------------------------------------------------------
-WITH pairs AS (
-  SELECT
-    c.id  AS closed_id,
-    a.id  AS active_id,
-    COALESCE(c.structure_coop_id, a.structure_coop_id) AS tgt_scoop,
-    COALESCE(c.mediateur_coop_id, a.mediateur_coop_id) AS tgt_mcoop
-  FROM main.personne_affectations c
-         JOIN main.personne_affectations a
-              ON a.structure_id = c.structure_id
-                AND a.personne_id  = c.personne_id
-                AND a.type         = c.type
-  WHERE c.structure_id = v_winner
-    AND c.suppression IS NOT NULL
-    AND a.suppression IS NULL
-),
-     up AS (
-UPDATE main.personne_affectations c
-SET structure_coop_id = p.tgt_scoop,
-    mediateur_coop_id = p.tgt_mcoop,
-    updated_at        = NOW()
-  FROM pairs p
-WHERE c.id = p.closed_id
-  RETURNING p.active_id
-  )
-DELETE FROM main.personne_affectations a
-  USING up
-WHERE a.id = up.active_id;
-
----------------------------------------------------------------------------
--- 3.guard) Déduplication finale sur la clé UNIQUE
---          (on garde une seule ligne « porteuse » et on neutralise les autres)
----------------------------------------------------------------------------
-WITH dups AS (
-  SELECT
-    structure_coop_id,
-    mediateur_coop_id,
-    type,
-    COALESCE(suppression, v_zero) AS k_supp,
-    ARRAY_AGG(id ORDER BY (structure_id IS NULL), id) AS ids
-  FROM main.personne_affectations
-  WHERE (structure_id = v_winner
-    OR (structure_id IS NULL AND structure_coop_id IS NOT NULL))
-  GROUP BY structure_coop_id, mediateur_coop_id, type, COALESCE(suppression, v_zero)
-  HAVING COUNT(*) > 1
-)
-UPDATE main.personne_affectations pa
-SET structure_coop_id = NULL,
-    updated_at        = NOW()
-WHERE pa.id = ANY (SELECT UNNEST(ids[2:]) FROM dups);
-
----------------------------------------------------------------------------
--- 4) Autres tables
----------------------------------------------------------------------------
-UPDATE main.poste p
-SET structure_id = v_winner,
-    updated_at   = NOW()
-WHERE p.structure_id = v_loser;
-
-UPDATE main.activites_coop a
-SET structure_id = v_winner
-WHERE a.structure_id = v_loser;
-
-UPDATE min.utilisateur
-SET structure_id = v_winner
-WHERE structure_id = v_loser;
-
-UPDATE min.membre
-SET structure_id = v_winner
-WHERE structure_id = v_loser;
-
----------------------------------------------------------------------------
--- 5) Hiérarchie (structure_parente = UUID COOP) – sécurité
----------------------------------------------------------------------------
-IF v_loser_coop IS NOT NULL AND v_winner_coop IS NOT NULL THEN
-UPDATE main.structure
-SET structure_parente = v_winner_coop
-WHERE structure_parente = v_loser_coop;
-END IF;
-
-  ---------------------------------------------------------------------------
-  -- 6) Supprimer le loser
-  ---------------------------------------------------------------------------
-DELETE FROM main.structure WHERE id = v_loser;
-
-END;
-$$;
-
-
-ALTER FUNCTION main.merge_structure(v_winner integer, v_loser integer) OWNER TO sonum;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
+-- PostgreSQL database dump complete
 

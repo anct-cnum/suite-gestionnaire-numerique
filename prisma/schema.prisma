@@ -96,10 +96,10 @@ model UtilisateurRecord {
   ssoEmail          String    @unique @map("sso_email")
   telephone         String    @db.VarChar(13)
 
-  relationStructure   main_structure?    @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
-  relationGroupement  GroupementRecord?  @relation(fields: [groupementId], references: [id])
-  relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
-  relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
+  relationStructureAdministrative main_structure_administrative? @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
+  relationGroupement              GroupementRecord?              @relation(fields: [groupementId], references: [id])
+  relationDepartement             DepartementRecord?             @relation(fields: [departementCode], references: [code])
+  relationRegion                  RegionRecord?                  @relation(fields: [regionCode], references: [code])
 
   comites                   ComiteRecord[]
   notesPrivees              GouvernanceRecord[]         @relation("UtilisateurNotesPrivees")
@@ -204,8 +204,8 @@ model MembreRecord {
 
   oldUUID String @map("old_uuid") @db.Uuid
 
-  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationStructure   main_structure    @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
+  relationGouvernance             GouvernanceRecord             @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationStructureAdministrative main_structure_administrative @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
@@ -415,6 +415,8 @@ model admin_departement {
   commune    commune[]
   region     admin_region            @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "departement_region_id")
 
+  @@unique([code], map: "departement_code_idx")
+  @@index([nom], map: "departement_nom_idx")
   @@map("departement")
   @@schema("admin")
 }
@@ -476,6 +478,8 @@ model admin_region {
   updated_at  DateTime?               @db.Timestamp(6)
   departement admin_departement[]
 
+  @@unique([code], map: "region_code_idx")
+  @@index([nom], map: "region_nom_idx")
   @@map("region")
   @@schema("admin")
 }
@@ -500,57 +504,67 @@ model zonage {
 }
 
 model activites_coop {
-  id                                  Int             @id @default(autoincrement())
-  coop_id                             String?         @unique(map: "activites_coop_coop_id_ukey") @db.Uuid
-  structure_id                        Int?
+  id                                  Int                  @id @default(autoincrement())
+  coop_id                             String?              @unique(map: "activites_coop_coop_id_ukey") @db.Uuid
+  lieu_id                             Int?
   personne_id                         Int?
-  type                                String          @db.VarChar(100)
-  date                                DateTime        @db.Date
+  type                                String               @db.VarChar(100)
+  date                                DateTime             @db.Date
   duree                               Int
-  lieu_code_insee                     String?         @db.VarChar(5)
-  type_lieu                           String          @db.VarChar(100)
-  autonomie                           String?         @db.VarChar(100)
-  structure_de_redirection            String?         @db.VarChar(255)
+  lieu_code_insee                     String?              @db.VarChar(5)
+  type_lieu                           String               @db.VarChar(100)
+  autonomie                           String?              @db.VarChar(100)
+  structure_de_redirection            String?              @db.VarChar(255)
   oriente_vers_structure              Boolean?
   precisions_demarche                 String?
-  degre_de_finalisation_demarche      String?         @db.VarChar(50)
-  titre_atelier                       String?         @db.VarChar(255)
-  niveau_atelier                      String?         @db.VarChar(50)
-  accompagnements                     Int             @default(0)
+  degre_de_finalisation_demarche      String?              @db.VarChar(50)
+  titre_atelier                       String?              @db.VarChar(255)
+  niveau_atelier                      String?              @db.VarChar(50)
+  accompagnements                     Int                  @default(0)
   thematiques                         String[]
   materiels                           String[]
   thematiques_demarche_administrative String[]
-  created_at                          DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?       @db.Timestamp(6)
-  periode                             DateTime?       @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
-  created_at_coop                     DateTime?       @db.Timestamp(6)
-  updated_at_coop                     DateTime?       @db.Timestamp(6)
-  personne                            personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
-  structure                           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  created_at                          DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime?            @db.Timestamp(6)
+  periode                             DateTime?            @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
+  created_at_coop                     DateTime?            @db.Timestamp(6)
+  updated_at_coop                     DateTime?            @db.Timestamp(6)
+  // Alimente par dataspace (ingest coop), non lu par MIN. Declare pour eviter
+  // un faux drop par prisma migrate dev.
+  beneficiaires                       Json?
+  personne                            personne?            @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
+  lieu                                main_lieu_inclusion? @relation(fields: [lieu_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "activites_coop_lieu_id_fkey")
 
   @@index([lieu_code_insee])
   @@index([periode])
   @@index([personne_id])
-  @@index([structure_id], map: "idx_activites_coop_structure_id")
+  // Nom historique conserve : la Flyway V084 dataspace a renomme la colonne
+  // structure_id -> lieu_id mais pas l'index (qui s'appelait deja
+  // idx_activites_coop_structure_id et non activites_coop_structure_id_idx
+  // attendu par la migration). Renommage propre a faire dans une future V09x.
+  @@index([lieu_id], map: "idx_activites_coop_structure_id")
   @@schema("main")
 }
 
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model adresse {
-  id           Int                      @id @default(autoincrement())
-  geom         Unsupported("geometry")?
-  clef_interop String?                  @db.VarChar(50)
-  code_ban     String?                  @unique(map: "adresse_code_ban_ukey") @db.Uuid
-  code_postal  String                   @db.VarChar(5)
-  code_insee   String                   @db.VarChar(5)
-  nom_commune  String                   @db.VarChar(255)
-  nom_voie     String?                  @db.VarChar(255)
-  repetition   String?                  @db.VarChar(10)
-  numero_voie  Int?                     @db.SmallInt
-  created_at   DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at   DateTime?                @db.Timestamp(6)
-  departement  String?                  @default(dbgenerated("\nCASE\n    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN \"left\"((code_insee)::text, 3)\n    ELSE \"left\"((code_insee)::text, 2)\nEND")) @db.VarChar(3)
-  structure    main_structure[]
+  id                         Int                             @id @default(autoincrement())
+  geom                       Unsupported("geometry")?
+  clef_interop               String?                         @db.VarChar(50)
+  code_ban                   String?                         @unique(map: "adresse_code_ban_ukey") @db.Uuid
+  code_postal                String                          @db.VarChar(5)
+  code_insee                 String                          @db.VarChar(5)
+  nom_commune                String                          @db.VarChar(255)
+  nom_voie                   String?                         @db.VarChar(255)
+  repetition                 String?                         @db.VarChar(10)
+  numero_voie                Int?                            @db.SmallInt
+  created_at                 DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?                       @db.Timestamp(6)
+  departement                String?                         @default(dbgenerated("\nCASE\n    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN \"left\"((code_insee)::text, 3)\n    ELSE \"left\"((code_insee)::text, 2)\nEND")) @db.VarChar(3)
+  structures_administratives main_structure_administrative[]
+  lieux_inclusion            main_lieu_inclusion[]
+  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
+  structures_legacy          main_structure[]                @relation("legacy_structure_adresse") @ignore
 
   @@index([geom], type: Gist)
   @@index([code_insee])
@@ -575,31 +589,41 @@ model coordination_mediation {
 
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model personne {
-  id                                                                      Int                      @id @default(autoincrement())
-  prenom                                                                  String?                  @db.VarChar(50)
-  nom                                                                     String?                  @db.VarChar(50)
+  id                                                                      Int                                 @id @default(autoincrement())
+  prenom                                                                  String?                             @db.VarChar(50)
+  nom                                                                     String?                             @db.VarChar(50)
   contact                                                                 Json?
-  aidant_connect_id                                                       Int?                     @unique(map: "personne_aidant_connect_id_ukey")
-  conseiller_numerique_id                                                 String?                  @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
-  cn_pg_id                                                                Int?                     @unique(map: "personne_cn_pg_id_ukey")
-  coop_id                                                                 String?                  @unique(map: "personne_coop_id_ukey") @db.Uuid
+  aidant_connect_id                                                       Int?                                @unique(map: "personne_aidant_connect_id_ukey")
+  conseiller_numerique_id                                                 String?                             @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
+  cn_pg_id                                                                Int?                                @unique(map: "personne_cn_pg_id_ukey")
+  coop_id                                                                 String?                             @unique(map: "personne_coop_id_ukey") @db.Uuid
   is_coordinateur                                                         Boolean?
   is_mediateur                                                            Boolean?
   formation_fne_ac                                                        Boolean?
-  profession_ac                                                           String?                  @db.VarChar
+  profession_ac                                                           String?                             @db.VarChar
   nb_accompagnements_ac                                                   Int?
-  created_at                                                              DateTime?                @default(now()) @db.Timestamp(6)
-  updated_at                                                              DateTime?                @db.Timestamp(6)
-  edited_by                                                               String?                  @db.VarChar(50)
-  deleted_at                                                              DateTime?                @db.Timestamp(6)
+  created_at                                                              DateTime?                           @default(now()) @db.Timestamp(6)
+  updated_at                                                              DateTime?                           @db.Timestamp(6)
+  edited_by                                                               String?                             @db.VarChar(50)
+  deleted_at                                                              DateTime?                           @db.Timestamp(6)
   deleted_by                                                              String[]
+  // Colonnes alimentees par dataspace, non lues par MIN. Declarees ici pour
+  // que prisma migrate dev ne propose pas de les dropper (cf snapshot regen).
+  is_referent_ac                                                          Boolean                             @default(false)
+  updated_at_ac                                                           DateTime?                           @db.Timestamp(6)
+  is_visible                                                              Boolean?
+  updated_at_coop                                                         DateTime?                           @db.Timestamp(6)
+  updated_at_idposte                                                      DateTime?                           @db.Timestamp(6)
   activites_coop                                                          activites_coop[]
   contrat                                                                 contrat[]
-  coordination_mediation_coordination_mediation_coordinateur_idTopersonne coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
-  coordination_mediation_coordination_mediation_mediateur_idTopersonne    coordination_mediation[] @relation("coordination_mediation_mediateur_idTopersonne")
+  coordination_mediation_coordination_mediation_coordinateur_idTopersonne coordination_mediation[]            @relation("coordination_mediation_coordinateur_idTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_idTopersonne    coordination_mediation[]            @relation("coordination_mediation_mediateur_idTopersonne")
   formation                                                               formation[]
-  personne_affectations                                                   personne_affectations[]
+  personne_affectations_emploi                                            main_personne_affectations_emploi[]
+  personne_affectations_lieu                                              main_personne_affectations_lieu[]
   poste                                                                   poste[]
+  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
+  personne_affectations_legacy                                            personne_affectations[]             @relation("legacy_personne_affectations_personne") @ignore
 
   @@index([nom, prenom], map: "personne_patronyme")
   @@schema("main")
@@ -607,55 +631,178 @@ model personne {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model poste {
-  id                  Int             @id @default(autoincrement())
-  poste_conum_id      Int
-  structure_id        Int?
-  personne_id         Int?
-  typologie           String?         @db.VarChar(6)
-  date_attribution    DateTime        @db.Date
-  date_rendu_poste    DateTime?       @db.Date
-  poste_renouvele     Boolean?
-  action_coselec      String?         @db.VarChar(255)
-  origine_transfert   Int?
-  etat                String?         @db.VarChar(6)
-  created_at          DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at          DateTime?       @db.Timestamp(6)
-  etat_instruction_v1 String?         @db.VarChar
-  etat_instruction_v2 String?         @db.VarChar
-  personne            personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  structure           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subvention          subvention[]
+  id                       Int                            @id @default(autoincrement())
+  poste_conum_id           Int
+  structure_id             Int?
+  personne_id              Int?
+  typologie                String?                        @db.VarChar(6)
+  date_attribution         DateTime                       @db.Date
+  date_rendu_poste         DateTime?                      @db.Date
+  poste_renouvele          Boolean?
+  action_coselec           String?                        @db.VarChar(255)
+  origine_transfert        Int?
+  etat                     String?                        @db.VarChar(6)
+  created_at               DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?                      @db.Timestamp(6)
+  etat_instruction_v1      String?                        @db.VarChar
+  etat_instruction_v2      String?                        @db.VarChar
+  personne                 personne?                      @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  structure_administrative main_structure_administrative? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "poste_structure_id_fkey")
+  subvention               subvention[]
 
   @@unique([poste_conum_id, structure_id, personne_id], map: "poste_ukey")
   @@index([structure_id], map: "idx_poste_structure_id")
   @@schema("main")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+/// Refonte 2026 : entité légale (SIRET/RIDET) qui emploie, reçoit des
+/// subventions, porte une gouvernance, héberge des lieux d'inclusion.
+/// Successeur de l'aspect "employeuse" de main.structure.
+/// This table contains check constraints and requires additional setup for migrations.
+model main_structure_administrative {
+  id                           Int                                            @id @default(autoincrement())
+  old_main_structure_id        Int?                                           @unique(map: "structure_administrative_old_main_structure_id_ukey")
+  siret                        String?                                        @db.VarChar(14)
+  ridet                        String?                                        @unique(map: "structure_administrative_ridet_ukey") @db.VarChar(10)
+  denomination_sirene          String?                                        @db.VarChar
+  /// Refonte 2026 : discriminant pour le pattern grand reseau (Emmaüs
+  /// Connect, Reconnect Groupe SOS, …). NULL = entite unique pour ce SIRET.
+  /// Cf decision tranchee 2026-05-25 (docs dataspace).
+  denomination_antenne         String?                                        @db.VarChar(255)
+  rna                          String?                                        @db.VarChar(10)
+  adresse_id                   Int?
+  structure_coop_id            String?                                        @unique(map: "structure_administrative_structure_coop_id_ukey") @db.Uuid
+  structure_tp_id              Int?                                           @unique(map: "structure_administrative_structure_tp_id_ukey")
+  structure_ac_id              String?                                        @unique(map: "structure_administrative_structure_ac_id_ukey") @db.Uuid
+  etat_administratif           String?                                        @db.VarChar
+  code_activite_principale     String?                                        @db.VarChar(6)
+  categorie_juridique          String?                                        @db.VarChar(4)
+  publique                     Boolean?
+  nb_mandats_ac                Int?
+  contact                      Json?
+  deleted_at                   DateTime?                                      @db.Timestamp(6)
+  deleted_by                   String[]
+  edited_by                    String?                                        @db.VarChar(50)
+  last_sirene_enrich_at        DateTime?                                      @db.Date
+  created_at                   DateTime?                                      @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                                      @db.Timestamp(6)
+  updated_at_coop              DateTime?                                      @db.Timestamp(6)
+  updated_at_idposte           DateTime?                                      @db.Timestamp(6)
+  updated_at_ac                DateTime?                                      @db.Timestamp(6)
+  contact_structures           contact_structure_administrative[]
+  contrat                      contrat[]
+  lieu_associations            main_lieu_inclusion_structure_administrative[]
+  personne_affectations_emploi main_personne_affectations_emploi[]
+  poste                        poste[]
+  adresse                      adresse?                                       @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_adresse_fkey")
+  categories_juridiques        categories_juridiques?                         @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_categorie_juridique_fkey")
+  membres                      MembreRecord[]
+  utilisateurs                 UtilisateurRecord[]
+
+  /// Refonte 2026 : remplace l'ancienne UNIQUE (siret) seule. Contrainte
+  /// reelle en base : UNIQUE NULLS NOT DISTINCT (pgsql 15+) — non
+  /// representable en syntaxe Prisma, donc declare ici en NULLS DISTINCT.
+  /// L'invariant NULLS NOT DISTINCT reste garanti cote Flyway V068.
+  @@unique([siret, denomination_antenne], map: "structure_administrative_siret_antenne_ukey")
+  @@index([adresse_id], map: "structure_administrative_adresse_id_idx")
+  @@index([denomination_sirene], map: "structure_administrative_denomination_sirene_idx")
+  @@map("structure_administrative")
+  @@schema("main")
+}
+
+/// Refonte 2026 : lieu physique d'inclusion numérique (France Services,
+/// médiathèque, EPN…). Successeur de l'aspect "lieu" de main.structure.
+model main_lieu_inclusion {
+  id                                  Int                                            @id @default(autoincrement())
+  old_main_structure_id               Int?                                           @unique(map: "lieu_inclusion_old_main_structure_id_ukey")
+  nom                                 String                                         @db.VarChar(255)
+  adresse_id                          Int?
+  structure_cartographie_nationale_id String?                                        @unique(map: "lieu_inclusion_carto_id_ukey") @db.VarChar
+  visible_pour_cartographie_nationale Boolean?
+  fiche_acces_libre                   String?                                        @db.VarChar
+  presentation_resume                 String?
+  presentation_detail                 String?
+  horaires                            String?                                        @db.VarChar
+  prise_rdv                           String?                                        @db.VarChar
+  itinerance                          String[]
+  services                            String[]
+  modalites_acces                     String[]
+  modalites_accompagnement            String[]
+  publics_specifiquement_adresses     String[]
+  prise_en_charge_specifique          String[]
+  frais_a_charge                      String[]
+  formations_labels                   String[]
+  autres_formations_labels            String[]
+  dispositif_programmes_nationaux     String[]
+  typologies                          String[]
+  contact                             Json?
+  mediateurs_en_activite              Int?
+  emplois                             Int?
+  source                              String?                                        @db.VarChar
+  edited_by                           String?                                        @db.VarChar(50)
+  created_at                          DateTime?                                      @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime?                                      @db.Timestamp(6)
+  structure_coop_id                   String?                                        @unique(map: "lieu_inclusion_structure_coop_id_ukey") @db.Uuid
+  import_warnings                     Json?
+  activites_coop                      activites_coop[]
+  structure_associations              main_lieu_inclusion_structure_administrative[]
+  personne_affectations_lieu          main_personne_affectations_lieu[]
+  adresse                             adresse?                                       @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")
+
+  @@index([adresse_id], map: "lieu_inclusion_adresse_id_idx")
+  @@index([nom], map: "lieu_inclusion_nom_idx")
+  // L'index lieu_inclusion_visible_idx existe en base mais est partiel
+  // (WHERE visible = true) — non representable en syntaxe Prisma, donc
+  // omis ici pour ne pas declencher de faux diff a chaque prisma migrate.
+  @@map("lieu_inclusion")
+  @@schema("main")
+}
+
+/// Refonte 2026 : asso N:N entre lieu_inclusion et structure_administrative.
+model main_lieu_inclusion_structure_administrative {
+  id                          Int                           @id @default(autoincrement())
+  lieu_id                     Int
+  structure_administrative_id Int
+  edited_by                   String?                       @db.VarChar(50)
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                     @db.Timestamp(6)
+  lieu                        main_lieu_inclusion           @relation(fields: [lieu_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "lieu_inclusion_structure_administrative_lieu_fkey")
+  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "lieu_inclusion_structure_administrative_admin_fkey")
+
+  @@unique([lieu_id, structure_administrative_id], map: "lieu_inclusion_structure_administrative_ukey")
+  @@index([lieu_id], map: "lieu_inclusion_structure_administrative_lieu_id_idx")
+  @@index([structure_administrative_id], map: "lieu_inclusion_structure_administrative_admin_id_idx")
+  @@map("lieu_inclusion_structure_administrative")
+  @@schema("main")
+}
+
+/// LEGACY post-refonte 2026 : table conservee en base pour les consommateurs
+/// historiques (dataviz, vues api heritees, ETL externes). MIN ecrit
+/// desormais dans main_structure_administrative + main_lieu_inclusion.
+/// Drop final planifie dans la doc dataspace (refonte-structure-plan.md > Next).
 model main_structure {
-  id                                  Int                     @id @default(autoincrement())
-  structure_coop_id                   String?                 @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
-  structure_ac_id                     String?                 @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
-  structure_tp_id                     Int?                    @unique(map: "structure_structure_tp_id_ukey")
-  nom                                 String                  @db.VarChar(255)
-  denomination_sirene                 String?                 @db.VarChar
-  siret                               String?                 @db.VarChar(14)
-  rna                                 String?                 @db.VarChar(10)
+  id                                  Int                    @id @default(autoincrement())
+  structure_coop_id                   String?                @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
+  structure_ac_id                     String?                @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
+  structure_tp_id                     Int?                   @unique(map: "structure_structure_tp_id_ukey")
+  nom                                 String                 @db.VarChar(255)
+  denomination_sirene                 String?                @db.VarChar
+  siret                               String?                @db.VarChar(14)
+  rna                                 String?                @db.VarChar(10)
   adresse_id                          Int?
   contact                             Json?
-  etat_administratif                  String?                 @db.VarChar
-  code_activite_principale            String?                 @db.VarChar(6)
-  categorie_juridique                 String?                 @db.VarChar(4)
+  etat_administratif                  String?                @db.VarChar
+  code_activite_principale            String?                @db.VarChar(6)
+  categorie_juridique                 String?                @db.VarChar(4)
   nb_mandats_ac                       Int?
   publique                            Boolean?
-  structure_cartographie_nationale_id String?                 @unique(map: "structure_cartographie_ukey") @db.VarChar
+  structure_cartographie_nationale_id String?                @unique(map: "structure_cartographie_ukey") @db.VarChar
   visible_pour_cartographie_nationale Boolean?
   typologies                          String[]
   presentation_resume                 String?
   presentation_detail                 String?
-  horaires                            String?                 @db.VarChar
-  prise_rdv                           String?                 @db.VarChar
+  horaires                            String?                @db.VarChar
+  prise_rdv                           String?                @db.VarChar
   services                            String[]
   publics_specifiquement_adresses     String[]
   prise_en_charge_specifique          String[]
@@ -668,57 +815,81 @@ model main_structure {
   modalites_accompagnement            String[]
   mediateurs_en_activite              Int?
   emplois                             Int?
-  source                              String?                 @db.VarChar
-  last_sirene_enrich_at               DateTime?               @db.Date
-  created_at                          DateTime?               @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?               @db.Timestamp(6)
-  fiche_acces_libre                   String?                 @db.VarChar
-  edited_by                           String?                 @db.VarChar(50)
-  deleted_at                          DateTime?               @db.Timestamp(6)
+  source                              String?                @db.VarChar
+  last_sirene_enrich_at               DateTime?              @db.Date
+  created_at                          DateTime?              @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime?              @db.Timestamp(6)
+  fiche_acces_libre                   String?                @db.VarChar
+  edited_by                           String?                @db.VarChar(50)
+  deleted_at                          DateTime?              @db.Timestamp(6)
   deleted_by                          String[]
-  activites_coop                      activites_coop[]
-  contact_structures                  contact_structure[]
-  contrat                             contrat[]
-  personne_affectations               personne_affectations[]
-  poste                               poste[]
-  adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
-  categories_juridiques               categories_juridiques?  @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
-  membres                             MembreRecord[]
-  utilisateurs                        UtilisateurRecord[]
+  adresse                             adresse?               @relation("legacy_structure_adresse", fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
+  categories_juridiques               categories_juridiques? @relation("legacy_structure_categorie_juridique", fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
+
+  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
+  personne_affectations_legacy personne_affectations[] @relation("legacy_personne_affectations_structure")
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
   @@map("structure")
+  @@ignore
+  @@schema("main")
+}
+
+/// LEGACY post-refonte 2026 : remplacee par main_personne_affectations_emploi
+/// (type='structure_emploi') et main_personne_affectations_lieu (type='lieu_activite').
+/// Conservee pour consommateurs historiques. Drop final planifie (Next dataspace).
+model personne_affectations {
+  id                Int             @id @default(autoincrement())
+  personne_id       Int
+  structure_id      Int?
+  structure_coop_id String?         @db.Uuid
+  mediateur_coop_id String?         @db.Uuid
+  type              String          @db.VarChar
+  created_at        DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?       @db.Timestamp(6)
+  source            String          @db.VarChar
+  est_active        Boolean         @default(true)
+  personne          personne        @relation("legacy_personne_affectations_personne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_personne_id_fkey")
+  structure         main_structure? @relation("legacy_personne_affectations_structure", fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_structure_id_fkey")
+
+  @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
+  @@index([personne_id], map: "idx_personne_affectations_personne_id")
+  @@index([structure_id], map: "idx_personne_affectations_structure_id")
+  @@ignore
   @@schema("main")
 }
 
 model main_contact {
-  id                 Int                 @id @default(autoincrement())
-  nom                String              @db.VarChar(255)
-  prenom             String              @db.VarChar(255)
-  email              String              @db.VarChar(255)
-  telephone          String              @default("") @db.VarChar(20)
-  fonction           String              @default("") @db.VarChar(255)
-  est_referent_fne   Boolean             @default(false)
-  created_at         DateTime?           @default(now()) @db.Timestamp(6)
-  updated_at         DateTime?           @default(now()) @db.Timestamp(6)
-  contact_structures contact_structure[]
+  id                 Int                                @id @default(autoincrement())
+  nom                String                             @db.VarChar(255)
+  prenom             String                             @db.VarChar(255)
+  email              String                             @db.VarChar(255)
+  telephone          String                             @default("") @db.VarChar(20)
+  fonction           String                             @default("") @db.VarChar(255)
+  est_referent_fne   Boolean                            @default(false)
+  created_at         DateTime?                          @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?                          @default(now()) @db.Timestamp(6)
+  contact_structures contact_structure_administrative[]
 
   @@map("contact")
   @@schema("main")
 }
 
-model contact_structure {
-  id           Int            @id @default(autoincrement())
-  structure_id Int
-  contact_id   Int
-  created_at   DateTime?      @default(now()) @db.Timestamp(6)
-  contact      main_contact   @relation(fields: [contact_id], references: [id], onDelete: Cascade)
-  structure    main_structure @relation(fields: [structure_id], references: [id], onDelete: Cascade)
+/// Refonte 2026 : ex-contact_structure renommé (V080), FK basculée vers
+/// main.structure_administrative.
+model contact_structure_administrative {
+  id                          Int                           @id @default(autoincrement())
+  structure_administrative_id Int
+  contact_id                  Int
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  contact                     main_contact                  @relation(fields: [contact_id], references: [id], onDelete: Cascade, map: "contact_structure_contact_id_fkey")
+  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: Cascade, map: "contact_structure_administrative_structure_id_fkey")
 
-  @@unique([structure_id, contact_id], map: "contact_structure_unique")
-  @@index([structure_id])
-  @@index([contact_id])
+  @@unique([structure_administrative_id, contact_id], map: "contact_structure_administrative_unique")
+  @@index([structure_administrative_id], map: "contact_structure_administrative_structure_id_idx")
+  @@index([contact_id], map: "contact_structure_contact_id_idx")
+  @@map("contact_structure_administrative")
   @@schema("main")
 }
 
@@ -736,17 +907,17 @@ model ifn_departement {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model contrat {
-  id           Int             @id @default(autoincrement())
-  personne_id  Int
-  date_debut   DateTime?       @db.Date
-  date_fin     DateTime?       @db.Date
-  date_rupture DateTime?       @db.Date
-  type         String?         @db.VarChar(3)
-  created_at   DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at   DateTime?       @db.Timestamp(6)
-  structure_id Int?
-  personne     personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  structure    main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                       Int                            @id @default(autoincrement())
+  personne_id              Int
+  date_debut               DateTime?                      @db.Date
+  date_fin                 DateTime?                      @db.Date
+  date_rupture             DateTime?                      @db.Date
+  type                     String?                        @db.VarChar(3)
+  created_at               DateTime?                      @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?                      @db.Timestamp(6)
+  structure_id             Int?
+  personne                 personne                       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  structure_administrative main_structure_administrative? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contrat_structure_id_fkey")
 
   @@index([structure_id], map: "idx_contrat_structure_id")
   @@schema("main")
@@ -831,38 +1002,56 @@ model naf {
 }
 
 model categories_juridiques {
-  id         Int              @id @default(autoincrement())
-  code       String           @unique(map: "categories_juridiques_ukey") @db.VarChar(4)
-  nom        String           @db.VarChar(150)
-  niveau     Int              @db.SmallInt
-  created_at DateTime?        @default(now()) @db.Timestamp(6)
-  updated_at DateTime?        @db.Timestamp(6)
-  structure  main_structure[]
+  id                       Int                             @id @default(autoincrement())
+  code                     String                          @unique(map: "categories_juridiques_ukey") @db.VarChar(4)
+  nom                      String                          @db.VarChar(150)
+  niveau                   Int                             @db.SmallInt
+  created_at               DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at               DateTime?                       @db.Timestamp(6)
+  structure_administrative main_structure_administrative[]
+  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
+  structures_legacy        main_structure[]                @relation("legacy_structure_categorie_juridique") @ignore
 
   @@schema("reference")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
-model personne_affectations {
-  id                Int             @id @default(autoincrement())
-  personne_id       Int
-  structure_id      Int?
-  structure_coop_id String?         @db.Uuid
-  mediateur_coop_id String?         @db.Uuid
-  type              String          @db.VarChar
-  created_at        DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at        DateTime?       @db.Timestamp(6)
-  source            String          @db.VarChar
-  est_active        Boolean         @default(true)
-  personne          personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  structure         main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+/// Refonte 2026 : successeur de type='structure_emploi' de personne_affectations.
+/// Relations d'emploi entre une personne et une structure_administrative.
+model main_personne_affectations_emploi {
+  id                          Int                           @id @default(autoincrement())
+  personne_id                 Int
+  structure_administrative_id Int
+  source                      String                        @db.VarChar
+  est_active                  Boolean                       @default(true)
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                  DateTime?                     @db.Timestamp(6)
+  personne                    personne                      @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_emploi_personne_fkey")
+  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_emploi_admin_fkey")
 
-  @@unique([structure_coop_id, mediateur_coop_id, type], map: "personne_affectations_ukey")
-  @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
-  @@index([personne_id], map: "idx_personne_affectations_personne_id")
-  @@index([structure_id], map: "idx_personne_affectations_structure_id")
+  @@unique([personne_id, structure_administrative_id, source], map: "personne_affectations_emploi_ukey")
+  @@index([personne_id], map: "idx_personne_affectations_emploi_personne_id")
+  @@index([structure_administrative_id], map: "idx_personne_affectations_emploi_structure_administrative_id")
+  @@map("personne_affectations_emploi")
+  @@schema("main")
+}
+
+/// Refonte 2026 : successeur de type='lieu_activite' de personne_affectations.
+/// Relations de présence d'une personne sur un lieu_inclusion.
+model main_personne_affectations_lieu {
+  id          Int                 @id @default(autoincrement())
+  personne_id Int
+  lieu_id     Int
+  source      String              @db.VarChar
+  est_active  Boolean             @default(true)
+  created_at  DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?           @db.Timestamp(6)
+  personne    personne            @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_lieu_personne_fkey")
+  lieu        main_lieu_inclusion @relation(fields: [lieu_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_lieu_lieu_fkey")
+
+  @@unique([personne_id, lieu_id, source], map: "personne_affectations_lieu_ukey")
+  @@index([personne_id], map: "idx_personne_affectations_lieu_personne_id")
+  @@index([lieu_id], map: "idx_personne_affectations_lieu_lieu_id")
+  @@map("personne_affectations_lieu")
   @@schema("main")
 }
 

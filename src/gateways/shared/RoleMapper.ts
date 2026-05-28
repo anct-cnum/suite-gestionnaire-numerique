@@ -2,7 +2,7 @@ import {
   $Enums,
   DepartementRecord,
   GroupementRecord,
-  main_structure,
+  main_structure_administrative,
   RegionRecord,
   UtilisateurRecord,
 } from '@prisma/client'
@@ -13,7 +13,7 @@ export type UtilisateurEtSesRelationsRecord = Readonly<{
   relationDepartement: DepartementRecord | null
   relationGroupement: GroupementRecord | null
   relationRegion: null | RegionRecord
-  relationStructure: main_structure | null
+  relationStructureAdministrative: main_structure_administrative | null
 }> &
   UtilisateurRecord
 
@@ -33,7 +33,11 @@ export function organisation(utilisateurRecord: UtilisateurEtSesRelationsRecord)
     case 'Gestionnaire région':
       return `${utilisateurRecord.relationRegion?.nom} (${utilisateurRecord.relationRegion?.code})`
     case 'Gestionnaire structure':
-      return utilisateurRecord.relationStructure?.nom
+      return (
+        utilisateurRecord.relationStructureAdministrative?.denomination_antenne ??
+        utilisateurRecord.relationStructureAdministrative?.denomination_sirene ??
+        undefined
+      )
     default:
       return undefined
   }

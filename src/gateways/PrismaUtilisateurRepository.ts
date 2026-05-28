@@ -68,7 +68,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructureAdministrative: true,
       },
       where: {
         isSupprime: false,
@@ -88,7 +88,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       nom: record.nom,
       prenom: record.prenom,
       region: record.relationRegion ?? undefined,
-      structureUid: record.relationStructure?.id,
+      structureUid: record.relationStructureAdministrative?.id,
       telephone: record.telephone,
       uid: { email: record.ssoEmail, value: record.ssoId },
     }).create(toTypologieRole(record.role))
@@ -100,7 +100,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructureAdministrative: true,
       },
       where: {
         isSupprime: false,
@@ -120,7 +120,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       nom: record.nom,
       prenom: record.prenom,
       region: record.relationRegion ?? undefined,
-      structureUid: record.relationStructure?.id,
+      structureUid: record.relationStructureAdministrative?.id,
       telephone: record.telephone,
       uid: { email: record.ssoEmail, value: record.ssoId },
     }).create(toTypologieRole(record.role))

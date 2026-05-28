@@ -32,7 +32,8 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
           ),
         ]
 
-        const structures = await prisma.main_structure.findMany({
+        // Refonte 2026 : structure_employeuse_id pointe sur SA (V092).
+        const structures = await prisma.main_structure_administrative.findMany({
           select: { id: true },
           where: {
             adresse: {

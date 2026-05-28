@@ -27,10 +27,13 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           min.personne_enrichie.est_actuellement_aidant_numerique_en_poste,
           min.personne_enrichie.est_actuellement_mediateur_en_poste,
           min.personne_enrichie.labellisation_aidant_connect,
-          main.structure.nom as employeur_raison_social,
+          -- Refonte 2026 : personne_enrichie.structure_employeuse_id pointe sur
+          -- main.structure_administrative (V092 dataspace). Le nom employeur =
+          -- denomination_sirene de la SA.
+          COALESCE(main.structure_administrative.denomination_antenne, main.structure_administrative.denomination_sirene) as employeur_raison_social,
           reference.categories_juridiques.nom as employeur_categorie_juridique,
-          main.structure.siret as employeur_siret,
-          main.structure.contact as employeur_contact_referent,
+          main.structure_administrative.siret as employeur_siret,
+          main.structure_administrative.contact as employeur_contact_referent,
           main.adresse.code_postal as employeur_code_postal,
           main.adresse.nom_commune as employeur_nom_commune,
           main.adresse.nom_voie as employeur_nom_voie,
@@ -39,10 +42,10 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           admin.region.nom as employeur_region
 
         FROM min.personne_enrichie
-               LEFT JOIN main.structure ON main.structure.id = min.personne_enrichie.structure_employeuse_id
+               LEFT JOIN main.structure_administrative ON main.structure_administrative.id = min.personne_enrichie.structure_employeuse_id
                LEFT JOIN reference.categories_juridiques
-                         ON reference.categories_juridiques.code = main.structure.categorie_juridique
-               LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+                         ON reference.categories_juridiques.code = main.structure_administrative.categorie_juridique
+               LEFT JOIN main.adresse ON main.adresse.id = main.structure_administrative.adresse_id
                LEFT JOIN admin.departement ON admin.departement.code = main.adresse.departement
                LEFT JOIN admin.region ON admin.region.id = admin.departement.region_id
         WHERE min.personne_enrichie.id = ${personneId}
@@ -130,42 +133,42 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         }))
       }
 
-      // Récupérer les lieux d'activité (toutes affectations actives, tous types confondus)
-      // La sous-requête déduplique les structure_id au cas où une structure apparaît
-      // à la fois comme employeuse et comme lieu d'accueil.
+      // Refonte 2026 : "lieux d'activite" = lieux ou la personne est active
+      // (personne_affectations_lieu, anciennement personne_affectations
+      // type='lieu_activite'). Activites_coop est desormais indexe par lieu_id
+      // (V084 dataspace). On garde le champ `structure_id` du resultat pour
+      // compat ascendante avec le presenter, mais il contient maintenant un
+      // lieu_inclusion.id.
       const lieuxActiviteResult = await prisma.$queryRaw<Array<LieuActiviteResult>>`
         SELECT
-          main.activites_coop.structure_id,
-          main.structure.nom,
+          lieux.lieu_id AS structure_id,
+          l.nom,
           COALESCE(
-            SUM(main.activites_coop.accompagnements) FILTER (
-            WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
-              ), 0) AS total_accompagnements,
-          main.structure.structure_cartographie_nationale_id,
-          main.adresse.numero_voie,
-          main.adresse.nom_voie,
-          main.adresse.code_postal,
-          main.adresse.nom_commune
+            SUM(ac.accompagnements) FILTER (
+              WHERE ac.date >= CURRENT_DATE - INTERVAL '30 days'
+            ), 0) AS total_accompagnements,
+          l.structure_cartographie_nationale_id,
+          a.numero_voie,
+          a.nom_voie,
+          a.code_postal,
+          a.nom_commune
         FROM (
-          SELECT DISTINCT structure_id
-          FROM main.personne_affectations
+          SELECT DISTINCT lieu_id
+          FROM main.personne_affectations_lieu
           WHERE personne_id = ${personneId}
             AND est_active = true
-        ) AS affectations
-               LEFT JOIN main.activites_coop
-                         ON main.activites_coop.structure_id = affectations.structure_id
-               LEFT JOIN main.structure
-                         ON main.structure.id = affectations.structure_id
-               LEFT JOIN main.adresse
-                         ON main.adresse.id = main.structure.adresse_id
+        ) AS lieux
+        LEFT JOIN main.activites_coop ac ON ac.lieu_id = lieux.lieu_id
+        LEFT JOIN main.lieu_inclusion l ON l.id = lieux.lieu_id
+        LEFT JOIN main.adresse a ON a.id = l.adresse_id
         GROUP BY
-          main.activites_coop.structure_id,
-          main.structure.nom,
-          main.structure.structure_cartographie_nationale_id,
-          main.adresse.numero_voie,
-          main.adresse.nom_voie,
-          main.adresse.code_postal,
-          main.adresse.nom_commune
+          lieux.lieu_id,
+          l.nom,
+          l.structure_cartographie_nationale_id,
+          a.numero_voie,
+          a.nom_voie,
+          a.code_postal,
+          a.nom_commune
         ORDER BY total_accompagnements DESC;
       `
       const totalAccompagnementsCoop =

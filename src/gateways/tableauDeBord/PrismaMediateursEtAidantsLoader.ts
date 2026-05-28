@@ -20,7 +20,8 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
         })
       } else {
         // Récupérer les IDs des structures dans le département
-        const structuresInDepartment = await prisma.main_structure.findMany({
+        // Refonte 2026 : structure_employeuse_id (utilise plus bas) pointe sur SA.
+        const structuresInDepartment = await prisma.main_structure_administrative.findMany({
           select: { id: true },
           where: {
             adresse: {

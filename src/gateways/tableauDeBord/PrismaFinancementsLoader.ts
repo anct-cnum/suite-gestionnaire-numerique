@@ -99,8 +99,9 @@ export class PrismaFinancementsLoader implements FinancementLoader {
       SELECT
         COALESCE(SUM(v.montant_subvention_cumule), 0)::bigint AS conventionne,
         COALESCE(SUM(v.montant_versement_cumule), 0)::bigint AS verse
+      -- Refonte 2026 : v.structure_id pointe sur SA (V078 dataspace).
       FROM min.postes_conseiller_numerique_synthese v
-      LEFT JOIN main.structure st ON st.id = v.structure_id
+      LEFT JOIN main.structure_administrative st ON st.id = v.structure_id
       LEFT JOIN main.adresse a ON a.id = st.adresse_id
       ${filtreTerritoire}
     `

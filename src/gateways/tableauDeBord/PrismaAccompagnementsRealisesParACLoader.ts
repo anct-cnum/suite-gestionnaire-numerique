@@ -22,7 +22,7 @@ export class PrismaAccompagnementsRealisesParACLoader implements Accompagnements
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           SELECT COALESCE(SUM(pe.nb_accompagnements_ac), 0) AS total_accompagnements
           FROM min.personne_enrichie pe
-          LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+          LEFT JOIN main.structure_administrative s ON s.id = pe.structure_employeuse_id
           LEFT JOIN main.adresse a ON a.id = s.adresse_id
           WHERE pe.type_accompagnateur = 'aidant_numerique'
             AND a.departement = ${territoire}
