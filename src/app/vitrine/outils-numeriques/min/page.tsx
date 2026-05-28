@@ -128,7 +128,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   textAlign: 'center',
                 }}
               >
-                L&apos;outil de pilotage par la données des dispositifs d&apos;inclusion numérique
+                L&apos;outil de pilotage par la donnée des dispositifs d&apos;inclusion numérique
               </p>
               <div>
                 <a
