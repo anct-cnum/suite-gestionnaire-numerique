@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import DateRangePicker from './DateRangePicker'
 import styles from './SelecteurRangeDates.module.css'
@@ -12,6 +12,8 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({})
 
   const isFilled = dateDebut !== DATE_DEBUT_DISPOSITIF || dateFin !== new Date().toISOString().slice(0, 10)
 
@@ -23,6 +25,30 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     setDebut(isFilled ? new Date(dateDebut) : null)
     setFin(isFilled ? new Date(dateFin) : null)
   }, [dateDebut, dateFin, isFilled])
+
+  const calculerPosition = useCallback(() => {
+    if (buttonRef.current === null) return
+    const rect = buttonRef.current.getBoundingClientRect()
+    const top = rect.bottom + 8
+    const spaceRight = window.innerWidth - rect.left - 8
+    const spaceLeft = rect.right - 8
+    const maxHeight = `${window.innerHeight - top - 8}px`
+    if (spaceRight >= spaceLeft) {
+      setPopoverStyle({ left: rect.left, maxHeight, maxWidth: `${spaceRight}px`, top })
+    } else {
+      setPopoverStyle({ maxHeight, maxWidth: `${spaceLeft}px`, right: window.innerWidth - rect.right, top })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isOpen) return
+    window.addEventListener('resize', calculerPosition)
+    window.addEventListener('scroll', calculerPosition, true)
+    return () => {
+      window.removeEventListener('resize', calculerPosition)
+      window.removeEventListener('scroll', calculerPosition, true)
+    }
+  }, [calculerPosition, isOpen])
 
   const appliquer = useCallback(
     (selectedDebut: Date | null, selectedFin: Date | null) => {
@@ -74,9 +100,13 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   return (
     <div className={styles.container}>
       <button
+        ref={buttonRef}
         aria-expanded={isOpen}
         className={`fr-btn ${isFilled ? 'fr-btn--secondary' : 'fr-btn--tertiary'} fr-border-radius--4 ${isFilled ? styles.filled : ''} ${isOpen ? styles.open : ''}`}
         onClick={() => {
+          if (!isOpen) {
+            calculerPosition()
+          }
           setIsOpen(!isOpen)
         }}
         type="button"
@@ -97,7 +127,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
               setIsOpen(false)
             }}
           />
-          <div className={styles.popover}>
+          <div className={styles.popover} style={popoverStyle}>
             <DateRangePicker
               debut={debut}
               fin={fin}
