@@ -8,11 +8,14 @@ import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaRepartitionSubventionGouvernanceLoader'
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 import { enveloppePresenter } from '@/presenters/enveloppePresenter'
 import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl, nomDepartement } from '@/shared/urlHelpers'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
@@ -23,6 +26,13 @@ export default async function ActionModifierController({ params }: Props): Promi
     if (!session) {
       redirect('/connexion')
     }
+
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.peutGererGouvernance(codeDepartement)) {
+      notFound()
+    }
+
     const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
 
     if (feuilleDeRoute.state.uidGouvernance !== codeDepartement) {
