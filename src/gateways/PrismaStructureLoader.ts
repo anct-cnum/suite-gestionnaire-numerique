@@ -42,8 +42,9 @@ export class PrismaStructureLoader implements StructureLoader {
     // Refonte 2026 : recherche sur COALESCE(denomination_antenne, denomination_sirene)
     // de main.structure_administrative. denomination_antenne permet de distinguer
     // les antennes d'un grand reseau partageant le SIRET du siege (Emmaüs
-    // Connect, Reconnect Groupe SOS, …). Les contacts referents FNE sont
-    // desormais dans main.contact_structure_administrative.
+    // Connect, Reconnect Groupe SOS, …). L'indicateur FNE est determine par la
+    // presence d'un membre confirme (min.membre au statut « confirme ») pour la
+    // structure.
     const conditionsMots = mots
       .map(
         (_, index) =>
@@ -72,9 +73,8 @@ export class PrismaStructureLoader implements StructureLoader {
         a.nom_commune as commune,
         EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id) as is_membre,
         EXISTS(
-          SELECT 1 FROM main.contact_structure_administrative csa
-          JOIN main.contact c ON csa.contact_id = c.id
-          WHERE csa.structure_administrative_id = sa.id AND c.est_referent_fne = true
+          SELECT 1 FROM min.membre m
+          WHERE m.structure_id = sa.id AND m.statut = 'confirme'
         ) as is_fne
       FROM main.structure_administrative sa
       LEFT JOIN main.adresse a ON sa.adresse_id = a.id

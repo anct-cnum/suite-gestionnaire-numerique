@@ -1,14 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStructureLoader } from './PrismaStructureLoader'
-import {
-  creerUnContact,
-  creerUnDepartement,
-  creerUneGouvernance,
-  creerUneRegion,
-  creerUneStructure,
-  creerUnMembre,
-} from './testHelper'
+import { creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 
 describe('structures loader', () => {
@@ -216,7 +209,7 @@ describe('structures loader', () => {
       expect(structureReadModel).toStrictEqual([])
     })
 
-    it("indique si une structure est membre d'une gouvernance", async () => {
+    it("indique si une structure est membre d'une gouvernance sans être FNE quand le membre n'est pas confirmé", async () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
@@ -227,10 +220,10 @@ describe('structures loader', () => {
         nom: "Conseil départemental de l'Aube",
       })
       await creerUneGouvernance({ departementCode: '10' })
-      await creerUnContact({ email: 'contact@aube.fr' })
       await creerUnMembre({
         gouvernanceDepartementCode: '10',
         id: 'membre-100',
+        statut: 'candidat',
         structureId: 100,
       })
 
@@ -249,7 +242,7 @@ describe('structures loader', () => {
       ])
     })
 
-    it('indique si une structure a un contact référent FNE', async () => {
+    it('indique si une structure est FNE quand elle a un membre confirmé', async () => {
       // GIVEN
       await creerUneRegion()
       await creerUnDepartement({ code: '10', nom: 'Aube' })
@@ -259,9 +252,12 @@ describe('structures loader', () => {
         id: 100,
         nom: "Conseil départemental de l'Aube",
       })
-      const contactId = await creerUnContact({ email: 'referent-fne@aube.fr', est_referent_fne: true })
-      await prisma.contact_structure_administrative.create({
-        data: { contact_id: contactId, structure_administrative_id: 100 },
+      await creerUneGouvernance({ departementCode: '10' })
+      await creerUnMembre({
+        gouvernanceDepartementCode: '10',
+        id: 'membre-100',
+        statut: 'confirme',
+        structureId: 100,
       })
 
       // WHEN
@@ -272,7 +268,7 @@ describe('structures loader', () => {
         {
           commune: 'TROYES',
           isFne: true,
-          isMembre: false,
+          isMembre: true,
           nom: "Conseil départemental de l'Aube",
           uid: '100',
         },
