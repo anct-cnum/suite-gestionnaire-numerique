@@ -282,7 +282,7 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['69'], type: 'departemental' })
   })
 
-  it('scopeFiltre — gestionnaire structure retourne les codes de ses gouvernances', async () => {
+  it('scopeFiltre — gestionnaire structure coporteur retourne les codes de ses gouvernances', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
     const loader = loaderStub({
@@ -297,6 +297,20 @@ describe('résoudre contexte - scopes', () => {
 
     // THEN
     expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['64', '75'], type: 'departemental' })
+  })
+
+  it('scopeFiltre — gestionnaire structure membre simple retourne son id de structure', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [{ codeDepartement: '64', estCoporteur: false }],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopeFiltre()).toStrictEqual({ id: 42, type: 'structure' })
   })
 
   it('scopeFiltre — gestionnaire structure sans gouvernance retourne son id de structure', async () => {

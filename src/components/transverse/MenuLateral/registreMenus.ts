@@ -167,7 +167,7 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
       label: "Lieux d'inclusion",
       url: () => '/lieux-inclusion',
     })
-  } else if (nb === 1) {
+  } else if (nb === 1 && !contexte.estGestionnaireStructureSansCoportage()) {
     menus.push({
       icon: 'group-line',
       label: 'Aidants et médiateurs',

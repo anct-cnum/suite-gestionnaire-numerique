@@ -47,6 +47,8 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     scope = contexte.scopes.find((scope) => scope.type === 'france')
   } else if (contexte.aCesRoles('gestionnaire_departement')) {
     scope = contexte.scopes.find((scope) => scope.type === 'departement')
+  } else if (contexte.estGestionnaireStructureSansCoportage()) {
+    scope = contexte.scopes.find((scope) => scope.type === 'structure')
   } else if (options.length === 1 && options[0].value !== 'France') {
     scope = { code: options[0].value, type: 'departement' }
   } else {
