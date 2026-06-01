@@ -13,6 +13,11 @@ const contexteGouvernance = new Contexte('gestionnaire_structure', [
   { code: '93', type: 'coporteur' },
 ])
 
+const contexteMembreFne = new Contexte('gestionnaire_structure', [
+  { code: '42', type: 'structure' },
+  { code: '93', type: 'membre' },
+])
+
 const contexteSuperAdmin = new Contexte('administrateur_dispositif', [{ type: 'france' }], true)
 
 describe('menu lateral', () => {
@@ -231,6 +236,39 @@ describe('menu lateral', () => {
     // THEN
     const maStructure = screen.queryByRole('link', { name: 'Ma structure' })
     expect(maStructure).not.toBeInTheDocument()
+  })
+
+  it.each([
+    { name: 'Aidants et médiateurs', url: '/liste-aidants-mediateurs' },
+    { name: "Lieux d'inclusion", url: '/liste-lieux-inclusion' },
+  ])(
+    "étant un gestionnaire de structure membre simple FNE, quand j'affiche le menu latéral, alors le listing $name est limité à sa structure",
+    ({ name, url }) => {
+      // WHEN
+      render(
+        <menuActifContext.Provider value="/">
+          <MenuLateral contexte={contexteMembreFne} />
+        </menuActifContext.Provider>
+      )
+
+      // THEN
+      const element = screen.getByRole('link', { name })
+      expect(element).toHaveAttribute('href', url)
+    }
+  )
+
+  it("étant un gestionnaire de structure membre simple FNE, quand j'affiche le menu latéral, alors le menu Gouvernance reste visible", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={contexteMembreFne} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const gouvernance = within(nav).getByRole('link', { name: 'Gouvernance' })
+    expect(gouvernance).toHaveAttribute('href', '/gouvernance/93')
   })
 
   it("étant un utilisateur autre que gestionnaire de département, quand j'affiche le menu latéral, alors il ne s'affiche pas avec le lien de la gouvernance", () => {

@@ -12,17 +12,15 @@ export type IdentifiantBloc =
   | 'rejoindreGouvernance'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
-  const estGestionnaireStructure = contexte.aCesRoles('gestionnaire_structure') && !contexte.estDansGouvernance()
-
   const blocs: Array<IdentifiantBloc> = ['accueil']
 
-  if (estGestionnaireStructure) {
+  if (contexte.estGestionnaireStructureSansCoportage()) {
     blocs.push('donneesStructure')
   }
 
   if (
     contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement', 'gestionnaire_region') ||
-    contexte.estDansGouvernance()
+    contexte.estCoporteur()
   ) {
     blocs.push('etatDesLieux', 'gouvernance')
   }
@@ -42,7 +40,7 @@ export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantB
     blocs.push('beneficiaires')
   }
 
-  if (estGestionnaireStructure && !contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement')) {
+  if (contexte.estGestionnaireStructureHorsGouvernance()) {
     blocs.push('rejoindreGouvernance', 'cartographie')
   }
 

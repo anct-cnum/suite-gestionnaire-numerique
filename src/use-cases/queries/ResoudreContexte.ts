@@ -71,8 +71,12 @@ export class Contexte {
     return this.scopes.some((scope) => scope.type === 'coporteur' || scope.type === 'membre')
   }
 
-  estGestionnaireStructureSansGouvernance(): boolean {
+  estGestionnaireStructureHorsGouvernance(): boolean {
     return this.role === 'gestionnaire_structure' && !this.estDansGouvernance()
+  }
+
+  estGestionnaireStructureSansCoportage(): boolean {
+    return this.role === 'gestionnaire_structure' && !this.estCoporteur()
   }
 
   estNational(): boolean {
@@ -136,7 +140,7 @@ export class Contexte {
     if (this.estNational()) {
       return { type: 'national' }
     }
-    if (this.estGestionnaireStructureSansGouvernance()) {
+    if (this.estGestionnaireStructureSansCoportage()) {
       return { id: this.idStructure(), type: 'structure' }
     }
     return { codes: this.codesDepartements(), type: 'departemental' }
