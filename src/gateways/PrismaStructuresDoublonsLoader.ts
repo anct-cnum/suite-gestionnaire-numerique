@@ -26,7 +26,7 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
   async #detecter(): Promise<ReadonlyArray<LigneCandidate>> {
     return prisma.$queryRaw<Array<LigneCandidate>>`
       WITH sa AS (
-        SELECT id, siret, ridet, denomination_sirene, denomination_antenne, rna, adresse_id,
+        SELECT id, siret, ridet, denomination_sirene, denomination_antenne, rna, adresse_id, edited_by,
                LEFT(siret, 9) AS siren
         FROM main.structure_administrative
         WHERE deleted_at IS NULL
@@ -57,12 +57,16 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
         JOIN rna_g USING (rna)
       ),
       dc AS (
+        -- ≥ 2 SIREN distincts : on ne propose JAMAIS la fusion d'établissements
+        -- d'un même SIREN (établissements primaire/secondaires INSEE, légitimement
+        -- distincts). Seules les entités légales différentes au même nom + commune
+        -- (erreur de saisie probable) sont des candidats.
         SELECT LOWER(unaccent(sa.denomination_sirene)) AS d, a.code_insee
         FROM sa
         JOIN main.adresse a ON a.id = sa.adresse_id
         WHERE sa.denomination_sirene IS NOT NULL AND a.code_insee IS NOT NULL
         GROUP BY 1, 2
-        HAVING COUNT(DISTINCT sa.siret) > 1
+        HAVING COUNT(DISTINCT LEFT(sa.siret, 9)) > 1
       ),
       cand_c AS (
         SELECT 'nom_commune_proche'::text AS signal,
@@ -86,6 +90,11 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
         s.denomination_sirene,
         s.denomination_antenne,
         s.siren,
+        s.edited_by AS source,
+        EXISTS (
+          SELECT 1 FROM audit.structure_merge_log ml
+          WHERE ml.winner_id = c.id AND ml.status = 'SUCCESS' AND ml.dag_id = 'min-ui'
+        ) AS deja_fusionnee,
         a.nom_commune,
         a.departement AS departement_code,
         r.code AS region_code,
@@ -118,6 +127,7 @@ type ZoneDoublons = Readonly<{
 // administrative active rattachée à un groupe de doublon par un signal donné.
 interface LigneCandidate {
   cle: string
+  deja_fusionnee: boolean
   denomination_antenne: null | string
   denomination_sirene: null | string
   departement_code: null | string
@@ -129,6 +139,7 @@ interface LigneCandidate {
   signal: SignalDoublon
   siren: null | string
   siret: null | string
+  source: null | string
 }
 
 function estDansLaZone(ligne: LigneCandidate, zone?: ZoneDoublons): boolean {
@@ -152,49 +163,38 @@ function construireGroupes(lignes: ReadonlyArray<LigneCandidate>): StructuresDou
   const groupes: Array<GroupeDoublonReadModel> = []
   for (const [cle, lignesDuGroupe] of parCle) {
     const signal = lignesDuGroupe[0].signal
-    // nom_commune_proche : on collapse les antennes d'un même SIRET en un seul
-    // représentant comparable (les antennes d'un SIRET ne sont pas des doublons
-    // entre elles). Les autres signaux restent au niveau ligne.
+    // nom_commune_proche : on regroupe par SIREN — les établissements d'un même
+    // SIREN comptent pour un seul candidat (ils ne sont jamais des doublons entre
+    // eux). Les autres signaux restent au niveau ligne.
     const structures =
-      signal === 'nom_commune_proche' ? collapserParSiret(lignesDuGroupe) : lignesDuGroupe.map(versCandidate)
+      signal === 'nom_commune_proche' ? collapserParSiren(lignesDuGroupe) : lignesDuGroupe.map(versCandidate)
 
     if (structures.length < 2) {
       continue
     }
 
-    groupes.push({
-      cle,
-      multiEtablissement: estMultiEtablissement(lignesDuGroupe),
-      signal,
-      structures,
-    })
+    groupes.push({ cle, signal, structures })
   }
 
   return groupes
 }
 
-// Multi-établissement = toutes les lignes du groupe partagent un unique SIREN
-// (établissements distincts d'une même entité) → fusionner serait généralement faux.
-function estMultiEtablissement(lignes: ReadonlyArray<LigneCandidate>): boolean {
-  const sirens = new Set(lignes.map((ligne) => ligne.siren).filter((siren): siren is string => siren !== null))
-  return sirens.size === 1
-}
-
-function collapserParSiret(lignes: ReadonlyArray<LigneCandidate>): ReadonlyArray<StructureCandidateReadModel> {
-  const parSiret = new Map<string, Array<LigneCandidate>>()
+function collapserParSiren(lignes: ReadonlyArray<LigneCandidate>): ReadonlyArray<StructureCandidateReadModel> {
+  const parSiren = new Map<string, Array<LigneCandidate>>()
   for (const ligne of lignes) {
-    const cleSiret = ligne.siret ?? `id:${ligne.id}`
-    const groupe = parSiret.get(cleSiret) ?? []
+    const cleSiren = ligne.siren ?? `id:${ligne.id}`
+    const groupe = parSiren.get(cleSiren) ?? []
     groupe.push(ligne)
-    parSiret.set(cleSiret, groupe)
+    parSiren.set(cleSiren, groupe)
   }
 
-  return Array.from(parSiret.values()).map((lignesDuSiret) => {
-    // Représentant : la ligne à antenne NULL si elle existe, sinon la plus rattachée.
-    const representant =
-      lignesDuSiret.find((ligne) => ligne.denomination_antenne === null) ??
-      [...lignesDuSiret].sort((gauche, droite) => droite.nb_rattachements - gauche.nb_rattachements)[0]
-    const nbRattachements = lignesDuSiret.reduce((total, ligne) => total + ligne.nb_rattachements, 0)
+  return Array.from(parSiren.values()).map((lignesDuSiren) => {
+    // Représentant du SIREN : l'établissement le plus rattaché ; nbRattachements
+    // = total cumulé des établissements de ce SIREN dans le groupe.
+    const representant = [...lignesDuSiren].sort(
+      (gauche, droite) => droite.nb_rattachements - gauche.nb_rattachements
+    )[0]
+    const nbRattachements = lignesDuSiren.reduce((total, ligne) => total + ligne.nb_rattachements, 0)
 
     return { ...versCandidate(representant), nbRattachements }
   })
@@ -203,11 +203,13 @@ function collapserParSiret(lignes: ReadonlyArray<LigneCandidate>): ReadonlyArray
 function versCandidate(ligne: LigneCandidate): StructureCandidateReadModel {
   return {
     commune: ligne.nom_commune,
+    dejaFusionnee: ligne.deja_fusionnee,
     denomination: ligne.denomination_sirene,
     denominationAntenne: ligne.denomination_antenne,
     id: ligne.id,
     nbRattachements: ligne.nb_rattachements,
     ridet: ligne.ridet,
     siret: ligne.siret,
+    source: ligne.source,
   }
 }

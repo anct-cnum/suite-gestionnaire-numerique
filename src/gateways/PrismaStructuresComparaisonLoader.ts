@@ -21,6 +21,11 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         sa.denomination_antenne,
         sa.etat_administratif,
         sa.code_activite_principale,
+        sa.edited_by AS source,
+        EXISTS (
+          SELECT 1 FROM audit.structure_merge_log ml
+          WHERE ml.winner_id = sa.id AND ml.status = 'SUCCESS' AND ml.dag_id = 'min-ui'
+        ) AS deja_fusionnee,
         a.nom_commune,
         NULLIF(TRIM(CONCAT_WS(' ', a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune)), '') AS adresse,
         (SELECT COUNT(*) FROM min.utilisateur u WHERE u.structure_id = sa.id)::int AS nb_utilisateurs_min,
@@ -32,7 +37,19 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         (SELECT COUNT(*) FROM main.contact_structure_administrative cs
          WHERE cs.structure_administrative_id = sa.id)::int AS nb_contacts,
         (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative li
-         WHERE li.structure_administrative_id = sa.id)::int AS nb_associations_lieux
+         WHERE li.structure_administrative_id = sa.id)::int AS nb_associations_lieux,
+        (SELECT COUNT(DISTINCT m.gouvernance_departement_code) FROM min.membre m
+         WHERE m.structure_id = sa.id)::int AS nb_gouvernances,
+        (SELECT COUNT(*) FROM min.feuille_de_route fdr
+         JOIN min.membre m ON fdr.porteur_id = m.id
+         WHERE m.structure_id = sa.id)::int AS nb_feuilles_de_route,
+        (SELECT COUNT(*) FROM min.membre m
+         WHERE m.structure_id = sa.id AND m.contact IS NOT NULL AND m.contact <> '')::int AS nb_contacts_membre,
+        EXISTS (
+          SELECT 1 FROM min.beneficiaire_subvention bs
+          JOIN min.membre m ON bs.membre_id = m.id
+          WHERE m.structure_id = sa.id
+        ) AS est_beneficiaire
       FROM main.structure_administrative sa
       LEFT JOIN main.adresse a ON a.id = sa.adresse_id
       WHERE sa.id = ANY(${[...ids]})
@@ -45,14 +62,19 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
 interface LigneDetail {
   adresse: null | string
   code_activite_principale: null | string
+  deja_fusionnee: boolean
   denomination_antenne: null | string
   denomination_sirene: null | string
+  est_beneficiaire: boolean
   etat_administratif: null | string
   id: number
   nb_affectations_emploi: number
   nb_associations_lieux: number
   nb_contacts: number
+  nb_contacts_membre: number
   nb_contrats: number
+  nb_feuilles_de_route: number
+  nb_gouvernances: number
   nb_membres_min: number
   nb_postes: number
   nb_utilisateurs_min: number
@@ -60,6 +82,7 @@ interface LigneDetail {
   ridet: null | string
   rna: null | string
   siret: null | string
+  source: null | string
 }
 
 function versDetail(ligne: LigneDetail): StructureDetailReadModel {
@@ -76,15 +99,20 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     adresse: ligne.adresse,
     codeActivitePrincipale: ligne.code_activite_principale,
     commune: ligne.nom_commune,
+    dejaFusionnee: ligne.deja_fusionnee,
     denominationAntenne: ligne.denomination_antenne,
     denominationSirene: ligne.denomination_sirene,
+    estBeneficiaire: ligne.est_beneficiaire,
     etatAdministratif: ligne.etat_administratif,
     id: ligne.id,
     rattachements: {
       affectationsEmploi: ligne.nb_affectations_emploi,
       associationsLieux: ligne.nb_associations_lieux,
       contacts: ligne.nb_contacts,
+      contactsMembre: ligne.nb_contacts_membre,
       contrats: ligne.nb_contrats,
+      feuillesDeRoute: ligne.nb_feuilles_de_route,
+      gouvernances: ligne.nb_gouvernances,
       membresMin: ligne.nb_membres_min,
       postes: ligne.nb_postes,
       total,
@@ -93,5 +121,6 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     ridet: ligne.ridet,
     rna: ligne.rna,
     siret: ligne.siret,
+    source: ligne.source,
   }
 }

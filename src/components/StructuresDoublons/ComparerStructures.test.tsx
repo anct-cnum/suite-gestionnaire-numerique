@@ -20,11 +20,18 @@ describe('examiner et fusionner un doublon', () => {
   it('confirme la fusion : appelle l’action avec survivante/absorbée, notifie et redirige', async () => {
     // GIVEN
     const fusionnerStructuresAction = stubbedServerAction(['OK'])
-    const push = vi.fn()
+    const push = vi.fn<() => void>()
     renderComponent(<ComparerStructures viewModel={deuxStructures()} />, {
       fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
-      router: { back: vi.fn(), forward: vi.fn(), prefetch: vi.fn(), push, refresh: vi.fn(), replace: vi.fn() },
+      router: {
+        back: vi.fn<() => void>(),
+        forward: vi.fn<() => void>(),
+        prefetch: vi.fn<() => void>(),
+        push,
+        refresh: vi.fn<() => void>(),
+        replace: vi.fn<() => void>(),
+      },
     })
 
     // WHEN

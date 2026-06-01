@@ -11,15 +11,30 @@ describe('liste des doublons de structures', () => {
     const viewModel: StructuresDoublonsViewModel = {
       groupes: [
         {
-          badges: ['Multi-établissement (même SIREN)'],
           cle: 'denom:coallia|86194',
           commune: 'Poitiers',
           idsParam: '11,22',
           nbStructures: 2,
           signalLibelle: 'Même nom et commune',
           structures: [
-            { denomination: 'COALLIA', id: 11, identifiant: '11111111100011', nbRattachements: 5 },
-            { denomination: 'CADA', id: 22, identifiant: '11111111100029', nbRattachements: 1 },
+            {
+              dejaFusionnee: false,
+              denomination: 'COALLIA',
+              estAntenne: false,
+              id: 11,
+              identifiant: '11111111100011',
+              nbRattachements: 5,
+              source: 'Coop médiation numérique',
+            },
+            {
+              dejaFusionnee: true,
+              denomination: 'CADA',
+              estAntenne: true,
+              id: 22,
+              identifiant: '11111111100029',
+              nbRattachements: 1,
+              source: 'Source inconnue',
+            },
           ],
         },
       ],
@@ -32,8 +47,10 @@ describe('liste des doublons de structures', () => {
     // THEN
     expect(screen.getByRole('heading', { level: 1, name: 'Doublons de structures' })).toBeInTheDocument()
     expect(screen.getByText('1 groupe de doublons candidats à examiner.')).toBeInTheDocument()
-    expect(screen.getByText('Multi-établissement (même SIREN)')).toBeInTheDocument()
     expect(screen.getByText('COALLIA')).toBeInTheDocument()
+    expect(screen.getByText('Coop médiation numérique')).toBeInTheDocument()
+    expect(screen.getByText('Antenne')).toBeInTheDocument()
+    expect(screen.getByText('Déjà fusionnée')).toBeInTheDocument()
     const lien = screen.getByRole('link', { name: 'Examiner' })
     expect(lien).toHaveAttribute('href', '/structures-doublons/comparer?ids=11,22')
   })

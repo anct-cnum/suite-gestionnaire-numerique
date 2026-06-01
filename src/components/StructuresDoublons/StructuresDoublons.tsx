@@ -34,21 +34,26 @@ function LigneGroupe({ groupe }: Readonly<{ groupe: GroupeDoublonViewModel }>): 
     <tr>
       <td>
         <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--info">{groupe.signalLibelle}</span>
-        {groupe.badges.map((badge) => (
-          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--warning fr-ml-1w" key={badge}>
-            {badge}
-          </span>
-        ))}
       </td>
       <td>
         <ul className="fr-raw-list">
           {groupe.structures.map((structure) => (
-            <li key={structure.id}>
+            <li className="fr-mb-1w" key={structure.id}>
               <span className="fr-text--bold">{structure.denomination}</span>{' '}
               <span className="fr-text--xs fr-text-mention--grey">
                 ({structure.identifiant} · {structure.nbRattachements} rattachement
                 {structure.nbRattachements > 1 ? 's' : ''})
               </span>
+              <br />
+              <span className="fr-badge fr-badge--no-icon fr-badge--sm">{structure.source}</span>
+              {structure.estAntenne ? (
+                <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--purple-glycine fr-ml-1w">
+                  Antenne
+                </span>
+              ) : null}
+              {structure.dejaFusionnee ? (
+                <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--info fr-ml-1w">Déjà fusionnée</span>
+              ) : null}
             </li>
           ))}
         </ul>

@@ -42,21 +42,22 @@ export type StructuresDoublonsReadModel = ReadonlyArray<GroupeDoublonReadModel>
 
 export type GroupeDoublonReadModel = Readonly<{
   cle: string
-  // true quand toutes les structures du groupe partagent le même SIREN (établissements
-  // multiples d'une même entité) — fusionner serait généralement une erreur, d'où le badge.
-  multiEtablissement: boolean
   signal: SignalDoublon
   structures: ReadonlyArray<StructureCandidateReadModel>
 }>
 
 export type StructureCandidateReadModel = Readonly<{
   commune: null | string
+  // true si la SA est déjà la survivante d'une fusion précédente (cf audit.structure_merge_log).
+  dejaFusionnee: boolean
   denomination: null | string
   denominationAntenne: null | string
   id: number
   nbRattachements: number
   ridet: null | string
   siret: null | string
+  // Source de la donnée (edited_by) : coop, carto, aidants-connect, idposte, MIN…
+  source: null | string
 }>
 
 type TypeZone = 'departement' | 'region'

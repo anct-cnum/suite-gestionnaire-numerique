@@ -1,3 +1,4 @@
+import { libelleSource } from '@/presenters/shared/libelleSource'
 import {
   GroupeDoublonReadModel,
   SignalDoublon,
@@ -23,7 +24,6 @@ export type StructuresDoublonsViewModel = Readonly<{
 }>
 
 export type GroupeDoublonViewModel = Readonly<{
-  badges: ReadonlyArray<string>
   cle: string
   commune: string
   idsParam: string
@@ -33,10 +33,13 @@ export type GroupeDoublonViewModel = Readonly<{
 }>
 
 export type StructureLigneViewModel = Readonly<{
+  dejaFusionnee: boolean
   denomination: string
+  estAntenne: boolean
   id: number
   identifiant: string
   nbRattachements: number
+  source: string
 }>
 
 function versGroupeViewModel(groupe: GroupeDoublonReadModel): GroupeDoublonViewModel {
@@ -47,17 +50,19 @@ function versGroupeViewModel(groupe: GroupeDoublonReadModel): GroupeDoublonViewM
   )
 
   return {
-    badges: groupe.multiEtablissement ? ['Multi-établissement (même SIREN)'] : [],
     cle: groupe.cle,
     commune: communes.join(', ') || '—',
     idsParam: groupe.structures.map((structure) => structure.id).join(','),
     nbStructures: groupe.structures.length,
     signalLibelle: LIBELLE_SIGNAL[groupe.signal],
     structures: groupe.structures.map((structure) => ({
+      dejaFusionnee: structure.dejaFusionnee,
       denomination: structure.denominationAntenne ?? structure.denomination ?? `Structure #${structure.id}`,
+      estAntenne: structure.denominationAntenne !== null,
       id: structure.id,
       identifiant: structure.siret ?? structure.ridet ?? '—',
       nbRattachements: structure.nbRattachements,
+      source: libelleSource(structure.source),
     })),
   }
 }
