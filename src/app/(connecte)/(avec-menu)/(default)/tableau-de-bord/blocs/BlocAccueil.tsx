@@ -6,7 +6,7 @@ import { Contexte, Scope } from '@/use-cases/queries/ResoudreContexte'
 
 export default function BlocAccueil({ contexte, prenom, scope }: Props): ReactElement {
   const suffixScope = scope.type === 'departement' ? ` · ${scope.code}` : ''
-  const sousTitre = contexte.estGestionnaireStructureSansGouvernance()
+  const sousTitre = contexte.estGestionnaireStructureSansCoportage()
     ? "Bienvenue sur votre espace structure de l'inclusion numérique"
     : `Bienvenue sur l'outil de pilotage de l'Inclusion Numérique${suffixScope}`
   const options = gouvernancesSelecteurPresenteur(contexte)
