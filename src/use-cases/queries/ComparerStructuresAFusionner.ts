@@ -28,23 +28,35 @@ export type StructureDetailReadModel = Readonly<{
   adresse: null | string
   codeActivitePrincipale: null | string
   commune: null | string
+  // true si la SA est déjà la survivante d'une fusion précédente (cf audit.structure_merge_log).
+  dejaFusionnee: boolean
   denominationAntenne: null | string
   denominationSirene: null | string
+  // true si la SA (via un de ses membres de gouvernance) bénéficie d'au moins une subvention.
+  estBeneficiaire: boolean
   etatAdministratif: null | string
   id: number
   rattachements: RattachementsReadModel
   ridet: null | string
   rna: null | string
   siret: null | string
+  // Source de la donnée (edited_by) : coop, carto, aidants-connect, idposte, MIN…
+  source: null | string
 }>
 
 // Ventilation des liens (FK) qui seront déplacés vers la survivante lors d'une
 // fusion — alimente la « fenêtre d'avertissement » avant confirmation.
+// `total` = somme des 7 FK directes (ce qui est réellement déplacé). Les compteurs
+// gouvernance (gouvernances, feuillesDeRoute, contactsMembre) sont des vues dérivées
+// de la relation membre, fournies pour informer la décision sans gonfler `total`.
 export type RattachementsReadModel = Readonly<{
   affectationsEmploi: number
   associationsLieux: number
   contacts: number
+  contactsMembre: number
   contrats: number
+  feuillesDeRoute: number
+  gouvernances: number
   membresMin: number
   postes: number
   total: number

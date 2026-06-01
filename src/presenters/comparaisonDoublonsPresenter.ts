@@ -1,3 +1,4 @@
+import { libelleSource } from '@/presenters/shared/libelleSource'
 import {
   ComparaisonDoublonsReadModel,
   RattachementsReadModel,
@@ -7,10 +8,13 @@ import {
 const LIBELLES_RATTACHEMENTS: ReadonlyArray<Readonly<{ cle: keyof RattachementsReadModel; label: string }>> = [
   { cle: 'utilisateursMin', label: 'Utilisateurs MIN' },
   { cle: 'membresMin', label: 'Membres MIN' },
+  { cle: 'gouvernances', label: 'Gouvernances' },
+  { cle: 'feuillesDeRoute', label: 'Feuilles de route portées' },
+  { cle: 'contactsMembre', label: 'Contacts membres' },
   { cle: 'postes', label: 'Postes' },
   { cle: 'contrats', label: 'Contrats' },
   { cle: 'affectationsEmploi', label: 'Affectations emploi' },
-  { cle: 'contacts', label: 'Contacts' },
+  { cle: 'contacts', label: 'Contacts référents' },
   { cle: 'associationsLieux', label: "Associations à des lieux d'inclusion" },
 ]
 
@@ -48,10 +52,16 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
       { label: 'RIDET', valeur: structure.ridet ?? '—' },
       { label: 'RNA', valeur: structure.rna ?? '—' },
       { label: 'Dénomination SIRENE', valeur: structure.denominationSirene ?? '—' },
-      { label: 'Antenne', valeur: structure.denominationAntenne ?? '—' },
+      {
+        label: 'Antenne',
+        valeur: structure.denominationAntenne === null ? 'Non' : `Oui — ${structure.denominationAntenne}`,
+      },
+      { label: 'Source', valeur: libelleSource(structure.source) },
       { label: 'État administratif', valeur: structure.etatAdministratif ?? '—' },
       { label: 'Code activité (APE)', valeur: structure.codeActivitePrincipale ?? '—' },
       { label: 'Commune', valeur: structure.commune ?? '—' },
+      { label: 'Bénéficiaire de subvention', valeur: structure.estBeneficiaire ? 'Oui' : 'Non' },
+      { label: 'Issue d’une fusion précédente', valeur: structure.dejaFusionnee ? 'Oui' : 'Non' },
     ],
     denomination: structure.denominationAntenne ?? structure.denominationSirene ?? `Structure #${structure.id}`,
     denominationSirene: structure.denominationSirene ?? '',
