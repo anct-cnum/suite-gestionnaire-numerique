@@ -12,7 +12,6 @@ import BlocGouvernance from './blocs/BlocGouvernance'
 import BlocMediateurs from './blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from './blocs/BlocRejoindreGouvernance'
 import { blocsParContexte, IdentifiantBloc } from './registreBlocs'
-import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -71,10 +70,5 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
   }
 
-  return (
-    <>
-      <FilAriane items={[{ label: 'Tableau de bord' }]} />
-      {blocs.map((bloc) => blocsElements[bloc])}
-    </>
-  )
+  return <>{blocs.map((bloc) => blocsElements[bloc])}</>
 }
