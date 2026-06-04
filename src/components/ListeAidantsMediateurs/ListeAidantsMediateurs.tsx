@@ -139,6 +139,7 @@ AidantRow.displayName = 'AidantRow'
 export default function ListeAidantsMediateurs({
   accompagnementsPromise,
   listeAidantsMediateursViewModel,
+  peutAfficherStatistiques30Jours,
   searchParams,
   totalAccompagnementsPromise,
   totalBeneficiairesPromise,
@@ -355,6 +356,7 @@ export default function ListeAidantsMediateurs({
         <>
           <ListeAidantsMediateurInfos
             hasActiveFilters={getFiltresActifs().length > 0}
+            peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
             totalAccompagnementsPromise={totalAccompagnementsPromise}
             totalBeneficiairesPromise={totalBeneficiairesPromise}
             viewModel={{
@@ -419,6 +421,7 @@ export default function ListeAidantsMediateurs({
 type Props = Readonly<{
   accompagnementsPromise: Promise<Map<string, number>>
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
+  peutAfficherStatistiques30Jours: boolean
   searchParams: SerializedSearchParams
   totalAccompagnementsPromise: Promise<ErrorViewModel | number>
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>

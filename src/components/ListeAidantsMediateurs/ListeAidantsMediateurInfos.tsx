@@ -9,6 +9,7 @@ import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
 export default function ListeAidantsMediateurInfos({
   hasActiveFilters,
+  peutAfficherStatistiques30Jours,
   totalAccompagnementsPromise,
   totalBeneficiairesPromise,
   viewModel,
@@ -167,7 +168,7 @@ export default function ListeAidantsMediateurInfos({
             indicateur: formaterEnNombreFrancais(viewModel.totalActeursNumerique),
             legends: `dont **${formaterEnNombreFrancais(viewModel.totalConseillersNumerique)} conseillers numériques**`,
           })}
-          {!hasActiveFilters && getFilterInfos()}
+          {!hasActiveFilters && peutAfficherStatistiques30Jours && getFilterInfos()}
         </div>
       </div>
     </section>
@@ -182,6 +183,7 @@ type AidantsMediateursInfoCard = Readonly<{
 
 type Props = Readonly<{
   hasActiveFilters: boolean
+  peutAfficherStatistiques30Jours: boolean
   totalAccompagnementsPromise: Promise<ErrorViewModel | number>
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
   viewModel: {

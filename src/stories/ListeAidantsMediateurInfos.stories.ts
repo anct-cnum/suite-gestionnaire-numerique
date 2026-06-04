@@ -20,6 +20,7 @@ type Story = StoryObj
 export const Default: Story = {
   args: {
     hasActiveFilters: false,
+    peutAfficherStatistiques30Jours: true,
     totalAccompagnementsPromise: Promise.resolve(1250),
     totalBeneficiairesPromise: Promise.resolve(980),
     viewModel: {
@@ -32,6 +33,7 @@ export const Default: Story = {
 export const ValeursZero: Story = {
   args: {
     hasActiveFilters: false,
+    peutAfficherStatistiques30Jours: true,
     totalAccompagnementsPromise: Promise.resolve(0),
     totalBeneficiairesPromise: Promise.resolve(0),
     viewModel: {
