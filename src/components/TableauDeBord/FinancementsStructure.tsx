@@ -55,7 +55,6 @@ export default function FinancementsStructure({
     : [COULEUR_VIDE]
   const data = aDesFinancements ? viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.montant) : [1]
   const labels = viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.label)
-  const { nombreDeFinancementsEngagesParLEtat } = viewModel
 
   return (
     <BlocCard labelledBy="financements-structure">
@@ -85,13 +84,6 @@ export default function FinancementsStructure({
           </div>
           <div className="fr-text--sm fr-mb-0" style={{ fontWeight: 500 }}>
             Financements engagés par l&apos;État
-          </div>
-          <div className="fr-text--xs color-blue-france fr-mb-0">
-            comprenant{' '}
-            <span style={{ fontWeight: 700 }}>
-              {nombreDeFinancementsEngagesParLEtat} financement
-              {nombreDeFinancementsEngagesParLEtat > 1 ? 's' : ''}
-            </span>
           </div>
         </div>
         <div className="fr-col">
