@@ -74,6 +74,10 @@ export default async function ListeAidantsMediateursController({
   const codeDepartementUnique =
     scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 1 ? scopeFiltre.codes[0] : undefined
 
+  // Les stats 30 jours viennent de l'API Coop, dont la granularité ne descend pas sous le département :
+  // on ne les affiche que pour la France entière ou un département unique (sinon le chiffre serait faux).
+  const peutAfficherStatistiques30Jours = scopeFiltre.type === 'national' || codeDepartementUnique !== undefined
+
   // Récupérer les bénéficiaires et accompagnements depuis l'API Coop
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(codeDepartementUnique, {
     depuis,
@@ -102,6 +106,7 @@ export default async function ListeAidantsMediateursController({
       <ListeAidantsMediateurs
         accompagnementsPromise={accompagnementsPromise}
         listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
+        peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
         searchParams={currentSearchParams}
         totalAccompagnementsPromise={totalAccompagnementsPromise}
         totalBeneficiairesPromise={totalBeneficiairesPromise}
