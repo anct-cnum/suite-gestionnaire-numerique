@@ -136,7 +136,7 @@ describe('menu lateral', () => {
     }
   )
 
-  it("étant super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES s'affiche avec le lien Statistiques", () => {
+  it("étant super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES est masquée (démo)", () => {
     // WHEN
     render(
       <menuActifContext.Provider value="/">
@@ -146,10 +146,9 @@ describe('menu lateral', () => {
 
     // THEN
     const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const rapportsEtStatistiques = within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })
-    expect(rapportsEtStatistiques).toBeInTheDocument()
-    const lienStatistiques = screen.getByRole('link', { name: 'Statistiques' })
-    expect(lienStatistiques).toHaveAttribute('href', '/statistiques')
+    expect(within(nav).queryByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'Statistiques' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'Rapports' })).not.toBeInTheDocument()
   })
 
   it("étant un utilisateur non super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES n'est pas visible", () => {
@@ -164,20 +163,6 @@ describe('menu lateral', () => {
     expect(lienStatistiques).not.toBeInTheDocument()
     const lienRapports = within(nav).queryByRole('link', { name: 'Rapports' })
     expect(lienRapports).not.toBeInTheDocument()
-  })
-
-  it("étant super admin, quand j'affiche le menu latéral, alors le lien Rapports s'affiche", () => {
-    // WHEN
-    render(
-      <menuActifContext.Provider value="/">
-        <MenuLateral contexte={contexteSuperAdmin} />
-      </menuActifContext.Provider>
-    )
-
-    // THEN
-    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const lienRapports = within(nav).getByRole('link', { name: 'Rapports' })
-    expect(lienRapports).toHaveAttribute('href', '/rapports')
   })
 
   it("étant administrateur dispositif non super admin, quand j'affiche le menu latéral, alors Rapports s'affiche mais pas Statistiques", () => {
