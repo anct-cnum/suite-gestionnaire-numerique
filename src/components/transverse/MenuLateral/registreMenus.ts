@@ -89,7 +89,8 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  if (contexte.estSuperAdmin() || contexte.aCesRoles('administrateur_dispositif')) {
+  // Masquage temporaire pour démo : Rapports + Statistiques cachés au superadmin (revert à la demande)
+  if (contexte.aCesRoles('administrateur_dispositif') && !contexte.estSuperAdmin()) {
     sections.push(sectionRapportsEtStatistiques)
   }
 
