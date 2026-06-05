@@ -79,16 +79,13 @@ async function financementsStructure(structureId: number): Promise<ReactElement>
     new PrismaFinancementsStructureLoader().get(structureId),
     cnLoader.getParStructure(structureId),
   ])
-  const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsStructurePresenter)
-  const enveloppesConum = enveloppesConseillerNumeriquePresenter(enveloppesConumReadModel.enveloppes, new Date())
-
-  return (
-    <FinancementsStructure
-      enveloppesConseillerNumerique={enveloppesConum}
-      lienFinancements="/gouvernance/financements"
-      viewModel={financementsViewModel}
-    />
+  // Fix #1557 : on fond le Conum dans le total/ventilation du donut (plus de bloc de jauges séparé).
+  const financementsViewModel = financementsStructurePresenter(
+    financementsReadModel,
+    enveloppesConumReadModel.enveloppes
   )
+
+  return <FinancementsStructure lienFinancements="/gouvernance/financements" viewModel={financementsViewModel} />
 }
 
 type Props = Readonly<{
