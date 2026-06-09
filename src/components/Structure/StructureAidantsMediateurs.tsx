@@ -27,7 +27,7 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
           <div>
             <Link
               className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
-              href="/aidants-mediateurs"
+              href="/liste-aidants-mediateurs"
             >
               Gérer les aidants et médiateurs
             </Link>
