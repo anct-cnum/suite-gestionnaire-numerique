@@ -26,20 +26,22 @@ async function AidantPage({ params, searchParams }: Props): Promise<ReactElement
 
   const aidantResult = await aidantLoader.findById(id, periode)
   // Si aidantResult est une erreur, pas besoin de récupérer les stats
-  const filAriane = (
-    <FilAriane
-      items={[
-        { href: '/tableau-de-bord', label: 'Tableau de bord' },
-        { href: '/liste-aidants-mediateurs', label: 'Liste des aidants et médiateurs' },
-        { label: 'Détail aidant' },
-      ]}
-    />
-  )
+  function buildFilAriane(dernierLabel: string): ReactElement {
+    return (
+      <FilAriane
+        items={[
+          { href: '/tableau-de-bord', label: 'Tableau de bord' },
+          { href: '/liste-aidants-mediateurs', label: 'Suivi des aidants et médiateurs' },
+          { label: dernierLabel },
+        ]}
+      />
+    )
+  }
 
   if (isError(aidantResult)) {
     return (
       <>
-        {filAriane}
+        {buildFilAriane('Détail aidant')}
         <div className="fr-container fr-py-4w">
           <div className="fr-alert fr-alert--error">
             <p>{aidantResult.message}</p>
@@ -53,7 +55,7 @@ async function AidantPage({ params, searchParams }: Props): Promise<ReactElement
   const presentedData = presentAidantDetails(aidantResult, new Date())
   return (
     <>
-      {filAriane}
+      {buildFilAriane(`${presentedData.header.prenom} ${presentedData.header.nom}`.trim())}
       <AidantDetails data={presentedData} />
     </>
   )

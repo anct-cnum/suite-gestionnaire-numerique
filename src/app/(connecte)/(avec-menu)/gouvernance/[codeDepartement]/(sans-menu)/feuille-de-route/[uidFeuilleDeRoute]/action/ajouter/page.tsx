@@ -51,7 +51,8 @@ export default async function ActionAjouterController({ params }: Props): Promis
         <FilAriane
           items={[
             { href: '/tableau-de-bord', label: 'Tableau de bord' },
-            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { label: 'Gouvernance' },
+            { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
             { href: urlFeuilleDeRoute, label: nomFeuilleDeRoute },
             { label: 'Ajouter une action' },
           ]}
