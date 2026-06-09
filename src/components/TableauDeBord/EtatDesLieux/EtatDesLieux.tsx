@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import AccompagnementsRealises from './AccompagnementsRealises'
+import AccompagnementsRealisesClient from './AccompagnementsRealisesClient'
 import styles from './CarteFragilite.module.css'
 import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
@@ -13,13 +14,15 @@ import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lie
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
-export default function EtatDesLieux({
-  accompagnementsRealisesPromise,
-  afficherLienLieux = true,
-  carte,
-  lieuxInclusionViewModel,
-  mediateursEtAidantsViewModel,
-}: EtatDesLieuxProps): ReactElement {
+export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
+  const { afficherLienLieux = true, carte, lieuxInclusionViewModel, mediateursEtAidantsViewModel } = props
+  const accompagnements =
+    'accompagnementsTerritoire' in props ? (
+      <AccompagnementsRealisesClient territoire={props.accompagnementsTerritoire} />
+    ) : (
+      <AccompagnementsRealises accompagnementsRealisesPromise={props.accompagnementsRealisesPromise} />
+    )
+
   return (
     <section aria-labelledby="etatDesLieux" className="fr-mb-4w ">
       <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
@@ -57,17 +60,20 @@ export default function EtatDesLieux({
         <div className={`fr-col-12 fr-col-xl-4 ${styles.cardsColumn}`}>
           <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
           <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
-          <AccompagnementsRealises accompagnementsRealisesPromise={accompagnementsRealisesPromise} />
+          {accompagnements}
         </div>
       </div>
     </section>
   )
 }
 
-type EtatDesLieuxProps = Readonly<{
-  accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel>
-  afficherLienLieux?: boolean
-  carte: ReactElement
-  lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
-  mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
-}>
+type EtatDesLieuxProps = (
+  | Readonly<{ accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel> }>
+  | Readonly<{ accompagnementsTerritoire: string }>
+) &
+  Readonly<{
+    afficherLienLieux?: boolean
+    carte: ReactElement
+    lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
+    mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
+  }>
