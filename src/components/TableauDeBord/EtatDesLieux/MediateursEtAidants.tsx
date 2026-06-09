@@ -33,7 +33,7 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
         {viewModel.total}
       </div>
       <div className="font-weight-500">
-        <span>Médiateurs et aidants numériques</span>
+        <span>{viewModel.totalEstPluriel ? 'Médiateurs et aidants numériques' : 'Médiateur et aidant numérique'}</span>
         <Information>
           <p className="fr-mb-0">
             Professionnels inscrits sur <strong>la Coop</strong> et/ou labellisés <strong>Aidants Connect</strong>

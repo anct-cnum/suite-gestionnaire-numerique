@@ -63,7 +63,9 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
                     {aidantsEtMediateurs.totalMediateur}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">Médiateurs numériques</span>
+                  <span className="font-weight-500 color-blue-france">
+                    {aidantsEtMediateurs.totalMediateur > 1 ? 'Médiateurs numériques' : 'Médiateur numérique'}
+                  </span>
                 </p>
               </div>
             </div>
@@ -79,7 +81,9 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
                     {aidantsEtMediateurs.totalAidant}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">Aidants Connect</span>
+                  <span className="font-weight-500 color-blue-france">
+                    {aidantsEtMediateurs.totalAidant > 1 ? 'Aidants Connect' : 'Aidant Connect'}
+                  </span>
                 </p>
               </div>
             </div>

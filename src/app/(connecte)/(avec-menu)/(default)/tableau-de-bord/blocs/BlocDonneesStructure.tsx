@@ -31,6 +31,7 @@ function presenter(readModel: DonneesStructureReadModel, maintenant: Date): Donn
     },
     nombreLieux: String(readModel.nombreLieux),
     nombreMediateurs: String(readModel.nombreMediateurs),
+    nombreMediateursEstPluriel: readModel.nombreMediateurs > 1,
   }
 }
 
@@ -60,6 +61,7 @@ const viewModelVide: DonneesStructureViewModel = {
   },
   nombreLieux: '-',
   nombreMediateurs: '-',
+  nombreMediateursEstPluriel: true,
 }
 
 type Props = Readonly<{

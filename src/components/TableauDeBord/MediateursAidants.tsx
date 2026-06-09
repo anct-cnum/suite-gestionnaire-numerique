@@ -42,7 +42,9 @@ export default function MediateursAidants({ viewModel }: Props): ReactElement {
             />
           </div>
           <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{viewModel.total}</div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">Médiateurs numériques</div>
+          <div className="fr-text--lg font-weight-700 fr-m-0">
+            {viewModel.total > 1 ? 'Médiateurs numériques' : 'Médiateur numérique'}
+          </div>
         </div>
         <div className="fr-col">
           <div className="font-weight-500">Dont</div>
