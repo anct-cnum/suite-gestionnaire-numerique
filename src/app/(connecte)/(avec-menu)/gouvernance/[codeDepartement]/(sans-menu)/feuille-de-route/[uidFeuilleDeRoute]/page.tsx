@@ -48,7 +48,8 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
         <FilAriane
           items={[
             { href: '/tableau-de-bord', label: 'Tableau de bord' },
-            { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+            { label: 'Gouvernance' },
+            { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
             { href: `/gouvernance/${codeDepartement}/feuilles-de-route`, label: 'Feuilles de route' },
             { label: feuilleDeRouteReadModel.nom },
           ]}

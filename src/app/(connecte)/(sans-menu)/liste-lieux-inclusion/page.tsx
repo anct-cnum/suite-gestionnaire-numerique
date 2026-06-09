@@ -66,9 +66,7 @@ export default async function ListeLieuxInclusionController({
 
   return (
     <>
-      <FilAriane
-        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: "Liste des lieux d'inclusion" }]}
-      />
+      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des lieux' }]} />
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
         searchParams={currentSearchParams}

@@ -59,7 +59,8 @@ export default async function AidantsMediateursGouvernanceController({ params }:
       <FilAriane
         items={[
           { href: '/tableau-de-bord', label: 'Tableau de bord' },
-          { href: `/gouvernance/${codeDepartement}`, label: `Gouvernance ${nomDepartement(codeDepartement)}` },
+          { label: 'Gouvernance' },
+          { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
           { label: 'Aidants et médiateurs' },
         ]}
       />

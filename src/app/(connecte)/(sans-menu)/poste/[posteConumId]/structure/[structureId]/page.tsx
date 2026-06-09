@@ -29,12 +29,13 @@ export default async function PosteConseillerNumeriqueController({ params }: Pro
   const readModel = await loader.get(posteConumIdNumeric, structureIdNumeric)
   const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, new Date())
 
+  const dernierFilArianeLabel = 'type' in viewModel ? 'Détail du poste' : `Poste #${viewModel.posteId}`
   const filAriane = (
     <FilAriane
       items={[
         { href: '/tableau-de-bord', label: 'Tableau de bord' },
         { href: '/postes-conseiller-numerique', label: 'Suivi des postes Conseiller Numérique' },
-        { label: 'Détail du poste' },
+        { label: dernierFilArianeLabel },
       ]}
     />
   )

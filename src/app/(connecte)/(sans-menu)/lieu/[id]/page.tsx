@@ -59,8 +59,8 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
       <FilAriane
         items={[
           { href: '/tableau-de-bord', label: 'Tableau de bord' },
-          { href: '/liste-lieux-inclusion', label: "Liste des lieux d'inclusion" },
-          { label: 'Détail du lieu' },
+          { href: '/liste-lieux-inclusion', label: 'Suivi des lieux' },
+          { label: presentedData.header.nom },
         ]}
       />
       <LieuxInclusionDetails data={presentedData} />

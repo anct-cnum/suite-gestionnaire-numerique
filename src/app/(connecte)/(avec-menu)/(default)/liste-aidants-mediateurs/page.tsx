@@ -101,7 +101,7 @@ export default async function ListeAidantsMediateursController({
   return (
     <>
       <FilAriane
-        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Liste des aidants et médiateurs' }]}
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des aidants et médiateurs' }]}
       />
       <ListeAidantsMediateurs
         accompagnementsPromise={accompagnementsPromise}

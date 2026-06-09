@@ -44,7 +44,9 @@ export default async function LieuxInclusionController(): Promise<ReactElement> 
 
   return (
     <>
-      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: "Lieux d'inclusion" }]} />
+      <FilAriane
+        items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: "Lieux d'inclusion numérique" }]}
+      />
       <LieuxInclusion viewModel={viewModel} />
     </>
   )
