@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { comparaisonDoublonsPresenter } from './comparaisonDoublonsPresenter'
+import {
+  comparaisonDoublonsPresenter,
+  matriceDistances,
+  StructureComparaisonViewModel,
+} from './comparaisonDoublonsPresenter'
 import { StructureDetailReadModel } from '@/use-cases/queries/ComparerStructuresAFusionner'
 
 describe('comparaison doublons presenter', () => {
@@ -17,6 +21,8 @@ describe('comparaison doublons presenter', () => {
         estBeneficiaire: true,
         etatAdministratif: 'A',
         id: 4555,
+        latitude: 48.45,
+        longitude: 1.49,
         rattachements: {
           affectationsEmploi: 37,
           associationsLieux: 0,
@@ -57,7 +63,7 @@ describe('comparaison doublons presenter', () => {
       { label: 'Bénéficiaire de subvention', valeur: 'Oui' },
       { label: 'Issue d’une fusion précédente', valeur: 'Non' },
     ])
-    expect(structure.rattachements).toStrictEqual([
+    expect(structure.rattachements.map(({ label, nombre }) => ({ label, nombre }))).toStrictEqual([
       { label: 'Utilisateurs MIN', nombre: 2 },
       { label: 'Membres MIN', nombre: 1 },
       { label: 'Gouvernances', nombre: 1 },
@@ -84,6 +90,8 @@ describe('comparaison doublons presenter', () => {
         estBeneficiaire: false,
         etatAdministratif: null,
         id: 99,
+        latitude: null,
+        longitude: null,
         rattachements: {
           affectationsEmploi: 0,
           associationsLieux: 0,
@@ -112,4 +120,50 @@ describe('comparaison doublons presenter', () => {
     expect(structure.adresse).toBe('—')
     expect(structure.denominationSirene).toBe('')
   })
+
+  it('matriceDistances classe chaque distance par niveau (identique / proche / normal / éloigné / inconnu)', () => {
+    // GIVEN
+    const structures = [
+      structureAvecCoords(1, 48.8, 2.3),
+      structureAvecCoords(2, 48.8, 2.3), // 0 m → identique
+      structureAvecCoords(3, 48.8008, 2.3), // ~89 m → proche
+      structureAvecCoords(4, 48.805, 2.3), // ~560 m → normal
+      structureAvecCoords(5, 48.85, 2.3), // ~5,6 km → éloigné
+      structureAvecCoords(6, null, null), // coords manquantes → inconnu
+    ]
+
+    // WHEN
+    const matrice = matriceDistances(structures)
+
+    // THEN
+    expect(matrice.lignes[0]?.cellules.map((cellule) => cellule.niveau)).toStrictEqual([
+      'diagonale',
+      'identique',
+      'proche',
+      'normal',
+      'eloigne',
+      'inconnu',
+    ])
+  })
 })
+
+function structureAvecCoords(
+  id: number,
+  latitude: null | number,
+  longitude: null | number
+): StructureComparaisonViewModel {
+  return {
+    adresse: `Adresse ${id}`,
+    champs: [],
+    denomination: `Structure ${id}`,
+    denominationSirene: `Structure ${id}`,
+    estAssocieLieuInclusion: false,
+    estCanonique: false,
+    estMembre: false,
+    id,
+    latitude,
+    longitude,
+    rattachements: [],
+    rattachementsTotal: 0,
+  }
+}

@@ -36,6 +36,10 @@ export type StructureDetailReadModel = Readonly<{
   estBeneficiaire: boolean
   etatAdministratif: null | string
   id: number
+  // Coordonnées (geom de l'adresse, SRID 4326). Permettent de calculer les distances entre
+  // structures candidates : des antennes d'un même SIRET peuvent avoir des adresses distinctes.
+  latitude: null | number
+  longitude: null | number
   rattachements: RattachementsReadModel
   ridet: null | string
   rna: null | string

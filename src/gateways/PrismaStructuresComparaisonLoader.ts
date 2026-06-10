@@ -28,6 +28,8 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         ) AS deja_fusionnee,
         a.nom_commune,
         NULLIF(TRIM(CONCAT_WS(' ', a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune)), '') AS adresse,
+        ST_Y(a.geom) AS latitude,
+        ST_X(a.geom) AS longitude,
         (SELECT COUNT(*) FROM min.utilisateur u WHERE u.structure_id = sa.id)::int AS nb_utilisateurs_min,
         (SELECT COUNT(*) FROM min.membre m WHERE m.structure_id = sa.id)::int AS nb_membres_min,
         (SELECT COUNT(*) FROM main.poste p WHERE p.structure_id = sa.id)::int AS nb_postes,
@@ -68,6 +70,8 @@ interface LigneDetail {
   est_beneficiaire: boolean
   etat_administratif: null | string
   id: number
+  latitude: null | number
+  longitude: null | number
   nb_affectations_emploi: number
   nb_associations_lieux: number
   nb_contacts: number
@@ -105,6 +109,8 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     estBeneficiaire: ligne.est_beneficiaire,
     etatAdministratif: ligne.etat_administratif,
     id: ligne.id,
+    latitude: ligne.latitude,
+    longitude: ligne.longitude,
     rattachements: {
       affectationsEmploi: ligne.nb_affectations_emploi,
       associationsLieux: ligne.nb_associations_lieux,

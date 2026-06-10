@@ -29,18 +29,28 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
     return ['Action réservée aux administrateurs']
   }
 
-  const result = await new FusionnerStructures(new PrismaStructureFusionRepository()).handle({
-    champsRetenus: {
-      denominationAntenne: actionParams.denominationAntenne,
-      denominationSirene: actionParams.denominationSirene,
-    },
-    idAbsorbee: actionParams.idAbsorbee,
-    idSurvivante: actionParams.idSurvivante,
-    uidUtilisateur: sub,
-  })
+  // Fusion séquentielle : chaque absorbée est fusionnée dans la (même) survivante, une transaction
+  // par paire. Non atomique entre paires — en cas d'échec partiel, les fusions déjà faites sont
+  // conservées (réversibles via le journal d'audit) et les échecs sont remontés.
+  const fusionnerStructures = new FusionnerStructures(new PrismaStructureFusionRepository())
+  const echecs: Array<string> = []
+  for (const idAbsorbee of actionParams.idsAbsorbees) {
+    const result = await fusionnerStructures.handle({
+      champsRetenus: {
+        denominationAntenne: actionParams.denominationAntenne,
+        denominationSirene: actionParams.denominationSirene,
+      },
+      idAbsorbee,
+      idSurvivante: actionParams.idSurvivante,
+      uidUtilisateur: sub,
+    })
+    if (result !== 'OK') {
+      echecs.push(`Structure ${idAbsorbee} : ${MESSAGES_ECHEC[result]}`)
+    }
+  }
 
-  if (result !== 'OK') {
-    return [MESSAGES_ECHEC[result]]
+  if (echecs.length > 0) {
+    return echecs
   }
 
   revalidatePath(actionParams.path)
@@ -51,7 +61,7 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
 type ActionParams = Readonly<{
   denominationAntenne?: null | string
   denominationSirene?: null | string
-  idAbsorbee: number
+  idsAbsorbees: ReadonlyArray<number>
   idSurvivante: number
   path: string
 }>
@@ -59,10 +69,9 @@ type ActionParams = Readonly<{
 const validator = z.object({
   denominationAntenne: z.string().nullish(),
   denominationSirene: z.string().nullish(),
-  idAbsorbee: z
-    .number()
-    .int()
-    .positive({ message: "L'identifiant de la structure absorbée doit être un entier positif" }),
+  idsAbsorbees: z
+    .array(z.number().int().positive())
+    .min(1, { message: 'Sélectionnez au moins une structure à fusionner' }),
   idSurvivante: z
     .number()
     .int()
