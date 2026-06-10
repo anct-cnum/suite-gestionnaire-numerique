@@ -74,6 +74,8 @@ function structureDetail(id: number, total: number): StructureDetailReadModel {
     estBeneficiaire: false,
     etatAdministratif: null,
     id,
+    latitude: null,
+    longitude: null,
     rattachements,
     ridet: null,
     rna: null,
