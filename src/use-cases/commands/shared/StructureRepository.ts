@@ -25,6 +25,16 @@ export type StructureData = Readonly<{
   numeroVoie: string
 }>
 
+export interface ModifierNomStructureRepository {
+  modifierNom(data: ModifierNomStructureData): Promise<void>
+}
+
+export type ModifierNomStructureData = Readonly<{
+  // null = on efface l'override et on retombe sur le nom SIRENE.
+  denominationAntenne: null | string
+  structureId: number
+}>
+
 export interface StructureRepository
   extends CreateStructureRepository, GetStructureBySiretEmployeuseRepository, GetStructureBySiretRepository {}
 

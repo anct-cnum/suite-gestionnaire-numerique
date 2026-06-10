@@ -72,6 +72,8 @@ export type UneStructureReadModel = Readonly<{
     adresse: string
     codePostal: string
     commune: string
+    // Override d'affichage (denomination_antenne). NULL = on retombe sur le nom SIRENE.
+    denominationAntenne: null | string
     departement: string
     editeur: string
     edition: Date | undefined

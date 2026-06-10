@@ -3,7 +3,12 @@ import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
-import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
+import {
+  ModifierNomStructureData,
+  ModifierNomStructureRepository,
+  StructureData,
+  StructureRepository,
+} from '@/use-cases/commands/shared/StructureRepository'
 
 // Refonte 2026 : MIN écrit désormais dans main.structure_administrative (et
 // non plus dans main.structure legacy). Les notions "lieu" (nom, typologies,
@@ -11,7 +16,9 @@ import { StructureData, StructureRepository } from '@/use-cases/commands/shared/
 // Le champ Structure.nom du domain est désormais alimenté depuis
 // SA.denomination_sirene (compatibilité ascendante avec le contrat actuel).
 
-export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
+export class PrismaStructureRepository
+  implements ContactReferentRepository, ModifierNomStructureRepository, StructureRepository
+{
   async ajouterContact(structureId: number, data: ContactStructureData): Promise<void> {
     const contact = await prisma.main_contact.create({
       data: {
@@ -102,6 +109,13 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
       where: {
         id: contactId,
       },
+    })
+  }
+
+  async modifierNom(data: ModifierNomStructureData): Promise<void> {
+    await prisma.main_structure_administrative.update({
+      data: { denomination_antenne: data.denominationAntenne },
+      where: { id: data.structureId },
     })
   }
 

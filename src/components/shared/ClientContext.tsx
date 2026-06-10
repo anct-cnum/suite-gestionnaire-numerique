@@ -25,6 +25,7 @@ import { modifierLieuInclusionServicesModaliteAction } from '@/app/api/actions/m
 import { modifierLieuInclusionServicesTypeAccompagnementAction } from '@/app/api/actions/modifierLieuInclusionServicesTypeAccompagnementAction'
 import { modifierLieuInclusionServicesTypePublicAction } from '@/app/api/actions/modifierLieuInclusionServicesTypePublicAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
+import { modifierNomStructureAction } from '@/app/api/actions/modifierNomStructureAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
 import { modifierUneActionAction } from '@/app/api/actions/modifierUneActionAction'
 import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFeuilleDeRouteAction'
@@ -77,6 +78,7 @@ export default function ClientContext({
       modifierLieuInclusionServicesTypeAccompagnementAction,
       modifierLieuInclusionServicesTypePublicAction,
       modifierMesInformationsPersonnellesAction,
+      modifierNomStructureAction,
       modifierUnComiteAction,
       modifierUneActionAction,
       modifierUneFeuilleDeRouteAction,
@@ -131,6 +133,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierLieuInclusionServicesTypeAccompagnementAction: typeof modifierLieuInclusionServicesTypeAccompagnementAction
   modifierLieuInclusionServicesTypePublicAction: typeof modifierLieuInclusionServicesTypePublicAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
+  modifierNomStructureAction: typeof modifierNomStructureAction
   modifierUnComiteAction: typeof modifierUnComiteAction
   modifierUneActionAction: typeof modifierUneActionAction
   modifierUneFeuilleDeRouteAction: typeof modifierUneFeuilleDeRouteAction

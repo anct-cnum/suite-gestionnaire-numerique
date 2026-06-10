@@ -43,6 +43,7 @@ export function renderComponent(
     modifierLieuInclusionServicesTypeAccompagnementAction: vi.fn(),
     modifierLieuInclusionServicesTypePublicAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
+    modifierNomStructureAction: vi.fn(),
     modifierUnComiteAction: vi.fn(),
     modifierUneActionAction: vi.fn(),
     modifierUneFeuilleDeRouteAction: vi.fn(),

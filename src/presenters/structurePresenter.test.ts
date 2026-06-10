@@ -90,6 +90,7 @@ function structureReadModel(
       adresse: '12 Rue Saint-Laurent, 14000 Caen',
       codePostal: '14000',
       commune: 'Caen',
+      denominationAntenne: null,
       departement: 'Calvados',
       editeur: 'carto',
       edition: epochTime,

@@ -1,9 +1,16 @@
 import { ReactElement } from 'react'
 
+import EditionNomStructure from './EditionNomStructure'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
+import { RattachementsStructureViewModel } from '@/presenters/rattachementsStructurePresenter'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
-export default function StructureIdentite({ identite }: Props): ReactElement {
+export default function StructureIdentite({
+  editionActive,
+  identite,
+  rattachements,
+  structureId,
+}: Props): ReactElement {
   return (
     <section aria-labelledby="identite" className="grey-border border-radius fr-mb-2w fr-p-4w">
       <header className="separator fr-mb-6w">
@@ -14,7 +21,16 @@ export default function StructureIdentite({ identite }: Props): ReactElement {
       <article aria-label="Identité" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div aria-label="Identité" role="list" style={{ margin: 0 }}>
           <div className="color-grey">Raison sociale</div>
-          <div className="font-weight-500">{identite.nom}</div>
+          {editionActive ? (
+            <EditionNomStructure
+              denominationAntenne={identite.denominationAntenne}
+              nom={identite.nom}
+              rattachements={rattachements}
+              structureId={structureId}
+            />
+          ) : (
+            <div className="font-weight-500">{identite.nom}</div>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '24px' }}>
@@ -67,5 +83,8 @@ export default function StructureIdentite({ identite }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  editionActive: boolean
   identite: StructureViewModel['identite']
+  rattachements: RattachementsStructureViewModel
+  structureId: number
 }>
