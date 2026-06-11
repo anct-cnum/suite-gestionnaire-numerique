@@ -10,7 +10,10 @@ import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
 export default async function BlocMediateurs({ scope }: Props): Promise<ReactElement> {
   const loader = new PrismaStatistiquesMediateursLoader()
-  const readModel = await loader.get(scope.type === 'france' ? 'France' : scope.code)
+  const readModel = await loader.get(
+    scope.type === 'france' ? 'France' : scope.code,
+    scope.type === 'region' ? 'region' : 'departement'
+  )
 
   if (isErrorReadModel(readModel)) {
     return <MediateursAidants viewModel={viewModelVide} />

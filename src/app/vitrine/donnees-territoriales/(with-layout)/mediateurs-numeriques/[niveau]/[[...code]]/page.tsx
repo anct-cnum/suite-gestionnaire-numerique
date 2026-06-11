@@ -70,7 +70,10 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
 
   // Récupérer les statistiques synchrones des médiateurs
   const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()
-  const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(territoire)
+  const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(
+    territoire,
+    niveau === 'national' ? 'national' : 'departement'
+  )
   const statistiquesMediateursViewModel = handleReadModelOrError(
     statistiquesMediateursReadModel,
     statistiquesMediateursPresenter

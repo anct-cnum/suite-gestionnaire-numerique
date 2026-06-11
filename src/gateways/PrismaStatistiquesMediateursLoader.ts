@@ -13,14 +13,15 @@ export interface StatistiquesMediateursReadModel {
 }
 
 export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateursLoader {
-  async get(territoire: string): Promise<ErrorReadModel | StatistiquesMediateursReadModel> {
+  async get(
+    territoire: string,
+    niveau: NiveauTerritoire = 'departement'
+  ): Promise<ErrorReadModel | StatistiquesMediateursReadModel> {
     try {
-      const departementFilter = this.buildDepartementFilter(territoire)
-
       const result =
-        territoire === 'France'
+        territoire === 'France' || niveau === 'national'
           ? await this.getStatistiquesNationales()
-          : await this.getStatistiquesDepartement(departementFilter)
+          : await this.getStatistiquesDepartement(this.buildDepartementFilter(territoire, niveau))
 
       return {
         nombreAidantsConnect: Number(result.aidants_connect),
@@ -40,18 +41,15 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
     }
   }
 
-  private buildDepartementFilter(territoire: string): Array<string> {
-    if (territoire === 'France') {
-      return []
+  // Le code de territoire est ambigu : un code département (ex. '01' = Ain) coïncide avec un
+  // code région d'outre-mer (ex. '01' = Guadeloupe). On s'appuie sur le niveau explicite plutôt
+  // que de deviner, sinon la vitrine d'un département (01 à 06) affiche les chiffres de la région
+  // d'outre-mer homonyme.
+  private buildDepartementFilter(territoire: string, niveau: NiveauTerritoire): Array<string> {
+    if (niveau === 'region') {
+      return departements.filter((dept) => dept.regionCode === territoire).map((dept) => dept.code)
     }
 
-    // Vérifier si c'est un code région
-    const departementsRegion = departements.filter((dept) => dept.regionCode === territoire)
-    if (departementsRegion.length > 0) {
-      return departementsRegion.map((dept) => dept.code)
-    }
-
-    // Sinon c'est un code département
     return [territoire]
   }
 
@@ -89,8 +87,10 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
 }
 
 interface StatistiquesMediateursLoader {
-  get(territoire: string): Promise<ErrorReadModel | StatistiquesMediateursReadModel>
+  get(territoire: string, niveau?: NiveauTerritoire): Promise<ErrorReadModel | StatistiquesMediateursReadModel>
 }
+
+type NiveauTerritoire = 'departement' | 'national' | 'region'
 
 interface StatistiquesQueryResult {
   aidants_connect: bigint
