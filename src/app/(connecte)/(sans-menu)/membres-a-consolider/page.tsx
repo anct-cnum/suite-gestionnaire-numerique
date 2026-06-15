@@ -27,7 +27,7 @@ export default async function MembresAConsoliderController({ searchParams }: Pro
   }
 
   const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(await getSessionSub())
-  if (!(utilisateur instanceof Administrateur)) {
+  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
     redirect('/tableau-de-bord')
   }
 
