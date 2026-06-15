@@ -5,12 +5,10 @@ export function mediateursEtAidantsPresenter(readModel: MediateursEtAidantsReadM
   return {
     departement: readModel.departement,
     total: formaterEnNombreFrancais(readModel.total),
-    totalEstPluriel: readModel.total > 1,
   }
 }
 
 export type MediateursEtAidantsViewModel = Readonly<{
   departement: string
   total: string
-  totalEstPluriel: boolean
 }>

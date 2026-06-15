@@ -28,11 +28,7 @@ export default function DonneesStructure({ viewModel }: Props): ReactElement {
             </div>
             <div className={classNames(styles.indicateurValeur, 'fr-m-0')}>{viewModel.nombreMediateurs}</div>
           </div>
-          <div className="font-weight-500 fr-mt-1v">
-            {viewModel.nombreMediateursEstPluriel
-              ? 'Médiateurs et aidants numériques'
-              : 'Médiateur et aidant numérique'}
-          </div>
+          <div className="font-weight-500 fr-mt-1v">Médiateurs et aidants numériques</div>
           <div className="fr-text--xs color-blue-france fr-mb-0">gérés par votre structure</div>
         </div>
       </div>
@@ -79,7 +75,6 @@ export type DonneesStructureViewModel = Readonly<{
   }>
   nombreLieux: string
   nombreMediateurs: string
-  nombreMediateursEstPluriel: boolean
 }>
 
 type Props = Readonly<{
