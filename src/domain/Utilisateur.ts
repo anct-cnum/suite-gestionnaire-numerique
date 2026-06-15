@@ -14,6 +14,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return this.#isAdmin
   }
 
+  get isBetaTesteur(): boolean {
+    return this.#isBetaTesteur
+  }
+
   get isSuperAdmin(): boolean {
     return this.#isSuperAdmin
   }
@@ -24,6 +28,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
       emailDeContact: this.#emailDeContact.state.value,
       inviteLe: this.#inviteLe.toJSON(),
       isActive: Boolean(this.#derniereConnexion),
+      isBetaTesteur: this.#isBetaTesteur,
       isSuperAdmin: this.#isSuperAdmin,
       nom: this.#nom.state.value,
       prenom: this.#prenom.state.value,
@@ -37,6 +42,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
   #emailDeContact: Email
   #inviteLe: ValidDate<UtilisateurFailure>
   readonly #isAdmin = false
+  readonly #isBetaTesteur: boolean
   readonly #isSuperAdmin: boolean
   #nom: Nom
   #prenom: Prenom
@@ -50,6 +56,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     derniereConnexion?: Date
@@ -60,6 +67,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#prenom = prenom
     this.#emailDeContact = emailDeContact
     this.#isSuperAdmin = isSuperAdmin
+    this.#isBetaTesteur = isBetaTesteur
     this.#derniereConnexion = derniereConnexion
       ? new ValidDate(derniereConnexion, 'dateDeDerniereConnexionInvalide')
       : derniereConnexion
@@ -138,6 +146,7 @@ export type UtilisateurState = Readonly<{
   groupementUid?: GroupementState['uid']
   inviteLe: string
   isActive: boolean
+  isBetaTesteur: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string

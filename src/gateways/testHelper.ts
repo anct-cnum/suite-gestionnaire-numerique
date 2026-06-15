@@ -13,6 +13,7 @@ export function utilisateurRecordFactory(
     derniereConnexion: epochTime,
     emailDeContact: 'martin.tartempion@example.net',
     inviteLe: epochTime,
+    isBetaTesteur: false,
     isSuperAdmin: false,
     isSupprime: false,
     nom: 'Tartempion',

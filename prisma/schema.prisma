@@ -84,6 +84,7 @@ model UtilisateurRecord {
   emailDeContact    String    @map("email_de_contact")
   groupementId      Int?      @map("groupement_id")
   inviteLe          DateTime  @map("invite_le")
+  isBetaTesteur     Boolean   @default(false) @map("is_beta_testeur")
   isSuperAdmin      Boolean   @default(false) @map("is_super_admin")
   isSupprime        Boolean   @default(false) @map("is_supprime")
   nom               String    @db.Citext

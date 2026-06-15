@@ -16,6 +16,7 @@ export class UtilisateurFactory {
   readonly #emailDeContact: Email
   readonly #groupementUid?: number
   readonly #inviteLe: Date
+  readonly #isBetaTesteur: boolean
   readonly #isSuperAdmin: boolean
   readonly #nom: Nom
   readonly #prenom: Prenom
@@ -30,6 +31,7 @@ export class UtilisateurFactory {
     this.#prenom = new Prenom(params.prenom)
     this.#emailDeContact = new Email(params.emailDeContact)
     this.#isSuperAdmin = params.isSuperAdmin
+    this.#isBetaTesteur = params.isBetaTesteur
     this.#inviteLe = params.inviteLe
     this.#derniereConnexion = params.derniereConnexion
     this.#telephone = new Telephone(params.telephone ?? '')
@@ -48,6 +50,7 @@ export class UtilisateurFactory {
       emailDeContact: state.emailDeContact,
       groupementUid: state.groupementUid?.value,
       inviteLe: new Date(state.inviteLe),
+      isBetaTesteur: state.isBetaTesteur,
       isSuperAdmin: state.isSuperAdmin,
       nom: state.nom,
       prenom: state.prenom,
@@ -83,6 +86,7 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
+      this.#isBetaTesteur,
       this.#inviteLe,
       this.#telephone,
       this.#derniereConnexion
@@ -97,6 +101,7 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
+      this.#isBetaTesteur,
       this.#inviteLe,
       this.#telephone,
       departement,
@@ -112,6 +117,7 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
+      this.#isBetaTesteur,
       this.#inviteLe,
       this.#telephone,
       groupementUid,
@@ -127,6 +133,7 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
+      this.#isBetaTesteur,
       this.#inviteLe,
       this.#telephone,
       region,
@@ -142,6 +149,7 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
+      this.#isBetaTesteur,
       this.#inviteLe,
       this.#telephone,
       structureUid,
@@ -156,6 +164,7 @@ type UtilisateurFactoryParams = Readonly<{
   emailDeContact: string
   groupementUid?: number
   inviteLe: Date
+  isBetaTesteur: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string
