@@ -19,7 +19,7 @@ export default async function BeneficiairesController({ params }: Props): Promis
       <FilAriane
         items={[
           { href: '/tableau-de-bord', label: 'Tableau de bord' },
-          { label: 'Gouvernance' },
+          { href: '/gouvernances', label: 'Gouvernances' },
           { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
           { label: 'Bénéficiaires' },
         ]}
