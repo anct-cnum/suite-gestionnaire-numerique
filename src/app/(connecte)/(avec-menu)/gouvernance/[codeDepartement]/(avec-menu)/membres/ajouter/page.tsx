@@ -37,7 +37,7 @@ export default async function Page({ params }: Props): Promise<ReactElement> {
       <FilAriane
         items={[
           { href: '/tableau-de-bord', label: 'Tableau de bord' },
-          { label: 'Gouvernance' },
+          { href: '/gouvernances', label: 'Gouvernances' },
           { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
           { href: `/gouvernance/${codeDepartement}/membres`, label: 'Membres' },
           { label: 'Ajouter un membre' },
