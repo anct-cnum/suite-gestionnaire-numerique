@@ -1,45 +1,37 @@
 'use client'
 
 import Image from 'next/image'
-import { ChangeEvent, ReactElement, SyntheticEvent, useId, useMemo, useState } from 'react'
+import { ReactElement, SyntheticEvent, useId, useMemo, useState } from 'react'
+import ReactSelect, { StylesConfig } from 'react-select'
 
-import Select from '../shared/Select/Select'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
-import { LabelValue } from '@/presenters/shared/labels'
+import { regionsEtDepartements } from '@/presenters/filtresUtilisateurPresenter'
 
-type TerritoireOption = Readonly<{
-  code: string
-  nom: string
+type EchelonOption = Readonly<{
+  label: string
+  type: 'departement' | 'national' | 'region'
+  value: string
 }>
 
-type Props = Readonly<{
-  departements: ReadonlyArray<TerritoireOption>
-  regions: ReadonlyArray<TerritoireOption>
-}>
+const optionNational: EchelonOption = { label: 'National', type: 'national', value: 'national' }
 
-const ECHELON_NATIONAL = 'national'
-
-export default function RapportsForm({ departements, regions }: Props): ReactElement {
-  const echelonId = useId()
+export default function RapportsForm(): ReactElement {
   const formatDocxId = useId()
   const formatPdfId = useId()
-  const [echelon, setEchelon] = useState(ECHELON_NATIONAL)
+  const [echelon, setEchelon] = useState(optionNational)
 
-  const options = useMemo<ReadonlyArray<LabelValue>>(
+  const options = useMemo<ReadonlyArray<EchelonOption>>(
     () => [
-      { isSelected: true, label: 'National', value: ECHELON_NATIONAL },
-      ...regions.map((region) => ({ label: `${region.nom} (Région)`, value: `region:${region.code}` })),
-      ...departements.map((dep) => ({ label: `${dep.nom} (Département)`, value: `departement:${dep.code}` })),
+      optionNational,
+      ...regionsEtDepartements()
+        .filter((zone) => zone.value !== 'all')
+        .map((zone): EchelonOption => ({ label: zone.label, type: zone.type, value: zone.value })),
     ],
-    [departements, regions]
+    []
   )
   const [format, setFormat] = useState<'docx' | 'pdf'>('docx')
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<null | string>(null)
-
-  function handleEchelonChange(event: ChangeEvent<HTMLSelectElement>): void {
-    setEchelon(event.target.value)
-  }
 
   async function genererLeRapport(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
@@ -47,12 +39,16 @@ export default function RapportsForm({ departements, regions }: Props): ReactEle
     setEnCours(true)
     try {
       const params = new URLSearchParams({ format })
-      if (echelon === ECHELON_NATIONAL) {
+      if (echelon.type === 'national') {
         params.set('type', 'national')
+      } else if (echelon.type === 'region') {
+        const codeRegion = echelon.value.split('_')[0]
+        params.set('type', 'region')
+        params.set('code', codeRegion)
       } else {
-        const [type, code] = echelon.split(':')
-        params.set('type', type)
-        params.set('code', code)
+        const codeDepartement = echelon.value.split('_')[1]
+        params.set('type', 'departement')
+        params.set('code', codeDepartement)
       }
 
       const response = await fetch(`/api/rapport?${params.toString()}`)
@@ -88,16 +84,27 @@ export default function RapportsForm({ departements, regions }: Props): ReactEle
         <div className="fr-col-12 fr-col-md-8">
           <form onSubmit={genererLeRapport}>
             <div style={{ maxWidth: '512px' }}>
-              <Select
-                disabled={enCours}
-                id={echelonId}
-                name="echelon"
-                onChange={handleEchelonChange}
-                options={options}
-                value={echelon}
-              >
-                Échelon géographique
-              </Select>
+              <div className="fr-select-group fr-mb-3w">
+                <label className="fr-label fr-mb-1w" htmlFor="echelon">
+                  Échelon géographique
+                </label>
+                <ReactSelect<EchelonOption>
+                  components={{ DropdownIndicator }}
+                  inputId="echelon"
+                  instanceId="echelon"
+                  isClearable={false}
+                  isDisabled={enCours}
+                  name="echelon"
+                  onChange={(option) => {
+                    if (option) {
+                      setEchelon(option)
+                    }
+                  }}
+                  options={options as Array<EchelonOption>}
+                  styles={selectStyles}
+                  value={echelon}
+                />
+              </div>
             </div>
 
             <fieldset className="fr-fieldset" disabled={enCours}>
@@ -165,4 +172,40 @@ export default function RapportsForm({ departements, regions }: Props): ReactEle
 function nomFichier(contentDisposition: null | string, format: string): string {
   const correspondance = contentDisposition?.match(/filename="([^"]+)"/)
   return correspondance ? correspondance[1] : `rapport.${format}`
+}
+
+// istanbul ignore next @preserve
+const selectStyles: StylesConfig<EchelonOption> = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: 'var(--background-contrast-grey)',
+    border: 'none',
+    borderRadius: '.25rem .25rem 0 0',
+    boxShadow: 'inset 0 -2px 0 0 var(--border-plain-grey)',
+    color: 'var(--text-default-grey)',
+    cursor: 'pointer',
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const colorOfFocus = isFocused ? '#dfdfdf' : undefined
+    const backgroundColor = isSelected ? '#bbb' : colorOfFocus
+    const borderBottom = data.type === 'region' ? '1px solid #ddd' : undefined
+    const fontWeight = data.type === 'region' ? '900' : undefined
+
+    return {
+      ...styles,
+      backgroundColor,
+      borderBottom,
+      color: '#222',
+      cursor: 'pointer',
+      fontWeight,
+    }
+  },
+}
+
+function DropdownIndicator(): ReactElement {
+  return (
+    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+      <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
+    </svg>
+  )
 }

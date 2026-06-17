@@ -160,6 +160,7 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
   )
   children.push(
     new Table({
+      columnWidths: [3610, 2708, 2708],
       rows: [
         new TableRow({
           children: [
@@ -203,6 +204,7 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
   )
   children.push(
     new Table({
+      columnWidths: [3610, 5416],
       rows: [
         new TableRow({
           children: [
