@@ -19,28 +19,45 @@ import {
 
 export default function MembresAConsolider({ regles, viewModel }: Props): ReactElement {
   const regleActive = regles.find((regle) => regle.actif)
+  const [afficherCsv, setAfficherCsv] = useState(false)
 
   return (
     <section>
       <h1>Membres à consolider</h1>
       <p>
         Chaque règle ci-dessous liste les membres dont le rattachement à une structure mérite d’être corrigé.
-        Sélectionnez-en une.
+        Sélectionnez-en une, ou importez une liste depuis un CSV.
       </p>
-      <SelecteurRegles regles={regles} />
-      {regleActive === undefined ? null : (
-        <>
-          <p>{regleActive.sousTitre}</p>
-          <ConditionsRegle conditions={regleActive.conditions} />
-          {regleActive.disponible ? <ListeMembres viewModel={viewModel} /> : <AVenir />}
-        </>
-      )}
-      <ImportCsv />
+      <SelecteurRegles
+        afficherCsv={afficherCsv}
+        regles={regles}
+        surImportCsv={() => {
+          setAfficherCsv(true)
+        }}
+      />
+      {afficherCsv ? <ImportCsv /> : <ContenuRegle regleActive={regleActive} viewModel={viewModel} />}
     </section>
   )
 }
 
-function SelecteurRegles({ regles }: Readonly<{ regles: ReadonlyArray<RegleViewModel> }>): ReactElement {
+function ContenuRegle({
+  regleActive,
+  viewModel,
+}: Readonly<{ regleActive: RegleViewModel | undefined; viewModel: MembresAConsoliderViewModel }>): null | ReactElement {
+  if (regleActive === undefined) {
+    return null
+  }
+
+  return (
+    <>
+      <p>{regleActive.sousTitre}</p>
+      <ConditionsRegle conditions={regleActive.conditions} />
+      {regleActive.disponible ? <ListeMembres viewModel={viewModel} /> : <AVenir />}
+    </>
+  )
+}
+
+function SelecteurRegles({ afficherCsv, regles, surImportCsv }: SelecteurReglesProps): ReactElement {
   return (
     <nav
       aria-label="Règle de détection"
@@ -49,14 +66,22 @@ function SelecteurRegles({ regles }: Readonly<{ regles: ReadonlyArray<RegleViewM
     >
       {regles.map((regle) => (
         <Link
-          aria-current={regle.actif ? 'page' : undefined}
-          className={regle.actif ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
+          aria-current={!afficherCsv && regle.actif ? 'page' : undefined}
+          className={!afficherCsv && regle.actif ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
           href={regle.href}
           key={regle.id}
         >
           {regle.titre}
         </Link>
       ))}
+      <button
+        aria-current={afficherCsv ? 'page' : undefined}
+        className={afficherCsv ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
+        onClick={surImportCsv}
+        type="button"
+      >
+        Importer un CSV
+      </button>
     </nav>
   )
 }
@@ -256,9 +281,8 @@ function ImportCsv(): ReactElement {
   const texteId = useId()
 
   return (
-    <details className="fr-mt-4w">
-      <summary className="fr-text--bold">Importer une liste depuis un CSV</summary>
-      <p className="fr-text--sm fr-text-mention--grey fr-mt-1w">
+    <div>
+      <p className="fr-text--sm fr-text-mention--grey">
         Collez un CSV de triage avec les en-têtes <code>membre_id</code>, <code>cur_id</code> (structure source) et{' '}
         <code>alt_id</code> (structure cible). Séparateur tabulation, point-virgule ou virgule.
       </p>
@@ -286,7 +310,7 @@ function ImportCsv(): ReactElement {
         Charger la liste
       </button>
       {resultat === undefined ? null : <ResultatCsv resultat={resultat} />}
-    </details>
+    </div>
   )
 }
 
@@ -345,4 +369,10 @@ type BoutonTransfererProps = Readonly<{
 type Props = Readonly<{
   regles: ReadonlyArray<RegleViewModel>
   viewModel: MembresAConsoliderViewModel
+}>
+
+type SelecteurReglesProps = Readonly<{
+  afficherCsv: boolean
+  regles: ReadonlyArray<RegleViewModel>
+  surImportCsv(): void
 }>

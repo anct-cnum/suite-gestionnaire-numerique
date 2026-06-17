@@ -116,7 +116,7 @@ describe('membres à consolider', () => {
     })
 
     // WHEN
-    fireEvent.click(screen.getByText('Importer une liste depuis un CSV'))
+    fireEvent.click(screen.getByRole('button', { name: 'Importer un CSV' }))
     fireEvent.change(screen.getByRole('textbox', { name: 'Contenu du CSV' }), {
       target: { value: 'membre_id,cur_id,alt_id\nstructure-77944552700046-26,9869,9867' },
     })
@@ -139,7 +139,7 @@ describe('membres à consolider', () => {
     renderComponent(<MembresAConsolider regles={reglesPresenter('structure-fantome')} viewModel={listeVide()} />)
 
     // WHEN
-    fireEvent.click(screen.getByText('Importer une liste depuis un CSV'))
+    fireEvent.click(screen.getByRole('button', { name: 'Importer un CSV' }))
     fireEvent.change(screen.getByRole('textbox', { name: 'Contenu du CSV' }), {
       target: { value: 'membre_id,cur_id,alt_id\n,10,20' },
     })
