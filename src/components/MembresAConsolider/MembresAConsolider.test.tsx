@@ -106,7 +106,54 @@ describe('membres à consolider', () => {
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Erreur : La structure cible est déjà membre de cette gouvernance')
   })
+
+  it('importe une liste depuis un CSV collé et transfère une ligne', async () => {
+    // GIVEN
+    const transfererMembreAction = stubbedServerAction(['OK'])
+    renderComponent(<MembresAConsolider regles={reglesPresenter('structure-fantome')} viewModel={listeVide()} />, {
+      pathname: '/membres-a-consolider',
+      transfererMembreAction,
+    })
+
+    // WHEN
+    fireEvent.click(screen.getByText('Importer une liste depuis un CSV'))
+    fireEvent.change(screen.getByRole('textbox', { name: 'Contenu du CSV' }), {
+      target: { value: 'membre_id,cur_id,alt_id\nstructure-77944552700046-26,9869,9867' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Charger la liste' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Transférer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Transférer le membre' }))
+
+    // THEN
+    await screen.findByRole('status')
+    expect(transfererMembreAction).toHaveBeenCalledWith({
+      idCible: 9867,
+      idMembre: 'structure-77944552700046-26',
+      idSource: 9869,
+      path: '/membres-a-consolider',
+    })
+  })
+
+  it('signale les lignes invalides du CSV importé', () => {
+    // GIVEN
+    renderComponent(<MembresAConsolider regles={reglesPresenter('structure-fantome')} viewModel={listeVide()} />)
+
+    // WHEN
+    fireEvent.click(screen.getByText('Importer une liste depuis un CSV'))
+    fireEvent.change(screen.getByRole('textbox', { name: 'Contenu du CSV' }), {
+      target: { value: 'membre_id,cur_id,alt_id\n,10,20' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Charger la liste' }))
+
+    // THEN
+    expect(screen.getByText('Aucune ligne exploitable.')).toBeInTheDocument()
+    expect(screen.getByText('Ligne 2 ignorée : membre_id / cur_id / alt_id invalides.')).toBeInTheDocument()
+  })
 })
+
+function listeVide(): MembresAConsoliderViewModel {
+  return { membres: [], total: 0 }
+}
 
 function unMembre(): MembresAConsoliderViewModel {
   return {

@@ -120,6 +120,65 @@ export type MembreLigneViewModel = Readonly<{
   saTerrainOp: number
 }>
 
+// Parse un CSV de triage (format #1573) collé par l'admin pour transférer des membres en lot.
+// En-têtes requis : membre_id, cur_id (structure source), alt_id (structure cible). Séparateur
+// auto-détecté (tabulation, point-virgule ou virgule). Les lignes invalides sont signalées et ignorées.
+export function parserCsvMembresAConsolider(texte: string): ImportCsvResultViewModel {
+  const lignesTexte = texte
+    .split('\n')
+    .map((ligne) => ligne.trim())
+    .filter((ligne) => ligne !== '')
+  if (lignesTexte.length < 2) {
+    return { erreurs: ['Collez au moins une ligne d’en-tête et une ligne de données.'], lignes: [] }
+  }
+
+  const separateur = detecterSeparateur(lignesTexte[0])
+  const entetes = lignesTexte[0].split(separateur).map((entete) => entete.trim().toLowerCase())
+  const indexMembre = entetes.indexOf('membre_id')
+  const indexSource = entetes.indexOf('cur_id')
+  const indexCible = entetes.indexOf('alt_id')
+  const indexNom = entetes.indexOf('membre_nom')
+  if (indexMembre === -1 || indexSource === -1 || indexCible === -1) {
+    return { erreurs: ['En-têtes requis manquants : membre_id, cur_id, alt_id.'], lignes: [] }
+  }
+
+  const lignes: Array<MembreCsvLigneViewModel> = []
+  const erreurs: Array<string> = []
+  lignesTexte.slice(1).forEach((ligneTexte, index) => {
+    const colonnes = ligneTexte.split(separateur)
+    const idMembre = (colonnes[indexMembre] ?? '').trim()
+    const idSource = Number((colonnes[indexSource] ?? '').trim())
+    const idCible = Number((colonnes[indexCible] ?? '').trim())
+    const nom = (colonnes[indexNom] ?? '').trim()
+    if (idMembre === '' || !estIdStructureValide(idSource) || !estIdStructureValide(idCible)) {
+      erreurs.push(`Ligne ${index + 2} ignorée : membre_id / cur_id / alt_id invalides.`)
+      return
+    }
+    lignes.push({
+      idCible,
+      idMembre,
+      idSource,
+      nomActuel: `Structure #${idSource}`,
+      nomOrigine: nom === '' ? idMembre : nom,
+    })
+  })
+
+  return { erreurs, lignes }
+}
+
+export type ImportCsvResultViewModel = Readonly<{
+  erreurs: ReadonlyArray<string>
+  lignes: ReadonlyArray<MembreCsvLigneViewModel>
+}>
+
+export type MembreCsvLigneViewModel = Readonly<{
+  idCible: number
+  idMembre: string
+  idSource: number
+  nomActuel: string
+  nomOrigine: string
+}>
+
 function versLigneViewModel(membre: MembreAConsoliderReadModel): MembreLigneViewModel {
   return {
     departement: membre.departementGouvernance ?? '—',
@@ -134,4 +193,18 @@ function versLigneViewModel(membre: MembreAConsoliderReadModel): MembreLigneView
     saTerrainNom: membre.saTerrainAntenne ?? membre.saTerrainDenomination ?? `Structure #${membre.saTerrainId}`,
     saTerrainOp: membre.saTerrainOp,
   }
+}
+
+function detecterSeparateur(entete: string): string {
+  if (entete.includes('\t')) {
+    return '\t'
+  }
+  if (entete.includes(';')) {
+    return ';'
+  }
+  return ','
+}
+
+function estIdStructureValide(valeur: number): boolean {
+  return Number.isInteger(valeur) && valeur > 0
 }

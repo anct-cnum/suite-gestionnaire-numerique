@@ -9,8 +9,11 @@ import { Notification } from '../shared/Notification/Notification'
 import Table from '../shared/Table/Table'
 import { clientContext } from '@/components/shared/ClientContext'
 import {
+  ImportCsvResultViewModel,
+  MembreCsvLigneViewModel,
   MembreLigneViewModel,
   MembresAConsoliderViewModel,
+  parserCsvMembresAConsolider,
   RegleViewModel,
 } from '@/presenters/membresAConsoliderPresenter'
 
@@ -32,6 +35,7 @@ export default function MembresAConsolider({ regles, viewModel }: Props): ReactE
           {regleActive.disponible ? <ListeMembres viewModel={viewModel} /> : <AVenir />}
         </>
       )}
+      <ImportCsv />
     </section>
   )
 }
@@ -124,36 +128,6 @@ function ListeMembres({ viewModel }: Readonly<{ viewModel: MembresAConsoliderVie
 }
 
 function LigneMembre({ membre }: Readonly<{ membre: MembreLigneViewModel }>): ReactElement {
-  const { pathname, router, transfererMembreAction } = useContext(clientContext)
-  const [estModaleOuverte, setEstModaleOuverte] = useState(false)
-  const [idCible, setIdCible] = useState(String(membre.idCible))
-  const [enCours, setEnCours] = useState(false)
-  const idCibleChampId = useId()
-
-  async function confirmerTransfert(): Promise<void> {
-    const cible = Number(idCible)
-    if (!Number.isInteger(cible) || cible <= 0) {
-      Notification('error', { description: 'Identifiant de structure cible invalide', title: 'Erreur : ' })
-      return
-    }
-    setEnCours(true)
-    const messages = await transfererMembreAction({
-      idCible: cible,
-      idMembre: membre.membreId,
-      idSource: membre.idSource,
-      path: pathname,
-    })
-    setEnCours(false)
-    setEstModaleOuverte(false)
-
-    if (messages.includes('OK')) {
-      Notification('success', { description: 'transféré', title: 'Membre ' })
-      router.refresh()
-    } else {
-      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
-    }
-  }
-
   return (
     <tr>
       <td>
@@ -177,15 +151,13 @@ function LigneMembre({ membre }: Readonly<{ membre: MembreLigneViewModel }>): Re
       </td>
       <td>
         <div className="fr-btns-group fr-btns-group--sm fr-btns-group--inline">
-          <button
-            className="fr-btn fr-btn--sm"
-            onClick={() => {
-              setEstModaleOuverte(true)
-            }}
-            type="button"
-          >
-            Transférer
-          </button>
+          <BoutonTransfererMembre
+            idCibleProposee={membre.idCible}
+            idMembre={membre.membreId}
+            idSource={membre.idSource}
+            nomActuel={membre.nomActuelAffiche}
+            nomOrigine={membre.nomOrigine}
+          />
           <Link
             className="fr-btn fr-btn--secondary fr-btn--sm"
             href={`/structures-doublons/comparer?ids=${membre.idsParam}`}
@@ -193,41 +165,182 @@ function LigneMembre({ membre }: Readonly<{ membre: MembreLigneViewModel }>): Re
             Comparer
           </Link>
         </div>
-        <ConfirmationModal
-          confirmLabel={enCours ? 'Transfert…' : 'Transférer le membre'}
-          id={`transferer-membre-${membre.membreId}`}
-          isOpen={estModaleOuverte}
-          onCancel={() => {
-            setEstModaleOuverte(false)
-          }}
-          onConfirm={confirmerTransfert}
-          title="Transférer le membre vers une autre structure"
-        >
-          <p className="fr-text--sm">
-            Le membre <span className="fr-text--bold">{membre.nomOrigine}</span>, ses utilisateurs et ses contacts
-            seront re-rattachés de la structure #{membre.idSource} ({membre.nomActuelAffiche}) vers la structure cible
-            ci-dessous. La structure d’origine n’est pas supprimée.
-          </p>
-          <div className="fr-input-group">
-            <label className="fr-label" htmlFor={idCibleChampId}>
-              Identifiant de la structure cible
-            </label>
-            <input
-              className="fr-input"
-              id={idCibleChampId}
-              min={1}
-              onChange={(event) => {
-                setIdCible(event.target.value)
-              }}
-              type="number"
-              value={idCible}
-            />
-          </div>
-        </ConfirmationModal>
       </td>
     </tr>
   )
 }
+
+// Bouton + modale de transfert d'un membre, réutilisé par la liste détectée et par l'import CSV.
+function BoutonTransfererMembre({
+  idCibleProposee,
+  idMembre,
+  idSource,
+  nomActuel,
+  nomOrigine,
+}: BoutonTransfererProps): ReactElement {
+  const { pathname, router, transfererMembreAction } = useContext(clientContext)
+  const [estModaleOuverte, setEstModaleOuverte] = useState(false)
+  const [idCible, setIdCible] = useState(String(idCibleProposee))
+  const [enCours, setEnCours] = useState(false)
+  const modaleId = useId()
+  const idCibleChampId = useId()
+
+  async function confirmerTransfert(): Promise<void> {
+    const cible = Number(idCible)
+    if (!Number.isInteger(cible) || cible <= 0) {
+      Notification('error', { description: 'Identifiant de structure cible invalide', title: 'Erreur : ' })
+      return
+    }
+    setEnCours(true)
+    const messages = await transfererMembreAction({ idCible: cible, idMembre, idSource, path: pathname })
+    setEnCours(false)
+    setEstModaleOuverte(false)
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'transféré', title: 'Membre ' })
+      router.refresh()
+    } else {
+      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  return (
+    <>
+      <button
+        className="fr-btn fr-btn--sm"
+        onClick={() => {
+          setEstModaleOuverte(true)
+        }}
+        type="button"
+      >
+        Transférer
+      </button>
+      <ConfirmationModal
+        confirmLabel={enCours ? 'Transfert…' : 'Transférer le membre'}
+        id={modaleId}
+        isOpen={estModaleOuverte}
+        onCancel={() => {
+          setEstModaleOuverte(false)
+        }}
+        onConfirm={confirmerTransfert}
+        title="Transférer le membre vers une autre structure"
+      >
+        <p className="fr-text--sm">
+          Le membre <span className="fr-text--bold">{nomOrigine}</span>, ses utilisateurs et ses contacts seront
+          re-rattachés de la structure #{idSource} ({nomActuel}) vers la structure cible ci-dessous. La structure
+          d’origine n’est pas supprimée.
+        </p>
+        <div className="fr-input-group">
+          <label className="fr-label" htmlFor={idCibleChampId}>
+            Identifiant de la structure cible
+          </label>
+          <input
+            className="fr-input"
+            id={idCibleChampId}
+            min={1}
+            onChange={(event) => {
+              setIdCible(event.target.value)
+            }}
+            type="number"
+            value={idCible}
+          />
+        </div>
+      </ConfirmationModal>
+    </>
+  )
+}
+
+function ImportCsv(): ReactElement {
+  const [texte, setTexte] = useState('')
+  const [resultat, setResultat] = useState<ImportCsvResultViewModel | undefined>(undefined)
+  const texteId = useId()
+
+  return (
+    <details className="fr-mt-4w">
+      <summary className="fr-text--bold">Importer une liste depuis un CSV</summary>
+      <p className="fr-text--sm fr-text-mention--grey fr-mt-1w">
+        Collez un CSV de triage avec les en-têtes <code>membre_id</code>, <code>cur_id</code> (structure source) et{' '}
+        <code>alt_id</code> (structure cible). Séparateur tabulation, point-virgule ou virgule.
+      </p>
+      <div className="fr-input-group">
+        <label className="fr-label" htmlFor={texteId}>
+          Contenu du CSV
+        </label>
+        <textarea
+          className="fr-input"
+          id={texteId}
+          onChange={(event) => {
+            setTexte(event.target.value)
+          }}
+          rows={6}
+          value={texte}
+        />
+      </div>
+      <button
+        className="fr-btn fr-btn--sm fr-mb-2w"
+        onClick={() => {
+          setResultat(parserCsvMembresAConsolider(texte))
+        }}
+        type="button"
+      >
+        Charger la liste
+      </button>
+      {resultat === undefined ? null : <ResultatCsv resultat={resultat} />}
+    </details>
+  )
+}
+
+function ResultatCsv({ resultat }: Readonly<{ resultat: ImportCsvResultViewModel }>): ReactElement {
+  return (
+    <>
+      {resultat.erreurs.length > 0 ? (
+        <ul className="fr-text--sm fr-mb-2w" style={{ color: 'var(--text-default-error)' }}>
+          {resultat.erreurs.map((erreur) => (
+            <li key={erreur}>{erreur}</li>
+          ))}
+        </ul>
+      ) : null}
+      {resultat.lignes.length > 0 ? (
+        <Table enTetes={['Membre', 'Structure source', 'Structure cible', '']} titre="Membres importés du CSV">
+          {resultat.lignes.map((ligne) => (
+            <LigneCsv key={`${ligne.idMembre}-${ligne.idSource}-${ligne.idCible}`} ligne={ligne} />
+          ))}
+        </Table>
+      ) : (
+        <p className="fr-text--sm fr-text-mention--grey">Aucune ligne exploitable.</p>
+      )}
+    </>
+  )
+}
+
+function LigneCsv({ ligne }: Readonly<{ ligne: MembreCsvLigneViewModel }>): ReactElement {
+  return (
+    <tr>
+      <td>
+        <span className="fr-text--bold">{ligne.nomOrigine}</span>
+      </td>
+      <td>#{ligne.idSource}</td>
+      <td>#{ligne.idCible}</td>
+      <td>
+        <BoutonTransfererMembre
+          idCibleProposee={ligne.idCible}
+          idMembre={ligne.idMembre}
+          idSource={ligne.idSource}
+          nomActuel={ligne.nomActuel}
+          nomOrigine={ligne.nomOrigine}
+        />
+      </td>
+    </tr>
+  )
+}
+
+type BoutonTransfererProps = Readonly<{
+  idCibleProposee: number
+  idMembre: string
+  idSource: number
+  nomActuel: string
+  nomOrigine: string
+}>
 
 type Props = Readonly<{
   regles: ReadonlyArray<RegleViewModel>
