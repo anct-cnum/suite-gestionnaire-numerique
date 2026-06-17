@@ -148,7 +148,7 @@ export class FeuilleDeRoute extends Entity<State> {
 
   peutEtreGereePar(utilisateur: Utilisateur, membresCoporteurs: Array<MembreCoporteur>): boolean {
     // Administrateurs peuvent toujours gérer
-    if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
+    if (utilisateur.isAdmin) {
       return true
     }
 

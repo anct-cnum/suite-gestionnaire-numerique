@@ -40,9 +40,7 @@ export class GestionnaireGroupement extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return (
-      this.isSuperAdmin || (autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid))
-    )
+    return autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid)
   }
 }
 
