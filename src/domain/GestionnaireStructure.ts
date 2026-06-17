@@ -18,6 +18,7 @@ export class GestionnaireStructure extends Utilisateur {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     structureUid: StructureUid,
@@ -30,6 +31,7 @@ export class GestionnaireStructure extends Utilisateur {
       prenom,
       emailDeContact,
       isSuperAdmin,
+      isBetaTesteur,
       inviteLe,
       telephone,
       derniereConnexion

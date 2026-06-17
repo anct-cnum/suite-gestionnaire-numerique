@@ -44,6 +44,7 @@ export class InviterContactsReferentsFne implements CommandHandler<Command> {
     const utilisateurACreer = new UtilisateurFactory({
       emailDeContact: contact.email,
       inviteLe: this.#date,
+      isBetaTesteur: false,
       isSuperAdmin: false,
       nom: contact.nom,
       prenom: contact.prenom,

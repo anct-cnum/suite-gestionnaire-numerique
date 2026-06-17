@@ -149,6 +149,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
       emailDeContact: contact.email,
       groupementUid: undefined,
       inviteLe: this.date,
+      isBetaTesteur: false,
       isSuperAdmin: false,
       nom: contact.nom,
       prenom: contact.prenom,

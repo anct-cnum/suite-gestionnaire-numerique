@@ -22,6 +22,7 @@ export function utilisateurFactory(
     derniereConnexion: epochTime,
     emailDeContact: 'martin.tartempion@example.net',
     inviteLe: epochTime,
+    isBetaTesteur: false,
     isSuperAdmin: false,
     nom: 'Tartempion',
     prenom: 'Martin',

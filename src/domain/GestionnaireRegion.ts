@@ -18,6 +18,7 @@ export class GestionnaireRegion extends Utilisateur {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     region: Region,
@@ -30,6 +31,7 @@ export class GestionnaireRegion extends Utilisateur {
       prenom,
       emailDeContact,
       isSuperAdmin,
+      isBetaTesteur,
       inviteLe,
       telephone,
       derniereConnexion

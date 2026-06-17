@@ -18,6 +18,7 @@ export class GestionnaireDepartement extends Utilisateur {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     departement: Departement,
@@ -30,6 +31,7 @@ export class GestionnaireDepartement extends Utilisateur {
       prenom,
       emailDeContact,
       isSuperAdmin,
+      isBetaTesteur,
       inviteLe,
       telephone,
       derniereConnexion

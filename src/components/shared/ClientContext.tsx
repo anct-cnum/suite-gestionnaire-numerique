@@ -17,6 +17,7 @@ import { changerMaStructureAction } from '@/app/api/actions/changerMaStructureAc
 import { changerMonDepartementAction } from '@/app/api/actions/changerMonDepartementAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
+import { fusionnerStructuresAction } from '@/app/api/actions/fusionnerStructuresAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierContactReferentStructureAction } from '@/app/api/actions/modifierContactReferentStructureAction'
 import { modifierLieuInclusionDescriptionAction } from '@/app/api/actions/modifierLieuInclusionDescriptionAction'
@@ -43,6 +44,7 @@ import { supprimerUneNoteDeContextualisationAction } from '@/app/api/actions/sup
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
 import { supprimerUnMembreOuCandidatAction } from '@/app/api/actions/supprimerUnMembreOuCandidatAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
+import { transfererMembreAction } from '@/app/api/actions/transfererMembreAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
 export default function ClientContext({
@@ -69,6 +71,7 @@ export default function ClientContext({
       changerMonDepartementAction,
       changerMonRoleAction,
       definirUnCoPorteurAction,
+      fusionnerStructuresAction,
       inviterUnUtilisateurAction,
       modifierContactReferentStructureAction,
       modifierLieuInclusionDescriptionAction,
@@ -100,6 +103,7 @@ export default function ClientContext({
       supprimerUneNotePriveeAction,
       supprimerUnMembreOuCandidatAction,
       supprimerUnUtilisateurAction,
+      transfererMembreAction,
       utilisateursParPage,
     }),
     [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
@@ -123,6 +127,7 @@ export type ClientContextProviderValue = Readonly<{
   changerMonDepartementAction: typeof changerMonDepartementAction
   changerMonRoleAction: typeof changerMonRoleAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
+  fusionnerStructuresAction: typeof fusionnerStructuresAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierContactReferentStructureAction: typeof modifierContactReferentStructureAction
   modifierLieuInclusionDescriptionAction: typeof modifierLieuInclusionDescriptionAction
@@ -154,6 +159,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
   supprimerUnMembreOuCandidatAction: typeof supprimerUnMembreOuCandidatAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
+  transfererMembreAction: typeof transfererMembreAction
   utilisateursParPage: number
 }>
 type Props = PropsWithChildren<
