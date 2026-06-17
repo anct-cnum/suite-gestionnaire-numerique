@@ -103,6 +103,10 @@ export type RegleViewModel = Readonly<{
 export type MembreLigneViewModel = Readonly<{
   departement: string
   estCoporteur: boolean
+  // Établissement réel proposé comme cible du transfert (SA-terrain), modifiable côté UI.
+  idCible: number
+  // Structure actuelle (antenne) à laquelle le membre est rattaché à tort.
+  idSource: number
   // ids des SA du SIREN à comparer/fusionner via l'outil existant.
   idsParam: string
   membreId: string
@@ -120,6 +124,8 @@ function versLigneViewModel(membre: MembreAConsoliderReadModel): MembreLigneView
   return {
     departement: membre.departementGouvernance ?? '—',
     estCoporteur: membre.estCoporteur,
+    idCible: membre.saTerrainId,
+    idSource: membre.saActuelleId,
     idsParam: membre.saIdsDuSiren,
     membreId: membre.membreId,
     nbSaDuSiren: membre.nbSaDuSiren,

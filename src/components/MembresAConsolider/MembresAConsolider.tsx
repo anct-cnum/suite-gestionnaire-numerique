@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useContext, useId, useState } from 'react'
 
 import Information from '../shared/Information/Information'
+import ConfirmationModal from '../shared/Modal/ConfirmationModal'
+import { Notification } from '../shared/Notification/Notification'
 import Table from '../shared/Table/Table'
+import { clientContext } from '@/components/shared/ClientContext'
 import {
   MembreLigneViewModel,
   MembresAConsoliderViewModel,
@@ -121,6 +124,36 @@ function ListeMembres({ viewModel }: Readonly<{ viewModel: MembresAConsoliderVie
 }
 
 function LigneMembre({ membre }: Readonly<{ membre: MembreLigneViewModel }>): ReactElement {
+  const { pathname, router, transfererMembreAction } = useContext(clientContext)
+  const [estModaleOuverte, setEstModaleOuverte] = useState(false)
+  const [idCible, setIdCible] = useState(String(membre.idCible))
+  const [enCours, setEnCours] = useState(false)
+  const idCibleChampId = useId()
+
+  async function confirmerTransfert(): Promise<void> {
+    const cible = Number(idCible)
+    if (!Number.isInteger(cible) || cible <= 0) {
+      Notification('error', { description: 'Identifiant de structure cible invalide', title: 'Erreur : ' })
+      return
+    }
+    setEnCours(true)
+    const messages = await transfererMembreAction({
+      idCible: cible,
+      idMembre: membre.membreId,
+      idSource: membre.idSource,
+      path: pathname,
+    })
+    setEnCours(false)
+    setEstModaleOuverte(false)
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'transféré', title: 'Membre ' })
+      router.refresh()
+    } else {
+      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+    }
+  }
+
   return (
     <tr>
       <td>
@@ -143,12 +176,54 @@ function LigneMembre({ membre }: Readonly<{ membre: MembreLigneViewModel }>): Re
         </span>
       </td>
       <td>
-        <Link
-          className="fr-btn fr-btn--secondary fr-btn--sm"
-          href={`/structures-doublons/comparer?ids=${membre.idsParam}`}
+        <div className="fr-btns-group fr-btns-group--sm fr-btns-group--inline">
+          <button
+            className="fr-btn fr-btn--sm"
+            onClick={() => {
+              setEstModaleOuverte(true)
+            }}
+            type="button"
+          >
+            Transférer
+          </button>
+          <Link
+            className="fr-btn fr-btn--secondary fr-btn--sm"
+            href={`/structures-doublons/comparer?ids=${membre.idsParam}`}
+          >
+            Comparer
+          </Link>
+        </div>
+        <ConfirmationModal
+          confirmLabel={enCours ? 'Transfert…' : 'Transférer le membre'}
+          id={`transferer-membre-${membre.membreId}`}
+          isOpen={estModaleOuverte}
+          onCancel={() => {
+            setEstModaleOuverte(false)
+          }}
+          onConfirm={confirmerTransfert}
+          title="Transférer le membre vers une autre structure"
         >
-          Comparer / fusionner
-        </Link>
+          <p className="fr-text--sm">
+            Le membre <span className="fr-text--bold">{membre.nomOrigine}</span>, ses utilisateurs et ses contacts
+            seront re-rattachés de la structure #{membre.idSource} ({membre.nomActuelAffiche}) vers la structure cible
+            ci-dessous. La structure d’origine n’est pas supprimée.
+          </p>
+          <div className="fr-input-group">
+            <label className="fr-label" htmlFor={idCibleChampId}>
+              Identifiant de la structure cible
+            </label>
+            <input
+              className="fr-input"
+              id={idCibleChampId}
+              min={1}
+              onChange={(event) => {
+                setIdCible(event.target.value)
+              }}
+              type="number"
+              value={idCible}
+            />
+          </div>
+        </ConfirmationModal>
       </td>
     </tr>
   )
