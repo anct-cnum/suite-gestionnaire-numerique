@@ -85,12 +85,6 @@ export type LigneDistanceViewModel = Readonly<{
   nom: string
 }>
 
-export type CelluleDistanceViewModel = Readonly<{
-  colonneId: number
-  niveau: NiveauDistance
-  valeur: string
-}>
-
 // Niveau de proximité d'une cellule, pour la mise en forme : identique (0 = même adresse),
 // proche (< 100 m), eloigne (> 1 km), normal (entre les deux), inconnu (coords manquantes),
 // diagonale (structure vs elle-même).
@@ -111,6 +105,12 @@ export function matriceDistances(structures: ReadonlyArray<StructureComparaisonV
     })),
   }
 }
+
+type CelluleDistanceViewModel = Readonly<{
+  colonneId: number
+  niveau: NiveauDistance
+  valeur: string
+}>
 
 function celluleDistance(
   ligne: StructureComparaisonViewModel,
