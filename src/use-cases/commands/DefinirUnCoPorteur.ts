@@ -162,7 +162,7 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
 
     if (utilisateurCree) {
       // Envoyer l'email d'invitation
-      const emailGateway = this.emailGatewayFactory(false)
+      const emailGateway = this.emailGatewayFactory()
       await emailGateway.send({
         email: contact.email,
         nom: contact.nom,

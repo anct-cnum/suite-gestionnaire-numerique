@@ -19,7 +19,7 @@ export class LieuInclusion {
     departementsGouvernances: ReadonlyArray<string> = []
   ): boolean {
     // Les administrateurs peuvent modifier tous les lieux
-    if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
+    if (utilisateur.isAdmin) {
       return true
     }
 

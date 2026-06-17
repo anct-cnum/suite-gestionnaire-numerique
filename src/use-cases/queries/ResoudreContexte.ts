@@ -18,14 +18,12 @@ export type ScopeFiltre =
   | Readonly<{ type: 'national' }>
 
 export class Contexte {
-  readonly isSuperAdmin: boolean
   readonly role: RoleUtilisateur
   readonly scopes: ReadonlyArray<Scope>
 
-  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>, isSuperAdmin: boolean = false) {
+  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>) {
     this.role = role
     this.scopes = scopes
-    this.isSuperAdmin = isSuperAdmin
   }
 
   aCesRoles(...roles: ReadonlyArray<RoleUtilisateur>): boolean {
@@ -81,10 +79,6 @@ export class Contexte {
 
   estNational(): boolean {
     return this.scopes.some((scope) => scope.type === 'france')
-  }
-
-  estSuperAdmin(): boolean {
-    return this.isSuperAdmin
   }
 
   getScopes(niveau?: 'departemental' | 'national' | 'structure'): ReadonlyArray<Scope> {
@@ -152,7 +146,7 @@ export async function resoudreContexte(
   scopeLoader: ScopeLoader
 ): Promise<Contexte> {
   const scopes = await construireScopes(utilisateur, scopeLoader)
-  return new Contexte(utilisateur.role.type, scopes, utilisateur.isSuperAdmin)
+  return new Contexte(utilisateur.role.type, scopes)
 }
 
 export type Scope =

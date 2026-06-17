@@ -72,7 +72,7 @@ export class Gouvernance extends Entity<State> {
     membresCoporteurs: Array<MembreCoporteur> = []
   ): boolean {
     // Administrateurs peuvent toujours gérer
-    if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
+    if (utilisateur.isAdmin) {
       return true
     }
 

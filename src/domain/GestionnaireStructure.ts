@@ -38,9 +38,7 @@ export class GestionnaireStructure extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return (
-      this.isSuperAdmin || (autre instanceof GestionnaireStructure && autre.#structureUid.equals(this.#structureUid))
-    )
+    return autre instanceof GestionnaireStructure && autre.#structureUid.equals(this.#structureUid)
   }
 }
 
