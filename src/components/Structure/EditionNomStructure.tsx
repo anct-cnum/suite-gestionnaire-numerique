@@ -1,9 +1,10 @@
 'use client'
 
-import { ReactElement, SyntheticEvent, useContext, useId, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useId, useRef, useState } from 'react'
 
 import Modal from '../shared/Modal/Modal'
 import ModalTitle from '../shared/ModalTitle/ModalTitle'
+import { AdresseApercu } from '@/app/api/actions/previsualiserAdresseAction'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { RattachementsStructureViewModel } from '@/presenters/rattachementsStructurePresenter'
@@ -15,13 +16,11 @@ export default function EditionNomStructure({
   rattachements,
   structureId,
 }: Props): ReactElement {
-  const { modifierAdresseStructureAction, modifierNomStructureAction, pathname } = useContext(clientContext)
+  const { modifierNomStructureAction, pathname } = useContext(clientContext)
   const modalId = useId()
   const labelId = useId()
   const inputNomId = useId()
-  const inputAdresseId = useId()
   const formNomId = useId()
-  const formAdresseId = useId()
   const [isOpen, setIsOpen] = useState(false)
   const [onglet, setOnglet] = useState<Onglet>('renommer')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -29,7 +28,8 @@ export default function EditionNomStructure({
   // Une structure canonique (nom officiel SIRENE) ne se modifie pas — ni son nom (cela créerait un
   // libellé d'antenne), ni son adresse. L'édition ne vise que les structures « antenne ».
   const estCanonique = denominationAntenne === null
-  const afficherFooter = !estCanonique && (onglet === 'renommer' || onglet === 'adresse')
+  // L'onglet Adresse gère ses propres boutons (recherche en 2 temps) ; le footer ne sert qu'au renommage.
+  const afficherFooter = !estCanonique && onglet === 'renommer'
 
   function fermer(): void {
     setIsOpen(false)
@@ -53,17 +53,6 @@ export default function EditionNomStructure({
     setIsSubmitting(false)
 
     notifier(messages, 'Nom de la structure ', 'modifié')
-  }
-
-  async function handleSubmitAdresse(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault()
-    const adresseSaisie = (new FormData(event.currentTarget).get('adresse') as string).trim()
-
-    setIsSubmitting(true)
-    const messages = await modifierAdresseStructureAction({ adresse: adresseSaisie, path: pathname, structureId })
-    setIsSubmitting(false)
-
-    notifier(messages, 'Adresse de la structure ', 'modifiée')
   }
 
   return (
@@ -117,9 +106,8 @@ export default function EditionNomStructure({
             <OngletAdresse
               adresse={adresse}
               estCanonique={estCanonique}
-              formId={formAdresseId}
-              inputId={inputAdresseId}
-              onSubmit={handleSubmitAdresse}
+              onSuccess={fermer}
+              structureId={structureId}
             />
           ) : null}
 
@@ -132,12 +120,7 @@ export default function EditionNomStructure({
               <button aria-controls={modalId} className="fr-btn fr-btn--secondary" onClick={fermer} type="button">
                 Annuler
               </button>
-              <button
-                className="fr-btn"
-                disabled={isSubmitting}
-                form={onglet === 'adresse' ? formAdresseId : formNomId}
-                type="submit"
-              >
+              <button className="fr-btn" disabled={isSubmitting} form={formNomId} type="submit">
                 {isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
               </button>
             </div>
@@ -207,36 +190,111 @@ function OngletRenommer({
   )
 }
 
-function OngletAdresse({ adresse, estCanonique, formId, inputId, onSubmit }: OngletAdresseProps): ReactElement {
+function OngletAdresse({ adresse, estCanonique, onSuccess, structureId }: OngletAdresseProps): ReactElement {
+  const { modifierAdresseStructureAction, pathname, previsualiserAdresseAction } = useContext(clientContext)
+  const inputId = useId()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [apercu, setApercu] = useState<AdresseApercu | null>(null)
+  const [enCours, setEnCours] = useState(false)
+
   if (estCanonique) {
     return <NoticeCanonique>La modification de l’adresse n’est pas disponible.</NoticeCanonique>
   }
 
+  // Étape 1 : on géocode la saisie via la BAN et on présente la correspondance à valider.
+  async function rechercher(): Promise<void> {
+    setEnCours(true)
+    const resultat = await previsualiserAdresseAction(inputRef.current?.value.trim() ?? '')
+    setEnCours(false)
+
+    if (resultat === null) {
+      Notification('error', { description: 'Adresse introuvable — vérifiez la saisie', title: 'Erreur : ' })
+      return
+    }
+    setApercu(resultat)
+  }
+
+  // Étape 2 : l'utilisateur valide l'adresse trouvée, qui re-pointe la FK (jamais d'UPDATE adresse).
+  async function valider(): Promise<void> {
+    if (apercu === null) {
+      return
+    }
+    setEnCours(true)
+    const messages = await modifierAdresseStructureAction({ adresse: apercu.label, path: pathname, structureId })
+    setEnCours(false)
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'modifiée', title: 'Adresse de la structure ' })
+      onSuccess()
+    } else {
+      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+    }
+  }
+
   return (
-    <form
-      id={formId}
-      onSubmit={(event) => {
-        void onSubmit(event)
-      }}
-    >
+    <div>
       <p className="fr-text--sm fr-mb-2w">
         <span className="fr-text--bold">Adresse actuelle : </span>
         {adresse}
       </p>
       <label className="fr-label" htmlFor={inputId}>
         Nouvelle adresse
-        <span className="fr-hint-text">
-          Géocodée via la Base Adresse Nationale. Une nouvelle adresse est créée si elle n’existe pas déjà.
-        </span>
+        <span className="fr-hint-text">Recherchez via la Base Adresse Nationale, puis validez l’adresse trouvée.</span>
       </label>
       <input
         className="fr-input"
         id={inputId}
-        name="adresse"
+        onChange={() => {
+          setApercu(null)
+        }}
         placeholder="12 rue de la République, 75001 Paris"
+        ref={inputRef}
         type="text"
       />
-    </form>
+
+      {apercu === null ? (
+        <button
+          className="fr-btn fr-btn--secondary fr-mt-2w"
+          disabled={enCours}
+          onClick={() => {
+            void rechercher()
+          }}
+          type="button"
+        >
+          {enCours ? 'Recherche…' : 'Rechercher'}
+        </button>
+      ) : (
+        <div className="fr-mt-2w">
+          <div className="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
+            <p>
+              <span className="fr-text--bold">Adresse trouvée : </span>
+              {apercu.label}
+            </p>
+          </div>
+          <div className="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--inline-lg">
+            <button
+              className="fr-btn fr-btn--secondary"
+              onClick={() => {
+                setApercu(null)
+              }}
+              type="button"
+            >
+              Modifier la saisie
+            </button>
+            <button
+              className="fr-btn"
+              disabled={enCours}
+              onClick={() => {
+                void valider()
+              }}
+              type="button"
+            >
+              {enCours ? 'Enregistrement…' : 'Valider cette adresse'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -277,9 +335,8 @@ type OngletRenommerProps = Readonly<{
 type OngletAdresseProps = Readonly<{
   adresse: string
   estCanonique: boolean
-  formId: string
-  inputId: string
-  onSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void>
+  onSuccess(): void
+  structureId: number
 }>
 
 type Onglet = 'adresse' | 'fusionner' | 'renommer'

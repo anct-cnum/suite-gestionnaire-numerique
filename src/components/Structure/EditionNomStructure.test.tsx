@@ -2,6 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import EditionNomStructure from './EditionNomStructure'
+import { AdresseApercu } from '@/app/api/actions/previsualiserAdresseAction'
 import { renderComponent, stubbedServerAction } from '@/components/testHelper'
 
 describe('édition du nom de structure', () => {
@@ -76,24 +77,35 @@ describe('édition du nom de structure', () => {
     expect(screen.queryByRole('button', { name: 'Enregistrer' })).not.toBeInTheDocument()
   })
 
-  it('modifie l’adresse depuis l’onglet Adresse en appelant l’action', async () => {
+  it('recherche puis valide une adresse via la BAN (saisie en 2 temps)', async () => {
     // GIVEN
+    const previsualiserAdresseAction = vi
+      .fn<(adresse: string) => Promise<AdresseApercu | null>>()
+      .mockResolvedValue({ label: '14 Rue Louis Talamoni, 94500 Champigny-sur-Marne', score: 0.96 })
     const modifierAdresseStructureAction = stubbedServerAction(['OK'])
     renderComponent(<EditionNomStructure {...props()} />, {
       modifierAdresseStructureAction,
       pathname: '/structure/978',
+      previsualiserAdresseAction,
     })
 
-    // WHEN
+    // WHEN — étape 1 : recherche
     fireEvent.click(screen.getByRole('button', { name: 'Éditer' }))
     fireEvent.click(screen.getByRole('button', { name: 'Adresse' }))
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: '5 rue Neuve, 13001 Marseille' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '14 rue louis talamoni champigny' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+    // THEN — l'adresse trouvée s'affiche pour validation
+    await screen.findByText(/14 Rue Louis Talamoni/)
+    expect(previsualiserAdresseAction).toHaveBeenCalledWith('14 rue louis talamoni champigny')
+
+    // WHEN — étape 2 : validation
+    fireEvent.click(screen.getByRole('button', { name: 'Valider cette adresse' }))
 
     // THEN
     await screen.findByRole('status')
     expect(modifierAdresseStructureAction).toHaveBeenCalledWith({
-      adresse: '5 rue Neuve, 13001 Marseille',
+      adresse: '14 Rue Louis Talamoni, 94500 Champigny-sur-Marne',
       path: '/structure/978',
       structureId: 978,
     })

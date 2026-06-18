@@ -53,6 +53,7 @@ export function renderComponent(
     modifierUneNoteDeContextualisationAction: vi.fn(),
     modifierUneNotePriveeAction: vi.fn(),
     pathname: '/',
+    previsualiserAdresseAction: vi.fn(),
     rechercherUneEntrepriseAction: vi.fn(),
     reinviterUnUtilisateurAction: vi.fn(),
     retirerUnCoPorteurAction: vi.fn(),
