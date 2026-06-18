@@ -33,26 +33,26 @@ export default async function AidantsMediateursGouvernanceController({ params }:
     redirect('/connexion')
   }
 
-  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
+  const accompagnementsEtMediateursPromise = new RecupererAccompagnementsEtMediateurs(
     new PrismaAccompagnementsEtMediateursLoader()
   )
-  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({
-    territoire: codeDepartement,
-  })
-  const accompagnementsEtMediateursViewModel = handleReadModelOrError(
-    accompagnementsEtMediateursReadModel,
-    accompagnementsEtMediateursPresenter
-  ) as AccompagnementsEtMediateursViewModel | ErrorViewModel
+    .execute({ territoire: codeDepartement })
+    .then(
+      (readModel) =>
+        handleReadModelOrError(readModel, accompagnementsEtMediateursPresenter) as
+          | AccompagnementsEtMediateursViewModel
+          | ErrorViewModel
+    )
 
-  const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
-  const niveauDeFormationReadModel = await niveauDeFormationLoader.get(codeDepartement)
-  const niveauDeFormationViewModel = handleReadModelOrError(niveauDeFormationReadModel, niveauDeFormationPresenter) as
-    | ErrorViewModel
-    | NiveauDeFormationViewModel
-
-  const dateGeneration = new Date()
+  const niveauDeFormationPromise = new PrismaNiveauDeFormationLoader()
+    .get(codeDepartement)
+    .then(
+      (readModel) =>
+        handleReadModelOrError(readModel, niveauDeFormationPresenter) as ErrorViewModel | NiveauDeFormationViewModel
+    )
 
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(codeDepartement)
+  const dateGeneration = new Date()
 
   return (
     <>
@@ -65,15 +65,15 @@ export default async function AidantsMediateursGouvernanceController({ params }:
         ]}
       />
       <AidantsMediateurs
-        accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+        accompagnementsEtMediateursPromise={accompagnementsEtMediateursPromise}
         beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
         dateGeneration={dateGeneration}
-        niveauDeFormationViewModel={niveauDeFormationViewModel}
+        niveauDeFormationPromise={niveauDeFormationPromise}
       />
     </>
   )
 }
 
-interface Props {
-  readonly params: Promise<{ codeDepartement: string }>
-}
+type Props = Readonly<{
+  params: Promise<{ codeDepartement: string }>
+}>

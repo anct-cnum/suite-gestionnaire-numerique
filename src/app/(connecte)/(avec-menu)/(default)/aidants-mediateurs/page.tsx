@@ -42,25 +42,26 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     redirect('/tableau-de-bord')
   }
 
-  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
+  const accompagnementsEtMediateursPromise = new RecupererAccompagnementsEtMediateurs(
     new PrismaAccompagnementsEtMediateursLoader()
   )
-  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({
-    territoire: 'France',
-  })
-  const accompagnementsEtMediateursViewModel = handleReadModelOrError(
-    accompagnementsEtMediateursReadModel,
-    accompagnementsEtMediateursPresenter
-  ) as AccompagnementsEtMediateursViewModel | ErrorViewModel
+    .execute({ territoire: 'France' })
+    .then(
+      (readModel) =>
+        handleReadModelOrError(readModel, accompagnementsEtMediateursPresenter) as
+          | AccompagnementsEtMediateursViewModel
+          | ErrorViewModel
+    )
 
-  const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
-  const niveauDeFormationReadModel = await niveauDeFormationLoader.get()
-  const niveauDeFormationViewModel = handleReadModelOrError(niveauDeFormationReadModel, niveauDeFormationPresenter) as
-    | ErrorViewModel
-    | NiveauDeFormationViewModel
-  const dateGeneration = new Date()
+  const niveauDeFormationPromise = new PrismaNiveauDeFormationLoader()
+    .get()
+    .then(
+      (readModel) =>
+        handleReadModelOrError(readModel, niveauDeFormationPresenter) as ErrorViewModel | NiveauDeFormationViewModel
+    )
 
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements()
+  const dateGeneration = new Date()
 
   return (
     <>
@@ -68,10 +69,10 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
         items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Aidants et médiateurs numériques' }]}
       />
       <AidantsMediateurs
-        accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+        accompagnementsEtMediateursPromise={accompagnementsEtMediateursPromise}
         beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
         dateGeneration={dateGeneration}
-        niveauDeFormationViewModel={niveauDeFormationViewModel}
+        niveauDeFormationPromise={niveauDeFormationPromise}
       />
     </>
   )

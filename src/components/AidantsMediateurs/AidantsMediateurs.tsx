@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, Suspense, useEffect, useState } from 'react'
 
-import AccompagnementsEtMediateurs from './AccompagnementsEtMediateurs'
-import NiveauDeFormation from './NiveauDeFormation'
+import AccompagnementsEtMediateursAsyncLoader from './AccompagnementsEtMediateursAsyncLoader'
+import AsyncLoaderErrorBoundary from './GenericErrorBoundary'
+import NiveauDeFormationAsyncLoader from './NiveauDeFormationAsyncLoader'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
@@ -14,10 +16,10 @@ import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeF
 import { BeneficiairesEtAccompagnementsResult } from '@/use-cases/queries/fetchBeneficiaires'
 
 export default function AidantsMediateurs({
-  accompagnementsEtMediateursViewModel,
+  accompagnementsEtMediateursPromise,
   beneficiairesEtAccompagnementsPromise,
   dateGeneration,
-  niveauDeFormationViewModel,
+  niveauDeFormationPromise,
 }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -87,15 +89,26 @@ export default function AidantsMediateurs({
       </div>
 
       <div className="fr-mb-4w">
-        <AccompagnementsEtMediateurs
-          accompagnementsEtMediateurs={accompagnementsEtMediateursViewModel}
-          beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
-          dateGeneration={dateGeneration}
-        />
+        <AsyncLoaderErrorBoundary>
+          <Suspense fallback={<SpinnerSimple text="Récupération des accompagnements et médiateurs..." />}>
+            <AccompagnementsEtMediateursAsyncLoader
+              accompagnementsEtMediateursPromise={accompagnementsEtMediateursPromise}
+              beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
+              dateGeneration={dateGeneration}
+            />
+          </Suspense>
+        </AsyncLoaderErrorBoundary>
       </div>
 
       <div className="fr-mb-4w">
-        <NiveauDeFormation dateGeneration={dateGeneration} niveauDeFormation={niveauDeFormationViewModel} />
+        <AsyncLoaderErrorBoundary>
+          <Suspense fallback={<SpinnerSimple text="Récupération du niveau de formation..." />}>
+            <NiveauDeFormationAsyncLoader
+              dateGeneration={dateGeneration}
+              niveauDeFormationPromise={niveauDeFormationPromise}
+            />
+          </Suspense>
+        </AsyncLoaderErrorBoundary>
       </div>
 
       {isDrawerOpen ? (
@@ -193,8 +206,8 @@ export default function AidantsMediateurs({
 }
 
 type Props = Readonly<{
-  accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  accompagnementsEtMediateursPromise: Promise<AccompagnementsEtMediateursViewModel | ErrorViewModel>
   beneficiairesEtAccompagnementsPromise: Promise<BeneficiairesEtAccompagnementsResult | ErrorViewModel>
   dateGeneration: Date
-  niveauDeFormationViewModel: ErrorViewModel | NiveauDeFormationViewModel
+  niveauDeFormationPromise: Promise<ErrorViewModel | NiveauDeFormationViewModel>
 }>
