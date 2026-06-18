@@ -19,6 +19,7 @@ import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { fusionnerStructuresAction } from '@/app/api/actions/fusionnerStructuresAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
+import { modifierAdresseStructureAction } from '@/app/api/actions/modifierAdresseStructureAction'
 import { modifierContactReferentStructureAction } from '@/app/api/actions/modifierContactReferentStructureAction'
 import { modifierLieuInclusionDescriptionAction } from '@/app/api/actions/modifierLieuInclusionDescriptionAction'
 import { modifierLieuInclusionInformationsPratiquesAction } from '@/app/api/actions/modifierLieuInclusionInformationsPratiquesAction'
@@ -74,6 +75,7 @@ export default function ClientContext({
       definirUnCoPorteurAction,
       fusionnerStructuresAction,
       inviterUnUtilisateurAction,
+      modifierAdresseStructureAction,
       modifierContactReferentStructureAction,
       modifierLieuInclusionDescriptionAction,
       modifierLieuInclusionInformationsPratiquesAction,
@@ -131,6 +133,7 @@ export type ClientContextProviderValue = Readonly<{
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   fusionnerStructuresAction: typeof fusionnerStructuresAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
+  modifierAdresseStructureAction: typeof modifierAdresseStructureAction
   modifierContactReferentStructureAction: typeof modifierContactReferentStructureAction
   modifierLieuInclusionDescriptionAction: typeof modifierLieuInclusionDescriptionAction
   modifierLieuInclusionInformationsPratiquesAction: typeof modifierLieuInclusionInformationsPratiquesAction

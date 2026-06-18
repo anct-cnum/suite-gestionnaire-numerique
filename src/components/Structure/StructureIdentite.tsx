@@ -23,6 +23,7 @@ export default function StructureIdentite({
           <div className="color-grey">Raison sociale</div>
           {editionActive ? (
             <EditionNomStructure
+              adresse={identite.adresse}
               denominationAntenne={identite.denominationAntenne}
               nom={identite.nom}
               rattachements={rattachements}

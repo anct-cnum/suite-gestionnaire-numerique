@@ -61,15 +61,40 @@ describe('édition du nom de structure', () => {
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Enregistrer' })).not.toBeInTheDocument()
   })
+
+  it('modifie l’adresse depuis l’onglet Adresse en appelant l’action', async () => {
+    // GIVEN
+    const modifierAdresseStructureAction = stubbedServerAction(['OK'])
+    renderComponent(<EditionNomStructure {...props()} />, {
+      modifierAdresseStructureAction,
+      pathname: '/structure/978',
+    })
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Éditer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Adresse' }))
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '5 rue Neuve, 13001 Marseille' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+
+    // THEN
+    await screen.findByRole('status')
+    expect(modifierAdresseStructureAction).toHaveBeenCalledWith({
+      adresse: '5 rue Neuve, 13001 Marseille',
+      path: '/structure/978',
+      structureId: 978,
+    })
+  })
 })
 
 function props(denominationAntenne: null | string = 'Antenne actuelle'): Readonly<{
+  adresse: string
   denominationAntenne: null | string
   nom: string
   rattachements: ReadonlyArray<Readonly<{ label: string; nombre: number }>>
   structureId: number
 }> {
   return {
+    adresse: '3 rue de la Paix, 75002 Paris',
     denominationAntenne,
     nom: 'Conseil départemental',
     rattachements: [

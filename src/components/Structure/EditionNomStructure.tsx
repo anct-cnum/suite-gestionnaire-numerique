@@ -9,16 +9,19 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import { RattachementsStructureViewModel } from '@/presenters/rattachementsStructurePresenter'
 
 export default function EditionNomStructure({
+  adresse,
   denominationAntenne,
   nom,
   rattachements,
   structureId,
 }: Props): ReactElement {
-  const { modifierNomStructureAction, pathname } = useContext(clientContext)
+  const { modifierAdresseStructureAction, modifierNomStructureAction, pathname } = useContext(clientContext)
   const modalId = useId()
   const labelId = useId()
-  const inputId = useId()
-  const formId = useId()
+  const inputNomId = useId()
+  const inputAdresseId = useId()
+  const formNomId = useId()
+  const formAdresseId = useId()
   const [isOpen, setIsOpen] = useState(false)
   const [onglet, setOnglet] = useState<Onglet>('renommer')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -27,12 +30,13 @@ export default function EditionNomStructure({
   // Structure canonique (nom officiel SIRENE) : on n'autorise pas le renommage (cela créerait un
   // libellé d'antenne). Le renommage ne vise que les structures « antenne ».
   const estCanonique = denominationAntenne === null
+  const afficherFooter = (onglet === 'renommer' && !estCanonique) || onglet === 'adresse'
 
   function fermer(): void {
     setIsOpen(false)
   }
 
-  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmitNom(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     const nomAffichage = (new FormData(event.currentTarget).get('nomAffichage') as string).trim()
 
@@ -40,8 +44,23 @@ export default function EditionNomStructure({
     const messages = await modifierNomStructureAction({ nomAffichage, path: pathname, structureId })
     setIsSubmitting(false)
 
+    notifier(messages, 'Nom de la structure ', 'modifié')
+  }
+
+  async function handleSubmitAdresse(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault()
+    const adresseSaisie = (new FormData(event.currentTarget).get('adresse') as string).trim()
+
+    setIsSubmitting(true)
+    const messages = await modifierAdresseStructureAction({ adresse: adresseSaisie, path: pathname, structureId })
+    setIsSubmitting(false)
+
+    notifier(messages, 'Adresse de la structure ', 'modifiée')
+  }
+
+  function notifier(messages: ReadonlyArray<string>, titre: string, succes: string): void {
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifié', title: 'Nom de la structure ' })
+      Notification('success', { description: succes, title: titre })
       fermer()
     } else {
       Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
@@ -58,7 +77,7 @@ export default function EditionNomStructure({
           onClick={() => {
             setIsOpen(true)
           }}
-          title="Renommer ou fusionner la structure"
+          title="Modifier la structure"
           type="button"
         >
           Éditer
@@ -67,27 +86,21 @@ export default function EditionNomStructure({
 
       <Modal close={fermer} id={modalId} isOpen={isOpen} labelId={labelId}>
         <div className="fr-modal__content">
-          <ModalTitle id={labelId}>Renommer ou fusionner la structure</ModalTitle>
+          <ModalTitle id={labelId}>Modifier la structure</ModalTitle>
 
           <div className="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-mb-3w">
-            <button
-              className={onglet === 'renommer' ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
-              onClick={() => {
-                setOnglet('renommer')
-              }}
-              type="button"
-            >
-              Renommer
-            </button>
-            <button
-              className={onglet === 'fusionner' ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
-              onClick={() => {
-                setOnglet('fusionner')
-              }}
-              type="button"
-            >
-              Fusionner
-            </button>
+            {ONGLETS.map((definition) => (
+              <button
+                className={onglet === definition.id ? 'fr-btn fr-btn--sm' : 'fr-btn fr-btn--sm fr-btn--secondary'}
+                key={definition.id}
+                onClick={() => {
+                  setOnglet(definition.id)
+                }}
+                type="button"
+              >
+                {definition.libelle}
+              </button>
+            ))}
           </div>
 
           {onglet === 'renommer' ? (
@@ -101,19 +114,19 @@ export default function EditionNomStructure({
                 </div>
               ) : (
                 <form
-                  id={formId}
+                  id={formNomId}
                   onSubmit={(event) => {
-                    void handleSubmit(event)
+                    void handleSubmitNom(event)
                   }}
                 >
-                  <label className="fr-label" htmlFor={inputId}>
+                  <label className="fr-label" htmlFor={inputNomId}>
                     Nom d’affichage
                     <span className="fr-hint-text">Laisser vide pour afficher le nom officiel (SIRENE).</span>
                   </label>
                   <input
                     className="fr-input"
                     defaultValue={denominationAntenne}
-                    id={inputId}
+                    id={inputNomId}
                     maxLength={255}
                     name="nomAffichage"
                     type="text"
@@ -141,23 +154,57 @@ export default function EditionNomStructure({
                 )}
               </div>
             </>
-          ) : (
+          ) : null}
+
+          {onglet === 'adresse' ? (
+            <form
+              id={formAdresseId}
+              onSubmit={(event) => {
+                void handleSubmitAdresse(event)
+              }}
+            >
+              <p className="fr-text--sm fr-mb-2w">
+                <span className="fr-text--bold">Adresse actuelle : </span>
+                {adresse}
+              </p>
+              <label className="fr-label" htmlFor={inputAdresseId}>
+                Nouvelle adresse
+                <span className="fr-hint-text">
+                  Géocodée via la Base Adresse Nationale. Une nouvelle adresse est créée si elle n’existe pas déjà.
+                </span>
+              </label>
+              <input
+                className="fr-input"
+                id={inputAdresseId}
+                name="adresse"
+                placeholder="12 rue de la République, 75001 Paris"
+                type="text"
+              />
+            </form>
+          ) : null}
+
+          {onglet === 'fusionner' ? (
             <div className="fr-py-4w" style={{ textAlign: 'center' }}>
               <p className="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1w">Fonctionnalité à venir</p>
               <p className="fr-text--sm fr-text-mention--grey">
                 La fusion de structures sera proposée ici. L’interface reste à définir.
               </p>
             </div>
-          )}
+          ) : null}
         </div>
 
-        {onglet === 'renommer' && !estCanonique ? (
+        {afficherFooter ? (
           <div className="fr-modal__footer">
             <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg">
               <button aria-controls={modalId} className="fr-btn fr-btn--secondary" onClick={fermer} type="button">
                 Annuler
               </button>
-              <button className="fr-btn" disabled={isSubmitting} form={formId} type="submit">
+              <button
+                className="fr-btn"
+                disabled={isSubmitting}
+                form={onglet === 'adresse' ? formAdresseId : formNomId}
+                type="submit"
+              >
                 {isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
               </button>
             </div>
@@ -168,9 +215,16 @@ export default function EditionNomStructure({
   )
 }
 
-type Onglet = 'fusionner' | 'renommer'
+const ONGLETS: ReadonlyArray<Readonly<{ id: Onglet; libelle: string }>> = [
+  { id: 'renommer', libelle: 'Renommer' },
+  { id: 'adresse', libelle: 'Adresse' },
+  { id: 'fusionner', libelle: 'Fusionner' },
+]
+
+type Onglet = 'adresse' | 'fusionner' | 'renommer'
 
 type Props = Readonly<{
+  adresse: string
   denominationAntenne: null | string
   nom: string
   rattachements: RattachementsStructureViewModel

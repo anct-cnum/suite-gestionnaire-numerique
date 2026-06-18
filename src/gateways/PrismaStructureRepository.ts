@@ -4,6 +4,8 @@ import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
 import {
+  AdresseARattacher,
+  ModifierAdresseStructureRepository,
   ModifierNomStructureData,
   ModifierNomStructureRepository,
   NomActuelStructure,
@@ -18,7 +20,11 @@ import {
 // SA.denomination_sirene (compatibilité ascendante avec le contrat actuel).
 
 export class PrismaStructureRepository
-  implements ContactReferentRepository, ModifierNomStructureRepository, StructureRepository
+  implements
+    ContactReferentRepository,
+    ModifierAdresseStructureRepository,
+    ModifierNomStructureRepository,
+    StructureRepository
 {
   async ajouterContact(structureId: number, data: ContactStructureData): Promise<void> {
     const contact = await prisma.main_contact.create({
@@ -137,6 +143,14 @@ export class PrismaStructureRepository
       }
       throw error
     }
+  }
+
+  async rattacherAdresse(structureId: number, adresse: AdresseARattacher): Promise<void> {
+    const adresseId = await this.trouverOuCreerAdresse(adresse)
+    await prisma.main_structure_administrative.update({
+      data: { adresse_id: adresseId },
+      where: { id: structureId },
+    })
   }
 
   async supprimerContact(structureId: number, contactId: number): Promise<void> {
@@ -357,6 +371,37 @@ export class PrismaStructureRepository
       repetition: adresseCreee.repetition,
       uid: { value: adresseCreee.id },
     })
+  }
+
+  // Re-pointage d'adresse : réutilise l'adresse de même clef_interop BAN si elle existe, sinon
+  // crée une nouvelle ligne (avec géométrie PostGIS). On ne modifie jamais une ligne adresse.
+  private async trouverOuCreerAdresse(adresse: AdresseARattacher): Promise<number> {
+    const existante = await prisma.adresse.findFirst({
+      where: { clef_interop: adresse.clefInterop },
+    })
+    if (existante) {
+      return existante.id
+    }
+
+    const resultat = await prisma.$queryRaw<Array<{ id: number }>>`
+      INSERT INTO main.adresse (
+        clef_interop, code_ban, code_insee, code_postal,
+        nom_commune, nom_voie, numero_voie, repetition, geom
+      ) VALUES (
+        ${adresse.clefInterop},
+        ${adresse.codeBan}::uuid,
+        ${adresse.codeInsee},
+        ${adresse.codePostal},
+        ${adresse.nomCommune},
+        ${adresse.nomVoie},
+        ${adresse.numeroVoie},
+        ${adresse.repetition},
+        public.ST_Point(${adresse.longitude}::double precision, ${adresse.latitude}::double precision, 4326)
+      )
+      RETURNING id
+    `
+
+    return resultat[0].id
   }
 }
 
