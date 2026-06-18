@@ -40,12 +40,19 @@ export type StructureDetailReadModel = Readonly<{
   // structures candidates : des antennes d'un même SIRET peuvent avoir des adresses distinctes.
   latitude: null | number
   longitude: null | number
+  // Nombre de mandats Aidants Connect (porté par la SA, indépendant des affectations).
+  nbMandatsAc: null | number
   rattachements: RattachementsReadModel
   ridet: null | string
   rna: null | string
   siret: null | string
   // Source de la donnée (edited_by) : coop, carto, aidants-connect, idposte, MIN…
   source: null | string
+  // Identifiants scalaires des sources agrégées portés inline par la SA. Une SA « porte » le
+  // concept source dès que l'id est non-NULL, même sans aucune affectation (0 ligne + id ≠ NULL).
+  structureAcId: null | string
+  structureCoopId: null | string
+  structureTpId: null | number
 }>
 
 // Ventilation des liens (FK) qui seront déplacés vers la survivante lors d'une
@@ -54,7 +61,12 @@ export type StructureDetailReadModel = Readonly<{
 // gouvernance (gouvernances, feuillesDeRoute, contactsMembre) sont des vues dérivées
 // de la relation membre, fournies pour informer la décision sans gonfler `total`.
 export type RattachementsReadModel = Readonly<{
+  // Affectations emploi ventilées par source agrégée (sous-ensembles de affectationsEmploi).
+  affectationsAc: number
+  affectationsCoop: number
+  // Total toutes sources (coop + idposte + aidants-connect + min) — conservé pour `total`.
   affectationsEmploi: number
+  affectationsIdposte: number
   associationsLieux: number
   contacts: number
   contactsMembre: number

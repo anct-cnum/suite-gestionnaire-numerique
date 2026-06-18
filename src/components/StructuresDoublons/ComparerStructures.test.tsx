@@ -3,26 +3,29 @@ import { describe, expect, it, vi } from 'vitest'
 
 import ComparerStructures from './ComparerStructures'
 import { renderComponent, stubbedServerAction } from '@/components/testHelper'
-import { ComparaisonViewModel, StructureComparaisonViewModel } from '@/presenters/comparaisonDoublonsPresenter'
+import {
+  ComparaisonViewModel,
+  ConceptViewModel,
+  StructureComparaisonViewModel,
+} from '@/presenters/comparaisonDoublonsPresenter'
 
-describe('examiner et fusionner un doublon', () => {
-  it('affiche les structures du groupe et le bouton de fusion', () => {
+describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
+  it('affiche les cartes, prend la canonique comme cible par défaut et désactive Appliquer', () => {
     // WHEN
     renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
 
-    // THEN
+    // THEN : la canonique (structure 3) est cible → carte source = structure 7.
     expect(screen.getByRole('heading', { level: 1, name: 'Examiner un doublon' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Conseil Départemental' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Antenne Sud' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Fusionner' })).toBeEnabled()
+    expect(screen.getByText('Concepts portés (destination)')).toBeInTheDocument()
+    expect(screen.getByLabelText(/Idposte/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Appliquer' })).toBeDisabled()
   })
 
-  it('confirme la fusion : appelle l’action avec survivante/absorbée, notifie et redirige', async () => {
+  it('coche une notion sur une source et la transfère via l’action de transfert', async () => {
     // GIVEN
-    const fusionnerStructuresAction = stubbedServerAction(['OK'])
+    const transfererNotionsStructureAction = stubbedServerAction(['OK'])
     const push = vi.fn<() => void>()
     renderComponent(<ComparerStructures viewModel={deuxStructures()} />, {
-      fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
       router: {
         back: vi.fn<() => void>(),
@@ -32,94 +35,118 @@ describe('examiner et fusionner un doublon', () => {
         refresh: vi.fn<() => void>(),
         replace: vi.fn<() => void>(),
       },
+      transfererNotionsStructureAction,
     })
 
     // WHEN
-    fireEvent.click(screen.getByRole('button', { name: 'Fusionner' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la fusion' }))
+    fireEvent.click(screen.getByLabelText(/Idposte/))
+    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
 
     // THEN
-    const notification = await screen.findByRole('status')
-    expect(notification.textContent).toBe('Structures fusionnées')
-    expect(fusionnerStructuresAction).toHaveBeenCalledWith({
-      idsAbsorbees: [7],
-      idSurvivante: 3,
+    await screen.findByRole('status')
+    expect(transfererNotionsStructureAction).toHaveBeenCalledWith({
+      idCible: 3,
+      idSource: 7,
+      notions: ['idposte'],
       path: '/structures-doublons/comparer',
     })
     expect(push).toHaveBeenCalledWith('/structures-doublons')
   })
 
-  it('fusionne plusieurs structures dans la survivante', async () => {
+  it('la surcoche « Fusionner » coche toutes les notions et déclenche la fusion', async () => {
     // GIVEN
     const fusionnerStructuresAction = stubbedServerAction(['OK'])
-    renderComponent(<ComparerStructures viewModel={troisStructures()} />, {
+    renderComponent(<ComparerStructures viewModel={deuxStructures()} />, {
       fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
     })
 
-    // WHEN : la 2e carte est absorbée par défaut, on ajoute la 3e
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Fusionner dans la survivante' })[2])
-    fireEvent.click(screen.getByRole('button', { name: 'Fusionner' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la fusion' }))
+    // WHEN
+    fireEvent.click(screen.getByLabelText(/Fusionner/))
+    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
 
     // THEN
     await screen.findByRole('status')
     expect(fusionnerStructuresAction).toHaveBeenCalledWith({
-      idsAbsorbees: [7, 11],
+      idsAbsorbees: [7],
       idSurvivante: 3,
       path: '/structures-doublons/comparer',
     })
   })
 
-  it('affiche une notification d’erreur si la fusion échoue', async () => {
+  it('une carte canonique non-cible ne propose aucune coche (cible uniquement)', () => {
     // GIVEN
-    const fusionnerStructuresAction = stubbedServerAction(['Structure introuvable ou déjà supprimée'])
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />, { fusionnerStructuresAction })
+    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+
+    // WHEN : on désigne la structure 7 (antenne) comme cible → la canonique (3) devient une carte non-cible.
+    fireEvent.click(screen.getAllByRole('radio', { name: 'Cible (destination)' })[1])
+
+    // THEN
+    expect(screen.getByText(/jamais transférée ni absorbée/)).toBeInTheDocument()
+  })
+
+  it('désactive une notion dont l’id scalaire entre en collision avec la cible', () => {
+    // GIVEN cible (3) et source (7) portent Aidants Connect avec un id externe différent.
+    const cible = carte({ concepts: [conceptAc('ac-cible')], denomination: 'Cible', estCanonique: true, id: 3 })
+    const source = carte({ concepts: [conceptAc('ac-source')], denomination: 'Source', id: 7 })
 
     // WHEN
-    fireEvent.click(screen.getByRole('button', { name: 'Fusionner' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer la fusion' }))
+    renderComponent(<ComparerStructures viewModel={[cible, source]} />)
+
+    // THEN
+    expect(screen.getByLabelText(/Aidants Connect/)).toBeDisabled()
+    expect(screen.getByText(/Identifiant déjà porté par la cible/)).toBeInTheDocument()
+  })
+
+  it('désactive un id scalaire déjà réclamé par une autre carte source', () => {
+    // GIVEN cible sans coop (3) + deux sources (7, 11) portant chacune coop.
+    const cible = carte({ denomination: 'Cible', estCanonique: true, id: 3 })
+    const sourceA = carte({ concepts: [conceptCoop('coop-a')], denomination: 'Source A', id: 7 })
+    const sourceB = carte({ concepts: [conceptCoop('coop-b')], denomination: 'Source B', id: 11 })
+    renderComponent(<ComparerStructures viewModel={[cible, sourceA, sourceB]} />)
+
+    // WHEN : on coche Coop sur la source A.
+    fireEvent.click(screen.getAllByLabelText(/Coop/)[0])
+
+    // THEN : Coop est désormais désactivé sur la source B.
+    expect(screen.getAllByLabelText(/Coop/)[1]).toBeDisabled()
+  })
+
+  it('agrège fusion et transfert et notifie en cas d’échec partiel', async () => {
+    // GIVEN la fusion réussit, le transfert échoue.
+    const fusionnerStructuresAction = stubbedServerAction(['OK'])
+    const transfererNotionsStructureAction = stubbedServerAction(['Conflit'])
+    renderComponent(<ComparerStructures viewModel={troisStructures()} />, {
+      fusionnerStructuresAction,
+      pathname: '/structures-doublons/comparer',
+      transfererNotionsStructureAction,
+    })
+
+    // WHEN : fusionner la 7, transférer une notion de la 11.
+    fireEvent.click(screen.getAllByLabelText(/Fusionner/)[0]) // surcoche de la 1re source (7)
+    fireEvent.click(screen.getByLabelText(/Coop/)) // notion coop de la 2e source (11)
+    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
 
     // THEN
     const notification = await screen.findByRole('alert')
-    expect(notification.textContent).toBe('Erreur : Structure introuvable ou déjà supprimée')
+    expect(notification.textContent).toContain('Erreur :')
+    expect(fusionnerStructuresAction).toHaveBeenCalledWith({
+      idsAbsorbees: [7],
+      idSurvivante: 3,
+      path: '/structures-doublons/comparer',
+    })
+    expect(transfererNotionsStructureAction).toHaveBeenCalledWith({
+      idCible: 3,
+      idSource: 11,
+      notions: ['coop'],
+      path: '/structures-doublons/comparer',
+    })
   })
 
-  it('marque la structure canonique d’un tag et l’autre comme antenne', () => {
-    // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
-
-    // THEN
-    expect(screen.getByText('Canonique')).toBeInTheDocument()
-    expect(screen.getByText('Antenne')).toBeInTheDocument()
-  })
-
-  it('marque d’un tag Membre la structure qui porte un membre de gouvernance', () => {
-    // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
-
-    // THEN
-    expect(screen.getByText('Membre')).toBeInTheDocument()
-  })
-
-  it('marque d’un tag Lieu d’inclusion la structure associée à un lieu d’inclusion', () => {
-    // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
-
-    // THEN
-    expect(screen.getByText('Lieu d’inclusion rattaché')).toBeInTheDocument()
-  })
-
-  it('affiche le détail des rattachements de chaque structure', () => {
-    // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
-
-    // THEN
-    expect(screen.getAllByText('Détail des rattachements')).toHaveLength(2)
-    expect(screen.getAllByText('Postes :', { exact: false }).length).toBeGreaterThan(0)
-  })
-
-  it('bascule sur la vue Distances et affiche la matrice de distances entre structures', () => {
+  it('bascule sur la vue Distances et affiche la matrice', () => {
     // GIVEN
     renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
 
@@ -127,48 +154,60 @@ describe('examiner et fusionner un doublon', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Distances' }))
 
     // THEN
-    expect(screen.getByRole('columnheader', { name: 'Conseil Départemental' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Antenne Sud' })).toBeInTheDocument()
-    expect(screen.queryByRole('radio', { name: 'Conserver (survivante)' })).not.toBeInTheDocument()
-  })
-
-  it('« Ne pas toucher » retire la carte de la fusion et désactive le bouton', () => {
-    // GIVEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
-
-    // WHEN : on retire la survivante par défaut (1re carte)
-    fireEvent.click(screen.getAllByRole('radio', { name: 'Ne pas toucher' })[0])
-
-    // THEN
-    expect(screen.getByRole('button', { name: 'Fusionner' })).toBeDisabled()
+    expect(screen.getByRole('columnheader', { name: 'Cible' })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /Fusionner/ })).not.toBeInTheDocument()
   })
 })
 
 function deuxStructures(): ComparaisonViewModel {
-  return [structureComparaison(3, 'Conseil Départemental'), structureComparaison(7, 'Antenne Sud')]
+  return [
+    carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
+    carte({ concepts: [conceptIdposte(), conceptAc('ac-xyz')], denomination: 'Antenne', id: 7 }),
+  ]
 }
 
 function troisStructures(): ComparaisonViewModel {
   return [
-    structureComparaison(3, 'Conseil Départemental'),
-    structureComparaison(7, 'Antenne Sud'),
-    structureComparaison(11, 'Antenne Est'),
+    carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
+    carte({ concepts: [conceptIdposte()], denomination: 'Source A', id: 7 }),
+    carte({ concepts: [conceptCoop('coop-b')], denomination: 'Source B', id: 11 }),
   ]
 }
 
-function structureComparaison(id: number, denomination: string): StructureComparaisonViewModel {
+function conceptIdposte(): ConceptViewModel {
   return {
-    adresse: '1 Place Chatelet 28000 Chartres',
+    cle: 'idposte',
+    idExterne: null,
+    label: 'Idposte',
+    present: true,
+    resume: '1 poste · 0 contrat · 0 affectation',
+  }
+}
+
+function conceptAc(idExterne: string): ConceptViewModel {
+  return { cle: 'aidantsConnect', idExterne, label: 'Aidants Connect', present: true, resume: '0 aidant' }
+}
+
+function conceptCoop(idExterne: string): ConceptViewModel {
+  return { cle: 'coop', idExterne, label: 'Coop', present: true, resume: '1 affectation' }
+}
+
+function carte(
+  overrides: Partial<StructureComparaisonViewModel> & Readonly<{ denomination: string; id: number }>
+): StructureComparaisonViewModel {
+  const notionsVides: ReadonlyArray<ConceptViewModel> = []
+  return {
+    adresse: '1 rue de Test 28000 Chartres',
     champs: [{ label: 'SIRET', valeur: '22280001300013' }],
-    denomination,
-    denominationSirene: denomination,
-    estAssocieLieuInclusion: id === 7,
-    estCanonique: id === 3,
-    estMembre: id === 7,
-    id,
-    latitude: id === 3 ? 48.45 : 48.5,
-    longitude: id === 3 ? 1.49 : 1.6,
-    rattachements: [{ label: 'Postes', nombre: 15 }],
-    rattachementsTotal: 15,
+    concepts: notionsVides,
+    denominationSirene: overrides.denomination,
+    estAssocieLieuInclusion: false,
+    estCanonique: false,
+    estMembre: false,
+    latitude: 48.45,
+    longitude: 1.49,
+    rattachements: [{ label: 'Postes', nombre: 1 }],
+    rattachementsTotal: 1,
+    ...overrides,
   }
 }

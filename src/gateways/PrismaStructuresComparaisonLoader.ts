@@ -22,6 +22,10 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         sa.etat_administratif,
         sa.code_activite_principale,
         sa.edited_by AS source,
+        sa.structure_coop_id,
+        sa.structure_tp_id,
+        sa.structure_ac_id,
+        sa.nb_mandats_ac,
         EXISTS (
           SELECT 1 FROM audit.structure_merge_log ml
           WHERE ml.winner_id = sa.id AND ml.status = 'SUCCESS' AND ml.dag_id = 'min-ui'
@@ -36,6 +40,12 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         (SELECT COUNT(*) FROM main.contrat ct WHERE ct.structure_id = sa.id)::int AS nb_contrats,
         (SELECT COUNT(*) FROM main.personne_affectations_emploi pae
          WHERE pae.structure_administrative_id = sa.id)::int AS nb_affectations_emploi,
+        (SELECT COUNT(*) FROM main.personne_affectations_emploi pae
+         WHERE pae.structure_administrative_id = sa.id AND pae.source = 'coop')::int AS nb_affectations_coop,
+        (SELECT COUNT(*) FROM main.personne_affectations_emploi pae
+         WHERE pae.structure_administrative_id = sa.id AND pae.source = 'idposte')::int AS nb_affectations_idposte,
+        (SELECT COUNT(*) FROM main.personne_affectations_emploi pae
+         WHERE pae.structure_administrative_id = sa.id AND pae.source = 'aidants-connect')::int AS nb_affectations_ac,
         (SELECT COUNT(*) FROM main.contact_structure_administrative cs
          WHERE cs.structure_administrative_id = sa.id)::int AS nb_contacts,
         (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative li
@@ -72,13 +82,17 @@ interface LigneDetail {
   id: number
   latitude: null | number
   longitude: null | number
+  nb_affectations_ac: number
+  nb_affectations_coop: number
   nb_affectations_emploi: number
+  nb_affectations_idposte: number
   nb_associations_lieux: number
   nb_contacts: number
   nb_contacts_membre: number
   nb_contrats: number
   nb_feuilles_de_route: number
   nb_gouvernances: number
+  nb_mandats_ac: null | number
   nb_membres_min: number
   nb_postes: number
   nb_utilisateurs_min: number
@@ -87,6 +101,9 @@ interface LigneDetail {
   rna: null | string
   siret: null | string
   source: null | string
+  structure_ac_id: null | string
+  structure_coop_id: null | string
+  structure_tp_id: null | number
 }
 
 function versDetail(ligne: LigneDetail): StructureDetailReadModel {
@@ -111,8 +128,12 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     id: ligne.id,
     latitude: ligne.latitude,
     longitude: ligne.longitude,
+    nbMandatsAc: ligne.nb_mandats_ac,
     rattachements: {
+      affectationsAc: ligne.nb_affectations_ac,
+      affectationsCoop: ligne.nb_affectations_coop,
       affectationsEmploi: ligne.nb_affectations_emploi,
+      affectationsIdposte: ligne.nb_affectations_idposte,
       associationsLieux: ligne.nb_associations_lieux,
       contacts: ligne.nb_contacts,
       contactsMembre: ligne.nb_contacts_membre,
@@ -128,5 +149,8 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     rna: ligne.rna,
     siret: ligne.siret,
     source: ligne.source,
+    structureAcId: ligne.structure_ac_id,
+    structureCoopId: ligne.structure_coop_id,
+    structureTpId: ligne.structure_tp_id,
   }
 }

@@ -14,7 +14,6 @@ describe('fusionner deux structures', () => {
 
     // WHEN
     const result = await fusionner.handle({
-      champsRetenus: {},
       idAbsorbee: 42,
       idSurvivante: 42,
       uidUtilisateur: 'admin-1',
@@ -31,7 +30,6 @@ describe('fusionner deux structures', () => {
 
     // WHEN
     const result = await fusionner.handle({
-      champsRetenus: { denominationAntenne: 'Siège' },
       idAbsorbee: 7,
       idSurvivante: 3,
       uidUtilisateur: 'admin-1',
@@ -40,7 +38,6 @@ describe('fusionner deux structures', () => {
     // THEN
     expect(result).toBe('OK')
     expect(spiedFusion).toStrictEqual({
-      champsRetenus: { denominationAntenne: 'Siège' },
       idAbsorbee: 7,
       idSurvivante: 3,
       parUtilisateur: 'admin-1',

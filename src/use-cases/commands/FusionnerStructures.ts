@@ -13,7 +13,6 @@ export class FusionnerStructures implements CommandHandler<Command, FusionFailur
     }
 
     return this.#repository.fusionner({
-      champsRetenus: command.champsRetenus,
       idAbsorbee: command.idAbsorbee,
       idSurvivante: command.idSurvivante,
       parUtilisateur: command.uidUtilisateur,
@@ -25,28 +24,27 @@ export interface StructureFusionRepository {
   fusionner(fusion: Fusion): ResultAsync<FusionFailure>
 }
 
+// La fusion = déplacer la TOTALITÉ des notions de l'absorbée vers la survivante puis soft-delete
+// l'absorbée. On ne récupère JAMAIS les champs descriptifs de l'absorbée (dénomination, adresse, APE,
+// catégorie juridique…) : la survivante garde les siens — importer ceux d'un doublon casserait la
+// cohérence INSEE. Les identifiants d'identité (siret/ridet/rna) de l'absorbée sont abandonnés (loggés) ;
+// les ids de source (coop/tp/ac) sont, eux, transférés (sinon le doublon ressuscite au resync).
 export type Fusion = Readonly<{
-  champsRetenus: ChampsRetenus
   idAbsorbee: number
   idSurvivante: number
   parUtilisateur: string
 }>
 
-// Champs informatifs que l'admin peut explicitement arbitrer côté survivante.
-// Les autres champs sont fusionnés automatiquement en COALESCE(survivante, absorbée).
-// Les identifiants UNIQUE (siret, ridet, coop_id, ac_id, tp_id) ne sont JAMAIS
-// transférés : la survivante conserve les siens, ceux de l'absorbée sont consignés
-// dans le journal d'audit (`moved_identifiers`) puis perdus.
-export type ChampsRetenus = Readonly<{
-  adresseId?: null | number
-  denominationAntenne?: null | string
-  denominationSirene?: null | string
-}>
-
-export type FusionFailure = 'fusionEchouee' | 'fusionImpossibleMemeStructure' | 'structureIntrouvable'
+export type FusionFailure =
+  | 'collisionIdentifiantSource'
+  | 'collisionMembreGouvernance'
+  | 'fusionEchouee'
+  // Une canonique vient de l'INSEE : on ne la supprime jamais, donc elle ne peut pas être absorbée.
+  | 'fusionImpossibleCanoniqueAbsorbee'
+  | 'fusionImpossibleMemeStructure'
+  | 'structureIntrouvable'
 
 type Command = Readonly<{
-  champsRetenus: ChampsRetenus
   idAbsorbee: number
   idSurvivante: number
   uidUtilisateur: string
