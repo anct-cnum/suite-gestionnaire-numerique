@@ -9,7 +9,7 @@ describe('route /api/tableau-de-bord/accompagnements-realises', () => {
   it("retourne une erreur 403 quand l'utilisateur n'est pas authentifié", async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(null)
-    const req = { nextUrl: { searchParams: new Map() } } as unknown as NextRequest
+    const req = { nextUrl: { searchParams: new URLSearchParams() } } as unknown as NextRequest
 
     // WHEN
     const result = await GET(req)
@@ -25,7 +25,8 @@ describe('route /api/tableau-de-bord/accompagnements-realises', () => {
     const spy = vi
       .spyOn(fetchAccompagnementsRealisesModule, 'fetchAccompagnementsRealises')
       .mockResolvedValueOnce(resultat)
-    const req = { nextUrl: { searchParams: new Map([['territoire', '06']]) } } as unknown as NextRequest
+    const searchParams = new URLSearchParams('territoire=06')
+    const req = { nextUrl: { searchParams } } as unknown as NextRequest
 
     // WHEN
     const result = await GET(req)
@@ -42,7 +43,7 @@ describe('route /api/tableau-de-bord/accompagnements-realises', () => {
     const spy = vi
       .spyOn(fetchAccompagnementsRealisesModule, 'fetchAccompagnementsRealises')
       .mockResolvedValueOnce({ nombreTotal: 0, repartitionMensuelle: [] })
-    const req = { nextUrl: { searchParams: new Map() } } as unknown as NextRequest
+    const req = { nextUrl: { searchParams: new URLSearchParams() } } as unknown as NextRequest
 
     // WHEN
     await GET(req)

@@ -2,6 +2,7 @@ import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewM
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { reportLoaderError } from '@/gateways/shared/sentryErrorReporter'
 import { PrismaAccompagnementsRealisesParACLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesParACLoader'
+import { PrismaDonneesStructureLoader } from '@/gateways/tableauDeBord/PrismaDonneesStructureLoader'
 
 /**
  * Résultat de la récupération des accompagnements réalisés (AC + Coop)
@@ -52,6 +53,34 @@ export async function fetchAccompagnementsRealises(
     }
   } catch (error) {
     reportLoaderError(error, 'fetchAccompagnementsRealises', { territoire })
+    return {
+      message: error instanceof Error ? error.message : 'Erreur inconnue lors de la récupération des accompagnements',
+      type: 'error',
+    } as ErrorViewModel
+  }
+}
+
+export async function fetchAccompagnementsRealisesParStructure(
+  structureId: number,
+  maintenant: Date
+): Promise<AccompagnementsRealisesResult | ErrorViewModel> {
+  try {
+    const loader = new PrismaDonneesStructureLoader()
+    const readModel = await loader.get(structureId, maintenant)
+
+    if ('type' in readModel) {
+      return readModel as ErrorViewModel
+    }
+
+    return {
+      nombreTotal: readModel.totalAccompagnements,
+      repartitionMensuelle: readModel.accompagnementsMensuels.map((item) => ({
+        mois: item.mois,
+        nombre: item.nombre,
+      })),
+    }
+  } catch (error) {
+    reportLoaderError(error, 'fetchAccompagnementsRealisesParStructure', { structureId })
     return {
       message: error instanceof Error ? error.message : 'Erreur inconnue lors de la récupération des accompagnements',
       type: 'error',
