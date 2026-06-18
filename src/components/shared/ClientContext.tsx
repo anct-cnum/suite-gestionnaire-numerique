@@ -19,6 +19,7 @@ import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { fusionnerStructuresAction } from '@/app/api/actions/fusionnerStructuresAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
+import { modifierAdresseStructureAction } from '@/app/api/actions/modifierAdresseStructureAction'
 import { modifierContactReferentStructureAction } from '@/app/api/actions/modifierContactReferentStructureAction'
 import { modifierLieuInclusionDescriptionAction } from '@/app/api/actions/modifierLieuInclusionDescriptionAction'
 import { modifierLieuInclusionInformationsPratiquesAction } from '@/app/api/actions/modifierLieuInclusionInformationsPratiquesAction'
@@ -33,6 +34,7 @@ import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFe
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
+import { previsualiserAdresseAction } from '@/app/api/actions/previsualiserAdresseAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { retirerUnCoPorteurAction } from '@/app/api/actions/retirerUnCoPorteurAction'
@@ -74,6 +76,7 @@ export default function ClientContext({
       definirUnCoPorteurAction,
       fusionnerStructuresAction,
       inviterUnUtilisateurAction,
+      modifierAdresseStructureAction,
       modifierContactReferentStructureAction,
       modifierLieuInclusionDescriptionAction,
       modifierLieuInclusionInformationsPratiquesAction,
@@ -89,6 +92,7 @@ export default function ClientContext({
       modifierUneNoteDeContextualisationAction,
       modifierUneNotePriveeAction,
       pathname,
+      previsualiserAdresseAction,
       rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
       retirerUnCoPorteurAction,
@@ -131,6 +135,7 @@ export type ClientContextProviderValue = Readonly<{
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   fusionnerStructuresAction: typeof fusionnerStructuresAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
+  modifierAdresseStructureAction: typeof modifierAdresseStructureAction
   modifierContactReferentStructureAction: typeof modifierContactReferentStructureAction
   modifierLieuInclusionDescriptionAction: typeof modifierLieuInclusionDescriptionAction
   modifierLieuInclusionInformationsPratiquesAction: typeof modifierLieuInclusionInformationsPratiquesAction
@@ -146,6 +151,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
+  previsualiserAdresseAction: typeof previsualiserAdresseAction
   rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   retirerUnCoPorteurAction: typeof retirerUnCoPorteurAction

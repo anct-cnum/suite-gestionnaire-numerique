@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { PrismaStructureRepository } from './PrismaStructureRepository'
 import { creerUneStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { AdresseARattacher } from '@/use-cases/commands/shared/StructureRepository'
 
 describe('prisma structure repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -86,4 +87,53 @@ describe('prisma structure repository', () => {
       expect(succes).toBe(false)
     })
   })
+
+  describe('rattacher une adresse', () => {
+    it('crée une nouvelle adresse et re-pointe la structure dessus', async () => {
+      // GIVEN
+      await creerUneStructure({ id: 978 })
+
+      // WHEN
+      await new PrismaStructureRepository().rattacherAdresse(978, adresseARattacher())
+
+      // THEN
+      const structure = await prisma.main_structure_administrative.findUnique({
+        include: { adresse: true },
+        where: { id: 978 },
+      })
+      expect(structure?.adresse?.clef_interop).toBe('94017_aaaa')
+      expect(structure?.adresse?.nom_commune).toBe('Champigny-sur-Marne')
+    })
+
+    it('réutilise une adresse existante de même clef_interop (pas de doublon)', async () => {
+      // GIVEN
+      await creerUneStructure({ id: 978 })
+      await new PrismaStructureRepository().rattacherAdresse(978, adresseARattacher())
+      const premiere = await prisma.main_structure_administrative.findUnique({ where: { id: 978 } })
+
+      // WHEN
+      await creerUneStructure({ id: 979, siret: '99999999999999' })
+      await new PrismaStructureRepository().rattacherAdresse(979, adresseARattacher())
+      const seconde = await prisma.main_structure_administrative.findUnique({ where: { id: 979 } })
+
+      // THEN
+      expect(seconde?.adresse_id).toBe(premiere?.adresse_id)
+      await expect(prisma.adresse.count({ where: { clef_interop: '94017_aaaa' } })).resolves.toBe(1)
+    })
+  })
 })
+
+function adresseARattacher(): AdresseARattacher {
+  return {
+    clefInterop: '94017_aaaa',
+    codeBan: null,
+    codeInsee: '94017',
+    codePostal: '94500',
+    latitude: 48.81,
+    longitude: 2.51,
+    nomCommune: 'Champigny-sur-Marne',
+    nomVoie: 'Rue Louis Talamoni',
+    numeroVoie: 14,
+    repetition: null,
+  }
+}

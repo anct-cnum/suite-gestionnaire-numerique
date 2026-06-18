@@ -43,6 +43,27 @@ export type NomActuelStructure = Readonly<{
   denominationAntenne: null | string
 }>
 
+export interface ModifierAdresseStructureRepository {
+  // null = structure introuvable. Sert à refuser la modification d'une structure canonique.
+  lireNomStructure(structureId: number): Promise<NomActuelStructure | null>
+  // Re-pointe structure_administrative.adresse_id : on réutilise une adresse existante
+  // (même clef_interop BAN) ou on en crée une nouvelle. On ne modifie JAMAIS une ligne adresse.
+  rattacherAdresse(structureId: number, adresse: AdresseARattacher): Promise<void>
+}
+
+export type AdresseARattacher = Readonly<{
+  clefInterop: string
+  codeBan: null | string
+  codeInsee: string
+  codePostal: string
+  latitude: number
+  longitude: number
+  nomCommune: string
+  nomVoie: null | string
+  numeroVoie: null | number
+  repetition: null | string
+}>
+
 export interface StructureRepository
   extends CreateStructureRepository, GetStructureBySiretEmployeuseRepository, GetStructureBySiretRepository {}
 
