@@ -24,6 +24,9 @@ export default function EditionNomStructure({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const rattachementsNonNuls = rattachements.filter((rattachement) => rattachement.nombre > 0)
+  // Structure canonique (nom officiel SIRENE) : on n'autorise pas le renommage (cela créerait un
+  // libellé d'antenne). Le renommage ne vise que les structures « antenne ».
+  const estCanonique = denominationAntenne === null
 
   function fermer(): void {
     setIsOpen(false)
@@ -88,30 +91,43 @@ export default function EditionNomStructure({
           </div>
 
           {onglet === 'renommer' ? (
-            <form
-              id={formId}
-              onSubmit={(event) => {
-                void handleSubmit(event)
-              }}
-            >
-              <label className="fr-label" htmlFor={inputId}>
-                Nom d’affichage
-                <span className="fr-hint-text">Laisser vide pour afficher le nom officiel (SIRENE).</span>
-              </label>
-              <input
-                className="fr-input"
-                defaultValue={denominationAntenne ?? ''}
-                id={inputId}
-                maxLength={255}
-                name="nomAffichage"
-                type="text"
-              />
+            <>
+              {estCanonique ? (
+                <div className="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
+                  <p>
+                    Cette structure utilise le nom officiel (SIRENE) — elle est « canonique ». Le renommage n’est pas
+                    disponible : il créerait un libellé d’antenne.
+                  </p>
+                </div>
+              ) : (
+                <form
+                  id={formId}
+                  onSubmit={(event) => {
+                    void handleSubmit(event)
+                  }}
+                >
+                  <label className="fr-label" htmlFor={inputId}>
+                    Nom d’affichage
+                    <span className="fr-hint-text">Laisser vide pour afficher le nom officiel (SIRENE).</span>
+                  </label>
+                  <input
+                    className="fr-input"
+                    defaultValue={denominationAntenne}
+                    id={inputId}
+                    maxLength={255}
+                    name="nomAffichage"
+                    type="text"
+                  />
+                </form>
+              )}
 
               <div className="fr-mt-3w">
                 <p className="fr-text--sm fr-text--bold fr-mb-1v">Éléments rattachés à cette structure</p>
-                <p className="fr-text--xs fr-text-mention--grey fr-mb-1w">
-                  Renommer la structure modifie son affichage partout où elle apparaît.
-                </p>
+                {estCanonique ? null : (
+                  <p className="fr-text--xs fr-text-mention--grey fr-mb-1w">
+                    Renommer la structure modifie son affichage partout où elle apparaît.
+                  </p>
+                )}
                 {rattachementsNonNuls.length === 0 ? (
                   <p className="fr-text--sm">Aucun élément rattaché.</p>
                 ) : (
@@ -124,7 +140,7 @@ export default function EditionNomStructure({
                   </ul>
                 )}
               </div>
-            </form>
+            </>
           ) : (
             <div className="fr-py-4w" style={{ textAlign: 'center' }}>
               <p className="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1w">Fonctionnalité à venir</p>
@@ -135,7 +151,7 @@ export default function EditionNomStructure({
           )}
         </div>
 
-        {onglet === 'renommer' ? (
+        {onglet === 'renommer' && !estCanonique ? (
           <div className="fr-modal__footer">
             <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg">
               <button aria-controls={modalId} className="fr-btn fr-btn--secondary" onClick={fermer} type="button">

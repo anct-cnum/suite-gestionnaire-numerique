@@ -8,7 +8,13 @@ import { Administrateur } from '@/domain/Administrateur'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
-import { ModifierNomStructure } from '@/use-cases/commands/ModifierNomStructure'
+import { Failure, ModifierNomStructure } from '@/use-cases/commands/ModifierNomStructure'
+
+const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
+  nomDejaUtilise: 'Un autre établissement de ce SIRET porte déjà ce nom',
+  structureCanoniqueNonRenommable: 'Cette structure utilise le nom officiel (SIRENE) et ne peut pas être renommée',
+  structureIntrouvable: 'Structure introuvable',
+}
 
 export async function modifierNomStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
@@ -22,10 +28,14 @@ export async function modifierNomStructureAction(actionParams: ActionParams): Pr
     return ['Action réservée aux administrateurs autorisés']
   }
 
-  await new ModifierNomStructure(new PrismaStructureRepository()).handle({
+  const result = await new ModifierNomStructure(new PrismaStructureRepository()).handle({
     nomAffichage: validationResult.data.nomAffichage,
     structureId: validationResult.data.structureId,
   })
+
+  if (result !== 'OK') {
+    return [MESSAGES_ECHEC[result]]
+  }
 
   revalidatePath(validationResult.data.path)
 

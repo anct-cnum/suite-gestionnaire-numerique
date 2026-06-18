@@ -6,6 +6,7 @@ import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactR
 import {
   ModifierNomStructureData,
   ModifierNomStructureRepository,
+  NomActuelStructure,
   StructureData,
   StructureRepository,
 } from '@/use-cases/commands/shared/StructureRepository'
@@ -96,6 +97,15 @@ export class PrismaStructureRepository
     })
   }
 
+  async lireNomStructure(structureId: number): Promise<NomActuelStructure | null> {
+    const structure = await prisma.main_structure_administrative.findUnique({
+      select: { denomination_antenne: true },
+      where: { id: structureId },
+    })
+
+    return structure === null ? null : { denominationAntenne: structure.denomination_antenne }
+  }
+
   async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
     await prisma.main_contact.update({
       data: {
@@ -112,11 +122,21 @@ export class PrismaStructureRepository
     })
   }
 
-  async modifierNom(data: ModifierNomStructureData): Promise<void> {
-    await prisma.main_structure_administrative.update({
-      data: { denomination_antenne: data.denominationAntenne },
-      where: { id: data.structureId },
-    })
+  async modifierNom(data: ModifierNomStructureData): Promise<boolean> {
+    try {
+      await prisma.main_structure_administrative.update({
+        data: { denomination_antenne: data.denominationAntenne },
+        where: { id: data.structureId },
+      })
+
+      return true
+    } catch (error: unknown) {
+      // P2002 : conflit sur la contrainte UNIQUE (siret, denomination_antenne).
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        return false
+      }
+      throw error
+    }
   }
 
   async supprimerContact(structureId: number, contactId: number): Promise<void> {

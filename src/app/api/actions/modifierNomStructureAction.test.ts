@@ -45,6 +45,25 @@ describe('modifier le nom d’une structure action', () => {
     expect(messages).toStrictEqual(['Le nom ne doit pas dépasser 255 caractères'])
   })
 
+  it('traduit l’échec métier renvoyé par la commande (structure canonique)', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    )
+    vi.spyOn(ModifierNomStructure.prototype, 'handle').mockResolvedValueOnce('structureCanoniqueNonRenommable')
+
+    // WHEN
+    const messages = await modifierNomStructureAction({
+      nomAffichage: 'Nouveau nom',
+      path: '/structure/978',
+      structureId: 978,
+    })
+
+    // THEN
+    expect(messages).toStrictEqual(['Cette structure utilise le nom officiel (SIRENE) et ne peut pas être renommée'])
+  })
+
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')

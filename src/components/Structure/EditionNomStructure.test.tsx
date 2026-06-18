@@ -48,16 +48,29 @@ describe('édition du nom de structure', () => {
     // THEN
     expect(screen.getByText('Fonctionnalité à venir')).toBeInTheDocument()
   })
+
+  it('interdit le renommage d’une structure canonique (denomination_antenne null)', () => {
+    // GIVEN
+    renderComponent(<EditionNomStructure {...props(null)} />)
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Éditer' }))
+
+    // THEN
+    expect(screen.getByText(/Le renommage/)).toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Enregistrer' })).not.toBeInTheDocument()
+  })
 })
 
-function props(): Readonly<{
+function props(denominationAntenne: null | string = 'Antenne actuelle'): Readonly<{
   denominationAntenne: null | string
   nom: string
   rattachements: ReadonlyArray<Readonly<{ label: string; nombre: number }>>
   structureId: number
 }> {
   return {
-    denominationAntenne: 'Antenne actuelle',
+    denominationAntenne,
     nom: 'Conseil départemental',
     rattachements: [
       { label: 'Contrats', nombre: 16 },
