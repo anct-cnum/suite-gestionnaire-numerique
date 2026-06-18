@@ -52,7 +52,10 @@ function loaderAvec(structures: ComparaisonDoublonsReadModel): ComparaisonDoublo
 
 function structureDetail(id: number, total: number): StructureDetailReadModel {
   const rattachements: RattachementsReadModel = {
+    affectationsAc: 0,
+    affectationsCoop: 0,
     affectationsEmploi: total,
+    affectationsIdposte: 0,
     associationsLieux: 0,
     contacts: 0,
     contactsMembre: 0,
@@ -76,10 +79,14 @@ function structureDetail(id: number, total: number): StructureDetailReadModel {
     id,
     latitude: null,
     longitude: null,
+    nbMandatsAc: null,
     rattachements,
     ridet: null,
     rna: null,
     siret: null,
     source: null,
+    structureAcId: null,
+    structureCoopId: null,
+    structureTpId: null,
   }
 }

@@ -23,8 +23,12 @@ describe('comparaison doublons presenter', () => {
         id: 4555,
         latitude: 48.45,
         longitude: 1.49,
+        nbMandatsAc: 3,
         rattachements: {
+          affectationsAc: 2,
+          affectationsCoop: 5,
           affectationsEmploi: 37,
+          affectationsIdposte: 30,
           associationsLieux: 0,
           contacts: 2,
           contactsMembre: 1,
@@ -40,6 +44,9 @@ describe('comparaison doublons presenter', () => {
         rna: null,
         siret: '22280001300013',
         source: 'sonum',
+        structureAcId: 'ac-uuid',
+        structureCoopId: 'coop-uuid',
+        structureTpId: 77,
       },
     ]
 
@@ -75,42 +82,58 @@ describe('comparaison doublons presenter', () => {
       { label: 'Contacts référents', nombre: 2 },
       { label: "Associations à des lieux d'inclusion", nombre: 0 },
     ])
+    expect(structure.concepts).toStrictEqual([
+      {
+        cle: 'membre',
+        idExterne: null,
+        label: 'Membre de gouvernance + utilisateurs',
+        present: true,
+        resume: '1 membre · 2 utilisateurs',
+      },
+      { cle: 'contacts', idExterne: null, label: 'Contacts référents', present: true, resume: '2 contacts' },
+      { cle: 'coop', idExterne: 'coop-uuid', label: 'Coop', present: true, resume: '5 affectations' },
+      {
+        cle: 'idposte',
+        idExterne: '77',
+        label: 'Idposte',
+        present: true,
+        resume: '15 postes · 1 contrat · 30 affectations',
+      },
+      { cle: 'aidantsConnect', idExterne: 'ac-uuid', label: 'Aidants Connect', present: true, resume: '2 aidants' },
+      { cle: 'lieuInclusion', idExterne: null, label: 'Lieu d’inclusion', present: false, resume: '0 lieu' },
+    ])
   })
 
-  it('applique les valeurs de repli quand les champs sont absents', () => {
-    // GIVEN
+  it('marque un concept source comme présent dès que son id scalaire existe, même sans aucune ligne', () => {
+    // GIVEN une structure sans affectation AC mais portant un structure_ac_id (id sans ligne).
     const readModel: ReadonlyArray<StructureDetailReadModel> = [
       {
-        adresse: null,
-        codeActivitePrincipale: null,
-        commune: null,
-        dejaFusionnee: false,
-        denominationAntenne: null,
-        denominationSirene: null,
-        estBeneficiaire: false,
-        etatAdministratif: null,
-        id: 99,
-        latitude: null,
-        longitude: null,
-        rattachements: {
-          affectationsEmploi: 0,
-          associationsLieux: 0,
-          contacts: 0,
-          contactsMembre: 0,
-          contrats: 0,
-          feuillesDeRoute: 0,
-          gouvernances: 0,
-          membresMin: 0,
-          postes: 0,
-          total: 0,
-          utilisateursMin: 0,
-        },
-        ridet: null,
-        rna: null,
-        siret: null,
-        source: null,
+        ...structureVide(7),
+        nbMandatsAc: 0,
+        structureAcId: 'ac-sans-ligne',
       },
     ]
+
+    // WHEN
+    const [structure] = comparaisonDoublonsPresenter(readModel)
+
+    // THEN — concept AC présent (id non-NULL) avec 0 ligne, et lieu non porté pour le pluriel « 0 lieu ».
+    const aidantsConnect = structure.concepts.find((concept) => concept.cle === 'aidantsConnect')
+    expect(aidantsConnect).toStrictEqual({
+      cle: 'aidantsConnect',
+      idExterne: 'ac-sans-ligne',
+      label: 'Aidants Connect',
+      present: true,
+      resume: '0 aidant',
+    })
+    expect(structure.concepts.filter((concept) => concept.present).map((concept) => concept.cle)).toStrictEqual([
+      'aidantsConnect',
+    ])
+  })
+
+  it('applique les valeurs de repli quand les champs sont absents et ne porte aucun concept', () => {
+    // GIVEN
+    const readModel: ReadonlyArray<StructureDetailReadModel> = [structureVide(99)]
 
     // WHEN
     const [structure] = comparaisonDoublonsPresenter(readModel)
@@ -119,6 +142,7 @@ describe('comparaison doublons presenter', () => {
     expect(structure.denomination).toBe('Structure #99')
     expect(structure.adresse).toBe('—')
     expect(structure.denominationSirene).toBe('')
+    expect(structure.concepts.every((concept) => !concept.present)).toBe(true)
   })
 
   it('matriceDistances classe chaque distance par niveau (identique / proche / normal / éloigné / inconnu)', () => {
@@ -155,6 +179,7 @@ function structureAvecCoords(
   return {
     adresse: `Adresse ${id}`,
     champs: [],
+    concepts: [],
     denomination: `Structure ${id}`,
     denominationSirene: `Structure ${id}`,
     estAssocieLieuInclusion: false,
@@ -165,5 +190,46 @@ function structureAvecCoords(
     longitude,
     rattachements: [],
     rattachementsTotal: 0,
+  }
+}
+
+// Structure read-model totalement vide (aucune ligne, aucun id scalaire) — base des cas de repli.
+function structureVide(id: number): StructureDetailReadModel {
+  return {
+    adresse: null,
+    codeActivitePrincipale: null,
+    commune: null,
+    dejaFusionnee: false,
+    denominationAntenne: null,
+    denominationSirene: null,
+    estBeneficiaire: false,
+    etatAdministratif: null,
+    id,
+    latitude: null,
+    longitude: null,
+    nbMandatsAc: null,
+    rattachements: {
+      affectationsAc: 0,
+      affectationsCoop: 0,
+      affectationsEmploi: 0,
+      affectationsIdposte: 0,
+      associationsLieux: 0,
+      contacts: 0,
+      contactsMembre: 0,
+      contrats: 0,
+      feuillesDeRoute: 0,
+      gouvernances: 0,
+      membresMin: 0,
+      postes: 0,
+      total: 0,
+      utilisateursMin: 0,
+    },
+    ridet: null,
+    rna: null,
+    siret: null,
+    source: null,
+    structureAcId: null,
+    structureCoopId: null,
+    structureTpId: null,
   }
 }

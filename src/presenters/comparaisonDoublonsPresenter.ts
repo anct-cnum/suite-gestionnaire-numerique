@@ -1,4 +1,5 @@
 import { libelleSource } from '@/presenters/shared/libelleSource'
+import { NotionCle } from '@/use-cases/commands/TransfererNotionsStructure'
 import {
   ComparaisonDoublonsReadModel,
   RattachementsReadModel,
@@ -33,9 +34,22 @@ export function comparaisonDoublonsPresenter(readModel: ComparaisonDoublonsReadM
 
 export type ComparaisonViewModel = ReadonlyArray<StructureComparaisonViewModel>
 
+// Une des 6 notions transférables portées par une structure. `present` pilote l'affichage
+// de la case (concept absent = pas de case). `idExterne` rend lisible le cas « 0 ligne mais
+// id scalaire présent » (ex. structure_ac_id sans aucun aidant) pour les sources agrégées.
+export type ConceptViewModel = Readonly<{
+  cle: NotionCle
+  idExterne: null | string
+  label: string
+  present: boolean
+  resume: string
+}>
+
 export type StructureComparaisonViewModel = Readonly<{
   adresse: string
   champs: ReadonlyArray<ChampViewModel>
+  // Les 6 notions transférables, dans l'ordre d'affichage (toujours les 6, `present` filtre).
+  concepts: ReadonlyArray<ConceptViewModel>
   denomination: string
   denominationSirene: string
   // true si la structure est associée à au moins un lieu d'inclusion
@@ -160,6 +174,7 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
       { label: 'Bénéficiaire de subvention', valeur: structure.estBeneficiaire ? 'Oui' : 'Non' },
       { label: 'Issue d’une fusion précédente', valeur: structure.dejaFusionnee ? 'Oui' : 'Non' },
     ],
+    concepts: construireConcepts(structure),
     denomination: structure.denominationAntenne ?? structure.denominationSirene ?? `Structure #${structure.id}`,
     denominationSirene: structure.denominationSirene ?? '',
     estAssocieLieuInclusion: structure.rattachements.associationsLieux > 0,
@@ -175,6 +190,65 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
     })),
     rattachementsTotal: structure.rattachements.total,
   }
+}
+
+// Construit les 6 notions transférables d'une structure. Une notion est « présente » dès qu'elle
+// porte au moins une ligne OU un id scalaire non-NULL — d'où l'inclusion des ids coop/tp/ac, qui
+// font qu'une structure « porte » la source même avec 0 affectation (le resync la repeuplerait).
+function construireConcepts(structure: StructureDetailReadModel): ReadonlyArray<ConceptViewModel> {
+  const liens = structure.rattachements
+  const idTp = structure.structureTpId === null ? null : String(structure.structureTpId)
+
+  return [
+    {
+      cle: 'membre',
+      idExterne: null,
+      label: 'Membre de gouvernance + utilisateurs',
+      present: liens.membresMin > 0 || liens.utilisateursMin > 0,
+      resume: `${unite(liens.membresMin, 'membre')} · ${unite(liens.utilisateursMin, 'utilisateur')}`,
+    },
+    {
+      cle: 'contacts',
+      idExterne: null,
+      label: 'Contacts référents',
+      present: liens.contacts > 0,
+      resume: unite(liens.contacts, 'contact'),
+    },
+    {
+      cle: 'coop',
+      idExterne: structure.structureCoopId,
+      label: 'Coop',
+      present: liens.affectationsCoop > 0 || structure.structureCoopId !== null,
+      resume: unite(liens.affectationsCoop, 'affectation'),
+    },
+    {
+      cle: 'idposte',
+      idExterne: idTp,
+      label: 'Idposte',
+      present:
+        liens.postes > 0 || liens.contrats > 0 || liens.affectationsIdposte > 0 || structure.structureTpId !== null,
+      resume: `${unite(liens.postes, 'poste')} · ${unite(liens.contrats, 'contrat')} · ${unite(liens.affectationsIdposte, 'affectation')}`,
+    },
+    {
+      cle: 'aidantsConnect',
+      idExterne: structure.structureAcId,
+      label: 'Aidants Connect',
+      present: liens.affectationsAc > 0 || structure.structureAcId !== null,
+      resume: unite(liens.affectationsAc, 'aidant'),
+    },
+    {
+      cle: 'lieuInclusion',
+      idExterne: null,
+      label: 'Lieu d’inclusion',
+      present: liens.associationsLieux > 0,
+      resume: unite(liens.associationsLieux, 'lieu', 'lieux'),
+    },
+  ]
+}
+
+// « 2 membres », « 1 contact », « 0 aidant » — pluriel à partir de 2.
+function unite(nombre: number, singulier: string, pluriel = `${singulier}s`): string {
+  return `${nombre} ${nombre > 1 ? pluriel : singulier}`
 }
 
 // Distance à vol d'oiseau (Haversine) en km entre deux structures, ou null si une coordonnée manque.
