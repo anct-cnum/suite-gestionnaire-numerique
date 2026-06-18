@@ -76,9 +76,7 @@ describe('modifier l’adresse d’une structure action', () => {
     })
 
     // THEN
-    expect(messages).toStrictEqual([
-      'Cette structure utilise le nom officiel (SIRENE) et ne peut pas être modifiée',
-    ])
+    expect(messages).toStrictEqual(['Cette structure utilise le nom officiel (SIRENE) et ne peut pas être modifiée'])
   })
 
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {

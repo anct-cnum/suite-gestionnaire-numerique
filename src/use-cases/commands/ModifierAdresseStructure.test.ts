@@ -87,9 +87,7 @@ function geocodage(resultat: AdresseGeocodeReadModel | null): BanGeocodingGatewa
 
 function repositoryStub(nomActuel: NomActuelStructure | null): ModifierAdresseStructureRepository {
   return {
-    lireNomStructure: vi
-      .fn<(structureId: number) => Promise<NomActuelStructure | null>>()
-      .mockResolvedValue(nomActuel),
+    lireNomStructure: vi.fn<(structureId: number) => Promise<NomActuelStructure | null>>().mockResolvedValue(nomActuel),
     rattacherAdresse: vi
       .fn<(structureId: number, adresse: AdresseARattacher) => Promise<void>>()
       .mockResolvedValue(undefined),

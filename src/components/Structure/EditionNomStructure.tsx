@@ -103,12 +103,7 @@ export default function EditionNomStructure({
           ) : null}
 
           {onglet === 'adresse' ? (
-            <OngletAdresse
-              adresse={adresse}
-              estCanonique={estCanonique}
-              onSuccess={fermer}
-              structureId={structureId}
-            />
+            <OngletAdresse adresse={adresse} estCanonique={estCanonique} onSuccess={fermer} structureId={structureId} />
           ) : null}
 
           {onglet === 'fusionner' ? <OngletFusionner /> : null}
