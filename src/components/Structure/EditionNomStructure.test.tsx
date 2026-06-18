@@ -62,6 +62,20 @@ describe('édition du nom de structure', () => {
     expect(screen.queryByRole('button', { name: 'Enregistrer' })).not.toBeInTheDocument()
   })
 
+  it('interdit la modification d’adresse d’une structure canonique', () => {
+    // GIVEN
+    renderComponent(<EditionNomStructure {...props(null)} />)
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Éditer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Adresse' }))
+
+    // THEN
+    expect(screen.getByText(/La modification de l/)).toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Enregistrer' })).not.toBeInTheDocument()
+  })
+
   it('modifie l’adresse depuis l’onglet Adresse en appelant l’action', async () => {
     // GIVEN
     const modifierAdresseStructureAction = stubbedServerAction(['OK'])

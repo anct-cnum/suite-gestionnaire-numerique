@@ -13,6 +13,17 @@ export class ModifierAdresseStructure implements CommandHandler<Command> {
 
   async handle(command: Command): ResultAsync<Failure> {
     // La validation des permissions est effectuée au niveau de la Server Action.
+    const nomActuel = await this.#structureRepository.lireNomStructure(command.structureId)
+    if (nomActuel === null) {
+      return 'structureIntrouvable'
+    }
+
+    // Règle métier : on ne modifie pas une structure canonique (denomination_antenne null) —
+    // ni son nom, ni son adresse. L'édition ne vise que les structures « antenne ».
+    if (nomActuel.denominationAntenne === null) {
+      return 'structureCanoniqueNonModifiable'
+    }
+
     // On géocode l'adresse saisie via la BAN ; sans correspondance, on refuse.
     const geocode = await this.#banGeocodingGateway.geocoder({ adresse: command.adresse })
     if (geocode === null) {
@@ -38,7 +49,7 @@ export class ModifierAdresseStructure implements CommandHandler<Command> {
   }
 }
 
-export type Failure = 'adresseIntrouvable'
+export type Failure = 'adresseIntrouvable' | 'structureCanoniqueNonModifiable' | 'structureIntrouvable'
 
 type Command = Readonly<{
   adresse: string

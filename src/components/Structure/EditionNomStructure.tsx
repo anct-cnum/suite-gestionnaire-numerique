@@ -26,14 +26,22 @@ export default function EditionNomStructure({
   const [onglet, setOnglet] = useState<Onglet>('renommer')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const rattachementsNonNuls = rattachements.filter((rattachement) => rattachement.nombre > 0)
-  // Structure canonique (nom officiel SIRENE) : on n'autorise pas le renommage (cela créerait un
-  // libellé d'antenne). Le renommage ne vise que les structures « antenne ».
+  // Une structure canonique (nom officiel SIRENE) ne se modifie pas — ni son nom (cela créerait un
+  // libellé d'antenne), ni son adresse. L'édition ne vise que les structures « antenne ».
   const estCanonique = denominationAntenne === null
-  const afficherFooter = (onglet === 'renommer' && !estCanonique) || onglet === 'adresse'
+  const afficherFooter = !estCanonique && (onglet === 'renommer' || onglet === 'adresse')
 
   function fermer(): void {
     setIsOpen(false)
+  }
+
+  function notifier(messages: ReadonlyArray<string>, titre: string, succes: string): void {
+    if (messages.includes('OK')) {
+      Notification('success', { description: succes, title: titre })
+      fermer()
+    } else {
+      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+    }
   }
 
   async function handleSubmitNom(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
@@ -56,15 +64,6 @@ export default function EditionNomStructure({
     setIsSubmitting(false)
 
     notifier(messages, 'Adresse de la structure ', 'modifiée')
-  }
-
-  function notifier(messages: ReadonlyArray<string>, titre: string, succes: string): void {
-    if (messages.includes('OK')) {
-      Notification('success', { description: succes, title: titre })
-      fermer()
-    } else {
-      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
-    }
   }
 
   return (
@@ -104,93 +103,27 @@ export default function EditionNomStructure({
           </div>
 
           {onglet === 'renommer' ? (
-            <>
-              {estCanonique ? (
-                <div className="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
-                  <p>
-                    Cette structure utilise le nom officiel (SIRENE) — elle est « canonique ». Le renommage n’est pas
-                    disponible : il créerait un libellé d’antenne.
-                  </p>
-                </div>
-              ) : (
-                <form
-                  id={formNomId}
-                  onSubmit={(event) => {
-                    void handleSubmitNom(event)
-                  }}
-                >
-                  <label className="fr-label" htmlFor={inputNomId}>
-                    Nom d’affichage
-                    <span className="fr-hint-text">Laisser vide pour afficher le nom officiel (SIRENE).</span>
-                  </label>
-                  <input
-                    className="fr-input"
-                    defaultValue={denominationAntenne}
-                    id={inputNomId}
-                    maxLength={255}
-                    name="nomAffichage"
-                    type="text"
-                  />
-                </form>
-              )}
-
-              <div className="fr-mt-3w">
-                <p className="fr-text--sm fr-text--bold fr-mb-1v">Éléments rattachés à cette structure</p>
-                {estCanonique ? null : (
-                  <p className="fr-text--xs fr-text-mention--grey fr-mb-1w">
-                    Renommer la structure modifie son affichage partout où elle apparaît.
-                  </p>
-                )}
-                {rattachementsNonNuls.length === 0 ? (
-                  <p className="fr-text--sm">Aucun élément rattaché.</p>
-                ) : (
-                  <ul className="fr-text--sm">
-                    {rattachementsNonNuls.map((rattachement) => (
-                      <li key={rattachement.label}>
-                        {rattachement.label} : <span className="fr-text--bold">{rattachement.nombre}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </>
+            <OngletRenommer
+              denominationAntenne={denominationAntenne}
+              estCanonique={estCanonique}
+              formId={formNomId}
+              inputId={inputNomId}
+              onSubmit={handleSubmitNom}
+              rattachements={rattachements}
+            />
           ) : null}
 
           {onglet === 'adresse' ? (
-            <form
-              id={formAdresseId}
-              onSubmit={(event) => {
-                void handleSubmitAdresse(event)
-              }}
-            >
-              <p className="fr-text--sm fr-mb-2w">
-                <span className="fr-text--bold">Adresse actuelle : </span>
-                {adresse}
-              </p>
-              <label className="fr-label" htmlFor={inputAdresseId}>
-                Nouvelle adresse
-                <span className="fr-hint-text">
-                  Géocodée via la Base Adresse Nationale. Une nouvelle adresse est créée si elle n’existe pas déjà.
-                </span>
-              </label>
-              <input
-                className="fr-input"
-                id={inputAdresseId}
-                name="adresse"
-                placeholder="12 rue de la République, 75001 Paris"
-                type="text"
-              />
-            </form>
+            <OngletAdresse
+              adresse={adresse}
+              estCanonique={estCanonique}
+              formId={formAdresseId}
+              inputId={inputAdresseId}
+              onSubmit={handleSubmitAdresse}
+            />
           ) : null}
 
-          {onglet === 'fusionner' ? (
-            <div className="fr-py-4w" style={{ textAlign: 'center' }}>
-              <p className="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1w">Fonctionnalité à venir</p>
-              <p className="fr-text--sm fr-text-mention--grey">
-                La fusion de structures sera proposée ici. L’interface reste à définir.
-              </p>
-            </div>
-          ) : null}
+          {onglet === 'fusionner' ? <OngletFusionner /> : null}
         </div>
 
         {afficherFooter ? (
@@ -215,11 +148,139 @@ export default function EditionNomStructure({
   )
 }
 
+function OngletRenommer({
+  denominationAntenne,
+  estCanonique,
+  formId,
+  inputId,
+  onSubmit,
+  rattachements,
+}: OngletRenommerProps): ReactElement {
+  const rattachementsNonNuls = rattachements.filter((rattachement) => rattachement.nombre > 0)
+
+  return (
+    <>
+      {estCanonique ? (
+        <NoticeCanonique>Le renommage n’est pas disponible : il créerait un libellé d’antenne.</NoticeCanonique>
+      ) : (
+        <form
+          id={formId}
+          onSubmit={(event) => {
+            void onSubmit(event)
+          }}
+        >
+          <label className="fr-label" htmlFor={inputId}>
+            Nom d’affichage
+            <span className="fr-hint-text">Laisser vide pour afficher le nom officiel (SIRENE).</span>
+          </label>
+          <input
+            className="fr-input"
+            defaultValue={denominationAntenne ?? ''}
+            id={inputId}
+            maxLength={255}
+            name="nomAffichage"
+            type="text"
+          />
+        </form>
+      )}
+
+      <div className="fr-mt-3w">
+        <p className="fr-text--sm fr-text--bold fr-mb-1v">Éléments rattachés à cette structure</p>
+        {estCanonique ? null : (
+          <p className="fr-text--xs fr-text-mention--grey fr-mb-1w">
+            Renommer la structure modifie son affichage partout où elle apparaît.
+          </p>
+        )}
+        {rattachementsNonNuls.length === 0 ? (
+          <p className="fr-text--sm">Aucun élément rattaché.</p>
+        ) : (
+          <ul className="fr-text--sm">
+            {rattachementsNonNuls.map((rattachement) => (
+              <li key={rattachement.label}>
+                {rattachement.label} : <span className="fr-text--bold">{rattachement.nombre}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
+  )
+}
+
+function OngletAdresse({ adresse, estCanonique, formId, inputId, onSubmit }: OngletAdresseProps): ReactElement {
+  if (estCanonique) {
+    return <NoticeCanonique>La modification de l’adresse n’est pas disponible.</NoticeCanonique>
+  }
+
+  return (
+    <form
+      id={formId}
+      onSubmit={(event) => {
+        void onSubmit(event)
+      }}
+    >
+      <p className="fr-text--sm fr-mb-2w">
+        <span className="fr-text--bold">Adresse actuelle : </span>
+        {adresse}
+      </p>
+      <label className="fr-label" htmlFor={inputId}>
+        Nouvelle adresse
+        <span className="fr-hint-text">
+          Géocodée via la Base Adresse Nationale. Une nouvelle adresse est créée si elle n’existe pas déjà.
+        </span>
+      </label>
+      <input
+        className="fr-input"
+        id={inputId}
+        name="adresse"
+        placeholder="12 rue de la République, 75001 Paris"
+        type="text"
+      />
+    </form>
+  )
+}
+
+function OngletFusionner(): ReactElement {
+  return (
+    <div className="fr-py-4w" style={{ textAlign: 'center' }}>
+      <p className="fr-badge fr-badge--info fr-badge--no-icon fr-mb-1w">Fonctionnalité à venir</p>
+      <p className="fr-text--sm fr-text-mention--grey">
+        La fusion de structures sera proposée ici. L’interface reste à définir.
+      </p>
+    </div>
+  )
+}
+
+function NoticeCanonique({ children }: Readonly<{ children: string }>): ReactElement {
+  return (
+    <div className="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
+      <p>Cette structure utilise le nom officiel (SIRENE) — elle est « canonique ». {children}</p>
+    </div>
+  )
+}
+
 const ONGLETS: ReadonlyArray<Readonly<{ id: Onglet; libelle: string }>> = [
   { id: 'renommer', libelle: 'Renommer' },
   { id: 'adresse', libelle: 'Adresse' },
   { id: 'fusionner', libelle: 'Fusionner' },
 ]
+
+type OngletRenommerProps = Readonly<{
+  denominationAntenne: null | string
+  estCanonique: boolean
+  formId: string
+  inputId: string
+  onSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void>
+  rattachements: RattachementsStructureViewModel
+}>
+
+type OngletAdresseProps = Readonly<{
+  adresse: string
+  estCanonique: boolean
+  formId: string
+  inputId: string
+  onSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void>
+}>
 
 type Onglet = 'adresse' | 'fusionner' | 'renommer'
 

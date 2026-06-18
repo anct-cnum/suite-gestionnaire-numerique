@@ -60,6 +60,27 @@ describe('modifier l’adresse d’une structure action', () => {
     expect(messages).toStrictEqual(['Adresse introuvable — vérifiez la saisie'])
   })
 
+  it('traduit le refus de modifier une structure canonique', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    )
+    vi.spyOn(ModifierAdresseStructure.prototype, 'handle').mockResolvedValueOnce('structureCanoniqueNonModifiable')
+
+    // WHEN
+    const messages = await modifierAdresseStructureAction({
+      adresse: '14 rue Louis Talamoni',
+      path: '/structure/978',
+      structureId: 978,
+    })
+
+    // THEN
+    expect(messages).toStrictEqual([
+      'Cette structure utilise le nom officiel (SIRENE) et ne peut pas être modifiée',
+    ])
+  })
+
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')

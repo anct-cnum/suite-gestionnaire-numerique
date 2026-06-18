@@ -13,6 +13,8 @@ import { Failure, ModifierAdresseStructure } from '@/use-cases/commands/Modifier
 
 const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
   adresseIntrouvable: 'Adresse introuvable — vérifiez la saisie',
+  structureCanoniqueNonModifiable: 'Cette structure utilise le nom officiel (SIRENE) et ne peut pas être modifiée',
+  structureIntrouvable: 'Structure introuvable',
 }
 
 export async function modifierAdresseStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {

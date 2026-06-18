@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
 import { ModifierAdresseStructure } from './ModifierAdresseStructure'
-import { AdresseARattacher, ModifierAdresseStructureRepository } from './shared/StructureRepository'
+import { AdresseARattacher, ModifierAdresseStructureRepository, NomActuelStructure } from './shared/StructureRepository'
 import { AdresseGeocodeReadModel, BanGeocodingGateway, GeocodageParams } from '@/gateways/apiBan/BanGeocodingGateway'
 
 describe('modifier l’adresse d’une structure', () => {
   it('géocode l’adresse puis re-pointe la structure sur l’adresse correspondante', async () => {
     // GIVEN
     const geocoder = geocodage(adresseGeocodee())
-    const rattacherAdresse = rattachement()
+    const repository = repositoryStub({ denominationAntenne: 'antenne actuelle' })
 
     // WHEN
-    const result = await new ModifierAdresseStructure({ geocoder }, { rattacherAdresse }).handle({
+    const result = await new ModifierAdresseStructure({ geocoder }, repository).handle({
       adresse: '14 rue Louis Talamoni, Champigny',
       structureId: 978,
     })
@@ -19,7 +19,7 @@ describe('modifier l’adresse d’une structure', () => {
     // THEN
     expect(result).toBe('OK')
     expect(geocoder).toHaveBeenCalledWith({ adresse: '14 rue Louis Talamoni, Champigny' })
-    expect(rattacherAdresse).toHaveBeenCalledWith(978, {
+    expect(repository.rattacherAdresse).toHaveBeenCalledWith(978, {
       clefInterop: '94017_aaaa',
       codeBan: null,
       codeInsee: '94017',
@@ -33,20 +33,51 @@ describe('modifier l’adresse d’une structure', () => {
     })
   })
 
+  it('refuse de modifier l’adresse d’une structure canonique (denomination_antenne null)', async () => {
+    // GIVEN
+    const geocoder = geocodage(adresseGeocodee())
+    const repository = repositoryStub({ denominationAntenne: null })
+
+    // WHEN
+    const result = await new ModifierAdresseStructure({ geocoder }, repository).handle({
+      adresse: '14 rue Louis Talamoni',
+      structureId: 978,
+    })
+
+    // THEN
+    expect(result).toBe('structureCanoniqueNonModifiable')
+    expect(geocoder).not.toHaveBeenCalled()
+    expect(repository.rattacherAdresse).not.toHaveBeenCalled()
+  })
+
+  it('renvoie une erreur quand la structure est introuvable', async () => {
+    // GIVEN
+    const repository = repositoryStub(null)
+
+    // WHEN
+    const result = await new ModifierAdresseStructure({ geocoder: geocodage(adresseGeocodee()) }, repository).handle({
+      adresse: '14 rue Louis Talamoni',
+      structureId: 0,
+    })
+
+    // THEN
+    expect(result).toBe('structureIntrouvable')
+  })
+
   it('renvoie une erreur quand l’adresse n’est pas géocodable', async () => {
     // GIVEN
     const geocoder = geocodage(null)
-    const rattacherAdresse = rattachement()
+    const repository = repositoryStub({ denominationAntenne: 'antenne actuelle' })
 
     // WHEN
-    const result = await new ModifierAdresseStructure({ geocoder }, { rattacherAdresse }).handle({
+    const result = await new ModifierAdresseStructure({ geocoder }, repository).handle({
       adresse: 'azertyuiop',
       structureId: 978,
     })
 
     // THEN
     expect(result).toBe('adresseIntrouvable')
-    expect(rattacherAdresse).not.toHaveBeenCalled()
+    expect(repository.rattacherAdresse).not.toHaveBeenCalled()
   })
 })
 
@@ -54,8 +85,15 @@ function geocodage(resultat: AdresseGeocodeReadModel | null): BanGeocodingGatewa
   return vi.fn<(params: GeocodageParams) => Promise<AdresseGeocodeReadModel | null>>().mockResolvedValue(resultat)
 }
 
-function rattachement(): ModifierAdresseStructureRepository['rattacherAdresse'] {
-  return vi.fn<(structureId: number, adresse: AdresseARattacher) => Promise<void>>().mockResolvedValue(undefined)
+function repositoryStub(nomActuel: NomActuelStructure | null): ModifierAdresseStructureRepository {
+  return {
+    lireNomStructure: vi
+      .fn<(structureId: number) => Promise<NomActuelStructure | null>>()
+      .mockResolvedValue(nomActuel),
+    rattacherAdresse: vi
+      .fn<(structureId: number, adresse: AdresseARattacher) => Promise<void>>()
+      .mockResolvedValue(undefined),
+  }
 }
 
 function adresseGeocodee(): AdresseGeocodeReadModel {
