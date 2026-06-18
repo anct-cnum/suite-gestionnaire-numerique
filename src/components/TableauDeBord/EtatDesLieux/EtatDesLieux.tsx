@@ -16,12 +16,14 @@ import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompag
 
 export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
   const { afficherLienLieux = true, carte, lieuxInclusionViewModel, mediateursEtAidantsViewModel } = props
-  const accompagnements =
-    'accompagnementsTerritoire' in props ? (
-      <AccompagnementsRealisesClient territoire={props.accompagnementsTerritoire} />
-    ) : (
-      <AccompagnementsRealises accompagnementsRealisesPromise={props.accompagnementsRealisesPromise} />
-    )
+  let accompagnements: ReactElement
+  if ('accompagnementsTerritoire' in props) {
+    accompagnements = <AccompagnementsRealisesClient territoire={props.accompagnementsTerritoire} />
+  } else if ('accompagnementsStructureId' in props) {
+    accompagnements = <AccompagnementsRealisesClient structureId={props.accompagnementsStructureId} />
+  } else {
+    accompagnements = <AccompagnementsRealises accompagnementsRealisesPromise={props.accompagnementsRealisesPromise} />
+  }
 
   return (
     <section aria-labelledby="etatDesLieux" className="fr-mb-4w ">
@@ -69,6 +71,7 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
 
 type EtatDesLieuxProps = (
   | Readonly<{ accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel> }>
+  | Readonly<{ accompagnementsStructureId: number }>
   | Readonly<{ accompagnementsTerritoire: string }>
 ) &
   Readonly<{

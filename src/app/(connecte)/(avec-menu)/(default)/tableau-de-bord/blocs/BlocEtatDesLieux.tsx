@@ -34,9 +34,14 @@ export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactE
   const carte =
     scope.type === 'france' ? await carteNationale(indicesLoader) : await carteDepartement(indicesLoader, scope.code)
 
+  const accompagnementsProps =
+    scope.type === 'structure'
+      ? { accompagnementsStructureId: parseInt(scope.code, 10) }
+      : { accompagnementsTerritoire: code }
+
   return (
     <EtatDesLieux
-      accompagnementsTerritoire={code}
+      {...accompagnementsProps}
       carte={carte}
       lieuxInclusionViewModel={lieuxInclusionViewModel}
       mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}

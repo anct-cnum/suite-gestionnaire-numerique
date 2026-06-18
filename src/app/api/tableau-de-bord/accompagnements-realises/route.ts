@@ -5,6 +5,7 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import {
   AccompagnementsRealisesResult,
   fetchAccompagnementsRealises,
+  fetchAccompagnementsRealisesParStructure,
 } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export async function GET(
@@ -13,6 +14,12 @@ export async function GET(
   const session = await getSession()
   if (!session) {
     return NextResponse.json(null, { status: 403 })
+  }
+
+  const structureIdParam = request.nextUrl.searchParams.get('structureId')
+  if (structureIdParam !== null) {
+    const resultat = await fetchAccompagnementsRealisesParStructure(parseInt(structureIdParam, 10), new Date())
+    return NextResponse.json(resultat)
   }
 
   const territoire = request.nextUrl.searchParams.get('territoire') ?? 'France'

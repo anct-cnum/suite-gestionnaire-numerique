@@ -6,14 +6,19 @@ import AccompagnementsRealisesView, { AccompagnementsRealisesEtat } from './Acco
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
-export default function AccompagnementsRealisesClient({ territoire }: Props): ReactElement {
+export default function AccompagnementsRealisesClient(props: Props): ReactElement {
   const [etat, setEtat] = useState<AccompagnementsRealisesEtat>({ statut: 'chargement' })
+
+  const queryParam =
+    'structureId' in props
+      ? `structureId=${encodeURIComponent(String(props.structureId))}`
+      : `territoire=${encodeURIComponent(props.territoire)}`
 
   useEffect(() => {
     let annule = false
     setEtat({ statut: 'chargement' })
 
-    void fetch(`/api/tableau-de-bord/accompagnements-realises?territoire=${encodeURIComponent(territoire)}`)
+    void fetch(`/api/tableau-de-bord/accompagnements-realises?${queryParam}`)
       .then((reponse) => reponse.json() as Promise<AccompagnementsRealisesResult | ErrorViewModel>)
       .then((donnees) => {
         if (annule) {
@@ -35,11 +40,9 @@ export default function AccompagnementsRealisesClient({ territoire }: Props): Re
     return () => {
       annule = true
     }
-  }, [territoire])
+  }, [queryParam])
 
   return <AccompagnementsRealisesView etat={etat} />
 }
 
-type Props = Readonly<{
-  territoire: string
-}>
+type Props = Readonly<{ structureId: number }> | Readonly<{ territoire: string }>
