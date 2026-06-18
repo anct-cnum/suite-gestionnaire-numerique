@@ -1,13 +1,16 @@
 import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import Structure from '@/components/Structure/Structure'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
+import { Administrateur } from '@/domain/Administrateur'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRattachementsStructureLoader } from '@/gateways/PrismaRattachementsStructureLoader'
 import { PrismaUneStructureLoader } from '@/gateways/PrismaUneStructureLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { rattachementsStructurePresenter } from '@/presenters/rattachementsStructurePresenter'
 import { structurePresenter } from '@/presenters/structurePresenter'
 import { RecupererRattachementsStructure } from '@/use-cases/queries/RecupererRattachementsStructure'
@@ -43,8 +46,11 @@ export default async function StructureController({ params, searchParams }: Prop
   const codesDepartements = uneStructureReadModel.role.gouvernances.map((gouvernance) => gouvernance.code)
   const peutGererStructure = contexte.peutGererStructure(structureIdNumeric, codesDepartements)
 
-  // Édition du nom réservée aux administrateurs dispositif, et seulement avec ?edit=true dans l'URL.
-  const editionNomActive = contexte.aCesRoles('administrateur_dispositif') && edit === 'true'
+  // Édition du nom réservée aux bêta-testeurs (administrateur dispositif + flag is_beta_testeur),
+  // et seulement avec ?edit=true dans l'URL.
+  const utilisateurDomaine = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(session.user.sub)
+  const estBetaTesteur = utilisateurDomaine instanceof Administrateur && utilisateurDomaine.isBetaTesteur
+  const editionNomActive = estBetaTesteur && edit === 'true'
 
   // Rattachements (FK) chargés seulement pour le mode édition : ils alimentent la modale de
   // renommage (conséquences) et le futur onglet fusion.

@@ -3,9 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import prisma from '../../../../prisma/prismaClient'
+import { Administrateur } from '@/domain/Administrateur'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ModifierNomStructure } from '@/use-cases/commands/ModifierNomStructure'
 
 export async function modifierNomStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
@@ -14,10 +16,10 @@ export async function modifierNomStructureAction(actionParams: ActionParams): Pr
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  // Garde : seul un administrateur dispositif peut éditer le nom d'une structure.
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
-  if (utilisateur.role.type !== 'administrateur_dispositif') {
-    return ['Action réservée aux administrateurs dispositif']
+  // Garde : édition réservée aux bêta-testeurs (administrateur dispositif + flag is_beta_testeur).
+  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(await getSessionSub())
+  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+    return ['Action réservée aux administrateurs autorisés']
   }
 
   await new ModifierNomStructure(new PrismaStructureRepository()).handle({
