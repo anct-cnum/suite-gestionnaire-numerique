@@ -11,7 +11,11 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { FusionFailure, FusionnerStructures } from '@/use-cases/commands/FusionnerStructures'
 
 const MESSAGES_ECHEC: Readonly<Record<FusionFailure, string>> = {
+  collisionIdentifiantSource:
+    'Conflit d’identifiant de source (Coop, Idposte ou Aidants Connect) avec la survivante : tranchez-le avant de fusionner',
+  collisionMembreGouvernance: 'La survivante est déjà membre d’une gouvernance de la structure absorbée',
   fusionEchouee: 'La fusion a échoué, aucune modification effectuée',
+  fusionImpossibleCanoniqueAbsorbee: 'Une structure canonique (INSEE) ne peut pas être absorbée',
   fusionImpossibleMemeStructure: 'Impossible de fusionner une structure avec elle-même',
   structureIntrouvable: 'Structure introuvable ou déjà supprimée',
 }
@@ -36,10 +40,6 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
   const echecs: Array<string> = []
   for (const idAbsorbee of actionParams.idsAbsorbees) {
     const result = await fusionnerStructures.handle({
-      champsRetenus: {
-        denominationAntenne: actionParams.denominationAntenne,
-        denominationSirene: actionParams.denominationSirene,
-      },
       idAbsorbee,
       idSurvivante: actionParams.idSurvivante,
       uidUtilisateur: sub,
@@ -59,16 +59,12 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
 }
 
 type ActionParams = Readonly<{
-  denominationAntenne?: null | string
-  denominationSirene?: null | string
   idsAbsorbees: ReadonlyArray<number>
   idSurvivante: number
   path: string
 }>
 
 const validator = z.object({
-  denominationAntenne: z.string().nullish(),
-  denominationSirene: z.string().nullish(),
   idsAbsorbees: z
     .array(z.number().int().positive())
     .min(1, { message: 'Sélectionnez au moins une structure à fusionner' }),
