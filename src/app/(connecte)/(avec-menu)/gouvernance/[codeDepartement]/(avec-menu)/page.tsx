@@ -16,7 +16,7 @@ export default async function GouvernanceController({ params }: Props): Promise<
       <FilAriane
         items={[
           { href: '/tableau-de-bord', label: 'Tableau de bord' },
-          { label: 'Gouvernance' },
+          { href: '/gouvernances', label: 'Gouvernances' },
           { label: nomDepartement(codeDepartement) },
         ]}
       />

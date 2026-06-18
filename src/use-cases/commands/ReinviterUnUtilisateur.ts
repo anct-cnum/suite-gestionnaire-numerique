@@ -27,7 +27,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
 
     utilisateurAReinviter.changerDateDInvitation(this.#date)
     await this.#utilisateurRepository.update(utilisateurAReinviter)
-    const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
+    const emailGateway = this.#emailGatewayFactory()
     await emailGateway.send({
       email: utilisateurAReinviter.state.emailDeContact,
       nom: utilisateurAReinviter.state.nom,

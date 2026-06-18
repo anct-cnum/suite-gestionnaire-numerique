@@ -18,6 +18,7 @@ export class GestionnaireGroupement extends Utilisateur {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     groupementUid: GroupementUid,
@@ -30,6 +31,7 @@ export class GestionnaireGroupement extends Utilisateur {
       prenom,
       emailDeContact,
       isSuperAdmin,
+      isBetaTesteur,
       inviteLe,
       telephone,
       derniereConnexion
@@ -38,9 +40,7 @@ export class GestionnaireGroupement extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return (
-      this.isSuperAdmin || (autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid))
-    )
+    return autre instanceof GestionnaireGroupement && autre.#groupementUid.equals(this.#groupementUid)
   }
 }
 

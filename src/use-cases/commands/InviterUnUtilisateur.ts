@@ -23,6 +23,7 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       emailDeContact: command.email,
       groupementUid: utilisateurCourantState.groupementUid?.value,
       inviteLe: this.#date,
+      isBetaTesteur: false,
       isSuperAdmin: false,
       nom: command.nom,
       prenom: command.prenom,
@@ -38,7 +39,7 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
 
     const isUtilisateurCreeOuReactive = await this.#utilisateurRepository.add(utilisateurACreer)
     if (isUtilisateurCreeOuReactive) {
-      const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
+      const emailGateway = this.#emailGatewayFactory()
       await emailGateway.send({
         email: command.email,
         nom: command.nom,

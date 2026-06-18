@@ -208,6 +208,7 @@ describe('utilisateur repository', () => {
         groupementId: null,
         id: 1,
         inviteLe: epochTime,
+        isBetaTesteur: false,
         isSuperAdmin: false,
         isSupprime: true,
         nom: 'Tartempion',

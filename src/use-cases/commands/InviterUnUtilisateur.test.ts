@@ -18,24 +18,10 @@ describe('inviter un utilisateur', () => {
       nom: '',
       prenom: '',
     }
-    spiedIsSuperAdmin = null
   })
 
   describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter', () => {
     it.each([
-      {
-        desc:
-          'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est' +
-          ' enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
-        utilisateurAInviter: {
-          role: 'Gestionnaire structure' as const,
-        },
-        utilisateurCourant: {
-          isSuperAdmin: true,
-          role: 'Gestionnaire groupement' as const,
-          uid: 'utilisateurAdminUid',
-        },
-      },
       {
         desc:
           'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci' +
@@ -46,7 +32,6 @@ describe('inviter un utilisateur', () => {
           role: 'Gestionnaire groupement' as const,
         },
         utilisateurCourant: {
-          isSuperAdmin: true,
           role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
@@ -62,7 +47,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           codeOrganisation: '53',
-          isSuperAdmin: true,
+
           role: 'Gestionnaire région' as const,
           uid: 'utilisateurGestionnaireUid',
         },
@@ -75,7 +60,6 @@ describe('inviter un utilisateur', () => {
           role: 'Gestionnaire structure' as const,
         },
         utilisateurCourant: {
-          isSuperAdmin: false,
           role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
@@ -90,7 +74,6 @@ describe('inviter un utilisateur', () => {
           role: 'Gestionnaire groupement' as const,
         },
         utilisateurCourant: {
-          isSuperAdmin: false,
           role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
@@ -106,7 +89,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           codeOrganisation: '53',
-          isSuperAdmin: false,
+
           role: 'Gestionnaire région' as const,
           uid: 'utilisateurGestionnaireUid',
         },
@@ -118,7 +101,6 @@ describe('inviter un utilisateur', () => {
         utilisateurFactory({
           codeOrganisation: utilisateurCourant.codeOrganisation,
           inviteLe: date,
-          isSuperAdmin: utilisateurCourant.isSuperAdmin,
           role: utilisateurCourant.role,
         })
       )
@@ -157,7 +139,6 @@ describe('inviter un utilisateur', () => {
         nom: 'Dugenoux',
         prenom: 'Martine',
       })
-      expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
     })
   })
 
@@ -186,7 +167,6 @@ describe('inviter un utilisateur', () => {
       nom: '',
       prenom: '',
     })
-    expect(spiedIsSuperAdmin).toBeNull()
   })
 
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
@@ -221,15 +201,12 @@ describe('inviter un utilisateur', () => {
       nom: '',
       prenom: '',
     })
-    expect(spiedIsSuperAdmin).toBeNull()
   })
 })
 
 let spiedUidToFind: string
 let spiedUtilisateurToAdd: null | Utilisateur
 let spiedDestinataire: Destinataire
-let spiedIsSuperAdmin: boolean | null
-
 class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepository {
   readonly #utilisateurCourant: Utilisateur
 
@@ -255,8 +232,7 @@ class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
   }
 }
 
-function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
-  spiedIsSuperAdmin = isSuperAdmin
+function emailGatewayFactorySpy(): EmailGateway {
   return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire

@@ -13,7 +13,6 @@ import {
 } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
-import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
 import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
 export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactElement> {
@@ -22,8 +21,6 @@ export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactE
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
-
-  const accompagnementsRealisesPromise = fetchAccompagnementsRealises(code)
 
   const lieuxInclusionReadModel = await lieuxInclusionLoader.get(code)
   const lieuxInclusionViewModel = handleReadModelOrError(lieuxInclusionReadModel, lieuxInclusionNumeriquePresenter)
@@ -39,7 +36,7 @@ export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactE
 
   return (
     <EtatDesLieux
-      accompagnementsRealisesPromise={accompagnementsRealisesPromise}
+      accompagnementsTerritoire={code}
       carte={carte}
       lieuxInclusionViewModel={lieuxInclusionViewModel}
       mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}

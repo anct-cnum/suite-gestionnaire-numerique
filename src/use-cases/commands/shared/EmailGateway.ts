@@ -4,4 +4,4 @@ export interface EmailGateway {
   send(destinataire: Destinataire): Promise<void>
 }
 
-export type EmailGatewayFactory = (isSuperAdmin: boolean) => EmailGateway
+export type EmailGatewayFactory = () => EmailGateway

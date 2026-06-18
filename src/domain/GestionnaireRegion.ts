@@ -18,6 +18,7 @@ export class GestionnaireRegion extends Utilisateur {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
+    isBetaTesteur: boolean,
     inviteLe: Date,
     telephone: Telephone,
     region: Region,
@@ -30,6 +31,7 @@ export class GestionnaireRegion extends Utilisateur {
       prenom,
       emailDeContact,
       isSuperAdmin,
+      isBetaTesteur,
       inviteLe,
       telephone,
       derniereConnexion
@@ -38,7 +40,7 @@ export class GestionnaireRegion extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return this.isSuperAdmin || (autre instanceof GestionnaireRegion && autre.#region.equals(this.#region))
+    return autre instanceof GestionnaireRegion && autre.#region.equals(this.#region)
   }
 }
 

@@ -35,6 +35,7 @@ export function renderComponent(
     changerMonDepartementAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
+    fusionnerStructuresAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierContactReferentStructureAction: vi.fn(),
     modifierLieuInclusionDescriptionAction: vi.fn(),
@@ -74,6 +75,7 @@ export function renderComponent(
     supprimerUneNotePriveeAction: vi.fn(),
     supprimerUnMembreOuCandidatAction: vi.fn(),
     supprimerUnUtilisateurAction: vi.fn(),
+    transfererMembreAction: vi.fn(),
     utilisateursParPage: 10,
   }
 

@@ -81,9 +81,7 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
                     {aidantsEtMediateurs.totalAidant}{' '}
                   </span>
                   <br />
-                  <span className="font-weight-500 color-blue-france">
-                    {aidantsEtMediateurs.totalAidant > 1 ? 'Aidants Connect' : 'Aidant Connect'}
-                  </span>
+                  <span className="font-weight-500 color-blue-france">Aidants Connect</span>
                 </p>
               </div>
             </div>

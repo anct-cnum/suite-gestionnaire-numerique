@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
+import { select } from 'react-select-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import RapportsForm from './RapportsForm'
@@ -13,19 +14,18 @@ describe('formulaire de génération de rapport', () => {
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockReturnValue(undefined)
   })
 
-  it('quand j’affiche le formulaire, alors National et Word sont sélectionnés par défaut', () => {
+  it(`quand j'affiche le formulaire, alors National et Word sont sélectionnés par défaut`, () => {
     // WHEN
     afficherLeFormulaire()
 
     // THEN
     expect(screen.getByRole('heading', { name: 'Paramètres du rapport' })).toBeInTheDocument()
-    const echelon = screen.getByRole('combobox', { name: 'Échelon géographique' })
-    expect(echelon).toHaveValue('national')
+    expect(screen.getByText('National')).toBeInTheDocument()
     expect(screen.getByRole('radio', { name: 'Word (.docx)' })).toBeChecked()
     expect(screen.getByRole('radio', { name: 'PDF' })).not.toBeChecked()
   })
 
-  it('quand je génère un rapport national au format Word, alors l’API est appelée et le fichier est téléchargé', async () => {
+  it(`quand je génère un rapport national au format Word, alors l'API est appelée et le fichier est téléchargé`, async () => {
     // GIVEN
     const fetchSpy = stubFetchOk()
     afficherLeFormulaire()
@@ -38,13 +38,13 @@ describe('formulaire de génération de rapport', () => {
     expect(window.URL.createObjectURL).toHaveBeenCalledTimes(1)
   })
 
-  it('quand je choisis une région et le format PDF, alors l’API est appelée avec le périmètre régional', async () => {
+  it(`quand je choisis une région et le format PDF, alors l'API est appelée avec le périmètre régional`, async () => {
     // GIVEN
     const fetchSpy = stubFetchOk()
     afficherLeFormulaire()
 
     // WHEN
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Échelon géographique' }), 'region:84')
+    await select(screen.getByRole('combobox', { name: 'Échelon géographique' }), 'Auvergne-Rhône-Alpes')
     await userEvent.click(screen.getByRole('radio', { name: 'PDF' }))
     await userEvent.click(screen.getByRole('button', { name: 'Générer le rapport' }))
 
@@ -52,7 +52,7 @@ describe('formulaire de génération de rapport', () => {
     expect(fetchSpy).toHaveBeenCalledWith('/api/rapport?format=pdf&type=region&code=84')
   })
 
-  it('quand l’API échoue, alors un message d’erreur est affiché', async () => {
+  it(`quand l'API échoue, alors un message d'erreur est affiché`, async () => {
     // GIVEN
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({ ok: false, status: 500 } as Response)
     afficherLeFormulaire()
@@ -62,7 +62,7 @@ describe('formulaire de génération de rapport', () => {
 
     // THEN
     const alerte = await screen.findByRole('alert')
-    expect(alerte.textContent).toBe('La génération du rapport a échoué. Veuillez réessayer.')
+    expect(alerte.textContent).toBe(`La génération du rapport a échoué. Veuillez réessayer.`)
   })
 })
 
@@ -76,5 +76,5 @@ function stubFetchOk() {
 }
 
 function afficherLeFormulaire(): void {
-  render(<RapportsForm departements={[{ code: '01', nom: 'Ain' }]} regions={[{ code: '84', nom: 'Auvergne' }]} />)
+  render(<RapportsForm />)
 }

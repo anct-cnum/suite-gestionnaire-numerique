@@ -2,8 +2,6 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import departementsJson from '../../../../../../ressources/departements.json'
-import regionsJson from '../../../../../../ressources/regions.json'
 import RapportsForm from '@/components/Rapports/RapportsForm'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
@@ -28,12 +26,6 @@ export default async function RapportsController(): Promise<ReactElement> {
   if (!contexte.aCesRoles('administrateur_dispositif')) {
     redirect('/tableau-de-bord')
   }
-
-  const regions = [...regionsJson].sort((regionA, regionB) => regionA.nom.localeCompare(regionB.nom, 'fr'))
-  const departements = [...departementsJson]
-    .map((departement) => ({ code: departement.code, nom: departement.nom }))
-    .sort((departementA, departementB) => departementA.nom.localeCompare(departementB.nom, 'fr'))
-
   return (
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Rapports' }]} />
@@ -41,7 +33,7 @@ export default async function RapportsController(): Promise<ReactElement> {
         <TitleIcon icon="file-text-line" />
         Rapports de situation de l’inclusion numérique
       </PageTitle>
-      <RapportsForm departements={departements} regions={regions} />
+      <RapportsForm />
     </>
   )
 }

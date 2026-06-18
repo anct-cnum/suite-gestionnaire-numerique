@@ -200,6 +200,9 @@ export class PrismaRapportRegionLoader {
         entry = { coporteurs: new Set(), membres: new Set() }
         membresParDep.set(row.departement_code, entry)
       }
+      if (row.structure_nom === null) {
+        continue
+      }
       const nom = this.#capitaliserNom(row.structure_nom)
       if (row.is_coporteur) {
         entry.coporteurs.add(nom)
@@ -408,7 +411,7 @@ type FneRow = Readonly<{
 type MembreGouvernanceRow = Readonly<{
   departement_code: string
   is_coporteur: boolean
-  structure_nom: string
+  structure_nom: null | string
 }>
 
 type NomRow = Readonly<{

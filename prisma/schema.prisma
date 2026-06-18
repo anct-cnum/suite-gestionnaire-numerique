@@ -84,6 +84,7 @@ model UtilisateurRecord {
   emailDeContact    String    @map("email_de_contact")
   groupementId      Int?      @map("groupement_id")
   inviteLe          DateTime  @map("invite_le")
+  isBetaTesteur     Boolean   @default(false) @map("is_beta_testeur")
   isSuperAdmin      Boolean   @default(false) @map("is_super_admin")
   isSupprime        Boolean   @default(false) @map("is_supprime")
   nom               String    @db.Citext
@@ -213,6 +214,22 @@ model MembreRecord {
   CoFinancementRecord          CoFinancementRecord[]
 
   @@map("membre")
+  @@schema("min")
+}
+
+model MembreTransfertLogRecord {
+  id Int @id @default(autoincrement())
+
+  membreId             String   @map("membre_id")
+  structureSourceId    Int      @map("structure_source_id")
+  structureCibleId     Int      @map("structure_cible_id")
+  utilisateursDeplaces Int      @map("utilisateurs_deplaces")
+  contactsDeplaces     Int      @map("contacts_deplaces")
+  contactsSupprimes    Int      @map("contacts_supprimes")
+  parUtilisateur       String   @map("par_utilisateur")
+  transfereLe          DateTime @default(now()) @map("transfere_le")
+
+  @@map("membre_transfert_log")
   @@schema("min")
 }
 

@@ -26,8 +26,8 @@ export class InviterContactsReferentsFne implements CommandHandler<Command> {
   }
 
   async handle(command: Command): ResultAsync<string> {
-    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
-    const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
+    await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
+    const emailGateway = this.#emailGatewayFactory()
     const contacts = await this.#contactReferentFneLoader.getContactsReferentFne(command.structureId)
 
     await Promise.all(contacts.map(async (contact) => this.#inviterContact(contact, command.structureId, emailGateway)))
@@ -44,6 +44,7 @@ export class InviterContactsReferentsFne implements CommandHandler<Command> {
     const utilisateurACreer = new UtilisateurFactory({
       emailDeContact: contact.email,
       inviteLe: this.#date,
+      isBetaTesteur: false,
       isSuperAdmin: false,
       nom: contact.nom,
       prenom: contact.prenom,

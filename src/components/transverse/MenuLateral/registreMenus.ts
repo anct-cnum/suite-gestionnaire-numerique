@@ -78,7 +78,6 @@ const sectionRapportsEtStatistiques: Section = {
       icon: 'line-chart-line',
       label: 'Statistiques',
       url: () => '/statistiques',
-      visible: (contexte) => contexte.estSuperAdmin(),
     },
   ],
   titre: 'RAPPORTS ET STATISTIQUES',
@@ -89,8 +88,7 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  // Masquage temporaire pour démo : Rapports + Statistiques cachés au superadmin (revert à la demande)
-  if (contexte.aCesRoles('administrateur_dispositif') && !contexte.estSuperAdmin()) {
+  if (contexte.aCesRoles('administrateur_dispositif')) {
     sections.push(sectionRapportsEtStatistiques)
   }
 

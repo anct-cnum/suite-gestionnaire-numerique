@@ -51,7 +51,7 @@ export default async function ActionModifierController({ params }: Props): Promi
         <FilAriane
           items={[
             { href: '/tableau-de-bord', label: 'Tableau de bord' },
-            { label: 'Gouvernance' },
+            { href: '/gouvernances', label: 'Gouvernances' },
             { href: `/gouvernance/${codeDepartement}`, label: nomDepartement(codeDepartement) },
             { href: urlFeuilleDeRoute, label: actionReadModel.nomFeuilleDeRoute },
             { label: 'Modifier une action' },

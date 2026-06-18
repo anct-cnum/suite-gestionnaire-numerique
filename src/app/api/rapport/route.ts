@@ -119,14 +119,15 @@ const noBorder = {
   top: { size: 0, style: BorderStyle.NONE },
 } as const
 
-function celluleTexte(texte: string, bold = false): TableCell {
+function celluleTexte(texte: string, bold = false, largeur?: number): TableCell {
   return new TableCell({
     borders: noBorder,
     children: [new Paragraph({ children: [new TextRun({ bold, text: texte })] })],
+    width: largeur !== undefined ? { size: largeur, type: WidthType.PERCENTAGE } : undefined,
   })
 }
 
-function celluleNombre(texte: string, bold = false): TableCell {
+function celluleNombre(texte: string, bold = false, largeur?: number): TableCell {
   return new TableCell({
     borders: noBorder,
     children: [
@@ -135,6 +136,7 @@ function celluleNombre(texte: string, bold = false): TableCell {
         children: [new TextRun({ bold, text: texte })],
       }),
     ],
+    width: largeur !== undefined ? { size: largeur, type: WidthType.PERCENTAGE } : undefined,
   })
 }
 
@@ -158,12 +160,13 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
   )
   children.push(
     new Table({
+      columnWidths: [3610, 2708, 2708],
       rows: [
         new TableRow({
           children: [
-            celluleTexte('Départements', true),
-            celluleNombre('Nombre de Conseillers numériques', true),
-            celluleNombre('Nombre de bénéficiaires depuis 2021', true),
+            celluleTexte('Départements', true, 40),
+            celluleNombre('Nombre de Conseillers numériques', true, 30),
+            celluleNombre('Nombre de bénéficiaires depuis 2021', true, 30),
           ],
           tableHeader: true,
         }),
@@ -171,9 +174,9 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
           (dep) =>
             new TableRow({
               children: [
-                celluleTexte(dep.nom),
-                celluleNombre(formaterNombre(dep.nbConseillers)),
-                celluleNombre(formaterNombre(dep.nbBeneficiaires)),
+                celluleTexte(dep.nom, false, 40),
+                celluleNombre(formaterNombre(dep.nbConseillers), false, 30),
+                celluleNombre(formaterNombre(dep.nbBeneficiaires), false, 30),
               ],
             })
         ),
@@ -201,11 +204,12 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
   )
   children.push(
     new Table({
+      columnWidths: [3610, 5416],
       rows: [
         new TableRow({
           children: [
-            celluleTexte('Départements', true),
-            celluleNombre('Aidants et référents habilités Aidants Connect', true),
+            celluleTexte('Départements', true, 40),
+            celluleNombre('Aidants et référents habilités Aidants Connect', true, 60),
           ],
           tableHeader: true,
         }),
@@ -213,7 +217,10 @@ async function genererDocx(rapport: RapportReadModel): Promise<Blob> {
           const suffixe =
             dep.dontConseillers > 0 ? ` dont ${formaterNombre(dep.dontConseillers)} conseillers numériques` : ''
           return new TableRow({
-            children: [celluleTexte(dep.nom), celluleNombre(`${formaterNombre(dep.nbHabilites)}${suffixe}`)],
+            children: [
+              celluleTexte(dep.nom, false, 40),
+              celluleNombre(`${formaterNombre(dep.nbHabilites)}${suffixe}`, false, 60),
+            ],
           })
         }),
       ],
@@ -474,11 +481,15 @@ function tableau(
   for (const ligne of lignes) {
     dessinerLigne(ligne, false, false)
   }
+  doc.text('', doc.page.margins.left)
   doc.moveDown(0.8)
 }
 
 function formaterNombre(nombre: number): string {
-  return nombre.toLocaleString('fr-FR')
+  // toLocaleString('fr-FR') utilise U+202F (narrow no-break space) comme séparateur
+  // de milliers, que les polices intégrées de PDFKit ne savent pas rendre (affiche "/").
+  // On remplace par une espace normale pour compatibilité PDF et DOCX.
+  return nombre.toLocaleString('fr-FR').replace(/\u202F/g, ' ')
 }
 
 function formaterMontant(montant: number): string {

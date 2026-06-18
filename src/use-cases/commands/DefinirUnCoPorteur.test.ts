@@ -544,7 +544,7 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   }
 }
 
-function emailGatewayFactorySpy(_: boolean): EmailGateway {
+function emailGatewayFactorySpy(): EmailGateway {
   return new (class implements EmailGateway {
     async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataires.push(destinataire)

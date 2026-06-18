@@ -18,7 +18,7 @@ const contexteMembreFne = new Contexte('gestionnaire_structure', [
   { code: '93', type: 'membre' },
 ])
 
-const contexteSuperAdmin = new Contexte('administrateur_dispositif', [{ type: 'france' }], true)
+const contexteAdminDispositif = new Contexte('administrateur_dispositif', [{ type: 'france' }])
 
 describe('menu lateral', () => {
   it("étant n'importe qui, quand j'affiche le menu latéral, alors il s'affiche avec le lien de mon tableau de bord", () => {
@@ -136,19 +136,19 @@ describe('menu lateral', () => {
     }
   )
 
-  it("étant super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES est masquée (démo)", () => {
+  it("étant administrateur dispositif, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES s'affiche", () => {
     // WHEN
     render(
       <menuActifContext.Provider value="/">
-        <MenuLateral contexte={contexteSuperAdmin} />
+        <MenuLateral contexte={contexteAdminDispositif} />
       </menuActifContext.Provider>
     )
 
     // THEN
     const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    expect(within(nav).queryByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).not.toBeInTheDocument()
-    expect(within(nav).queryByRole('link', { name: 'Statistiques' })).not.toBeInTheDocument()
-    expect(within(nav).queryByRole('link', { name: 'Rapports' })).not.toBeInTheDocument()
+    expect(within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).toBeInTheDocument()
+    expect(within(nav).getByRole('link', { name: 'Rapports' })).toHaveAttribute('href', '/rapports')
+    expect(within(nav).getByRole('link', { name: 'Statistiques' })).toHaveAttribute('href', '/statistiques')
   })
 
   it("étant un utilisateur non super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES n'est pas visible", () => {
@@ -165,7 +165,7 @@ describe('menu lateral', () => {
     expect(lienRapports).not.toBeInTheDocument()
   })
 
-  it("étant administrateur dispositif non super admin, quand j'affiche le menu latéral, alors Rapports s'affiche mais pas Statistiques", () => {
+  it("étant administrateur dispositif, quand j'affiche le menu latéral, alors Rapports et Statistiques s'affichent", () => {
     // WHEN
     render(
       <menuActifContext.Provider value="/">
@@ -177,7 +177,7 @@ describe('menu lateral', () => {
     const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
     expect(within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).toBeInTheDocument()
     expect(within(nav).getByRole('link', { name: 'Rapports' })).toHaveAttribute('href', '/rapports')
-    expect(within(nav).queryByRole('link', { name: 'Statistiques' })).not.toBeInTheDocument()
+    expect(within(nav).getByRole('link', { name: 'Statistiques' })).toHaveAttribute('href', '/statistiques')
   })
 
   it("étant n'importe qui, quand j'affiche le menu latéral, alors la section ORGANISATION s'affiche avec Mon équipe", () => {
