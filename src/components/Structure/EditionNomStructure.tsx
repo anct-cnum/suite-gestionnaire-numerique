@@ -1,6 +1,5 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import { ReactElement, SyntheticEvent, useContext, useId, useState } from 'react'
 
 import Modal from '../shared/Modal/Modal'
@@ -15,8 +14,7 @@ export default function EditionNomStructure({
   rattachements,
   structureId,
 }: Props): ReactElement {
-  const { modifierNomStructureAction } = useContext(clientContext)
-  const pathname = usePathname()
+  const { modifierNomStructureAction, pathname } = useContext(clientContext)
   const modalId = useId()
   const labelId = useId()
   const inputId = useId()
