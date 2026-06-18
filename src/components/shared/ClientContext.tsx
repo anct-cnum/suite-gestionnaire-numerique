@@ -48,6 +48,7 @@ import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNote
 import { supprimerUnMembreOuCandidatAction } from '@/app/api/actions/supprimerUnMembreOuCandidatAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { transfererMembreAction } from '@/app/api/actions/transfererMembreAction'
+import { transfererNotionsStructureAction } from '@/app/api/actions/transfererNotionsStructureAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
 export default function ClientContext({
@@ -110,6 +111,7 @@ export default function ClientContext({
       supprimerUnMembreOuCandidatAction,
       supprimerUnUtilisateurAction,
       transfererMembreAction,
+      transfererNotionsStructureAction,
       utilisateursParPage,
     }),
     [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
@@ -169,6 +171,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUnMembreOuCandidatAction: typeof supprimerUnMembreOuCandidatAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   transfererMembreAction: typeof transfererMembreAction
+  transfererNotionsStructureAction: typeof transfererNotionsStructureAction
   utilisateursParPage: number
 }>
 type Props = PropsWithChildren<

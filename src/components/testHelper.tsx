@@ -78,6 +78,7 @@ export function renderComponent(
     supprimerUnMembreOuCandidatAction: vi.fn(),
     supprimerUnUtilisateurAction: vi.fn(),
     transfererMembreAction: vi.fn(),
+    transfererNotionsStructureAction: vi.fn(),
     utilisateursParPage: 10,
   }
 
