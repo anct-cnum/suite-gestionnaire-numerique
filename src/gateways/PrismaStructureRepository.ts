@@ -3,7 +3,13 @@ import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
-import { StructureData, StructureRepository } from '@/use-cases/commands/shared/StructureRepository'
+import {
+  ModifierNomStructureData,
+  ModifierNomStructureRepository,
+  NomActuelStructure,
+  StructureData,
+  StructureRepository,
+} from '@/use-cases/commands/shared/StructureRepository'
 
 // Refonte 2026 : MIN écrit désormais dans main.structure_administrative (et
 // non plus dans main.structure legacy). Les notions "lieu" (nom, typologies,
@@ -11,7 +17,9 @@ import { StructureData, StructureRepository } from '@/use-cases/commands/shared/
 // Le champ Structure.nom du domain est désormais alimenté depuis
 // SA.denomination_sirene (compatibilité ascendante avec le contrat actuel).
 
-export class PrismaStructureRepository implements ContactReferentRepository, StructureRepository {
+export class PrismaStructureRepository
+  implements ContactReferentRepository, ModifierNomStructureRepository, StructureRepository
+{
   async ajouterContact(structureId: number, data: ContactStructureData): Promise<void> {
     const contact = await prisma.main_contact.create({
       data: {
@@ -89,6 +97,15 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
     })
   }
 
+  async lireNomStructure(structureId: number): Promise<NomActuelStructure | null> {
+    const structure = await prisma.main_structure_administrative.findUnique({
+      select: { denomination_antenne: true },
+      where: { id: structureId },
+    })
+
+    return structure === null ? null : { denominationAntenne: structure.denomination_antenne }
+  }
+
   async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
     await prisma.main_contact.update({
       data: {
@@ -103,6 +120,23 @@ export class PrismaStructureRepository implements ContactReferentRepository, Str
         id: contactId,
       },
     })
+  }
+
+  async modifierNom(data: ModifierNomStructureData): Promise<boolean> {
+    try {
+      await prisma.main_structure_administrative.update({
+        data: { denomination_antenne: data.denominationAntenne },
+        where: { id: data.structureId },
+      })
+
+      return true
+    } catch (error: unknown) {
+      // P2002 : conflit sur la contrainte UNIQUE (siret, denomination_antenne).
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        return false
+      }
+      throw error
+    }
   }
 
   async supprimerContact(structureId: number, contactId: number): Promise<void> {

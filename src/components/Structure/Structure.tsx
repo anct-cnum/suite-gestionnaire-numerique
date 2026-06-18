@@ -11,9 +11,15 @@ import StructureIdentite from './StructureIdentite'
 import StructureRole from './StructureRole'
 import MenuCollant, { type SideMenuItem } from '../AidantDetails/MenuCollant'
 import styles from '../AidantDetails/MenuCollant.module.css'
+import { RattachementsStructureViewModel } from '@/presenters/rattachementsStructurePresenter'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
-export default function Structure({ peutGererStructure, viewModel }: Props): ReactElement {
+export default function Structure({
+  editionNomActive,
+  peutGererStructure,
+  rattachements,
+  viewModel,
+}: Props): ReactElement {
   return (
     <div className={`fr-container fr-py-4w ${styles.fullWidth}`}>
       <div className={styles.layout}>
@@ -23,7 +29,12 @@ export default function Structure({ peutGererStructure, viewModel }: Props): Rea
         <div className={styles.contentContainer} id="structure-content">
           <StructureHeader gouvernances={viewModel.role.gouvernances} identite={viewModel.identite} />
 
-          <StructureIdentite identite={viewModel.identite} />
+          <StructureIdentite
+            editionActive={editionNomActive}
+            identite={viewModel.identite}
+            rattachements={rattachements}
+            structureId={viewModel.structureId}
+          />
 
           <StructureContactReferent
             contacts={viewModel.contacts}
@@ -44,7 +55,9 @@ export default function Structure({ peutGererStructure, viewModel }: Props): Rea
 }
 
 type Props = Readonly<{
+  editionNomActive: boolean
   peutGererStructure: boolean
+  rattachements: RattachementsStructureViewModel
   viewModel: StructureViewModel
 }>
 
