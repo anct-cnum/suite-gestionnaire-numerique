@@ -43,13 +43,12 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
           },
         })
 
-        const structuresInTerritoire = structures.map((structure) => structure.id)
+        const structuresInTerritoire = new Set(structures.map((structure) => structure.id))
 
         personnesIds = personnesEnPoste
           .filter(
             (personne): personne is { structure_employeuse_id: number } & typeof personne =>
-              personne.structure_employeuse_id !== null &&
-              structuresInTerritoire.includes(personne.structure_employeuse_id)
+              personne.structure_employeuse_id !== null && structuresInTerritoire.has(personne.structure_employeuse_id)
           )
           .map((personne) => personne.id)
       }
@@ -75,41 +74,11 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
       // Répartition par certification (pour les personnes en poste)
       const certificationCounts = new Map<string, number>()
 
-      formations.forEach((formation: (typeof formations)[0]) => {
-        // Traiter chaque formation pour catégoriser les certifications
-        const certifications: Array<string> = []
-
-        if (formation.label === 'CCP1') {
-          certifications.push('CCP1')
-        }
-        if (formation.label === 'CCP2') {
-          certifications.push('CCP2')
-        }
-        if (formation.label === 'CCP2 & CCP3') {
-          certifications.push('CCP2 & CCP3')
-        }
-        if (formation.pix === true) {
-          certifications.push('Pix')
-        }
-        if (formation.remn === true) {
-          certifications.push('REMN')
-        }
-
-        // Si la formation a un label qui n'est pas CCP et pas de pix/remn
-        if (
-          formation.label !== null &&
-          !['CCP1', 'CCP2', 'CCP2 & CCP3'].includes(formation.label) &&
-          formation.pix !== true &&
-          formation.remn !== true
-        ) {
-          certifications.push('Autres')
-        }
-
-        // Incrémenter les compteurs pour chaque certification
-        certifications.forEach((certification) => {
+      for (const formation of formations) {
+        for (const certification of categoriserCertifications(formation)) {
           certificationCounts.set(certification, (certificationCounts.get(certification) ?? 0) + 1)
-        })
-      })
+        }
+      }
 
       const formationsFormatees = Array.from(certificationCounts.entries())
         .map(([nom, nombre]) => ({ nom, nombre }))
@@ -131,4 +100,37 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
       }
     }
   }
+}
+
+type FormationRecord = Readonly<{
+  label: null | string
+  personne_id: number
+  pix: boolean | null
+  remn: boolean | null
+}>
+
+const labelsCCP = ['CCP1', 'CCP2', 'CCP2 & CCP3']
+
+function categoriserCertifications(formation: FormationRecord): Array<string> {
+  const certifications: Array<string> = []
+
+  if (formation.label !== null && labelsCCP.includes(formation.label)) {
+    certifications.push(formation.label)
+  }
+  if (formation.pix === true) {
+    certifications.push('Pix')
+  }
+  if (formation.remn === true) {
+    certifications.push('REMN')
+  }
+  if (
+    formation.label !== null &&
+    !labelsCCP.includes(formation.label) &&
+    formation.pix !== true &&
+    formation.remn !== true
+  ) {
+    certifications.push('Autres')
+  }
+
+  return certifications
 }
