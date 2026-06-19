@@ -61,7 +61,9 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
         -- d'un même SIREN (établissements primaire/secondaires INSEE, légitimement
         -- distincts). Seules les entités légales différentes au même nom + commune
         -- (erreur de saisie probable) sont des candidats.
-        SELECT LOWER(unaccent(sa.denomination_sirene)) AS d, a.code_insee
+        -- Préfixe public. obligatoire : Prisma fixe son propre search_path (sans public)
+        -- sur la connexion, donc un unaccent(...) non qualifié est introuvable en prod.
+        SELECT LOWER(public.unaccent(sa.denomination_sirene)) AS d, a.code_insee
         FROM sa
         JOIN main.adresse a ON a.id = sa.adresse_id
         WHERE sa.denomination_sirene IS NOT NULL AND a.code_insee IS NOT NULL
@@ -74,7 +76,7 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
                sa.id
         FROM sa
         JOIN main.adresse a ON a.id = sa.adresse_id
-        JOIN dc ON dc.d = LOWER(unaccent(sa.denomination_sirene)) AND dc.code_insee = a.code_insee
+        JOIN dc ON dc.d = LOWER(public.unaccent(sa.denomination_sirene)) AND dc.code_insee = a.code_insee
       ),
       cand AS (
         SELECT * FROM cand_a
