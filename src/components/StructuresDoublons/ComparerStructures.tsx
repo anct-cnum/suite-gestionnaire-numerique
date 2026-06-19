@@ -259,15 +259,13 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
         )}
       </ConfirmationModal>
 
-      {structureCanonisation === undefined ? null : (
-        <ModaleCanonisation
-          isOpen={idCanonisation !== null}
-          onClose={() => {
-            setIdCanonisation(null)
-          }}
-          structure={structureCanonisation}
-        />
-      )}
+      <ModaleCanonisation
+        isOpen={idCanonisation !== null}
+        onClose={() => {
+          setIdCanonisation(null)
+        }}
+        structure={structureCanonisation ?? viewModel[0]}
+      />
     </section>
   )
 }
@@ -454,7 +452,7 @@ function CarteStructure({
             onClick={onCanoniser}
             type="button"
           >
-            Synchroniser avec INSEE
+            Synchroniser avec l’INSEE
           </button>
           {structure.siret === null ? (
             <p className="fr-text--xs fr-text-mention--grey fr-mt-1v">

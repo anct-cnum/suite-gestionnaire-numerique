@@ -54,7 +54,7 @@ export default function ModaleCanonisation({ isOpen, onClose, structure }: Props
     <ConfirmationModal
       cancelLabel="Fermer"
       confirmLabel={confirmLabel(etat.statut, isSubmitting)}
-      id={`canoniser-${structure.id}`}
+      id="canoniser-structure"
       isOpen={isOpen}
       onCancel={onClose}
       onConfirm={() => {
