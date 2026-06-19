@@ -6,8 +6,11 @@ import { PrismaDonneesStructureLoader } from '@/gateways/tableauDeBord/PrismaDon
 import { DonneesStructureReadModel } from '@/use-cases/queries/RecupererDonneesStructure'
 import { Scope } from '@/use-cases/queries/ResoudreContexte'
 
-export default async function BlocDonneesStructure({ scope }: Props): Promise<ReactElement> {
-  const structureId = scope.type === 'structure' ? parseInt(scope.code, 10) : 0
+export default async function BlocDonneesStructure({
+  scope,
+  structureId: structureIdProp,
+}: Props): Promise<ReactElement> {
+  const structureId = structureIdProp ?? (scope.type === 'structure' ? parseInt(scope.code, 10) : 0)
 
   if (structureId === 0) {
     return <DonneesStructure viewModel={viewModelVide} />
@@ -64,4 +67,5 @@ const viewModelVide: DonneesStructureViewModel = {
 
 type Props = Readonly<{
   scope: Scope
+  structureId?: number
 }>

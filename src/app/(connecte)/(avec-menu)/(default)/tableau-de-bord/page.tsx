@@ -46,7 +46,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     scope = contexte.scopes.find((scope) => scope.type === 'france')
   } else if (contexte.aCesRoles('gestionnaire_departement')) {
     scope = contexte.scopes.find((scope) => scope.type === 'departement')
-  } else if (contexte.estGestionnaireStructureSansCoportage()) {
+  } else if (contexte.estGestionnaireStructureHorsGouvernance()) {
     scope = contexte.scopes.find((scope) => scope.type === 'structure')
   } else if (options.length === 1 && options[0].value !== 'France') {
     scope = { code: options[0].value, type: 'departement' }
@@ -62,7 +62,9 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     accueil: <BlocAccueil contexte={contexte} key="accueil" prenom={utilisateur.prenom} scope={scope} />,
     beneficiaires: <BlocBeneficiaires key="beneficiaires" scope={scope} />,
     cartographie: <BlocCartographie key="cartographie" />,
-    donneesStructure: <BlocDonneesStructure key="donneesStructure" scope={scope} />,
+    donneesStructure: (
+      <BlocDonneesStructure key="donneesStructure" scope={scope} structureId={contexte.idStructure()} />
+    ),
     etatDesLieux: <BlocEtatDesLieux key="etatDesLieux" scope={scope} />,
     financements: <BlocFinancements key="financements" scope={scope} />,
     gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
