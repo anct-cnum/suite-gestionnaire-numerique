@@ -85,7 +85,12 @@ async function financementsStructure(structureId: number): Promise<ReactElement>
     enveloppesConumReadModel.enveloppes
   )
 
-  return <FinancementsStructure lienFinancements="/gouvernance/financements" viewModel={financementsViewModel} />
+  return (
+    <FinancementsStructure
+      lienFinancements={`/structures/${structureId}/financements`}
+      viewModel={financementsViewModel}
+    />
+  )
 }
 
 type Props = Readonly<{
