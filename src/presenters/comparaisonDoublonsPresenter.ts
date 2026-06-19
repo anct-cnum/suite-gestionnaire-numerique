@@ -65,6 +65,8 @@ export type StructureComparaisonViewModel = Readonly<{
   longitude: null | number
   rattachements: ReadonlyArray<RattachementViewModel>
   rattachementsTotal: number
+  // SIRET brut, pour la requête INSEE de l'aperçu et le calcul de collision de canonisation côté client.
+  siret: null | string
 }>
 
 export type ChampViewModel = Readonly<{
@@ -189,6 +191,7 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
       nombre: structure.rattachements[cle],
     })),
     rattachementsTotal: structure.rattachements.total,
+    siret: structure.siret,
   }
 }
 

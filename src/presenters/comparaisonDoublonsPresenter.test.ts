@@ -190,6 +190,7 @@ function structureAvecCoords(
     longitude,
     rattachements: [],
     rattachementsTotal: 0,
+    siret: null,
   }
 }
 
