@@ -9,7 +9,8 @@ import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { StructureComparaisonViewModel } from '@/presenters/comparaisonDoublonsPresenter'
 
 export default function ModaleCanonisation({ isOpen, onClose, structure }: Props): ReactElement {
-  const { canoniserStructureAction, pathname, rechercherUneEntrepriseAction, router } = useContext(clientContext)
+  const { canoniserStructureAction, pathname, previsualiserAdresseAction, rechercherUneEntrepriseAction, router } =
+    useContext(clientContext)
   const [etat, setEtat] = useState<EtatInsee>({ statut: 'chargement' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -23,17 +24,20 @@ export default function ModaleCanonisation({ isOpen, onClose, structure }: Props
     }
     setEtat({ statut: 'chargement' })
     rechercherUneEntrepriseAction({ siret: structure.siret })
-      .then((resultat) => {
-        if ('denomination' in resultat) {
-          setEtat({ entreprise: resultat, statut: 'chargee' })
-        } else {
+      .then(async (resultat) => {
+        if (!('denomination' in resultat)) {
           setEtat({ message: resultat.join(' · '), statut: 'erreur' })
+          return
         }
+        // On banifie l'adresse INSEE pour afficher côté INSEE ce qui sera réellement écrit (la BAN
+        // renvoie une casse normalisée), plutôt que la chaîne brute INSEE en majuscules. Best-effort.
+        const apercu = await previsualiserAdresseAction(resultat.adresse)
+        setEtat({ adresseBanifiee: apercu?.label ?? null, entreprise: resultat, statut: 'chargee' })
       })
       .catch(() => {
         setEtat({ message: 'Erreur lors de la récupération des données INSEE.', statut: 'erreur' })
       })
-  }, [isOpen, structure.siret, rechercherUneEntrepriseAction])
+  }, [isOpen, structure.siret, previsualiserAdresseAction, rechercherUneEntrepriseAction])
 
   async function synchroniser(): Promise<void> {
     setIsSubmitting(true)
@@ -96,7 +100,7 @@ function Comparaison({
     return <p className="fr-mt-2w fr-error-text">{etat.message}</p>
   }
 
-  const lignes = lignesComparaison(structure, etat.entreprise)
+  const lignes = lignesComparaison(structure, etat.entreprise, etat.adresseBanifiee)
 
   return (
     <div className="fr-table fr-table--md fr-mt-2w">
@@ -138,7 +142,8 @@ type LigneComparaison = Readonly<{
 
 function lignesComparaison(
   structure: StructureComparaisonViewModel,
-  entreprise: EntrepriseViewModel
+  entreprise: EntrepriseViewModel,
+  adresseBanifiee: null | string
 ): ReadonlyArray<LigneComparaison> {
   function champ(label: string): string {
     return structure.champs.find((candidat) => candidat.label === label)?.valeur ?? '—'
@@ -147,10 +152,18 @@ function lignesComparaison(
   // La structure ne stocke que le code APE ; on compare donc code à code et on affiche « code — libellé »
   // côté INSEE pour que la ligne ne paraisse pas différente alors qu'il s'agit du même code.
   const apeStructure = champ('Code activité (APE)')
+  // Côté INSEE on montre l'adresse banifiée (ce qui sera réellement écrit), pas la chaîne brute INSEE
+  // en majuscules. Comparaison normalisée (casse/ponctuation) pour ne pas signaler une fausse différence.
+  const adresseInsee = adresseBanifiee ?? entreprise.adresse
 
   return [
     ligne('Dénomination', structure.denominationSirene || '—', entreprise.denomination),
-    ligne('Adresse', structure.adresse, entreprise.adresse),
+    {
+      identique: memeAdresse(structure.adresse, adresseInsee),
+      insee: adresseInsee,
+      label: 'Adresse',
+      structure: structure.adresse,
+    },
     ligne('État administratif', champ('État administratif'), 'Actif'),
     {
       identique: apeStructure === entreprise.activitePrincipale,
@@ -175,9 +188,22 @@ function avecLibelle(code: string, libelle: string): string {
   return libelle === '' || libelle === code ? code : `${code} — ${libelle}`
 }
 
+// Deux adresses sont « identiques » si elles ne diffèrent que par la casse, la ponctuation ou les
+// espaces (l'INSEE renvoie en majuscules, la BAN normalise la casse et ajoute des virgules).
+function memeAdresse(adresseA: string, adresseB: string): boolean {
+  function normaliser(valeur: string): string {
+    return valeur
+      .toLowerCase()
+      .replace(/[\s,]+/g, ' ')
+      .trim()
+  }
+
+  return normaliser(adresseA) === normaliser(adresseB)
+}
+
 // État du chargement de l'image INSEE : en attente, chargée, ou en erreur (introuvable / réseau).
 type EtatInsee =
-  | Readonly<{ entreprise: EntrepriseViewModel; statut: 'chargee' }>
+  | Readonly<{ adresseBanifiee: null | string; entreprise: EntrepriseViewModel; statut: 'chargee' }>
   | Readonly<{ message: string; statut: 'erreur' }>
   | Readonly<{ statut: 'chargement' }>
 

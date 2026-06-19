@@ -11,10 +11,14 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     // GIVEN
     const rechercherUneEntrepriseAction = rechercherMock().mockResolvedValueOnce(insee)
     const canoniserStructureAction = canoniserMock().mockResolvedValueOnce(['OK'])
+    const previsualiserAdresseAction = vi
+      .fn<(adresse: string) => Promise<null | Readonly<{ label: string; score: number }>>>()
+      .mockResolvedValueOnce({ label: '20 Avenue de Ségur, 75007 Paris', score: 0.97 })
     const push = vi.fn<() => void>()
     renderComponent(<ModaleCanonisation isOpen onClose={vi.fn<() => void>()} structure={antenne()} />, {
       canoniserStructureAction,
       pathname: '/structures-doublons/comparer?ids=7,3',
+      previsualiserAdresseAction,
       rechercherUneEntrepriseAction,
       router: routerStub(push),
     })
@@ -25,6 +29,10 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     expect(screen.getByText('AGENCE NATIONALE')).toBeInTheDocument()
     // APE : code + libellé côté INSEE (comparé au code de la structure, pas au libellé).
     expect(screen.getByText('84.12Z — Administration publique')).toBeInTheDocument()
+    // Adresse banifiée affichée côté INSEE (pas la chaîne brute INSEE en majuscules).
+    expect(previsualiserAdresseAction).toHaveBeenCalledWith('20 AVENUE DE SEGUR, 75007 PARIS')
+    expect(screen.getByText('20 Avenue de Ségur, 75007 Paris')).toBeInTheDocument()
+    expect(screen.queryByText('20 AVENUE DE SEGUR, 75007 PARIS')).not.toBeInTheDocument()
     fireEvent.click(bouton)
 
     // THEN
