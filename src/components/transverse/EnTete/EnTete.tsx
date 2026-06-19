@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useContext, useId, useState } from 'react'
+import { ReactElement, useContext, useId } from 'react'
 
 import styles from './EnTete.module.css'
 import MenuUtilisateur from './MenuUtilisateur/MenuUtilisateur'
@@ -11,8 +11,6 @@ import Icon from '@/components/shared/Icon/Icon'
 
 export default function EnTete(): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
-  // Stryker disable next-line BooleanLiteral
-  const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawerMenuUtilisateurId'
   const labelId = useId()
 
@@ -81,15 +79,7 @@ export default function EnTete(): ReactElement {
                     </a>
                   </li>
                   <li>
-                    <button
-                      aria-controls={drawerId}
-                      className="fr-link"
-                      data-fr-opened="false"
-                      onClick={() => {
-                        setIsOpen(true)
-                      }}
-                      type="button"
-                    >
+                    <button className="fr-link" popoverTarget={drawerId} popoverTargetAction="show" type="button">
                       {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
                       <Icon icon="arrow-down-s-line" />
                     </button>
@@ -110,14 +100,11 @@ export default function EnTete(): ReactElement {
       </header>
       <Drawer
         boutonFermeture="Fermer le menu"
-        closeDrawer={() => {
-          setIsOpen(false)
-        }}
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={true}
-        isOpen={isOpen}
         labelId={labelId}
+        popover="auto"
       >
         <MenuUtilisateur ariaControlsId={drawerId} />
       </Drawer>

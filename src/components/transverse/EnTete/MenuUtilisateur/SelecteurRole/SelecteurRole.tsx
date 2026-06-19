@@ -1,11 +1,11 @@
 'use client'
 
-import { ChangeEvent, ReactElement, useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import Select from '@/components/shared/Select/Select'
 
-export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
+export default function SelecteurRole({ ariaControlsId, startRoleTransition }: Props): ReactElement {
   const { changerMonRoleAction, pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
@@ -14,7 +14,10 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
       id="role"
       name="role"
       onChange={(event) => {
-        void changerDeRole(event)
+        const nouveauRole = event.currentTarget.value
+        startRoleTransition(async () => {
+          await changerMonRoleAction({ nouveauRole, path: pathname })
+        })
       }}
       options={roles
         .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')
@@ -28,12 +31,9 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
       Rôle
     </Select>
   )
-
-  async function changerDeRole({ currentTarget }: ChangeEvent<HTMLSelectElement>): Promise<void> {
-    await changerMonRoleAction({ nouveauRole: currentTarget.value, path: pathname })
-  }
 }
 
 type Props = Readonly<{
   ariaControlsId: string
+  startRoleTransition(callback: () => Promise<void>): void
 }>

@@ -17,3 +17,7 @@
 .nom {
   display: block;
 }
+
+.zone-selecteurs {
+  min-height: 7rem;
+}

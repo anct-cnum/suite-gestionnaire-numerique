@@ -3,16 +3,18 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useTransition } from 'react'
 
 import styles from './MenuUtilisateur.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
+import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import SelecteurDepartement from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurDepartement/SelecteurDepartement'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 import SelecteurStructure from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurStructure/SelecteurStructure'
 
 export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
+  const [isChangingRole, startRoleTransition] = useTransition()
 
   return (
     <>
@@ -59,14 +61,24 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           </Link>
         </li>
       </ul>
-      {sessionUtilisateurViewModel.peutChangerDeRole ? <SelecteurRole ariaControlsId={ariaControlsId} /> : null}
-      {sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ? (
-        <SelecteurDepartement ariaControlsId={ariaControlsId} />
+      {sessionUtilisateurViewModel.peutChangerDeRole ? (
+        <SelecteurRole ariaControlsId={ariaControlsId} startRoleTransition={startRoleTransition} />
       ) : null}
-      {sessionUtilisateurViewModel.role.type === 'gestionnaire_structure' &&
-      sessionUtilisateurViewModel.peutChangerDeRole ? (
-        <SelecteurStructure ariaControlsId={ariaControlsId} />
-      ) : null}
+      <div className={styles['zone-selecteurs']}>
+        {isChangingRole ? (
+          <SpinnerSimple size="small" text="Changement de rôle..." />
+        ) : (
+          <>
+            {sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ? (
+              <SelecteurDepartement ariaControlsId={ariaControlsId} />
+            ) : null}
+            {sessionUtilisateurViewModel.role.type === 'gestionnaire_structure' &&
+            sessionUtilisateurViewModel.peutChangerDeRole ? (
+              <SelecteurStructure ariaControlsId={ariaControlsId} />
+            ) : null}
+          </>
+        )}
+      </div>
       <div className="fr-btns-group--center">
         <button
           className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}
