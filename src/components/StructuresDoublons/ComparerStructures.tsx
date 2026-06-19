@@ -2,6 +2,7 @@
 
 import { CSSProperties, ReactElement, useContext, useState } from 'react'
 
+import ModaleCanonisation from './ModaleCanonisation'
 import Information from '../shared/Information/Information'
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
 import { Notification } from '../shared/Notification/Notification'
@@ -38,7 +39,19 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
   const [etats, setEtats] = useState<Readonly<Record<number, EtatCarte | undefined>>>({})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [idCanonisation, setIdCanonisation] = useState<null | number>(null)
   const [vue, setVue] = useState<Vue>('comparer')
+
+  // Une antenne ne peut être canonisée s'il existe déjà une canonique de même SIRET dans le groupe :
+  // la contrainte UNIQUE (siret, denomination_antenne) l'interdirait (garde aussi appliquée côté serveur).
+  function collisionCanonique(structure: StructureComparaisonViewModel): boolean {
+    return viewModel.some(
+      (autre) =>
+        autre.id !== structure.id && autre.estCanonique && autre.siret !== null && autre.siret === structure.siret
+    )
+  }
+
+  const structureCanonisation = viewModel.find((structure) => structure.id === idCanonisation)
 
   const cible = viewModel.find((structure) => structure.id === idCible)
   const cartesFusion = viewModel.filter((structure) => etats[structure.id]?.fusionner)
@@ -180,9 +193,13 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
           {viewModel.map((structure) => (
             <div className="fr-col-12 fr-col-md-6" key={structure.id}>
               <CarteStructure
+                collisionCanonique={collisionCanonique(structure)}
                 estCible={structure.id === idCible}
                 etat={etatDe(structure.id)}
                 idScalaireDisponible={(concept) => idScalaireDisponible(concept, structure.id)}
+                onCanoniser={() => {
+                  setIdCanonisation(structure.id)
+                }}
                 onCible={() => {
                   definirCible(structure.id)
                 }}
@@ -241,6 +258,14 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
           />
         )}
       </ConfirmationModal>
+
+      <ModaleCanonisation
+        isOpen={idCanonisation !== null}
+        onClose={() => {
+          setIdCanonisation(null)
+        }}
+        structure={structureCanonisation ?? viewModel[0]}
+      />
     </section>
   )
 }
@@ -298,17 +323,21 @@ function MatriceDistances({ matrice }: Readonly<{ matrice: MatriceDistancesViewM
 }
 
 function CarteStructure({
+  collisionCanonique,
   estCible,
   etat,
   idScalaireDisponible,
+  onCanoniser,
   onCible,
   onToggleFusion,
   onToggleNotion,
   structure,
 }: Readonly<{
+  collisionCanonique: boolean
   estCible: boolean
   etat: EtatCarte
   idScalaireDisponible(concept: ConceptViewModel): boolean
+  onCanoniser(): void
   onCible(): void
   onToggleFusion(): void
   onToggleNotion(cle: NotionCle): void
@@ -414,6 +443,30 @@ function CarteStructure({
           </div>
         ))}
       </dl>
+
+      {structure.estCanonique ? null : (
+        <div className="fr-mb-2w">
+          <button
+            className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left"
+            disabled={collisionCanonique || structure.siret === null}
+            onClick={onCanoniser}
+            type="button"
+          >
+            Synchroniser avec l’INSEE
+          </button>
+          {structure.siret === null ? (
+            <p className="fr-text--xs fr-text-mention--grey fr-mt-1v">
+              Sans SIRET, la structure ne peut pas être canonisée depuis l’INSEE.
+            </p>
+          ) : null}
+          {collisionCanonique ? (
+            <p className="fr-text--xs fr-text-mention--grey fr-mt-1v">
+              Une structure canonique de même SIRET est déjà présente : fusionnez-la plutôt que de canoniser cette
+              antenne.
+            </p>
+          ) : null}
+        </div>
+      )}
 
       <p className="fr-text--sm fr-text--bold fr-mb-1v">Détail des rattachements</p>
       {rattachementsDetail.length === 0 ? (

@@ -157,6 +157,49 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     expect(screen.getByRole('columnheader', { name: 'Cible' })).toBeInTheDocument()
     expect(screen.queryByRole('checkbox', { name: /Fusionner/ })).not.toBeInTheDocument()
   })
+
+  it('désactive le CTA « Synchroniser avec INSEE » quand une canonique de même SIRET est présente', () => {
+    // WHEN : l'antenne 7 partage son SIRET avec la canonique 3.
+    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+
+    // THEN
+    expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeDisabled()
+    expect(screen.getByText(/Une structure canonique de même SIRET est déjà présente/)).toBeInTheDocument()
+  })
+
+  it('active le CTA « Synchroniser avec INSEE » sur une antenne sans canonique de même SIRET', () => {
+    // GIVEN : antenne 7 avec un SIRET distinct de la canonique 3.
+    const viewModel: ComparaisonViewModel = [
+      carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
+      carte({ denomination: 'Antenne', id: 7, siret: '99999999900099' }),
+    ]
+
+    // WHEN
+    renderComponent(<ComparerStructures viewModel={viewModel} />)
+
+    // THEN
+    expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeEnabled()
+  })
+
+  it('ouvre la modale de canonisation au clic et déclenche la récupération INSEE', async () => {
+    // GIVEN une antenne sans canonique de même SIRET dans le groupe.
+    const rechercherUneEntrepriseAction = vi
+      .fn<(actionParam: Readonly<{ siret: string }>) => Promise<ReadonlyArray<string>>>()
+      .mockResolvedValue(['x'])
+    const viewModel: ComparaisonViewModel = [
+      carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
+      carte({ denomination: 'Antenne', id: 7, siret: '99999999900099' }),
+    ]
+    renderComponent(<ComparerStructures viewModel={viewModel} />, { rechercherUneEntrepriseAction })
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' }))
+
+    // THEN : l'ouverture de la modale déclenche la requête INSEE pour ce SIRET.
+    await vi.waitFor(() => {
+      expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '99999999900099' })
+    })
+  })
 })
 
 function deuxStructures(): ComparaisonViewModel {
@@ -208,6 +251,7 @@ function carte(
     longitude: 1.49,
     rattachements: [{ label: 'Postes', nombre: 1 }],
     rattachementsTotal: 1,
+    siret: '22280001300013',
     ...overrides,
   }
 }
