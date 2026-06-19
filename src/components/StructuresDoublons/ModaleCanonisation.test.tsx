@@ -14,13 +14,13 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     const previsualiserAdresseAction = vi
       .fn<(adresse: string) => Promise<null | Readonly<{ label: string; score: number }>>>()
       .mockResolvedValueOnce({ label: '20 Avenue de Ségur, 75007 Paris', score: 0.97 })
-    const push = vi.fn<() => void>()
+    const refresh = vi.fn<() => void>()
     renderComponent(<ModaleCanonisation isOpen onClose={vi.fn<() => void>()} structure={antenne()} />, {
       canoniserStructureAction,
       pathname: '/structures-doublons/comparer?ids=7,3',
       previsualiserAdresseAction,
       rechercherUneEntrepriseAction,
-      router: routerStub(push),
+      router: routerStub({ refresh }),
     })
 
     // WHEN : l'image INSEE se charge puis on synchronise.
@@ -41,7 +41,7 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
       path: '/structures-doublons/comparer?ids=7,3',
       structureId: 7,
     })
-    expect(push).toHaveBeenCalledWith('/structures-doublons')
+    expect(refresh).toHaveBeenCalledWith()
   })
 
   it('affiche une erreur quand l’INSEE ne renvoie aucun établissement', async () => {
@@ -58,17 +58,17 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     expect(erreur).toBeInTheDocument()
   })
 
-  it('affiche une erreur de synchronisation sans rediriger', async () => {
+  it('affiche une erreur de synchronisation sans rafraîchir', async () => {
     // GIVEN
     const rechercherUneEntrepriseAction = rechercherMock().mockResolvedValueOnce(insee)
     const canoniserStructureAction = canoniserMock().mockResolvedValueOnce([
       'Une structure canonique existe déjà pour ce SIRET : fusionnez-la plutôt',
     ])
-    const push = vi.fn<() => void>()
+    const refresh = vi.fn<() => void>()
     renderComponent(<ModaleCanonisation isOpen onClose={vi.fn<() => void>()} structure={antenne()} />, {
       canoniserStructureAction,
       rechercherUneEntrepriseAction,
-      router: routerStub(push),
+      router: routerStub({ refresh }),
     })
 
     // WHEN
@@ -77,7 +77,7 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toContain('Erreur :')
-    expect(push).not.toHaveBeenCalled()
+    expect(refresh).not.toHaveBeenCalled()
   })
 
   it('ignore le clic « Synchroniser » tant que l’image INSEE n’est pas chargée', () => {
@@ -185,7 +185,7 @@ function antenne(overrides: Partial<StructureComparaisonViewModel> = {}): Struct
   }
 }
 
-function routerStub(push: () => void): Readonly<{
+function routerStub(spies: Readonly<{ push?(): void; refresh?(): void }> = {}): Readonly<{
   back(): void
   forward(): void
   prefetch(): void
@@ -197,8 +197,8 @@ function routerStub(push: () => void): Readonly<{
     back: vi.fn<() => void>(),
     forward: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
-    push,
-    refresh: vi.fn<() => void>(),
+    push: spies.push ?? vi.fn<() => void>(),
+    refresh: spies.refresh ?? vi.fn<() => void>(),
     replace: vi.fn<() => void>(),
   }
 }

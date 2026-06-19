@@ -47,7 +47,9 @@ export default function ModaleCanonisation({ isOpen, onClose, structure }: Props
     if (messages.includes('OK')) {
       onClose()
       Notification('success', { description: 'synchronisée avec l’INSEE', title: 'Structure ' })
-      router.push('/structures-doublons')
+      // La structure reste sur la page comparer mais devient canonique : on rafraîchit en place (le
+      // serveur a déjà revalidé le chemin) plutôt que de naviguer, pour que la carte se mette à jour.
+      router.refresh()
     } else {
       Notification('error', { description: messages.join(' · '), title: 'Erreur : ' })
     }
