@@ -30,6 +30,11 @@ type EtatCarte = Readonly<{
 
 const ETAT_VIDE: EtatCarte = { fusionner: false, notions: [] }
 
+// coop et lieuInclusion sont indissociables en transfert partiel : le lien lieu↔structure est une
+// projection de l'identifiant Coop (structure_coop_id), re-dérivé par le DAG coop. Déplacer l'un
+// sans l'autre laisse une association orpheline sur la source et un doublon re-créé sur la cible.
+const NOTIONS_COUPLEES: ReadonlyArray<NotionCle> = ['coop', 'lieuInclusion']
+
 export default function ComparerStructures({ viewModel }: Props): ReactElement {
   const { fusionnerStructuresAction, pathname, router, transfererNotionsStructureAction } = useContext(clientContext)
 
@@ -108,12 +113,22 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
     })
   }
 
+  // Disponibilité couplée : une notion couplée n'est déplaçable que si TOUTES les notions de son
+  // groupe le sont (un id Coop en collision verrouille donc aussi lieuInclusion).
+  function notionDisponible(structure: StructureComparaisonViewModel, concept: ConceptViewModel): boolean {
+    return groupeCouple(structure, concept.cle).every((cle) => {
+      const membre = structure.concepts.find((autre) => autre.cle === cle)
+      return membre === undefined || idScalaireDisponible(membre, structure.id)
+    })
+  }
+
   function basculerNotion(structure: StructureComparaisonViewModel, cle: NotionCle): void {
     setEtats((precedent) => {
       const actuel = precedent[structure.id] ?? ETAT_VIDE
-      const notions = actuel.notions.includes(cle)
-        ? actuel.notions.filter((autre) => autre !== cle)
-        : [...actuel.notions, cle]
+      const groupe = groupeCouple(structure, cle)
+      const activer = !actuel.notions.includes(cle)
+      const base = actuel.notions.filter((autre) => !groupe.includes(autre))
+      const notions = activer ? [...base, ...groupe] : base
       if (notions.length === 0) {
         return sansClef(precedent, structure.id)
       }
@@ -196,7 +211,7 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
                 collisionCanonique={collisionCanonique(structure)}
                 estCible={structure.id === idCible}
                 etat={etatDe(structure.id)}
-                idScalaireDisponible={(concept) => idScalaireDisponible(concept, structure.id)}
+                notionDisponible={(concept) => notionDisponible(structure, concept)}
                 onCanoniser={() => {
                   setIdCanonisation(structure.id)
                 }}
@@ -326,7 +341,7 @@ function CarteStructure({
   collisionCanonique,
   estCible,
   etat,
-  idScalaireDisponible,
+  notionDisponible,
   onCanoniser,
   onCible,
   onToggleFusion,
@@ -336,7 +351,7 @@ function CarteStructure({
   collisionCanonique: boolean
   estCible: boolean
   etat: EtatCarte
-  idScalaireDisponible(concept: ConceptViewModel): boolean
+  notionDisponible(concept: ConceptViewModel): boolean
   onCanoniser(): void
   onCible(): void
   onToggleFusion(): void
@@ -372,6 +387,8 @@ function CarteStructure({
       return <p className="fr-text--sm fr-text-mention--grey fr-mt-2w">Aucune notion à transférer.</p>
     }
 
+    const coopEtLieuCouples = NOTIONS_COUPLEES.every((cle) => conceptsPortes.some((concept) => concept.cle === cle))
+
     return (
       <fieldset className="fr-fieldset fr-mt-2w">
         <legend className="fr-fieldset__legend fr-text--bold">Notions à déplacer vers la cible</legend>
@@ -382,8 +399,17 @@ function CarteStructure({
               Fusionner (tout transférer puis supprimer la structure)
             </label>
           </div>
+          {coopEtLieuCouples ? (
+            <p className="fr-text--xs fr-text-mention--grey fr-mb-1w">
+              Coop et Lieu d’inclusion sont déplacés ensemble : le lien lieu↔structure dépend de l’identifiant Coop.
+            </p>
+          ) : null}
           {conceptsPortes.map((concept) => {
-            const disponible = idScalaireDisponible(concept)
+            const disponible = notionDisponible(concept)
+            const messageIndisponible =
+              concept.idExterne === null
+                ? 'Déplacé conjointement avec Coop, dont l’identifiant n’est pas disponible (voir ci-dessus).'
+                : 'Identifiant déjà porté par la cible ou réclamé par une autre structure. Avant d’abandonner cet id, vérifiez qu’il n’existe plus côté source externe, sinon le doublon réapparaîtra au resync.'
             return (
               <div className="fr-checkbox-group" key={concept.cle}>
                 <input
@@ -398,12 +424,7 @@ function CarteStructure({
                 <label className="fr-label" htmlFor={`notion-${concept.cle}-${structure.id}`}>
                   {concept.label} — {concept.resume}
                   {concept.idExterne === null ? null : ` · id ${concept.idExterne}`}
-                  {disponible ? null : (
-                    <span className="fr-error-text">
-                      Identifiant déjà porté par la cible ou réclamé par une autre structure. Avant d’abandonner cet id,
-                      vérifiez qu’il n’existe plus côté source externe, sinon le doublon réapparaîtra au resync.
-                    </span>
-                  )}
+                  {disponible ? null : <span className="fr-error-text">{messageIndisponible}</span>}
                 </label>
               </div>
             )
@@ -584,6 +605,19 @@ function RecapitulatifOperations({
       </p>
     </>
   )
+}
+
+// Groupe de notions à basculer ensemble pour une clé : coop et lieuInclusion sont indissociables
+// dès que la structure porte les deux (cf. NOTIONS_COUPLEES). Sinon, la clé seule.
+function groupeCouple(structure: StructureComparaisonViewModel, cle: NotionCle): ReadonlyArray<NotionCle> {
+  if (!NOTIONS_COUPLEES.includes(cle)) {
+    return [cle]
+  }
+  const presentes = NOTIONS_COUPLEES.filter((couplee) =>
+    structure.concepts.some((concept) => concept.cle === couplee && concept.present)
+  )
+
+  return presentes.length > 1 ? presentes : [cle]
 }
 
 // Retire l'entrée d'une structure de l'état (devenue cible, ou plus aucune notion cochée).
