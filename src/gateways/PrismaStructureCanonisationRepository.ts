@@ -138,14 +138,20 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
     return lignes.at(0)?.snapshot ?? null
   }
 
-  // Re-pointage d'adresse : réutilise l'adresse de même clef_interop BAN si elle existe, sinon crée
-  // une nouvelle ligne (avec géométrie PostGIS). On ne modifie jamais une ligne adresse existante.
-  // Mirroir de PrismaStructureRepository.trouverOuCreerAdresse, exécuté dans la transaction.
+  // Re-pointage d'adresse : on réutilise une adresse BAN existante — identifiée d'abord par son
+  // code_ban (colonne UNIQUE), à défaut par sa clef_interop — sinon on crée une nouvelle ligne (avec
+  // géométrie PostGIS). On ne modifie JAMAIS une ligne adresse existante. Matcher sur code_ban évite
+  // aussi de heurter la contrainte unique adresse_code_ban_ukey à l'INSERT.
   async #trouverOuCreerAdresse(
     tx: Prisma.TransactionClient,
     geocode: NonNullable<Canonisation['geocode']>
   ): Promise<number> {
-    const existante = await tx.adresse.findFirst({ where: { clef_interop: geocode.banClefInterop } })
+    const existante = await tx.adresse.findFirst({
+      where:
+        geocode.banCodeBan === null
+          ? { clef_interop: geocode.banClefInterop }
+          : { OR: [{ code_ban: geocode.banCodeBan }, { clef_interop: geocode.banClefInterop }] },
+    })
     if (existante) {
       return existante.id
     }

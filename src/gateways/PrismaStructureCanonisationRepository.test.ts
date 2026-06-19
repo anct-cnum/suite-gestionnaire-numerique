@@ -12,6 +12,7 @@ const ANTENNE = 990031
 const CANONIQUE = 990032
 const SIRET = '99003100000001'
 const CLEF_INTEROP = '99003_9999_00003'
+const CODE_BAN = '99003999-0000-4000-8000-000000000003'
 const CATEGORIE = '7389'
 
 describe('canonisation de structure (repository Prisma)', () => {
@@ -80,6 +81,25 @@ describe('canonisation de structure (repository Prisma)', () => {
     expect(result).toBe('OK')
     expect((await lire(ANTENNE))?.adresse_id).toBe(existante.id)
     await expect(prisma.adresse.count({ where: { clef_interop: CLEF_INTEROP } })).resolves.toBe(1)
+  })
+
+  it('réutilise une adresse existante via le code BAN unique, même si la clef_interop diffère', async () => {
+    // GIVEN une adresse déjà présente avec un code_ban (colonne unique) mais sans clef_interop.
+    await seedCategorie()
+    const existante = await prisma.adresse.create({
+      data: { code_ban: CODE_BAN, code_insee: '75107', code_postal: '75007', nom_commune: 'Paris' },
+    })
+    await creerUneStructure({ denomination_antenne: 'Antenne', id: ANTENNE, nom: 'Antenne', siret: SIRET })
+
+    // WHEN le géocodage renvoie ce code_ban avec une clef_interop différente.
+    const result = await new PrismaStructureCanonisationRepository().canoniser(
+      canonisation({ geocode: { ...geocodeInsee, banClefInterop: 'autre_clef_99003', banCodeBan: CODE_BAN } })
+    )
+
+    // THEN on réutilise la ligne existante (pas de doublon, pas de violation d'unicité).
+    expect(result).toBe('OK')
+    expect((await lire(ANTENNE))?.adresse_id).toBe(existante.id)
+    await expect(prisma.adresse.count({ where: { code_ban: CODE_BAN } })).resolves.toBe(1)
   })
 
   it('détecte la présence d’une canonique de même SIRET (hors structure courante)', async () => {
@@ -222,6 +242,6 @@ async function dernierAuditEchoue(): Promise<boolean> {
 async function nettoyer(): Promise<void> {
   await prisma.$executeRaw`DELETE FROM audit.structure_merge_log WHERE winner_id IN (${ANTENNE}, ${CANONIQUE})`
   await prisma.main_structure_administrative.deleteMany({ where: { id: { in: [ANTENNE, CANONIQUE] } } })
-  await prisma.adresse.deleteMany({ where: { clef_interop: CLEF_INTEROP } })
+  await prisma.adresse.deleteMany({ where: { OR: [{ clef_interop: CLEF_INTEROP }, { code_ban: CODE_BAN }] } })
   await prisma.categories_juridiques.deleteMany({ where: { code: CATEGORIE } })
 }
