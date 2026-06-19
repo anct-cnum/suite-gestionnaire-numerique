@@ -144,17 +144,35 @@ function lignesComparaison(
     return structure.champs.find((candidat) => candidat.label === label)?.valeur ?? '—'
   }
 
+  // La structure ne stocke que le code APE ; on compare donc code à code et on affiche « code — libellé »
+  // côté INSEE pour que la ligne ne paraisse pas différente alors qu'il s'agit du même code.
+  const apeStructure = champ('Code activité (APE)')
+
   return [
     ligne('Dénomination', structure.denominationSirene || '—', entreprise.denomination),
     ligne('Adresse', structure.adresse, entreprise.adresse),
     ligne('État administratif', champ('État administratif'), 'Actif'),
-    ligne('Code activité (APE)', champ('Code activité (APE)'), entreprise.activitePrincipaleLibelle),
-    ligne('Catégorie juridique', '—', entreprise.categorieJuridiqueLibelle),
+    {
+      identique: apeStructure === entreprise.activitePrincipale,
+      insee: avecLibelle(entreprise.activitePrincipale, entreprise.activitePrincipaleLibelle),
+      label: 'Code activité (APE)',
+      structure: apeStructure,
+    },
+    ligne(
+      'Catégorie juridique',
+      '—',
+      avecLibelle(entreprise.categorieJuridiqueCode, entreprise.categorieJuridiqueLibelle)
+    ),
   ]
 }
 
 function ligne(label: string, valeurStructure: string, valeurInsee: string): LigneComparaison {
   return { identique: valeurStructure === valeurInsee, insee: valeurInsee, label, structure: valeurStructure }
+}
+
+// « code — libellé » si le libellé existe et diffère du code, sinon le code seul.
+function avecLibelle(code: string, libelle: string): string {
+  return libelle === '' || libelle === code ? code : `${code} — ${libelle}`
 }
 
 // État du chargement de l'image INSEE : en attente, chargée, ou en erreur (introuvable / réseau).

@@ -23,6 +23,8 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     const bouton = await screen.findByRole('button', { name: 'Synchroniser avec INSEE' })
     expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '13002603200016' })
     expect(screen.getByText('AGENCE NATIONALE')).toBeInTheDocument()
+    // APE : code + libellé côté INSEE (comparé au code de la structure, pas au libellé).
+    expect(screen.getByText('84.12Z — Administration publique')).toBeInTheDocument()
     fireEvent.click(bouton)
 
     // THEN
