@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
+import { ETAT_ADMINISTRATIF_CANONIQUE } from '@/shared/etatAdministratif'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   Canonisation,
@@ -77,12 +78,12 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
     // Image INSEE : la canonique reflète la source faisant autorité. Timestamps posés en SQL
     // (CURRENT_DATE / now()) — new Date() est interdit hors src/app. Adresse best-effort : conservée
     // telle quelle (COALESCE) si le géocodage BAN n'a rien rendu. L'API INSEE ne renvoie que les
-    // établissements actifs, d'où etat_administratif = 'A'.
+    // établissements actifs, d'où le libellé d'état canonique (convention dataspace).
     await tx.$executeRaw`
       UPDATE main.structure_administrative SET
         denomination_antenne = NULL,
         denomination_sirene = ${entreprise.denomination},
-        etat_administratif = 'A',
+        etat_administratif = ${ETAT_ADMINISTRATIF_CANONIQUE},
         code_activite_principale = ${entreprise.activitePrincipale},
         categorie_juridique = ${entreprise.categorieJuridiqueCode},
         adresse_id = COALESCE(${adresseId}::int, adresse_id),

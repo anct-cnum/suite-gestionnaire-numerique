@@ -38,7 +38,7 @@ describe('canonisation de structure (repository Prisma)', () => {
     expect(structure?.denomination_antenne).toBeNull()
     expect(structure?.denomination_sirene).toBe('AGENCE NATIONALE DE LA COHESION DES TERRITOIRES')
     expect(structure?.code_activite_principale).toBe('84.12Z')
-    expect(structure?.etat_administratif).toBe('A')
+    expect(structure?.etat_administratif).toBe('Entreprise active / Etablissement actif')
     expect(structure?.edited_by).toBe('min')
     expect(structure?.last_sirene_enrich_at).not.toBeNull()
     await expect(clefInteropDeLAdresse(structure?.adresse_id)).resolves.toBe(CLEF_INTEROP)

@@ -7,6 +7,7 @@ import { Notification } from '../shared/Notification/Notification'
 import { clientContext } from '@/components/shared/ClientContext'
 import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { StructureComparaisonViewModel } from '@/presenters/comparaisonDoublonsPresenter'
+import { ETAT_ADMINISTRATIF_CANONIQUE } from '@/shared/etatAdministratif'
 
 export default function ModaleCanonisation({ isOpen, onClose, structure }: Props): ReactElement {
   const { canoniserStructureAction, pathname, previsualiserAdresseAction, rechercherUneEntrepriseAction, router } =
@@ -164,7 +165,7 @@ function lignesComparaison(
       label: 'Adresse',
       structure: structure.adresse,
     },
-    ligne('État administratif', champ('État administratif'), 'Actif'),
+    ligne('État administratif', champ('État administratif'), ETAT_ADMINISTRATIF_CANONIQUE),
     {
       identique: apeStructure === entreprise.activitePrincipale,
       insee: avecLibelle(entreprise.activitePrincipale, entreprise.activitePrincipaleLibelle),
