@@ -1,12 +1,44 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
 import EnTete from './EnTete'
 import { renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
+  beforeAll(() => {
+    HTMLElement.prototype.showPopover = function () {
+      this.setAttribute('open', '')
+      this.style.display = ''
+    }
+    HTMLElement.prototype.hidePopover = function () {
+      this.removeAttribute('open')
+      this.style.display = 'none'
+    }
+    /* eslint-disable testing-library/no-node-access */
+    document.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>('[popovertarget]')
+      if (button) {
+        const targetId = button.getAttribute('popovertarget')
+        const action = button.getAttribute('popovertargetaction') ?? 'toggle'
+        const target = targetId ? document.getElementById(targetId) : null
+        if (target) {
+          if (action === 'show') {
+            target.showPopover()
+          } else if (action === 'hide') {
+            target.hidePopover()
+          } else if (target.hasAttribute('open')) {
+            target.hidePopover()
+          } else {
+            target.showPopover()
+          }
+        }
+      }
+    })
+    /* eslint-enable testing-library/no-node-access */
+  })
+
   it('quand j’affiche l’en-tête alors j’affiche le bouton d’accueil et le menu utilisateur', () => {
     // WHEN
     afficherLEnTete()
@@ -17,7 +49,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(accueil).toHaveAttribute('title', 'Accueil')
 
     const monCompte = screen.getByRole('button', { name: 'Martin Tartempion' })
-    expect(monCompte).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
+    expect(monCompte).toHaveAttribute('popovertarget', 'drawerMenuUtilisateurId')
     expect(monCompte).toHaveAttribute('type', 'button')
   })
 
@@ -109,7 +141,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       const fermer = jeFermeLeMenuUtilisateur()
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
+      expect(fermer).toHaveAttribute('popovertarget', 'drawerMenuUtilisateurId')
       expect(drawer).not.toBeVisible()
     })
 
