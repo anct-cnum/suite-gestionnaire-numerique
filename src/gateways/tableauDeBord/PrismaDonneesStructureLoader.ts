@@ -7,30 +7,19 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
   async get(structureId: number, maintenant: Date): Promise<DonneesStructureReadModel | ErrorReadModel> {
     try {
-      const lieuxCoopIds = await this.#recupererLieuxCoopIds(structureId)
+      const mediateursCoopIds = await this.#recupererMediateursCoopIds(structureId)
 
-      const nombreLieux = lieuxCoopIds.length
-
-      const nombreMediateursResult = await prisma.$queryRaw<Array<{ total: bigint }>>`
-        SELECT COUNT(DISTINCT pe.id)::bigint AS total
-        FROM min.personne_enrichie pe
-        WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
-          AND (
-            pe.structure_employeuse_id = ${structureId}
-            OR EXISTS (
-              SELECT 1 FROM main.personne_affectations_emploi pae
-              WHERE pae.personne_id = pe.id AND pae.est_active = true AND pae.structure_administrative_id = ${structureId}
-            )
-          )
-      `
-      const nombreMediateurs = Number(nombreMediateursResult[0]?.total ?? 0)
+      const [nombreMediateurs, nombreLieux] = await Promise.all([
+        this.#compterMediateurs(structureId),
+        this.#compterLieux(structureId),
+      ])
 
       let totalAccompagnements = 0
       let accompagnementsMensuels: DonneesStructureReadModel['accompagnementsMensuels'] = []
 
-      if (lieuxCoopIds.length > 0) {
+      if (mediateursCoopIds.length > 0) {
         const statistiquesCoop = await createApiCoopStatistiquesLoader().recupererStatistiques({
-          lieux: lieuxCoopIds,
+          mediateurs: mediateursCoopIds,
         })
 
         accompagnementsMensuels = Array.from({ length: 6 }, (_, index) => {
@@ -67,6 +56,45 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
     }
   }
 
+  async #compterLieux(structureId: number): Promise<number> {
+    const result = await prisma.$queryRaw<ReadonlyArray<{ total: bigint }>>`
+      SELECT COUNT(DISTINCT l.id)::bigint AS total
+      FROM main.lieu_inclusion l
+      WHERE EXISTS (
+          SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
+          WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${structureId}
+        )
+        OR EXISTS (
+          SELECT 1 FROM main.personne_affectations_lieu pal
+          WHERE pal.lieu_id = l.id AND pal.est_active = true
+            AND pal.personne_id IN (
+              SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+              WHERE pae.structure_administrative_id = ${structureId} AND pae.est_active = true
+              UNION
+              SELECT pe.id FROM min.personne_enrichie pe
+              WHERE pe.structure_employeuse_id = ${structureId}
+            )
+        )
+    `
+    return Number(result[0]?.total ?? 0)
+  }
+
+  async #compterMediateurs(structureId: number): Promise<number> {
+    const result = await prisma.$queryRaw<ReadonlyArray<{ total: bigint }>>`
+      SELECT COUNT(DISTINCT pe.id)::bigint AS total
+      FROM min.personne_enrichie pe
+      WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+        AND (
+          pe.structure_employeuse_id = ${structureId}
+          OR EXISTS (
+            SELECT 1 FROM main.personne_affectations_emploi pae
+            WHERE pae.personne_id = pe.id AND pae.est_active = true AND pae.structure_administrative_id = ${structureId}
+          )
+        )
+    `
+    return Number(result[0]?.total ?? 0)
+  }
+
   #parseLabelToDate(label: string): Date | null {
     const parts = label.split('/')
     if (parts.length === 2) {
@@ -77,29 +105,24 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
     return null
   }
 
-  async #recupererLieuxCoopIds(structureId: number): Promise<ReadonlyArray<string>> {
-    const rows = await prisma.$queryRaw<ReadonlyArray<{ structure_coop_id: string }>>`
-      SELECT l.structure_coop_id
-      FROM main.lieu_inclusion l
-      WHERE l.structure_coop_id IS NOT NULL
-        AND (
-          EXISTS (
-            SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
-            WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${structureId}
-          )
-          OR EXISTS (
-            SELECT 1 FROM main.personne_affectations_lieu pal
-            WHERE pal.lieu_id = l.id AND pal.est_active = true
-              AND pal.personne_id IN (
-                SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-                WHERE pae.structure_administrative_id = ${structureId} AND pae.est_active = true
-                UNION
-                SELECT pe.id FROM min.personne_enrichie pe
-                WHERE pe.structure_employeuse_id = ${structureId}
-              )
-          )
+  async #recupererMediateursCoopIds(structureId: number): Promise<ReadonlyArray<string>> {
+    const rows = await prisma.$queryRaw<ReadonlyArray<{ coop_id: string }>>`
+      SELECT pe.coop_id
+      FROM min.personne_enrichie pe
+      WHERE (
+        pe.structure_employeuse_id = ${structureId}
+        OR EXISTS (
+          SELECT 1 FROM main.personne_affectations_emploi pae
+          WHERE pae.personne_id = pe.id
+            AND pae.est_active = true
+            AND pae.structure_administrative_id = ${structureId}
         )
+      )
+      AND pe.is_mediateur = true
+      AND pe.coop_id IS NOT NULL
+      AND pe.deleted_at IS NULL
+      AND pe.aidant_connect_id IS NULL
     `
-    return rows.map((row) => row.structure_coop_id)
+    return rows.map((row) => row.coop_id)
   }
 }
