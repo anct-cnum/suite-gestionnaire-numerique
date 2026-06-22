@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { PrismaStructureLoader } from './PrismaStructureLoader'
 import { creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnMembre } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { epochTime } from '../shared/testHelper'
 
 describe('structures loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -273,6 +274,25 @@ describe('structures loader', () => {
           uid: '100',
         },
       ])
+    })
+
+    it('exclut les structures supprimées (soft-delete) des résultats de recherche', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        deleted_at: epochTime,
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('conseil aube')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([])
     })
   })
 })

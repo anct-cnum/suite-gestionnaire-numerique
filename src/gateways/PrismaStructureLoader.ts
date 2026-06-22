@@ -79,6 +79,7 @@ export class PrismaStructureLoader implements StructureLoader {
       FROM main.structure_administrative sa
       LEFT JOIN main.adresse a ON sa.adresse_id = a.id
       WHERE COALESCE(sa.denomination_antenne, sa.denomination_sirene) IS NOT NULL
+        AND sa.deleted_at IS NULL
         AND (${conditionsMots})
       ${whereExtra}
       ORDER BY ${scoreMoyen} DESC, COALESCE(sa.denomination_antenne, sa.denomination_sirene) ASC
