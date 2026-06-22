@@ -1,0 +1,10 @@
+FROM postgis/postgis:16-3.5-alpine
+
+RUN apk add --no-cache git build-base clang19 llvm19-dev \
+    && cd /tmp \
+    && git clone --branch v0.8.0 https://github.com/pgvector/pgvector.git \
+    && cd pgvector \
+    && make \
+    && make install \
+    && rm -rf /tmp/pgvector \
+    && apk del git build-base clang19 llvm19-dev
