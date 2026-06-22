@@ -14,13 +14,13 @@ export type IdentifiantBloc =
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
   const blocs: Array<IdentifiantBloc> = ['accueil']
 
-  if (contexte.estGestionnaireStructureHorsGouvernance()) {
+  if (contexte.estGestionnaireStructureSansCoportage()) {
     blocs.push('donneesStructure')
   }
 
   if (
     contexte.aCesRoles('administrateur_dispositif', 'gestionnaire_departement', 'gestionnaire_region') ||
-    contexte.estDansGouvernance()
+    contexte.estCoporteur()
   ) {
     blocs.push('etatDesLieux', 'gouvernance')
   }
