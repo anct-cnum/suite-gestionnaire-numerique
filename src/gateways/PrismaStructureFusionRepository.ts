@@ -35,10 +35,11 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     if (survivante.deleted_at !== null || absorbee.deleted_at !== null) {
       return 'structureIntrouvable'
     }
-    // Une canonique (forme INSEE, sans denomination_antenne) ne peut pas être l'absorbée : on ne
-    // supprime jamais une entité INSEE.
-    if (absorbee.denomination_antenne === null) {
-      return 'fusionImpossibleCanoniqueAbsorbee'
+    // Une canonique (forme INSEE, sans denomination_antenne) ne peut être absorbée que par une autre
+    // canonique : fusionner deux canoniques (doublons inter-SIRET) est permis, mais jamais absorber une
+    // canonique dans une antenne — on ne fait pas disparaître une entité INSEE au profit d'une variante.
+    if (absorbee.denomination_antenne === null && survivante.denomination_antenne !== null) {
+      return 'fusionImpossibleCanoniqueDansAntenne'
     }
 
     // Déplacement des 6 notions (ids de source inclus) + gardes C1/C2 du moteur partagé.

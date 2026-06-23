@@ -179,7 +179,7 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
       <p className="fr-text--sm fr-text-mention--grey">
         Choisissez la structure <span className="fr-text--bold">cible (destination)</span>, puis sur chaque autre carte
         cochez les notions à transférer — ou « Fusionner » pour tout déplacer et supprimer la structure. Une canonique
-        (INSEE) ne peut être que cible.
+        (INSEE) ne peut être absorbée que par une autre canonique.
       </p>
 
       <div className="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-mb-2w">
@@ -208,6 +208,7 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
           {viewModel.map((structure) => (
             <div className="fr-col-12 fr-col-md-6" key={structure.id}>
               <CarteStructure
+                cibleEstCanonique={cible?.estCanonique ?? false}
                 collisionCanonique={collisionCanonique(structure)}
                 estCible={structure.id === idCible}
                 etat={etatDe(structure.id)}
@@ -338,6 +339,7 @@ function MatriceDistances({ matrice }: Readonly<{ matrice: MatriceDistancesViewM
 }
 
 function CarteStructure({
+  cibleEstCanonique,
   collisionCanonique,
   estCible,
   etat,
@@ -348,6 +350,7 @@ function CarteStructure({
   onToggleNotion,
   structure,
 }: Readonly<{
+  cibleEstCanonique: boolean
   collisionCanonique: boolean
   estCible: boolean
   etat: EtatCarte
@@ -376,10 +379,10 @@ function CarteStructure({
     if (estCible) {
       return <ConceptsPortes conceptsPortes={conceptsPortes} legende="Concepts portés (destination)" />
     }
-    if (structure.estCanonique) {
+    if (structure.estCanonique && !cibleEstCanonique) {
       return (
         <p className="fr-text--xs fr-text-mention--grey fr-mt-2w">
-          Structure canonique (INSEE) : elle ne peut être que cible, jamais transférée ni absorbée.
+          Structure canonique (INSEE) : elle ne peut être absorbée que par une autre canonique, pas par une antenne.
         </p>
       )
     }
