@@ -192,8 +192,6 @@ model MembreRecord {
   id String @id
 
   gouvernanceDepartementCode String    @map("gouvernance_departement_code")
-  contact                    String?
-  contactTechnique           String?   @map("contact_technique")
   type                       String?
   statut                     String
   isCoporteur                Boolean   @default(false) @map("is_coporteur")
