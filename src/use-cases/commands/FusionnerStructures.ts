@@ -39,8 +39,9 @@ export type FusionFailure =
   | 'collisionIdentifiantSource'
   | 'collisionMembreGouvernance'
   | 'fusionEchouee'
-  // Une canonique vient de l'INSEE : on ne la supprime jamais, donc elle ne peut pas être absorbée.
-  | 'fusionImpossibleCanoniqueAbsorbee'
+  // Une canonique (INSEE) peut être absorbée par une autre canonique (doublons inter-SIRET), mais
+  // jamais par une antenne : on ne fait pas disparaître une entité INSEE au profit d'une variante.
+  | 'fusionImpossibleCanoniqueDansAntenne'
   | 'fusionImpossibleMemeStructure'
   | 'structureIntrouvable'
 

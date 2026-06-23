@@ -76,7 +76,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     })
   })
 
-  it('une carte canonique non-cible ne propose aucune coche (cible uniquement)', () => {
+  it('une carte canonique non-cible ne propose aucune coche quand la cible est une antenne', () => {
     // GIVEN
     renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
 
@@ -84,7 +84,39 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     fireEvent.click(screen.getAllByRole('radio', { name: 'Cible (destination)' })[1])
 
     // THEN
-    expect(screen.getByText(/jamais transférée ni absorbée/)).toBeInTheDocument()
+    expect(screen.getByText(/Structure canonique \(INSEE\) : elle ne peut être absorbée/)).toBeInTheDocument()
+  })
+
+  it('autorise la fusion d’une canonique dans une autre canonique', async () => {
+    // GIVEN deux canoniques (doublon inter-SIRET) : la 3 est cible par défaut, la 7 est source canonique.
+    const fusionnerStructuresAction = stubbedServerAction(['OK'])
+    const viewModel: ComparaisonViewModel = [
+      carte({ denomination: 'Cible canonique', estCanonique: true, id: 3 }),
+      carte({
+        concepts: [conceptIdposte()],
+        denomination: 'Doublon canonique',
+        estCanonique: true,
+        id: 7,
+        siret: '99999999900099',
+      }),
+    ]
+    renderComponent(<ComparerStructures viewModel={viewModel} />, {
+      fusionnerStructuresAction,
+      pathname: '/structures-doublons/comparer',
+    })
+
+    // WHEN
+    fireEvent.click(screen.getByLabelText(/Fusionner/))
+    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
+
+    // THEN
+    await screen.findByRole('status')
+    expect(fusionnerStructuresAction).toHaveBeenCalledWith({
+      idsAbsorbees: [7],
+      idSurvivante: 3,
+      path: '/structures-doublons/comparer',
+    })
   })
 
   it('désactive une notion dont l’id scalaire entre en collision avec la cible', () => {

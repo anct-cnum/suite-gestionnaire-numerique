@@ -62,8 +62,27 @@ describe('fusion de structures (repository Prisma)', () => {
     await expect(dernierAuditReussi()).resolves.toMatchObject({ moved_identifiers: { siret: '99002100000002' } })
   })
 
-  it('refuse de fusionner quand l’absorbée est une canonique (INSEE)', async () => {
-    // GIVEN absorbée canonique (pas de denomination_antenne).
+  it('refuse de fusionner une canonique (INSEE) dans une antenne', async () => {
+    // GIVEN survivante antenne, absorbée canonique (pas de denomination_antenne).
+    await seedBase()
+    await creerUneStructure({
+      denomination_antenne: 'Antenne survivante',
+      id: SURVIVANTE,
+      nom: 'SURVIVANTE',
+      siret: '99002100000001',
+    })
+    await creerUneStructure({ id: ABSORBEE, nom: 'ABSORBEE-CANONIQUE', siret: '99002100000002' })
+
+    // WHEN
+    const result = await fusionner()
+
+    // THEN
+    expect(result).toBe('fusionImpossibleCanoniqueDansAntenne')
+    await expect(estSupprimee(ABSORBEE)).resolves.toBe(false)
+  })
+
+  it('autorise la fusion d’une canonique (INSEE) dans une autre canonique', async () => {
+    // GIVEN survivante ET absorbée canoniques (deux SIRET distincts, doublon inter-SIRET).
     await seedBase()
     await creerUneStructure({ id: SURVIVANTE, nom: 'SURVIVANTE', siret: '99002100000001' })
     await creerUneStructure({ id: ABSORBEE, nom: 'ABSORBEE-CANONIQUE', siret: '99002100000002' })
@@ -72,8 +91,8 @@ describe('fusion de structures (repository Prisma)', () => {
     const result = await fusionner()
 
     // THEN
-    expect(result).toBe('fusionImpossibleCanoniqueAbsorbee')
-    await expect(estSupprimee(ABSORBEE)).resolves.toBe(false)
+    expect(result).toBe('OK')
+    await expect(estSupprimee(ABSORBEE)).resolves.toBe(true)
   })
 
   it('refuse la fusion en cas de collision d’id de source et ne supprime pas l’absorbée', async () => {
