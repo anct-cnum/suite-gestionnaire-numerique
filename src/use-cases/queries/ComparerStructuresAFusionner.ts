@@ -58,8 +58,8 @@ export type StructureDetailReadModel = Readonly<{
 // Ventilation des liens (FK) qui seront déplacés vers la survivante lors d'une
 // fusion — alimente la « fenêtre d'avertissement » avant confirmation.
 // `total` = somme des 7 FK directes (ce qui est réellement déplacé). Les compteurs
-// gouvernance (gouvernances, feuillesDeRoute, contactsMembre) sont des vues dérivées
-// de la relation membre, fournies pour informer la décision sans gonfler `total`.
+// gouvernance (gouvernances, feuillesDeRoute) sont des vues dérivées de la relation
+// membre, fournies pour informer la décision sans gonfler `total`.
 export type RattachementsReadModel = Readonly<{
   // Affectations emploi ventilées par source agrégée (sous-ensembles de affectationsEmploi).
   affectationsAc: number
@@ -69,7 +69,6 @@ export type RattachementsReadModel = Readonly<{
   affectationsIdposte: number
   associationsLieux: number
   contacts: number
-  contactsMembre: number
   contrats: number
   feuillesDeRoute: number
   gouvernances: number

@@ -13,7 +13,6 @@ const LIBELLES_RATTACHEMENTS: ReadonlyArray<
   { cle: 'membresMin', label: 'Membres MIN' },
   { cle: 'gouvernances', label: 'Gouvernances' },
   { cle: 'feuillesDeRoute', label: 'Feuilles de route portées' },
-  { cle: 'contactsMembre', label: 'Contacts membres' },
   { cle: 'postes', label: 'Postes' },
   { cle: 'contrats', label: 'Contrats' },
   { cle: 'affectationsEmploi', label: 'Affectations emploi' },

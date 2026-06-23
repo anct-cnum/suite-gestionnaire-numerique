@@ -55,8 +55,6 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         (SELECT COUNT(*) FROM min.feuille_de_route fdr
          JOIN min.membre m ON fdr.porteur_id = m.id
          WHERE m.structure_id = sa.id)::int AS nb_feuilles_de_route,
-        (SELECT COUNT(*) FROM min.membre m
-         WHERE m.structure_id = sa.id AND m.contact IS NOT NULL AND m.contact <> '')::int AS nb_contacts_membre,
         EXISTS (
           SELECT 1 FROM min.beneficiaire_subvention bs
           JOIN min.membre m ON bs.membre_id = m.id
@@ -88,7 +86,6 @@ interface LigneDetail {
   nb_affectations_idposte: number
   nb_associations_lieux: number
   nb_contacts: number
-  nb_contacts_membre: number
   nb_contrats: number
   nb_feuilles_de_route: number
   nb_gouvernances: number
@@ -136,7 +133,6 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
       affectationsIdposte: ligne.nb_affectations_idposte,
       associationsLieux: ligne.nb_associations_lieux,
       contacts: ligne.nb_contacts,
-      contactsMembre: ligne.nb_contacts_membre,
       contrats: ligne.nb_contrats,
       feuillesDeRoute: ligne.nb_feuilles_de_route,
       gouvernances: ligne.nb_gouvernances,
