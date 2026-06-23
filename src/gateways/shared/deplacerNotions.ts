@@ -230,6 +230,14 @@ async function transfererIdposte(
   source: LigneStructure
 ): Promise<void> {
   // poste : UNIQUE(poste_conum_id, structure_id, personne_id).
+  // On repointe uniquement les postes qui n'entrent pas en collision avec un poste déjà
+  // présent sur la cible. On ne SUPPRIME PAS les doublons exacts restants : main.poste est
+  // alimentée par l'ETL id-poste (dataspace), MIN ne doit pas y faire de DELETE (il
+  // détruirait une ligne ETL, recréée/désynchronisée au run suivant ; min_scalingo n'a
+  // d'ailleurs qu'UPDATE sur poste). Les doublons non repointables (cas rare : même
+  // poste_conum_id + personne des deux côtés) restent sur la source — la fusion la
+  // soft-delete quand même ; un transfert la conserve (sourceEstVide = false) et l'ETL
+  // réconcilie au prochain run.
   await tx.$executeRaw`
     UPDATE main.poste p SET structure_id = ${idCible}
     WHERE p.structure_id = ${idSource}
@@ -240,7 +248,6 @@ async function transfererIdposte(
           AND q.personne_id IS NOT DISTINCT FROM p.personne_id
       )
   `
-  await tx.$executeRaw`DELETE FROM main.poste WHERE structure_id = ${idSource}`
   // contrat : pas de contrainte d'unicité sur structure_id → UPDATE direct.
   await tx.$executeRaw`UPDATE main.contrat SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
   await deplacerAffectations(tx, idSource, idCible, 'idposte')
