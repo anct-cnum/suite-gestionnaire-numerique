@@ -56,9 +56,8 @@ export default async function ListeLieuxInclusionController({
     listeLieuxInclusionLoader.getTypesStructure(),
   ])
 
-  const listeLieuxInclusionViewModel = handleReadModelOrError(
-    listeLieuxInclusionReadModel,
-    listeLieuxInclusionPresenter
+  const listeLieuxInclusionViewModel = handleReadModelOrError(listeLieuxInclusionReadModel, (readModel) =>
+    listeLieuxInclusionPresenter(readModel, new Date())
   )
 
   const currentSearchParams = new URLSearchParams()

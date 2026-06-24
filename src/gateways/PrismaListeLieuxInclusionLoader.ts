@@ -178,7 +178,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       WITH ${scopeCte},
       lieux_page AS (
         SELECT
-          l.id, l.nom, l.structure_cartographie_nationale_id,
+          l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at,
           sa_first.siret, sa_first.categorie_juridique, sa_first.nb_mandats_ac,
           a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
         FROM main.lieu_inclusion l
@@ -210,6 +210,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         l.nom,
         l.siret,
         l.structure_cartographie_nationale_id,
+        l.updated_at,
         ref.nom AS categorie_juridique,
         l.numero_voie,
         l.nom_voie,
@@ -235,7 +236,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       LEFT JOIN reference.categories_juridiques ref ON l.categorie_juridique = ref.code
       LEFT JOIN main.activites_coop act ON act.lieu_id = l.id
       LEFT JOIN accompagnements_ac acc ON acc.lieu_id = l.id
-      GROUP BY l.id, l.nom, l.siret, l.structure_cartographie_nationale_id, ref.nom,
+      GROUP BY l.id, l.nom, l.siret, l.structure_cartographie_nationale_id, l.updated_at, ref.nom,
                l.numero_voie, l.nom_voie, l.code_postal, l.nom_commune, l.code_insee,
                l.nb_mandats_ac, l.geom, acc.nbr
       ORDER BY l.nom ASC
