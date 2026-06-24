@@ -52,10 +52,21 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     `
   }
 
+  private buildFiltreActif(anciens?: boolean): Prisma.Sql {
+    if (anciens) {
+      return Prisma.empty
+    }
+    return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM main.personne_affectations_lieu pal
+      WHERE pal.lieu_id = l.id AND pal.est_active = true
+    )`
+  }
+
   // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
   // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
   private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
-    const { geographique, scopeFiltre } = filtres
+    const { anciens, geographique, scopeFiltre } = filtres
+    const filtreActif = this.buildFiltreActif(anciens)
 
     if (geographique) {
       const codesDepartements =
@@ -67,6 +78,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         FROM main.lieu_inclusion l
         LEFT JOIN main.adresse a ON a.id = l.adresse_id
         WHERE a.departement = ANY(${codesDepartements})
+          ${filtreActif}
       )`
     }
 
@@ -77,6 +89,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         FROM main.lieu_inclusion l
         LEFT JOIN main.adresse a ON a.id = l.adresse_id
         WHERE a.departement = ANY(${codesDepartements})
+          ${filtreActif}
       )`
     }
 
@@ -86,30 +99,34 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       // SA via l'asso, (b) ou ou travaillent des personnes employees par sa SA
       // (paf_lieu + paf_emploi croises, plus min.personne_enrichie pour les
       // mediateurs Coop sans paf_emploi).
+      const filtreEmploiActif = anciens ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
+      const filtreLieuActif = anciens ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
       return Prisma.sql`lieux_dans_scope AS (
         SELECT l.id
         FROM main.lieu_inclusion l
-        WHERE EXISTS (
+        WHERE (EXISTS (
             SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
             WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${scopeFiltre.id}
           )
           OR EXISTS (
             SELECT 1 FROM main.personne_affectations_lieu pal
-            WHERE pal.lieu_id = l.id AND pal.est_active = true
+            WHERE pal.lieu_id = l.id ${filtreLieuActif}
               AND pal.personne_id IN (
                 SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-                WHERE pae.structure_administrative_id = ${scopeFiltre.id} AND pae.est_active = true
+                WHERE pae.structure_administrative_id = ${scopeFiltre.id} ${filtreEmploiActif}
                 UNION
                 SELECT pe.id FROM min.personne_enrichie pe
                 WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
               )
-          )
+          ))
       )`
     }
 
     // Scope national : aucune restriction d'accès
     return Prisma.sql`lieux_dans_scope AS (
       SELECT l.id FROM main.lieu_inclusion l
+      WHERE true
+        ${filtreActif}
     )`
   }
 
@@ -209,7 +226,11 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         END AS est_qpv,
         COALESCE(l.nb_mandats_ac, 0) AS nb_mandats_ac,
         COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
-        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
+        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac,
+        EXISTS (
+          SELECT 1 FROM main.personne_affectations_lieu pal
+          WHERE pal.lieu_id = l.id AND pal.est_active = true
+        ) AS est_actif
       FROM lieux_page l
       LEFT JOIN reference.categories_juridiques ref ON l.categorie_juridique = ref.code
       LEFT JOIN main.activites_coop act ON act.lieu_id = l.id

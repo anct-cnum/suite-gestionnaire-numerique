@@ -22,6 +22,7 @@ export default async function ListeLieuxInclusionController({
   searchParams,
 }: {
   readonly searchParams: Promise<{
+    anciens?: string
     codeDepartement?: string
     codeRegion?: string
     frr?: string
@@ -61,7 +62,8 @@ export default async function ListeLieuxInclusionController({
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = resolvedSearchParams
+  const { anciens, codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } =
+    resolvedSearchParams
   setSearchParams()
 
   return (
@@ -77,6 +79,9 @@ export default async function ListeLieuxInclusionController({
   )
 
   function setSearchParams(): void {
+    if (anciens === 'true') {
+      currentSearchParams.set('anciens', 'true')
+    }
     if (page !== undefined && page !== '') {
       currentSearchParams.set('page', page)
     }

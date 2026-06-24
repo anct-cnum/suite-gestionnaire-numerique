@@ -45,6 +45,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const estAdmin = scopeFiltre.type === 'national'
     const params: FiltresURLParams = {
+      anciens: searchParams.get('anciens') ?? undefined,
       codeDepartement: estAdmin ? codeDepartementDemande : undefined,
       codeRegion: estAdmin ? codeRegionDemande : undefined,
       formations: searchParams.get('formations') ?? undefined,

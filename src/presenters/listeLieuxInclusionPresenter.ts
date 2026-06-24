@@ -5,6 +5,7 @@ export function listeLieuxInclusionPresenter(
 ): ListeLieuxInclusionViewModel {
   const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
+    estActif: lieu.est_actif,
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
     nbAccompagnements: lieu.nb_accompagnements_coop + lieu.nb_accompagnements_ac,
@@ -40,6 +41,7 @@ export interface ListeLieuxInclusionViewModel {
 
 interface LieuInclusionViewModel {
   adresse: string
+  estActif: boolean
   id: string
   idCartographieNationale: null | string
   nbAccompagnements: number

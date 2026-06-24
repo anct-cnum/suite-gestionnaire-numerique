@@ -15,6 +15,7 @@ export type FiltreHabilitations = ReadonlyArray<
 export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN' | 'Sans formation'>
 
 export type FiltresListeAidants = Readonly<{
+  anciens?: boolean
   formations?: FiltreFormations
   geographique?: FiltreGeographique
   habilitations?: FiltreHabilitations
@@ -31,6 +32,7 @@ export interface ListeAidantsMediateursLoader {
 }
 
 export type AidantMediateurReadModel = Readonly<{
+  estActif: boolean
   formations: Array<string>
   id: string
   labelisations: Array<'aidants connect' | 'conseiller numérique'>

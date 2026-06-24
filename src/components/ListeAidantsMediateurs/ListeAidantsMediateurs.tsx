@@ -75,6 +75,11 @@ const AidantRow = memo(
           </div>
         </td>
         <td>
+          <Badge color={aidant.estActif ? 'success' : 'warning'} small={true}>
+            {aidant.estActif ? 'Actif' : 'Inactif'}
+          </Badge>
+        </td>
+        <td>
           <div className="fr-grid-row fr-grid-row--gutters fr-text--sm">
             {aidant.role.map((roleItem) => (
               <Badge
@@ -193,12 +198,16 @@ export default function ListeAidantsMediateurs({
     const exportParams = new URLSearchParams()
 
     // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
+    const anciens = normalizedSearchParams.get('anciens')
     const codeRegion = normalizedSearchParams.get('codeRegion')
     const codeDepartement = normalizedSearchParams.get('codeDepartement')
     const roles = normalizedSearchParams.get('roles')
     const habilitations = normalizedSearchParams.get('habilitations')
     const formations = normalizedSearchParams.get('formations')
 
+    if (anciens === 'true') {
+      exportParams.set('anciens', 'true')
+    }
     if (codeRegion !== null && codeRegion !== '') {
       exportParams.set('codeRegion', codeRegion)
     }
@@ -366,7 +375,7 @@ export default function ListeAidantsMediateurs({
           />
 
           <Table
-            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
+            enTetes={['Prénom et nom', 'Statut', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
             titre="Aidants et médiateurs numériques"
           >
             {viewModel.aidants.map((aidant) => (

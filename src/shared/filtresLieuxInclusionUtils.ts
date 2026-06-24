@@ -3,6 +3,7 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 // Types pour les filtres internes utilisés dans les composants
 export interface FiltresLieuxInclusionInternes {
+  anciens: boolean
   codeDepartement: null | string
   codeRegion: null | string
   frr: boolean
@@ -16,6 +17,7 @@ export interface FiltresLieuxInclusionInternes {
  */
 export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchParams): FiltresLieuxInclusionInternes {
   return {
+    anciens: params.get('anciens') === 'true',
     codeDepartement: params.get('codeDepartement'),
     codeRegion: params.get('codeRegion'),
     frr: params.get('frr') === 'true',
@@ -34,7 +36,7 @@ export function buildFiltresLieuxInclusion(
   scopeFiltre: ScopeFiltre,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = params
+  const { anciens, codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } = params
 
   let geographique: FiltreGeographiqueLieux | undefined
   if (scopeFiltre.type === 'national') {
@@ -46,6 +48,7 @@ export function buildFiltresLieuxInclusion(
   }
 
   return {
+    anciens: anciens === 'true',
     frr: frr === 'true' ? true : undefined,
     geographique,
     horsZonePrioritaire: horsZonePrioritaire === 'true' ? true : undefined,
@@ -61,6 +64,12 @@ export function buildFiltresLieuxInclusion(
  */
 export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchParams): URLSearchParams {
   const convertedParams = new URLSearchParams()
+
+  // Filtre anciens
+  const anciens = params.get('anciens')
+  if (anciens === 'true') {
+    convertedParams.set('anciens', 'true')
+  }
 
   // Copie directe des paramètres
   const codeDepartement = params.get('codeDepartement')
@@ -113,6 +122,15 @@ export function getActiveLieuxInclusionFilters(
   paramValue: string
 }> {
   const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
+
+  const anciensParam = params.get('anciens')
+  if (anciensParam === 'true') {
+    filtres.push({
+      label: 'Anciens inclus',
+      paramKey: 'anciens',
+      paramValue: 'true',
+    })
+  }
 
   const codeDepartement = params.get('codeDepartement')
   const codeRegion = params.get('codeRegion')
@@ -180,6 +198,7 @@ export function getActiveLieuxInclusionFilters(
 
 // Types pour les paramètres d'URL des lieux d'inclusion
 interface FiltresLieuxInclusionURLParams {
+  anciens?: string
   codeDepartement?: string
   codeRegion?: string
   frr?: string
