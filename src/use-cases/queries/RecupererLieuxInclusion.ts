@@ -43,6 +43,7 @@ export interface LieuInclusionNumeriqueItem {
   siret: null | string
   structure_cartographie_nationale_id: null | string
   type_structure: null | string
+  updated_at: Date | null
 }
 
 export interface RecupererLieuxInclusionPort {

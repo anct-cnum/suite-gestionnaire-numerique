@@ -1,10 +1,12 @@
 import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 export function listeLieuxInclusionPresenter(
-  readModel: RecupererLieuxInclusionReadModel
+  readModel: RecupererLieuxInclusionReadModel,
+  now: Date
 ): ListeLieuxInclusionViewModel {
   const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
+    derniereMiseAJour: getDerniereMiseAJourTag(lieu.updated_at, now),
     estActif: lieu.est_actif,
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
@@ -39,8 +41,9 @@ export interface ListeLieuxInclusionViewModel {
   totalLabellise: number
 }
 
-interface LieuInclusionViewModel {
+export interface LieuInclusionViewModel {
   adresse: string
+  derniereMiseAJour: DerniereMiseAJourTag | null
   estActif: boolean
   id: string
   idCartographieNationale: null | string
@@ -50,6 +53,13 @@ interface LieuInclusionViewModel {
   siret: null | string
   tags: Array<Tag>
   typeStructure: string
+}
+
+type CouleurDerniereMiseAJour = 'error' | 'green-tilleul-verveine' | 'info' | 'orange-terre-battue'
+
+interface DerniereMiseAJourTag {
+  couleur: CouleurDerniereMiseAJour
+  libelle: string
 }
 
 interface Tag {
@@ -80,4 +90,27 @@ function getTags(lieu: { est_frr: boolean; est_qpv: boolean }): Array<Tag> {
   }
 
   return tags
+}
+
+function getDerniereMiseAJourTag(updatedAt: Date | null, now: Date): DerniereMiseAJourTag | null {
+  if (updatedAt === null) {
+    return null
+  }
+
+  const diffMs = now.getTime() - updatedAt.getTime()
+  const diffMois = diffMs / (1000 * 60 * 60 * 24 * 30.44)
+
+  if (diffMois < 3) {
+    return { couleur: 'info', libelle: '< 3 mois' }
+  }
+
+  if (diffMois < 6) {
+    return { couleur: 'green-tilleul-verveine', libelle: '3 - 6 mois' }
+  }
+
+  if (diffMois < 12) {
+    return { couleur: 'orange-terre-battue', libelle: '6 - 12 mois' }
+  }
+
+  return { couleur: 'error', libelle: '> 12 mois' }
 }
