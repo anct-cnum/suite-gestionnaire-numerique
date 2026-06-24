@@ -276,6 +276,34 @@ describe('structures loader', () => {
       ])
     })
 
+    it('trouve une structure dont le nom contient des caractères spéciaux dans la recherche', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '36', nom: 'Indre' })
+      await creerUneStructure({
+        commune: 'CHATEAUROUX',
+        departementCode: '36',
+        id: 200,
+        nom: "LIGUE DE L'ENSEIGNEMENT - FEDERATION DEPARTEMENTALE DE L'INDRE",
+      })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures(
+        "LIGUE DE L'ENSEIGNEMENT - FEDERATION DEPARTEMENTALE DE L'INDRE"
+      )
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'CHATEAUROUX',
+          isFne: false,
+          isMembre: false,
+          nom: "LIGUE DE L'ENSEIGNEMENT - FEDERATION DEPARTEMENTALE DE L'INDRE",
+          uid: '200',
+        },
+      ])
+    })
+
     it('exclut les structures supprimées (soft-delete) des résultats de recherche', async () => {
       // GIVEN
       await creerUneRegion()
