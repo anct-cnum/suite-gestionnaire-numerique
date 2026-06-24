@@ -17,7 +17,7 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
+import { LieuInclusionViewModel, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
 import {
   buildURLSearchParamsFromLieuxInclusionFilters,
   getActiveLieuxInclusionFilters,
@@ -160,6 +160,7 @@ export default function ListeLieuxInclusion({
   }
 
   const viewModel = listeLieuxInclusionViewModel
+  const afficherDerniereMiseAJour = rolesAvecDerniereMiseAJour.includes(utilisateurRole)
 
   return (
     <>
@@ -261,10 +262,7 @@ export default function ListeLieuxInclusion({
               totalLabellise: viewModel.totalLabellise,
             }}
           />
-          <Table
-            enTetes={['Lieu', 'Statut', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
-            titre="Lieux d'inclusion numérique"
-          >
+          <Table enTetes={buildEnTetes(afficherDerniereMiseAJour)} titre="Lieux d'inclusion numérique">
             {viewModel.lieux.map((lieu) => (
               <tr key={lieu.id}>
                 <td style={{ maxWidth: '25vw' }}>
@@ -332,6 +330,11 @@ export default function ListeLieuxInclusion({
                 </td>
                 <td className="fr-cell--center">{lieu.nbMandatsAC}</td>
                 <td className="fr-cell--center">{lieu.nbAccompagnements}</td>
+                {afficherDerniereMiseAJour ? (
+                  <td>
+                    <DerniereMiseAJourBadge lieu={lieu} />
+                  </td>
+                ) : null}
                 <td className="fr-cell--center">
                   <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/lieu/${lieu.id}`}>
                     Détail
@@ -390,6 +393,36 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
   }
   // Si c'est un tableau de paires [clé, valeur], le convertir
   return new URLSearchParams(params)
+}
+
+const rolesAvecDerniereMiseAJour: ReadonlyArray<TypologieRole> = [
+  'Administrateur dispositif',
+  'Gestionnaire département',
+  'Gestionnaire structure',
+]
+
+function buildEnTetes(afficherDerniereMiseAJour: boolean): Array<string> {
+  const enTetes = ['Lieu', 'Statut', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements']
+
+  if (afficherDerniereMiseAJour) {
+    enTetes.push('Dernière MAJ')
+  }
+
+  enTetes.push('Action')
+
+  return enTetes
+}
+
+function DerniereMiseAJourBadge({ lieu }: Readonly<{ lieu: LieuInclusionViewModel }>): null | ReactElement {
+  if (lieu.derniereMiseAJour === null) {
+    return null
+  }
+
+  return (
+    <Badge color={lieu.derniereMiseAJour.couleur} small={true}>
+      {lieu.derniereMiseAJour.libelle}
+    </Badge>
+  )
 }
 
 type Props = Readonly<{
