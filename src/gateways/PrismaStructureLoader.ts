@@ -33,7 +33,7 @@ export class PrismaStructureLoader implements StructureLoader {
     const mots = match
       .trim()
       .split(/\s+/)
-      .filter((mot) => mot.length > 0)
+      .filter((mot) => /\p{L}/u.test(mot))
 
     if (mots.length === 0) {
       return []
