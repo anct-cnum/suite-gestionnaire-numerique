@@ -10,6 +10,7 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 // Types pour les paramètres d'URL
 export interface FiltresURLParams {
+  anciens?: string
   codeDepartement?: string
   codeRegion?: string
   formations?: string
@@ -23,6 +24,7 @@ export interface FiltresURLParams {
  */
 export function parseURLParamsToFiltresInternes(params: URLSearchParams): FiltresInternes {
   return {
+    anciens: params.get('anciens') === 'true',
     codeDepartement: params.get('codeDepartement'),
     codeRegion: params.get('codeRegion'),
     formations: params.get('formations')?.split(',').filter(Boolean) ?? [],
@@ -40,7 +42,7 @@ export function buildFiltresListeAidants(
   utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeAidants {
-  const { codeDepartement, codeRegion, formations, habilitations, page, roles } = params
+  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, roles } = params
 
   // Construction du filtre géographique - seulement pour les administrateurs
   let filtreGeographique: FiltreGeographique | undefined
@@ -60,6 +62,7 @@ export function buildFiltresListeAidants(
   }
 
   return {
+    anciens: anciens === 'true',
     formations:
       formations !== undefined && formations.length > 0 ? (formations.split(',') as FiltreFormations) : undefined,
     geographique: filtreGeographique,
@@ -112,6 +115,12 @@ export function buildURLSearchParamsFromFilters(params: URLSearchParams): URLSea
     convertedParams.set('codeDepartement', departement)
   }
 
+  // Filtre anciens
+  const anciens = params.get('anciens')
+  if (anciens === 'true') {
+    convertedParams.set('anciens', 'true')
+  }
+
   // Autres filtres - copie directe
   const roles = params.get('roles')
   const habilitations = params.get('habilitations')
@@ -136,7 +145,9 @@ export function buildURLSearchParamsFromFilters(params: URLSearchParams): URLSea
 export function removeFilterFromParams(params: URLSearchParams, paramKey: string, paramValue: string): URLSearchParams {
   const newParams = new URLSearchParams(params)
 
-  if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
+  if (paramKey === 'anciens') {
+    newParams.delete('anciens')
+  } else if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
     // Pour les filtres géographiques, supprimer complètement les deux
     newParams.delete('codeRegion')
     newParams.delete('codeDepartement')
@@ -166,11 +177,20 @@ export function getActiveFilters(params: URLSearchParams): Array<{
 }> {
   const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
 
+  const anciensParam = params.get('anciens')
   const codeRegion = params.get('codeRegion')
   const codeDepartement = params.get('codeDepartement')
   const roles = params.get('roles')
   const habilitations = params.get('habilitations')
   const formations = params.get('formations')
+
+  if (anciensParam === 'true') {
+    filtres.push({
+      label: 'Anciens inclus',
+      paramKey: 'anciens',
+      paramValue: 'true',
+    })
+  }
 
   // Filtre géographique
   if (codeDepartement !== null && codeDepartement !== '') {
@@ -211,6 +231,7 @@ export function getActiveFilters(params: URLSearchParams): Array<{
 
 // Types pour les filtres internes utilisés dans les composants
 interface FiltresInternes {
+  anciens: boolean
   codeDepartement: null | string
   codeRegion: null | string
   formations: Array<string>

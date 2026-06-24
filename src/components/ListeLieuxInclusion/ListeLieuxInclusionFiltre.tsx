@@ -24,6 +24,8 @@ export default function ListeLieuxInclusionFiltre({
   utilisateurRole,
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
+  const toggleId = useId()
+  const [selectedAnciens, setSelectedAnciens] = useState(currentFilters.anciens)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
   const [selectedStructureType, setSelectedStructureType] = useState(currentFilters.typeStructure)
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
@@ -61,6 +63,7 @@ export default function ListeLieuxInclusionFiltre({
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
+    setSelectedAnciens(currentFilters.anciens)
     setSelectedStructureType(currentFilters.typeStructure)
     setIsQpvSelected(currentFilters.qpv)
     setIsFrrSelected(currentFilters.frr)
@@ -73,6 +76,11 @@ export default function ListeLieuxInclusionFiltre({
 
   function handleApplyFilters(): void {
     const params = new URLSearchParams()
+
+    // Filtre anciens
+    if (selectedAnciens) {
+      params.set('anciens', 'true')
+    }
 
     // Filtre géographique - seulement pour les administrateur_dispositif
     if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
@@ -106,6 +114,7 @@ export default function ListeLieuxInclusionFiltre({
 
   function handleReset(): void {
     ref.current?.setValue(toutesLesRegions, 'select-option')
+    setSelectedAnciens(false)
     setSelectedZone(null)
     setSelectedStructureType('')
     setIsQpvSelected(false)
@@ -126,6 +135,22 @@ export default function ListeLieuxInclusionFiltre({
 
   return (
     <div>
+      <div className="fr-toggle fr-mb-3w">
+        <input
+          checked={selectedAnciens}
+          className="fr-toggle__input"
+          id={toggleId}
+          name="anciens"
+          onChange={(event) => {
+            setSelectedAnciens(event.target.checked)
+          }}
+          type="checkbox"
+        />
+        <label className="fr-toggle__label" htmlFor={toggleId}>
+          Afficher les lieux de mes anciens aidants et médiateurs
+        </label>
+      </div>
+
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
           <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />

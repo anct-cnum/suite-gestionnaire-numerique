@@ -6,6 +6,7 @@ export type FiltreGeographiqueLieux = Readonly<{
 }>
 
 export type FiltresListeLieux = Readonly<{
+  anciens?: boolean
   frr?: boolean
   geographique?: FiltreGeographiqueLieux
   horsZonePrioritaire?: boolean
@@ -28,6 +29,7 @@ export interface LieuInclusionNumeriqueItem {
   categorie_juridique: null | string
   code_insee: string
   code_postal: string
+  est_actif: boolean
   est_frr: boolean
   est_qpv: boolean
   id: string

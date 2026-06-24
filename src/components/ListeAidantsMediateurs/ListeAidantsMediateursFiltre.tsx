@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useRef, useState } from 'react'
 import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
@@ -21,6 +21,8 @@ export default function ListeAidantsMediateursFiltre({
   utilisateurRole,
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
+  const toggleId = useId()
+  const [selectedAnciens, setSelectedAnciens] = useState(false)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
   const [selectedRoles, setSelectedRoles] = useState<Array<string>>([])
   const [selectedHabilitations, setSelectedHabilitations] = useState<Array<string>>([])
@@ -28,6 +30,7 @@ export default function ListeAidantsMediateursFiltre({
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
+    setSelectedAnciens(currentFilters.anciens)
     setSelectedRoles(currentFilters.roles.filter(Boolean))
     setSelectedHabilitations(currentFilters.habilitations.filter(Boolean))
     setSelectedFormations(currentFilters.formations.filter(Boolean))
@@ -42,6 +45,7 @@ export default function ListeAidantsMediateursFiltre({
 
   function reinitialiser(): void {
     ref.current?.setValue(toutesLesRegions, 'select-option')
+    setSelectedAnciens(false)
     setSelectedZone(null)
     setSelectedRoles([])
     setSelectedHabilitations([])
@@ -52,6 +56,11 @@ export default function ListeAidantsMediateursFiltre({
 
   function appliquerFiltre(): void {
     const params = new URLSearchParams()
+
+    // Filtre anciens
+    if (selectedAnciens) {
+      params.set('anciens', 'true')
+    }
 
     // Filtre géographique - seulement pour les administrateur_dispositif
     if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
@@ -82,6 +91,22 @@ export default function ListeAidantsMediateursFiltre({
 
   return (
     <div className="sidepanel__content">
+      <div className="fr-toggle fr-mb-3w">
+        <input
+          checked={selectedAnciens}
+          className="fr-toggle__input"
+          id={toggleId}
+          name="anciens"
+          onChange={(event) => {
+            setSelectedAnciens(event.target.checked)
+          }}
+          type="checkbox"
+        />
+        <label className="fr-toggle__label" htmlFor={toggleId}>
+          Afficher les anciens aidants et médiateurs
+        </label>
+      </div>
+
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
           <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
@@ -143,6 +168,7 @@ export default function ListeAidantsMediateursFiltre({
 type Props = Readonly<{
   closeDrawer(): void
   currentFilters: {
+    anciens: boolean
     codeDepartement: null | string
     codeRegion: null | string
     formations: Array<string>

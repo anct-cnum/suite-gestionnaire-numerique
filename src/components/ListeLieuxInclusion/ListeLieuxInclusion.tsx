@@ -76,6 +76,7 @@ export default function ListeLieuxInclusion({
     const exportParams = new URLSearchParams()
 
     // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
+    const anciens = normalizedSearchParams.get('anciens')
     const codeDepartement = normalizedSearchParams.get('codeDepartement')
     const codeRegion = normalizedSearchParams.get('codeRegion')
     const typeStructure = normalizedSearchParams.get('typeStructure')
@@ -83,6 +84,9 @@ export default function ListeLieuxInclusion({
     const frr = normalizedSearchParams.get('frr')
     const horsZonePrioritaire = normalizedSearchParams.get('horsZonePrioritaire')
 
+    if (anciens === 'true') {
+      exportParams.set('anciens', 'true')
+    }
     if (codeDepartement !== null && codeDepartement !== '') {
       exportParams.set('codeDepartement', codeDepartement)
     }
@@ -258,7 +262,7 @@ export default function ListeLieuxInclusion({
             }}
           />
           <Table
-            enTetes={['Lieu', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
+            enTetes={['Lieu', 'Statut', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
             titre="Lieux d'inclusion numérique"
           >
             {viewModel.lieux.map((lieu) => (
@@ -277,6 +281,11 @@ export default function ListeLieuxInclusion({
                       {lieu.typeStructure}
                     </span>
                   </div>
+                </td>
+                <td>
+                  <Badge color={lieu.estActif ? 'success' : 'warning'} small={true}>
+                    {lieu.estActif ? 'Actif' : 'Inactif'}
+                  </Badge>
                 </td>
                 <td style={{ maxWidth: '20vw' }}>
                   <div

@@ -44,6 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const filtres = buildFiltresLieuxInclusion(
       {
+        anciens: searchParams.get('anciens') ?? undefined,
         codeDepartement: codeDepartementDemande,
         codeRegion: codeRegionDemande,
         frr: searchParams.get('frr') ?? undefined,

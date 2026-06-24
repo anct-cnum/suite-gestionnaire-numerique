@@ -22,6 +22,7 @@ export default async function ListeAidantsMediateursController({
   searchParams,
 }: {
   readonly searchParams: Promise<{
+    anciens?: string
     codeDepartement?: string
     codeRegion?: string
     formations?: string
@@ -95,7 +96,7 @@ export default async function ListeAidantsMediateursController({
 
   // Passer les paramètres actuels pour l'affichage des filtres actifs
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, formations, habilitations, page, roles } = resolvedSearchParams
+  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, roles } = resolvedSearchParams
   setSearchParams()
 
   return (
@@ -116,6 +117,9 @@ export default async function ListeAidantsMediateursController({
   )
 
   function setSearchParams(): void {
+    if (anciens === 'true') {
+      currentSearchParams.set('anciens', 'true')
+    }
     if (page !== undefined && page !== '') {
       currentSearchParams.set('page', page)
     }

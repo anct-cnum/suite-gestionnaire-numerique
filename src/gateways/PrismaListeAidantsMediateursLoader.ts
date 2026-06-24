@@ -108,10 +108,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
+  private buildFiltreActif(anciens?: boolean): Prisma.Sql {
+    if (anciens) {
+      return Prisma.empty
+    }
+    return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM main.personne_affectations_emploi pae
+      WHERE pae.personne_id = pe.id AND pae.est_active = true
+    )`
+  }
+
   // Étape 1 — Périmètre d'accès : "qui ai-je le droit de voir ?"
   // Le filtre géographique explicite (UI) prend le pas sur le scope departemental/structure.
   private buildScopeCte(filtres: FiltresListeAidants): Prisma.Sql {
-    const { geographique, scopeFiltre } = filtres
+    const { anciens, geographique, scopeFiltre } = filtres
+    const filtreActif = this.buildFiltreActif(anciens)
 
     if (geographique) {
       const codesDepartements =
@@ -125,6 +136,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           AND a.departement = ANY(${codesDepartements})
+          ${filtreActif}
       )`
     }
 
@@ -137,10 +149,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           AND a.departement = ANY(${codesDepartements})
+          ${filtreActif}
       )`
     }
 
     if (scopeFiltre.type === 'structure') {
+      const filtreEmploiStructure = anciens ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
       return Prisma.sql`personnes_dans_scope AS (
         SELECT pe.id
         FROM min.personne_enrichie pe
@@ -150,8 +164,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             OR EXISTS (
               SELECT 1 FROM main.personne_affectations_emploi pae
               WHERE pae.personne_id = pe.id
-                AND pae.est_active = true
                 AND pae.structure_administrative_id = ${scopeFiltre.id}
+                ${filtreEmploiStructure}
             )
           )
       )`
@@ -162,6 +176,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       SELECT pe.id
       FROM min.personne_enrichie pe
       WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+        ${filtreActif}
     )`
   }
 
@@ -298,6 +313,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
 
     return {
+      estActif: personne.est_actif,
       formations,
       id: String(personne.id),
       labelisations,
@@ -339,7 +355,11 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         pe.est_actuellement_mediateur_en_poste,
         array_agg(DISTINCT f.label) AS formations,
         BOOL_OR(f.pix) AS pix,
-        BOOL_OR(f.remn) AS remn
+        BOOL_OR(f.remn) AS remn,
+        EXISTS (
+          SELECT 1 FROM main.personne_affectations_emploi pae
+          WHERE pae.personne_id = pe.id AND pae.est_active = true
+        ) AS est_actif
       FROM min.personne_enrichie pe
       JOIN personnes_dans_scope pds ON pds.id = pe.id
       LEFT JOIN main.formation f ON pe.id = f.personne_id
@@ -373,6 +393,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         array_agg(DISTINCT f.label) AS formations,
         BOOL_OR(f.pix) AS pix,
         BOOL_OR(f.remn) AS remn,
+        EXISTS (
+          SELECT 1 FROM main.personne_affectations_emploi pae
+          WHERE pae.personne_id = pe.id AND pae.est_active = true
+        ) AS est_actif,
         COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
         COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac,
         MAX(COALESCE(s.denomination_antenne, s.denomination_sirene)) AS structure_nom,
@@ -398,6 +422,7 @@ interface PersonneQueryResult {
   aidants_connect: boolean
   conseiller_numerique: boolean
   coordinateur: boolean
+  est_actif: boolean
   est_actuellement_mediateur_en_poste: boolean
   formations: Array<string>
   id: number
