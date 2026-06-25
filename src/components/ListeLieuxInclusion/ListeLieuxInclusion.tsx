@@ -262,7 +262,7 @@ export default function ListeLieuxInclusion({
             }}
           />
           <Table
-            enTetes={['Lieu', 'Statut', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
+            enTetes={['Lieu', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
             titre="Lieux d'inclusion numérique"
           >
             {viewModel.lieux.map((lieu) => (
@@ -281,11 +281,6 @@ export default function ListeLieuxInclusion({
                       {lieu.typeStructure}
                     </span>
                   </div>
-                </td>
-                <td>
-                  <Badge color={lieu.estActif ? 'success' : 'warning'} small={true}>
-                    {lieu.estActif ? 'Actif' : 'Inactif'}
-                  </Badge>
                 </td>
                 <td style={{ maxWidth: '20vw' }}>
                   <div
