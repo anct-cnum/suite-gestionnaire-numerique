@@ -2,15 +2,15 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../../prisma/prismaClient'
 import StructuresDoublons from '@/components/StructuresDoublons/StructuresDoublons'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { Administrateur } from '@/domain/Administrateur'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresDoublonsLoader } from '@/gateways/PrismaStructuresDoublonsLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { structuresDoublonsPresenter } from '@/presenters/structuresDoublonsPresenter'
 import { RechercherStructuresDoublons } from '@/use-cases/queries/RechercherStructuresDoublons'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Doublons de structures',
@@ -22,8 +22,9 @@ export default async function StructuresDoublonsController(): Promise<ReactEleme
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(await getSessionSub())
-  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     redirect('/tableau-de-bord')
   }
 

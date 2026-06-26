@@ -383,6 +383,7 @@ function utilisateurAvecRole(
     groupementId: null,
     inviteLe: epochTime,
     isActive: true,
+    isBetaTesteur: false,
     isGestionnaireDepartement: type === 'gestionnaire_departement',
     isSuperAdmin: false,
     nom: 'Doe',

@@ -3,16 +3,16 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import prisma from '../../../../prisma/prismaClient'
-import { Administrateur } from '@/domain/Administrateur'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureTransfertRepository } from '@/gateways/PrismaStructureTransfertRepository'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import {
   NotionCle,
   TransfererNotionsStructure,
   TransfertNotionsFailure,
 } from '@/use-cases/commands/TransfererNotionsStructure'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<TransfertNotionsFailure, string>> = {
   aucuneNotionSelectionnee: 'Sélectionnez au moins une notion à transférer',
@@ -30,10 +30,11 @@ export async function transfererNotionsStructureAction(actionParams: ActionParam
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  // Garde : seul un administrateur_dispositif porteur du flag beta testeur peut transférer.
+  // Garde : seul un bêta-testeur peut transférer.
   const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(sub)
-  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     return ['Action réservée aux administrateurs autorisés']
   }
 

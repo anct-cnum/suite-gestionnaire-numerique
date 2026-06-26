@@ -20,6 +20,7 @@ export function utilisateurReadModelFactory(override?: Partial<UnUtilisateurRead
     groupementId: null,
     inviteLe: epochTime,
     isActive: true,
+    isBetaTesteur: false,
     isGestionnaireDepartement: false,
     isSuperAdmin: false,
     nom: 'Tartempion',

@@ -119,6 +119,7 @@ function createUtilisateurReadModel(
     // eslint-disable-next-line no-restricted-syntax
     inviteLe: overrides.inviteLe ?? new Date(),
     isActive: overrides.isActive ?? true,
+    isBetaTesteur: false,
     isGestionnaireDepartement: overrides.role === 'gestionnaire_departement',
     isSuperAdmin: overrides.isSuperAdmin ?? false,
     nom: overrides.nom ?? 'Dupont',

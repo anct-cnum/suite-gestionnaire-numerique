@@ -75,11 +75,6 @@ const AidantRow = memo(
           </div>
         </td>
         <td>
-          <Badge color={aidant.estActif ? 'success' : 'warning'} small={true}>
-            {aidant.estActif ? 'Actif' : 'Inactif'}
-          </Badge>
-        </td>
-        <td>
           <div className="fr-grid-row fr-grid-row--gutters fr-text--sm">
             {aidant.role.map((roleItem) => (
               <Badge
@@ -375,7 +370,7 @@ export default function ListeAidantsMediateurs({
           />
 
           <Table
-            enTetes={['Prénom et nom', 'Statut', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
+            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
             titre="Aidants et médiateurs numériques"
           >
             {viewModel.aidants.map((aidant) => (

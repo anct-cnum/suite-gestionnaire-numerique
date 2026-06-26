@@ -2,19 +2,19 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../prisma/prismaClient'
 import MembresAConsolider from '@/components/MembresAConsolider/MembresAConsolider'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { Administrateur } from '@/domain/Administrateur'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMembresAConsoliderLoader } from '@/gateways/PrismaMembresAConsoliderLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { membresAConsoliderPresenter, reglesPresenter } from '@/presenters/membresAConsoliderPresenter'
 import {
   RechercherMembresAConsolider,
   RegleConsolidation,
   REGLES_CONSOLIDATION,
 } from '@/use-cases/queries/RechercherMembresAConsolider'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Membres à consolider',
@@ -26,8 +26,9 @@ export default async function MembresAConsoliderController({ searchParams }: Pro
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(await getSessionSub())
-  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     redirect('/tableau-de-bord')
   }
 

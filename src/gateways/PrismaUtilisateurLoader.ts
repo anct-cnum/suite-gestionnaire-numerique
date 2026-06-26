@@ -350,6 +350,7 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
     isActive: utilisateurRecord.derniereConnexion !== null,
+    isBetaTesteur: utilisateurRecord.isBetaTesteur,
     isGestionnaireDepartement: role.nom === 'Gestionnaire département',
     isSuperAdmin: utilisateurRecord.isSuperAdmin,
     nom: utilisateurRecord.nom,

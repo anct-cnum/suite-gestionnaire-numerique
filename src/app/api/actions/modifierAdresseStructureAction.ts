@@ -3,13 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import prisma from '../../../../prisma/prismaClient'
-import { Administrateur } from '@/domain/Administrateur'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { Failure, ModifierAdresseStructure } from '@/use-cases/commands/ModifierAdresseStructure'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
   adresseIntrouvable: 'Adresse introuvable — vérifiez la saisie',
@@ -23,9 +23,11 @@ export async function modifierAdresseStructureAction(actionParams: ActionParams)
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  // Garde : édition réservée aux bêta-testeurs (administrateur dispositif + flag is_beta_testeur).
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(await getSessionSub())
-  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+  // Garde : édition réservée aux bêta-testeurs.
+  const sub = await getSessionSub()
+  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     return ['Action réservée aux administrateurs autorisés']
   }
 

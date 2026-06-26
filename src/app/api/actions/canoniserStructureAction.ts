@@ -3,14 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import prisma from '../../../../prisma/prismaClient'
-import { Administrateur } from '@/domain/Administrateur'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { ApiSireneLoader } from '@/gateways/apiEntreprise/ApiSireneLoader'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureCanonisationRepository } from '@/gateways/PrismaStructureCanonisationRepository'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { CanoniserFailure, CanoniserStructure } from '@/use-cases/commands/CanoniserStructure'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<CanoniserFailure, string>> = {
   canoniqueExistante: 'Une structure canonique existe déjà pour ce SIRET : fusionnez-la plutôt',
@@ -27,10 +27,11 @@ export async function canoniserStructureAction(actionParams: ActionParams): Prom
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  // Garde : opération réservée aux bêta-testeurs (administrateur dispositif + flag is_beta_testeur).
+  // Garde : opération réservée aux bêta-testeurs.
   const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(sub)
-  if (!(utilisateur instanceof Administrateur) || !utilisateur.isBetaTesteur) {
+  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     return ['Action réservée aux administrateurs autorisés']
   }
 

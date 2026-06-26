@@ -18,10 +18,12 @@ export type ScopeFiltre =
   | Readonly<{ type: 'national' }>
 
 export class Contexte {
+  readonly isBetaTesteur: boolean
   readonly role: RoleUtilisateur
   readonly scopes: ReadonlyArray<Scope>
 
-  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>) {
+  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>, isBetaTesteur = false) {
+    this.isBetaTesteur = isBetaTesteur
     this.role = role
     this.scopes = scopes
   }
@@ -146,7 +148,7 @@ export async function resoudreContexte(
   scopeLoader: ScopeLoader
 ): Promise<Contexte> {
   const scopes = await construireScopes(utilisateur, scopeLoader)
-  return new Contexte(utilisateur.role.type, scopes)
+  return new Contexte(utilisateur.role.type, scopes, utilisateur.isBetaTesteur)
 }
 
 export type Scope =

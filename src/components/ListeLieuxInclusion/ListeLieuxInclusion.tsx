@@ -328,9 +328,11 @@ export default function ListeLieuxInclusion({
                 <td className="fr-cell--center">{lieu.nbMandatsAC}</td>
                 <td className="fr-cell--center">{lieu.nbAccompagnements}</td>
                 <td className="fr-cell--center">
-                  <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/lieu/${lieu.id}`}>
-                    Détail
-                  </Link>
+                  <div className="fr-btns-group fr-btns-group--inline fr-btns-group--sm">
+                    <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/lieu/${lieu.id}`}>
+                      Détail
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
