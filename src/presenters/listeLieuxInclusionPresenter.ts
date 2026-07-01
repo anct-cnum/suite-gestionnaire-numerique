@@ -1,3 +1,4 @@
+import { formaterEnDateFrancaise } from '@/presenters/shared/date'
 import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 export function listeLieuxInclusionPresenter(
@@ -6,7 +7,7 @@ export function listeLieuxInclusionPresenter(
 ): ListeLieuxInclusionViewModel {
   const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
-    derniereMiseAJour: getDerniereMiseAJourTag(lieu.updated_at, now),
+    derniereMiseAJour: getDerniereMiseAJour(lieu.updated_at, now),
     estActif: lieu.est_actif,
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
@@ -43,7 +44,7 @@ export interface ListeLieuxInclusionViewModel {
 
 export interface LieuInclusionViewModel {
   adresse: string
-  derniereMiseAJour: DerniereMiseAJourTag | null
+  derniereMiseAJour: DerniereMiseAJourViewModel | null
   estActif: boolean
   id: string
   idCartographieNationale: null | string
@@ -55,11 +56,11 @@ export interface LieuInclusionViewModel {
   typeStructure: string
 }
 
-type CouleurDerniereMiseAJour = 'error' | 'green-tilleul-verveine' | 'info' | 'orange-terre-battue'
+export type CouleurFraicheur = 'blue' | 'orange' | 'red' | 'yellow'
 
-interface DerniereMiseAJourTag {
-  couleur: CouleurDerniereMiseAJour
-  libelle: string
+interface DerniereMiseAJourViewModel {
+  couleur: CouleurFraicheur
+  date: string
 }
 
 interface Tag {
@@ -92,25 +93,26 @@ function getTags(lieu: { est_frr: boolean; est_qpv: boolean }): Array<Tag> {
   return tags
 }
 
-function getDerniereMiseAJourTag(updatedAt: Date | null, now: Date): DerniereMiseAJourTag | null {
+function getDerniereMiseAJour(updatedAt: Date | null, now: Date): DerniereMiseAJourViewModel | null {
   if (updatedAt === null) {
     return null
   }
 
   const diffMs = now.getTime() - updatedAt.getTime()
   const diffMois = diffMs / (1000 * 60 * 60 * 24 * 30.44)
-
-  if (diffMois < 3) {
-    return { couleur: 'info', libelle: '< 3 mois' }
-  }
+  const date = formaterEnDateFrancaise(updatedAt)
 
   if (diffMois < 6) {
-    return { couleur: 'green-tilleul-verveine', libelle: '3 - 6 mois' }
+    return { couleur: 'blue', date }
   }
 
   if (diffMois < 12) {
-    return { couleur: 'orange-terre-battue', libelle: '6 - 12 mois' }
+    return { couleur: 'yellow', date }
   }
 
-  return { couleur: 'error', libelle: '> 12 mois' }
+  if (diffMois < 18) {
+    return { couleur: 'orange', date }
+  }
+
+  return { couleur: 'red', date }
 }

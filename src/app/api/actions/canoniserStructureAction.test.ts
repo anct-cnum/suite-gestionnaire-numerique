@@ -2,17 +2,17 @@ import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { canoniserStructureAction } from './canoniserStructureAction'
-import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { CanoniserStructure } from '@/use-cases/commands/CanoniserStructure'
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('canoniser une structure action', () => {
   it('canonise et purge le cache quand un bêta-testeur confirme', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(CanoniserStructure.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
@@ -37,8 +37,8 @@ describe('canoniser une structure action', () => {
   it('traduit le refus de canoniser quand une canonique de même SIRET existe', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(CanoniserStructure.prototype, 'handle').mockResolvedValueOnce('canoniqueExistante')
 
@@ -52,8 +52,8 @@ describe('canoniser une structure action', () => {
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: false, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: false })
     )
 
     // WHEN

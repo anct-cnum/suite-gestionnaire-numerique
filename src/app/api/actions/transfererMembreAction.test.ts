@@ -2,17 +2,17 @@ import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { transfererMembreAction } from './transfererMembreAction'
-import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { TransfererMembre } from '@/use-cases/commands/TransfererMembre'
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('transférer un membre action', () => {
   it('transfère le membre et purge le cache quand un administrateur autorisé confirme', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererMembre.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
@@ -52,8 +52,18 @@ describe('transférer un membre action', () => {
   it('refuse l’action à un utilisateur non administrateur autorisé', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: false, role: 'Gestionnaire structure' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({
+        isBetaTesteur: false,
+        role: {
+          categorie: 'anct',
+          doesItBelongToGroupeAdmin: false,
+          nom: 'Gestionnaire structure',
+          organisation: '',
+          rolesGerables: [],
+          type: 'gestionnaire_structure',
+        },
+      })
     )
 
     // WHEN
@@ -71,8 +81,8 @@ describe('transférer un membre action', () => {
   it('remonte le message d’échec métier renvoyé par la commande', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererMembre.prototype, 'handle').mockResolvedValueOnce('transfertCreeraitDoublonMembre')
 
