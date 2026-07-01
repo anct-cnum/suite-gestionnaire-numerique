@@ -17,7 +17,7 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
+import { CouleurFraicheur, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
 import {
   buildURLSearchParamsFromLieuxInclusionFilters,
   getActiveLieuxInclusionFilters,
@@ -34,9 +34,12 @@ export default function ListeLieuxInclusion({
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
   const router = useRouter()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false)
   const [isFilterLoading, setIsFilterLoading] = useState(false)
   const drawerId = 'drawerFiltreLieux'
+  const drawerInfoId = 'drawerInfoFraicheur'
   const labelId = useId()
+  const labelInfoId = useId()
 
   // Normaliser searchParams une fois pour toute l'utilisation
   const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
@@ -151,6 +154,11 @@ export default function ListeLieuxInclusion({
     }, 50)
   }
 
+  const afficherColonneMajInfos =
+    utilisateurRole === 'Administrateur dispositif' ||
+    utilisateurRole === 'Gestionnaire département' ||
+    utilisateurRole === 'Gestionnaire structure'
+
   if ('type' in listeLieuxInclusionViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -262,7 +270,16 @@ export default function ListeLieuxInclusion({
             }}
           />
           <Table
-            enTetes={['Lieu', 'Adresse', 'Siret', 'FRR / QPV', 'Mandats AC', 'Nb Accompagnements', 'Action']}
+            enTetes={[
+              'Lieu',
+              'Adresse',
+              'Siret',
+              ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
+              'FRR / QPV',
+              'Mandats AC',
+              'Nb Accompagnements',
+              'Action',
+            ]}
             titre="Lieux d'inclusion numérique"
           >
             {viewModel.lieux.map((lieu) => (
@@ -316,6 +333,41 @@ export default function ListeLieuxInclusion({
                     </a>
                   )}
                 </td>
+                {afficherColonneMajInfos ? (
+                  <td>
+                    {lieu.derniereMiseAJour !== null ? (
+                      <button
+                        aria-controls={drawerInfoId}
+                        data-fr-opened="false"
+                        onClick={() => {
+                          setIsInfoDrawerOpen(true)
+                        }}
+                        style={{
+                          alignItems: 'center',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          gap: '4px',
+                          padding: 0,
+                        }}
+                        type="button"
+                      >
+                        <span
+                          style={{
+                            backgroundColor: couleursFraicheur[lieu.derniereMiseAJour.couleur],
+                            borderRadius: '50%',
+                            display: 'inline-block',
+                            flexShrink: 0,
+                            height: '12px',
+                            width: '12px',
+                          }}
+                        />
+                        {lieu.derniereMiseAJour.date}
+                      </button>
+                    ) : null}
+                  </td>
+                ) : null}
                 <td>
                   <div className="fr-tags-group">
                     {lieu.tags.map((tag) => (
@@ -372,9 +424,106 @@ export default function ListeLieuxInclusion({
           utilisateurRole={utilisateurRole}
         />
       </Drawer>
+
+      <Drawer
+        boutonFermeture="Fermer"
+        closeDrawer={() => {
+          setIsInfoDrawerOpen(false)
+        }}
+        id={drawerInfoId}
+        isFixedWidth={false}
+        isOpen={isInfoDrawerOpen}
+        labelId={labelInfoId}
+      >
+        <DrawerTitle id={labelInfoId}>
+          <TitleIcon className="fr-mb-2w" icon="information-line" />
+          <br />
+          Fraîcheur des informations du lieu
+        </DrawerTitle>
+        <p className="fr-text--md">
+          {'Cet indicateur signale depuis combien de temps les informations du lieu '}
+          <strong>{'(coordonnées, horaires, services proposés)'}</strong>
+          {
+            ' n\u2019ont pas été mises à jour. Il ne signifie pas qu\u2019une information est fausse\u00a0: une donnée ancienne peut rester exacte. Il indique le niveau de vérification recommandé.'
+          }
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {niveauxFraicheur.map((niveau) => (
+            <div key={niveau.libelle} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <span
+                style={{
+                  alignItems: 'center',
+                  backgroundColor: niveau.badgeBg,
+                  borderRadius: '4px',
+                  color: niveau.badgeTexte,
+                  display: 'inline-flex',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  gap: '4px',
+                  lineHeight: '20px',
+                  padding: '4px 8px',
+                  width: 'fit-content',
+                }}
+              >
+                <span
+                  style={{
+                    backgroundColor: niveau.couleurPastille,
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    height: '10px',
+                    width: '10px',
+                  }}
+                />
+                {niveau.libelle}
+              </span>
+              <p className="fr-text--md fr-mb-0">{niveau.description}</p>
+            </div>
+          ))}
+        </div>
+      </Drawer>
     </>
   )
 }
+
+const couleursFraicheur: Readonly<Record<CouleurFraicheur, string>> = {
+  blue: '#0078F3',
+  orange: '#D64D00',
+  red: '#C9191E',
+  yellow: '#E2CF58',
+}
+
+const niveauxFraicheur = [
+  {
+    badgeBg: '#e8edff',
+    badgeTexte: '#0063cb',
+    couleurPastille: '#0078F3',
+    description: 'Informations mises à jour il y a moins de 6 mois. Aucune action nécessaire.',
+    libelle: 'À jour',
+  },
+  {
+    badgeBg: '#fceeac',
+    badgeTexte: '#66673d',
+    couleurPastille: '#E2CF58',
+    description: 'Informations mises à jour il y a 6 à 12 mois. Un contrôle ponctuel est conseillé.',
+    libelle: 'À surveiller',
+  },
+  {
+    badgeBg: '#ffe9e6',
+    badgeTexte: '#b34000',
+    couleurPastille: '#D64D00',
+    description: 'Informations datant de 12 à 18 mois. Une vérification est recommandée en priorité.',
+    libelle: 'À vérifier',
+  },
+  {
+    badgeBg: '#fddede',
+    badgeTexte: '#ce0500',
+    couleurPastille: '#C9191E',
+    description:
+      'Informations non mises à jour depuis plus de 18 mois. Une mise à jour est recommandée pour qu\u2019elles restent fiables sur la cartographie.',
+    libelle: 'À actualiser',
+  },
+]
 
 // Type pour les searchParams sérialisés depuis le serveur
 type SerializedSearchParams = Array<[string, string]> | URLSearchParams

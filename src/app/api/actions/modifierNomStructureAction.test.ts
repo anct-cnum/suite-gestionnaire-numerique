@@ -2,17 +2,17 @@ import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { modifierNomStructureAction } from './modifierNomStructureAction'
-import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { ModifierNomStructure } from '@/use-cases/commands/ModifierNomStructure'
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('modifier le nom d’une structure action', () => {
   it('modifie le nom et purge le cache quand un bêta-testeur confirme', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(ModifierNomStructure.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
@@ -48,8 +48,8 @@ describe('modifier le nom d’une structure action', () => {
   it('traduit l’échec métier renvoyé par la commande (structure canonique)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: true, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(ModifierNomStructure.prototype, 'handle').mockResolvedValueOnce('structureCanoniqueNonRenommable')
 
@@ -67,8 +67,8 @@ describe('modifier le nom d’une structure action', () => {
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ isBetaTesteur: false, role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: false })
     )
 
     // WHEN
