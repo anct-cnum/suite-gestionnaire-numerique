@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { ReactElement, useEffect, useId, useMemo, useState } from 'react'
+import React, { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
+import styles from './ListeLieuxInclusion.module.css'
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'
 import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
@@ -12,9 +13,11 @@ import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { modifierLieuInclusionVisibiliteCartographieAction } from '@/app/api/actions/modifierLieuInclusionVisibiliteCartographieAction'
 import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { Notification } from '@/components/shared/Notification/Notification'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { CouleurFraicheur, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
@@ -154,6 +157,25 @@ export default function ListeLieuxInclusion({
     }, 50)
   }
 
+  async function handleToggleVisibleCarto(event: ChangeEvent<HTMLInputElement>, lieuId: string): Promise<void> {
+    const newValue = event.target.checked
+    const messages = await modifierLieuInclusionVisibiliteCartographieAction({
+      lieuId,
+      path: '/liste-lieux-inclusion',
+      visiblePourCartographie: newValue,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'modifiée', title: 'Visibilité cartographique ' })
+    } else {
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
+      event.target.checked = !newValue
+    }
+  }
+
   const afficherColonneMajInfos =
     utilisateurRole === 'Administrateur dispositif' ||
     utilisateurRole === 'Gestionnaire département' ||
@@ -275,6 +297,7 @@ export default function ListeLieuxInclusion({
               'Adresse',
               'Siret',
               ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
+              ...(afficherColonneMajInfos ? ['Visible Carto'] : []),
               'FRR / QPV',
               'Mandats AC',
               'Nb Accompagnements',
@@ -366,6 +389,23 @@ export default function ListeLieuxInclusion({
                         {lieu.derniereMiseAJour.date}
                       </button>
                     ) : null}
+                  </td>
+                ) : null}
+                {afficherColonneMajInfos ? (
+                  <td>
+                    <div className={styles['toggle-carto']}>
+                      <div className="fr-toggle" style={{ margin: 0 }}>
+                        <input
+                          className="fr-toggle__input"
+                          defaultChecked={lieu.visiblePourCartographie}
+                          disabled
+                          id={`visible-carto-${lieu.id}`}
+                          onChange={(event) => handleToggleVisibleCarto(event, lieu.id)}
+                          type="checkbox"
+                        />
+                        <label className="fr-toggle__label" htmlFor={`visible-carto-${lieu.id}`} />
+                      </div>
+                    </div>
                   </td>
                 ) : null}
                 <td>

@@ -1,0 +1,14 @@
+/* Toggle sans label dans une cellule de tableau : supprime l'espace réservé
+   au texte du label DSFR (margin-right sur le ::before) pour un centrage exact. */
+.toggle-carto {
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-carto label {
+  width: auto;
+}
+
+.toggle-carto label::before {
+  margin-right: 0;
+}

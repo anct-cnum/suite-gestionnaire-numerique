@@ -10,6 +10,8 @@ import {
   UpdateLieuInclusionServicesTypeAccompagnementRepository,
   UpdateLieuInclusionServicesTypePublicData,
   UpdateLieuInclusionServicesTypePublicRepository,
+  UpdateLieuInclusionVisibiliteCartographieData,
+  UpdateLieuInclusionVisibiliteCartographieRepository,
 } from '@/use-cases/commands/shared/LieuInclusionRepository'
 
 export class PrismaLieuInclusionRepository
@@ -17,7 +19,8 @@ export class PrismaLieuInclusionRepository
     UpdateLieuInclusionDescriptionRepository,
     UpdateLieuInclusionServicesModaliteRepository,
     UpdateLieuInclusionServicesTypeAccompagnementRepository,
-    UpdateLieuInclusionServicesTypePublicRepository
+    UpdateLieuInclusionServicesTypePublicRepository,
+    UpdateLieuInclusionVisibiliteCartographieRepository
 {
   async updateDescription(data: UpdateLieuInclusionDescriptionData): Promise<void> {
     const existingStructure = await prisma.main_lieu_inclusion.findUnique({
@@ -134,6 +137,17 @@ export class PrismaLieuInclusionRepository
     // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
     await prisma.main_lieu_inclusion.update({
       data: updateData,
+      where: {
+        id: data.structureUid.state.value,
+      },
+    })
+  }
+
+  async updateVisibiliteCartographie(data: UpdateLieuInclusionVisibiliteCartographieData): Promise<void> {
+    await prisma.main_lieu_inclusion.update({
+      data: {
+        visible_pour_cartographie_nationale: data.visiblePourCartographie,
+      },
       where: {
         id: data.structureUid.state.value,
       },

@@ -44,6 +44,7 @@ export interface LieuInclusionNumeriqueItem {
   structure_cartographie_nationale_id: null | string
   type_structure: null | string
   updated_at: Date | null
+  visible_pour_cartographie_nationale: boolean | null
 }
 
 export interface RecupererLieuxInclusionPort {

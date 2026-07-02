@@ -17,6 +17,7 @@ export function listeLieuxInclusionPresenter(
     siret: lieu.siret,
     tags: getTags(lieu),
     typeStructure: lieu.categorie_juridique ?? 'Non renseigné',
+    visiblePourCartographie: lieu.visible_pour_cartographie_nationale ?? false,
   }))
 
   return {
@@ -54,6 +55,7 @@ export interface LieuInclusionViewModel {
   siret: null | string
   tags: Array<Tag>
   typeStructure: string
+  visiblePourCartographie: boolean
 }
 
 export type CouleurFraicheur = 'blue' | 'orange' | 'red' | 'yellow'
