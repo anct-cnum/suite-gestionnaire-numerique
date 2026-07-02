@@ -47,3 +47,12 @@ export type UpdateLieuInclusionServicesTypePublicData = Readonly<{
   publicsSpecifiquementAdresses: ReadonlyArray<string>
   structureUid: StructureUid
 }>
+
+export interface UpdateLieuInclusionVisibiliteCartographieRepository {
+  updateVisibiliteCartographie(data: UpdateLieuInclusionVisibiliteCartographieData): Promise<void>
+}
+
+export type UpdateLieuInclusionVisibiliteCartographieData = Readonly<{
+  structureUid: StructureUid
+  visiblePourCartographie: boolean
+}>
