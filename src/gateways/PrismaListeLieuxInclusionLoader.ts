@@ -7,6 +7,7 @@ import {
   LieuInclusionNumeriqueItem,
   RecupererLieuxInclusionPort,
   RecupererLieuxInclusionReadModel,
+  StatutLieux,
 } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 // Refonte 2026 : ce loader cible desormais main.lieu_inclusion (et plus
@@ -20,11 +21,14 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   async getLieux(filtres: FiltresListeLieux): Promise<RecupererLieuxInclusionReadModel> {
     const { pagination } = filtres
     const scopeCte = this.buildScopeCte(filtres)
+    const scopeCteActifs = this.buildScopeCte({ ...filtres, statut: 'actif' })
+    const scopeCteArchives = this.buildScopeCte({ ...filtres, statut: 'archive' })
     const whereConditions = this.buildWhereConditions(filtres)
     const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
 
-    const [total, lieux, stats] = await Promise.all([
-      this.queryTotal(scopeCte, whereConditions),
+    const [totalActifs, totalArchives, lieux, stats] = await Promise.all([
+      this.queryTotal(scopeCteActifs, whereConditions),
+      this.queryTotal(scopeCteArchives, whereConditions),
       this.queryLieux(scopeCte, whereConditions, limitOffset),
       this.queryStats(scopeCte, whereConditions),
     ])
@@ -33,7 +37,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       lieux,
       limite: pagination.limite,
       page: pagination.page,
-      total,
+      total: filtres.statut === 'archive' ? totalArchives : totalActifs,
+      totalActifs,
+      totalArchives,
       totalConseillerNumerique: stats.totalConseillerNumerique,
       totalLabellise: stats.totalLabellise,
     }
@@ -52,9 +58,13 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     `
   }
 
-  private buildFiltreActif(anciens?: boolean): Prisma.Sql {
-    if (anciens) {
-      return Prisma.empty
+  // Actif = au moins une affectation active sur le lieu ; archivé = aucune.
+  private buildFiltreStatut(statut: StatutLieux): Prisma.Sql {
+    if (statut === 'archive') {
+      return Prisma.sql`AND NOT EXISTS (
+        SELECT 1 FROM main.personne_affectations_lieu pal
+        WHERE pal.lieu_id = l.id AND pal.est_active = true
+      )`
     }
     return Prisma.sql`AND EXISTS (
       SELECT 1 FROM main.personne_affectations_lieu pal
@@ -65,8 +75,8 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
   // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
   private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
-    const { anciens, geographique, scopeFiltre } = filtres
-    const filtreActif = this.buildFiltreActif(anciens)
+    const { geographique, scopeFiltre, statut } = filtres
+    const filtreStatut = this.buildFiltreStatut(statut)
 
     if (geographique) {
       const codesDepartements =
@@ -78,7 +88,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         FROM main.lieu_inclusion l
         LEFT JOIN main.adresse a ON a.id = l.adresse_id
         WHERE a.departement = ANY(${codesDepartements})
-          ${filtreActif}
+          ${filtreStatut}
       )`
     }
 
@@ -89,7 +99,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         FROM main.lieu_inclusion l
         LEFT JOIN main.adresse a ON a.id = l.adresse_id
         WHERE a.departement = ANY(${codesDepartements})
-          ${filtreActif}
+          ${filtreStatut}
       )`
     }
 
@@ -98,9 +108,11 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       // Un gestionnaire de SA voit les lieux : (a) associes directement a sa
       // SA via l'asso, (b) ou ou travaillent des personnes employees par sa SA
       // (paf_lieu + paf_emploi croises, plus min.personne_enrichie pour les
-      // mediateurs Coop sans paf_emploi).
-      const filtreEmploiActif = anciens ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
-      const filtreLieuActif = anciens ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
+      // mediateurs Coop sans paf_emploi). Pour les lieux archivés, le
+      // périmètre est calculé sans exiger d'affectations actives, puis le
+      // statut (aucune affectation active sur le lieu) est appliqué.
+      const filtreEmploiActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
+      const filtreLieuActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
       return Prisma.sql`lieux_dans_scope AS (
         SELECT l.id
         FROM main.lieu_inclusion l
@@ -119,6 +131,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
                 WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
               )
           ))
+          ${filtreStatut}
       )`
     }
 
@@ -126,7 +139,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     return Prisma.sql`lieux_dans_scope AS (
       SELECT l.id FROM main.lieu_inclusion l
       WHERE true
-        ${filtreActif}
+        ${filtreStatut}
     )`
   }
 

@@ -22,13 +22,13 @@ export default async function ListeLieuxInclusionController({
   searchParams,
 }: {
   readonly searchParams: Promise<{
-    anciens?: string
     codeDepartement?: string
     codeRegion?: string
     frr?: string
     horsZonePrioritaire?: string
     page?: string
     qpv?: string
+    statut?: string
     typeStructure?: string
   }>
 }): Promise<ReactElement> {
@@ -61,7 +61,7 @@ export default async function ListeLieuxInclusionController({
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { anciens, codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, typeStructure } =
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut, typeStructure } =
     resolvedSearchParams
   setSearchParams()
 
@@ -78,8 +78,8 @@ export default async function ListeLieuxInclusionController({
   )
 
   function setSearchParams(): void {
-    if (anciens === 'true') {
-      currentSearchParams.set('anciens', 'true')
+    if (statut === 'archives') {
+      currentSearchParams.set('statut', 'archives')
     }
     if (page !== undefined && page !== '') {
       currentSearchParams.set('page', page)

@@ -5,14 +5,16 @@ export type FiltreGeographiqueLieux = Readonly<{
   type: 'departement' | 'region'
 }>
 
+export type StatutLieux = 'actif' | 'archive'
+
 export type FiltresListeLieux = Readonly<{
-  anciens?: boolean
   frr?: boolean
   geographique?: FiltreGeographiqueLieux
   horsZonePrioritaire?: boolean
   pagination: Readonly<{ limite: number; page: number }>
   qpv?: boolean
   scopeFiltre: ScopeFiltre
+  statut: StatutLieux
   typeStructure?: string
 }>
 
@@ -21,6 +23,8 @@ export interface RecupererLieuxInclusionReadModel {
   limite: number
   page: number
   total: number
+  totalActifs: number
+  totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
 }
