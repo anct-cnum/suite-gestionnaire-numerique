@@ -46,6 +46,7 @@ export default function ListeLieuxInclusion({
 
   // Normaliser searchParams une fois pour toute l'utilisation
   const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
+  const estOngletArchives = normalizedSearchParams.get('statut') === 'archives'
 
   // Réinitialiser le loading quand la page se charge
   useEffect(() => {
@@ -59,6 +60,9 @@ export default function ListeLieuxInclusion({
 
     // Utiliser la fonction utilitaire pour convertir les paramètres
     const convertedParams = buildURLSearchParamsFromLieuxInclusionFilters(params)
+    if (estOngletArchives) {
+      convertedParams.set('statut', 'archives')
+    }
 
     // Navigation avec délai (solution temporaire qui fonctionne)
     setTimeout(() => {
@@ -73,7 +77,26 @@ export default function ListeLieuxInclusion({
     setIsFilterLoading(true)
     setIsDrawerOpen(false)
     setTimeout(() => {
-      router.push('/liste-lieux-inclusion')
+      router.push(estOngletArchives ? '/liste-lieux-inclusion?statut=archives' : '/liste-lieux-inclusion')
+    }, 150)
+  }
+
+  // Changement d'onglet : on conserve les filtres mais on repart à la première page
+  function changerOnglet(versArchives: boolean): void {
+    if (versArchives === estOngletArchives) {
+      return
+    }
+    setIsFilterLoading(true)
+    const params = new URLSearchParams(normalizedSearchParams)
+    params.delete('page')
+    if (versArchives) {
+      params.set('statut', 'archives')
+    } else {
+      params.delete('statut')
+    }
+    setTimeout(() => {
+      const query = params.toString()
+      router.push(query === '' ? '/liste-lieux-inclusion' : `/liste-lieux-inclusion?${query}`)
     }, 150)
   }
 
@@ -82,7 +105,6 @@ export default function ListeLieuxInclusion({
     const exportParams = new URLSearchParams()
 
     // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
-    const anciens = normalizedSearchParams.get('anciens')
     const codeDepartement = normalizedSearchParams.get('codeDepartement')
     const codeRegion = normalizedSearchParams.get('codeRegion')
     const typeStructure = normalizedSearchParams.get('typeStructure')
@@ -90,8 +112,8 @@ export default function ListeLieuxInclusion({
     const frr = normalizedSearchParams.get('frr')
     const horsZonePrioritaire = normalizedSearchParams.get('horsZonePrioritaire')
 
-    if (anciens === 'true') {
-      exportParams.set('anciens', 'true')
+    if (estOngletArchives) {
+      exportParams.set('statut', 'archives')
     }
     if (codeDepartement !== null && codeDepartement !== '') {
       exportParams.set('codeDepartement', codeDepartement)
@@ -177,9 +199,10 @@ export default function ListeLieuxInclusion({
   }
 
   const afficherColonneMajInfos =
-    utilisateurRole === 'Administrateur dispositif' ||
-    utilisateurRole === 'Gestionnaire département' ||
-    utilisateurRole === 'Gestionnaire structure'
+    (utilisateurRole === 'Administrateur dispositif' ||
+      utilisateurRole === 'Gestionnaire département' ||
+      utilisateurRole === 'Gestionnaire structure') &&
+    !estOngletArchives
 
   if ('type' in listeLieuxInclusionViewModel) {
     return (
@@ -224,6 +247,37 @@ export default function ListeLieuxInclusion({
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="fr-tabs fr-tabs__list fr-pb-0 fr-mb-3w">
+        <ul className="fr-nav__list">
+          <li className="fr-nav__item">
+            <button
+              aria-current={!estOngletArchives}
+              className="fr-nav__link"
+              onClick={() => {
+                changerOnglet(false)
+              }}
+              role="tab"
+              type="button"
+            >
+              Lieux actuels ({viewModel.totalActifs})
+            </button>
+          </li>
+          <li className="fr-nav__item">
+            <button
+              aria-current={estOngletArchives}
+              className="fr-nav__link"
+              onClick={() => {
+                changerOnglet(true)
+              }}
+              role="tab"
+              type="button"
+            >
+              Lieux archivés ({viewModel.totalArchives})
+            </button>
+          </li>
+        </ul>
       </div>
 
       {/* Indicateur de filtres actifs */}
@@ -284,23 +338,25 @@ export default function ListeLieuxInclusion({
         </div>
       ) : (
         <>
-          <ListeLieuxInclusionInfo
-            infos={{
-              total: viewModel.total,
-              totalConseillerNumerique: viewModel.totalConseillerNumerique,
-              totalLabellise: viewModel.totalLabellise,
-            }}
-          />
+          {estOngletArchives ? null : (
+            <ListeLieuxInclusionInfo
+              infos={{
+                total: viewModel.total,
+                totalConseillerNumerique: viewModel.totalConseillerNumerique,
+                totalLabellise: viewModel.totalLabellise,
+              }}
+            />
+          )}
           <Table
             enTetes={[
               'Lieu',
               'Adresse',
               'Siret',
+              ...(estOngletArchives ? ['Date d\u2019archivage'] : []),
               ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
-              ...(afficherColonneMajInfos ? ['Visible Carto'] : []),
               'FRR / QPV',
-              'Mandats AC',
-              'Nb Accompagnements',
+              'Activités',
+              ...(afficherColonneMajInfos ? ['Visible Carto'] : []),
               'Action',
             ]}
             titre="Lieux d'inclusion numérique"
@@ -331,14 +387,28 @@ export default function ListeLieuxInclusion({
                     }}
                   >
                     {lieu.idCartographieNationale === null ? (
-                      lieu.adresse
+                      <>
+                        {lieu.adresse.ligne1}
+                        {lieu.adresse.ligne2 === '' ? null : (
+                          <>
+                            <br />
+                            {lieu.adresse.ligne2}
+                          </>
+                        )}
+                      </>
                     ) : (
                       <a
                         href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        {lieu.adresse}
+                        {lieu.adresse.ligne1}
+                        {lieu.adresse.ligne2 === '' ? null : (
+                          <>
+                            <br />
+                            {lieu.adresse.ligne2}
+                          </>
+                        )}
                       </a>
                     )}
                   </div>
@@ -356,6 +426,7 @@ export default function ListeLieuxInclusion({
                     </a>
                   )}
                 </td>
+                {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
                 {afficherColonneMajInfos ? (
                   <td>
                     {lieu.derniereMiseAJour !== null ? (
@@ -391,6 +462,22 @@ export default function ListeLieuxInclusion({
                     ) : null}
                   </td>
                 ) : null}
+                <td>
+                  <div className="fr-tags-group">
+                    {lieu.tags.map((tag) => (
+                      <Badge color={tag.couleur} key={`${lieu.id}-tag-${tag.libelle}`}>
+                        {tag.libelle}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+                <td>
+                  {lieu.nbAccompagnements}
+                  {' accomp.'}
+                  <br />
+                  {lieu.nbMandatsAC}
+                  {lieu.nbMandatsAC > 1 ? ' mandats' : ' mandat'}
+                </td>
                 {afficherColonneMajInfos ? (
                   <td>
                     <div className={styles['toggle-carto']}>
@@ -408,23 +495,14 @@ export default function ListeLieuxInclusion({
                     </div>
                   </td>
                 ) : null}
-                <td>
-                  <div className="fr-tags-group">
-                    {lieu.tags.map((tag) => (
-                      <Badge color={tag.couleur} key={`${lieu.id}-tag-${tag.libelle}`}>
-                        {tag.libelle}
-                      </Badge>
-                    ))}
-                  </div>
-                </td>
-                <td className="fr-cell--center">{lieu.nbMandatsAC}</td>
-                <td className="fr-cell--center">{lieu.nbAccompagnements}</td>
                 <td className="fr-cell--center">
-                  <div className="fr-btns-group fr-btns-group--inline fr-btns-group--sm">
-                    <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/lieu/${lieu.id}`}>
-                      Détail
-                    </Link>
-                  </div>
+                  <Link
+                    className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-eye-line"
+                    href={`/lieu/${lieu.id}`}
+                    title={`Voir le détail de ${lieu.nom}`}
+                  >
+                    {`Voir le détail de ${lieu.nom}`}
+                  </Link>
                 </td>
               </tr>
             ))}

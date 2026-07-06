@@ -7,6 +7,7 @@ export function listeLieuxInclusionPresenter(
 ): ListeLieuxInclusionViewModel {
   const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
+    dateArchivage: lieu.updated_at === null ? null : formaterEnDateFrancaise(lieu.updated_at),
     derniereMiseAJour: getDerniereMiseAJour(lieu.updated_at, now),
     estActif: lieu.est_actif,
     id: lieu.id,
@@ -27,6 +28,8 @@ export function listeLieuxInclusionPresenter(
     nombreDePages: Math.ceil(readModel.total / readModel.limite),
     page: readModel.page,
     total: readModel.total,
+    totalActifs: readModel.totalActifs,
+    totalArchives: readModel.totalArchives,
     totalConseillerNumerique: readModel.totalConseillerNumerique,
     totalLabellise: readModel.totalLabellise,
   }
@@ -39,12 +42,15 @@ export interface ListeLieuxInclusionViewModel {
   nombreDePages: number
   page: number
   total: number
+  totalActifs: number
+  totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
 }
 
 export interface LieuInclusionViewModel {
-  adresse: string
+  adresse: AdresseViewModel
+  dateArchivage: null | string
   derniereMiseAJour: DerniereMiseAJourViewModel | null
   estActif: boolean
   id: string
@@ -59,6 +65,11 @@ export interface LieuInclusionViewModel {
 }
 
 export type CouleurFraicheur = 'blue' | 'orange' | 'red' | 'yellow'
+
+interface AdresseViewModel {
+  ligne1: string
+  ligne2: string
+}
 
 interface DerniereMiseAJourViewModel {
   couleur: CouleurFraicheur
@@ -75,10 +86,15 @@ function formatAdresse(lieu: {
   nom_commune: string
   nom_voie: null | string
   numero_voie: null | string
-}): string {
-  const voie = [lieu.numero_voie, lieu.nom_voie].filter(Boolean).join(' ')
-  const adresse = [voie, lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')
-  return adresse || 'Adresse non renseignée'
+}): AdresseViewModel {
+  const ligne1 = [lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')
+  const ligne2 = [lieu.numero_voie, lieu.nom_voie].filter(Boolean).join(' ')
+
+  if (ligne1 === '' && ligne2 === '') {
+    return { ligne1: 'Adresse non renseignée', ligne2: '' }
+  }
+
+  return { ligne1, ligne2 }
 }
 
 function getTags(lieu: { est_frr: boolean; est_qpv: boolean }): Array<Tag> {

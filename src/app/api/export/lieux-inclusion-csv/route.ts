@@ -44,12 +44,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const filtres = buildFiltresLieuxInclusion(
       {
-        anciens: searchParams.get('anciens') ?? undefined,
         codeDepartement: codeDepartementDemande,
         codeRegion: codeRegionDemande,
         frr: searchParams.get('frr') ?? undefined,
         horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
         qpv: searchParams.get('qpv') ?? undefined,
+        statut: searchParams.get('statut') ?? undefined,
         typeStructure: searchParams.get('typeStructure') ?? undefined,
       },
       scopeFiltre,
