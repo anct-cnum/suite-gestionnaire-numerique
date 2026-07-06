@@ -20,7 +20,11 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import { CouleurFraicheur, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
+import {
+  CouleurFraicheur,
+  LieuInclusionViewModel,
+  ListeLieuxInclusionViewModel,
+} from '@/presenters/listeLieuxInclusionPresenter'
 import {
   buildURLSearchParamsFromLieuxInclusionFilters,
   getActiveLieuxInclusionFilters,
@@ -29,6 +33,7 @@ import {
 } from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusion({
+  estBetaTesteur,
   listeLieuxInclusionViewModel,
   searchParams,
   typesStructure,
@@ -102,37 +107,7 @@ export default function ListeLieuxInclusion({
 
   // Fonction d'export CSV
   function handleExportCSV(): void {
-    const exportParams = new URLSearchParams()
-
-    // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
-    const codeDepartement = normalizedSearchParams.get('codeDepartement')
-    const codeRegion = normalizedSearchParams.get('codeRegion')
-    const typeStructure = normalizedSearchParams.get('typeStructure')
-    const qpv = normalizedSearchParams.get('qpv')
-    const frr = normalizedSearchParams.get('frr')
-    const horsZonePrioritaire = normalizedSearchParams.get('horsZonePrioritaire')
-
-    if (estOngletArchives) {
-      exportParams.set('statut', 'archives')
-    }
-    if (codeDepartement !== null && codeDepartement !== '') {
-      exportParams.set('codeDepartement', codeDepartement)
-    }
-    if (codeRegion !== null && codeRegion !== '') {
-      exportParams.set('codeRegion', codeRegion)
-    }
-    if (typeStructure !== null && typeStructure !== '') {
-      exportParams.set('typeStructure', typeStructure)
-    }
-    if (qpv !== null && qpv !== '') {
-      exportParams.set('qpv', qpv)
-    }
-    if (frr !== null && frr !== '') {
-      exportParams.set('frr', frr)
-    }
-    if (horsZonePrioritaire !== null && horsZonePrioritaire !== '') {
-      exportParams.set('horsZonePrioritaire', horsZonePrioritaire)
-    }
+    const exportParams = buildExportParams(normalizedSearchParams, estOngletArchives)
 
     // Déclencher le téléchargement avec fetch et blob
     const url = `/api/export/lieux-inclusion-csv?${exportParams.toString()}`
@@ -264,19 +239,21 @@ export default function ListeLieuxInclusion({
               Lieux actuels ({viewModel.totalActifs})
             </button>
           </li>
-          <li className="fr-nav__item">
-            <button
-              aria-current={estOngletArchives}
-              className="fr-nav__link"
-              onClick={() => {
-                changerOnglet(true)
-              }}
-              role="tab"
-              type="button"
-            >
-              Lieux archivés ({viewModel.totalArchives})
-            </button>
-          </li>
+          {estBetaTesteur ? (
+            <li className="fr-nav__item">
+              <button
+                aria-current={estOngletArchives}
+                className="fr-nav__link"
+                onClick={() => {
+                  changerOnglet(true)
+                }}
+                role="tab"
+                type="button"
+              >
+                Lieux archivés ({viewModel.totalArchives})
+              </button>
+            </li>
+          ) : null}
         </ul>
       </div>
 
@@ -347,164 +324,19 @@ export default function ListeLieuxInclusion({
               }}
             />
           )}
-          <Table
-            enTetes={[
-              'Lieu',
-              'Adresse',
-              'Siret',
-              ...(estOngletArchives ? ['Date d\u2019archivage'] : []),
-              ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
-              'FRR / QPV',
-              'Activités',
-              ...(afficherColonneMajInfos ? ['Visible Carto'] : []),
-              'Action',
-            ]}
-            titre="Lieux d'inclusion numérique"
-          >
+          <Table enTetes={buildEnTetes(estOngletArchives, afficherColonneMajInfos)} titre="Lieux d'inclusion numérique">
             {viewModel.lieux.map((lieu) => (
-              <tr key={lieu.id}>
-                <td style={{ maxWidth: '25vw' }}>
-                  <div
-                    style={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <strong title={lieu.nom}>{lieu.nom}</strong>
-                    <br />
-                    <span className="fr-text--sm" title={lieu.typeStructure}>
-                      {lieu.typeStructure}
-                    </span>
-                  </div>
-                </td>
-                <td style={{ maxWidth: '20vw' }}>
-                  <div
-                    style={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {lieu.idCartographieNationale === null ? (
-                      <>
-                        {lieu.adresse.ligne1}
-                        {lieu.adresse.ligne2 === '' ? null : (
-                          <>
-                            <br />
-                            {lieu.adresse.ligne2}
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <a
-                        href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        {lieu.adresse.ligne1}
-                        {lieu.adresse.ligne2 === '' ? null : (
-                          <>
-                            <br />
-                            {lieu.adresse.ligne2}
-                          </>
-                        )}
-                      </a>
-                    )}
-                  </div>
-                </td>
-                <td>
-                  {lieu.siret === null ? (
-                    'Non renseigné'
-                  ) : (
-                    <a
-                      href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      {lieu.siret}
-                    </a>
-                  )}
-                </td>
-                {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
-                {afficherColonneMajInfos ? (
-                  <td>
-                    {lieu.derniereMiseAJour !== null ? (
-                      <button
-                        aria-controls={drawerInfoId}
-                        data-fr-opened="false"
-                        onClick={() => {
-                          setIsInfoDrawerOpen(true)
-                        }}
-                        style={{
-                          alignItems: 'center',
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          gap: '4px',
-                          padding: 0,
-                        }}
-                        type="button"
-                      >
-                        <span
-                          style={{
-                            backgroundColor: couleursFraicheur[lieu.derniereMiseAJour.couleur],
-                            borderRadius: '50%',
-                            display: 'inline-block',
-                            flexShrink: 0,
-                            height: '12px',
-                            width: '12px',
-                          }}
-                        />
-                        {lieu.derniereMiseAJour.date}
-                      </button>
-                    ) : null}
-                  </td>
-                ) : null}
-                <td>
-                  <div className="fr-tags-group">
-                    {lieu.tags.map((tag) => (
-                      <Badge color={tag.couleur} key={`${lieu.id}-tag-${tag.libelle}`}>
-                        {tag.libelle}
-                      </Badge>
-                    ))}
-                  </div>
-                </td>
-                <td>
-                  {lieu.nbAccompagnements}
-                  {' accomp.'}
-                  <br />
-                  {lieu.nbMandatsAC}
-                  {lieu.nbMandatsAC > 1 ? ' mandats' : ' mandat'}
-                </td>
-                {afficherColonneMajInfos ? (
-                  <td>
-                    <div className={styles['toggle-carto']}>
-                      <div className="fr-toggle" style={{ margin: 0 }}>
-                        <input
-                          className="fr-toggle__input"
-                          defaultChecked={lieu.visiblePourCartographie}
-                          disabled
-                          id={`visible-carto-${lieu.id}`}
-                          onChange={(event) => handleToggleVisibleCarto(event, lieu.id)}
-                          type="checkbox"
-                        />
-                        <label className="fr-toggle__label" htmlFor={`visible-carto-${lieu.id}`} />
-                      </div>
-                    </div>
-                  </td>
-                ) : null}
-                <td className="fr-cell--center">
-                  <Link
-                    className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-eye-line"
-                    href={`/lieu/${lieu.id}`}
-                    title={`Voir le détail de ${lieu.nom}`}
-                  >
-                    {`Voir le détail de ${lieu.nom}`}
-                  </Link>
-                </td>
-              </tr>
+              <LigneLieu
+                afficherColonneMajInfos={afficherColonneMajInfos}
+                drawerInfoId={drawerInfoId}
+                estOngletArchives={estOngletArchives}
+                key={lieu.id}
+                lieu={lieu}
+                onOpenInfoDrawer={() => {
+                  setIsInfoDrawerOpen(true)
+                }}
+                onToggleVisibleCarto={handleToggleVisibleCarto}
+              />
             ))}
           </Table>
 
@@ -643,6 +475,207 @@ const niveauxFraicheur = [
   },
 ]
 
+function LigneLieu({
+  afficherColonneMajInfos,
+  drawerInfoId,
+  estOngletArchives,
+  lieu,
+  onOpenInfoDrawer,
+  onToggleVisibleCarto,
+}: Readonly<{
+  afficherColonneMajInfos: boolean
+  drawerInfoId: string
+  estOngletArchives: boolean
+  lieu: LieuInclusionViewModel
+  onOpenInfoDrawer(): void
+  onToggleVisibleCarto(event: ChangeEvent<HTMLInputElement>, lieuId: string): Promise<void>
+}>): ReactElement {
+  return (
+    <tr>
+      <td style={{ maxWidth: '25vw' }}>
+        <div
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <strong title={lieu.nom}>{lieu.nom}</strong>
+          <br />
+          <span className="fr-text--sm" title={lieu.typeStructure}>
+            {lieu.typeStructure}
+          </span>
+        </div>
+      </td>
+      <td style={{ maxWidth: '20vw' }}>
+        <div
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <AdresseLieu adresse={lieu.adresse} idCartographieNationale={lieu.idCartographieNationale} />
+        </div>
+      </td>
+      <td>
+        {lieu.siret === null ? (
+          'Non renseigné'
+        ) : (
+          <a
+            href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {lieu.siret}
+          </a>
+        )}
+      </td>
+      {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
+      {afficherColonneMajInfos ? (
+        <td>
+          {lieu.derniereMiseAJour !== null ? (
+            <button
+              aria-controls={drawerInfoId}
+              data-fr-opened="false"
+              onClick={onOpenInfoDrawer}
+              style={{
+                alignItems: 'center',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                gap: '4px',
+                padding: 0,
+              }}
+              type="button"
+            >
+              <span
+                style={{
+                  backgroundColor: couleursFraicheur[lieu.derniereMiseAJour.couleur],
+                  borderRadius: '50%',
+                  display: 'inline-block',
+                  flexShrink: 0,
+                  height: '12px',
+                  width: '12px',
+                }}
+              />
+              {lieu.derniereMiseAJour.date}
+            </button>
+          ) : null}
+        </td>
+      ) : null}
+      <td>
+        <div className="fr-tags-group">
+          {lieu.tags.map((tag) => (
+            <Badge color={tag.couleur} key={`${lieu.id}-tag-${tag.libelle}`}>
+              {tag.libelle}
+            </Badge>
+          ))}
+        </div>
+      </td>
+      <td>
+        {lieu.nbAccompagnements}
+        {' accomp.'}
+        <br />
+        {lieu.nbMandatsAC}
+        {lieu.nbMandatsAC > 1 ? ' mandats' : ' mandat'}
+      </td>
+      {afficherColonneMajInfos ? (
+        <td>
+          <div className={styles['toggle-carto']}>
+            <div className="fr-toggle" style={{ margin: 0 }}>
+              <input
+                className="fr-toggle__input"
+                defaultChecked={lieu.visiblePourCartographie}
+                disabled
+                id={`visible-carto-${lieu.id}`}
+                onChange={async (event) => onToggleVisibleCarto(event, lieu.id)}
+                type="checkbox"
+              />
+              <label className="fr-toggle__label" htmlFor={`visible-carto-${lieu.id}`} />
+            </div>
+          </div>
+        </td>
+      ) : null}
+      <td className="fr-cell--center">
+        <Link
+          className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-eye-line"
+          href={`/lieu/${lieu.id}`}
+          title={`Voir le détail de ${lieu.nom}`}
+        >
+          {`Voir le détail de ${lieu.nom}`}
+        </Link>
+      </td>
+    </tr>
+  )
+}
+
+function buildEnTetes(estOngletArchives: boolean, afficherColonneMajInfos: boolean): Array<string> {
+  return [
+    'Lieu',
+    'Adresse',
+    'Siret',
+    ...(estOngletArchives ? ['Date d\u2019archivage'] : []),
+    ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
+    'FRR / QPV',
+    'Activités',
+    ...(afficherColonneMajInfos ? ['Visible Carto'] : []),
+    'Action',
+  ]
+}
+
+function buildExportParams(normalizedSearchParams: URLSearchParams, estOngletArchives: boolean): URLSearchParams {
+  const exportParams = new URLSearchParams()
+
+  if (estOngletArchives) {
+    exportParams.set('statut', 'archives')
+  }
+
+  for (const cle of ['codeDepartement', 'codeRegion', 'typeStructure', 'qpv', 'frr', 'horsZonePrioritaire']) {
+    const valeur = normalizedSearchParams.get(cle)
+    if (valeur !== null && valeur !== '') {
+      exportParams.set(cle, valeur)
+    }
+  }
+
+  return exportParams
+}
+
+function AdresseLieu({
+  adresse,
+  idCartographieNationale,
+}: Readonly<{
+  adresse: LieuInclusionViewModel['adresse']
+  idCartographieNationale: null | string
+}>): ReactElement {
+  const contenu = (
+    <>
+      {adresse.ligne1}
+      {adresse.ligne2 === '' ? null : (
+        <>
+          <br />
+          {adresse.ligne2}
+        </>
+      )}
+    </>
+  )
+
+  if (idCartographieNationale === null) {
+    return contenu
+  }
+
+  return (
+    <a
+      href={`https://cartographie.societenumerique.gouv.fr/cartographie/${idCartographieNationale}/details`}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      {contenu}
+    </a>
+  )
+}
+
 // Type pour les searchParams sérialisés depuis le serveur
 type SerializedSearchParams = Array<[string, string]> | URLSearchParams
 
@@ -657,6 +690,7 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 }
 
 type Props = Readonly<{
+  estBetaTesteur: boolean
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
   searchParams: SerializedSearchParams
   typesStructure: Array<{ code: string; nom: string }>
