@@ -57,6 +57,7 @@ export function renderComponent(
     previsualiserAdresseAction: vi.fn(),
     rechercherUneEntrepriseAction: vi.fn(),
     reinviterUnUtilisateurAction: vi.fn(),
+    rejoindreUneGouvernanceAction: vi.fn(),
     retirerUnCoPorteurAction: vi.fn(),
     roles: Roles,
     router: {

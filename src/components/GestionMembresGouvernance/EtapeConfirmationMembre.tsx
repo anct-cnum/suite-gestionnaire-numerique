@@ -6,6 +6,7 @@ import { NouveauMembreData } from './types'
 
 export default function EtapeConfirmationMembre({
   data,
+  labelBoutonConfirmer = 'Ajouter cette structure',
   onConfirmer,
   onRetour,
 }: EtapeConfirmationMembreProps): ReactElement {
@@ -44,6 +45,19 @@ export default function EtapeConfirmationMembre({
                 </dl>
               ) : null}
             </div>
+
+            {/* Votre gouvernance */}
+            {data.departement ? (
+              <div className="fr-mb-4w">
+                <h3 className="fr-h5 fr-mb-3w">Votre gouvernance</h3>
+                <dl aria-label="Votre gouvernance" className="fr-grid-row fr-grid-row--gutters" role="list">
+                  <div className="fr-col-12">
+                    <dt className="color-grey">Département</dt>
+                    <dd className="font-weight-500">{data.departement.label}</dd>
+                  </div>
+                </dl>
+              </div>
+            ) : null}
 
             {/* Contact référent */}
             <div className="fr-mb-4w">
@@ -113,7 +127,7 @@ export default function EtapeConfirmationMembre({
             }}
             type="button"
           >
-            {isAjoutEnCours ? 'Ajout en cours...' : 'Ajouter cette structure'}
+            {isAjoutEnCours ? 'Ajout en cours...' : labelBoutonConfirmer}
           </button>
         </div>
       </div>
@@ -132,6 +146,7 @@ export default function EtapeConfirmationMembre({
 
 type EtapeConfirmationMembreProps = Readonly<{
   data: NouveauMembreData
+  labelBoutonConfirmer?: string
   onConfirmer(): Promise<void>
   onRetour(): void
 }>

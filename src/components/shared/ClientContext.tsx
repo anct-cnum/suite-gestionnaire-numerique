@@ -38,6 +38,7 @@ import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePr
 import { previsualiserAdresseAction } from '@/app/api/actions/previsualiserAdresseAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
+import { rejoindreUneGouvernanceAction } from '@/app/api/actions/rejoindreUneGouvernanceAction'
 import { retirerUnCoPorteurAction } from '@/app/api/actions/retirerUnCoPorteurAction'
 import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
@@ -98,6 +99,7 @@ export default function ClientContext({
       previsualiserAdresseAction,
       rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
+      rejoindreUneGouvernanceAction,
       retirerUnCoPorteurAction,
       roles,
       router,
@@ -159,6 +161,7 @@ export type ClientContextProviderValue = Readonly<{
   previsualiserAdresseAction: typeof previsualiserAdresseAction
   rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
+  rejoindreUneGouvernanceAction: typeof rejoindreUneGouvernanceAction
   retirerUnCoPorteurAction: typeof retirerUnCoPorteurAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance

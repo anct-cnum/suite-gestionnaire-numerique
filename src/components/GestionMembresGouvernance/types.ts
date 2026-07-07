@@ -10,6 +10,10 @@ export type ContactPrincipal = Readonly<{
 export type NouveauMembreData = Readonly<{
   contact: ContactPrincipal | null
   contactSecondaire: ContactPrincipal | null
+  departement?: null | Readonly<{
+    code: string
+    label: string
+  }>
   entreprise: EntrepriseViewModel | null
 }>
 

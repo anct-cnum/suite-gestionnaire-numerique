@@ -6,12 +6,19 @@ import { NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
 import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
+import Select from '../shared/Select/Select'
 import TextInput from '../shared/TextInput/TextInput'
 
-export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: EtapeSelectionMembreProps): ReactElement {
+export default function EtapeSelectionMembre({
+  departements,
+  donneesMembre,
+  onContinuer,
+}: EtapeSelectionMembreProps): ReactElement {
   const { rechercherUneEntrepriseAction } = useContext(clientContext)
+  const modeCandidature = departements !== undefined
   const [siret, setSiret] = useState(donneesMembre?.entreprise?.identifiant ?? '')
   const [entreprise, setEntreprise] = useState(donneesMembre?.entreprise ?? null)
+  const [codeDepartement, setCodeDepartement] = useState(donneesMembre?.departement?.code ?? '')
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
   const [contact, setContact] = useState(donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' })
   const [contactSecondaire, setContactSecondaire] = useState(
@@ -21,19 +28,12 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     donneesMembre?.contactSecondaire !== null && donneesMembre?.contactSecondaire !== undefined
   )
 
-  const isContactSecondaireValide =
-    !showContactSecondaire ||
-    (contactSecondaire.nom.trim() !== '' &&
-      contactSecondaire.prenom.trim() !== '' &&
-      contactSecondaire.email.trim() !== '' &&
-      contactSecondaire.fonction.trim() !== '')
+  const isContactSecondaireValide = !showContactSecondaire || estContactRenseigne(contactSecondaire)
 
   const isFormulairePret =
     entreprise !== null &&
-    contact.nom.trim() !== '' &&
-    contact.prenom.trim() !== '' &&
-    contact.email.trim() !== '' &&
-    contact.fonction.trim() !== '' &&
+    (!modeCandidature || codeDepartement !== '') &&
+    estContactRenseigne(contact) &&
     isContactSecondaireValide
 
   return (
@@ -47,22 +47,26 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
             {/* Structure */}
             <div className="fr-mb-4w">
               <h3 className="fr-h5 fr-mb-3w">Structure</h3>
-              <Search
-                labelBouton="Rechercher"
-                placeholder="Renseignez le Numéro SIRET ou RIDET *"
-                rechercher={changerSiret}
-                reinitialiserBouton="Effacer la recherche"
-                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserSiret}
-                soumettreLaRecherche={soumettreRechercheSiret}
-                termesDeRechercheNomOuEmail={formaterNumero(siret)}
-              />
-              <p className="color-grey fr-mb-1w">Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)</p>
+              {modeCandidature ? null : (
+                <>
+                  <Search
+                    labelBouton="Rechercher"
+                    placeholder="Renseignez le Numéro SIRET ou RIDET *"
+                    rechercher={changerSiret}
+                    reinitialiserBouton="Effacer la recherche"
+                    reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserSiret}
+                    soumettreLaRecherche={soumettreRechercheSiret}
+                    termesDeRechercheNomOuEmail={formaterNumero(siret)}
+                  />
+                  <p className="color-grey fr-mb-1w">Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)</p>
 
-              {erreurRechercheSiret ? (
-                <div className="fr-alert fr-alert--error fr-mt-2w">
-                  <p>{erreurRechercheSiret}</p>
-                </div>
-              ) : null}
+                  {erreurRechercheSiret ? (
+                    <div className="fr-alert fr-alert--error fr-mt-2w">
+                      <p>{erreurRechercheSiret}</p>
+                    </div>
+                  ) : null}
+                </>
+              )}
 
               {entreprise ? (
                 <div className="fr-card fr-mt-3w background-blue-france">
@@ -82,10 +86,30 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
               ) : null}
             </div>
 
+            {/* Votre gouvernance */}
+            {modeCandidature ? (
+              <div className="fr-mb-4w">
+                <h3 className="fr-h5 fr-mb-3w">Votre gouvernance</h3>
+                <Select
+                  id="departement"
+                  name="departement"
+                  onChange={changerDepartement}
+                  options={departements}
+                  placeholder="Sélectionnez un département"
+                  required={true}
+                  value={codeDepartement}
+                >
+                  Département
+                </Select>
+              </div>
+            ) : null}
+
             {/* Contact référent */}
             {entreprise ? (
               <div className="fr-mb-4w">
-                <h3 className="fr-h5 fr-mb-3w">Contact référent</h3>
+                <h3 className="fr-h5 fr-mb-3w">
+                  {modeCandidature ? 'Contact référent de la structure' : 'Contact référent'}
+                </h3>
 
                 <div className="fr-grid-row fr-grid-row--gutters">
                   <div className="fr-col-12 fr-col-md-6">
@@ -301,6 +325,10 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     return `${numeroBrut.slice(0, 3)} ${numeroBrut.slice(3, 6)} ${numeroBrut.slice(6, 9)} ${numeroBrut.slice(9)}`
   }
 
+  function changerDepartement(event: ChangeEvent<HTMLSelectElement>): void {
+    setCodeDepartement(event.target.value)
+  }
+
   function changerNomContact(event: ChangeEvent<HTMLInputElement>): void {
     setContact((contactActuel) => ({ ...contactActuel, nom: event.target.value }))
   }
@@ -370,16 +398,35 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
   function continuerVersConfirmation(): void {
     if (isFormulairePret) {
+      const departement = departements?.find((departement) => departement.value === codeDepartement)
       onContinuer({
         contact,
         contactSecondaire: showContactSecondaire ? contactSecondaire : null,
+        departement: departement ? { code: departement.value, label: departement.label } : null,
         entreprise,
       })
     }
   }
 }
 
+function estContactRenseigne(
+  contact: Readonly<{ email: string; fonction: string; nom: string; prenom: string }>
+): boolean {
+  return (
+    contact.nom.trim() !== '' &&
+    contact.prenom.trim() !== '' &&
+    contact.email.trim() !== '' &&
+    contact.fonction.trim() !== ''
+  )
+}
+
 type EtapeSelectionMembreProps = Readonly<{
+  departements?: ReadonlyArray<
+    Readonly<{
+      label: string
+      value: string
+    }>
+  >
   donneesMembre?: NouveauMembreData
   onContinuer(data: NouveauMembreData): void
 }>

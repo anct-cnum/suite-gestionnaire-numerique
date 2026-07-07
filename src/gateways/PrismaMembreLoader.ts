@@ -1,6 +1,21 @@
 import prisma from '../../prisma/prismaClient'
+import { MembreExistantLoader } from '@/use-cases/commands/RejoindreUneGouvernance'
 
-export class PrismaMembreLoader {
+export class PrismaMembreLoader implements MembreExistantLoader {
+  async existePourStructureDansGouvernance(structureId: number, codeDepartement: string): Promise<boolean> {
+    const membre = await prisma.membreRecord.findFirst({
+      select: {
+        id: true,
+      },
+      where: {
+        gouvernanceDepartementCode: codeDepartement,
+        structureId,
+      },
+    })
+
+    return membre !== null
+  }
+
   async getDepartementCodeByStructureId(structureId: number): Promise<null | string> {
     const membre = await prisma.membreRecord.findFirst({
       select: {

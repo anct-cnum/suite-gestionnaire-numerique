@@ -21,7 +21,7 @@ export default function RejoindreGouvernance(): ReactElement {
             rejoindre la dynamique de votre territoire en rejoignant la gouvernance de votre département. Vous pourrez
             ainsi porter ou contribuer à des actions pensées et mises en oeuvre de façon collégiale.
           </p>
-          <Link className="fr-btn" href="/gouvernances">
+          <Link className="fr-btn" href="/gouvernances/rejoindre">
             Accéder au formulaire
           </Link>
         </div>
