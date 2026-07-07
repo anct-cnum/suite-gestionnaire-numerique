@@ -5,10 +5,15 @@ import LieuInclusionDetailsHeader from '@/components/LieuInclusionDetails/LieuIn
 import LieuInclusionDetailsInformationsGenerales from '@/components/LieuInclusionDetails/LieuInclusionDetailsInformationsGenerales'
 import LieuInclusionDetailsPersonnes from '@/components/LieuInclusionDetails/LieuInclusionDetailsPersonnes'
 import LieuInclusionDetailsServices from '@/components/LieuInclusionDetails/LieuInclusionDetailsServices'
+import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
 
 export type LieuInclusionDetailsHeaderData = Readonly<{
-  modificationAuteur?: string
-  modificationDate?: string
+  fraicheur?: Readonly<{
+    couleur: CouleurFraicheur
+    date: string
+    libelle: string
+    source: string
+  }>
   nom: string
   tags: ReadonlyArray<string>
 }>

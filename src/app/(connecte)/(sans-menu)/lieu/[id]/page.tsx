@@ -52,7 +52,7 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
     departementsGouvernances
   )
 
-  const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier)
+  const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier, new Date())
 
   return (
     <>

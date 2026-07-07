@@ -3,8 +3,8 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 export interface LieuDetailsReadModel {
   codeDepartement?: string
   header: {
-    modificationAuteur?: string
-    modificationDate?: string
+    editeur?: string
+    miseAJourLe?: Date
     nom: string
     tags: ReadonlyArray<string>
   }

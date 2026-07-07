@@ -28,8 +28,12 @@ export const Default: Story = {
 export const AvecPlusieursLabels: Story = {
   args: {
     data: {
-      modificationAuteur: 'Jean Dupont',
-      modificationDate: '20/04/2024',
+      fraicheur: {
+        couleur: 'yellow',
+        date: '20/04/2024',
+        libelle: 'À surveiller',
+        source: 'la Cartographie nationale',
+      },
       nom: 'Maison des Services Publics de Lyon',
       tags: [
         'France Services',
@@ -45,8 +49,12 @@ export const AvecPlusieursLabels: Story = {
 export const SansTag: Story = {
   args: {
     data: {
-      modificationAuteur: 'Admin Système',
-      modificationDate: '10/05/2024',
+      fraicheur: {
+        couleur: 'orange',
+        date: '10/05/2024',
+        libelle: 'À vérifier',
+        source: '-',
+      },
       nom: 'Centre Social Marseille Nord',
       tags: [],
     },
@@ -56,8 +64,12 @@ export const SansTag: Story = {
 export const TagUnique: Story = {
   args: {
     data: {
-      modificationAuteur: 'Responsable Territorial',
-      modificationDate: '28/02/2024',
+      fraicheur: {
+        couleur: 'red',
+        date: '28/02/2024',
+        libelle: 'À actualiser',
+        source: 'Mon Inclusion Numérique',
+      },
       nom: 'Point Numérique Bordeaux Centre',
       tags: ['Conseiller numérique'],
     },
@@ -67,8 +79,6 @@ export const TagUnique: Story = {
 export const NomLong: Story = {
   args: {
     data: {
-      modificationAuteur: 'Marie Leroy',
-      modificationDate: '15/06/2024',
       nom: "Maison des Services Publics et de l'Inclusion Numérique de Montpellier Métropole - Antenne Nord",
       tags: ['France Services', 'Conseiller numérique', 'Maison des services publics'],
     },

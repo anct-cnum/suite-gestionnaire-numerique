@@ -86,6 +86,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       code_postal: null | string
       contact: null | Record<string, unknown>
       dispositif_programmes_nationaux: Array<string> | null
+      edited_by: null | string
       frais_a_charge: Array<string> | null
       horaires: null | string
       itinerance: Array<string> | null
@@ -124,7 +125,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     return {
       codeDepartement,
       header: {
-        modificationDate: structure.updated_at?.toISOString(),
+        editeur: structure.edited_by ?? undefined,
+        miseAJourLe: structure.updated_at ?? undefined,
         nom: structure.nom,
         tags,
       },
@@ -322,6 +324,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       code_postal: null | string
       contact: null | Record<string, unknown>
       dispositif_programmes_nationaux: Array<string> | null
+      edited_by: null | string
       est_frr: boolean
       est_qpv: boolean
       frais_a_charge: Array<string> | null
@@ -371,6 +374,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.frais_a_charge,
         l.services,
         l.updated_at,
+        l.edited_by,
         a.numero_voie,
         a.nom_voie,
         a.code_postal,
