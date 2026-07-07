@@ -1,13 +1,15 @@
+import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { CouleurFraicheur, couleurFraicheur, libellesFraicheur } from '@/presenters/shared/fraicheur'
 import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
 
 export function lieuDetailsPresenter(
   lieuDetailsReadModel: LieuDetailsReadModel,
-  peutModifier: boolean
+  peutModifier: boolean,
+  now: Date
 ): LieuInclusionDetailsData {
   return {
     header: {
-      modificationAuteur: lieuDetailsReadModel.header.modificationAuteur,
-      modificationDate: lieuDetailsReadModel.header.modificationDate,
+      fraicheur: getFraicheur(lieuDetailsReadModel.header, now),
       nom: lieuDetailsReadModel.header.nom,
       tags: lieuDetailsReadModel.header.tags,
     },
@@ -42,10 +44,42 @@ export function lieuDetailsPresenter(
   }
 }
 
+function getFraicheur(
+  header: LieuDetailsReadModel['header'],
+  now: Date
+): LieuInclusionDetailsData['header']['fraicheur'] {
+  if (header.miseAJourLe === undefined) {
+    return undefined
+  }
+
+  const couleur = couleurFraicheur(header.miseAJourLe, now)
+
+  return {
+    couleur,
+    date: formaterEnDateFrancaise(header.miseAJourLe),
+    libelle: libellesFraicheur[couleur],
+    source: (header.editeur === undefined ? undefined : nomApplicationParEditeur[header.editeur]) ?? '-',
+  }
+}
+
+// Nom d'application affiché « Via … » selon l'éditeur (edited_by) de la
+// dernière modification ; un tiret est affiché quand l'éditeur est inconnu.
+const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
+  'aidants-connect': 'Aidants Connect',
+  carto: 'la Cartographie nationale',
+  coop: 'la Coop',
+  min_scalingo: 'Mon Inclusion Numérique',
+  sonum: 'Mon Inclusion Numérique',
+}
+
 interface LieuInclusionDetailsData {
   header: {
-    modificationAuteur?: string
-    modificationDate?: string
+    fraicheur?: {
+      couleur: CouleurFraicheur
+      date: string
+      libelle: string
+      source: string
+    }
     nom: string
     tags: ReadonlyArray<string>
   }

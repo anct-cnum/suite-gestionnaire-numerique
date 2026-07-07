@@ -1,4 +1,5 @@
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { CouleurFraicheur, couleurFraicheur } from '@/presenters/shared/fraicheur'
 import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 export function listeLieuxInclusionPresenter(
@@ -64,8 +65,6 @@ export interface LieuInclusionViewModel {
   visiblePourCartographie: boolean
 }
 
-export type CouleurFraicheur = 'blue' | 'orange' | 'red' | 'yellow'
-
 interface AdresseViewModel {
   ligne1: string
   ligne2: string
@@ -116,21 +115,5 @@ function getDerniereMiseAJour(updatedAt: Date | null, now: Date): DerniereMiseAJ
     return null
   }
 
-  const diffMs = now.getTime() - updatedAt.getTime()
-  const diffMois = diffMs / (1000 * 60 * 60 * 24 * 30.44)
-  const date = formaterEnDateFrancaise(updatedAt)
-
-  if (diffMois < 6) {
-    return { couleur: 'blue', date }
-  }
-
-  if (diffMois < 12) {
-    return { couleur: 'yellow', date }
-  }
-
-  if (diffMois < 18) {
-    return { couleur: 'orange', date }
-  }
-
-  return { couleur: 'red', date }
+  return { couleur: couleurFraicheur(updatedAt, now), date: formaterEnDateFrancaise(updatedAt) }
 }

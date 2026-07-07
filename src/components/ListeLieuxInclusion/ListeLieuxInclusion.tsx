@@ -20,11 +20,8 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import {
-  CouleurFraicheur,
-  LieuInclusionViewModel,
-  ListeLieuxInclusionViewModel,
-} from '@/presenters/listeLieuxInclusionPresenter'
+import { LieuInclusionViewModel, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
+import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
 import {
   buildURLSearchParamsFromLieuxInclusionFilters,
   getActiveLieuxInclusionFilters,

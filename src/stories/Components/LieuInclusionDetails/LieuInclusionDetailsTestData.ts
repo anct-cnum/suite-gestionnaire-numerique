@@ -9,8 +9,12 @@ import type {
 
 export function createDefaultHeaderData(): LieuInclusionDetailsHeaderData {
   return {
-    modificationAuteur: 'Marie Dupont',
-    modificationDate: '15/03/2024',
+    fraicheur: {
+      couleur: 'blue',
+      date: '23/11/2024',
+      libelle: 'À jour',
+      source: 'la Coop',
+    },
     nom: 'Association Connect 69',
     tags: ['FRR', 'QPV', 'Conseiller numérique', 'Médiateur', 'Aidants Connect'],
   }

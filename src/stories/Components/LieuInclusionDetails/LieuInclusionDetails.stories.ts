@@ -49,8 +49,12 @@ export const AvecModificationRecente: Story = {
     data: {
       ...createDefaultLieuInclusionDetailsData(),
       header: {
-        modificationAuteur: 'Système Automatique',
-        modificationDate: '01/09/2024',
+        fraicheur: {
+          couleur: 'blue' as const,
+          date: '01/09/2024',
+          libelle: 'À jour',
+          source: 'la Coop',
+        },
         nom: 'Maison France Services Modernisée',
         tags: ['France Services', 'Conseiller numérique', 'Modernisation'],
       },
