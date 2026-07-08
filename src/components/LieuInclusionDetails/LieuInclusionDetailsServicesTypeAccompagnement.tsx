@@ -72,7 +72,9 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
       value: 'accompagnement-individuel',
     },
     {
-      dbValue: 'Atelier collectif',
+      // dbValue = libellé du référentiel (enum main.modalite_accompagnement) ;
+      // seul le label d'affichage est raccourci.
+      dbValue: 'Dans un atelier collectif',
       label: 'Atelier collectif',
       value: 'atelier-collectif',
     },

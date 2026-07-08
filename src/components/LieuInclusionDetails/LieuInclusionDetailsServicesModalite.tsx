@@ -17,8 +17,11 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
 
   const structureId = pathname.split('/').pop() ?? ''
 
+  // Les values sont les libellés du référentiel des lieux de médiation numérique
+  // (enums main.modalite_acces) : « Se présenter sur place » n'en fait pas partie,
+  // seul le label d'affichage peut s'en écarter.
   const modalitesAccesOptions = [
-    { label: 'Se présenter sur place', value: 'Se présenter sur place' },
+    { label: 'Se présenter sur place', value: 'Se présenter' },
     { label: 'Téléphoner', value: 'Téléphoner' },
     { label: 'Contacter par mail', value: 'Contacter par mail' },
   ]

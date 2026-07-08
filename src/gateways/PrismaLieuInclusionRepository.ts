@@ -1,5 +1,26 @@
-import { Prisma } from '@prisma/client'
+import {
+  main_frais_a_charge,
+  main_itinerance,
+  main_modalite_acces,
+  main_modalite_accompagnement,
+  main_prise_en_charge_specifique,
+  main_public_specifiquement_adresse,
+  main_service,
+  main_typologie,
+  Prisma,
+} from '@prisma/client'
 
+import {
+  fraisAChargeVersEnum,
+  itineranceVersEnum,
+  modalitesAccesVersEnum,
+  modalitesAccompagnementVersEnum,
+  priseEnChargeSpecifiqueVersEnum,
+  publicsSpecifiquementAdressesVersEnum,
+  servicesVersEnum,
+  typologiesVersEnum,
+  versEnumsLieuInclusion,
+} from './shared/lieuInclusionEnums'
 import prisma from '../../prisma/prismaClient'
 import {
   UpdateLieuInclusionDescriptionData,
@@ -65,18 +86,18 @@ export class PrismaLieuInclusionRepository
       }
     }
 
-    // Préparer les données à mettre à jour
+    // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
       contact?: Prisma.InputJsonValue
-      frais_a_charge?: Array<string>
-      modalites_acces?: Array<string>
+      frais_a_charge?: Array<main_frais_a_charge>
+      modalites_acces?: Array<main_modalite_acces>
     } = {}
 
     // Mettre à jour les modalités d'accès
-    updateData.modalites_acces = [...data.modalitesAcces]
+    updateData.modalites_acces = versEnumsLieuInclusion(data.modalitesAcces, modalitesAccesVersEnum, 'modalites_acces')
 
     // Mettre à jour les frais à charge
-    updateData.frais_a_charge = [...data.fraisACharge]
+    updateData.frais_a_charge = versEnumsLieuInclusion(data.fraisACharge, fraisAChargeVersEnum, 'frais_a_charge')
 
     // Mettre à jour le contact si nécessaire
     if (data.telephone !== undefined || data.email !== undefined) {
@@ -94,21 +115,25 @@ export class PrismaLieuInclusionRepository
   }
 
   async updateServicesTypeAccompagnement(data: UpdateLieuInclusionServicesTypeAccompagnementData): Promise<void> {
-    // Préparer les données à mettre à jour
+    // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
-      modalites_acces?: Array<string>
-      modalites_accompagnement?: Array<string>
-      services?: Array<string>
+      modalites_acces?: Array<main_modalite_acces>
+      modalites_accompagnement?: Array<main_modalite_accompagnement>
+      services?: Array<main_service>
     } = {}
 
     // Mettre à jour les services (thématiques)
-    updateData.services = [...data.thematiques]
+    updateData.services = versEnumsLieuInclusion(data.thematiques, servicesVersEnum, 'services')
 
     // Mettre à jour les modalités d'accès
-    updateData.modalites_acces = [...data.modalites]
+    updateData.modalites_acces = versEnumsLieuInclusion(data.modalites, modalitesAccesVersEnum, 'modalites_acces')
 
     // Mettre à jour les types d'accompagnement (modalites_accompagnement)
-    updateData.modalites_accompagnement = [...data.typesAccompagnement]
+    updateData.modalites_accompagnement = versEnumsLieuInclusion(
+      data.typesAccompagnement,
+      modalitesAccompagnementVersEnum,
+      'modalites_accompagnement'
+    )
 
     // Refonte 2026 : ces champs lieu (services, modalites, typologies, horaires…)
     // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
@@ -121,17 +146,25 @@ export class PrismaLieuInclusionRepository
   }
 
   async updateServicesTypePublic(data: UpdateLieuInclusionServicesTypePublicData): Promise<void> {
-    // Préparer les données à mettre à jour
+    // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
-      prise_en_charge_specifique?: Array<string>
-      publics_specifiquement_adresses?: Array<string>
+      prise_en_charge_specifique?: Array<main_prise_en_charge_specifique>
+      publics_specifiquement_adresses?: Array<main_public_specifiquement_adresse>
     } = {}
 
     // Mettre à jour les publics spécifiquement adressés
-    updateData.publics_specifiquement_adresses = [...data.publicsSpecifiquementAdresses]
+    updateData.publics_specifiquement_adresses = versEnumsLieuInclusion(
+      data.publicsSpecifiquementAdresses,
+      publicsSpecifiquementAdressesVersEnum,
+      'publics_specifiquement_adresses'
+    )
 
     // Mettre à jour les prises en charge spécifiques
-    updateData.prise_en_charge_specifique = [...data.priseEnChargeSpecifique]
+    updateData.prise_en_charge_specifique = versEnumsLieuInclusion(
+      data.priseEnChargeSpecifique,
+      priseEnChargeSpecifiqueVersEnum,
+      'prise_en_charge_specifique'
+    )
 
     // Refonte 2026 : ces champs lieu (services, modalites, typologies, horaires…)
     // vivent sur main.lieu_inclusion et plus sur main.structure legacy.
@@ -172,20 +205,20 @@ export class PrismaLieuInclusionRepository
   ): {
     contact?: Prisma.InputJsonValue
     horaires?: null | string
-    itinerance?: Array<string>
+    itinerance?: Array<main_itinerance>
     presentation_detail?: null | string
     presentation_resume?: null | string
     prise_rdv?: null | string
-    typologies?: Array<string>
+    typologies?: Array<main_typologie>
   } {
     const updateData: {
       contact?: Prisma.InputJsonValue
       horaires?: null | string
-      itinerance?: Array<string>
+      itinerance?: Array<main_itinerance>
       presentation_detail?: null | string
       presentation_resume?: null | string
       prise_rdv?: null | string
-      typologies?: Array<string>
+      typologies?: Array<main_typologie>
     } = {}
 
     if (data.presentationDetail !== undefined) {
@@ -197,7 +230,8 @@ export class PrismaLieuInclusionRepository
     }
 
     if (data.typologie !== undefined) {
-      updateData.typologies = data.typologie === '' ? [] : [data.typologie]
+      updateData.typologies =
+        data.typologie === '' ? [] : versEnumsLieuInclusion([data.typologie], typologiesVersEnum, 'typologies')
     }
 
     if (data.horaires !== undefined) {
@@ -209,7 +243,7 @@ export class PrismaLieuInclusionRepository
     }
 
     if (data.itinerance !== undefined) {
-      updateData.itinerance = [...data.itinerance]
+      updateData.itinerance = versEnumsLieuInclusion(data.itinerance, itineranceVersEnum, 'itinerance')
     }
 
     if (data.websiteUrl !== undefined) {

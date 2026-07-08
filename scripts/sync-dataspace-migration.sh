@@ -29,7 +29,14 @@ MIGRATION_FILE="${MIGRATION_FILE:-$MIN_ROOT/prisma/migrations/20250619151605_2_d
 # `audit` n'est PAS exclu : la migration "1" provisionne le schéma, et le dump
 # en prod l'inclut (cf tables audit.personne_merge_log / structure_merge_log).
 # `opendata` est exclu : présent en local seulement, pas en prod.
-EXCLUDE_SCHEMAS=(min api auth cache dataviz import public pseudonymisation opendata)
+# `llm` (dataspace V102) et `source` (V114) sont exclus : non utilisés par
+# Prisma, et les vues llm sur min.membre référencent des colonnes créées par
+# des migrations min POSTÉRIEURES à ce dump → leur CREATE VIEW casserait le
+# replay sur la shadow database.
+# `coop` (moteur SQL commun coop-mediation-numerique, migré par le Prisma de
+# la coop) est exclu : ses ALTER DEFAULT PRIVILEGES FOR ROLE dataspace
+# casseraient le replay (rôle absent), et MIN n'y accède pas via Prisma.
+EXCLUDE_SCHEMAS=(coop min api auth cache dataviz import llm public pseudonymisation opendata source)
 EXCLUDE_ARGS=()
 for s in "${EXCLUDE_SCHEMAS[@]}"; do
   EXCLUDE_ARGS+=(-N "$s")
@@ -60,6 +67,10 @@ docker exec "$CONTAINER" pg_dump -U "$USER" -d "$DB" --section=post-data "${EXCL
 
 # Transformations équivalentes à la tâche `clean` du DAG :
 # - retirer les directives pgcrypto (extension non utilisée côté Prisma)
+# - retirer les directives vector : pgvector est installé sur dataspace mais
+#   seule coop.rag_document_chunks.embedding l'utilise, et le schéma coop est
+#   exclu du dump. pg_dump émet quand même le CREATE EXTENSION (niveau base),
+#   qui casserait le CI min (image postgis/postgis sans pgvector)
 # - retirer les lignes de commentaires "--" isolées (bruit du pg_dump)
 # - retirer les "SET transaction_timeout" et "\restrict" (incompatibles selon version client/server)
 # - retirer le `SELECT pg_catalog.set_config('search_path', '', false);`
@@ -80,6 +91,10 @@ docker exec "$CONTAINER" pg_dump -U "$USER" -d "$DB" --section=post-data "${EXCL
 echo "→ nettoyage…"
 sed -i \
   -e '/pgcrypto/d' \
+  -e '/^CREATE EXTENSION IF NOT EXISTS vector /d' \
+  -e '/^COMMENT ON EXTENSION vector /d' \
+  -e '/^-- Name: vector; Type: EXTENSION/d' \
+  -e '/^-- Name: EXTENSION vector;/d' \
   -e '/^--$/d' \
   -e '/transaction_timeout/d' \
   -e "/^SELECT pg_catalog.set_config('search_path'/d" \
