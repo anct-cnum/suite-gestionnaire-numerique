@@ -725,6 +725,220 @@ model main_structure_administrative {
   @@schema("main")
 }
 
+/// Intégration coop 2026 (#1700, dataspace V122) : référentiel des lieux de
+/// médiation numérique, types enum Postgres du schéma main (propriété Flyway
+/// côté dataspace — ne jamais les modifier via prisma migrate). Les valeurs
+/// @map sont VERBATIM celles des @map Prisma de coop-mediation-numerique
+/// (accents, guillemets français, apostrophe typographique U+2019) : le
+/// moindre écart casserait la convergence coop ↔ entrepôt.
+enum main_typologie {
+  ACI
+  ACIPHC
+  AFPA
+  AI
+  ASE
+  ASSO
+  ASSO_CHOMEUR
+  Autre
+  AVIP
+  BIB
+  CAARUD
+  CADA
+  CAF
+  CAP_EMPLOI
+  CAVA
+  CC
+  CCAS
+  CCONS
+  CD
+  CDAS
+  CFP
+  CHRS
+  CHU
+  CIAS
+  CIDFF
+  CITMET
+  CMP
+  CMS
+  CPAM
+  CPH
+  CS
+  CSAPA
+  CSC
+  DEETS
+  DEPT
+  DIPLP
+  E2C
+  EA
+  EATT
+  EI
+  EITI
+  ENM
+  EPCI
+  EPI
+  EPIDE
+  EPN
+  ES
+  ESAT
+  ESS
+  ETTI
+  EVS
+  FABLAB
+  FABRIQUE
+  FAIS
+  FT
+  GEIQ
+  HUDA
+  LA_POSTE
+  MDE
+  MDH
+  MDEF
+  MDPH
+  MDS
+  MJC
+  ML
+  MQ
+  MSA
+  MSAP
+  MUNI
+  OACAS
+  ODC
+  OF
+  OIL
+  OPCS
+  PAD
+  PENSION
+  PI
+  PIJ_BIJ
+  PIMMS
+  PJJ
+  PLIE
+  PREF
+  PREVENTION
+  REG
+  RELAIS_LECTURE
+  RESSOURCERIE
+  RFS
+  RS_FJT
+  SCP
+  SPIP
+  TIERS_LIEUX
+  UDAF
+
+  @@map("typologie")
+  @@schema("main")
+}
+
+enum main_service {
+  AideAuxDemarchesAdministratives                 @map("Aide aux démarches administratives")
+  MaitriseDesOutilsNumeriquesDuQuotidien          @map("Maîtrise des outils numériques du quotidien")
+  InsertionProfessionnelleViaLeNumerique          @map("Insertion professionnelle via le numérique")
+  UtilisationSecuriseeDuNumerique                 @map("Utilisation sécurisée du numérique")
+  ParentaliteEtEducationAvecLeNumerique           @map("Parentalité et éducation avec le numérique")
+  LoisirsEtCreationsNumeriques                    @map("Loisirs et créations numériques")
+  ComprehensionDuMondeNumerique                   @map("Compréhension du monde numérique")
+  AccesInternetEtMaterielInformatique             @map("Accès internet et matériel informatique")
+  AcquisitionDeMaterielInformatiqueAPrixSolidaire @map("Acquisition de matériel informatique à prix solidaire")
+
+  @@map("service")
+  @@schema("main")
+}
+
+enum main_public_specifiquement_adresse {
+  Jeunes          @map("Jeunes")
+  Etudiants       @map("Étudiants")
+  FamillesEnfants @map("Familles et/ou enfants")
+  Seniors         @map("Seniors")
+  Femmes          @map("Femmes")
+
+  @@map("public_specifiquement_adresse")
+  @@schema("main")
+}
+
+enum main_prise_en_charge_specifique {
+  Surdite                  @map("Surdité")
+  HandicapsMoteurs         @map("Handicaps moteurs")
+  HandicapsMentaux         @map("Handicaps mentaux")
+  Illettrisme              @map("Illettrisme")
+  LanguesEtrangeresAnglais @map("Langues étrangères (anglais)")
+  LanguesEtrangeresAutre   @map("Langues étrangères (autres)")
+  DeficienceVisuelle       @map("Déficience visuelle")
+
+  @@map("prise_en_charge_specifique")
+  @@schema("main")
+}
+
+enum main_frais_a_charge {
+  Gratuit              @map("Gratuit")
+  GratuitSousCondition @map("Gratuit sous condition")
+  Payant               @map("Payant")
+
+  @@map("frais_a_charge")
+  @@schema("main")
+}
+
+enum main_dispositif_programme_national {
+  AidantsConnect                    @map("Aidants Connect")
+  BibliothequesNumeriqueDeReference @map("Bibliothèques numérique de référence")
+  CertificationPix                  @map("Certification PIX")
+  ConseillersNumeriques             @map("Conseillers numériques")
+  EmmausConnect                     @map("Emmaüs Connect")
+  FranceServices                    @map("France Services")
+  GrandeEcoleDuNumerique            @map("Grande école du numérique")
+  LaCroixRouge                      @map("La Croix Rouge")
+  PointAccesNumeriqueCaf            @map("Point d'accès numérique CAF")
+  PromeneursDuNet                   @map("Promeneurs du net")
+  RelaisNumeriqueEmmausConnect      @map("Relais numérique (Emmaüs Connect)")
+
+  @@map("dispositif_programme_national")
+  @@schema("main")
+}
+
+enum main_formation_label {
+  FormeAMonEspaceSante                 @map("Formé à « Mon Espace Santé »")
+  FormeADuplex                         @map("Formé à « DUPLEX » (illettrisme)")
+  ArniaMednum                          @map("Arnia/MedNum BFC (Bourgogne-Franche-Comté)")
+  CollectifRessourcesEtActeursReemploi @map("Collectif ressources et acteurs réemploi (Normandie)")
+  FabriquesDeTerritoire                @map("Fabriques de Territoire")
+  LesEclaireurs                        @map("Les Éclaireurs du numérique (Drôme)")
+  MesPapiers                           @map("Mes Papiers (Métropole de Lyon)")
+  Ordi3                                @map("ORDI 3.0")
+  SudLabs                              @map("SUD LABS (PACA)")
+
+  @@map("formation_label")
+  @@schema("main")
+}
+
+enum main_itinerance {
+  Itinerant @map("Itinérant")
+  Fixe      @map("Fixe")
+
+  @@map("itinerance")
+  @@schema("main")
+}
+
+enum main_modalite_acces {
+  SePresenter         @map("Se présenter")
+  Telephoner          @map("Téléphoner")
+  ContacterParMail    @map("Contacter par mail")
+  PrendreRdvEnLigne   @map("Prendre un RDV en ligne")
+  PasDePublic         @map("Ce lieu n’accueille pas de public")
+  FicheDePrescription @map("Envoyer un mail avec une fiche de prescription")
+
+  @@map("modalite_acces")
+  @@schema("main")
+}
+
+enum main_modalite_accompagnement {
+  EnAutonomie              @map("En autonomie")
+  AccompagnementIndividuel @map("Accompagnement individuel")
+  DansUnAtelierCollectif   @map("Dans un atelier collectif")
+  ADistance                @map("À distance")
+
+  @@map("modalite_accompagnement")
+  @@schema("main")
+}
+
 /// Refonte 2026 : lieu physique d'inclusion numérique (France Services,
 /// médiathèque, EPN…). Successeur de l'aspect "lieu" de main.structure.
 model main_lieu_inclusion {
@@ -739,17 +953,17 @@ model main_lieu_inclusion {
   presentation_detail                 String?
   horaires                            String?                                        @db.VarChar
   prise_rdv                           String?                                        @db.VarChar
-  itinerance                          String[]
-  services                            String[]
-  modalites_acces                     String[]
-  modalites_accompagnement            String[]
-  publics_specifiquement_adresses     String[]
-  prise_en_charge_specifique          String[]
-  frais_a_charge                      String[]
-  formations_labels                   String[]
+  itinerance                          main_itinerance[]
+  services                            main_service[]
+  modalites_acces                     main_modalite_acces[]
+  modalites_accompagnement            main_modalite_accompagnement[]
+  publics_specifiquement_adresses     main_public_specifiquement_adresse[]
+  prise_en_charge_specifique          main_prise_en_charge_specifique[]
+  frais_a_charge                      main_frais_a_charge[]
+  formations_labels                   main_formation_label[]
   autres_formations_labels            String[]
-  dispositif_programmes_nationaux     String[]
-  typologies                          String[]
+  dispositif_programmes_nationaux     main_dispositif_programme_national[]
+  typologies                          main_typologie[]
   contact                             Json?
   mediateurs_en_activite              Int?
   emplois                             Int?
@@ -758,6 +972,9 @@ model main_lieu_inclusion {
   created_at                          DateTime?                                      @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?                                      @db.Timestamp(6)
   structure_coop_id                   String?                                        @unique(map: "lieu_inclusion_structure_coop_id_ukey") @db.Uuid
+  complement_adresse                  String?
+  siret_a_l_enrichissement            String?                                        @db.VarChar(14)
+  nom_usage                           String?                                        @db.VarChar(255)
   import_warnings                     Json?
   activites_coop                      activites_coop[]
   structure_associations              main_lieu_inclusion_structure_administrative[]
