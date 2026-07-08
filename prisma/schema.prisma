@@ -704,6 +704,8 @@ model main_structure_administrative {
   updated_at_coop              DateTime?                                      @db.Timestamp(6)
   updated_at_idposte           DateTime?                                      @db.Timestamp(6)
   updated_at_ac                DateTime?                                      @db.Timestamp(6)
+  est_grand_reseau             Boolean                                        @default(false)
+  est_hub                      Boolean                                        @default(false)
   contact_structures           contact_structure_administrative[]
   contrat                      contrat[]
   lieu_associations            main_lieu_inclusion_structure_administrative[]
@@ -970,7 +972,12 @@ model main_lieu_inclusion {
   source                              String?                                        @db.VarChar
   edited_by                           String?                                        @db.VarChar(50)
   created_at                          DateTime?                                      @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?                                      @db.Timestamp(6)
+  updated_at_carto                    DateTime?                                      @db.Timestamp(6)
+  updated_at_coop                     DateTime?                                      @db.Timestamp(6)
+  updated_at_min                      DateTime?                                      @db.Timestamp(6)
+  // Colonne GENERATED ALWAYS AS ... STORED en base ; dbgenerated est la seule
+  // representation Prisma qui n'induit pas de faux diff (cf. activites_coop.periode)
+  updated_at                          DateTime?                                      @default(dbgenerated("GREATEST(updated_at_carto, updated_at_coop, updated_at_min)")) @db.Timestamp(6)
   structure_coop_id                   String?                                        @unique(map: "lieu_inclusion_structure_coop_id_ukey") @db.Uuid
   complement_adresse                  String?
   siret_a_l_enrichissement            String?                                        @db.VarChar(14)
