@@ -67,6 +67,10 @@ docker exec "$CONTAINER" pg_dump -U "$USER" -d "$DB" --section=post-data "${EXCL
 
 # Transformations équivalentes à la tâche `clean` du DAG :
 # - retirer les directives pgcrypto (extension non utilisée côté Prisma)
+# - retirer les directives vector : pgvector est installé sur dataspace mais
+#   seule coop.rag_document_chunks.embedding l'utilise, et le schéma coop est
+#   exclu du dump. pg_dump émet quand même le CREATE EXTENSION (niveau base),
+#   qui casserait le CI min (image postgis/postgis sans pgvector)
 # - retirer les lignes de commentaires "--" isolées (bruit du pg_dump)
 # - retirer les "SET transaction_timeout" et "\restrict" (incompatibles selon version client/server)
 # - retirer le `SELECT pg_catalog.set_config('search_path', '', false);`
@@ -87,6 +91,10 @@ docker exec "$CONTAINER" pg_dump -U "$USER" -d "$DB" --section=post-data "${EXCL
 echo "→ nettoyage…"
 sed -i \
   -e '/pgcrypto/d' \
+  -e '/^CREATE EXTENSION IF NOT EXISTS vector /d' \
+  -e '/^COMMENT ON EXTENSION vector /d' \
+  -e '/^-- Name: vector; Type: EXTENSION/d' \
+  -e '/^-- Name: EXTENSION vector;/d' \
   -e '/^--$/d' \
   -e '/transaction_timeout/d' \
   -e "/^SELECT pg_catalog.set_config('search_path'/d" \
