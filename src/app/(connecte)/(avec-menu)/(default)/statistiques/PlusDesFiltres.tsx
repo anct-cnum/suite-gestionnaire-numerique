@@ -2,7 +2,7 @@
 
 import { Accordion } from '@codegouvfr/react-dsfr/Accordion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useId, useState } from 'react'
 
 import styles from './FiltrePopover.module.css'
 import Modal from '@/components/shared/Modal/Modal'
@@ -58,6 +58,7 @@ export default function PlusDesFiltres({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const formId = useId()
   const [isOpen, setIsOpen] = useState(false)
 
   const [pendingTypes, setPendingTypes] = useState(types)
@@ -152,13 +153,11 @@ export default function PlusDesFiltres({
         id={MODAL_ID}
         isOpen={isOpen}
         labelId={MODAL_LABEL_ID}
+        titre="Plus de filtres"
       >
         <div className="fr-modal__content">
-          <h1 className="fr-modal__title" id={MODAL_LABEL_ID}>
-            Plus de filtres
-          </h1>
-
           <form
+            id={formId}
             onSubmit={(event) => {
               event.preventDefault()
               valider()
@@ -241,17 +240,18 @@ export default function PlusDesFiltres({
                 </div>
               </div>
             </Accordion>
-
-            <hr className="fr-separator-1px fr-my-6v" />
-            <div className="fr-flex fr-flex-gap-4v" style={{ alignItems: 'center', flexDirection: 'row-reverse' }}>
-              <button className="fr-btn" type="submit">
-                Valider
-              </button>
-              <button className="fr-btn fr-btn--secondary" onClick={effacer} type="button">
-                Effacer
-              </button>
-            </div>
           </form>
+        </div>
+
+        <div className="fr-modal__footer">
+          <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg">
+            <button className="fr-btn fr-btn--secondary" onClick={effacer} type="button">
+              Effacer
+            </button>
+            <button className="fr-btn" form={formId} type="submit">
+              Valider
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

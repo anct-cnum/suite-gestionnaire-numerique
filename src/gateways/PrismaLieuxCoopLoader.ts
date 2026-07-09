@@ -1,11 +1,12 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
+import { capitaliserMots } from '@/shared/lang'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 export type LieuCoopOption = Readonly<{
-  id: string
-  nom: string
+  label: string
+  value: string
 }>
 
 // Refonte 2026 : "lieux coop" = main.lieu_inclusion (et plus main.structure
@@ -17,9 +18,10 @@ export class PrismaLieuxCoopLoader {
     let rows: ReadonlyArray<LieuRow>
     if (scopeFiltre.type === 'structure') {
       rows = await prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-        SELECT DISTINCT l.id, l.nom
+        SELECT DISTINCT l.id, l.nom, ad.code_postal, ad.nom_commune
         FROM main.lieu_inclusion l
         JOIN main.activites_coop a ON a.lieu_id = l.id
+        LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
         WHERE EXISTS (
             SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
             WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${scopeFiltre.id}
@@ -31,7 +33,7 @@ export class PrismaLieuxCoopLoader {
       `
     } else if (scopeFiltre.type === 'departemental') {
       rows = await prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-        SELECT DISTINCT l.id, l.nom
+        SELECT DISTINCT l.id, l.nom, ad.code_postal, ad.nom_commune
         FROM main.lieu_inclusion l
         JOIN main.activites_coop a ON a.lieu_id = l.id
         LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
@@ -43,21 +45,17 @@ export class PrismaLieuxCoopLoader {
       `
     } else {
       rows = await prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-        SELECT DISTINCT l.id, l.nom
+        SELECT DISTINCT l.id, l.nom, ad.code_postal, ad.nom_commune
         FROM main.lieu_inclusion l
         JOIN main.activites_coop a ON a.lieu_id = l.id
+        LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
         WHERE l.nom IS NOT NULL
           AND l.nom ILIKE '%' || ${recherche} || '%'
         ORDER BY l.nom
         LIMIT 20
       `
     }
-    return rows.map((row) => ({ id: String(row.id), nom: row.nom }))
-  }
-
-  async recuperer(scopeFiltre: ScopeFiltre): Promise<ReadonlyArray<LieuCoopOption>> {
-    const rows = await this.#queryLieux(scopeFiltre)
-    return rows.map((row) => ({ id: String(row.id), nom: row.nom }))
+    return rows.map(versOption)
   }
 
   async recupererCoopIds(ids: ReadonlyArray<string>): Promise<ReadonlyArray<string>> {
@@ -76,53 +74,28 @@ export class PrismaLieuxCoopLoader {
       return []
     }
     const rows = await prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-      SELECT l.id, l.nom
+      SELECT l.id, l.nom, ad.code_postal, ad.nom_commune
       FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
       WHERE l.id = ANY(ARRAY[${Prisma.join(ids.map(Number))}]::int[])
         AND l.nom IS NOT NULL
       ORDER BY l.nom
     `
-    return rows.map((row) => ({ id: String(row.id), nom: row.nom }))
-  }
-
-  async #queryLieux(scopeFiltre: ScopeFiltre): Promise<ReadonlyArray<LieuRow>> {
-    if (scopeFiltre.type === 'structure') {
-      return prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-        SELECT DISTINCT l.id, l.nom
-        FROM main.lieu_inclusion l
-        JOIN main.activites_coop a ON a.lieu_id = l.id
-        WHERE EXISTS (
-            SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
-            WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${scopeFiltre.id}
-          )
-          AND l.nom IS NOT NULL
-        ORDER BY l.nom
-      `
-    }
-
-    if (scopeFiltre.type === 'departemental') {
-      return prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-        SELECT DISTINCT l.id, l.nom
-        FROM main.lieu_inclusion l
-        JOIN main.activites_coop a ON a.lieu_id = l.id
-        LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
-        WHERE l.nom IS NOT NULL
-          AND ad.departement = ANY(${[...scopeFiltre.codes]})
-        ORDER BY l.nom
-      `
-    }
-
-    return prisma.$queryRaw<ReadonlyArray<LieuRow>>`
-      SELECT DISTINCT l.id, l.nom
-      FROM main.lieu_inclusion l
-      JOIN main.activites_coop a ON a.lieu_id = l.id
-      WHERE l.nom IS NOT NULL
-      ORDER BY l.nom
-    `
+    return rows.map(versOption)
   }
 }
 
+function versOption(row: LieuRow): LieuCoopOption {
+  const localisation =
+    row.code_postal !== null && row.nom_commune !== null
+      ? ` · ${row.code_postal} - ${capitaliserMots(row.nom_commune)}`
+      : ''
+  return { label: `${row.nom}${localisation}`, value: String(row.id) }
+}
+
 type LieuRow = Readonly<{
+  code_postal: null | string
   id: number
   nom: string
+  nom_commune: null | string
 }>

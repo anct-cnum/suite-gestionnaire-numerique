@@ -9,6 +9,7 @@ export default function Modal({
   id,
   isOpen,
   labelId,
+  titre,
 }: Props): ReactElement {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const stableClose = useCallback(close, [close])
@@ -41,7 +42,15 @@ export default function Modal({
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-8 fr-col-lg-6">
             <div className="fr-modal__body">
-              <div className="fr-modal__header">
+              <div
+                className="fr-modal__header"
+                style={{ backgroundColor: 'var(--background-lifted-grey)', position: 'sticky', top: 0, zIndex: 1 }}
+              >
+                {titre === undefined ? null : (
+                  <h1 className="fr-modal__title fr-mb-0" id={labelId}>
+                    {titre}
+                  </h1>
+                )}
                 <button
                   aria-controls={id}
                   className="fr-btn--close fr-btn"
@@ -68,5 +77,6 @@ type Props = PropsWithChildren<
     id: string
     isOpen: boolean
     labelId: string
+    titre?: string
   }>
 >
