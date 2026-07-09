@@ -49,7 +49,13 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         url.searchParams.append('filter[au]', filtres.au)
       }
       if (filtres.types) {
-        url.searchParams.append('filter[types]', filtres.types.join(','))
+        // L'API Coop attend les slugs en minuscules (individuel, collectif) — toute autre valeur provoque une 500
+        const slugs = filtres.types
+          .map((type) => TYPE_ACTIVITE_SLUGS[type])
+          .filter((slug): slug is string => slug !== undefined)
+        if (slugs.length > 0) {
+          url.searchParams.append('filter[types]', slugs.join(','))
+        }
       }
       if (filtres.mediateurs) {
         url.searchParams.append('filter[mediateurs]', filtres.mediateurs.join(','))
@@ -65,6 +71,12 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       }
       if (filtres.lieux) {
         url.searchParams.append('filter[lieux]', filtres.lieux.join(','))
+      }
+      if (filtres.thematiqueNonAdministratives) {
+        url.searchParams.append('filter[thematiqueNonAdministratives]', filtres.thematiqueNonAdministratives.join(','))
+      }
+      if (filtres.thematiqueAdministratives) {
+        url.searchParams.append('filter[thematiqueAdministratives]', filtres.thematiqueAdministratives.join(','))
       }
       if (filtres.conseillerNumerique !== undefined) {
         url.searchParams.append('filter[conseiller_numerique]', filtres.conseillerNumerique ? '1' : '0')
@@ -253,6 +265,12 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       },
     }
   }
+}
+
+// Slugs attendus par l'API Coop pour filter[types] — « Demarche » n'a pas d'équivalent côté Coop
+const TYPE_ACTIVITE_SLUGS: Readonly<Partial<Record<'Collectif' | 'Demarche' | 'Individuel', string>>> = {
+  Collectif: 'collectif',
+  Individuel: 'individuel',
 }
 
 // Types pour la réponse de l'API Coop

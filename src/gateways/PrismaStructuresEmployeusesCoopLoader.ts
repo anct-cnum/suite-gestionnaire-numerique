@@ -4,8 +4,8 @@ import prisma from '../../prisma/prismaClient'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 export type StructureEmployeuseOption = Readonly<{
-  id: string
-  nom: string
+  label: string
+  value: string
 }>
 
 // Refonte 2026 : `min.personne_enrichie.structure_employeuse_id` pointe
@@ -65,7 +65,7 @@ export class PrismaStructuresEmployeusesCoopLoader {
       `
     }
 
-    return rows.map((row) => ({ id: String(row.id), nom: row.nom }))
+    return rows.map((row) => ({ label: row.nom, value: String(row.id) }))
   }
 
   async recupererParIds(ids: ReadonlyArray<string>): Promise<ReadonlyArray<StructureEmployeuseOption>> {
@@ -78,7 +78,7 @@ export class PrismaStructuresEmployeusesCoopLoader {
         AND COALESCE(sa.denomination_antenne, sa.denomination_sirene) IS NOT NULL
       ORDER BY COALESCE(sa.denomination_antenne, sa.denomination_sirene)
     `
-    return rows.map((row) => ({ id: String(row.id), nom: row.nom }))
+    return rows.map((row) => ({ label: row.nom, value: String(row.id) }))
   }
 }
 
