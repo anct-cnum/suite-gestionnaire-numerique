@@ -1,12 +1,12 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 import { EvenementHistorique, SourcePivot } from './shared/HistoriqueEvenement'
 
-export type LieuHistoriqueReadModel = Readonly<{
+export type StructureHistoriqueReadModel = Readonly<{
+  denomination: string
   evenements: ReadonlyArray<EvenementHistorique>
-  nomLieu: string
   sourcesPivots: ReadonlyArray<SourcePivot>
 }>
 
-export interface RecupererLieuHistoriqueLoader {
-  recuperer(id: string): Promise<ErrorReadModel | LieuHistoriqueReadModel>
+export interface RecupererStructureHistoriqueLoader {
+  recuperer(id: string): Promise<ErrorReadModel | StructureHistoriqueReadModel>
 }

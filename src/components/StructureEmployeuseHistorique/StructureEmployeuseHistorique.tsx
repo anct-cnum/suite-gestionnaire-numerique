@@ -6,28 +6,28 @@ import { ReactElement } from 'react'
 import HistoriqueEvenements from '../shared/HistoriqueEvenements/HistoriqueEvenements'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { LieuHistoriqueViewModel } from '@/presenters/lieuHistoriquePresenter'
+import { StructureHistoriqueViewModel } from '@/presenters/structureHistoriquePresenter'
 
-export default function LieuInclusionHistorique({ lieuId, viewModel }: Props): ReactElement {
+export default function StructureEmployeuseHistorique({ structureId, viewModel }: Props): ReactElement {
   return (
     <div className="fr-container fr-py-4w">
-      <Link className="fr-link fr-icon-arrow-left-line fr-link--icon-left fr-mb-3w" href={`/lieu/${lieuId}`}>
-        Retour au détail du lieu
+      <Link className="fr-link fr-icon-arrow-left-line fr-link--icon-left fr-mb-3w" href={`/structure/${structureId}`}>
+        Retour au détail de la structure
       </Link>
       <PageTitle>
         <TitleIcon icon="time-line" />
-        Historique — {viewModel.nomLieu}
+        Historique — {viewModel.denomination}
       </PageTitle>
       <HistoriqueEvenements
         evenements={viewModel.evenements}
         sourcesPivots={viewModel.sourcesPivots}
-        texteVide="Aucun événement enregistré pour ce lieu."
+        texteVide="Aucun événement enregistré pour cette structure."
       />
     </div>
   )
 }
 
 type Props = Readonly<{
-  lieuId: string
-  viewModel: LieuHistoriqueViewModel
+  structureId: string
+  viewModel: StructureHistoriqueViewModel
 }>

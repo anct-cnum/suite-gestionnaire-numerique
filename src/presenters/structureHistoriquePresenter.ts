@@ -4,18 +4,18 @@ import {
   presenterSourcesPivots,
   SourcePivotViewModel,
 } from './shared/historiqueEvenements'
-import { LieuHistoriqueReadModel } from '@/use-cases/queries/RecupererLieuHistorique'
+import { StructureHistoriqueReadModel } from '@/use-cases/queries/RecupererStructureHistorique'
 
-export function lieuHistoriquePresenter(readModel: LieuHistoriqueReadModel): LieuHistoriqueViewModel {
+export function structureHistoriquePresenter(readModel: StructureHistoriqueReadModel): StructureHistoriqueViewModel {
   return {
+    denomination: readModel.denomination,
     evenements: presenterEvenements(readModel.evenements),
-    nomLieu: readModel.nomLieu,
     sourcesPivots: presenterSourcesPivots(readModel.sourcesPivots),
   }
 }
 
-export type LieuHistoriqueViewModel = Readonly<{
+export type StructureHistoriqueViewModel = Readonly<{
+  denomination: string
   evenements: ReadonlyArray<EvenementViewModel>
-  nomLieu: string
   sourcesPivots: ReadonlyArray<SourcePivotViewModel>
 }>

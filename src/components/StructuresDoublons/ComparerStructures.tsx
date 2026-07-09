@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { CSSProperties, ReactElement, useContext, useState } from 'react'
 
 import ModaleCanonisation from './ModaleCanonisation'
@@ -454,9 +455,24 @@ function CarteStructure({
           </span>
         ) : null}
       </p>
-      <h2 className="fr-h5">{structure.denomination}</h2>
+      <h2 className="fr-h5">
+        {structure.id} -{' '}
+        <Link className="fr-link fr-link--lg" href={`/structure/${structure.id}`} rel="noreferrer" target="_blank">
+          {structure.denomination}
+        </Link>
+      </h2>
       <p className="fr-text--xs fr-text-mention--grey">
         {structure.adresse} · {structure.rattachementsTotal} rattachement{structure.rattachementsTotal > 1 ? 's' : ''}
+      </p>
+      <p className="fr-text--xs">
+        <Link
+          className="fr-link fr-text--xs"
+          href={`/structure/${structure.id}/historique`}
+          rel="noreferrer"
+          target="_blank"
+        >
+          Historique
+        </Link>
       </p>
 
       <dl className="fr-text--sm">

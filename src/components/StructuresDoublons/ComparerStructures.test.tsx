@@ -21,6 +21,21 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     expect(screen.getByRole('button', { name: 'Appliquer' })).toBeDisabled()
   })
 
+  it('affiche sur chaque carte le titre « id - dénomination » dont la dénomination est un lien vers la fiche et un lien vers l’historique', () => {
+    // WHEN
+    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+
+    // THEN
+    expect(screen.getByRole('heading', { level: 2, name: '3 - Cible' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: '7 - Antenne' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Cible' }).getAttribute('href')).toBe('/structure/3')
+    expect(screen.getByRole('link', { name: 'Antenne' }).getAttribute('href')).toBe('/structure/7')
+    const liensHistorique = screen.getAllByRole('link', { name: 'Historique' })
+    expect(liensHistorique).toHaveLength(2)
+    expect(liensHistorique[0].getAttribute('href')).toBe('/structure/3/historique')
+    expect(liensHistorique[1].getAttribute('href')).toBe('/structure/7/historique')
+  })
+
   it('coche une notion sur une source et la transfère via l’action de transfert', async () => {
     // GIVEN
     const transfererNotionsStructureAction = stubbedServerAction(['OK'])
