@@ -21,6 +21,7 @@ export type LieuInclusionDetailsHeaderData = Readonly<{
 export type PersonneTravaillantData = Readonly<{
   email?: string
   id: number
+  labelisations: ReadonlyArray<'aidants connect' | 'conseiller numérique'>
   nom: string
   prenom: string
   role?: string

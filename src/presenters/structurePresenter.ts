@@ -10,8 +10,8 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       liste: uneStructureReadModel.aidantsEtMediateurs.liste.map((aidant) => ({
         fonction: aidant.fonction,
         id: aidant.id,
+        labelisations: aidant.labelisations,
         lienFiche: aidant.lienFiche,
-        logos: aidant.logos,
         nom: `${aidant.prenom} ${aidant.nom}`.trim(),
       })),
       totalAidant: uneStructureReadModel.aidantsEtMediateurs.totalAidant,
@@ -95,8 +95,8 @@ export type StructureViewModel = Readonly<{
     liste: ReadonlyArray<{
       fonction: string
       id: number
+      labelisations: ReadonlyArray<'aidants connect' | 'conseiller numérique'>
       lienFiche: string
-      logos: ReadonlyArray<string>
       nom: string
     }>
     totalAidant: number

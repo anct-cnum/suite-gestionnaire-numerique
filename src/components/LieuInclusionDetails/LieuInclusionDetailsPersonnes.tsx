@@ -1,10 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import { ReactElement, useState } from 'react'
 
 import { PersonneTravaillantData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import styles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
+import PastilleLabelisation from '@/components/shared/PastilleLabelisation/PastilleLabelisation'
 
 export default function LieuInclusionDetailsPersonnes(props: Props): ReactElement {
   const { data } = props
@@ -48,8 +48,10 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-text--xs">
               {typeof personne.role === 'string' && (
                 <div className="fr-col-auto fr-grid-row fr-grid-row--middle">
-                  <Image alt="" height={16} src={`${process.env.NEXT_PUBLIC_HOST}/conum.svg`} width={16} />
-                  <span className="fr-text--xs fr-text-mention--grey fr-ml-1v fr-mb-0">{personne.role}</span>
+                  {personne.labelisations.map((labelisation) => (
+                    <PastilleLabelisation className="fr-mr-1w" key={labelisation} labelisation={labelisation} />
+                  ))}
+                  <span className="fr-text--xs fr-text-mention--grey fr-mb-0">{personne.role}</span>
                 </div>
               )}
 

@@ -105,8 +105,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     },
     adresseComplete: string,
     personnes: Array<{
-      conseiller_numerique_id: null | string
       contact: null | Record<string, unknown>
+      est_actuellement_conseiller_numerique: boolean
       id: number
       is_aidant_connect: boolean | null
       is_coordinateur: boolean | null
@@ -166,7 +166,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       est_qpv: boolean
     },
     personnes: Array<{
-      conseiller_numerique_id: null | string
+      est_actuellement_conseiller_numerique: boolean
       is_aidant_connect: boolean | null
       is_mediateur: boolean | null
     }>
@@ -187,7 +187,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     // On affiche le tag si la structure a le dispositif OU si au moins une personne est conseiller numérique
     const hasConseillerNumerique =
       structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') === true ||
-      personnes.some((personne) => personne.conseiller_numerique_id !== null)
+      personnes.some((personne) => personne.est_actuellement_conseiller_numerique)
     if (hasConseillerNumerique) {
       tags.push('Conseiller numérique')
     }
@@ -196,7 +196,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     // On ne compte que les médiateurs qui ne sont PAS conseillers numériques
     // Une personne peut être à la fois médiateur et aidant
     const hasMediateur = personnes.some(
-      (personne) => personne.is_mediateur === true && personne.conseiller_numerique_id === null
+      (personne) => personne.is_mediateur === true && !personne.est_actuellement_conseiller_numerique
     )
     if (hasMediateur) {
       tags.push('Médiateur')
@@ -206,7 +206,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     // On ne compte que les aidants qui ne sont PAS conseillers numériques
     // Une personne peut être à la fois aidant et médiateur
     const hasAidantConnect = personnes.some(
-      (personne) => personne.is_aidant_connect === true && personne.conseiller_numerique_id === null
+      (personne) => personne.is_aidant_connect === true && !personne.est_actuellement_conseiller_numerique
     )
     if (hasAidantConnect) {
       tags.push('Aidants Connect')
@@ -243,8 +243,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   }
 
   private mapperPersonne(personne: {
-    conseiller_numerique_id: null | string
     contact: null | Record<string, unknown>
+    est_actuellement_conseiller_numerique: boolean
     id: number
     is_aidant_connect: boolean | null
     is_coordinateur: boolean | null
@@ -254,6 +254,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   }): {
     email: string | undefined
     id: number
+    labelisations: Array<'aidants connect' | 'conseiller numérique'>
     nom: string
     prenom: string
     role: string | undefined
@@ -265,7 +266,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     const telephone = contact?.telephone as string | undefined
 
     let role: string | undefined
-    if (personne.conseiller_numerique_id !== null) {
+    if (personne.est_actuellement_conseiller_numerique) {
       role = 'Conseiller numérique'
     } else if (personne.is_mediateur === true) {
       role = 'Médiateur'
@@ -275,9 +276,18 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       role = 'Coordinateur'
     }
 
+    const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
+    if (personne.est_actuellement_conseiller_numerique) {
+      labelisations.push('conseiller numérique')
+    }
+    if (personne.is_aidant_connect === true) {
+      labelisations.push('aidants connect')
+    }
+
     return {
       email,
       id: personne.id,
+      labelisations,
       nom: personne.nom,
       prenom: personne.prenom,
       role,
@@ -287,8 +297,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
   private async recupererPersonnes(id: string): Promise<
     Array<{
-      conseiller_numerique_id: null | string
       contact: null | Record<string, unknown>
+      est_actuellement_conseiller_numerique: boolean
       id: number
       is_aidant_connect: boolean | null
       is_coordinateur: boolean | null
@@ -309,7 +319,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         pe.contact,
         pe.is_coordinateur,
         pe.is_mediateur,
-        pe.conseiller_numerique_id,
+        pe.est_actuellement_conseiller_numerique,
         pe.labellisation_aidant_connect as is_aidant_connect
       FROM main.personne_affectations_lieu pal
       INNER JOIN min.personne_enrichie pe ON pal.personne_id = pe.id
