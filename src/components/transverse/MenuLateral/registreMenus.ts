@@ -66,6 +66,22 @@ const sectionAVenir: Section = {
   titre: 'à venir',
 }
 
+const sectionBetaTesteur: Section = {
+  menus: [
+    {
+      icon: 'building-line',
+      label: 'Structures administratives',
+      url: () => '/liste-structures-administratives',
+    },
+    {
+      icon: 'git-merge-line',
+      label: 'Doublons de structures',
+      url: () => '/structures-doublons',
+    },
+  ],
+  titre: 'DÉVELOPPEUR',
+}
+
 const sectionRapportsEtStatistiques: Section = {
   menus: [
     {
@@ -90,6 +106,10 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   if (contexte.aCesRoles('administrateur_dispositif')) {
     sections.push(sectionRapportsEtStatistiques)
+  }
+
+  if (contexte.isBetaTesteur) {
+    sections.push(sectionBetaTesteur)
   }
 
   sections.push(sectionAVenir)

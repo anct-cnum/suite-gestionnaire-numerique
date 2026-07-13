@@ -89,6 +89,7 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
         c.id,
         s.siret,
         s.ridet,
+        s.rna,
         s.denomination_sirene,
         s.denomination_antenne,
         s.siren,
@@ -138,6 +139,7 @@ interface LigneCandidate {
   nom_commune: null | string
   region_code: null | string
   ridet: null | string
+  rna: null | string
   signal: SignalDoublon
   siren: null | string
   siret: null | string
@@ -211,6 +213,7 @@ function versCandidate(ligne: LigneCandidate): StructureCandidateReadModel {
     id: ligne.id,
     nbRattachements: ligne.nb_rattachements,
     ridet: ligne.ridet,
+    rna: ligne.rna,
     siret: ligne.siret,
     source: ligne.source,
   }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { structuresDoublonsPresenter } from './structuresDoublonsPresenter'
+import { structuresDoublonsPresenter, TriDoublons, triDoublonsParDefaut } from './structuresDoublonsPresenter'
 import { GroupeDoublonReadModel, StructureCandidateReadModel } from '@/use-cases/queries/RechercherStructuresDoublons'
 
 describe('structures doublons presenter', () => {
@@ -32,7 +32,7 @@ describe('structures doublons presenter', () => {
     ]
 
     // WHEN
-    const viewModel = structuresDoublonsPresenter(readModel)
+    const viewModel = structuresDoublonsPresenter(readModel, triDoublonsParDefaut)
 
     // THEN
     expect(viewModel).toStrictEqual({
@@ -41,6 +41,7 @@ describe('structures doublons presenter', () => {
           cle: 'denom:coallia|86194',
           commune: 'Poitiers',
           idsParam: '11,22',
+          nbRattachements: 6,
           nbStructures: 2,
           signalLibelle: 'Même nom et commune',
           structures: [
@@ -80,7 +81,7 @@ describe('structures doublons presenter', () => {
     ]
 
     // WHEN
-    const viewModel = structuresDoublonsPresenter(readModel)
+    const viewModel = structuresDoublonsPresenter(readModel, triDoublonsParDefaut)
 
     // THEN
     expect(viewModel.groupes[0].signalLibelle).toBe('SIRET à antenne ambiguë')
@@ -107,9 +108,86 @@ describe('structures doublons presenter', () => {
     ])
   })
 
+  it('trie les groupes par nombre total de rattachements décroissant', () => {
+    // GIVEN
+    const readModel: ReadonlyArray<GroupeDoublonReadModel> = [
+      {
+        cle: 'groupe-faible-impact',
+        signal: 'nom_commune_proche',
+        structures: [structureCandidate({ id: 1, nbRattachements: 1 }), structureCandidate({ id: 2 })],
+      },
+      {
+        cle: 'groupe-fort-impact',
+        signal: 'nom_commune_proche',
+        structures: [
+          structureCandidate({ id: 3, nbRattachements: 4 }),
+          structureCandidate({ id: 4, nbRattachements: 3 }),
+        ],
+      },
+    ]
+
+    // WHEN
+    const viewModel = structuresDoublonsPresenter(readModel, triDoublonsParDefaut)
+
+    // THEN
+    expect(viewModel.groupes.map((groupe) => groupe.cle)).toStrictEqual(['groupe-fort-impact', 'groupe-faible-impact'])
+    expect(viewModel.groupes[0].nbRattachements).toBe(7)
+    expect(viewModel.groupes[1].nbRattachements).toBe(1)
+  })
+
+  it.each([
+    {
+      attendu: ['groupe-fort-impact', 'groupe-faible-impact'],
+      intention: 'par rattachements croissants inversés',
+      tri: { colonne: 'rattachements', ordre: 'desc' } as TriDoublons,
+    },
+    {
+      attendu: ['groupe-faible-impact', 'groupe-fort-impact'],
+      intention: 'par rattachements croissants',
+      tri: { colonne: 'rattachements', ordre: 'asc' } as TriDoublons,
+    },
+    {
+      attendu: ['groupe-fort-impact', 'groupe-faible-impact'],
+      intention: 'par commune alphabétique',
+      tri: { colonne: 'commune', ordre: 'asc' } as TriDoublons,
+    },
+    {
+      attendu: ['groupe-faible-impact', 'groupe-fort-impact'],
+      intention: 'par libellé de signal alphabétique',
+      tri: { colonne: 'signal', ordre: 'asc' } as TriDoublons,
+    },
+  ])('trie les groupes $intention', ({ attendu, tri }) => {
+    // GIVEN
+    const readModel: ReadonlyArray<GroupeDoublonReadModel> = [
+      {
+        cle: 'groupe-faible-impact',
+        // « Identifiant externe partagé » < « Même nom et commune »
+        signal: 'identifiant_externe_partage',
+        structures: [
+          structureCandidate({ commune: 'Zicavo', id: 1, nbRattachements: 1 }),
+          structureCandidate({ commune: 'Zicavo', id: 2 }),
+        ],
+      },
+      {
+        cle: 'groupe-fort-impact',
+        signal: 'nom_commune_proche',
+        structures: [
+          structureCandidate({ commune: 'Ajaccio', id: 3, nbRattachements: 4 }),
+          structureCandidate({ commune: 'Ajaccio', id: 4, nbRattachements: 3 }),
+        ],
+      },
+    ]
+
+    // WHEN
+    const viewModel = structuresDoublonsPresenter(readModel, tri)
+
+    // THEN
+    expect(viewModel.groupes.map((groupe) => groupe.cle)).toStrictEqual(attendu)
+  })
+
   it('un readModel vide produit un total nul et aucun groupe', () => {
     // WHEN
-    const viewModel = structuresDoublonsPresenter([])
+    const viewModel = structuresDoublonsPresenter([], triDoublonsParDefaut)
 
     // THEN
     expect(viewModel).toStrictEqual({ groupes: [], total: 0 })
@@ -126,6 +204,7 @@ function structureCandidate(
     denominationAntenne: null,
     nbRattachements: 0,
     ridet: null,
+    rna: null,
     siret: null,
     source: null,
     ...overrides,

@@ -256,6 +256,34 @@ describe('menu lateral', () => {
     expect(gouvernance).toHaveAttribute('href', '/gouvernance/93')
   })
 
+  it("étant un bêta-testeur, quand j'affiche le menu latéral, alors la section BÊTA TESTEUR s'affiche avec les liens des structures administratives et des doublons", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={new Contexte('administrateur_dispositif', [{ type: 'france' }], true)} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).getByText('DÉVELOPPEUR', { selector: 'p' })).toBeInTheDocument()
+    const structuresAdministratives = within(nav).getByRole('link', { name: 'Structures administratives' })
+    expect(structuresAdministratives).toHaveAttribute('href', '/liste-structures-administratives')
+    const doublons = within(nav).getByRole('link', { name: 'Doublons de structures' })
+    expect(doublons).toHaveAttribute('href', '/structures-doublons')
+  })
+
+  it("étant un utilisateur non bêta-testeur, quand j'affiche le menu latéral, alors la section BÊTA TESTEUR n'est pas visible", () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).queryByText('DÉVELOPPEUR', { selector: 'p' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'Structures administratives' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'Doublons de structures' })).not.toBeInTheDocument()
+  })
+
   it("étant un utilisateur autre que gestionnaire de département, quand j'affiche le menu latéral, alors il ne s'affiche pas avec le lien de la gouvernance", () => {
     // WHEN
     afficherMenuLateral()

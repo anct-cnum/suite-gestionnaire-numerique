@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import { gererClicNavigation } from './PremierePage'
 import { pages } from '@/presenters/paginationPresenter'
 
 export default function Page({
   nombreDeResultat,
+  onNavigation,
   pageCourante,
   urlAvecParametres,
   utilisateursParPage,
@@ -27,7 +29,12 @@ export default function Page({
 
     return (
       <li key={page}>
-        <Link className="fr-pagination__link" href={cloneUrlAvecParametres} title={`Page ${page}`}>
+        <Link
+          className="fr-pagination__link"
+          href={cloneUrlAvecParametres}
+          onClick={gererClicNavigation(onNavigation, cloneUrlAvecParametres)}
+          title={`Page ${page}`}
+        >
           {page}
         </Link>
       </li>
@@ -37,6 +44,7 @@ export default function Page({
 
 type Props = Readonly<{
   nombreDeResultat: number
+  onNavigation?(url: string): void
   pageCourante: number
   urlAvecParametres: URL
   utilisateursParPage: number

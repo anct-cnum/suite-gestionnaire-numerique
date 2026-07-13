@@ -17,7 +17,13 @@ export class RechercherStructuresDoublons implements QueryHandler<Query, Structu
     // Aucun signal sélectionné = on cherche sur tous les axes de détection.
     const signaux = query.signaux.length === 0 ? TOUS_LES_SIGNAUX : query.signaux
 
-    return this.#doublonsLoader.doublons(signaux, query.zone)
+    const groupes = await this.#doublonsLoader.doublons(signaux, query.zone)
+
+    // Un groupe reste visible si AU MOINS UNE de ses structures satisfait tous les
+    // critères : on ne retire jamais une structure d'un groupe, sinon le doublon
+    // perdrait son binôme de comparaison.
+    const criteres = query.criteres ?? {}
+    return groupes.filter((groupe) => groupe.structures.some((structure) => correspondAuxCriteres(structure, criteres)))
   }
 }
 
@@ -55,6 +61,7 @@ export type StructureCandidateReadModel = Readonly<{
   id: number
   nbRattachements: number
   ridet: null | string
+  rna: null | string
   siret: null | string
   // Source de la donnée (edited_by) : coop, carto, aidants-connect, idposte, MIN…
   source: null | string
@@ -67,7 +74,38 @@ type ZoneDoublons = Readonly<{
   type: TypeZone
 }>
 
+// Critères en ET : un groupe est retenu si une de ses structures les satisfait tous.
+type CriteresDoublons = Readonly<{
+  nom?: string
+  ridet?: string
+  rna?: string
+  siret?: string
+}>
+
 type Query = Readonly<{
+  criteres?: CriteresDoublons
   signaux: ReadonlyArray<SignalDoublon>
   zone?: ZoneDoublons
 }>
+
+function correspondAuxCriteres(structure: StructureCandidateReadModel, criteres: CriteresDoublons): boolean {
+  if (criteres.nom !== undefined) {
+    const nomRecherche = criteres.nom.toLowerCase()
+    const correspondNom = [structure.denomination, structure.denominationAntenne].some(
+      (denomination) => denomination?.toLowerCase().includes(nomRecherche) ?? false
+    )
+    if (!correspondNom) {
+      return false
+    }
+  }
+
+  return (
+    correspondIdentifiant(structure.siret, criteres.siret) &&
+    correspondIdentifiant(structure.rna, criteres.rna) &&
+    correspondIdentifiant(structure.ridet, criteres.ridet)
+  )
+}
+
+function correspondIdentifiant(valeur: null | string, critere?: string): boolean {
+  return critere === undefined || (valeur?.includes(critere) ?? false)
+}
