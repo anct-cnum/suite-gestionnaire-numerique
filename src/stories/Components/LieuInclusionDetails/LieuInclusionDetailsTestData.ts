@@ -25,6 +25,7 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
     {
       email: 'jean.martin@franceservices.gouv.fr',
       id: 1,
+      labelisations: ['conseiller numérique'],
       nom: 'Martin',
       prenom: 'Jean',
       role: 'Conseiller numérique',
@@ -33,6 +34,7 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
     {
       email: 'marie.durand@franceservices.gouv.fr',
       id: 2,
+      labelisations: ['aidants connect'],
       nom: 'Durand',
       prenom: 'Marie',
       role: 'Aidant',
@@ -40,6 +42,7 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
     },
     {
       id: 3,
+      labelisations: [],
       nom: 'Leroy',
       prenom: 'Pierre',
       role: 'Médiateur',

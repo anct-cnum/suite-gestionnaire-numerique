@@ -23,8 +23,8 @@ export type UneStructureReadModel = Readonly<{
     liste: ReadonlyArray<{
       fonction: string
       id: number
+      labelisations: ReadonlyArray<'aidants connect' | 'conseiller numérique'>
       lienFiche: string
-      logos: ReadonlyArray<string>
       nom: string
       prenom: string
     }>

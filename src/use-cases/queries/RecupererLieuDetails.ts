@@ -36,6 +36,7 @@ export interface LieuDetailsReadModel {
   personnesTravaillant: ReadonlyArray<{
     email?: string
     id: number
+    labelisations: ReadonlyArray<'aidants connect' | 'conseiller numérique'>
     nom: string
     prenom: string
     role?: string

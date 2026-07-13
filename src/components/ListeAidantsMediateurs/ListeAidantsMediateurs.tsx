@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
+import React, { memo, ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
 import AccompagnementsTableCell from './AccompagnementsTableCell'
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
@@ -11,6 +11,7 @@ import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
+import PastilleLabelisation from '../shared/PastilleLabelisation/PastilleLabelisation'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
@@ -45,32 +46,18 @@ const AidantRow = memo(
     accompagnementsPromise,
     aidant,
     badgeStyle,
-    getAidantIcons,
   }: {
     readonly accompagnementsPromise: Promise<Map<string, number>>
     readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
     readonly badgeStyle: React.CSSProperties
-    // eslint-disable-next-line @typescript-eslint/method-signature-style
-    readonly getAidantIcons: (
-      labelisations: Array<'aidants connect' | 'conseiller numérique'>
-    ) => Array<{ alt: string; src: string }>
   }) => {
-    const icons = useMemo(() => getAidantIcons(aidant.labelisations), [aidant.labelisations, getAidantIcons])
-
     return (
       <tr style={{ height: '4rem' }}>
         <td>
           <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
             {aidant.nom} {aidant.prenom}
-            {icons.map((icon) => (
-              <img
-                alt={icon.alt}
-                className="fr-ml-1w"
-                height={24}
-                key={`${aidant.id}-${icon.src}`}
-                src={icon.src}
-                width={24}
-              />
+            {aidant.labelisations.map((labelisation) => (
+              <PastilleLabelisation key={`${aidant.id}-${labelisation}`} labelisation={labelisation} />
             ))}
           </div>
         </td>
@@ -239,23 +226,6 @@ export default function ListeAidantsMediateurs({
     router.push(url.pathname + url.search)
   }
 
-  const getAidantIcons = useCallback(
-    (labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
-      const icons: Array<{ alt: string; src: string }> = []
-
-      if (labelisations.includes('conseiller numérique')) {
-        icons.push({ alt: 'Conseiller numérique', src: '/conum.svg' })
-      }
-
-      if (labelisations.includes('aidants connect')) {
-        icons.push({ alt: 'Aidant numérique', src: '/aidant-numerique.svg' })
-      }
-
-      return icons
-    },
-    []
-  )
-
   // Styles constants mémorisés
   const badgeStyle = useMemo(
     () => ({
@@ -378,7 +348,6 @@ export default function ListeAidantsMediateurs({
                 accompagnementsPromise={accompagnementsPromise}
                 aidant={aidant}
                 badgeStyle={badgeStyle}
-                getAidantIcons={getAidantIcons}
                 key={aidant.id}
               />
             ))}

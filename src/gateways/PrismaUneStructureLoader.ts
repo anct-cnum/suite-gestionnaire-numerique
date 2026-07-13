@@ -136,7 +136,6 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
 
 interface PersonneAffectation {
   personne: {
-    conseiller_numerique_id: null | string
     id: number
     is_coordinateur: boolean | null
     is_mediateur: boolean | null
@@ -150,8 +149,8 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
   liste: ReadonlyArray<{
     fonction: string
     id: number
+    labelisations: ReadonlyArray<'aidants connect' | 'conseiller numérique'>
     lienFiche: string
-    logos: ReadonlyArray<string>
     nom: string
     prenom: string
   }>
@@ -195,21 +194,23 @@ function buildAidantsEtMediateurs(personnesAffectations: ReadonlyArray<PersonneA
       fonctions.push('Médiateur numérique')
     }
     if (sources.has('aidants-connect')) {
-      fonctions.push('Aidant numérique')
+      fonctions.push('Aidant Connect')
     }
 
-    const logos: Array<string> = []
-    if (personne.conseiller_numerique_id !== null && personne.conseiller_numerique_id !== '') {
-      logos.push(`${process.env.NEXT_PUBLIC_HOST}/conum.svg`)
+    const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
+    // Conseiller numérique = affectation emploi « idposte » active (même critère
+    // que est_actuellement_conseiller_numerique dans la vue min.personne_enrichie).
+    if (sources.has('idposte')) {
+      labelisations.push('conseiller numérique')
     }
     if (sources.has('aidants-connect')) {
-      logos.push(`${process.env.NEXT_PUBLIC_HOST}/aidant-numerique.svg`)
+      labelisations.push('aidants connect')
     }
     return {
       fonction: fonctions.join(', '),
       id: personne.id,
+      labelisations,
       lienFiche: `/aidant/${personne.id}`,
-      logos,
       nom: personne.nom ?? '',
       prenom: personne.prenom ?? '',
     }

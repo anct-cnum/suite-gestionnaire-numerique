@@ -1,0 +1,8 @@
+.pastille {
+  align-items: center;
+  display: inline-flex;
+  height: 1.5rem;
+  justify-content: center;
+  vertical-align: middle;
+  width: 1.5rem;
+}

@@ -1,7 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import PastilleLabelisation from '@/components/shared/PastilleLabelisation/PastilleLabelisation'
 import TableauVide from '@/components/shared/TableauVide/TableauVide'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { StructureViewModel } from '@/presenters/structurePresenter'
@@ -102,8 +102,8 @@ export default function StructureAidantsMediateurs({ aidantsEtMediateurs }: Prop
                   <div className="font-weight-700">
                     <span aria-hidden="true" className="fr-icon-user-line color-blue-france fr-mr-1w" />
                     {aidant.nom}
-                    {aidant.logos.map((logo) => (
-                      <Image alt="" className="fr-ml-1w" height={24} key={logo} src={logo} width={24} />
+                    {aidant.labelisations.map((labelisation) => (
+                      <PastilleLabelisation key={labelisation} labelisation={labelisation} />
                     ))}
                   </div>
                   <div className="fr-text--sm color-grey fr-m-0">{aidant.fonction}</div>
