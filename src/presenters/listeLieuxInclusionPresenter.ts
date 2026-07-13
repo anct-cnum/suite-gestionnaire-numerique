@@ -1,5 +1,6 @@
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
 import { CouleurFraicheur, couleurFraicheur } from '@/presenters/shared/fraicheur'
+import { libelleTypologie } from '@/presenters/shared/typologie'
 import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 export function listeLieuxInclusionPresenter(
@@ -14,11 +15,9 @@ export function listeLieuxInclusionPresenter(
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
     nbAccompagnements: lieu.nb_accompagnements_coop + lieu.nb_accompagnements_ac,
-    nbMandatsAC: lieu.nb_mandats_ac,
     nom: lieu.nom,
-    siret: lieu.siret,
     tags: getTags(lieu),
-    typeStructure: lieu.categorie_juridique ?? 'Non renseigné',
+    typeStructure: libelleTypologie(lieu.typologies[0]),
     visiblePourCartographie: lieu.visible_pour_cartographie_nationale ?? false,
   }))
 
@@ -57,9 +56,7 @@ export interface LieuInclusionViewModel {
   id: string
   idCartographieNationale: null | string
   nbAccompagnements: number
-  nbMandatsAC: number
   nom: string
-  siret: null | string
   tags: Array<Tag>
   typeStructure: string
   visiblePourCartographie: boolean

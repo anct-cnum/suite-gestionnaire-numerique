@@ -30,7 +30,7 @@ export interface StructureTransfertRepository {
 
 // Une des 6 notions transférables d'une structure_administrative vers une autre. Type canonique
 // partagé : le presenter (affichage des concepts) et l'UI (cases à cocher) s'y réfèrent.
-export type NotionCle = 'aidantsConnect' | 'contacts' | 'coop' | 'idposte' | 'lieuInclusion' | 'membre'
+export type NotionCle = 'aidantsConnect' | 'contacts' | 'coop' | 'idposte' | 'membre'
 
 // Déplacement d'un sous-ensemble de notions de la source vers la cible. La source n'est supprimée
 // (soft-delete) que si elle ne porte plus aucune notion après le transfert. La fusion est le cas

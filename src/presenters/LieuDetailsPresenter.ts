@@ -17,7 +17,6 @@ export function lieuDetailsPresenter(
       adresse: lieuDetailsReadModel.informationsGenerales.adresse,
       complementAdresse: lieuDetailsReadModel.informationsGenerales.complementAdresse,
       nomStructure: lieuDetailsReadModel.informationsGenerales.nomStructure,
-      siret: lieuDetailsReadModel.informationsGenerales.siret,
     },
     lieuAccueilPublic: {
       accessibilite: lieuDetailsReadModel.lieuAccueilPublic.accessibilite,
@@ -87,7 +86,6 @@ interface LieuInclusionDetailsData {
     adresse: string
     complementAdresse?: string
     nomStructure: string
-    siret?: string
   }
   lieuAccueilPublic: {
     accessibilite?: string

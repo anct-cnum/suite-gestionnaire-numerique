@@ -48,8 +48,6 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
          WHERE pae.structure_administrative_id = sa.id AND pae.source = 'aidants-connect')::int AS nb_affectations_ac,
         (SELECT COUNT(*) FROM main.contact_structure_administrative cs
          WHERE cs.structure_administrative_id = sa.id)::int AS nb_contacts,
-        (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative li
-         WHERE li.structure_administrative_id = sa.id)::int AS nb_associations_lieux,
         (SELECT COUNT(DISTINCT m.gouvernance_departement_code) FROM min.membre m
          WHERE m.structure_id = sa.id)::int AS nb_gouvernances,
         (SELECT COUNT(*) FROM min.feuille_de_route fdr
@@ -84,7 +82,6 @@ interface LigneDetail {
   nb_affectations_coop: number
   nb_affectations_emploi: number
   nb_affectations_idposte: number
-  nb_associations_lieux: number
   nb_contacts: number
   nb_contrats: number
   nb_feuilles_de_route: number
@@ -110,8 +107,7 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     ligne.nb_postes +
     ligne.nb_contrats +
     ligne.nb_affectations_emploi +
-    ligne.nb_contacts +
-    ligne.nb_associations_lieux
+    ligne.nb_contacts
 
   return {
     adresse: ligne.adresse,
@@ -131,7 +127,6 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
       affectationsCoop: ligne.nb_affectations_coop,
       affectationsEmploi: ligne.nb_affectations_emploi,
       affectationsIdposte: ligne.nb_affectations_idposte,
-      associationsLieux: ligne.nb_associations_lieux,
       contacts: ligne.nb_contacts,
       contrats: ligne.nb_contrats,
       feuillesDeRoute: ligne.nb_feuilles_de_route,

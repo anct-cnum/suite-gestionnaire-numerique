@@ -172,7 +172,6 @@ function antenne(overrides: Partial<StructureComparaisonViewModel> = {}): Struct
     concepts: [],
     denomination: 'Antenne Chartres',
     denominationSirene: 'Antenne Chartres',
-    estAssocieLieuInclusion: false,
     estCanonique: false,
     estMembre: false,
     id: 7,

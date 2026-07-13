@@ -17,14 +17,6 @@ const LIBELLES_RATTACHEMENTS: ReadonlyArray<
   { cle: 'contrats', label: 'Contrats' },
   { cle: 'affectationsEmploi', label: 'Affectations emploi' },
   { cle: 'contacts', label: 'Contacts référents' },
-  {
-    cle: 'associationsLieux',
-    info:
-      'Les lieux d’inclusion sont rattachés à cette structure par leur SIRET. Fusionner une structure qui a des ' +
-      'lieux d’inclusion rattachés ne « déplace » pas les lieux d’inclusion sur la carte, ces derniers ayant une ' +
-      'adresse indépendante.',
-    label: "Associations à des lieux d'inclusion",
-  },
 ]
 
 export function comparaisonDoublonsPresenter(readModel: ComparaisonDoublonsReadModel): ComparaisonViewModel {
@@ -33,7 +25,7 @@ export function comparaisonDoublonsPresenter(readModel: ComparaisonDoublonsReadM
 
 export type ComparaisonViewModel = ReadonlyArray<StructureComparaisonViewModel>
 
-// Une des 6 notions transférables portées par une structure. `present` pilote l'affichage
+// Une des 5 notions transférables portées par une structure. `present` pilote l'affichage
 // de la case (concept absent = pas de case). `idExterne` rend lisible le cas « 0 ligne mais
 // id scalaire présent » (ex. structure_ac_id sans aucun aidant) pour les sources agrégées.
 export type ConceptViewModel = Readonly<{
@@ -47,13 +39,10 @@ export type ConceptViewModel = Readonly<{
 export type StructureComparaisonViewModel = Readonly<{
   adresse: string
   champs: ReadonlyArray<ChampViewModel>
-  // Les 6 notions transférables, dans l'ordre d'affichage (toujours les 6, `present` filtre).
+  // Les 5 notions transférables, dans l'ordre d'affichage (toujours les 5, `present` filtre).
   concepts: ReadonlyArray<ConceptViewModel>
   denomination: string
   denominationSirene: string
-  // true si la structure est associée à au moins un lieu d'inclusion
-  // (table main.lieu_inclusion_structure_administrative).
-  estAssocieLieuInclusion: boolean
   // true si la structure est la forme canonique (aucune denomination_antenne) = celle qui devrait
   // porter le rattachement et l'affichage. Sinon c'est une antenne.
   estCanonique: boolean
@@ -178,7 +167,6 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
     concepts: construireConcepts(structure),
     denomination: structure.denominationAntenne ?? structure.denominationSirene ?? `Structure #${structure.id}`,
     denominationSirene: structure.denominationSirene ?? '',
-    estAssocieLieuInclusion: structure.rattachements.associationsLieux > 0,
     estCanonique: structure.denominationAntenne === null,
     estMembre: structure.rattachements.membresMin > 0,
     id: structure.id,
@@ -194,7 +182,7 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
   }
 }
 
-// Construit les 6 notions transférables d'une structure. Une notion est « présente » dès qu'elle
+// Construit les 5 notions transférables d'une structure. Une notion est « présente » dès qu'elle
 // porte au moins une ligne OU un id scalaire non-NULL — d'où l'inclusion des ids coop/tp/ac, qui
 // font qu'une structure « porte » la source même avec 0 affectation (le resync la repeuplerait).
 function construireConcepts(structure: StructureDetailReadModel): ReadonlyArray<ConceptViewModel> {
@@ -237,13 +225,6 @@ function construireConcepts(structure: StructureDetailReadModel): ReadonlyArray<
       label: 'Aidants Connect',
       present: liens.affectationsAc > 0 || structure.structureAcId !== null,
       resume: unite(liens.affectationsAc, 'aidant'),
-    },
-    {
-      cle: 'lieuInclusion',
-      idExterne: null,
-      label: 'Lieu d’inclusion',
-      present: liens.associationsLieux > 0,
-      resume: unite(liens.associationsLieux, 'lieu', 'lieux'),
     },
   ]
 }

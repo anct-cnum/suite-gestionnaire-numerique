@@ -8,7 +8,6 @@ export interface FiltresLieuxInclusionInternes {
   frr: boolean
   horsZonePrioritaire: boolean
   qpv: boolean
-  typeStructure: string
 }
 
 /**
@@ -21,7 +20,6 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
     frr: params.get('frr') === 'true',
     horsZonePrioritaire: params.get('horsZonePrioritaire') === 'true',
     qpv: params.get('qpv') === 'true',
-    typeStructure: params.get('typeStructure') ?? '',
   }
 }
 
@@ -34,7 +32,7 @@ export function buildFiltresLieuxInclusion(
   scopeFiltre: ScopeFiltre,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut, typeStructure } = params
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut } = params
 
   let geographique: FiltreGeographiqueLieux | undefined
   if (scopeFiltre.type === 'national') {
@@ -53,7 +51,6 @@ export function buildFiltresLieuxInclusion(
     qpv: qpv === 'true' ? true : undefined,
     scopeFiltre,
     statut: statut === 'archives' ? 'archive' : 'actif',
-    typeStructure,
   }
 }
 
@@ -66,7 +63,6 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
   // Copie directe des paramètres
   const codeDepartement = params.get('codeDepartement')
   const codeRegion = params.get('codeRegion')
-  const typeStructure = params.get('typeStructure')
   const qpv = params.get('qpv')
   const frr = params.get('frr')
   const horsZonePrioritaire = params.get('horsZonePrioritaire')
@@ -76,9 +72,6 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
   }
   if (codeRegion !== null && codeRegion !== '') {
     convertedParams.set('codeRegion', codeRegion)
-  }
-  if (typeStructure !== null && typeStructure !== '') {
-    convertedParams.set('typeStructure', typeStructure)
   }
   if (qpv === 'true') {
     convertedParams.set('qpv', 'true')
@@ -105,10 +98,7 @@ export function removeLieuxInclusionFilterFromParams(params: URLSearchParams, pa
 /**
  * Obtient la liste des filtres actifs pour l'affichage
  */
-export function getActiveLieuxInclusionFilters(
-  params: URLSearchParams,
-  typesStructure?: Array<{ code: string; nom: string }>
-): Array<{
+export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
   label: string
   paramKey: string
   paramValue: string
@@ -117,7 +107,6 @@ export function getActiveLieuxInclusionFilters(
 
   const codeDepartement = params.get('codeDepartement')
   const codeRegion = params.get('codeRegion')
-  const typeStructure = params.get('typeStructure')
   const qpv = params.get('qpv')
   const frr = params.get('frr')
   const horsZonePrioritaire = params.get('horsZonePrioritaire')
@@ -139,16 +128,6 @@ export function getActiveLieuxInclusionFilters(
       label: regionName,
       paramKey: 'codeRegion',
       paramValue: codeRegion,
-    })
-  }
-
-  if (typeStructure !== null && typeStructure !== '') {
-    // Chercher le nom du type de structure correspondant au code
-    const typeStructureName = getTypeStructureName(typeStructure, typesStructure)
-    filtres.push({
-      label: typeStructureName,
-      paramKey: 'typeStructure',
-      paramValue: typeStructure,
     })
   }
 
@@ -188,7 +167,6 @@ interface FiltresLieuxInclusionURLParams {
   page?: string
   qpv?: string
   statut?: string
-  typeStructure?: string
 }
 
 /**
@@ -328,16 +306,4 @@ function getRegionName(code: string): string {
   }
 
   return regions[code] ?? `Région ${code}`
-}
-
-/**
- * Fonction utilitaire pour obtenir le nom d'un type de structure par son code
- */
-function getTypeStructureName(code: string, typesStructure?: Array<{ code: string; nom: string }>): string {
-  if (!typesStructure) {
-    return code
-  }
-
-  const typeStructure = typesStructure.find((type) => type.code === code)
-  return typeStructure ? typeStructure.nom : code
 }

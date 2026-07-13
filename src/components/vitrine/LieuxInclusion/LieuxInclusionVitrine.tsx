@@ -35,12 +35,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
         </div>
       </div>
 
-      <LieuxInclusionCategory
-        dateGeneration={viewModel.categoryGenerationDate}
-        elements={viewModel.categoryElements}
-        nombreLieuxInclusion={viewModel.nombreLieuxInclusion}
-        nombreLieuxInclusionPublic={viewModel.nombreLieuxInclusionPublic}
-      />
+      <LieuxInclusionCategory nombreLieuxInclusion={viewModel.nombreLieuxInclusion} />
 
       <div className="fr-grid-row">
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w">

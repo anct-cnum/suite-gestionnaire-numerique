@@ -11,8 +11,10 @@ export type LieuCoopOption = Readonly<{
 
 // Refonte 2026 : "lieux coop" = main.lieu_inclusion (et plus main.structure
 // legacy). activites_coop a ete repointe sur lieu_id (V084 dataspace).
-// Pour le scope "structure", scopeFiltre.id refere a une SA.id : on selectionne
-// les lieux associes via la table d'asso main.lieu_inclusion_structure_administrative.
+// Pour le scope "structure", scopeFiltre.id refere a une SA.id : depuis le
+// retrait de l'asso lieu ↔ SA (#1711), on selectionne les lieux ou une personne
+// employee par cette SA est affectee (paf_lieu × paf_emploi, plus
+// min.personne_enrichie pour les mediateurs Coop sans paf_emploi).
 export class PrismaLieuxCoopLoader {
   async rechercher(recherche: string, scopeFiltre: ScopeFiltre): Promise<ReadonlyArray<LieuCoopOption>> {
     let rows: ReadonlyArray<LieuRow>
@@ -23,8 +25,15 @@ export class PrismaLieuxCoopLoader {
         JOIN main.activites_coop a ON a.lieu_id = l.id
         LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
         WHERE EXISTS (
-            SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
-            WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${scopeFiltre.id}
+            SELECT 1 FROM main.personne_affectations_lieu pal
+            WHERE pal.lieu_id = l.id AND pal.est_active = true
+              AND pal.personne_id IN (
+                SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+                WHERE pae.structure_administrative_id = ${scopeFiltre.id} AND pae.est_active = true
+                UNION
+                SELECT pe.id FROM min.personne_enrichie pe
+                WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
+              )
           )
           AND l.nom IS NOT NULL
           AND l.nom ILIKE '%' || ${recherche} || '%'

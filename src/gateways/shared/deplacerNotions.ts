@@ -2,15 +2,8 @@ import { Prisma } from '@prisma/client'
 
 import { NotionCle } from '@/use-cases/commands/TransfererNotionsStructure'
 
-// Les 6 notions transférables — une fusion = déplacer la totalité.
-export const TOUTES_NOTIONS: ReadonlyArray<NotionCle> = [
-  'aidantsConnect',
-  'contacts',
-  'coop',
-  'idposte',
-  'lieuInclusion',
-  'membre',
-]
+// Les 5 notions transférables — une fusion = déplacer la totalité.
+export const TOUTES_NOTIONS: ReadonlyArray<NotionCle> = ['aidantsConnect', 'contacts', 'coop', 'idposte', 'membre']
 
 // Cœur transactionnel partagé entre le transfert (sous-ensemble de notions) et la fusion (les 6).
 // Charge les structures, applique les gardes C1/C2 puis les mutations des notions choisies. Ne gère
@@ -57,14 +50,11 @@ export async function deplacerNotionsDansTransaction(
   if (choisi('aidantsConnect')) {
     await transfererAidantsConnect(tx, idSource, idCible, source)
   }
-  if (choisi('lieuInclusion')) {
-    await transfererLieuInclusion(tx, idSource, idCible)
-  }
 
   return 'OK'
 }
 
-// La source ne porte plus rien = 0 ligne sur les 7 FK ET 0 id scalaire sortant (coop/tp/ac). Les
+// La source ne porte plus rien = 0 ligne sur les 6 FK ET 0 id scalaire sortant (coop/tp/ac). Les
 // champs d'identité (siret/ridet/rna) ne comptent pas : ce ne sont pas des vecteurs de resync.
 export async function sourceEstVide(tx: Prisma.TransactionClient, idSource: number): Promise<boolean> {
   const lignes = await tx.$queryRaw<Array<{ vide: boolean }>>`
@@ -75,7 +65,6 @@ export async function sourceEstVide(tx: Prisma.TransactionClient, idSource: numb
       OR EXISTS (SELECT 1 FROM main.contrat WHERE structure_id = ${idSource})
       OR EXISTS (SELECT 1 FROM main.personne_affectations_emploi WHERE structure_administrative_id = ${idSource})
       OR EXISTS (SELECT 1 FROM main.contact_structure_administrative WHERE structure_administrative_id = ${idSource})
-      OR EXISTS (SELECT 1 FROM main.lieu_inclusion_structure_administrative WHERE structure_administrative_id = ${idSource})
       OR EXISTS (
         SELECT 1 FROM main.structure_administrative
         WHERE id = ${idSource}
@@ -257,21 +246,6 @@ async function transfererIdposte(
   await tx.$executeRaw`UPDATE main.structure_administrative SET structure_tp_id = NULL WHERE id = ${idSource}`
   await tx.$executeRaw`
     UPDATE main.structure_administrative SET structure_tp_id = ${source.structure_tp_id} WHERE id = ${idCible}
-  `
-}
-
-async function transfererLieuInclusion(tx: Prisma.TransactionClient, idSource: number, idCible: number): Promise<void> {
-  // lieu_inclusion_structure_administrative : UNIQUE(lieu_id, structure_administrative_id).
-  await tx.$executeRaw`
-    UPDATE main.lieu_inclusion_structure_administrative a SET structure_administrative_id = ${idCible}
-    WHERE a.structure_administrative_id = ${idSource}
-      AND NOT EXISTS (
-        SELECT 1 FROM main.lieu_inclusion_structure_administrative b
-        WHERE b.structure_administrative_id = ${idCible} AND b.lieu_id = a.lieu_id
-      )
-  `
-  await tx.$executeRaw`
-    DELETE FROM main.lieu_inclusion_structure_administrative WHERE structure_administrative_id = ${idSource}
   `
 }
 

@@ -31,11 +31,6 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
           <h3 className={`fr-text--regular fr-text--sm fr-mb-1v ${styles.subtitleGrey}`}>Complément d&apos;adresse</h3>
           <p className="fr-text--bold fr-mb-0">{data.complementAdresse ?? 'Non renseigné'}</p>
         </div>
-
-        <div className="fr-mb-4v">
-          <h3 className={`fr-text--regular fr-text--sm fr-mb-1v ${styles.subtitleGrey}`}>SIRET structure (ou RNA)</h3>
-          <p className="fr-text--bold fr-mb-0">{data.siret}</p>
-        </div>
       </div>
     </section>
   )

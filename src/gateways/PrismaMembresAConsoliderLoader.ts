@@ -31,8 +31,6 @@ export class PrismaMembresAConsoliderLoader implements MembresAConsoliderLoader 
             + (SELECT COUNT(*) FROM main.contrat c WHERE c.structure_id = s.id)
             + (SELECT COUNT(*) FROM main.personne_affectations_emploi a
                WHERE a.structure_administrative_id = s.id)
-            + (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative l
-               WHERE l.structure_administrative_id = s.id)
           )::int AS op
         FROM main.structure_administrative s
         WHERE s.deleted_at IS NULL AND s.siret ~ '^[0-9]{9}'

@@ -5,14 +5,12 @@ import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
-import Select from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
 import {
   toutesLesRegions,
   ZoneGeographique,
   zoneGeographiqueToURLSearchParams,
 } from '@/presenters/filtresUtilisateurPresenter'
-import { LabelValue } from '@/presenters/shared/labels'
 import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusionFiltre({
@@ -20,17 +18,14 @@ export default function ListeLieuxInclusionFiltre({
   currentFilters,
   onFilterAction,
   onResetAction,
-  typesStructure,
   utilisateurRole,
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
-  const [selectedStructureType, setSelectedStructureType] = useState(currentFilters.typeStructure)
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
   const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)
   const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(currentFilters.horsZonePrioritaire)
 
-  const structureTypeSelectId = useId()
   const qpvCheckboxId = useId()
   const frrCheckboxId = useId()
   const horsZonePrioritaireCheckboxId = useId()
@@ -61,7 +56,6 @@ export default function ListeLieuxInclusionFiltre({
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
-    setSelectedStructureType(currentFilters.typeStructure)
     setIsQpvSelected(currentFilters.qpv)
     setIsFrrSelected(currentFilters.frr)
     setIsHorsZonePrioritaireSelected(currentFilters.horsZonePrioritaire)
@@ -87,9 +81,6 @@ export default function ListeLieuxInclusionFiltre({
       })
     }
 
-    if (selectedStructureType !== '') {
-      params.set('typeStructure', selectedStructureType)
-    }
     if (isQpvSelected) {
       params.set('qpv', 'true')
     }
@@ -107,22 +98,12 @@ export default function ListeLieuxInclusionFiltre({
   function handleReset(): void {
     ref.current?.setValue(toutesLesRegions, 'select-option')
     setSelectedZone(null)
-    setSelectedStructureType('')
     setIsQpvSelected(false)
     setIsFrrSelected(false)
     setIsHorsZonePrioritaireSelected(false)
     onResetAction()
     closeDrawer()
   }
-
-  const typesStructureOptions: ReadonlyArray<LabelValue> = [
-    { isSelected: selectedStructureType === '', label: 'Tous les types', value: '' },
-    ...typesStructure.map((type) => ({
-      isSelected: selectedStructureType === type.code,
-      label: type.nom,
-      value: type.code,
-    })),
-  ]
 
   return (
     <div>
@@ -132,18 +113,6 @@ export default function ListeLieuxInclusionFiltre({
           <hr className="fr-hr" />
         </>
       )}
-
-      <Select<string>
-        id={structureTypeSelectId}
-        name="typeStructure"
-        onChange={(event) => {
-          setSelectedStructureType(event.target.value)
-        }}
-        options={typesStructureOptions}
-        placeholder="Choisir un type"
-      >
-        Par typologie de structure
-      </Select>
 
       <div className="fr-fieldset">
         <legend className="fr-fieldset__legend fr-text--regular">Typologie de territoire</legend>
@@ -180,6 +149,5 @@ type Props = Readonly<{
   currentFilters: FiltresLieuxInclusionInternes
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
-  typesStructure: Array<{ code: string; nom: string }>
   utilisateurRole: TypologieRole
 }>

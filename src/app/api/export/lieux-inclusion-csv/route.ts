@@ -4,6 +4,7 @@ import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGa
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { libelleTypologie } from '@/presenters/shared/typologie'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -56,7 +57,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
         qpv: searchParams.get('qpv') ?? undefined,
         statut: searchParams.get('statut') ?? undefined,
-        typeStructure: searchParams.get('typeStructure') ?? undefined,
       },
       scopeFiltre,
       100_000
@@ -86,11 +86,9 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     'Nom',
     'Adresse',
     'Type de structure',
-    'SIRET',
     'ID Cartographie Nationale',
     'FRR',
     'QPV',
-    'Nombre de mandats AC',
     "Nombre d'accompagnements AC",
     "Nombre d'accompagnements Coop",
     'Code INSEE',
@@ -114,12 +112,10 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
       escapeCSV(lieu.id),
       escapeCSV(lieu.nom),
       escapeCSV(adresse),
-      escapeCSV(lieu.categorie_juridique),
-      escapeCSV(lieu.siret),
+      escapeCSV(libelleTypologie(lieu.typologies[0])),
       escapeCSV(lieu.structure_cartographie_nationale_id),
       lieu.est_frr ? 'Oui' : 'Non',
       lieu.est_qpv ? 'Oui' : 'Non',
-      escapeCSV(lieu.nb_mandats_ac),
       escapeCSV(lieu.nb_accompagnements_ac),
       escapeCSV(lieu.nb_accompagnements_coop),
       escapeCSV(lieu.code_insee),

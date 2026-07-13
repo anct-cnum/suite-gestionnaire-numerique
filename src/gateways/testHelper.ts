@@ -412,9 +412,8 @@ export async function creerUnePersonneAffectation(override: PersonneAffectationO
   // On dispatche selon `type` :
   //  - 'structure_emploi' -> personne_affectations_emploi (SA)
   //  - 'lieu_activite'    -> personne_affectations_lieu (lieu_inclusion)
-  // Pour 'lieu_activite', on materialise un lieu_inclusion + asso miroir de la
-  // SA (id partage) pour preserver la semantique des tests historiques qui
-  // passent un structure_id de SA.
+  // Pour 'lieu_activite', on materialise un lieu_inclusion (id = SA id pour
+  // simplifier) ; le lien lieu ↔ SA via l'asso a ete supprime (#1711).
   const { est_active = true, personne_id, source = 'coop', structure_id, type } = override
 
   if (type === 'structure_emploi') {
@@ -429,14 +428,11 @@ export async function creerUnePersonneAffectation(override: PersonneAffectationO
     return
   }
 
-  // Materialise lieu_inclusion + asso si absent (id = SA id pour simplifier).
+  // Materialise lieu_inclusion si absent (id = SA id pour simplifier).
   const lieuExistant = await prisma.main_lieu_inclusion.findUnique({ where: { id: structure_id } })
   if (!lieuExistant) {
     await prisma.main_lieu_inclusion.create({
       data: { id: structure_id, nom: `Lieu auto ${String(structure_id)}` },
-    })
-    await prisma.main_lieu_inclusion_structure_administrative.create({
-      data: { lieu_id: structure_id, structure_administrative_id: structure_id },
     })
   }
   await prisma.main_personne_affectations_lieu.create({

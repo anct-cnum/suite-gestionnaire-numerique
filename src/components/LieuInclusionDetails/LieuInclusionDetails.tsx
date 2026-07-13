@@ -51,7 +51,6 @@ export type InformationsGeneralesData = Readonly<{
   adresse: string
   complementAdresse?: string
   nomStructure: string
-  siret?: string
 }>
 
 export type ServiceInclusionNumeriqueData = Readonly<{

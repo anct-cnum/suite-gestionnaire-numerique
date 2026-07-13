@@ -14,12 +14,7 @@ export default function LieuxInclusion(props: Props): ReactElement {
   return (
     <div className="fr-mt-4w">
       <LieuxInclusionHearder />
-      <LieuxInclusionCategory
-        dateGeneration={viewModel.categoryGenerationDate}
-        elements={viewModel.categoryElements}
-        nombreLieuxInclusion={viewModel.nombreLieuxInclusion}
-        nombreLieuxInclusionPublic={viewModel.nombreLieuxInclusionPublic}
-      />
+      <LieuxInclusionCategory nombreLieuxInclusion={viewModel.nombreLieuxInclusion} />
       <div className="fr-grid-row ">
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w">
           <GraphiqueDemiCercle

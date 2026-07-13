@@ -108,8 +108,6 @@ export class PrismaStructuresDoublonsLoader implements StructuresDoublonsLoader 
           + (SELECT COUNT(*) FROM main.contrat ct WHERE ct.structure_id = c.id)
           + (SELECT COUNT(*) FROM main.personne_affectations_emploi pae WHERE pae.structure_administrative_id = c.id)
           + (SELECT COUNT(*) FROM main.contact_structure_administrative cs WHERE cs.structure_administrative_id = c.id)
-          + (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative li
-             WHERE li.structure_administrative_id = c.id)
         )::int AS nb_rattachements
       FROM cand c
       JOIN sa s ON s.id = c.id

@@ -12,7 +12,6 @@ export interface LieuDetailsReadModel {
     adresse: string
     complementAdresse?: string
     nomStructure: string
-    siret?: string
   }
   lieuAccueilPublic: {
     accessibilite?: string
