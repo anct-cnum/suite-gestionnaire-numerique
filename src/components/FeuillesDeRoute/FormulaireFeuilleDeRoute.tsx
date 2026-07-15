@@ -47,7 +47,7 @@ export default function FormulaireFeuilleDeRoute({
         <TextInput defaultValue={nom} id={nomId} name="nom" required={true}>
           Quel est le nom de la feuille de route ? <span className="color-red">*</span>
         </TextInput>
-        <Select id="membres" isPlaceholderSelectable={true} name="membre" options={membres} required={true}>
+        <Select id="membres" isClearable={true} name="membre" options={membres} required={true}>
           Quel membre de la gouvernance porte la feuille de route ? <span className="color-red">*</span>
         </Select>
         <fieldset className="fr-fieldset">

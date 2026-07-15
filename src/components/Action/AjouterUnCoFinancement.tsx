@@ -28,7 +28,6 @@ export default function AjouterUnCoFinancement({
   useEffect(() => {
     setCoFinanceur('')
     setMontant(Optional.empty())
-    resetPorteurToutEffacer()
   }, [isDrawerOpen])
 
   return (
@@ -77,14 +76,15 @@ export default function AjouterUnCoFinancement({
         <Select
           id="cofinanceur"
           name="cofinanceur"
-          onChange={(event) => {
-            setCoFinanceur(event.target.value)
+          onChange={(option) => {
+            setCoFinanceur(option?.value ?? '')
           }}
           options={
             membresGouvernanceConfirme.length > 0
               ? membresGouvernanceConfirme.map(({ id, nom }) => ({ label: nom, value: id }))
               : []
           }
+          value={coFinanceur}
         >
           Membre de la gouvernance
         </Select>
@@ -119,13 +119,6 @@ export default function AjouterUnCoFinancement({
       </Drawer>
     </>
   )
-
-  function resetPorteurToutEffacer(): void {
-    const select = document.getElementById('cofinanceur')
-    if (select instanceof HTMLSelectElement) {
-      select.value = ''
-    }
-  }
 
   function handleSubmit(): void {
     if (montant.isEmpty()) {

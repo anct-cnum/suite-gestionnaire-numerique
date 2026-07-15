@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import AjouterUnMembrePage from './AjouterUnMembrePage'
@@ -20,7 +21,7 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('rejoindre une gouvernance en tant que structure non membre', () => {
-  it('quand j’accède au formulaire de candidature, alors ma structure est affichée sans recherche SIRET et le département est obligatoire', () => {
+  it('quand j’accède au formulaire de candidature, alors ma structure est affichée sans recherche SIRET et le département est obligatoire', async () => {
     // WHEN
     afficherFormulaireCandidature()
 
@@ -31,10 +32,12 @@ describe('rejoindre une gouvernance en tant que structure non membre', () => {
 
     const selectDepartement = screen.getByRole('combobox', { name: 'Département' })
     expect(selectDepartement).toHaveValue('')
-    const optionAin = screen.getByRole('option', { name: '01 - Ain' })
+    await userEvent.click(selectDepartement)
+    const optionAin = await screen.findByRole('option', { name: '01 - Ain' })
     expect(optionAin).toBeInTheDocument()
     const optionLoire = screen.getByRole('option', { name: '42 - Loire' })
     expect(optionLoire).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
 
     const contactReferent = screen.getByRole('heading', { level: 3, name: 'Contact référent de la structure' })
     expect(contactReferent).toBeInTheDocument()
@@ -60,7 +63,8 @@ describe('rejoindre une gouvernance en tant que structure non membre', () => {
     const rejoindreUneGouvernanceAction = stubbedServerAction(['OK'])
     afficherFormulaireCandidature(rejoindreUneGouvernanceAction)
     remplirContact()
-    fireEvent.change(screen.getByRole('combobox', { name: 'Département' }), { target: { value: '42' } })
+    await userEvent.click(screen.getByRole('combobox', { name: 'Département' }))
+    await userEvent.click(await screen.findByRole('option', { name: '42 - Loire' }))
     fireEvent.click(screen.getByRole('button', { name: 'Étape suivante' }))
 
     // WHEN
@@ -91,7 +95,8 @@ describe('rejoindre une gouvernance en tant que structure non membre', () => {
     const rejoindreUneGouvernanceAction = stubbedServerAction(['La structure est déjà membre de la gouvernance'])
     afficherFormulaireCandidature(rejoindreUneGouvernanceAction)
     remplirContact()
-    fireEvent.change(screen.getByRole('combobox', { name: 'Département' }), { target: { value: '42' } })
+    await userEvent.click(screen.getByRole('combobox', { name: 'Département' }))
+    await userEvent.click(await screen.findByRole('option', { name: '42 - Loire' }))
     fireEvent.click(screen.getByRole('button', { name: 'Étape suivante' }))
 
     // WHEN

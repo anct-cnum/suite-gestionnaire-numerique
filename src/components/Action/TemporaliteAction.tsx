@@ -48,9 +48,9 @@ export default function TemporaliteAction({ action, isReadOnly = false }: Props)
             disabled={isReadOnly}
             id="anneeDeDebut"
             name="anneeDeDebut"
-            onChange={(event) => {
-              if (!isReadOnly) {
-                setSelectedStartDate(event.target.value)
+            onChange={(option) => {
+              if (!isReadOnly && option !== null) {
+                setSelectedStartDate(String(option.value))
               }
             }}
             options={anneeDebut.map(toLabelValue(Number(selectedStartDate)))}

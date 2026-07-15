@@ -13,11 +13,13 @@ export default function SelecteurRole({ ariaControlsId, startRoleTransition }: P
       ariaControlsId={ariaControlsId}
       id="role"
       name="role"
-      onChange={(event) => {
-        const nouveauRole = event.currentTarget.value
-        startRoleTransition(async () => {
-          await changerMonRoleAction({ nouveauRole, path: pathname })
-        })
+      onChange={(option) => {
+        if (option !== null) {
+          const nouveauRole = option.value
+          startRoleTransition(async () => {
+            await changerMonRoleAction({ nouveauRole, path: pathname })
+          })
+        }
       }}
       options={roles
         .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')

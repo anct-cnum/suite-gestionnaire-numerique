@@ -8,6 +8,7 @@ import departements from '../../../ressources/departements.json'
 import { Notification } from '../shared/Notification/Notification'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
+import Select from '../shared/Select/Select'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
@@ -179,56 +180,64 @@ export default function ListeStructuresAdministratives({ filtres, tri, viewModel
         </div>
         <div className="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters fr-mt-1v">
           <div className="fr-col-12 fr-col-md-3">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={departementId}>
-                Département
-              </label>
-              <select className="fr-select" defaultValue={filtres.departement} id={departementId} name="departement">
-                <option value="">Tous les départements</option>
-                {departements.map((departement) => (
-                  <option key={departement.code} value={departement.code}>
-                    {`${departement.code} · ${departement.nom}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              id={departementId}
+              name="departement"
+              options={[
+                { isSelected: filtres.departement === '', label: 'Tous les départements', value: '' },
+                ...departements.map((departement) => ({
+                  isSelected: filtres.departement === departement.code,
+                  label: `${departement.code} · ${departement.nom}`,
+                  value: departement.code,
+                })),
+              ]}
+            >
+              Département
+            </Select>
           </div>
           <ChampTexte label="Commune" largeur="fr-col-md-2" name="commune" valeur={filtres.commune} />
           <div className="fr-col-12 fr-col-md-2">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={adresseId}>
-                Adresse
-              </label>
-              <select className="fr-select" defaultValue={filtres.adresse} id={adresseId} name="adresse">
-                <option value="">Toutes</option>
-                <option value="avec">Avec adresse</option>
-                <option value="sans">Sans adresse</option>
-              </select>
-            </div>
+            <Select
+              id={adresseId}
+              name="adresse"
+              options={[
+                { isSelected: filtres.adresse === '', label: 'Toutes', value: '' },
+                { isSelected: filtres.adresse === 'avec', label: 'Avec adresse', value: 'avec' },
+                { isSelected: filtres.adresse === 'sans', label: 'Sans adresse', value: 'sans' },
+              ]}
+            >
+              Adresse
+            </Select>
           </div>
           <div className="fr-col-12 fr-col-md-2">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={typeId}>
-                Type
-              </label>
-              <select className="fr-select" defaultValue={filtres.type} id={typeId} name="type">
-                <option value="">Toutes</option>
-                <option value="canonique">Canoniques</option>
-                <option value="antenne">Antennes</option>
-              </select>
-            </div>
+            <Select
+              id={typeId}
+              name="type"
+              options={[
+                { isSelected: filtres.type === '', label: 'Toutes', value: '' },
+                { isSelected: filtres.type === 'canonique', label: 'Canoniques', value: 'canonique' },
+                { isSelected: filtres.type === 'antenne', label: 'Antennes', value: 'antenne' },
+              ]}
+            >
+              Type
+            </Select>
           </div>
           <div className="fr-col-12 fr-col-md-2">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={gouvernanceId}>
-                Gouvernance
-              </label>
-              <select className="fr-select" defaultValue={filtres.gouvernance} id={gouvernanceId} name="gouvernance">
-                <option value="">Toutes</option>
-                <option value="gouvernance">Gouvernance</option>
-                <option value="horsGouvernance">Hors gouvernance</option>
-              </select>
-            </div>
+            <Select
+              id={gouvernanceId}
+              name="gouvernance"
+              options={[
+                { isSelected: filtres.gouvernance === '', label: 'Toutes', value: '' },
+                { isSelected: filtres.gouvernance === 'gouvernance', label: 'Gouvernance', value: 'gouvernance' },
+                {
+                  isSelected: filtres.gouvernance === 'horsGouvernance',
+                  label: 'Hors gouvernance',
+                  value: 'horsGouvernance',
+                },
+              ]}
+            >
+              Gouvernance
+            </Select>
           </div>
           <div className="fr-col-12 fr-col-md-3">
             <div style={{ display: 'flex', gap: '1rem' }}>

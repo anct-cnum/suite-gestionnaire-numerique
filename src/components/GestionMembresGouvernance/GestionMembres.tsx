@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
-import styles from './GestionMembres.module.css'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -11,6 +10,7 @@ import Menu from '@/components/shared/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
 import ConfirmationModal from '@/components/shared/Modal/ConfirmationModal'
 import { Notification } from '@/components/shared/Notification/Notification'
+import Select from '@/components/shared/Select/Select'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 
@@ -221,47 +221,38 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
       <div className="fr-grid-row space-between fr-mt-4w fr-grid-row--middle">
         <div className="fr-grid-row fr-grid-row--middle">
           <div className="fr-pr-1w">Filtres :</div>
-          <div className={`fr-tag fr-accordion__btn ${styles.selecteur} fr-mr-1w`}>
-            <label className="fr-sr-only" htmlFor={selectRoleId}>
-              Filtrer par rôle
-            </label>
-            <select
-              className="fr-tag--sm"
-              defaultValue={toutRole}
+          <div className="fr-mr-1w">
+            <Select
               id={selectRoleId}
-              onChange={(event) => {
-                setFiltreRole(event.target.value)
+              onChange={(option) => {
+                setFiltreRole(option?.value ?? toutRole)
               }}
+              options={[
+                { isSelected: true, label: 'Rôles', value: toutRole },
+                ...membresViewModel.roles
+                  .filter((role) => role.nom !== 'Observateur')
+                  .map((role) => ({ label: role.nom, value: role.nom })),
+              ]}
             >
-              <option value={toutRole}>Rôles</option>
-              {membresViewModel.roles
-                .filter((role) => role.nom !== 'Observateur')
-                .map((role) => (
-                  <option key={role.color} value={role.nom}>
-                    {role.nom}
-                  </option>
-                ))}
-            </select>
+              <span className="fr-sr-only">Filtrer par rôle</span>
+            </Select>
           </div>
-          <div className={`fr-tag fr-accordion__btn color-blue-france ${styles.selecteur}`}>
-            <label className="fr-sr-only" htmlFor={selectTypologieId}>
-              Filtrer par typologie
-            </label>
-            <select
-              className="fr-tag--sm"
-              defaultValue={touteTypologie}
+          <div>
+            <Select
               id={selectTypologieId}
-              onChange={(event) => {
-                setFiltreTypologie(event.target.value)
+              onChange={(option) => {
+                setFiltreTypologie(option?.value ?? touteTypologie)
               }}
+              options={[
+                { isSelected: true, label: 'Typologie', value: touteTypologie },
+                ...membresViewModel.typologies.map((typologie) => ({
+                  label: typologie.label,
+                  value: typologie.value,
+                })),
+              ]}
             >
-              <option value={touteTypologie}>Typologie</option>
-              {membresViewModel.typologies.map((typologie) => (
-                <option key={typologie.value.replace(/\s/, '-')} value={typologie.value}>
-                  {typologie.label}
-                </option>
-              ))}
-            </select>
+              <span className="fr-sr-only">Filtrer par typologie</span>
+            </Select>
           </div>
         </div>
         <button

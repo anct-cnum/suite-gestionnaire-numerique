@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import { ReactElement, SyntheticEvent, useId, useMemo, useState } from 'react'
-import ReactSelect, { StylesConfig } from 'react-select'
 
+import Select from '../shared/Select/Select'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import { regionsEtDepartements } from '@/presenters/filtresUtilisateurPresenter'
 
@@ -84,26 +84,24 @@ export default function RapportsForm(): ReactElement {
         <div className="fr-col-12 fr-col-md-8">
           <form onSubmit={genererLeRapport}>
             <div style={{ maxWidth: '512px' }}>
-              <div className="fr-select-group fr-mb-3w">
-                <label className="fr-label fr-mb-1w" htmlFor="echelon">
-                  Échelon géographique
-                </label>
-                <ReactSelect<EchelonOption>
-                  components={{ DropdownIndicator }}
-                  inputId="echelon"
-                  instanceId="echelon"
-                  isClearable={false}
-                  isDisabled={enCours}
+              <div className="fr-mb-3w">
+                <Select<EchelonOption>
+                  disabled={enCours}
+                  formatOptionLabel={(option) => (
+                    <span className={option.type === 'region' ? 'fr-text--bold' : ''}>{option.label}</span>
+                  )}
+                  id="echelon"
                   name="echelon"
                   onChange={(option) => {
                     if (option) {
                       setEchelon(option)
                     }
                   }}
-                  options={options as Array<EchelonOption>}
-                  styles={selectStyles}
-                  value={echelon}
-                />
+                  options={options}
+                  value={echelon.value}
+                >
+                  Échelon géographique
+                </Select>
               </div>
             </div>
 
@@ -172,40 +170,4 @@ export default function RapportsForm(): ReactElement {
 function nomFichier(contentDisposition: null | string, format: string): string {
   const correspondance = contentDisposition?.match(/filename="([^"]+)"/)
   return correspondance ? correspondance[1] : `rapport.${format}`
-}
-
-// istanbul ignore next @preserve
-const selectStyles: StylesConfig<EchelonOption> = {
-  control: (styles) => ({
-    ...styles,
-    backgroundColor: 'var(--background-contrast-grey)',
-    border: 'none',
-    borderRadius: '.25rem .25rem 0 0',
-    boxShadow: 'inset 0 -2px 0 0 var(--border-plain-grey)',
-    color: 'var(--text-default-grey)',
-    cursor: 'pointer',
-  }),
-  option: (styles, { data, isFocused, isSelected }) => {
-    const colorOfFocus = isFocused ? '#dfdfdf' : undefined
-    const backgroundColor = isSelected ? '#bbb' : colorOfFocus
-    const borderBottom = data.type === 'region' ? '1px solid #ddd' : undefined
-    const fontWeight = data.type === 'region' ? '900' : undefined
-
-    return {
-      ...styles,
-      backgroundColor,
-      borderBottom,
-      color: '#222',
-      cursor: 'pointer',
-      fontWeight,
-    }
-  },
-}
-
-function DropdownIndicator(): ReactElement {
-  return (
-    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
-      <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
-    </svg>
-  )
 }

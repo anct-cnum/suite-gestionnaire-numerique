@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -10,7 +11,7 @@ import {
 } from './Action.test'
 
 describe('drawer d‘ajout d‘un co-financement', () => {
-  it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {
+  it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', async () => {
     // GIVEN
     afficherFormulaireDeCreationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
@@ -33,20 +34,13 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     const texteDInstruction = within(drawer).getByText('Précisez l’origine du financement', { selector: 'p' })
     expect(texteDInstruction).toBeInTheDocument()
     const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-    const option1 = within(selecteurOrigineDuFinancement).getByRole('option', { hidden: true, name: '' })
+    await userEvent.click(selecteurOrigineDuFinancement)
+    const option1 = await within(drawer).findByRole('option', { name: 'CC des Monts du Lyonnais' })
     expect(option1).toBeInTheDocument()
-    const option2 = within(selecteurOrigineDuFinancement).getByRole('option', {
-      name: 'CC des Monts du Lyonnais',
-      selected: false,
-    })
+    const option2 = within(drawer).getByRole('option', { name: 'Croix Rouge Française' })
     expect(option2).toBeInTheDocument()
-    const option3 = within(selecteurOrigineDuFinancement).getByRole('option', {
-      name: 'Croix Rouge Française',
-      selected: false,
-    })
+    const option3 = within(drawer).getByRole('option', { name: 'La Poste' })
     expect(option3).toBeInTheDocument()
-    const option4 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'La Poste', selected: false })
-    expect(option4).toBeInTheDocument()
     const montantDuFinancement = within(drawer).getByRole('textbox', { name: 'Montant du financement *' })
     expect(montantDuFinancement).toBeRequired()
     expect(montantDuFinancement).toHaveAttribute('type', 'text')

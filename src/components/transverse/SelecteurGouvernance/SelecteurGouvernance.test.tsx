@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import SelecteurGouvernance from './SelecteurGouvernance'
@@ -38,14 +39,13 @@ describe('selecteur gouvernance', () => {
     expect(select).toHaveValue('')
   })
 
-  it('navigue vers le tableau de bord de la gouvernance sélectionnée', () => {
+  it('navigue vers le tableau de bord de la gouvernance sélectionnée', async () => {
     // GIVEN
     render(<SelecteurGouvernance options={options} />)
 
     // WHEN
-    fireEvent.change(screen.getByRole('combobox', { name: 'Sélectionnez une gouvernance' }), {
-      target: { value: '75' },
-    })
+    await userEvent.click(screen.getByRole('combobox', { name: 'Sélectionnez une gouvernance' }))
+    await userEvent.click(await screen.findByRole('option', { name: '(75) Paris' }))
 
     // THEN
     expect(mockPush).toHaveBeenCalledWith('/tableau-de-bord/departement/75')

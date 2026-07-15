@@ -1,10 +1,10 @@
 'use client'
 
 import { ReactElement, useEffect, useId, useRef, useState } from 'react'
-import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
+import { SelectInstance } from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
 import {
   toutesLesRegions,
@@ -20,7 +20,7 @@ export default function ListeLieuxInclusionFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance>(null)
+  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
   const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)

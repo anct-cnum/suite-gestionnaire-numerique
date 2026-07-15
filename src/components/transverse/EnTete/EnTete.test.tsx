@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as nextAuth from 'next-auth/react'
 import { beforeAll, describe, expect, it } from 'vitest'
 
@@ -53,7 +54,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(monCompte).toHaveAttribute('type', 'button')
   })
 
-  it('quand je clique sur le bouton affichant mes nom et prénom alors le menu utilisateur s’ouvre', () => {
+  it('quand je clique sur le bouton affichant mes nom et prénom alors le menu utilisateur s’ouvre', async () => {
     // GIVEN
     afficherLEnTetePeutChangerDeRole()
 
@@ -94,12 +95,15 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
     const roles = within(drawer).getByRole('combobox', { name: 'Rôle' })
-    const admin = within(roles).getByRole('option', { name: 'Administrateur dispositif' })
-    expect(admin).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
-    const gestionnaireDepartement = within(roles).getByRole('option', { name: 'Gestionnaire département' })
-    expect(gestionnaireDepartement).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
-    const gestionnaireStructure = within(roles).getByRole('option', { name: 'Gestionnaire structure' })
-    expect(gestionnaireStructure).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
+    expect(roles).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
+    await userEvent.click(roles)
+    const admin = await within(drawer).findByRole('option', { name: 'Administrateur dispositif' })
+    expect(admin).toBeInTheDocument()
+    const gestionnaireDepartement = within(drawer).getByRole('option', { name: 'Gestionnaire département' })
+    expect(gestionnaireDepartement).toBeInTheDocument()
+    const gestionnaireStructure = within(drawer).getByRole('option', { name: 'Gestionnaire structure' })
+    expect(gestionnaireStructure).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
   })
 
   describe('le menu utilisateur étant ouvert', () => {
@@ -123,7 +127,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // WHEN
       jOuvreLeMenuUtilisateur()
-      jeChangeMonRole()
+      await jeChangeMonRole()
 
       // THEN
       await waitFor(() => {
@@ -222,8 +226,9 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     return presserLeBouton('Fermer le menu')
   }
 
-  function jeChangeMonRole(): void {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rôle' }), { target: { value: 'Gestionnaire structure' } })
+  async function jeChangeMonRole(): Promise<void> {
+    await userEvent.click(screen.getByRole('combobox', { name: 'Rôle' }))
+    await userEvent.click(await screen.findByRole('option', { name: 'Gestionnaire structure' }))
   }
 
   function jeMeDeconnecte(): void {

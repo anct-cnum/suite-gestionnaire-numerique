@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, ReactElement, useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import departements from '../../../../../../ressources/departements.json'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -14,8 +14,10 @@ export default function SelecteurDepartement({ ariaControlsId }: Props): ReactEl
       ariaControlsId={ariaControlsId}
       id="departement"
       name="departement"
-      onChange={(event) => {
-        void changerDeDepartement(event)
+      onChange={(option) => {
+        if (option !== null) {
+          void changerDeDepartement(option.value)
+        }
       }}
       options={departements.map((departement) => ({
         id: departement.code,
@@ -28,8 +30,8 @@ export default function SelecteurDepartement({ ariaControlsId }: Props): ReactEl
     </Select>
   )
 
-  async function changerDeDepartement({ currentTarget }: ChangeEvent<HTMLSelectElement>): Promise<void> {
-    const result = await changerMonDepartementAction({ nouveauCodeDepartement: currentTarget.value, path: pathname })
+  async function changerDeDepartement(nouveauCodeDepartement: string): Promise<void> {
+    const result = await changerMonDepartementAction({ nouveauCodeDepartement, path: pathname })
     if (result[0] === 'OK') {
       router.refresh()
     }

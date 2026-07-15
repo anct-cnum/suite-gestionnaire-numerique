@@ -1,9 +1,9 @@
 'use client'
 
 import { ReactElement, useContext, useState } from 'react'
-import AsyncSelect from 'react-select/async'
 
 import { clientContext } from '@/components/shared/ClientContext'
+import SelectAsync from '@/components/shared/Select/SelectAsync'
 import { UneStructureReadModel } from '@/use-cases/queries/RechercherLesStructures'
 
 export default function SelecteurStructure({ ariaControlsId }: Props): ReactElement {
@@ -11,35 +11,31 @@ export default function SelecteurStructure({ ariaControlsId }: Props): ReactElem
   const [structure, setStructure] = useState<null | StructureOption>(null)
 
   return (
-    <div className="fr-select-group">
-      <label className="fr-label" htmlFor="structure">
-        Structure
-      </label>
-      <AsyncSelect<StructureOption>
-        aria-controls={ariaControlsId}
-        formatOptionLabel={formatOptionLabel}
-        inputId="structure"
-        instanceId="structure"
-        isClearable={true}
-        loadOptions={chargerLesStructures}
-        loadingMessage={() => 'Chargement des structures...'}
-        noOptionsMessage={() => 'Rechercher une structure'}
-        onChange={(option) => {
-          setStructure(option)
-          void changerMaStructureAction({ idStructure: option?.value ?? null, path: pathname }).then((result) => {
-            if (result[0] === 'OK') {
-              router.refresh()
-            }
-          })
-        }}
-        placeholder="Choisir une structure"
-        value={structure}
-      />
-    </div>
+    <SelectAsync<StructureOption>
+      ariaControlsId={ariaControlsId}
+      formatOptionLabel={formatOptionLabel}
+      id="structure"
+      isClearable={true}
+      loadingMessage="Chargement des structures..."
+      loadOptions={chargerLesStructures}
+      noOptionsMessage={() => 'Rechercher une structure'}
+      onChange={(option) => {
+        setStructure(option)
+        void changerMaStructureAction({ idStructure: option?.value ?? null, path: pathname }).then((result) => {
+          if (result[0] === 'OK') {
+            router.refresh()
+          }
+        })
+      }}
+      placeholder="Choisir une structure"
+      value={structure}
+    >
+      Structure
+    </SelectAsync>
   )
 }
 
-async function chargerLesStructures(search: string): Promise<ReadonlyArray<StructureOption>> {
+async function chargerLesStructures(search: string): Promise<Array<StructureOption>> {
   if (search.length < 3) {
     return []
   }

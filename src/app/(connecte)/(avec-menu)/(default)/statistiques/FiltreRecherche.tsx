@@ -2,10 +2,10 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ReactElement, useCallback, useEffect, useId, useRef, useState } from 'react'
-import Select, { StylesConfig } from 'react-select'
-import AsyncSelect from 'react-select/async'
 
 import styles from './FiltrePopover.module.css'
+import Select from '@/components/shared/Select/Select'
+import SelectAsync from '@/components/shared/Select/SelectAsync'
 
 export type FiltreOption = Readonly<{
   label: string
@@ -126,39 +126,30 @@ export default function FiltreRecherche({
                 valider()
               }}
             >
-              <div className="fr-select-group">
-                <label className="fr-label fr-mb-3v fr-text--bold" htmlFor={inputId}>
-                  Filtrer par&nbsp;:
-                </label>
-                {urlRecherche === undefined ? (
-                  <Select<FiltreOption>
-                    components={{ DropdownIndicator }}
-                    inputId={inputId}
-                    instanceId={`${inputId}-instance`}
-                    noOptionsMessage={() => 'Pas de résultat'}
-                    onChange={ajouter}
-                    options={(options ?? []).filter((opt) => !pending.some((sel) => sel.value === opt.value))}
-                    placeholder={placeholder}
-                    styles={selectStyles}
-                    value={null}
-                  />
-                ) : (
-                  <AsyncSelect<FiltreOption>
-                    components={{ DropdownIndicator }}
-                    inputId={inputId}
-                    instanceId={`${inputId}-instance`}
-                    loadOptions={chargerOptions}
-                    loadingMessage={() => 'Chargement...'}
-                    noOptionsMessage={({ inputValue }) =>
-                      inputValue.length < 2 ? 'Saisissez au moins 2 caractères' : 'Pas de résultat'
-                    }
-                    onChange={ajouter}
-                    placeholder={placeholder}
-                    styles={selectStyles}
-                    value={null}
-                  />
-                )}
-              </div>
+              {urlRecherche === undefined ? (
+                <Select<FiltreOption>
+                  id={inputId}
+                  onChange={ajouter}
+                  options={(options ?? []).filter((opt) => !pending.some((sel) => sel.value === opt.value))}
+                  placeholder={placeholder}
+                  value={null}
+                >
+                  <span className="fr-text--bold">Filtrer par&nbsp;:</span>
+                </Select>
+              ) : (
+                <SelectAsync<FiltreOption>
+                  id={inputId}
+                  loadOptions={chargerOptions}
+                  noOptionsMessage={(inputValue) =>
+                    inputValue.length < 2 ? 'Saisissez au moins 2 caractères' : 'Pas de résultat'
+                  }
+                  onChange={ajouter}
+                  placeholder={placeholder}
+                  value={null}
+                >
+                  <span className="fr-text--bold">Filtrer par&nbsp;:</span>
+                </SelectAsync>
+              )}
 
               {isFilled ? (
                 <>
@@ -200,38 +191,6 @@ export default function FiltreRecherche({
       ) : null}
     </div>
   )
-}
-
-function DropdownIndicator(): ReactElement {
-  return (
-    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
-      <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
-    </svg>
-  )
-}
-
-// istanbul ignore next @preserve
-const selectStyles: StylesConfig<FiltreOption, false> = {
-  control: (base) => ({
-    ...base,
-    backgroundColor: 'var(--background-contrast-grey)',
-    border: 'none',
-    borderRadius: '.25rem .25rem 0 0',
-    boxShadow: 'inset 0 -2px 0 0 var(--border-plain-grey)',
-    color: 'var(--text-default-grey)',
-    cursor: 'pointer',
-  }),
-  input: (base) => ({
-    ...base,
-    color: 'var(--text-default-grey)',
-  }),
-  option: (base, { isFocused }) => ({
-    ...base,
-    backgroundColor: isFocused ? 'var(--background-contrast-grey)' : undefined,
-    borderBottom: '1px solid var(--border-default-grey)',
-    color: 'var(--text-default-grey)',
-    cursor: 'pointer',
-  }),
 }
 
 type Props = Readonly<{

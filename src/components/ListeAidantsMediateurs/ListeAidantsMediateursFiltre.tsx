@@ -1,10 +1,10 @@
 'use client'
 
 import { ReactElement, useEffect, useId, useRef, useState } from 'react'
-import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import CheckboxGroup from '../shared/CheckboxGroup/CheckboxGroup'
+import { SelectInstance } from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
 import {
   toutesLesRegions,
@@ -20,7 +20,7 @@ export default function ListeAidantsMediateursFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance>(null)
+  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const toggleId = useId()
   const [selectedAnciens, setSelectedAnciens] = useState(false)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)

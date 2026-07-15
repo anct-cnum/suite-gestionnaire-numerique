@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import FeuillesDeRoute from './FeuillesDeRoute'
@@ -8,7 +9,7 @@ import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('ajouter une feuille de route', () => {
   describe('quand je clique sur ajouter une feuille de route', () => {
-    it('alors s’affiche le formulaire d’ajout', () => {
+    it('alors s’affiche le formulaire d’ajout', async () => {
       // GIVEN
       afficherLesFeuillesDeRoute()
 
@@ -35,14 +36,16 @@ describe('ajouter une feuille de route', () => {
         name: 'Quel membre de la gouvernance porte la feuille de route ? *',
       })
       expect(porteur).toBeRequired()
-      const choisir = within(porteur).getByRole('option', { name: 'Choisir', selected: true })
+      const choisir = within(formulaire).getByText('Choisir')
       expect(choisir).toBeInTheDocument()
-      const membre1 = within(porteur).getByRole('option', { name: 'Meetkap' })
+      await userEvent.click(porteur)
+      const membre1 = await within(formulaire).findByRole('option', { name: 'Meetkap' })
       expect(membre1).toBeInTheDocument()
-      const membre2 = within(porteur).getByRole('option', { name: 'Emmaüs Connect' })
+      const membre2 = within(formulaire).getByRole('option', { name: 'Emmaüs Connect' })
       expect(membre2).toBeInTheDocument()
-      const membre3 = within(porteur).getByRole('option', { name: 'Orange' })
+      const membre3 = within(formulaire).getByRole('option', { name: 'Orange' })
       expect(membre3).toBeInTheDocument()
+      await userEvent.keyboard('{Escape}')
 
       const fieldsets = within(formulaire).getAllByRole('group')
       const perimetre = within(fieldsets[0]).getByText(
@@ -88,7 +91,7 @@ describe('ajouter une feuille de route', () => {
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneLePorteur('structure-95351745500010-44')
+      await jeSelectionneLePorteur('Meetkap')
       jeSelectionneUnPerimetre('Régional')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
       // THEN
@@ -120,7 +123,7 @@ describe('ajouter une feuille de route', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneLePorteur('porteurId1')
+      await jeSelectionneLePorteur('Emmaüs Connect')
       jeSelectionneUnPerimetre('Régional')
       jEnregistreLaFeuilleDeRoute()
 
@@ -136,11 +139,11 @@ describe('ajouter une feuille de route', () => {
     return input
   }
 
-  function jeSelectionneLePorteur(value: string): void {
-    fireEvent.change(
-      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }),
-      { target: { value } }
+  async function jeSelectionneLePorteur(nom: string): Promise<void> {
+    await userEvent.click(
+      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' })
     )
+    await userEvent.click(await screen.findByRole('option', { name: nom }))
   }
 
   function jeSelectionneUnPerimetre(name: string): void {

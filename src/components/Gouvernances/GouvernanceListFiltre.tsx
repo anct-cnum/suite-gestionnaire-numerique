@@ -4,6 +4,7 @@ import { ReactElement, useEffect, useState } from 'react'
 
 import { filtrerDetails } from '@/components/Gouvernances/GouvernanceFiltrage'
 import { FilterType } from '@/components/Gouvernances/GouvernancesList'
+import Select from '@/components/shared/Select/Select'
 import { GouvernanceDetails } from '@/presenters/gouvernancesPresenter'
 
 export default function GouvernanceListFiltre({
@@ -38,24 +39,19 @@ export default function GouvernanceListFiltre({
   return (
     <div className="sidepanel__content">
       <div className="fr-mb-3w">
-        <label className="fr-label" htmlFor="region-select">
-          Par zone géographique
-        </label>
-        <select
-          className="fr-select"
+        <Select
           id="region-select"
-          onChange={(event) => {
-            setGeographique(event.target.value)
+          onChange={(option) => {
+            setGeographique(option?.value ?? '')
           }}
+          options={[
+            { label: 'Toutes les régions', value: '' },
+            ...regions.map((region) => ({ label: region, value: region })),
+          ]}
           value={geographique}
         >
-          <option value="">Toutes les régions</option>
-          {regions.map((region) => (
-            <option key={region} value={region}>
-              {region}
-            </option>
-          ))}
-        </select>
+          Par zone géographique
+        </Select>
       </div>
 
       <fieldset aria-labelledby="radio-group-1" className="fr-fieldset fr-ml-0">
