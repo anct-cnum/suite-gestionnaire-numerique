@@ -5,8 +5,7 @@ import { RoleType, UneStructureLoader, UneStructureReadModel } from '@/use-cases
 
 export class PrismaUneStructureLoader implements UneStructureLoader {
   // Refonte 2026 : structureId refere desormais a main.structure_administrative.id.
-  // Les "lieux" associes vivent sur main.lieu_inclusion via la table d'asso
-  // main.lieu_inclusion_structure_administrative (cf [N8] / [N12] doc dataspace).
+  // Le lien lieu ↔ structure administrative a ete supprime (#1711).
   readonly #dataResource = prisma.main_structure_administrative
 
   async get(structureId: number): Promise<UneStructureReadModel> {

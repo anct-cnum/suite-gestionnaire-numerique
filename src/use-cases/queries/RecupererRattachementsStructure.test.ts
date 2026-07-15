@@ -13,7 +13,6 @@ describe('récupérer les rattachements d’une structure', () => {
       affectations: 0,
       contacts: 0,
       contrats: 0,
-      lieux: 0,
       membres: 0,
       postes: 0,
       utilisateurs: 0,

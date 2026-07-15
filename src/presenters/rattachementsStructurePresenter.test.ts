@@ -9,7 +9,6 @@ describe('rattachements structure presenter', () => {
       affectations: 5,
       contacts: 2,
       contrats: 16,
-      lieux: 1,
       membres: 3,
       postes: 19,
       utilisateurs: 4,
@@ -23,7 +22,6 @@ describe('rattachements structure presenter', () => {
       { label: 'Contrats', nombre: 16 },
       { label: 'Affectations emploi', nombre: 5 },
       { label: 'Contacts référents', nombre: 2 },
-      { label: 'Lieux d’inclusion', nombre: 1 },
     ])
   })
 })

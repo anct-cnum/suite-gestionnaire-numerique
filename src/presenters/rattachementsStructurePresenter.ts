@@ -10,7 +10,6 @@ export function rattachementsStructurePresenter(
     { label: 'Contrats', nombre: readModel.contrats },
     { label: 'Affectations emploi', nombre: readModel.affectations },
     { label: 'Contacts référents', nombre: readModel.contacts },
-    { label: 'Lieux d’inclusion', nombre: readModel.lieux },
   ]
 }
 

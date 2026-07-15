@@ -675,44 +675,43 @@ model poste {
 /// Successeur de l'aspect "employeuse" de main.structure.
 /// This table contains check constraints and requires additional setup for migrations.
 model main_structure_administrative {
-  id                           Int                                            @id @default(autoincrement())
-  old_main_structure_id        Int?                                           @unique(map: "structure_administrative_old_main_structure_id_ukey")
-  siret                        String?                                        @db.VarChar(14)
-  ridet                        String?                                        @unique(map: "structure_administrative_ridet_ukey") @db.VarChar(10)
-  denomination_sirene          String?                                        @db.VarChar
+  id                           Int                                 @id @default(autoincrement())
+  old_main_structure_id        Int?                                @unique(map: "structure_administrative_old_main_structure_id_ukey")
+  siret                        String?                             @db.VarChar(14)
+  ridet                        String?                             @unique(map: "structure_administrative_ridet_ukey") @db.VarChar(10)
+  denomination_sirene          String?                             @db.VarChar
   /// Refonte 2026 : discriminant pour le pattern grand reseau (Emmaüs
   /// Connect, Reconnect Groupe SOS, …). NULL = entite unique pour ce SIRET.
   /// Cf decision tranchee 2026-05-25 (docs dataspace).
-  denomination_antenne         String?                                        @db.VarChar(255)
-  rna                          String?                                        @db.VarChar(10)
+  denomination_antenne         String?                             @db.VarChar(255)
+  rna                          String?                             @db.VarChar(10)
   adresse_id                   Int?
-  structure_coop_id            String?                                        @unique(map: "structure_administrative_structure_coop_id_ukey") @db.Uuid
-  structure_tp_id              Int?                                           @unique(map: "structure_administrative_structure_tp_id_ukey")
-  structure_ac_id              String?                                        @unique(map: "structure_administrative_structure_ac_id_ukey") @db.Uuid
-  etat_administratif           String?                                        @db.VarChar
-  code_activite_principale     String?                                        @db.VarChar(6)
-  categorie_juridique          String?                                        @db.VarChar(4)
+  structure_coop_id            String?                             @unique(map: "structure_administrative_structure_coop_id_ukey") @db.Uuid
+  structure_tp_id              Int?                                @unique(map: "structure_administrative_structure_tp_id_ukey")
+  structure_ac_id              String?                             @unique(map: "structure_administrative_structure_ac_id_ukey") @db.Uuid
+  etat_administratif           String?                             @db.VarChar
+  code_activite_principale     String?                             @db.VarChar(6)
+  categorie_juridique          String?                             @db.VarChar(4)
   publique                     Boolean?
   nb_mandats_ac                Int?
   contact                      Json?
-  deleted_at                   DateTime?                                      @db.Timestamp(6)
+  deleted_at                   DateTime?                           @db.Timestamp(6)
   deleted_by                   String[]
-  edited_by                    String?                                        @db.VarChar(50)
-  last_sirene_enrich_at        DateTime?                                      @db.Date
-  created_at                   DateTime?                                      @default(now()) @db.Timestamp(6)
-  updated_at                   DateTime?                                      @db.Timestamp(6)
-  updated_at_coop              DateTime?                                      @db.Timestamp(6)
-  updated_at_idposte           DateTime?                                      @db.Timestamp(6)
-  updated_at_ac                DateTime?                                      @db.Timestamp(6)
-  est_grand_reseau             Boolean                                        @default(false)
-  est_hub                      Boolean                                        @default(false)
+  edited_by                    String?                             @db.VarChar(50)
+  last_sirene_enrich_at        DateTime?                           @db.Date
+  created_at                   DateTime?                           @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                           @db.Timestamp(6)
+  updated_at_coop              DateTime?                           @db.Timestamp(6)
+  updated_at_idposte           DateTime?                           @db.Timestamp(6)
+  updated_at_ac                DateTime?                           @db.Timestamp(6)
+  est_grand_reseau             Boolean                             @default(false)
+  est_hub                      Boolean                             @default(false)
   contact_structures           contact_structure_administrative[]
   contrat                      contrat[]
-  lieu_associations            main_lieu_inclusion_structure_administrative[]
   personne_affectations_emploi main_personne_affectations_emploi[]
   poste                        poste[]
-  adresse                      adresse?                                       @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_adresse_fkey")
-  categories_juridiques        categories_juridiques?                         @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_categorie_juridique_fkey")
+  adresse                      adresse?                            @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_adresse_fkey")
+  categories_juridiques        categories_juridiques?              @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_categorie_juridique_fkey")
   membres                      MembreRecord[]
   utilisateurs                 UtilisateurRecord[]
 
@@ -944,17 +943,17 @@ enum main_modalite_accompagnement {
 /// Refonte 2026 : lieu physique d'inclusion numérique (France Services,
 /// médiathèque, EPN…). Successeur de l'aspect "lieu" de main.structure.
 model main_lieu_inclusion {
-  id                                  Int                                            @id @default(autoincrement())
-  old_main_structure_id               Int?                                           @unique(map: "lieu_inclusion_old_main_structure_id_ukey")
-  nom                                 String                                         @db.VarChar(255)
+  id                                  Int                                  @id @default(autoincrement())
+  old_main_structure_id               Int?                                 @unique(map: "lieu_inclusion_old_main_structure_id_ukey")
+  nom                                 String                               @db.VarChar(255)
   adresse_id                          Int?
-  structure_cartographie_nationale_id String?                                        @unique(map: "lieu_inclusion_carto_id_ukey") @db.VarChar
+  structure_cartographie_nationale_id String?                              @unique(map: "lieu_inclusion_carto_id_ukey") @db.VarChar
   visible_pour_cartographie_nationale Boolean?
-  fiche_acces_libre                   String?                                        @db.VarChar
+  fiche_acces_libre                   String?                              @db.VarChar
   presentation_resume                 String?
   presentation_detail                 String?
-  horaires                            String?                                        @db.VarChar
-  prise_rdv                           String?                                        @db.VarChar
+  horaires                            String?                              @db.VarChar
+  prise_rdv                           String?                              @db.VarChar
   itinerance                          main_itinerance[]
   services                            main_service[]
   modalites_acces                     main_modalite_acces[]
@@ -969,24 +968,23 @@ model main_lieu_inclusion {
   contact                             Json?
   mediateurs_en_activite              Int?
   emplois                             Int?
-  source                              String?                                        @db.VarChar
-  edited_by                           String?                                        @db.VarChar(50)
-  created_at                          DateTime?                                      @default(now()) @db.Timestamp(6)
-  updated_at_carto                    DateTime?                                      @db.Timestamp(6)
-  updated_at_coop                     DateTime?                                      @db.Timestamp(6)
-  updated_at_min                      DateTime?                                      @db.Timestamp(6)
+  source                              String?                              @db.VarChar
+  edited_by                           String?                              @db.VarChar(50)
+  created_at                          DateTime?                            @default(now()) @db.Timestamp(6)
+  updated_at_carto                    DateTime?                            @db.Timestamp(6)
+  updated_at_coop                     DateTime?                            @db.Timestamp(6)
+  updated_at_min                      DateTime?                            @db.Timestamp(6)
   // Colonne GENERATED ALWAYS AS ... STORED en base ; dbgenerated est la seule
   // representation Prisma qui n'induit pas de faux diff (cf. activites_coop.periode)
-  updated_at                          DateTime?                                      @default(dbgenerated("GREATEST(updated_at_carto, updated_at_coop, updated_at_min)")) @db.Timestamp(6)
-  structure_coop_id                   String?                                        @unique(map: "lieu_inclusion_structure_coop_id_ukey") @db.Uuid
+  updated_at                          DateTime?                            @default(dbgenerated("GREATEST(updated_at_carto, updated_at_coop, updated_at_min)")) @db.Timestamp(6)
+  structure_coop_id                   String?                              @unique(map: "lieu_inclusion_structure_coop_id_ukey") @db.Uuid
   complement_adresse                  String?
-  siret_a_l_enrichissement            String?                                        @db.VarChar(14)
-  nom_usage                           String?                                        @db.VarChar(255)
+  siret_a_l_enrichissement            String?                              @db.VarChar(14)
+  nom_usage                           String?                              @db.VarChar(255)
   import_warnings                     Json?
   activites_coop                      activites_coop[]
-  structure_associations              main_lieu_inclusion_structure_administrative[]
   personne_affectations_lieu          main_personne_affectations_lieu[]
-  adresse                             adresse?                                       @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")
+  adresse                             adresse?                             @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")
 
   @@index([adresse_id], map: "lieu_inclusion_adresse_id_idx")
   @@index([nom], map: "lieu_inclusion_nom_idx")
@@ -994,24 +992,6 @@ model main_lieu_inclusion {
   // (WHERE visible = true) — non representable en syntaxe Prisma, donc
   // omis ici pour ne pas declencher de faux diff a chaque prisma migrate.
   @@map("lieu_inclusion")
-  @@schema("main")
-}
-
-/// Refonte 2026 : asso N:N entre lieu_inclusion et structure_administrative.
-model main_lieu_inclusion_structure_administrative {
-  id                          Int                           @id @default(autoincrement())
-  lieu_id                     Int
-  structure_administrative_id Int
-  edited_by                   String?                       @db.VarChar(50)
-  created_at                  DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                  DateTime?                     @db.Timestamp(6)
-  lieu                        main_lieu_inclusion           @relation(fields: [lieu_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "lieu_inclusion_structure_administrative_lieu_fkey")
-  structure_administrative    main_structure_administrative @relation(fields: [structure_administrative_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "lieu_inclusion_structure_administrative_admin_fkey")
-
-  @@unique([lieu_id, structure_administrative_id], map: "lieu_inclusion_structure_administrative_ukey")
-  @@index([lieu_id], map: "lieu_inclusion_structure_administrative_lieu_id_idx")
-  @@index([structure_administrative_id], map: "lieu_inclusion_structure_administrative_admin_id_idx")
-  @@map("lieu_inclusion_structure_administrative")
   @@schema("main")
 }
 
