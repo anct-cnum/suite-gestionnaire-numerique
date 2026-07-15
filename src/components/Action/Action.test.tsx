@@ -162,9 +162,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(pluriannuelle).toHaveAttribute('value', 'pluriannuelle')
       expect(pluriannuelle).not.toBeChecked()
       const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
-      expect(selecteurAnneeDeDebut).toHaveAttribute('name', 'anneeDeDebut')
+      expect(selecteurAnneeDeDebut).toBeInTheDocument()
       const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
-      expect(selecteurAnneeDeFin).toHaveAttribute('name', 'anneeDeFin')
       expect(selecteurAnneeDeFin).toBeDisabled()
       const titreSectionInformationBudget = within(formulaire).getByText(
         'Information sur le budget et le financement',
@@ -205,7 +204,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeTapeLeContexteDeLaction(formulaire)
       jeTapeLaDescriptionDeLaction(formulaire)
       jeTapeLeBudgetGlobalDeLAction(formulaire)
-      jeSelectionneLAnneeDeDebut('2026')
+      await jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
 
       // THEN
@@ -232,8 +231,8 @@ describe('formulaire d‘ajout d‘une action', () => {
               montant: '5000',
             },
           ],
-          contexte: '<p>Contexte de l‘action</p>',
-          description: '<p><strong>Description de l‘action.</strong></p>',
+          contexte: '<p>Ma note de contexte de l‘action</p>',
+          description: '<p><strong>Mes notes de description de l‘action</strong></p>',
           destinataires: [],
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteur: '',
@@ -296,10 +295,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(optionAnnuelle).not.toBeChecked()
       const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
       expect(optionPluriannuelle).toBeChecked()
-      const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
-      expect(selecteurAnneeDeDebut).toHaveValue('2025')
-      const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
-      expect(selecteurAnneeDeFin).toHaveValue('2026')
+      const anneeDeDebutSelectionnee = within(formulaire).getByDisplayValue('2025')
+      expect(anneeDeDebutSelectionnee).toHaveAttribute('name', 'anneeDeDebut')
+      const anneeDeFinSelectionnee = within(formulaire).getByDisplayValue('2026')
+      expect(anneeDeFinSelectionnee).toHaveAttribute('name', 'anneeDeFin')
       const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       expect(budgetGlobalDeLAction).toHaveValue(50000)
       const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
@@ -381,8 +380,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeTapeLeContexteDeLaction(formulaire)
       jeTapeLaDescriptionDeLaction(formulaire)
       fireEvent.click(screen.getByRole('radio', { name: 'Pluriannuelle' }))
-      jeSelectionneLAnneeDeDebut('2026')
-      jeSelectionneLAnneeDeFin('2028')
+      await jeSelectionneLAnneeDeDebut('2026')
+      await jeSelectionneLAnneeDeFin('2028')
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
       fireEvent.click(boutonDeValidation)
@@ -412,9 +411,9 @@ describe('formulaire d‘ajout d‘une action', () => {
               montant: '5000',
             },
           ],
-          contexte: '<p>Contexte de l‘action</p>',
+          contexte: '<p>Ma note de contexte de l‘action</p>',
           demandeDeSubvention: undefined,
-          description: '<p><strong>Description de l‘action.</strong></p>',
+          description: '<p><strong>Mes notes de description de l‘action</strong></p>',
           destinataires: [],
           feuilleDeRoute: 'uidFeuilleDeRoute',
           gouvernance: 'gouvernanceFooId',
@@ -471,7 +470,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
-      jeSelectionneLAnneeDeDebut('2026')
+      await jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
 
       // THEN
@@ -496,7 +495,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
-      jeSelectionneLAnneeDeDebut('2026')
+      await jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDeModification()
 
       // THEN
@@ -786,8 +785,8 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
 }
 
 export async function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): Promise<void> {
-  const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  await userEvent.selectOptions(selecteurOrigineDuFinancement, 'CC des Monts du Lyonnais')
+  await userEvent.click(within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' }))
+  await userEvent.click(await within(drawer).findByRole('option', { name: 'CC des Monts du Lyonnais' }))
 
   const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
@@ -839,14 +838,14 @@ function afficherMenuLateral(): void {
   renderComponent(<MenuLateral />)
 }
 
-function jeSelectionneLAnneeDeDebut(annee: string): void {
-  const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
-  fireEvent.change(selectAnneeDebut, { target: { value: annee } })
+async function jeSelectionneLAnneeDeDebut(annee: string): Promise<void> {
+  await userEvent.click(screen.getByRole('combobox', { name: 'Année de début de l‘action' }))
+  await userEvent.click(await screen.findByRole('option', { name: annee }))
 }
 
-function jeSelectionneLAnneeDeFin(annee: string): void {
-  const selectAnneeDeFin = screen.getByLabelText('Année de fin de l‘action')
-  fireEvent.change(selectAnneeDeFin, { target: { value: annee } })
+async function jeSelectionneLAnneeDeFin(annee: string): Promise<void> {
+  await userEvent.click(screen.getByRole('combobox', { name: 'Année de fin de l‘action' }))
+  await userEvent.click(await screen.findByRole('option', { name: annee }))
 }
 
 function jeValideLeFormulaireDAjout(): HTMLElement {

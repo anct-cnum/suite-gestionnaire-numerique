@@ -325,8 +325,8 @@ export default function EtapeSelectionMembre({
     return `${numeroBrut.slice(0, 3)} ${numeroBrut.slice(3, 6)} ${numeroBrut.slice(6, 9)} ${numeroBrut.slice(9)}`
   }
 
-  function changerDepartement(event: ChangeEvent<HTMLSelectElement>): void {
-    setCodeDepartement(event.target.value)
+  function changerDepartement(option: null | Readonly<{ label: string; value: string }>): void {
+    setCodeDepartement(option?.value ?? '')
   }
 
   function changerNomContact(event: ChangeEvent<HTMLInputElement>): void {

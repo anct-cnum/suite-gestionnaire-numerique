@@ -1,11 +1,10 @@
 'use client'
 
 import { ReactElement, useId, useRef, useState } from 'react'
-import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
-import Select from '../shared/Select/Select'
+import Select, { SelectInstance } from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
 import {
   toutesLesRegions,
@@ -22,7 +21,7 @@ export default function PostesConseillerNumeriqueFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance>(null)
+  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
   const [selectedStatut, setSelectedStatut] = useState(currentFilters.statut)
   const [isBonificationSelected, setIsBonificationSelected] = useState(currentFilters.bonification)
@@ -141,11 +140,11 @@ export default function PostesConseillerNumeriqueFiltre({
         </>
       ) : null}
 
-      <Select<string>
+      <Select<LabelValue>
         id={statutSelectId}
         name="statut"
-        onChange={(event) => {
-          setSelectedStatut(event.target.value)
+        onChange={(option) => {
+          setSelectedStatut(option?.value ?? '')
         }}
         options={statutOptions}
         placeholder="Tous"

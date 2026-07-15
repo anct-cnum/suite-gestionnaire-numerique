@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import GestionMembres from './GestionMembres'
@@ -21,7 +22,7 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('gestion des membres gouvernance', () => {
-  it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', () => {
+  it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', async () => {
     // WHEN
     afficherMembres()
 
@@ -56,45 +57,51 @@ describe('gestion des membres gouvernance', () => {
     expect(labelFiltreRoles).not.toBeRequired()
     const labelFiltreTypologie = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
     expect(labelFiltreTypologie).not.toBeRequired()
-    expect(labelFiltreRoles).toHaveLength(5)
     expect(filtres).toBeInTheDocument()
-    const optionRoles = within(labelFiltreRoles).getByRole('option', { name: 'Rôles', selected: true })
+    await userEvent.click(labelFiltreRoles)
+    const optionsRoles = await screen.findAllByRole('option')
+    expect(optionsRoles).toHaveLength(5)
+    const optionRoles = screen.getByRole('option', { name: 'Rôles', selected: true })
     expect(optionRoles).toBeInTheDocument()
-    const optionCoFinanceur = within(labelFiltreRoles).getByRole('option', { name: 'Co-financeur', selected: false })
+    const optionCoFinanceur = screen.getByRole('option', { name: 'Co-financeur', selected: false })
     expect(optionCoFinanceur).toBeInTheDocument()
-    const optionCoPorteur = within(labelFiltreRoles).getByRole('option', { name: 'Co-porteur', selected: false })
+    const optionCoPorteur = screen.getByRole('option', { name: 'Co-porteur', selected: false })
     expect(optionCoPorteur).toBeInTheDocument()
-    const optionBeneficiaire = within(labelFiltreRoles).getByRole('option', { name: 'Bénéficiaire', selected: false })
+    const optionBeneficiaire = screen.getByRole('option', { name: 'Bénéficiaire', selected: false })
     expect(optionBeneficiaire).toBeInTheDocument()
-    const optionRecipiendaire = within(labelFiltreRoles).getByRole('option', { name: 'Récipiendaire', selected: false })
+    const optionRecipiendaire = screen.getByRole('option', { name: 'Récipiendaire', selected: false })
     expect(optionRecipiendaire).toBeInTheDocument()
-    expect(labelFiltreTypologie).toHaveLength(7)
-    const optionTypologie = within(labelFiltreTypologie).getByRole('option', { name: 'Typologie', selected: true })
+    await userEvent.keyboard('{Escape}')
+    await userEvent.click(labelFiltreTypologie)
+    const optionsTypologie = await screen.findAllByRole('option')
+    expect(optionsTypologie).toHaveLength(7)
+    const optionTypologie = screen.getByRole('option', { name: 'Typologie', selected: true })
     expect(optionTypologie).toBeInTheDocument()
-    const optionAutre = within(labelFiltreTypologie).getByRole('option', { name: 'Autre', selected: false })
+    const optionAutre = screen.getByRole('option', { name: 'Autre', selected: false })
     expect(optionAutre).toBeInTheDocument()
-    const optionCollectivite = within(labelFiltreTypologie).getByRole('option', {
+    const optionCollectivite = screen.getByRole('option', {
       name: 'Collectivité, EPCI',
       selected: false,
     })
     expect(optionCollectivite).toBeInTheDocument()
-    const optionPrefecture = within(labelFiltreTypologie).getByRole('option', {
+    const optionPrefecture = screen.getByRole('option', {
       name: 'Préfecture départementale',
       selected: false,
     })
     expect(optionPrefecture).toBeInTheDocument()
-    const optionConseilDepartemental = within(labelFiltreTypologie).getByRole('option', {
+    const optionConseilDepartemental = screen.getByRole('option', {
       name: 'Collectivité, conseil départemental',
       selected: false,
     })
     expect(optionConseilDepartemental).toBeInTheDocument()
-    const optionEntreprisePrivee = within(labelFiltreTypologie).getByRole('option', {
+    const optionEntreprisePrivee = screen.getByRole('option', {
       name: 'Entreprise privée',
       selected: false,
     })
     expect(optionEntreprisePrivee).toBeInTheDocument()
-    const optionAssociation = within(labelFiltreTypologie).getByRole('option', { name: 'Association', selected: false })
+    const optionAssociation = screen.getByRole('option', { name: 'Association', selected: false })
     expect(optionAssociation).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
 
     const membres = screen.getByRole('table', { name: 'Membres' })
     const [head, body] = within(membres).getAllByRole('rowgroup')
@@ -175,13 +182,13 @@ describe('gestion des membres gouvernance', () => {
     }
   )
 
-  it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', () => {
+  it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
-    fireEvent.change(labelFiltreRoles, { target: { value: 'Co-porteur' } })
+    await jeSelectionneLOption(labelFiltreRoles, 'Co-porteur')
 
     // THEN
     const membres = screen.getByRole('table', { name: 'Membres' })
@@ -196,14 +203,14 @@ describe('gestion des membres gouvernance', () => {
     })
   })
 
-  it('quand je sélectionne tous les rôles après avoir filtré sur un rôle, alors la liste se rafraîchit en annulant le filtrage', () => {
+  it('quand je sélectionne tous les rôles après avoir filtré sur un rôle, alors la liste se rafraîchit en annulant le filtrage', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
-    fireEvent.change(labelFiltreTypologies, { target: { value: 'Co-porteur' } })
-    fireEvent.change(labelFiltreTypologies, { target: { value: 'toutRole' } })
+    await jeSelectionneLOption(labelFiltreTypologies, 'Co-porteur')
+    await jeSelectionneLOption(labelFiltreTypologies, 'Rôles')
 
     // THEN
     const membres = screen.getByRole('table', { name: 'Membres' })
@@ -213,13 +220,13 @@ describe('gestion des membres gouvernance', () => {
     expect(rowsBody).toHaveLength(5)
   })
 
-  it('quand je filtre sur une typologie, alors la liste se rafraîchit, n’affichant que les membres correspondant à la typologie sélectionné', () => {
+  it('quand je filtre sur une typologie, alors la liste se rafraîchit, n’affichant que les membres correspondant à la typologie sélectionné', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
-    fireEvent.change(labelFiltreRoles, { target: { value: 'Association' } })
+    await jeSelectionneLOption(labelFiltreRoles, 'Association')
 
     // THEN
     const membres = screen.getByRole('table', { name: 'Membres' })
@@ -234,14 +241,14 @@ describe('gestion des membres gouvernance', () => {
     })
   })
 
-  it('quand je sélectionne toutes les typologies après avoir filtré sur une typologie, alors la liste se rafraîchit en annulant le filtrage', () => {
+  it('quand je sélectionne toutes les typologies après avoir filtré sur une typologie, alors la liste se rafraîchit en annulant le filtrage', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
-    fireEvent.change(labelFiltreTypologies, { target: { value: 'Association' } })
-    fireEvent.change(labelFiltreTypologies, { target: { value: 'touteTypologie' } })
+    await jeSelectionneLOption(labelFiltreTypologies, 'Association')
+    await jeSelectionneLOption(labelFiltreTypologies, 'Typologie')
 
     // THEN
     const membres = screen.getByRole('table', { name: 'Membres' })
@@ -251,15 +258,15 @@ describe('gestion des membres gouvernance', () => {
     expect(rowsBody).toHaveLength(5)
   })
 
-  it('quand je filtre sur un rôle et une typologie, alors la liste se rafraîchit n’affichant que les membres correspondant au rôle et à la typologie sélectionnés', () => {
+  it('quand je filtre sur un rôle et une typologie, alors la liste se rafraîchit n’affichant que les membres correspondant au rôle et à la typologie sélectionnés', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
     const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
-    fireEvent.change(labelFiltreRoles, { target: { value: 'Co-porteur' } })
-    fireEvent.change(labelFiltreTypologies, { target: { value: 'Association' } })
+    await jeSelectionneLOption(labelFiltreRoles, 'Co-porteur')
+    await jeSelectionneLOption(labelFiltreTypologies, 'Association')
 
     // THEN
     const membres = screen.getByRole('table', { name: 'Membres' })
@@ -274,6 +281,11 @@ describe('gestion des membres gouvernance', () => {
     expect(columnsBody[2].textContent).toBe('Co-porteur ')
   })
 })
+
+async function jeSelectionneLOption(combobox: HTMLElement, option: string): Promise<void> {
+  await userEvent.click(combobox)
+  await userEvent.click(await screen.findByRole('option', { name: option }))
+}
 
 function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonly<ReadonlyArray<HTMLElement>> {
   return within(rowsBody[rank]).getAllByRole('cell')

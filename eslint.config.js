@@ -304,6 +304,44 @@ export default [
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     },
   },
+  {
+    files: ['src/**/*.tsx'],
+    ignores: ['src/components/shared/Select/**'],
+    rules: {
+      'react/forbid-elements': [
+        'error',
+        {
+          forbid: [
+            {
+              element: 'select',
+              message: 'Utiliser les composants partagés de src/components/shared/Select',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
+    ignores: ['src/components/shared/Select/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              message: 'Utiliser les composants partagés de src/components/shared/Select',
+              name: 'react-select',
+            },
+            {
+              message: 'Utiliser les composants partagés de src/components/shared/Select',
+              name: 'react-select/async',
+            },
+          ],
+        },
+      ],
+    },
+  },
   ...storybook.configs['flat/recommended'],
   eslintConfigPrettier,
 ]

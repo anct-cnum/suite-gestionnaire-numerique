@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import FeuilleDeRoute from './FeuilleDeRoute'
@@ -8,7 +9,7 @@ import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/u
 
 describe('modifier une feuille de route', () => {
   describe('quand je clique sur modifier une feuille de route', () => {
-    it('alors s’affiche le formulaire de modification déjà rempli', () => {
+    it('alors s’affiche le formulaire de modification déjà rempli', async () => {
       // GIVEN
       afficherUneFeuilleDeRoute()
 
@@ -36,12 +37,14 @@ describe('modifier une feuille de route', () => {
         name: 'Quel membre de la gouvernance porte la feuille de route ? *',
       })
       expect(porteur).toBeRequired()
-      const choisir = within(porteur).getByRole('option', { name: 'Choisir' })
-      expect(choisir).toBeInTheDocument()
-      const membre1 = within(porteur).getByRole('option', { name: 'Croix Rouge Française' })
+      const porteurSelectionne = within(formulaire).getByDisplayValue('membre2FooId')
+      expect(porteurSelectionne).toHaveAttribute('name', 'membre')
+      await userEvent.click(porteur)
+      const membre1 = await within(formulaire).findByRole('option', { name: 'Croix Rouge Française' })
       expect(membre1).toBeInTheDocument()
-      const membre2 = within(porteur).getByRole('option', { name: 'La Poste', selected: true })
+      const membre2 = within(formulaire).getByRole('option', { name: 'La Poste' })
       expect(membre2).toBeInTheDocument()
+      await userEvent.keyboard('{Escape}')
 
       const fieldsets = within(formulaire).getAllByRole('group')
       const perimetre = within(fieldsets[0]).getByText(
@@ -87,7 +90,7 @@ describe('modifier une feuille de route', () => {
       jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Modifier une feuille de route' })
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre1FooId')
+      await jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
 
@@ -118,7 +121,7 @@ describe('modifier une feuille de route', () => {
       // WHEN
       jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre1FooId')
+      await jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
       jEnregistreLaFeuilleDeRoute()
 
@@ -134,11 +137,15 @@ describe('modifier une feuille de route', () => {
     return input
   }
 
-  function jeSelectionneUnMembre(value: string): void {
-    fireEvent.change(
-      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }),
-      { target: { value } }
+  async function jeSelectionneUnMembre(uid: string): Promise<void> {
+    const labelParUid: Readonly<Record<string, string>> = {
+      membre1FooId: 'Croix Rouge Française',
+      membre2FooId: 'La Poste',
+    }
+    await userEvent.click(
+      screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' })
     )
+    await userEvent.click(await screen.findByRole('option', { name: labelParUid[uid] }))
   }
 
   function jeSelectionneUnPerimetre(name: string): void {

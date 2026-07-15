@@ -56,8 +56,6 @@ export default function DemanderUneSubvention({
     if (inputMontantRhRef.current) {
       inputMontantRhRef.current.value = ''
     }
-    const selectEnveloppe = document.getElementById(selectEnveloppeId) as HTMLSelectElement
-    selectEnveloppe.value = ''
   }
 
   useEffect(() => {
@@ -218,8 +216,11 @@ export default function DemanderUneSubvention({
         <Select
           id={selectEnveloppeId}
           name="enveloppes"
-          onChange={(event) => {
-            const enveloppeId = event.target.value
+          onChange={(option) => {
+            if (option === null) {
+              return
+            }
+            const enveloppeId = option.value
             setSelectedEnveloppeId(enveloppeId)
             setIsEnveloppeSelectionnee(true)
             if (enveloppeById[enveloppeId].limiteLaDemandeSubvention) {
@@ -228,12 +229,8 @@ export default function DemanderUneSubvention({
               setBudgetEnveloppe(undefined)
             }
           }}
-          options={enveloppes
-            .filter((enveloppe) => enveloppe.available)
-            .map((enveloppe) => ({
-              ...enveloppe,
-              isSelected: enveloppe.value === selectedEnveloppeId,
-            }))}
+          options={enveloppes.filter((enveloppe) => enveloppe.available)}
+          value={selectedEnveloppeId}
         >
           Enveloppe de financement concernée
         </Select>

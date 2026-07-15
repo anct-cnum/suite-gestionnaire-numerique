@@ -1,14 +1,13 @@
 'use client'
 
 import { ReactElement, SyntheticEvent, useContext, useRef, useState } from 'react'
-// eslint-disable-next-line import/no-unresolved
-import Select from 'react-select/dist/declarations/src/Select'
 
 import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { SelectInstance } from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import Toggle from '../shared/Toggle/Toggle'
 import {
@@ -20,7 +19,7 @@ import {
 
 export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, resetSearch }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
-  const ref = useRef<Select>(null)
+  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
   const [structuresSearchParams, setStructuresSearchParams] = useState(new URLSearchParams())
   const [structure, setStructure] = useState<null | OrganisationOption>(null)

@@ -5,6 +5,7 @@ import { ReactElement, useContext, useId, useTransition } from 'react'
 
 import departements from '../../../ressources/departements.json'
 import { clientContext } from '../shared/ClientContext'
+import Select from '../shared/Select/Select'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import {
@@ -104,34 +105,36 @@ export default function StructuresDoublons({ filtres, tri, viewModel }: Props): 
         <div className="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters fr-mt-1v">
           <ChampTexte label="Ridet" largeur="fr-col-md-2" name="ridet" valeur={filtres.ridet} />
           <div className="fr-col-12 fr-col-md-3">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={signalId}>
-                Signal
-              </label>
-              <select className="fr-select" defaultValue={filtres.signal} id={signalId} name="signal">
-                <option value="">Tous les signaux</option>
-                {optionsSignal.map((option) => (
-                  <option key={option.valeur} value={option.valeur}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              id={signalId}
+              name="signal"
+              options={[
+                { isSelected: filtres.signal === '', label: 'Tous les signaux', value: '' },
+                ...optionsSignal.map((option) => ({
+                  isSelected: filtres.signal === option.valeur,
+                  label: option.label,
+                  value: option.valeur,
+                })),
+              ]}
+            >
+              Signal
+            </Select>
           </div>
           <div className="fr-col-12 fr-col-md-3">
-            <div className="fr-select-group">
-              <label className="fr-label" htmlFor={departementId}>
-                Département
-              </label>
-              <select className="fr-select" defaultValue={filtres.departement} id={departementId} name="departement">
-                <option value="">Tous les départements</option>
-                {departements.map((departement) => (
-                  <option key={departement.code} value={departement.code}>
-                    {`${departement.code} · ${departement.nom}`}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              id={departementId}
+              name="departement"
+              options={[
+                { isSelected: filtres.departement === '', label: 'Tous les départements', value: '' },
+                ...departements.map((departement) => ({
+                  isSelected: filtres.departement === departement.code,
+                  label: `${departement.code} · ${departement.nom}`,
+                  value: departement.code,
+                })),
+              ]}
+            >
+              Département
+            </Select>
           </div>
           <div className="fr-col-12 fr-col-md-4">
             <div style={{ display: 'flex', gap: '1rem' }}>

@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
@@ -42,7 +43,7 @@ describe('faire une demande de subvention', () => {
         ' sous-formulaire de demande de subvention s’affiche sans enveloppe sélectionnée, indiquant le maximum' +
         ' autorisé pour cette action correspondant au budget global préalablement saisi, avec des champs de saisie de' +
         ' montants et un bouton de soumission désactivés',
-      () => {
+      async () => {
         // GIVEN
         jAfficheLeFormulaireAction(42_500)
 
@@ -64,18 +65,16 @@ describe('faire une demande de subvention', () => {
         const selecteurEnveloppes = within(drawer).getByRole('combobox', {
           name: 'Enveloppe de financement concernée',
         })
-        const enveloppes = within(selecteurEnveloppes).getAllByRole('option', { hidden: true })
-        expect(enveloppes).toHaveLength(5)
-        expect(enveloppes[0].textContent).toBe('Choisir')
-        expect(enveloppes[0].hidden).toBe(true)
-        expect(enveloppes[1].textContent).toBe('Conseiller Numérique - 2024')
-        expect(enveloppes[1].hidden).toBe(false)
-        expect(enveloppes[2].textContent).toBe('Conseiller Numérique - initiale')
-        expect(enveloppes[2].hidden).toBe(false)
-        expect(enveloppes[3].textContent).toBe('Formation Aidant Numérique/Aidants Connect - 2024')
-        expect(enveloppes[3].hidden).toBe(false)
-        expect(enveloppes[4].textContent).toBe('Ingénierie France Numérique Ensemble - 2024')
-        expect(enveloppes[4].hidden).toBe(false)
+        const placeholder = within(drawer).getByText('Choisir')
+        expect(placeholder).toBeInTheDocument()
+        await userEvent.click(selecteurEnveloppes)
+        const enveloppes = await within(drawer).findAllByRole('option')
+        expect(enveloppes).toHaveLength(4)
+        expect(enveloppes[0].textContent).toBe('Conseiller Numérique - 2024')
+        expect(enveloppes[1].textContent).toBe('Conseiller Numérique - initiale')
+        expect(enveloppes[2].textContent).toBe('Formation Aidant Numérique/Aidants Connect - 2024')
+        expect(enveloppes[3].textContent).toBe('Ingénierie France Numérique Ensemble - 2024')
+        await userEvent.keyboard('{Escape}')
 
         const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
         expect(champSaisieMontantPrestation).toHaveAttribute('min', '0')
@@ -133,13 +132,13 @@ describe('faire une demande de subvention', () => {
       ])(
         '$precision0, alors son montant s’affiche en tant que droits de subvention$precision1 et les champs de' +
           ' saisie de montants deviennent actifs',
-        ({ enveloppeId, expectedDroitsDeSubventionAffiches, expectedLimiteAffichee }) => {
+        async ({ enveloppeId, expectedDroitsDeSubventionAffiches, expectedLimiteAffichee }) => {
           // GIVEN
           jAfficheLeFormulaireAction(42_500)
 
           // WHEN
           jOuvreLeSousFormulaireDeDemandeDeSubvention()
-          jeSelectionneLEnveloppe(enveloppeId)
+          await jeSelectionneLEnveloppe(enveloppeId)
 
           // THEN
           const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
@@ -243,7 +242,7 @@ describe('faire une demande de subvention', () => {
             },
           ])(
             '$raison',
-            ({
+            async ({
               enveloppeDeRemplacementId,
               enveloppeInitialeId,
               erreurMontantPrestation,
@@ -258,9 +257,9 @@ describe('faire une demande de subvention', () => {
 
               // WHEN
               jOuvreLeSousFormulaireDeDemandeDeSubvention()
-              jeSelectionneLEnveloppe(enveloppeInitialeId)
+              await jeSelectionneLEnveloppe(enveloppeInitialeId)
               jeSaisisLesMontants(montantPrestation, montantRh)
-              jeSelectionneLEnveloppe(enveloppeDeRemplacementId)
+              await jeSelectionneLEnveloppe(enveloppeDeRemplacementId)
 
               // THEN
               const [champSaisieMontantPrestation, champSaisieMontantRh] = champsSaisieMontants()
@@ -332,13 +331,13 @@ describe('faire une demande de subvention', () => {
                 'car l’un des montants est saisi correctement mais l’autre résulte en une somme qui excède' +
                 ' le budget maximal de l’action',
             },
-          ])('$raison', ({ erreurMontantPrestation, erreurMontantRh, montantPrestation, montantRh }) => {
+          ])('$raison', async ({ erreurMontantPrestation, erreurMontantRh, montantPrestation, montantRh }) => {
             // GIVEN
             jAfficheLeFormulaireAction(42_500)
 
             // WHEN
             jOuvreLeSousFormulaireDeDemandeDeSubvention()
-            jeSelectionneLEnveloppe('2')
+            await jeSelectionneLEnveloppe('2')
             jeSaisisLesMontants(montantPrestation, montantRh)
 
             // THEN
@@ -379,13 +378,13 @@ describe('faire une demande de subvention', () => {
             },
           ])(
             '$desc',
-            ({ montantPrestationInitial, montantPrestationRectifie, montantRhInitial, montantRhRectifie }) => {
+            async ({ montantPrestationInitial, montantPrestationRectifie, montantRhInitial, montantRhRectifie }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
 
               // WHEN
               jOuvreLeSousFormulaireDeDemandeDeSubvention()
-              jeSelectionneLEnveloppe('4')
+              await jeSelectionneLEnveloppe('4')
               jeSaisisLesMontants(montantPrestationInitial, montantRhInitial)
               jeSaisisLesMontants(montantPrestationRectifie, montantRhRectifie)
 
@@ -430,13 +429,13 @@ describe('faire une demande de subvention', () => {
                 montantRh: 3_300,
                 precision: 'saisie d’un montant en prestation de service et d’un montant en ressources humaines',
               },
-            ])('$precision', ({ expected, montantPrestation, montantRh }) => {
+            ])('$precision', async ({ expected, montantPrestation, montantRh }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
 
               // WHEN
               jOuvreLeSousFormulaireDeDemandeDeSubvention()
-              jeSelectionneLEnveloppe('4')
+              await jeSelectionneLEnveloppe('4')
               jeSaisisLesMontants(montantPrestation, montantRh)
 
               // THEN
@@ -455,7 +454,7 @@ describe('faire une demande de subvention', () => {
           }
         )
 
-        it('et que je soumets ma demande, alors le sous-formulaire se ferme', () => {
+        it('et que je soumets ma demande, alors le sous-formulaire se ferme', async () => {
           // GIVEN
           jAfficheLeFormulaireAction(42_500)
 
@@ -465,7 +464,7 @@ describe('faire une demande de subvention', () => {
             hidden: false,
             name: 'Demander une subvention',
           })
-          jeSelectionneLEnveloppe('4')
+          await jeSelectionneLEnveloppe('4')
           jeSaisisLesMontants(800, 3_300)
           fireEvent.click(boutonSoumissionFormulaire())
 
@@ -495,11 +494,16 @@ function jOuvreLeSousFormulaireDeDemandeDeSubvention(): void {
   fireEvent.click(button)
 }
 
-function jeSelectionneLEnveloppe(enveloppeId: string): void {
-  const selecteurEnveloppes = within(sousFormulaireDemandeSubvention()).getByRole('combobox', {
-    name: 'Enveloppe de financement concernée',
-  })
-  fireEvent.change(selecteurEnveloppes, { target: { value: enveloppeId } })
+async function jeSelectionneLEnveloppe(enveloppeId: string): Promise<void> {
+  const libelleParEnveloppeId: Readonly<Record<string, string>> = {
+    1: 'Conseiller Numérique - 2024',
+    2: 'Conseiller Numérique - initiale',
+    3: 'Formation Aidant Numérique/Aidants Connect - 2024',
+    4: 'Ingénierie France Numérique Ensemble - 2024',
+  }
+  const drawer = sousFormulaireDemandeSubvention()
+  await userEvent.click(within(drawer).getByRole('combobox', { name: 'Enveloppe de financement concernée' }))
+  await userEvent.click(await within(drawer).findByRole('option', { name: libelleParEnveloppeId[enveloppeId] }))
 }
 
 function jeSaisisLesMontants(montantPrestation: number, montantRh: number): void {

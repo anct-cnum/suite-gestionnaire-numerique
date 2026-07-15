@@ -97,7 +97,7 @@ function isRegion(zoneGeographique: string): boolean {
 }
 
 function isZoneParDefaut(zoneGeographique: ZoneGeographique): boolean {
-  return JSON.stringify(toutesLesRegions) === JSON.stringify(zoneGeographique)
+  return zoneGeographique.value === valeurParDefautDeToutesLesRegions
 }
 
 const valeurParDefautDeToutesLesRegions = 'all'

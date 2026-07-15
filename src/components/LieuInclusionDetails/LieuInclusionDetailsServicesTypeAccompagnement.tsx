@@ -7,6 +7,7 @@ import { ServiceInclusionNumeriqueData } from '@/components/LieuInclusionDetails
 import sharedStyles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
+import Select from '@/components/shared/Select/Select'
 import { InternetIcon } from '@/shared/pictograms/digital/InternetIcon'
 import { SittingAtATableIcon } from '@/shared/pictograms/user/SittingAtATableIcon'
 import { TeacherIcon } from '@/shared/pictograms/user/TeacherIcon'
@@ -98,13 +99,10 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     .map((dbValue) => typeAccompagnements.find((type) => type.dbValue === dbValue)?.value)
     .filter((value): value is string => value !== undefined)
 
-  function handleThematiqueSelect(event: React.ChangeEvent<HTMLSelectElement>): void {
-    const selectedValue = event.target.value
-    if (selectedValue !== '' && !selectedThematiques.includes(selectedValue)) {
-      setSelectedThematiques((prev) => [...prev, selectedValue])
+  function handleThematiqueSelect(option: null | Readonly<{ label: string; value: string }>): void {
+    if (option !== null && option.value !== '' && !selectedThematiques.includes(option.value)) {
+      setSelectedThematiques((prev) => [...prev, option.value])
     }
-    // Reset select après ajout
-    event.target.value = ''
   }
 
   function handleRemoveThematique(thematiqueToRemove: string): void {
@@ -158,16 +156,17 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     if (isEditing) {
       return (
         <>
-          <select className="fr-select" id="thematiques-select" onChange={handleThematiqueSelect}>
-            <option value="">Choisissez un ou plusieurs types</option>
-            {thematiquesDisponibles
+          <Select
+            id="thematiques-select"
+            onChange={handleThematiqueSelect}
+            options={thematiquesDisponibles
               .filter((thematique) => !selectedThematiques.includes(thematique))
-              .map((thematique) => (
-                <option key={thematique} value={thematique}>
-                  {thematique}
-                </option>
-              ))}
-          </select>
+              .map((thematique) => ({ label: thematique, value: thematique }))}
+            placeholder="Choisissez un ou plusieurs types"
+            value={null}
+          >
+            <span className="fr-sr-only">Thématiques</span>
+          </Select>
           {selectedThematiques.length > 0 ? (
             <div
               className="fr-tags-group fr-mt-2w"

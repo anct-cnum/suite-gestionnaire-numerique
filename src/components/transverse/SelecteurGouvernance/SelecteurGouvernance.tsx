@@ -3,36 +3,27 @@
 import { useRouter } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import Select from '@/components/shared/Select/Select'
 import type { OptionGouvernance } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
 
 export default function SelecteurGouvernance({ options, selectedValue }: Props): ReactElement {
   const router = useRouter()
 
   return (
-    <div className="fr-select-group">
-      <label className="fr-label" htmlFor="gouvernance">
-        Sélectionnez une gouvernance
-      </label>
-      <select
-        aria-label="Sélectionnez une gouvernance"
-        className="fr-select"
-        id="gouvernance"
-        name="gouvernance"
-        onChange={(event) => {
-          router.push(`/tableau-de-bord/departement/${event.target.value}`)
-        }}
-        value={selectedValue ?? ''}
-      >
-        <option disabled value="">
-          Sélectionnez une gouvernance
-        </option>
-        {options.map((option) => (
-          <option key={option.value} label={option.label} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Select
+      id="gouvernance"
+      name="gouvernance"
+      onChange={(option) => {
+        if (option !== null) {
+          router.push(`/tableau-de-bord/departement/${option.value}`)
+        }
+      }}
+      options={options}
+      placeholder="Sélectionnez une gouvernance"
+      value={selectedValue ?? ''}
+    >
+      Sélectionnez une gouvernance
+    </Select>
   )
 }
 
