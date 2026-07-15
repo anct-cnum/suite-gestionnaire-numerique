@@ -34,18 +34,15 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
     }
   }
 
-  // Même règle « lieu actif » que le listing (PrismaListeLieuxInclusionLoader) :
-  // un lieu rattaché à la SA par la seule asso (carto, pont siret) mais sans plus
-  // aucune affectation active est archivé et ne doit pas être compté (#1560).
+  // Un lieu compte pour la structure s'il porte au moins une affectation active
+  // d'une personne employée par cette SA (le lien lieu ↔ SA via l'asso a été
+  // supprimé, #1711). La garde « affectation active » archive les lieux sans
+  // plus aucun accompagnateur actif.
   async #compterLieux(structureId: number): Promise<number> {
     const result = await prisma.$queryRaw<ReadonlyArray<{ total: bigint }>>`
       SELECT COUNT(DISTINCT l.id)::bigint AS total
       FROM main.lieu_inclusion l
-      WHERE (EXISTS (
-          SELECT 1 FROM main.lieu_inclusion_structure_administrative asso
-          WHERE asso.lieu_id = l.id AND asso.structure_administrative_id = ${structureId}
-        )
-        OR EXISTS (
+      WHERE EXISTS (
           SELECT 1 FROM main.personne_affectations_lieu pal
           WHERE pal.lieu_id = l.id AND pal.est_active = true
             AND pal.personne_id IN (
@@ -55,10 +52,6 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
               SELECT pe.id FROM min.personne_enrichie pe
               WHERE pe.structure_employeuse_id = ${structureId}
             )
-        ))
-        AND EXISTS (
-          SELECT 1 FROM main.personne_affectations_lieu pal_active
-          WHERE pal_active.lieu_id = l.id AND pal_active.est_active = true
         )
     `
     return Number(result[0]?.total ?? 0)

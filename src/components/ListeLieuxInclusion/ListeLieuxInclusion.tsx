@@ -33,7 +33,6 @@ export default function ListeLieuxInclusion({
   estBetaTesteur,
   listeLieuxInclusionViewModel,
   searchParams,
-  typesStructure,
   utilisateurRole,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
@@ -136,7 +135,7 @@ export default function ListeLieuxInclusion({
 
   // Obtenir la liste des filtres actifs individuels
   function getFiltresActifs(): Array<{ label: string; paramKey: string; paramValue: string }> {
-    return getActiveLieuxInclusionFilters(normalizedSearchParams, typesStructure)
+    return getActiveLieuxInclusionFilters(normalizedSearchParams)
   }
 
   // Fonction pour supprimer un filtre spécifique
@@ -367,7 +366,6 @@ export default function ListeLieuxInclusion({
           currentFilters={parseURLParamsToFiltresLieuxInclusionInternes(normalizedSearchParams)}
           onFilterAction={onFilter}
           onResetAction={onReset}
-          typesStructure={typesStructure}
           utilisateurRole={utilisateurRole}
         />
       </Drawer>
@@ -515,19 +513,6 @@ function LigneLieu({
           <AdresseLieu adresse={lieu.adresse} idCartographieNationale={lieu.idCartographieNationale} />
         </div>
       </td>
-      <td>
-        {lieu.siret === null ? (
-          'Non renseigné'
-        ) : (
-          <a
-            href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {lieu.siret}
-          </a>
-        )}
-      </td>
       {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
       {afficherColonneMajInfos ? (
         <td>
@@ -574,9 +559,6 @@ function LigneLieu({
       <td>
         {lieu.nbAccompagnements}
         {' accomp.'}
-        <br />
-        {lieu.nbMandatsAC}
-        {lieu.nbMandatsAC > 1 ? ' mandats' : ' mandat'}
       </td>
       {afficherColonneMajInfos ? (
         <td>
@@ -612,7 +594,6 @@ function buildEnTetes(estOngletArchives: boolean, afficherColonneMajInfos: boole
   return [
     'Lieu',
     'Adresse',
-    'Siret',
     ...(estOngletArchives ? ['Date d\u2019archivage'] : []),
     ...(afficherColonneMajInfos ? ['MAJ Infos'] : []),
     'FRR / QPV',
@@ -629,7 +610,7 @@ function buildExportParams(normalizedSearchParams: URLSearchParams, estOngletArc
     exportParams.set('statut', 'archives')
   }
 
-  for (const cle of ['codeDepartement', 'codeRegion', 'typeStructure', 'qpv', 'frr', 'horsZonePrioritaire']) {
+  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire']) {
     const valeur = normalizedSearchParams.get(cle)
     if (valeur !== null && valeur !== '') {
       exportParams.set(cle, valeur)
@@ -690,6 +671,5 @@ type Props = Readonly<{
   estBetaTesteur: boolean
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
   searchParams: SerializedSearchParams
-  typesStructure: Array<{ code: string; nom: string }>
   utilisateurRole: TypologieRole
 }>

@@ -50,8 +50,8 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
     await affecter(SOURCE, 'idposte')
     await affecter(SOURCE, 'aidants-connect')
 
-    // WHEN on transfère les 6 notions.
-    const result = await transferer(['aidantsConnect', 'contacts', 'coop', 'idposte', 'lieuInclusion', 'membre'])
+    // WHEN on transfère les 5 notions.
+    const result = await transferer(['aidantsConnect', 'contacts', 'coop', 'idposte', 'membre'])
 
     // THEN la source est vidée puis supprimée, et la cible porte les 3 ids scalaires.
     expect(result).toBe('OK')

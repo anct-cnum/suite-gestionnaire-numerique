@@ -161,52 +161,6 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     expect(screen.getAllByLabelText(/Coop/)[1]).toBeDisabled()
   })
 
-  it('couple Coop et Lieu d’inclusion : cocher l’un coche l’autre et les transfère ensemble', async () => {
-    // GIVEN une source portant Coop ET Lieu d’inclusion.
-    const transfererNotionsStructureAction = stubbedServerAction(['OK'])
-    const viewModel: ComparaisonViewModel = [
-      carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
-      carte({ concepts: [conceptCoop('coop-x'), conceptLieu()], denomination: 'Source', id: 7 }),
-    ]
-    renderComponent(<ComparerStructures viewModel={viewModel} />, {
-      pathname: '/structures-doublons/comparer',
-      transfererNotionsStructureAction,
-    })
-
-    // WHEN : on coche uniquement Coop.
-    fireEvent.click(screen.getByLabelText(/Coop/))
-
-    // THEN : Lieu d’inclusion est coché automatiquement…
-    expect(screen.getByLabelText(/Lieu/)).toBeChecked()
-
-    // …et le transfert porte les deux notions.
-    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
-    await screen.findByRole('status')
-    expect(transfererNotionsStructureAction).toHaveBeenCalledWith({
-      idCible: 3,
-      idSource: 7,
-      notions: ['coop', 'lieuInclusion'],
-      path: '/structures-doublons/comparer',
-    })
-  })
-
-  it('couple l’indisponibilité : un id Coop en collision désactive aussi Lieu d’inclusion', () => {
-    // GIVEN la cible porte déjà un id Coop différent → collision sur la source.
-    const viewModel: ComparaisonViewModel = [
-      carte({ concepts: [conceptCoop('coop-cible')], denomination: 'Cible', estCanonique: true, id: 3 }),
-      carte({ concepts: [conceptCoop('coop-source'), conceptLieu()], denomination: 'Source', id: 7 }),
-    ]
-
-    // WHEN
-    renderComponent(<ComparerStructures viewModel={viewModel} />)
-
-    // THEN : Coop est verrouillé, et Lieu d’inclusion l’est aussi par couplage.
-    // (matcher ancré : le message d’indisponibilité du lieu contient lui aussi le mot « Coop ».)
-    expect(screen.getByLabelText(/^Coop/)).toBeDisabled()
-    expect(screen.getByLabelText(/^Lieu/)).toBeDisabled()
-  })
-
   it('agrège fusion et transfert et notifie en cas d’échec partiel', async () => {
     // GIVEN la fusion réussit, le transfert échoue.
     const fusionnerStructuresAction = stubbedServerAction(['OK'])
@@ -328,10 +282,6 @@ function conceptCoop(idExterne: string): ConceptViewModel {
   return { cle: 'coop', idExterne, label: 'Coop', present: true, resume: '1 affectation' }
 }
 
-function conceptLieu(): ConceptViewModel {
-  return { cle: 'lieuInclusion', idExterne: null, label: 'Lieu d’inclusion', present: true, resume: '1 lieu rattaché' }
-}
-
 function carte(
   overrides: Partial<StructureComparaisonViewModel> & Readonly<{ denomination: string; id: number }>
 ): StructureComparaisonViewModel {
@@ -341,7 +291,6 @@ function carte(
     champs: [{ label: 'SIRET', valeur: '22280001300013' }],
     concepts: notionsVides,
     denominationSirene: overrides.denomination,
-    estAssocieLieuInclusion: false,
     estCanonique: false,
     estMembre: false,
     latitude: 48.45,

@@ -5,10 +5,6 @@ export function lieuxInclusionNumeriquePresenter(
   readModel: LieuxInclusionNumeriqueReadModel
 ): LieuxInclusionNumeriqueViewModel {
   return {
-    categoryElements: readModel.repartitionLieuxParCategorieJuridique.map((repartition) => ({
-      label: repartition.categorie_finale,
-      value: repartition.nb_lieux_inclusion_numerique,
-    })),
     // eslint-disable-next-line no-restricted-syntax
     categoryGenerationDate: new Date(),
     lieuxConseillerNumeriques: readModel.nombreStructuresAvecConseillersNumeriques.reduce(
@@ -27,11 +23,6 @@ export function lieuxInclusionNumeriquePresenter(
       (acc, totalLieuxInclusionNumerique) => acc + totalLieuxInclusionNumerique.nb_lieux_inclusion_numerique,
       0
     ),
-    nombreLieuxInclusionPublic: readModel.lieuxInclusionNumeriqueSecteurPublic.reduce(
-      (acc, lieuInclusionNumeriqueSecteurPublic) =>
-        acc + lieuInclusionNumeriqueSecteurPublic.nb_lieux_inclusion_numerique_public,
-      0
-    ),
     territoriesFRR: readModel.nombreStructuresFRR.reduce((acc, territorieFRR) => acc + territorieFRR.nb_structures, 0),
     territoriesPrioritaires: readModel.nombreStructuresZonesPrioritaires.reduce(
       (acc, territoriesPrioritaire) => acc + territoriesPrioritaire.nb_structures,
@@ -42,13 +33,11 @@ export function lieuxInclusionNumeriquePresenter(
 }
 
 export interface LieuxInclusionNumeriqueViewModel {
-  categoryElements: Array<{ label: string; value: number }>
   categoryGenerationDate: Date
   lieuxConseillerNumeriques: number
   lieuxFranceService: number
   nombreLabellisesOuHabilites: number
   nombreLieuxInclusion: number
-  nombreLieuxInclusionPublic: number
   territoriesFRR: number
   territoriesPrioritaires: number
   territoriesQPV: number

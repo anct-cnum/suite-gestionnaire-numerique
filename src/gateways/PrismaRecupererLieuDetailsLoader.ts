@@ -6,7 +6,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   async recuperer(id: string): Promise<ErrorReadModel | LieuDetailsReadModel> {
     try {
       // Refonte 2026 : id = main.lieu_inclusion.id (et non plus main.structure.id legacy).
-      // La SA "principale" est resolue via la table d'asso (LATERAL LIMIT 1, cf N8).
       const structureResult = await this.recupererStructure(id)
       if (structureResult.length === 0) {
         return { message: 'Lieu non trouvé', type: 'error' } as ErrorReadModel
@@ -16,9 +15,11 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       const adresseComplete = this.construireAdresse(structure)
       const personnes = await this.recupererPersonnes(id)
       const tags = this.determinerTags(structure, personnes)
-      // structureId du read model = SA.id (utilise par la page pour les lookups
-      // sur min.membre.structureId et les checks de permission). Fallback sur
-      // lieu_inclusion.id si aucune SA associee (peu probable mais defensif).
+      // structureId du read model = SA employant une personne affectee au lieu
+      // (utilise par la page pour les lookups min.membre.structureId et les
+      // checks de permission). Depuis le retrait de l'asso lieu ↔ SA (#1711), il
+      // est resolu via les affectations. Fallback sur lieu_inclusion.id si aucune
+      // affectation active (le lieu n'est alors editable que par role dept/admin).
       const structureId = structure.structure_administrative_id ?? parseInt(id, 10)
 
       return this.construireReadModel(structure, adresseComplete, personnes, tags, structureId)
@@ -99,7 +100,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       prise_rdv: null | string
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
-      siret: null | string
       typologies: Array<string> | null
       updated_at: Date | null
     },
@@ -133,7 +133,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       informationsGenerales: {
         adresse: adresseComplete.length > 0 ? adresseComplete : 'Adresse non renseignée',
         nomStructure: structure.nom,
-        siret: structure.siret ?? undefined,
       },
       lieuAccueilPublic,
       personnesTravaillant,
@@ -367,7 +366,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       SELECT
         l.id::text,
         l.nom,
-        sa_first.siret,
         sa_first.structure_administrative_id,
         l.dispositif_programmes_nationaux,
         l.horaires,
@@ -407,11 +405,12 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       FROM main.lieu_inclusion l
       LEFT JOIN main.adresse a ON l.adresse_id = a.id
       LEFT JOIN LATERAL (
-        SELECT sa.siret, sa.id AS structure_administrative_id
-        FROM main.lieu_inclusion_structure_administrative asso
-        JOIN main.structure_administrative sa ON sa.id = asso.structure_administrative_id
-        WHERE asso.lieu_id = l.id
-        ORDER BY sa.id
+        SELECT pae.structure_administrative_id
+        FROM main.personne_affectations_lieu pal
+        JOIN main.personne_affectations_emploi pae
+          ON pae.personne_id = pal.personne_id AND pae.est_active = true
+        WHERE pal.lieu_id = l.id AND pal.est_active = true
+        ORDER BY pae.structure_administrative_id
         LIMIT 1
       ) sa_first ON true
       WHERE l.id = ${parseInt(id, 10)}

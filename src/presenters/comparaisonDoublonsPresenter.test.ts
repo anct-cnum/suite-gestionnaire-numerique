@@ -29,7 +29,6 @@ describe('comparaison doublons presenter', () => {
           affectationsCoop: 5,
           affectationsEmploi: 37,
           affectationsIdposte: 30,
-          associationsLieux: 0,
           contacts: 2,
           contrats: 1,
           feuillesDeRoute: 1,
@@ -78,7 +77,6 @@ describe('comparaison doublons presenter', () => {
       { label: 'Contrats', nombre: 1 },
       { label: 'Affectations emploi', nombre: 37 },
       { label: 'Contacts référents', nombre: 2 },
-      { label: "Associations à des lieux d'inclusion", nombre: 0 },
     ])
     expect(structure.concepts).toStrictEqual([
       {
@@ -98,7 +96,6 @@ describe('comparaison doublons presenter', () => {
         resume: '15 postes · 1 contrat · 30 affectations',
       },
       { cle: 'aidantsConnect', idExterne: 'ac-uuid', label: 'Aidants Connect', present: true, resume: '2 aidants' },
-      { cle: 'lieuInclusion', idExterne: null, label: 'Lieu d’inclusion', present: false, resume: '0 lieu' },
     ])
   })
 
@@ -180,7 +177,6 @@ function structureAvecCoords(
     concepts: [],
     denomination: `Structure ${id}`,
     denominationSirene: `Structure ${id}`,
-    estAssocieLieuInclusion: false,
     estCanonique: false,
     estMembre: false,
     id,
@@ -212,7 +208,6 @@ function structureVide(id: number): StructureDetailReadModel {
       affectationsCoop: 0,
       affectationsEmploi: 0,
       affectationsIdposte: 0,
-      associationsLieux: 0,
       contacts: 0,
       contrats: 0,
       feuillesDeRoute: 0,

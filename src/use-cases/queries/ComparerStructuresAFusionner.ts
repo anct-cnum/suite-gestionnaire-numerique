@@ -67,7 +67,6 @@ export type RattachementsReadModel = Readonly<{
   // Total toutes sources (coop + idposte + aidants-connect + min) — conservé pour `total`.
   affectationsEmploi: number
   affectationsIdposte: number
-  associationsLieux: number
   contacts: number
   contrats: number
   feuillesDeRoute: number

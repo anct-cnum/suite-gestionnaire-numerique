@@ -55,7 +55,6 @@ export function createDefaultInformationsGeneralesData(): InformationsGeneralesD
     adresse: '123 Rue de la République, 75001 Paris',
     complementAdresse: 'Bâtiment A - 2ème étage',
     nomStructure: 'Association Connect 69',
-    siret: '12345678901234',
   }
 }
 

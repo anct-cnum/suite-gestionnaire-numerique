@@ -3,43 +3,20 @@ import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient'
 
 export interface LieuxInclusionNumeriqueReadModel {
-  lieuxInclusionNumeriqueSecteurPublic: Array<{ nb_lieux_inclusion_numerique_public: number }>
   nombreStructuresAvecConseillersNumeriques: Array<{ count: number }>
   nombreStructuresAvecFranceServices: Array<{ count: number }>
   nombreStructuresAvecProgrammeNational: Array<{ count: number }>
   nombreStructuresFRR: Array<{ nb_structures: number }>
   nombreStructuresQPV: Array<{ nb_structures: number }>
   nombreStructuresZonesPrioritaires: Array<{ nb_structures: number }>
-  repartitionLieuxParCategorieJuridique: Array<{
-    categorie_finale: string
-    nb_lieux_inclusion_numerique: number
-  }>
   totalLieuxInclusionNumerique: Array<{ nb_lieux_inclusion_numerique: number }>
 }
 
-const CJ_CASE = Prisma.sql`
-  CASE
-    WHEN cj.nom = 'Commune et commune nouvelle' THEN cj.nom
-    WHEN cj.nom = 'Centre communal d''action sociale' THEN cj.nom
-    WHEN cj.nom ILIKE '%association%' THEN 'Association'
-    WHEN cj.nom = 'Département' THEN cj.nom
-    WHEN cj.nom = 'Communauté d''agglomération' THEN cj.nom
-    WHEN cj.nom ILIKE '%Pôle d''équilibre territorial et rural%' THEN cj.nom
-    WHEN cj.nom = 'Région' THEN cj.nom
-    WHEN cj.code NOT LIKE '7%' THEN 'Acteur privé'
-    WHEN cj.code IS NULL THEN 'Inconnue'
-    ELSE 'Autre'
-  END
-`
-
-// Refonte 2026 : la source est désormais main.lieu_inclusion (alias `l`).
-// `categorie_juridique` vit côté structure_administrative — accédée via
-// l'asso lieu_inclusion_structure_administrative.
+// Refonte 2026 : la source est main.lieu_inclusion (alias `l`). La répartition
+// par catégorie juridique et le décompte « secteur public » ont été retirés
+// (#1711) : ils dérivaient de la structure administrative via l'asso lieu ↔ SA,
+// désormais supprimée.
 const JOIN_ADRESSE = Prisma.sql`LEFT JOIN main.adresse a ON a.id = l.adresse_id`
-const JOIN_SA_VIA_ASSO = Prisma.sql`
-  LEFT JOIN main.lieu_inclusion_structure_administrative asso ON asso.lieu_id = l.id
-  LEFT JOIN main.structure_administrative sa ON sa.id = asso.structure_administrative_id
-`
 
 export class PrismaLieuxInclusionNumeriqueLoader {
   async getDepartemental(codeDepartement: string): Promise<LieuxInclusionNumeriqueReadModel> {
@@ -77,34 +54,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${JOIN_ADRESSE}
       WHERE l.structure_cartographie_nationale_id IS NOT NULL
         ${deptFilter};
-    `)
-
-    const lieuxInclusionNumeriqueSecteurPublic = await prisma.$queryRaw<
-      Array<{ nb_lieux_inclusion_numerique_public: number }>
-    >(Prisma.sql`
-      SELECT COUNT(*)::int AS nb_lieux_inclusion_numerique_public
-      FROM main.lieu_inclusion l
-      ${JOIN_ADRESSE}
-      ${JOIN_SA_VIA_ASSO}
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
-        AND sa.categorie_juridique LIKE '7%'
-        ${deptFilter};
-    `)
-
-    const repartitionLieuxParCategorieJuridique = await prisma.$queryRaw<
-      Array<{ categorie_finale: string; nb_lieux_inclusion_numerique: number }>
-    >(Prisma.sql`
-      SELECT
-        ${CJ_CASE} AS categorie_finale,
-        COUNT(*)::int AS nb_lieux_inclusion_numerique
-      FROM main.lieu_inclusion l
-        ${JOIN_ADRESSE}
-        ${JOIN_SA_VIA_ASSO}
-        LEFT JOIN reference.categories_juridiques cj ON sa.categorie_juridique = cj.code
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
-        ${deptFilter}
-      GROUP BY categorie_finale
-      ORDER BY nb_lieux_inclusion_numerique DESC;
     `)
 
     const nombreStructuresZonesPrioritaires = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
@@ -163,14 +112,12 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     `)
 
     return {
-      lieuxInclusionNumeriqueSecteurPublic,
       nombreStructuresAvecConseillersNumeriques,
       nombreStructuresAvecFranceServices,
       nombreStructuresAvecProgrammeNational,
       nombreStructuresFRR,
       nombreStructuresQPV,
       nombreStructuresZonesPrioritaires,
-      repartitionLieuxParCategorieJuridique,
       totalLieuxInclusionNumerique,
     }
   }

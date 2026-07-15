@@ -15,7 +15,6 @@ export type FiltresListeLieux = Readonly<{
   qpv?: boolean
   scopeFiltre: ScopeFiltre
   statut: StatutLieux
-  typeStructure?: string
 }>
 
 export interface RecupererLieuxInclusionReadModel {
@@ -30,7 +29,6 @@ export interface RecupererLieuxInclusionReadModel {
 }
 
 export interface LieuInclusionNumeriqueItem {
-  categorie_juridique: null | string
   code_insee: string
   code_postal: string
   est_actif: boolean
@@ -39,19 +37,16 @@ export interface LieuInclusionNumeriqueItem {
   id: string
   nb_accompagnements_ac: number
   nb_accompagnements_coop: number
-  nb_mandats_ac: number
   nom: string
   nom_commune: string
   nom_voie: null | string
   numero_voie: null | string
-  siret: null | string
   structure_cartographie_nationale_id: null | string
-  type_structure: null | string
+  typologies: Array<string>
   updated_at: Date | null
   visible_pour_cartographie_nationale: boolean | null
 }
 
 export interface RecupererLieuxInclusionPort {
   getLieux(filtres: FiltresListeLieux): Promise<RecupererLieuxInclusionReadModel>
-  getTypesStructure(): Promise<Array<{ code: string; nom: string }>>
 }

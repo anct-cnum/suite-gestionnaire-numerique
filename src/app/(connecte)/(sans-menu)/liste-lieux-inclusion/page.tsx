@@ -29,7 +29,6 @@ export default async function ListeLieuxInclusionController({
     page?: string
     qpv?: string
     statut?: string
-    typeStructure?: string
   }>
 }): Promise<ReactElement> {
   const session = await getSession()
@@ -57,18 +56,14 @@ export default async function ListeLieuxInclusionController({
   const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre)
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
-  const [listeLieuxInclusionReadModel, typesStructure] = await Promise.all([
-    listeLieuxInclusionLoader.getLieux(filtres),
-    listeLieuxInclusionLoader.getTypesStructure(),
-  ])
+  const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieux(filtres)
 
   const listeLieuxInclusionViewModel = handleReadModelOrError(listeLieuxInclusionReadModel, (readModel) =>
     listeLieuxInclusionPresenter(readModel, new Date())
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut, typeStructure } =
-    resolvedSearchParams
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut } = resolvedSearchParams
   setSearchParams()
 
   return (
@@ -78,7 +73,6 @@ export default async function ListeLieuxInclusionController({
         estBetaTesteur={contexte.isBetaTesteur}
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
         searchParams={currentSearchParams}
-        typesStructure={typesStructure}
         utilisateurRole={utilisateur.role.nom as TypologieRole}
       />
     </>
@@ -96,9 +90,6 @@ export default async function ListeLieuxInclusionController({
     }
     if (codeRegion !== undefined && codeRegion !== '') {
       currentSearchParams.set('codeRegion', codeRegion)
-    }
-    if (typeStructure !== undefined && typeStructure !== '') {
-      currentSearchParams.set('typeStructure', typeStructure)
     }
     if (qpv !== undefined && qpv !== '') {
       currentSearchParams.set('qpv', qpv)

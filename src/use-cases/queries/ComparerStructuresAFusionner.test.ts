@@ -56,7 +56,6 @@ function structureDetail(id: number, total: number): StructureDetailReadModel {
     affectationsCoop: 0,
     affectationsEmploi: total,
     affectationsIdposte: 0,
-    associationsLieux: 0,
     contacts: 0,
     contrats: 0,
     feuillesDeRoute: 0,
