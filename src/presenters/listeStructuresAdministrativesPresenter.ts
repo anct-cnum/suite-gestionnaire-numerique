@@ -111,7 +111,6 @@ function formatRattachements(structure: StructureAdministrativeItem): Rattacheme
     { nombre: structure.nb_affectations_emploi, pluriel: 'affectations emploi', singulier: 'affectation emploi' },
     { nombre: structure.nb_contacts, pluriel: 'contacts', singulier: 'contact' },
     { nombre: structure.nb_contrats, pluriel: 'contrats', singulier: 'contrat' },
-    { nombre: structure.nb_associations_lieux, pluriel: 'lieux d’inclusion', singulier: 'lieu d’inclusion' },
     { nombre: structure.nb_membres_min, pluriel: 'membres MIN', singulier: 'membre MIN' },
     { nombre: structure.nb_postes, pluriel: 'postes', singulier: 'poste' },
     { nombre: structure.nb_utilisateurs_min, pluriel: 'utilisateurs MIN', singulier: 'utilisateur MIN' },

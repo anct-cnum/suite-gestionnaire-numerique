@@ -12,7 +12,6 @@ export class PrismaRattachementsStructureLoader implements RattachementsStructur
           select: {
             contact_structures: true,
             contrat: true,
-            lieu_associations: true,
             membres: true,
             personne_affectations_emploi: true,
             poste: true,
@@ -29,7 +28,6 @@ export class PrismaRattachementsStructureLoader implements RattachementsStructur
       affectations: compteurs?.personne_affectations_emploi ?? 0,
       contacts: compteurs?.contact_structures ?? 0,
       contrats: compteurs?.contrat ?? 0,
-      lieux: compteurs?.lieu_associations ?? 0,
       membres: compteurs?.membres ?? 0,
       postes: compteurs?.poste ?? 0,
       utilisateurs: compteurs?.utilisateurs ?? 0,

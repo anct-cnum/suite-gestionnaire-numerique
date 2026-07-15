@@ -51,7 +51,7 @@ export class PrismaStructuresAdministrativesLoader implements RecupererStructure
       nom: Prisma.sql`TRIM(denomination_sirene)`,
       personnesEmployees: Prisma.sql`nb_personnes_employees`,
       rattachements: Prisma.sql`(nb_utilisateurs_min + nb_membres_min + nb_postes + nb_contrats
-        + nb_affectations_emploi + nb_contacts + nb_associations_lieux)`,
+        + nb_affectations_emploi + nb_contacts)`,
     }
     const ordre = tri.ordre === 'desc' ? Prisma.sql`DESC` : Prisma.sql`ASC`
 
@@ -157,8 +157,6 @@ export class PrismaStructuresAdministrativesLoader implements RecupererStructure
          WHERE pae.structure_administrative_id = sa.id)::int AS nb_affectations_emploi,
         (SELECT COUNT(*) FROM main.contact_structure_administrative cs
          WHERE cs.structure_administrative_id = sa.id)::int AS nb_contacts,
-        (SELECT COUNT(*) FROM main.lieu_inclusion_structure_administrative li
-         WHERE li.structure_administrative_id = sa.id)::int AS nb_associations_lieux,
         COALESCE(emp.nb, 0) AS nb_personnes_employees
       FROM main.structure_administrative sa
       LEFT JOIN main.adresse a ON a.id = sa.adresse_id

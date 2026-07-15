@@ -33,7 +33,6 @@ export interface StructureAdministrativeItem {
   est_gouvernance: boolean
   id: number
   nb_affectations_emploi: number
-  nb_associations_lieux: number
   nb_contacts: number
   nb_contrats: number
   nb_membres_min: number

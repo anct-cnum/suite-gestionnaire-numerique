@@ -22,7 +22,6 @@ export type RattachementsStructureReadModel = Readonly<{
   affectations: number
   contacts: number
   contrats: number
-  lieux: number
   membres: number
   postes: number
   utilisateurs: number

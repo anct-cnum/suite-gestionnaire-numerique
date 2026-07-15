@@ -40,8 +40,8 @@ describe('liste structures administratives presenter', () => {
       nbPersonnesEmployees: 4,
       nom: 'La Poste',
       rattachements: {
-        details: ['3 affectations emploi', '1 contact', '2 lieux d’inclusion', '1 poste'],
-        total: 7,
+        details: ['3 affectations emploi', '1 contact', '1 poste'],
+        total: 5,
       },
     })
   })
@@ -58,7 +58,6 @@ describe('liste structures administratives presenter', () => {
           denomination_sirene: null,
           est_gouvernance: false,
           nb_affectations_emploi: 0,
-          nb_associations_lieux: 0,
           nb_contacts: 0,
           nb_postes: 0,
           nom_commune: null,
@@ -105,7 +104,6 @@ describe('liste structures administratives presenter', () => {
       structures: [
         creerStructure({
           nb_affectations_emploi: 2,
-          nb_associations_lieux: 2,
           nb_contacts: 2,
           nb_contrats: 2,
           nb_membres_min: 2,
@@ -121,16 +119,8 @@ describe('liste structures administratives presenter', () => {
 
     // THEN
     expect(viewModel.structures[0].rattachements).toStrictEqual({
-      details: [
-        '2 affectations emploi',
-        '2 contacts',
-        '2 contrats',
-        '2 lieux d’inclusion',
-        '2 membres MIN',
-        '2 postes',
-        '2 utilisateurs MIN',
-      ],
-      total: 14,
+      details: ['2 affectations emploi', '2 contacts', '2 contrats', '2 membres MIN', '2 postes', '2 utilisateurs MIN'],
+      total: 12,
     })
   })
 
@@ -173,7 +163,6 @@ function creerStructure(surcharges?: Partial<StructureAdministrativeItem>): Stru
     est_gouvernance: true,
     id: 7,
     nb_affectations_emploi: 3,
-    nb_associations_lieux: 2,
     nb_contacts: 1,
     nb_contrats: 0,
     nb_membres_min: 0,
