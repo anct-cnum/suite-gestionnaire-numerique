@@ -3,10 +3,12 @@ import { UpdateLieuInclusionDescriptionRepository } from './shared/LieuInclusion
 import { StructureUid } from '@/domain/Structure'
 
 export class ModifierLieuInclusionDescription implements CommandHandler<Command> {
+  readonly #date: Date
   readonly #lieuInclusionRepository: LieuInclusionRepository
 
-  constructor(lieuInclusionRepository: LieuInclusionRepository) {
+  constructor(lieuInclusionRepository: LieuInclusionRepository, date: Date) {
     this.#lieuInclusionRepository = lieuInclusionRepository
+    this.#date = date
   }
 
   async handle(command: Command): ResultAsync<Failure> {
@@ -24,6 +26,7 @@ export class ModifierLieuInclusionDescription implements CommandHandler<Command>
     }
 
     await this.#lieuInclusionRepository.updateDescription({
+      date: this.#date,
       horaires: command.horaires,
       itinerance: itineranceArray,
       presentationDetail: command.presentationDetail,

@@ -60,7 +60,7 @@ export async function modifierLieuInclusionInformationsPratiquesAction(
     }
 
     // Appel du Use Case
-    const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository()).handle({
+    const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle({
       horaires: actionParams.horaires,
       itinerance: actionParams.itinerance,
       priseRdvUrl: actionParams.priseRdvUrl,

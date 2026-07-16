@@ -59,7 +59,10 @@ export async function modifierLieuInclusionServicesTypePublicAction(
   }
 
   // Appel du Use Case
-  const result = await new ModifierLieuInclusionServicesTypePublic(new PrismaLieuInclusionRepository()).handle({
+  const result = await new ModifierLieuInclusionServicesTypePublic(
+    new PrismaLieuInclusionRepository(),
+    new Date()
+  ).handle({
     priseEnChargeSpecifique: actionParams.priseEnChargeSpecifique,
     publicsSpecifiquementAdresses: actionParams.publicsSpecifiquementAdresses,
     structureId: actionParams.structureId,

@@ -5,6 +5,7 @@ export interface UpdateLieuInclusionDescriptionRepository {
 }
 
 export type UpdateLieuInclusionDescriptionData = Readonly<{
+  date: Date
   horaires?: string
   itinerance?: ReadonlyArray<string>
   presentationDetail?: string
@@ -20,6 +21,7 @@ export interface UpdateLieuInclusionServicesTypeAccompagnementRepository {
 }
 
 export type UpdateLieuInclusionServicesTypeAccompagnementData = Readonly<{
+  date: Date
   modalites: ReadonlyArray<string>
   structureUid: StructureUid
   thematiques: ReadonlyArray<string>
@@ -31,6 +33,7 @@ export interface UpdateLieuInclusionServicesModaliteRepository {
 }
 
 export type UpdateLieuInclusionServicesModaliteData = Readonly<{
+  date: Date
   email?: string
   fraisACharge: ReadonlyArray<string>
   modalitesAcces: ReadonlyArray<string>
@@ -43,6 +46,7 @@ export interface UpdateLieuInclusionServicesTypePublicRepository {
 }
 
 export type UpdateLieuInclusionServicesTypePublicData = Readonly<{
+  date: Date
   priseEnChargeSpecifique: ReadonlyArray<string>
   publicsSpecifiquementAdresses: ReadonlyArray<string>
   structureUid: StructureUid
@@ -53,6 +57,7 @@ export interface UpdateLieuInclusionVisibiliteCartographieRepository {
 }
 
 export type UpdateLieuInclusionVisibiliteCartographieData = Readonly<{
+  date: Date
   structureUid: StructureUid
   visiblePourCartographie: boolean
 }>

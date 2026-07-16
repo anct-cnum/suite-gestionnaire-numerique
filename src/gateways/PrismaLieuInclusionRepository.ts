@@ -89,9 +89,11 @@ export class PrismaLieuInclusionRepository
     // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
       contact?: Prisma.InputJsonValue
+      edited_by: string
       frais_a_charge?: Array<main_frais_a_charge>
       modalites_acces?: Array<main_modalite_acces>
-    } = {}
+      updated_at_min: Date
+    } = { edited_by: 'min', updated_at_min: data.date }
 
     // Mettre à jour les modalités d'accès
     updateData.modalites_acces = versEnumsLieuInclusion(data.modalitesAcces, modalitesAccesVersEnum, 'modalites_acces')
@@ -117,10 +119,12 @@ export class PrismaLieuInclusionRepository
   async updateServicesTypeAccompagnement(data: UpdateLieuInclusionServicesTypeAccompagnementData): Promise<void> {
     // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
+      edited_by: string
       modalites_acces?: Array<main_modalite_acces>
       modalites_accompagnement?: Array<main_modalite_accompagnement>
       services?: Array<main_service>
-    } = {}
+      updated_at_min: Date
+    } = { edited_by: 'min', updated_at_min: data.date }
 
     // Mettre à jour les services (thématiques)
     updateData.services = versEnumsLieuInclusion(data.thematiques, servicesVersEnum, 'services')
@@ -148,9 +152,11 @@ export class PrismaLieuInclusionRepository
   async updateServicesTypePublic(data: UpdateLieuInclusionServicesTypePublicData): Promise<void> {
     // Préparer les données à mettre à jour (libellés référentiel → enums main, cf lieuInclusionEnums)
     const updateData: {
+      edited_by: string
       prise_en_charge_specifique?: Array<main_prise_en_charge_specifique>
       publics_specifiquement_adresses?: Array<main_public_specifiquement_adresse>
-    } = {}
+      updated_at_min: Date
+    } = { edited_by: 'min', updated_at_min: data.date }
 
     // Mettre à jour les publics spécifiquement adressés
     updateData.publics_specifiquement_adresses = versEnumsLieuInclusion(
@@ -179,6 +185,8 @@ export class PrismaLieuInclusionRepository
   async updateVisibiliteCartographie(data: UpdateLieuInclusionVisibiliteCartographieData): Promise<void> {
     await prisma.main_lieu_inclusion.update({
       data: {
+        edited_by: 'min',
+        updated_at_min: data.date,
         visible_pour_cartographie_nationale: data.visiblePourCartographie,
       },
       where: {
@@ -204,22 +212,26 @@ export class PrismaLieuInclusionRepository
     updatedContact: Record<string, unknown>
   ): {
     contact?: Prisma.InputJsonValue
+    edited_by: string
     horaires?: null | string
     itinerance?: Array<main_itinerance>
     presentation_detail?: null | string
     presentation_resume?: null | string
     prise_rdv?: null | string
     typologies?: Array<main_typologie>
+    updated_at_min: Date
   } {
     const updateData: {
       contact?: Prisma.InputJsonValue
+      edited_by: string
       horaires?: null | string
       itinerance?: Array<main_itinerance>
       presentation_detail?: null | string
       presentation_resume?: null | string
       prise_rdv?: null | string
       typologies?: Array<main_typologie>
-    } = {}
+      updated_at_min: Date
+    } = { edited_by: 'min', updated_at_min: data.date }
 
     if (data.presentationDetail !== undefined) {
       updateData.presentation_detail = data.presentationDetail === '' ? null : data.presentationDetail

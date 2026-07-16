@@ -3,15 +3,18 @@ import { UpdateLieuInclusionServicesModaliteRepository } from './shared/LieuIncl
 import { StructureUid } from '@/domain/Structure'
 
 export class ModifierLieuInclusionServicesModalite implements CommandHandler<Command> {
+  readonly #date: Date
   readonly #lieuInclusionRepository: LieuInclusionRepository
 
-  constructor(lieuInclusionRepository: LieuInclusionRepository) {
+  constructor(lieuInclusionRepository: LieuInclusionRepository, date: Date) {
     this.#lieuInclusionRepository = lieuInclusionRepository
+    this.#date = date
   }
 
   async handle(command: Command): ResultAsync<Failure> {
     // La validation des permissions est effectuée au niveau des Server Actions
     await this.#lieuInclusionRepository.updateServicesModalite({
+      date: this.#date,
       email: command.email,
       fraisACharge: command.fraisACharge,
       modalitesAcces: command.modalitesAcces,

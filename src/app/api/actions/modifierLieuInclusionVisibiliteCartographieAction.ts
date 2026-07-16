@@ -59,7 +59,10 @@ export async function modifierLieuInclusionVisibiliteCartographieAction(
   }
 
   // Appel du Use Case
-  const result = await new ModifierLieuInclusionVisibiliteCartographie(new PrismaLieuInclusionRepository()).handle({
+  const result = await new ModifierLieuInclusionVisibiliteCartographie(
+    new PrismaLieuInclusionRepository(),
+    new Date()
+  ).handle({
     lieuId: actionParams.lieuId,
     visiblePourCartographie: actionParams.visiblePourCartographie,
   })

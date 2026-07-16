@@ -59,7 +59,10 @@ export async function modifierLieuInclusionServicesTypeAccompagnementAction(
   }
 
   // Appel du Use Case
-  const result = await new ModifierLieuInclusionServicesTypeAccompagnement(new PrismaLieuInclusionRepository()).handle({
+  const result = await new ModifierLieuInclusionServicesTypeAccompagnement(
+    new PrismaLieuInclusionRepository(),
+    new Date()
+  ).handle({
     modalites: actionParams.modalites,
     structureId: actionParams.structureId,
     thematiques: actionParams.thematiques,
