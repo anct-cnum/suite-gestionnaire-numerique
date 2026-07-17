@@ -48,8 +48,8 @@ export default async function ListeLieuxInclusionController({
 
   const resolvedSearchParams = await searchParams
 
-  // L'onglet "Lieux archivés" est réservé aux bêta-testeurs
-  if (resolvedSearchParams.statut === 'archives' && !contexte.isBetaTesteur) {
+  // L'onglet "Lieux archivés" est réservé aux super admins
+  if (resolvedSearchParams.statut === 'archives' && !contexte.isSuperAdmin) {
     redirect('/liste-lieux-inclusion')
   }
 
@@ -70,7 +70,7 @@ export default async function ListeLieuxInclusionController({
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des lieux' }]} />
       <ListeLieuxInclusion
-        estBetaTesteur={contexte.isBetaTesteur}
+        estSuperAdmin={contexte.isSuperAdmin}
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
         searchParams={currentSearchParams}
         utilisateurRole={utilisateur.role.nom as TypologieRole}

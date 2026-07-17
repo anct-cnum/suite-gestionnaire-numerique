@@ -19,11 +19,13 @@ export type ScopeFiltre =
 
 export class Contexte {
   readonly isBetaTesteur: boolean
+  readonly isSuperAdmin: boolean
   readonly role: RoleUtilisateur
   readonly scopes: ReadonlyArray<Scope>
 
-  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>, isBetaTesteur = false) {
+  constructor(role: RoleUtilisateur, scopes: ReadonlyArray<Scope>, isBetaTesteur = false, isSuperAdmin = false) {
     this.isBetaTesteur = isBetaTesteur
+    this.isSuperAdmin = isSuperAdmin
     this.role = role
     this.scopes = scopes
   }
@@ -148,7 +150,7 @@ export async function resoudreContexte(
   scopeLoader: ScopeLoader
 ): Promise<Contexte> {
   const scopes = await construireScopes(utilisateur, scopeLoader)
-  return new Contexte(utilisateur.role.type, scopes, utilisateur.isBetaTesteur)
+  return new Contexte(utilisateur.role.type, scopes, utilisateur.isBetaTesteur, utilisateur.isSuperAdmin)
 }
 
 export type Scope =

@@ -30,7 +30,7 @@ import {
 } from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusion({
-  estBetaTesteur,
+  estSuperAdmin,
   listeLieuxInclusionViewModel,
   searchParams,
   utilisateurRole,
@@ -235,7 +235,7 @@ export default function ListeLieuxInclusion({
               Lieux actuels ({viewModel.totalActifs})
             </button>
           </li>
-          {estBetaTesteur ? (
+          {estSuperAdmin ? (
             <li className="fr-nav__item">
               <button
                 aria-current={estOngletArchives}
@@ -668,7 +668,7 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 }
 
 type Props = Readonly<{
-  estBetaTesteur: boolean
+  estSuperAdmin: boolean
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
   searchParams: SerializedSearchParams
   utilisateurRole: TypologieRole
