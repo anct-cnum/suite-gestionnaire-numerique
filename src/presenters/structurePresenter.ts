@@ -63,6 +63,9 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
     },
     identite: {
       adresse: uneStructureReadModel.identite.adresse,
+      dateSuppression: uneStructureReadModel.identite.deletedAt
+        ? formaterEnDateFrancaise(uneStructureReadModel.identite.deletedAt)
+        : null,
       denominationAntenne: uneStructureReadModel.identite.denominationAntenne,
       departement: uneStructureReadModel.identite.departement,
       editeur: uneStructureReadModel.identite.editeur,
@@ -143,6 +146,7 @@ export type StructureViewModel = Readonly<{
   }>
   identite: Readonly<{
     adresse: string
+    dateSuppression: null | string
     denominationAntenne: null | string
     departement: string
     editeur: string

@@ -426,9 +426,24 @@ function CarteStructure({
         ) : (
           <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--purple-glycine">Antenne</span>
         )}
-        {structure.estMembre ? (
-          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--green-emeraude fr-ml-1w">Membre</span>
+        {structure.membreStatut === 'confirme' ? (
+          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--green-emeraude fr-ml-1w">
+            Membre confirmé
+          </span>
         ) : null}
+        {structure.membreStatut === 'candidat' ? (
+          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--blue-cumulus fr-ml-1w">
+            Membre candidat
+          </span>
+        ) : null}
+        {structure.membreStatut === 'supprimer' ? (
+          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-ml-1w">Membre supprimé</span>
+        ) : null}
+        {structure.dateSuppression === null ? null : (
+          <span className="fr-badge fr-badge--no-icon fr-badge--sm fr-badge--warning fr-ml-1w">
+            Supprimée le {structure.dateSuppression}
+          </span>
+        )}
       </p>
       <h2 className="fr-h5">
         {structure.id} -{' '}

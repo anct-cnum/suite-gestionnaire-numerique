@@ -121,6 +121,7 @@ export function createDefaultStructureViewModel(): StructureViewModel {
     },
     identite: {
       adresse: '123 Rue de la République, 75001 Paris',
+      dateSuppression: null,
       denominationAntenne: null,
       departement: 'Paris (75)',
       editeur: 'Marie Admin',
@@ -196,6 +197,7 @@ export function createStructureViewModelWithMinimalData(): StructureViewModel {
     },
     identite: {
       adresse: '123 Rue de la République, 75001 Paris',
+      dateSuppression: null,
       denominationAntenne: null,
       departement: 'Paris (75)',
       editeur: '-',
