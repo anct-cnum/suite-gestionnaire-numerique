@@ -8,6 +8,7 @@ import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
+import Sondage from '@/components/transverse/Sondage/Sondage'
 import { Roles } from '@/domain/Role'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -46,6 +47,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
         <LienEvitement />
         <ToastContainer aria-label="Notifications" style={{ width: '30rem' }} />
         <EnTete />
+        <Sondage />
         <main className="fr-container--fluid fr-mx-5w" id="content">
           <Suspense fallback={<SpinnerSimple text="Chargement..." />}>{children}</Suspense>
         </main>
