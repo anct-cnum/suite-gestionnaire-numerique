@@ -1,3 +1,4 @@
+import { formaterEnDateFrancaise } from '@/presenters/shared/date'
 import { libelleSource } from '@/presenters/shared/libelleSource'
 import { NotionCle } from '@/use-cases/commands/TransfererNotionsStructure'
 import {
@@ -41,16 +42,19 @@ export type StructureComparaisonViewModel = Readonly<{
   champs: ReadonlyArray<ChampViewModel>
   // Les 5 notions transférables, dans l'ordre d'affichage (toujours les 5, `present` filtre).
   concepts: ReadonlyArray<ConceptViewModel>
+  // Non-null si la structure a été supprimée (soft delete) : date de suppression formatée.
+  dateSuppression: null | string
   denomination: string
   denominationSirene: string
   // true si la structure est la forme canonique (aucune denomination_antenne) = celle qui devrait
   // porter le rattachement et l'affichage. Sinon c'est une antenne.
   estCanonique: boolean
-  // true si la structure porte au moins un membre de gouvernance (critère de décision important).
-  estMembre: boolean
   id: number
   latitude: null | number
   longitude: null | number
+  // Statut le plus engageant parmi les membres de gouvernance portés par la structure
+  // (confirme > candidat > supprimer), null si aucun membre.
+  membreStatut: 'candidat' | 'confirme' | 'supprimer' | null
   rattachements: ReadonlyArray<RattachementViewModel>
   rattachementsTotal: number
   // SIRET brut, pour la requête INSEE de l'aperçu et le calcul de collision de canonisation côté client.
@@ -146,6 +150,8 @@ function niveauDistance(km: number): NiveauDistance {
 }
 
 function versStructureComparaison(structure: StructureDetailReadModel): StructureComparaisonViewModel {
+  const dateSuppression = structure.deletedAt ? formaterEnDateFrancaise(structure.deletedAt) : null
+
   return {
     adresse: structure.adresse ?? '—',
     champs: [
@@ -163,15 +169,17 @@ function versStructureComparaison(structure: StructureDetailReadModel): Structur
       { label: 'Commune', valeur: structure.commune ?? '—' },
       { label: 'Bénéficiaire de subvention', valeur: structure.estBeneficiaire ? 'Oui' : 'Non' },
       { label: 'Issue d’une fusion précédente', valeur: structure.dejaFusionnee ? 'Oui' : 'Non' },
+      { label: 'Supprimée', valeur: dateSuppression === null ? 'Non' : `Oui — le ${dateSuppression}` },
     ],
     concepts: construireConcepts(structure),
+    dateSuppression,
     denomination: structure.denominationAntenne ?? structure.denominationSirene ?? `Structure #${structure.id}`,
     denominationSirene: structure.denominationSirene ?? '',
     estCanonique: structure.denominationAntenne === null,
-    estMembre: structure.rattachements.membresMin > 0,
     id: structure.id,
     latitude: structure.latitude,
     longitude: structure.longitude,
+    membreStatut: structure.membreStatut,
     rattachements: LIBELLES_RATTACHEMENTS.map(({ cle, info, label }) => ({
       info,
       label,

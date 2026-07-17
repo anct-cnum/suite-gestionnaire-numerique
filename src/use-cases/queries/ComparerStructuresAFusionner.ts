@@ -30,6 +30,7 @@ export type StructureDetailReadModel = Readonly<{
   commune: null | string
   // true si la SA est déjà la survivante d'une fusion précédente (cf audit.structure_merge_log).
   dejaFusionnee: boolean
+  deletedAt: Date | null
   denominationAntenne: null | string
   denominationSirene: null | string
   // true si la SA (via un de ses membres de gouvernance) bénéficie d'au moins une subvention.
@@ -40,6 +41,9 @@ export type StructureDetailReadModel = Readonly<{
   // structures candidates : des antennes d'un même SIRET peuvent avoir des adresses distinctes.
   latitude: null | number
   longitude: null | number
+  // Statut le plus engageant parmi les membres min.membre de la SA (confirme > candidat > supprimer),
+  // null si la SA ne porte aucun membre.
+  membreStatut: 'candidat' | 'confirme' | 'supprimer' | null
   // Nombre de mandats Aidants Connect (porté par la SA, indépendant des affectations).
   nbMandatsAc: null | number
   rattachements: RattachementsReadModel

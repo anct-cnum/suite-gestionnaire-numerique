@@ -19,6 +19,7 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         sa.rna,
         sa.denomination_sirene,
         sa.denomination_antenne,
+        sa.deleted_at,
         sa.etat_administratif,
         sa.code_activite_principale,
         sa.edited_by AS source,
@@ -36,6 +37,14 @@ export class PrismaStructuresComparaisonLoader implements ComparaisonDoublonsLoa
         public.ST_X(a.geom) AS longitude,
         (SELECT COUNT(*) FROM min.utilisateur u WHERE u.structure_id = sa.id)::int AS nb_utilisateurs_min,
         (SELECT COUNT(*) FROM min.membre m WHERE m.structure_id = sa.id)::int AS nb_membres_min,
+        (SELECT CASE
+           WHEN EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'confirme')
+             THEN 'confirme'
+           WHEN EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'candidat')
+             THEN 'candidat'
+           WHEN EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'supprimer')
+             THEN 'supprimer'
+         END) AS membre_statut,
         (SELECT COUNT(*) FROM main.poste p WHERE p.structure_id = sa.id)::int AS nb_postes,
         (SELECT COUNT(*) FROM main.contrat ct WHERE ct.structure_id = sa.id)::int AS nb_contrats,
         (SELECT COUNT(*) FROM main.personne_affectations_emploi pae
@@ -71,6 +80,7 @@ interface LigneDetail {
   adresse: null | string
   code_activite_principale: null | string
   deja_fusionnee: boolean
+  deleted_at: Date | null
   denomination_antenne: null | string
   denomination_sirene: null | string
   est_beneficiaire: boolean
@@ -78,6 +88,7 @@ interface LigneDetail {
   id: number
   latitude: null | number
   longitude: null | number
+  membre_statut: 'candidat' | 'confirme' | 'supprimer' | null
   nb_affectations_ac: number
   nb_affectations_coop: number
   nb_affectations_emploi: number
@@ -114,6 +125,7 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     codeActivitePrincipale: ligne.code_activite_principale,
     commune: ligne.nom_commune,
     dejaFusionnee: ligne.deja_fusionnee,
+    deletedAt: ligne.deleted_at,
     denominationAntenne: ligne.denomination_antenne,
     denominationSirene: ligne.denomination_sirene,
     estBeneficiaire: ligne.est_beneficiaire,
@@ -121,6 +133,7 @@ function versDetail(ligne: LigneDetail): StructureDetailReadModel {
     id: ligne.id,
     latitude: ligne.latitude,
     longitude: ligne.longitude,
+    membreStatut: ligne.membre_statut,
     nbMandatsAc: ligne.nb_mandats_ac,
     rattachements: {
       affectationsAc: ligne.nb_affectations_ac,

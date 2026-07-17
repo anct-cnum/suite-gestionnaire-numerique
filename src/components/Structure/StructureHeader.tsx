@@ -14,8 +14,11 @@ export default function StructureHeader({ gouvernances, identite }: Props): Reac
       <title>{identite.nom}</title>
 
       <div>
-        <div className="fr-grid-row space-between fr-mb-2w">
+        <div className="fr-grid-row space-between fr-mb-2w" style={{ alignItems: 'center' }}>
           <h1 className="fr-h1 fr-mb-0 color-blue-france">{identite.nom}</h1>
+          {identite.dateSuppression === null ? null : (
+            <Badge color="warning">Supprimée le {identite.dateSuppression}</Badge>
+          )}
         </div>
         <div className="fr-grid-row space-between">
           <div>

@@ -111,6 +111,7 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
         adresse: formatAdresse(structureRecord.adresse),
         codePostal: structureRecord.adresse?.code_postal ?? '',
         commune: structureRecord.adresse?.nom_commune ?? '',
+        deletedAt: structureRecord.deleted_at,
         denominationAntenne: structureRecord.denomination_antenne ?? null,
         departement: departementNom,
         editeur: structureRecord.edited_by ?? '',
