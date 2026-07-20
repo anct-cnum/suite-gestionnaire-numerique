@@ -1,6 +1,5 @@
 import { ReactElement } from 'react'
 
-import AidantDetailsActivites from '@/components/AidantDetails/AidantDetailsActivites'
 import AidantDetailsHeader from '@/components/AidantDetails/AidantDetailsHeader'
 import InformationsPersonnellesCard from '@/components/AidantDetails/AidantDetailsInformationsPersonnelles'
 import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetailsLieuxActivite'
@@ -23,26 +22,6 @@ export type InformationsPersonnellesData = Readonly<{
   telephone?: string
 }>
 
-export type StatistiquesActivitesData = Readonly<{
-  accompagnements: Readonly<{
-    avecAidantsConnect: number
-    individuels: number
-    nombreAteliers: number
-    participationsAteliers: number
-    total: number
-  }>
-  beneficiaires: Readonly<{
-    anonymes: number
-    suivis: number
-    total: number
-  }>
-  graphique: Readonly<{
-    backgroundColor: ReadonlyArray<string>
-    data: ReadonlyArray<number>
-    labels: ReadonlyArray<string>
-  }>
-}>
-
 export type StructureEmployeuseData = Readonly<{
   adresse: string
   departement?: string
@@ -63,14 +42,12 @@ export type LieuActiviteData = Readonly<{
   adresse: string
   idCoopCarto: null | string
   nom: string
-  nombreAccompagnements: number
 }>
 
 export type AidantDetailsData = Readonly<{
   header: AidantDetailsHeaderData
   informationsPersonnelles: InformationsPersonnellesData
   lieuxActivite: ReadonlyArray<LieuActiviteData>
-  statistiquesActivites?: StatistiquesActivitesData
   structuresEmployeuses: ReadonlyArray<StructureEmployeuseData>
 }>
 
@@ -109,17 +86,6 @@ export default function AidantDetails(props: Props): ReactElement {
               <AidantDetailsStructureEmployeuse data={structure} key={structure.nom} />
             ))}
           </div>
-
-          {shouldShowActivites ? (
-            <div id="activites">
-              <AidantDetailsActivites
-                data={data.statistiquesActivites}
-                estAidantConnect={data.header.tags.includes('Aidant Connect')}
-                nom={data.informationsPersonnelles.nom}
-                prenom={data.informationsPersonnelles.prenom}
-              />
-            </div>
-          ) : null}
 
           <div id="lieux-activite">
             <AidantDetailsLieuxActivite

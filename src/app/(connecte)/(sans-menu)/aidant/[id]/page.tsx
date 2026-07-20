@@ -11,20 +11,17 @@ export const metadata: Metadata = {
   title: 'Détails aidants et médiateurs numériques',
 }
 
-async function AidantPage({ params, searchParams }: Props): Promise<ReactElement> {
+async function AidantPage({ params }: Props): Promise<ReactElement> {
   const { id } = await params
-  const resolvedSearchParams = await searchParams
 
   // Vérifier si la récupération a échoué
   function isError(data: unknown): data is ErrorViewModel {
     return data !== null && typeof data === 'object' && 'message' in data && 'type' in data
   }
 
-  const periode = resolvedSearchParams.periode === 'journalier' ? 'journalier' : 'mensuel'
-
   const aidantLoader = new PrismaAidantDetailsLoader()
 
-  const aidantResult = await aidantLoader.findById(id, periode)
+  const aidantResult = await aidantLoader.findById(id)
   // Si aidantResult est une erreur, pas besoin de récupérer les stats
   function buildFilAriane(dernierLabel: string): ReactElement {
     return (
@@ -52,7 +49,7 @@ async function AidantPage({ params, searchParams }: Props): Promise<ReactElement
   }
 
   // Transformer les données via le presenteur
-  const presentedData = presentAidantDetails(aidantResult, new Date())
+  const presentedData = presentAidantDetails(aidantResult)
   return (
     <>
       {buildFilAriane(`${presentedData.header.prenom} ${presentedData.header.nom}`.trim())}
@@ -64,11 +61,6 @@ type Props = Readonly<{
   params: Promise<
     Readonly<{
       id: string
-    }>
-  >
-  searchParams: Promise<
-    Readonly<{
-      periode?: string
     }>
   >
 }>

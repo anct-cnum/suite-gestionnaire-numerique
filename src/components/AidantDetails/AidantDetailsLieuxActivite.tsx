@@ -79,10 +79,6 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
                     )}
                   </div>
                 </div>
-                <div className="fr-col-12 fr-col-md-2 fr-text--center">
-                  <div className="fr-text--xl fr-text--bold fr-m-0">{lieu.nombreAccompagnements}</div>
-                  <div className="fr-text--sm fr-text-mention--grey fr-m-0">Accompagnements (sur 30 j.)</div>
-                </div>
               </div>
               {index < lieux.length - 1 && <hr className="fr-hr  fr-mt-2w" />}
             </React.Fragment>

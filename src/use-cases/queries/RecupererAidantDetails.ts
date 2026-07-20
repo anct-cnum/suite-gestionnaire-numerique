@@ -1,15 +1,10 @@
 export interface AidantDetailsLoader {
-  findById(
-    id: string,
-    graphiquePeriode?: 'journalier' | 'mensuel'
-  ): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel>
+  findById(id: string): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel>
 }
 
 export type AidantDetailsReadModel = Readonly<{
-  accompagnements: AccompagnementsReadModel
   coopId: string
   emails: ReadonlyArray<string>
-  graphiqueAccompagnements: ReadonlyArray<GraphiqueAccompagnementReadModel>
   lieuxActivite: ReadonlyArray<LieuActiviteReadModel>
   nom: string
   prenom: string
@@ -31,24 +26,10 @@ export type AidantDetailsErrorReadModel = Readonly<{
   type: 'error'
 }>
 
-type AccompagnementsReadModel = Readonly<{
-  avecAidantsConnect: number
-  individuels: number
-  nombreAteliers: number
-  participationsAteliers: number
-  total: number
-}>
-
-type GraphiqueAccompagnementReadModel = Readonly<{
-  date: string
-  totalAccompagnements: number
-}>
-
 type LieuActiviteReadModel = Readonly<{
   adresse: string
   idCoopCarto: null | string
   nom: string
-  nombreAccompagnements: number
 }>
 
 type StructureEmployeuseReadModel = Readonly<{
