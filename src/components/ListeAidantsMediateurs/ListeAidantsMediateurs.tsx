@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { memo, ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
-import AccompagnementsTableCell from './AccompagnementsTableCell'
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
 import ListeAidantsMediateursFiltre from './ListeAidantsMediateursFiltre'
 import Badge from '../shared/Badge/Badge'
@@ -43,11 +42,9 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 // Composant mémorisé pour chaque ligne d'aidant
 const AidantRow = memo(
   ({
-    accompagnementsPromise,
     aidant,
     badgeStyle,
   }: {
-    readonly accompagnementsPromise: Promise<Map<string, number>>
     readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
     readonly badgeStyle: React.CSSProperties
   }) => {
@@ -109,9 +106,6 @@ const AidantRow = memo(
           )}
         </td>
         <td className="fr-cell--center">
-          <AccompagnementsTableCell accompagnementsPromise={accompagnementsPromise} aidantId={aidant.id} />
-        </td>
-        <td className="fr-cell--center">
           <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={`/aidant/${aidant.id}`}>
             Détail
           </Link>
@@ -124,7 +118,6 @@ const AidantRow = memo(
 AidantRow.displayName = 'AidantRow'
 
 export default function ListeAidantsMediateurs({
-  accompagnementsPromise,
   listeAidantsMediateursViewModel,
   peutAfficherStatistiques30Jours,
   searchParams,
@@ -340,16 +333,11 @@ export default function ListeAidantsMediateurs({
           />
 
           <Table
-            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', 'Nb accomp.', '']}
+            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', '']}
             titre="Aidants et médiateurs numériques"
           >
             {viewModel.aidants.map((aidant) => (
-              <AidantRow
-                accompagnementsPromise={accompagnementsPromise}
-                aidant={aidant}
-                badgeStyle={badgeStyle}
-                key={aidant.id}
-              />
+              <AidantRow aidant={aidant} badgeStyle={badgeStyle} key={aidant.id} />
             ))}
           </Table>
         </>
@@ -392,7 +380,6 @@ export default function ListeAidantsMediateurs({
 }
 
 type Props = Readonly<{
-  accompagnementsPromise: Promise<Map<string, number>>
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
   peutAfficherStatistiques30Jours: boolean
   searchParams: SerializedSearchParams

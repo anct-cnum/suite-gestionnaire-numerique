@@ -47,52 +47,6 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  async getAccompagnementsForPersonnes(personneIds: Array<string>): Promise<Map<string, number>> {
-    try {
-      if (personneIds.length === 0) {
-        return new Map()
-      }
-
-      const personneIdsAsNumbers = personneIds.map((id) => parseInt(id, 10))
-
-      const [resultCoop, resultAC] = await Promise.all([
-        prisma.$queryRaw<Array<{ personne_id: number; total: bigint }>>`
-          SELECT ac.personne_id, COALESCE(SUM(ac.accompagnements), 0) AS total
-          FROM main.activites_coop ac
-          WHERE ac.personne_id = ANY(${personneIdsAsNumbers})
-          GROUP BY ac.personne_id
-        `,
-        prisma.$queryRaw<Array<{ id: number; nb_accompagnements_ac: number }>>`
-          SELECT pe.id, COALESCE(pe.nb_accompagnements_ac, 0) AS nb_accompagnements_ac
-          FROM min.personne_enrichie pe
-          WHERE pe.id = ANY(${personneIdsAsNumbers})
-        `,
-      ])
-
-      const accompagnementsMap = new Map<string, number>()
-
-      for (const row of resultCoop) {
-        accompagnementsMap.set(String(row.personne_id), Number(row.total))
-      }
-
-      for (const row of resultAC) {
-        const currentTotal = accompagnementsMap.get(String(row.id)) ?? 0
-        accompagnementsMap.set(String(row.id), currentTotal + row.nb_accompagnements_ac)
-      }
-
-      for (const id of personneIds) {
-        if (!accompagnementsMap.has(id)) {
-          accompagnementsMap.set(id, 0)
-        }
-      }
-
-      return accompagnementsMap
-    } catch (error) {
-      reportLoaderError(error, 'PrismaListeAidantsMediateursLoader.getAccompagnementsForPersonnes', { personneIds })
-      return new Map(personneIds.map((id) => [id, 0]))
-    }
-  }
-
   async getForExport(
     filtres: FiltresListeAidants
   ): Promise<Array<AidantMediateurAvecAccompagnementReadModel> | ErrorReadModel> {
@@ -329,7 +283,6 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     return {
       ...this.mapToAidant(personne),
       adresseStructure: personne.structure_adresse ?? '',
-      nbAccompagnements: Number(personne.accompagnements) + personne.accompagnements_ac,
       nomStructure: personne.structure_nom ?? '',
       siretStructure: personne.structure_siret ?? '',
     }
@@ -397,21 +350,18 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           SELECT 1 FROM main.personne_affectations_emploi pae
           WHERE pae.personne_id = pe.id AND pae.est_active = true
         ) AS est_actif,
-        COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
-        COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac,
         MAX(COALESCE(s.denomination_antenne, s.denomination_sirene)) AS structure_nom,
         MAX(s.siret) AS structure_siret,
         MAX(TRIM(CONCAT_WS(' ', a.numero_voie::text, a.repetition, a.nom_voie, a.code_postal, a.nom_commune))) AS structure_adresse
       FROM min.personne_enrichie pe
       JOIN personnes_dans_scope pds ON pds.id = pe.id
       LEFT JOIN main.formation f ON pe.id = f.personne_id
-      LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
       LEFT JOIN main.structure_administrative s ON s.id = pe.structure_employeuse_id
       LEFT JOIN main.adresse a ON a.id = s.adresse_id
       WHERE true
         ${whereConditions}
       GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur,
-               pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
+               pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique
       ORDER BY pe.nom, pe.prenom
       ${limitOffset}
     `
@@ -433,8 +383,6 @@ interface PersonneQueryResult {
 }
 
 interface PersonneAvecAccompagnementQueryResult extends PersonneQueryResult {
-  accompagnements: bigint
-  accompagnements_ac: number
   structure_adresse: null | string
   structure_nom: null | string
   structure_siret: null | string

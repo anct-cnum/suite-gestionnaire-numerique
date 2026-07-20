@@ -3,7 +3,6 @@ import type {
   AidantDetailsHeaderData,
   InformationsPersonnellesData,
   LieuActiviteData,
-  StatistiquesActivitesData,
   StructureEmployeuseData,
 } from '@/components/AidantDetails/AidantDetails'
 
@@ -26,47 +25,22 @@ export function createDefaultInformationsPersonnellesData(): InformationsPersonn
   }
 }
 
-export function createDefaultStatistiquesActivitesData(): StatistiquesActivitesData {
-  return {
-    accompagnements: {
-      avecAidantsConnect: 45,
-      individuels: 82,
-      nombreAteliers: 15,
-      participationsAteliers: 45,
-      total: 127,
-    },
-    beneficiaires: {
-      anonymes: 82,
-      suivis: 45,
-      total: 127,
-    },
-    graphique: {
-      backgroundColor: ['#000091', '#e1000f', '#ff8d7e', '#ffb7ae'],
-      data: [45, 35, 30, 17],
-      labels: ['Numérique', 'Démarches administratives', 'Mobilité', 'Insertion professionnelle'],
-    },
-  }
-}
-
 export function createDefaultLieuxActiviteData(): ReadonlyArray<LieuActiviteData> {
   return [
     {
       adresse: '123 Rue de la République, 75001 Paris',
       idCoopCarto: null,
       nom: 'Mairie de Paris 1er',
-      nombreAccompagnements: 67,
     },
     {
       adresse: '45 Avenue des Champs-Élysées, 75008 Paris',
       idCoopCarto: 'testCarto',
       nom: 'France Services Champs-Élysées',
-      nombreAccompagnements: 35,
     },
     {
       adresse: '78 Rue de Rivoli, 75004 Paris',
       idCoopCarto: null,
       nom: 'Point Numérique Rivoli',
-      nombreAccompagnements: 25,
     },
   ]
 }
@@ -76,7 +50,6 @@ export function createDefaultAidantDetailsData(): AidantDetailsData {
     header: createDefaultHeaderData(),
     informationsPersonnelles: createDefaultInformationsPersonnellesData(),
     lieuxActivite: createDefaultLieuxActiviteData(),
-    statistiquesActivites: createDefaultStatistiquesActivitesData(),
     structuresEmployeuses: [createDefaultStructureEmployeuseData()],
   }
 }

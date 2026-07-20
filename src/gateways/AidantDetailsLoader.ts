@@ -8,10 +8,7 @@ import {
 } from '@/use-cases/queries/RecupererAidantDetails'
 
 export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
-  async findById(
-    id: string,
-    graphiquePeriode: 'journalier' | 'mensuel' = 'mensuel'
-  ): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel> {
+  async findById(id: string): Promise<AidantDetailsErrorReadModel | AidantDetailsReadModel> {
     const personneId = parseInt(id, 10)
 
     try {
@@ -58,80 +55,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       }
 
       const personne = personneResult[0]
-      // Récupérer les accompagnements depuis activites_coop
-      const accompagnementsCoopResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
-        SELECT
-          COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_accompagnements
-        FROM main.activites_coop
-        WHERE main.activites_coop.personne_id = ${personneId}
-        GROUP BY main.activites_coop.personne_id
-      `
-      // Récupérer les accompagnements individuels
-      const accompagnementsIndividuelsResult = await prisma.$queryRaw<Array<{ total_individuels: bigint }>>`
-        SELECT
-          COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_individuels
-        FROM main.activites_coop
-        WHERE main.activites_coop.personne_id = ${personneId}
-          AND main.activites_coop.type = 'individuel'
-        GROUP BY main.activites_coop.personne_id
-      `
-      // Récupérer les ateliers collectifs
-      const ateliersResult = await prisma.$queryRaw<Array<{ nombre_ateliers: bigint; total_participations: bigint }>>`
-        SELECT
-          COALESCE(COUNT(*), 0) as nombre_ateliers,
-          COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_participations
-        FROM main.activites_coop
-        WHERE main.activites_coop.personne_id = ${personneId}
-          AND main.activites_coop.type = 'collectif'
-        GROUP BY main.activites_coop.personne_id
-      `
-      // Récupérer les accompagnements AidantConnect
-      const accompagnementsAcResult = await prisma.$queryRaw<Array<{ total_accompagnements_ac: bigint }>>`
-        SELECT
-          COALESCE(main.personne.nb_accompagnements_ac, 0) as total_accompagnements_ac
-        FROM main.personne
-        WHERE id = ${personneId}
-      `
-      // Récupérer les données du graphique selon la période demandée
-      let graphiqueData: Array<{ date: string; totalAccompagnements: number }>
-
-      if (graphiquePeriode === 'journalier') {
-        // Requête par jour - 30 derniers jours uniquement
-        const graphiqueJourResult = await prisma.$queryRaw<Array<{ date: string; total_accompagnements: bigint }>>`
-          SELECT
-            main.activites_coop.date::text as date,
-            COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_accompagnements
-          FROM main.activites_coop
-          WHERE main.activites_coop.personne_id = ${personneId}
-            AND main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
-          GROUP BY main.activites_coop.date
-          ORDER BY main.activites_coop.date
-        `
-
-        graphiqueData = graphiqueJourResult.map((row) => ({
-          date: row.date,
-          totalAccompagnements: Number(row.total_accompagnements),
-        }))
-      } else {
-        // Requête par mois (par défaut) - 12 derniers mois uniquement
-        const graphiqueMoisResult = await prisma.$queryRaw<Array<{ mois: string; total_accompagnements: bigint }>>`
-          SELECT
-            TO_CHAR(DATE_TRUNC('month', ac.date), 'YYYY-MM') AS mois,
-            COALESCE(SUM(ac.accompagnements), 0) AS total_accompagnements
-          FROM main.personne p
-          LEFT JOIN main.activites_coop ac
-            ON ac.personne_id = p.id
-          WHERE p.id = ${personneId}
-            AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '12 months')
-          GROUP BY DATE_TRUNC('month', ac.date)
-          ORDER BY DATE_TRUNC('month', ac.date)
-        `
-
-        graphiqueData = graphiqueMoisResult.map((row) => ({
-          date: row.mois,
-          totalAccompagnements: Number(row.total_accompagnements),
-        }))
-      }
 
       // Refonte 2026 : "lieux d'activite" = lieux ou la personne est active
       // (personne_affectations_lieu, anciennement personne_affectations
@@ -143,10 +66,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         SELECT
           lieux.lieu_id AS structure_id,
           l.nom,
-          COALESCE(
-            SUM(ac.accompagnements) FILTER (
-              WHERE ac.date >= CURRENT_DATE - INTERVAL '30 days'
-            ), 0) AS total_accompagnements,
           l.structure_cartographie_nationale_id,
           a.numero_voie,
           a.nom_voie,
@@ -158,7 +77,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           WHERE personne_id = ${personneId}
             AND est_active = true
         ) AS lieux
-        LEFT JOIN main.activites_coop ac ON ac.lieu_id = lieux.lieu_id
         LEFT JOIN main.lieu_inclusion l ON l.id = lieux.lieu_id
         LEFT JOIN main.adresse a ON a.id = l.adresse_id
         GROUP BY
@@ -169,27 +87,10 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           a.nom_voie,
           a.code_postal,
           a.nom_commune
-        ORDER BY total_accompagnements DESC;
+        ORDER BY nom;
       `
-      const totalAccompagnementsCoop =
-        accompagnementsCoopResult.length > 0 ? Number(accompagnementsCoopResult[0].total_accompagnements) : 0
-      const totalAccompagnementsAc =
-        accompagnementsAcResult.length > 0 ? Number(accompagnementsAcResult[0].total_accompagnements_ac) : 0
-      const totalIndividuels =
-        accompagnementsIndividuelsResult.length > 0 ? Number(accompagnementsIndividuelsResult[0].total_individuels) : 0
-      const nombreAteliers = ateliersResult.length > 0 ? Number(ateliersResult[0].nombre_ateliers) : 0
-      const totalParticipationsAteliers = ateliersResult.length > 0 ? Number(ateliersResult[0].total_participations) : 0
 
-      return this.mapToReadModel(
-        personne,
-        totalAccompagnementsCoop,
-        totalAccompagnementsAc,
-        totalIndividuels,
-        nombreAteliers,
-        totalParticipationsAteliers,
-        graphiqueData,
-        lieuxActiviteResult
-      )
+      return this.mapToReadModel(personne, lieuxActiviteResult)
     } catch (error) {
       reportLoaderError(error, 'PrismaAidantDetailsLoader', {
         id,
@@ -251,12 +152,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
 
   private mapToReadModel(
     personne: PersonneEnrichieResult,
-    totalAccompagnementsCoop: number,
-    totalAccompagnementsAc: number,
-    totalIndividuels: number,
-    nombreAteliers: number,
-    totalParticipationsAteliers: number,
-    graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>,
     lieuxActiviteData: ReadonlyArray<LieuActiviteResult>
   ): AidantDetailsReadModel {
     // Extraire les informations de contact depuis le JSON
@@ -273,16 +168,8 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     ].filter((email): email is string => Boolean(email))
 
     return {
-      accompagnements: {
-        avecAidantsConnect: totalAccompagnementsAc,
-        individuels: totalIndividuels,
-        nombreAteliers,
-        participationsAteliers: totalParticipationsAteliers,
-        total: totalAccompagnementsCoop + totalAccompagnementsAc,
-      },
       coopId: personne.aidant_coop_uid ?? '',
       emails,
-      graphiqueAccompagnements: graphiqueData,
       lieuxActivite: lieuxActiviteData.map((lieu) => ({
         adresse: this.formatAdresse({
           codePostal: lieu.code_postal,
@@ -292,7 +179,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         }),
         idCoopCarto: lieu.structure_cartographie_nationale_id,
         nom: lieu.nom ?? 'Structure inconnue',
-        nombreAccompagnements: Number(lieu.total_accompagnements),
       })),
       nom: personne.aidant_nom ?? '',
       prenom: personne.aidant_prenom ?? '',
@@ -346,7 +232,6 @@ type LieuActiviteResult = Readonly<{
   numero_voie: null | number
   structure_cartographie_nationale_id: null | string
   structure_id: null | number
-  total_accompagnements: bigint
 }>
 
 type PersonneEnrichieResult = Readonly<{

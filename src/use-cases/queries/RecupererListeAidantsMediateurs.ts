@@ -44,7 +44,6 @@ export type AidantMediateurReadModel = Readonly<{
 export type AidantMediateurAvecAccompagnementReadModel = AidantMediateurReadModel &
   Readonly<{
     adresseStructure: string
-    nbAccompagnements: number
     nomStructure: string
     siretStructure: string
   }>
