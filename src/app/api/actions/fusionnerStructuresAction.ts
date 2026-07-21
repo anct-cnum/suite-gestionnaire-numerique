@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { Administrateur } from '@/domain/Administrateur'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
@@ -22,41 +23,43 @@ const MESSAGES_ECHEC: Readonly<Record<FusionFailure, string>> = {
 }
 
 export async function fusionnerStructuresAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
-
-  // Garde : seul un administrateur_dispositif peut fusionner des structures.
-  const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(sub)
-  if (!(utilisateur instanceof Administrateur)) {
-    return ['Action réservée aux administrateurs']
-  }
-
-  // Fusion séquentielle : chaque absorbée est fusionnée dans la (même) survivante, une transaction
-  // par paire. Non atomique entre paires — en cas d'échec partiel, les fusions déjà faites sont
-  // conservées (réversibles via le journal d'audit) et les échecs sont remontés.
-  const fusionnerStructures = new FusionnerStructures(new PrismaStructureFusionRepository())
-  const echecs: Array<string> = []
-  for (const idAbsorbee of actionParams.idsAbsorbees) {
-    const result = await fusionnerStructures.handle({
-      idAbsorbee,
-      idSurvivante: actionParams.idSurvivante,
-      uidUtilisateur: sub,
-    })
-    if (result !== 'OK') {
-      echecs.push(`Structure ${idAbsorbee} : ${MESSAGES_ECHEC[result]}`)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
     }
-  }
 
-  if (echecs.length > 0) {
-    return echecs
-  }
+    // Garde : seul un administrateur_dispositif peut fusionner des structures.
+    const sub = await getSessionSub()
+    const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(sub)
+    if (!(utilisateur instanceof Administrateur)) {
+      return ['Action réservée aux administrateurs']
+    }
 
-  revalidatePath(actionParams.path)
+    // Fusion séquentielle : chaque absorbée est fusionnée dans la (même) survivante, une transaction
+    // par paire. Non atomique entre paires — en cas d'échec partiel, les fusions déjà faites sont
+    // conservées (réversibles via le journal d'audit) et les échecs sont remontés.
+    const fusionnerStructures = new FusionnerStructures(new PrismaStructureFusionRepository())
+    const echecs: Array<string> = []
+    for (const idAbsorbee of actionParams.idsAbsorbees) {
+      const result = await fusionnerStructures.handle({
+        idAbsorbee,
+        idSurvivante: actionParams.idSurvivante,
+        uidUtilisateur: sub,
+      })
+      if (result !== 'OK') {
+        echecs.push(`Structure ${idAbsorbee} : ${MESSAGES_ECHEC[result]}`)
+      }
+    }
 
-  return ['OK']
+    if (echecs.length > 0) {
+      return echecs
+    }
+
+    revalidatePath(actionParams.path)
+
+    return ['OK']
+  })
 }
 
 type ActionParams = Readonly<{

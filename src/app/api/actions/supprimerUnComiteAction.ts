@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaComiteRepository } from '@/gateways/PrismaComiteRepository'
@@ -12,25 +13,27 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUnComite } from '@/use-cases/commands/SupprimerUnComite'
 
 export async function supprimerUnComiteAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const result = await new SupprimerUnComite(
-    new PrismaGouvernanceRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaComiteRepository()
-  ).handle({
-    uid: actionParams.uid,
-    uidEditeur: await getSessionSub(),
-    uidGouvernance: actionParams.uidGouvernance,
+    const result = await new SupprimerUnComite(
+      new PrismaGouvernanceRepository(),
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new PrismaComiteRepository()
+    ).handle({
+      uid: actionParams.uid,
+      uidEditeur: await getSessionSub(),
+      uidGouvernance: actionParams.uidGouvernance,
+    })
+
+    revalidatePath(validationResult.data.path)
+
+    return [result]
   })
-
-  revalidatePath(validationResult.data.path)
-
-  return [result]
 }
 
 type ActionParams = Readonly<{

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { ApiSireneLoader } from '@/gateways/apiEntreprise/ApiSireneLoader'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
@@ -22,32 +23,34 @@ const MESSAGES_ECHEC: Readonly<Record<CanoniserFailure, string>> = {
 }
 
 export async function canoniserStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  // Garde : opération réservée aux bêta-testeurs.
-  const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
-  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
-    return ['Action réservée aux administrateurs autorisés']
-  }
+    // Garde : opération réservée aux bêta-testeurs.
+    const sub = await getSessionSub()
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+      return ['Action réservée aux administrateurs autorisés']
+    }
 
-  const result = await new CanoniserStructure(
-    new ApiSireneLoader(),
-    new ApiBanGeocodingGateway(),
-    new PrismaStructureCanonisationRepository()
-  ).handle({ structureId: validationResult.data.structureId, uidUtilisateur: sub })
+    const result = await new CanoniserStructure(
+      new ApiSireneLoader(),
+      new ApiBanGeocodingGateway(),
+      new PrismaStructureCanonisationRepository()
+    ).handle({ structureId: validationResult.data.structureId, uidUtilisateur: sub })
 
-  if (result !== 'OK') {
-    return [MESSAGES_ECHEC[result]]
-  }
+    if (result !== 'OK') {
+      return [MESSAGES_ECHEC[result]]
+    }
 
-  revalidatePath(validationResult.data.path)
+    revalidatePath(validationResult.data.path)
 
-  return ['OK']
+    return ['OK']
+  })
 }
 
 type ActionParams = Readonly<{

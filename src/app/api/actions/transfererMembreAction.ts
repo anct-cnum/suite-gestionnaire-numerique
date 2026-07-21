@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMembreTransfertRepository } from '@/gateways/PrismaMembreTransfertRepository'
@@ -19,33 +20,35 @@ const MESSAGES_ECHEC: Readonly<Record<TransfertFailure, string>> = {
 }
 
 export async function transfererMembreAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  // Garde : seul un bêta-testeur peut transférer.
-  const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
-  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
-    return ['Action réservée aux administrateurs autorisés']
-  }
+    // Garde : seul un bêta-testeur peut transférer.
+    const sub = await getSessionSub()
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+      return ['Action réservée aux administrateurs autorisés']
+    }
 
-  const result = await new TransfererMembre(new PrismaMembreTransfertRepository()).handle({
-    idCible: actionParams.idCible,
-    idMembre: actionParams.idMembre,
-    idSource: actionParams.idSource,
-    uidUtilisateur: sub,
+    const result = await new TransfererMembre(new PrismaMembreTransfertRepository()).handle({
+      idCible: actionParams.idCible,
+      idMembre: actionParams.idMembre,
+      idSource: actionParams.idSource,
+      uidUtilisateur: sub,
+    })
+
+    if (result !== 'OK') {
+      return [MESSAGES_ECHEC[result]]
+    }
+
+    revalidatePath(actionParams.path)
+
+    return ['OK']
   })
-
-  if (result !== 'OK') {
-    return [MESSAGES_ECHEC[result]]
-  }
-
-  revalidatePath(actionParams.path)
-
-  return ['OK']
 }
 
 type ActionParams = Readonly<{

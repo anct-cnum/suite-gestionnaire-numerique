@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { journaliserDeleteBrut, journaliserUpdateBrut } from './shared/journalisationMin'
 import prisma from '../../prisma/prismaClient'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { MembreTransfertRepository, Transfert, TransfertFailure } from '@/use-cases/commands/TransfererMembre'
@@ -47,28 +48,61 @@ export class PrismaMembreTransfertRepository implements MembreTransfertRepositor
     }
 
     // Re-pointage du membre et de tous les utilisateurs de la source vers la cible.
-    await tx.$executeRaw`
-      UPDATE min.membre SET structure_id = ${idCible}
-      WHERE id = ${idMembre} AND structure_id = ${idSource}
-    `
-    const utilisateursDeplaces = await tx.$executeRaw`
-      UPDATE min.utilisateur SET structure_id = ${idCible} WHERE structure_id = ${idSource}
-    `
+    await journaliserUpdateBrut(
+      tx,
+      'min.membre',
+      Prisma.sql`
+        SELECT to_jsonb(m.*) AS ligne FROM min.membre m
+        WHERE m.id = ${idMembre} AND m.structure_id = ${idSource}
+      `,
+      async () => tx.$executeRaw`
+        UPDATE min.membre SET structure_id = ${idCible}
+        WHERE id = ${idMembre} AND structure_id = ${idSource}
+      `
+    )
+    const utilisateursDeplaces = await journaliserUpdateBrut(
+      tx,
+      'min.utilisateur',
+      Prisma.sql`SELECT to_jsonb(u.*) AS ligne FROM min.utilisateur u WHERE u.structure_id = ${idSource}`,
+      async () => tx.$executeRaw`
+        UPDATE min.utilisateur SET structure_id = ${idCible} WHERE structure_id = ${idSource}
+      `
+    )
 
     // Contacts : un contact déjà présent côté cible (index unique (struct, contact)) se
     // supprime côté source ; les autres se déplacent.
-    const contactsSupprimes = await tx.$executeRaw`
-      DELETE FROM main.contact_structure_administrative
-      WHERE structure_administrative_id = ${idSource}
-        AND contact_id IN (
-          SELECT contact_id FROM main.contact_structure_administrative
-          WHERE structure_administrative_id = ${idCible}
-        )
-    `
-    const contactsDeplaces = await tx.$executeRaw`
-      UPDATE main.contact_structure_administrative SET structure_administrative_id = ${idCible}
-      WHERE structure_administrative_id = ${idSource}
-    `
+    const contactsSupprimes = await journaliserDeleteBrut(
+      tx,
+      'main.contact_structure_administrative',
+      Prisma.sql`
+        SELECT to_jsonb(c.*) AS ligne FROM main.contact_structure_administrative c
+        WHERE c.structure_administrative_id = ${idSource}
+          AND c.contact_id IN (
+            SELECT contact_id FROM main.contact_structure_administrative
+            WHERE structure_administrative_id = ${idCible}
+          )
+      `,
+      async () => tx.$executeRaw`
+        DELETE FROM main.contact_structure_administrative
+        WHERE structure_administrative_id = ${idSource}
+          AND contact_id IN (
+            SELECT contact_id FROM main.contact_structure_administrative
+            WHERE structure_administrative_id = ${idCible}
+          )
+      `
+    )
+    const contactsDeplaces = await journaliserUpdateBrut(
+      tx,
+      'main.contact_structure_administrative',
+      Prisma.sql`
+        SELECT to_jsonb(c.*) AS ligne FROM main.contact_structure_administrative c
+        WHERE c.structure_administrative_id = ${idSource}
+      `,
+      async () => tx.$executeRaw`
+        UPDATE main.contact_structure_administrative SET structure_administrative_id = ${idCible}
+        WHERE structure_administrative_id = ${idSource}
+      `
+    )
 
     // Journal d'audit : qui, quand, quoi. La structure source N'EST PAS supprimée.
     await tx.$executeRaw`

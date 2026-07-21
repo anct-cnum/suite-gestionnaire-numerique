@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -13,29 +14,31 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { DefinirUnCoPorteur } from '@/use-cases/commands/DefinirUnCoPorteur'
 
 export async function definirUnCoPorteurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const sessionSub = await getSessionSub()
+    const sessionSub = await getSessionSub()
 
-  const message = await new DefinirUnCoPorteur(
-    new PrismaMembreRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaGouvernanceRepository(),
-    emailInvitationGatewayFactory,
-    new Date()
-  ).handle({
-    uidGouvernance: actionParams.uidGouvernance,
-    uidMembre: actionParams.uidMembre,
-    uidUtilisateurConnecte: sessionSub,
+    const message = await new DefinirUnCoPorteur(
+      new PrismaMembreRepository(),
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new PrismaGouvernanceRepository(),
+      emailInvitationGatewayFactory,
+      new Date()
+    ).handle({
+      uidGouvernance: actionParams.uidGouvernance,
+      uidMembre: actionParams.uidMembre,
+      uidUtilisateurConnecte: sessionSub,
+    })
+
+    revalidatePath(actionParams.path)
+
+    return [message]
   })
-
-  revalidatePath(actionParams.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{

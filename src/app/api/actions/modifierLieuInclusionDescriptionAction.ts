@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
@@ -15,65 +16,67 @@ import { ModifierLieuInclusionDescription } from '@/use-cases/commands/ModifierL
 export async function modifierLieuInclusionDescriptionAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  // Validation des paramètres
-  const validationResult = validator.safeParse(actionParams)
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+  return avecJournalisationMin(async () => {
+    // Validation des paramètres
+    const validationResult = validator.safeParse(actionParams)
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  // Vérification des droits
-  const sub = await getSessionSub()
-  const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurRepository.get(sub)
+    // Vérification des droits
+    const sub = await getSessionSub()
+    const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+    const utilisateur = await utilisateurRepository.get(sub)
 
-  const loader = new PrismaRecupererLieuDetailsLoader()
-  const lieuDetailsReadModel = await loader.recuperer(actionParams.structureId)
+    const loader = new PrismaRecupererLieuDetailsLoader()
+    const lieuDetailsReadModel = await loader.recuperer(actionParams.structureId)
 
-  if ('type' in lieuDetailsReadModel) {
-    return ['Lieu non trouvé']
-  }
+    if ('type' in lieuDetailsReadModel) {
+      return ['Lieu non trouvé']
+    }
 
-  // Récupérer les départements des gouvernances dont la structure est membre
-  const gouvernancesDepartements = await prisma.membreRecord.findMany({
-    select: {
-      gouvernanceDepartementCode: true,
-    },
-    where: {
-      dateSuppression: null,
-      structureId: lieuDetailsReadModel.structureId,
-    },
+    // Récupérer les départements des gouvernances dont la structure est membre
+    const gouvernancesDepartements = await prisma.membreRecord.findMany({
+      select: {
+        gouvernanceDepartementCode: true,
+      },
+      where: {
+        dateSuppression: null,
+        structureId: lieuDetailsReadModel.structureId,
+      },
+    })
+
+    const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
+
+    const peutModifier = LieuInclusion.peutEtreModifiePar(
+      utilisateur,
+      lieuDetailsReadModel.codeDepartement,
+      lieuDetailsReadModel.structureId,
+      lieuDetailsReadModel.personnesTravaillant.length,
+      departementsGouvernances
+    )
+
+    if (!peutModifier) {
+      return ["Vous n'avez pas les droits pour modifier ce lieu"]
+    }
+
+    // Appel du Use Case
+    const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle({
+      horaires: actionParams.horaires,
+      itinerance: actionParams.itinerance,
+      presentationDetail: actionParams.presentationDetail,
+      presentationResume: actionParams.presentationResume,
+      priseRdvUrl: actionParams.priseRdvUrl,
+      structureId: actionParams.structureId,
+      typologie: actionParams.typologie,
+      websiteUrl: actionParams.websiteUrl,
+    })
+
+    // Invalider le cache de la page
+    revalidatePath(validationResult.data.path)
+
+    return [result]
   })
-
-  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
-  const peutModifier = LieuInclusion.peutEtreModifiePar(
-    utilisateur,
-    lieuDetailsReadModel.codeDepartement,
-    lieuDetailsReadModel.structureId,
-    lieuDetailsReadModel.personnesTravaillant.length,
-    departementsGouvernances
-  )
-
-  if (!peutModifier) {
-    return ["Vous n'avez pas les droits pour modifier ce lieu"]
-  }
-
-  // Appel du Use Case
-  const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle({
-    horaires: actionParams.horaires,
-    itinerance: actionParams.itinerance,
-    presentationDetail: actionParams.presentationDetail,
-    presentationResume: actionParams.presentationResume,
-    priseRdvUrl: actionParams.priseRdvUrl,
-    structureId: actionParams.structureId,
-    typologie: actionParams.typologie,
-    websiteUrl: actionParams.websiteUrl,
-  })
-
-  // Invalider le cache de la page
-  revalidatePath(validationResult.data.path)
-
-  return [result]
 }
 
 type ActionParams = Readonly<{

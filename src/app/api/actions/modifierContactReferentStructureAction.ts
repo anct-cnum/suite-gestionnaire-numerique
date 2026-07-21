@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -11,26 +12,28 @@ import { ModifierContactReferentStructure } from '@/use-cases/commands/ModifierC
 export async function modifierContactReferentStructureAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const message = await new ModifierContactReferentStructure(new PrismaStructureRepository()).handle({
-    contactReferent: {
-      email: actionParams.email,
-      fonction: actionParams.fonction,
-      nom: actionParams.nom,
-      prenom: actionParams.prenom,
-      telephone: actionParams.telephone,
-    },
-    structureId: actionParams.structureId,
+    const message = await new ModifierContactReferentStructure(new PrismaStructureRepository()).handle({
+      contactReferent: {
+        email: actionParams.email,
+        fonction: actionParams.fonction,
+        nom: actionParams.nom,
+        prenom: actionParams.prenom,
+        telephone: actionParams.telephone,
+      },
+      structureId: actionParams.structureId,
+    })
+
+    revalidatePath(actionParams.path)
+
+    return [message]
   })
-
-  revalidatePath(actionParams.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{

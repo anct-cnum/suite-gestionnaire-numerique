@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid'
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
+import { avecJournalisationMin } from '../../actions/shared/journalisation'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -26,58 +27,60 @@ const s3Config: S3ClientConfig = {
 const s3 = new S3Client(s3Config)
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Vérification de l'authentification
-    const session = await getSession()
-    if (isNullish(session)) {
-      return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
-    }
+  return avecJournalisationMin(async () => {
+    try {
+      // Vérification de l'authentification
+      const session = await getSession()
+      if (isNullish(session)) {
+        return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
+      }
 
-    const formData = await request.formData()
-    const fileRaw = formData.get('file')
-    const uidFeuilleDeRoute = formData.get('uidFeuilleDeRoute') as string
-    const uidEditeur = formData.get('uidEditeur') as string
+      const formData = await request.formData()
+      const fileRaw = formData.get('file')
+      const uidFeuilleDeRoute = formData.get('uidFeuilleDeRoute') as string
+      const uidEditeur = formData.get('uidEditeur') as string
 
-    if (fileRaw === null || !uidFeuilleDeRoute || !uidEditeur) {
-      return NextResponse.json({ message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' }, { status: 400 })
-    }
+      if (fileRaw === null || !uidFeuilleDeRoute || !uidEditeur) {
+        return NextResponse.json({ message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' }, { status: 400 })
+      }
 
-    // Vérification que l'utilisateur authentifié correspond à l'uidEditeur
-    if (session?.user.sub !== uidEditeur) {
-      return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
-    }
+      // Vérification que l'utilisateur authentifié correspond à l'uidEditeur
+      if (session?.user.sub !== uidEditeur) {
+        return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
+      }
 
-    const file = fileRaw as File
-    const key = await televerseVersS3(file, uidFeuilleDeRoute)
-    const result = await appelUseCase({ fileName: file.name, key, uidEditeur, uidFeuilleDeRoute })
+      const file = fileRaw as File
+      const key = await televerseVersS3(file, uidFeuilleDeRoute)
+      const result = await appelUseCase({ fileName: file.name, key, uidEditeur, uidFeuilleDeRoute })
 
-    if (result !== 'OK') {
-      Sentry.captureException(new Error("Erreur lors de l'ajout du document en base"), {
-        extra: {
-          fileName: file.name,
-          uidEditeur,
-          uidFeuilleDeRoute,
-        },
-        tags: {
-          action: 'POST',
-          location: 'document-feuille-de-route-upload',
-          type: 'DATABASE_ERROR',
-        },
+      if (result !== 'OK') {
+        Sentry.captureException(new Error("Erreur lors de l'ajout du document en base"), {
+          extra: {
+            fileName: file.name,
+            uidEditeur,
+            uidFeuilleDeRoute,
+          },
+          tags: {
+            action: 'POST',
+            location: 'document-feuille-de-route-upload',
+            type: 'DATABASE_ERROR',
+          },
+        })
+        return NextResponse.json({ message: "Erreur lors de l'ajout du document en base" }, { status: 400 })
+      }
+
+      return NextResponse.json({
+        href: `/api/document-feuille-de-route/${key}`,
+        nom: file.name,
       })
-      return NextResponse.json({ message: "Erreur lors de l'ajout du document en base" }, { status: 400 })
+    } catch (error) {
+      return gereErreur(error, {
+        fileName: (error as CustomError).file?.name ?? 'unknown',
+        uidEditeur: (error as CustomError).uidEditeur ?? 'unknown',
+        uidFeuilleDeRoute: (error as CustomError).uidFeuilleDeRoute ?? 'unknown',
+      })
     }
-
-    return NextResponse.json({
-      href: `/api/document-feuille-de-route/${key}`,
-      nom: file.name,
-    })
-  } catch (error) {
-    return gereErreur(error, {
-      fileName: (error as CustomError).file?.name ?? 'unknown',
-      uidEditeur: (error as CustomError).uidEditeur ?? 'unknown',
-      uidFeuilleDeRoute: (error as CustomError).uidFeuilleDeRoute ?? 'unknown',
-    })
-  }
+  })
 }
 
 interface UseCaseParams {

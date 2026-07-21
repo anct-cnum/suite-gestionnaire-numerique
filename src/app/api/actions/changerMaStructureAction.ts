@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -10,22 +11,24 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMaStructure } from '@/use-cases/commands/ChangerMaStructure'
 
 export async function changerMaStructureAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const uid = await getSessionSub()
+    const uid = await getSessionSub()
 
-  const message = await new ChangerMaStructure(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
-    idStructure: validationResult.data.idStructure,
-    uidUtilisateurCourant: uid,
+    const message = await new ChangerMaStructure(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
+      idStructure: validationResult.data.idStructure,
+      uidUtilisateurCourant: uid,
+    })
+
+    revalidatePath(actionParams.path)
+
+    return [message]
   })
-
-  revalidatePath(actionParams.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{

@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { journaliserCreateBrut, journaliserTransaction } from './shared/journalisationMin'
 import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
@@ -49,9 +50,11 @@ export class PrismaStructureRepository
   async create(data: StructureData, tx?: Prisma.TransactionClient): Promise<Structure> {
     // Si pas de transaction fournie, en créer une pour garantir l'atomicité
     if (!tx) {
-      return prisma.$transaction(async (transaction) => {
-        return this.createWithTransaction(data, transaction)
-      })
+      return journaliserTransaction(prisma, async () =>
+        prisma.$transaction(async (transaction) => {
+          return this.createWithTransaction(data, transaction)
+        })
+      )
     }
 
     return this.createWithTransaction(data, tx)
@@ -295,6 +298,7 @@ export class PrismaStructureRepository
       `
 
       const adresseId = result[0].id
+      await journaliserCreateBrut(client, 'main.adresse', adresseId)
 
       const adresseCreee = await client.adresse.findUnique({
         where: { id: adresseId },
@@ -400,6 +404,7 @@ export class PrismaStructureRepository
       )
       RETURNING id
     `
+    await journaliserCreateBrut(prisma, 'main.adresse', resultat[0].id)
 
     return resultat[0].id
   }

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureTransfertRepository } from '@/gateways/PrismaStructureTransfertRepository'
@@ -25,33 +26,35 @@ const MESSAGES_ECHEC: Readonly<Record<TransfertNotionsFailure, string>> = {
 }
 
 export async function transfererNotionsStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  // Garde : seul un bêta-testeur peut transférer.
-  const sub = await getSessionSub()
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
-  const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
-    return ['Action réservée aux administrateurs autorisés']
-  }
+    // Garde : seul un bêta-testeur peut transférer.
+    const sub = await getSessionSub()
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+      return ['Action réservée aux administrateurs autorisés']
+    }
 
-  const result = await new TransfererNotionsStructure(new PrismaStructureTransfertRepository()).handle({
-    idCible: actionParams.idCible,
-    idSource: actionParams.idSource,
-    notions: actionParams.notions,
-    uidUtilisateur: sub,
+    const result = await new TransfererNotionsStructure(new PrismaStructureTransfertRepository()).handle({
+      idCible: actionParams.idCible,
+      idSource: actionParams.idSource,
+      notions: actionParams.notions,
+      uidUtilisateur: sub,
+    })
+
+    if (result !== 'OK') {
+      return [MESSAGES_ECHEC[result]]
+    }
+
+    revalidatePath(actionParams.path)
+
+    return ['OK']
   })
-
-  if (result !== 'OK') {
-    return [MESSAGES_ECHEC[result]]
-  }
-
-  revalidatePath(actionParams.path)
-
-  return ['OK']
 }
 
 type ActionParams = Readonly<{

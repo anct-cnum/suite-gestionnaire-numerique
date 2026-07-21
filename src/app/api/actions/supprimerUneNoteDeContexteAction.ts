@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -11,22 +12,24 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUneNoteDeContexte } from '@/use-cases/commands/SupprimerUneNoteDeContexte'
 
 export async function supprimerUneNoteDeContexteAction(actionParam: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParam)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParam)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const supprimerUneNoteDeContexte = new SupprimerUneNoteDeContexte(
-    new PrismaGouvernanceRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  )
-  const result = await supprimerUneNoteDeContexte.handle({
-    uidEditeur: await getSessionSub(),
-    uidGouvernance: actionParam.uidGouvernance,
+    const supprimerUneNoteDeContexte = new SupprimerUneNoteDeContexte(
+      new PrismaGouvernanceRepository(),
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+    )
+    const result = await supprimerUneNoteDeContexte.handle({
+      uidEditeur: await getSessionSub(),
+      uidGouvernance: actionParam.uidGouvernance,
+    })
+    revalidatePath(validationResult.data.path)
+    return [result]
   })
-  revalidatePath(validationResult.data.path)
-  return [result]
 }
 
 type ActionParams = Readonly<{

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
@@ -15,37 +16,39 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUnMembre } from '@/use-cases/commands/AjouterUnMembre'
 
 export async function ajouterUnMembreAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    // Vérifier si l'erreur concerne les données de l'entreprise
-    const hasEntrepriseError = validationResult.error.issues.some((issue) => issue.path[0] === 'entreprise')
+    if (validationResult.error) {
+      // Vérifier si l'erreur concerne les données de l'entreprise
+      const hasEntrepriseError = validationResult.error.issues.some((issue) => issue.path[0] === 'entreprise')
 
-    if (hasEntrepriseError) {
-      return ["Un problème est survenu en récupérant les informations de l'entreprise. Contactez le support ANCT."]
+      if (hasEntrepriseError) {
+        return ["Un problème est survenu en récupérant les informations de l'entreprise. Contactez le support ANCT."]
+      }
+
+      return validationResult.error.issues.map(({ message }) => message)
     }
 
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    const result = await new AjouterUnMembre(
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new PrismaGouvernanceRepository(),
+      new PrismaMembreRepository(),
+      new PrismaStructureRepository(),
+      new PrismaTransactionRepository(),
+      new ApiBanGeocodingGateway()
+    ).handle({
+      contact: actionParams.contact,
+      contactTechnique: actionParams.contactTechnique,
+      entreprise: actionParams.entreprise,
+      uidGestionnaire: await getSessionSub(),
+      uidGouvernance: actionParams.codeDepartement, // Pour l'instant, on utilise le code département
+    })
 
-  const result = await new AjouterUnMembre(
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaGouvernanceRepository(),
-    new PrismaMembreRepository(),
-    new PrismaStructureRepository(),
-    new PrismaTransactionRepository(),
-    new ApiBanGeocodingGateway()
-  ).handle({
-    contact: actionParams.contact,
-    contactTechnique: actionParams.contactTechnique,
-    entreprise: actionParams.entreprise,
-    uidGestionnaire: await getSessionSub(),
-    uidGouvernance: actionParams.codeDepartement, // Pour l'instant, on utilise le code département
+    revalidatePath(validationResult.data.path)
+
+    return [result]
   })
-
-  revalidatePath(validationResult.data.path)
-
-  return [result]
 }
 
 type ActionParams = Readonly<{

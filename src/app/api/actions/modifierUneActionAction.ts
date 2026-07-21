@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 
 import { ActionValidator } from './shared/action'
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
@@ -16,56 +17,58 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModifierUneAction } from '@/use-cases/commands/ModifierUneAction'
 
 export async function modifierUneActionAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const actionCommand = {
-    anneeDeDebut: actionParams.anneeDeDebut,
-    anneeDeFin: actionParams.anneeDeFin ?? '',
-    besoins: actionParams.besoins.map((besoin) => besoin),
-    budgetGlobal: actionParams.budgetGlobal,
-    coFinancements: actionParams.coFinancements.map((cofinancement) => ({
-      membreId: cofinancement.coFinanceur,
-      montant: Number(cofinancement.montant),
-    })),
-    contexte: actionParams.contexte,
-    demandeDeSubvention: actionParams.demandeDeSubvention
-      ? {
-          beneficiaires: [],
-          enveloppeFinancementId: actionParams.demandeDeSubvention.enveloppeId,
-          subventionDemandee: actionParams.demandeDeSubvention.total,
-          subventionEtp: actionParams.demandeDeSubvention.montantRh,
-          subventionPrestation: actionParams.demandeDeSubvention.montantPrestation,
-        }
-      : undefined,
-    description: actionParams.description,
-    destinataires: actionParams.destinataires.map((destinataire) => destinataire),
-    nom: actionParams.nom,
-    porteurs: actionParams.porteurs,
-    uid: actionParams.uid,
-    uidEditeur: await getSessionSub(),
-    uidFeuilleDeRoute: actionParams.feuilleDeRoute,
-    uidGouvernance: actionParams.gouvernance,
-    uidPorteurs: [...actionParams.porteurs],
-  }
+    const actionCommand = {
+      anneeDeDebut: actionParams.anneeDeDebut,
+      anneeDeFin: actionParams.anneeDeFin ?? '',
+      besoins: actionParams.besoins.map((besoin) => besoin),
+      budgetGlobal: actionParams.budgetGlobal,
+      coFinancements: actionParams.coFinancements.map((cofinancement) => ({
+        membreId: cofinancement.coFinanceur,
+        montant: Number(cofinancement.montant),
+      })),
+      contexte: actionParams.contexte,
+      demandeDeSubvention: actionParams.demandeDeSubvention
+        ? {
+            beneficiaires: [],
+            enveloppeFinancementId: actionParams.demandeDeSubvention.enveloppeId,
+            subventionDemandee: actionParams.demandeDeSubvention.total,
+            subventionEtp: actionParams.demandeDeSubvention.montantRh,
+            subventionPrestation: actionParams.demandeDeSubvention.montantPrestation,
+          }
+        : undefined,
+      description: actionParams.description,
+      destinataires: actionParams.destinataires.map((destinataire) => destinataire),
+      nom: actionParams.nom,
+      porteurs: actionParams.porteurs,
+      uid: actionParams.uid,
+      uidEditeur: await getSessionSub(),
+      uidFeuilleDeRoute: actionParams.feuilleDeRoute,
+      uidGouvernance: actionParams.gouvernance,
+      uidPorteurs: [...actionParams.porteurs],
+    }
 
-  const result = await new ModifierUneAction(
-    new PrismaGouvernanceRepository(),
-    new PrismaFeuilleDeRouteRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaActionRepository(),
-    new PrismaTransactionRepository(),
-    new PrismaDemandeDeSubventionRepository(),
-    new PrismaCoFinancementRepository(),
-    new Date()
-  ).handle(actionCommand)
+    const result = await new ModifierUneAction(
+      new PrismaGouvernanceRepository(),
+      new PrismaFeuilleDeRouteRepository(),
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new PrismaActionRepository(),
+      new PrismaTransactionRepository(),
+      new PrismaDemandeDeSubventionRepository(),
+      new PrismaCoFinancementRepository(),
+      new Date()
+    ).handle(actionCommand)
 
-  revalidatePath(validationResult.data.path)
+    revalidatePath(validationResult.data.path)
 
-  return [result]
+    return [result]
+  })
 }
 
 type ActionParams = Readonly<{

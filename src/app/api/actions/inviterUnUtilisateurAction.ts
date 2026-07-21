@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
@@ -12,32 +13,34 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const message = await new InviterUnUtilisateur(
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    emailInvitationGatewayFactory,
-    new Date()
-  ).handle({
-    email: validationResult.data.email,
-    nom: validationResult.data.nom,
-    prenom: validationResult.data.prenom,
-    role: validationResult.data.role
-      ? {
-          codeOrganisation: validationResult.data.codeOrganisation,
-          type: validationResult.data.role,
-        }
-      : undefined,
-    uidUtilisateurCourant: await getSessionSub(),
+    const message = await new InviterUnUtilisateur(
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      emailInvitationGatewayFactory,
+      new Date()
+    ).handle({
+      email: validationResult.data.email,
+      nom: validationResult.data.nom,
+      prenom: validationResult.data.prenom,
+      role: validationResult.data.role
+        ? {
+            codeOrganisation: validationResult.data.codeOrganisation,
+            type: validationResult.data.role,
+          }
+        : undefined,
+      uidUtilisateurCourant: await getSessionSub(),
+    })
+
+    revalidatePath(validationResult.data.path)
+
+    return [message]
   })
-
-  revalidatePath(validationResult.data.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{

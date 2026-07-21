@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { journaliserCreateBrut, journaliserUpdateBrut, selectionLigne } from './shared/journalisationMin'
 import prisma from '../../prisma/prismaClient'
 import { ETAT_ADMINISTRATIF_CANONIQUE } from '@/shared/etatAdministratif'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -79,19 +80,24 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
     // (CURRENT_DATE / now()) — new Date() est interdit hors src/app. Adresse best-effort : conservée
     // telle quelle (COALESCE) si le géocodage BAN n'a rien rendu. L'API INSEE ne renvoie que les
     // établissements actifs, d'où le libellé d'état canonique (convention dataspace).
-    await tx.$executeRaw`
-      UPDATE main.structure_administrative SET
-        denomination_antenne = NULL,
-        denomination_sirene = ${entreprise.denomination},
-        etat_administratif = ${ETAT_ADMINISTRATIF_CANONIQUE},
-        code_activite_principale = ${entreprise.activitePrincipale},
-        categorie_juridique = ${entreprise.categorieJuridiqueCode},
-        adresse_id = COALESCE(${adresseId}::int, adresse_id),
-        last_sirene_enrich_at = CURRENT_DATE,
-        edited_by = 'min',
-        updated_at = now()
-      WHERE id = ${structureId}
-    `
+    await journaliserUpdateBrut(
+      tx,
+      'main.structure_administrative',
+      selectionLigne('main.structure_administrative', structureId),
+      async () => tx.$executeRaw`
+        UPDATE main.structure_administrative SET
+          denomination_antenne = NULL,
+          denomination_sirene = ${entreprise.denomination},
+          etat_administratif = ${ETAT_ADMINISTRATIF_CANONIQUE},
+          code_activite_principale = ${entreprise.activitePrincipale},
+          categorie_juridique = ${entreprise.categorieJuridiqueCode},
+          adresse_id = COALESCE(${adresseId}::int, adresse_id),
+          last_sirene_enrich_at = CURRENT_DATE,
+          edited_by = 'min',
+          updated_at = now()
+        WHERE id = ${structureId}
+      `
+    )
 
     const apres = await this.#snapshot(tx, structureId)
     await this.#journaliserSucces(tx, canonisation, avant, apres)
@@ -174,6 +180,7 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
       )
       RETURNING id
     `
+    await journaliserCreateBrut(tx, 'main.adresse', resultat[0].id)
 
     return resultat[0].id
   }

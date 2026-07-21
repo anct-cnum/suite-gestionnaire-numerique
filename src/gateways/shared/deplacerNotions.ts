@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { journaliserDeleteBrut, journaliserUpdateBrut, selectionLigne } from './journalisationMin'
 import { NotionCle } from '@/use-cases/commands/TransfererNotionsStructure'
 
 // Les 5 notions transférables — une fusion = déplacer la totalité.
@@ -81,13 +82,31 @@ export async function soumettreSoftDelete(
   idSource: number,
   parUtilisateur: string
 ): Promise<void> {
-  await tx.$executeRaw`
+  await miseAJourStructure(
+    tx,
+    idSource,
+    async () => tx.$executeRaw`
     UPDATE main.structure_administrative
     SET deleted_at = now(),
         deleted_by = array_append(COALESCE(deleted_by, '{}'), ${parUtilisateur}),
         updated_at = now()
     WHERE id = ${idSource}
   `
+  )
+}
+
+// Update mono-ligne sur main.structure_administrative, journalisé (diff old/new).
+async function miseAJourStructure(
+  tx: Prisma.TransactionClient,
+  id: number,
+  mutation: () => Promise<unknown>
+): Promise<void> {
+  await journaliserUpdateBrut(
+    tx,
+    'main.structure_administrative',
+    selectionLigne('main.structure_administrative', id),
+    mutation
+  )
 }
 
 type DeplacementFailure = 'collisionIdentifiantSource' | 'collisionMembreGouvernance' | 'structureIntrouvable'
@@ -147,18 +166,38 @@ async function deplacerAffectations(
   source: string
 ): Promise<void> {
   // personne_affectations_emploi : UNIQUE(personne_id, structure_administrative_id, source).
-  await tx.$executeRaw`
-    UPDATE main.personne_affectations_emploi e SET structure_administrative_id = ${idCible}
-    WHERE e.structure_administrative_id = ${idSource} AND e.source = ${source}
-      AND NOT EXISTS (
-        SELECT 1 FROM main.personne_affectations_emploi f
-        WHERE f.structure_administrative_id = ${idCible} AND f.personne_id = e.personne_id AND f.source = e.source
-      )
-  `
-  await tx.$executeRaw`
-    DELETE FROM main.personne_affectations_emploi
-    WHERE structure_administrative_id = ${idSource} AND source = ${source}
-  `
+  await journaliserUpdateBrut(
+    tx,
+    'main.personne_affectations_emploi',
+    Prisma.sql`
+      SELECT to_jsonb(e.*) AS ligne FROM main.personne_affectations_emploi e
+      WHERE e.structure_administrative_id = ${idSource} AND e.source = ${source}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.personne_affectations_emploi f
+          WHERE f.structure_administrative_id = ${idCible} AND f.personne_id = e.personne_id AND f.source = e.source
+        )
+    `,
+    async () => tx.$executeRaw`
+      UPDATE main.personne_affectations_emploi e SET structure_administrative_id = ${idCible}
+      WHERE e.structure_administrative_id = ${idSource} AND e.source = ${source}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.personne_affectations_emploi f
+          WHERE f.structure_administrative_id = ${idCible} AND f.personne_id = e.personne_id AND f.source = e.source
+        )
+    `
+  )
+  await journaliserDeleteBrut(
+    tx,
+    'main.personne_affectations_emploi',
+    Prisma.sql`
+      SELECT to_jsonb(e.*) AS ligne FROM main.personne_affectations_emploi e
+      WHERE e.structure_administrative_id = ${idSource} AND e.source = ${source}
+    `,
+    async () => tx.$executeRaw`
+      DELETE FROM main.personne_affectations_emploi
+      WHERE structure_administrative_id = ${idSource} AND source = ${source}
+    `
+  )
 }
 
 async function transfererAidantsConnect(
@@ -171,29 +210,57 @@ async function transfererAidantsConnect(
   if (source.structure_ac_id === null) {
     return
   }
-  await tx.$executeRaw`
+  await miseAJourStructure(
+    tx,
+    idSource,
+    async () => tx.$executeRaw`
     UPDATE main.structure_administrative SET structure_ac_id = NULL, nb_mandats_ac = NULL WHERE id = ${idSource}
   `
-  await tx.$executeRaw`
+  )
+  await miseAJourStructure(
+    tx,
+    idCible,
+    async () => tx.$executeRaw`
     UPDATE main.structure_administrative
     SET structure_ac_id = ${source.structure_ac_id}::uuid, nb_mandats_ac = ${source.nb_mandats_ac}
     WHERE id = ${idCible}
   `
+  )
 }
 
 async function transfererContacts(tx: Prisma.TransactionClient, idSource: number, idCible: number): Promise<void> {
   // contact_structure_administrative : UNIQUE(structure_administrative_id, contact_id).
-  await tx.$executeRaw`
-    UPDATE main.contact_structure_administrative c SET structure_administrative_id = ${idCible}
-    WHERE c.structure_administrative_id = ${idSource}
-      AND NOT EXISTS (
-        SELECT 1 FROM main.contact_structure_administrative d
-        WHERE d.structure_administrative_id = ${idCible} AND d.contact_id = c.contact_id
-      )
-  `
-  await tx.$executeRaw`
-    DELETE FROM main.contact_structure_administrative WHERE structure_administrative_id = ${idSource}
-  `
+  await journaliserUpdateBrut(
+    tx,
+    'main.contact_structure_administrative',
+    Prisma.sql`
+      SELECT to_jsonb(c.*) AS ligne FROM main.contact_structure_administrative c
+      WHERE c.structure_administrative_id = ${idSource}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.contact_structure_administrative d
+          WHERE d.structure_administrative_id = ${idCible} AND d.contact_id = c.contact_id
+        )
+    `,
+    async () => tx.$executeRaw`
+      UPDATE main.contact_structure_administrative c SET structure_administrative_id = ${idCible}
+      WHERE c.structure_administrative_id = ${idSource}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.contact_structure_administrative d
+          WHERE d.structure_administrative_id = ${idCible} AND d.contact_id = c.contact_id
+        )
+    `
+  )
+  await journaliserDeleteBrut(
+    tx,
+    'main.contact_structure_administrative',
+    Prisma.sql`
+      SELECT to_jsonb(c.*) AS ligne FROM main.contact_structure_administrative c
+      WHERE c.structure_administrative_id = ${idSource}
+    `,
+    async () => tx.$executeRaw`
+      DELETE FROM main.contact_structure_administrative WHERE structure_administrative_id = ${idSource}
+    `
+  )
 }
 
 async function transfererCoop(
@@ -206,10 +273,20 @@ async function transfererCoop(
   if (source.structure_coop_id === null) {
     return
   }
-  await tx.$executeRaw`UPDATE main.structure_administrative SET structure_coop_id = NULL WHERE id = ${idSource}`
-  await tx.$executeRaw`
+  await miseAJourStructure(
+    tx,
+    idSource,
+    async () => tx.$executeRaw`
+    UPDATE main.structure_administrative SET structure_coop_id = NULL WHERE id = ${idSource}
+  `
+  )
+  await miseAJourStructure(
+    tx,
+    idCible,
+    async () => tx.$executeRaw`
     UPDATE main.structure_administrative SET structure_coop_id = ${source.structure_coop_id}::uuid WHERE id = ${idCible}
   `
+  )
 }
 
 async function transfererIdposte(
@@ -227,31 +304,70 @@ async function transfererIdposte(
   // poste_conum_id + personne des deux côtés) restent sur la source — la fusion la
   // soft-delete quand même ; un transfert la conserve (sourceEstVide = false) et l'ETL
   // réconcilie au prochain run.
-  await tx.$executeRaw`
-    UPDATE main.poste p SET structure_id = ${idCible}
-    WHERE p.structure_id = ${idSource}
-      AND NOT EXISTS (
-        SELECT 1 FROM main.poste q
-        WHERE q.structure_id = ${idCible}
-          AND q.poste_conum_id = p.poste_conum_id
-          AND q.personne_id IS NOT DISTINCT FROM p.personne_id
-      )
-  `
+  await journaliserUpdateBrut(
+    tx,
+    'main.poste',
+    Prisma.sql`
+      SELECT to_jsonb(p.*) AS ligne FROM main.poste p
+      WHERE p.structure_id = ${idSource}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.poste q
+          WHERE q.structure_id = ${idCible}
+            AND q.poste_conum_id = p.poste_conum_id
+            AND q.personne_id IS NOT DISTINCT FROM p.personne_id
+        )
+    `,
+    async () => tx.$executeRaw`
+      UPDATE main.poste p SET structure_id = ${idCible}
+      WHERE p.structure_id = ${idSource}
+        AND NOT EXISTS (
+          SELECT 1 FROM main.poste q
+          WHERE q.structure_id = ${idCible}
+            AND q.poste_conum_id = p.poste_conum_id
+            AND q.personne_id IS NOT DISTINCT FROM p.personne_id
+        )
+    `
+  )
   // contrat : pas de contrainte d'unicité sur structure_id → UPDATE direct.
-  await tx.$executeRaw`UPDATE main.contrat SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
+  await journaliserUpdateBrut(
+    tx,
+    'main.contrat',
+    Prisma.sql`SELECT to_jsonb(c.*) AS ligne FROM main.contrat c WHERE c.structure_id = ${idSource}`,
+    async () => tx.$executeRaw`UPDATE main.contrat SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
+  )
   await deplacerAffectations(tx, idSource, idCible, 'idposte')
   if (source.structure_tp_id === null) {
     return
   }
-  await tx.$executeRaw`UPDATE main.structure_administrative SET structure_tp_id = NULL WHERE id = ${idSource}`
-  await tx.$executeRaw`
+  await miseAJourStructure(
+    tx,
+    idSource,
+    async () => tx.$executeRaw`
+    UPDATE main.structure_administrative SET structure_tp_id = NULL WHERE id = ${idSource}
+  `
+  )
+  await miseAJourStructure(
+    tx,
+    idCible,
+    async () => tx.$executeRaw`
     UPDATE main.structure_administrative SET structure_tp_id = ${source.structure_tp_id} WHERE id = ${idCible}
   `
+  )
 }
 
 async function transfererMembre(tx: Prisma.TransactionClient, idSource: number, idCible: number): Promise<void> {
   // Re-pointage des membres et de tous les utilisateurs : les dépendants (feuilles de route,
   // subventions, porteurs d'action, cofinancements) suivent via le membre.id inchangé.
-  await tx.$executeRaw`UPDATE min.membre SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
-  await tx.$executeRaw`UPDATE min.utilisateur SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
+  await journaliserUpdateBrut(
+    tx,
+    'min.membre',
+    Prisma.sql`SELECT to_jsonb(m.*) AS ligne FROM min.membre m WHERE m.structure_id = ${idSource}`,
+    async () => tx.$executeRaw`UPDATE min.membre SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
+  )
+  await journaliserUpdateBrut(
+    tx,
+    'min.utilisateur',
+    Prisma.sql`SELECT to_jsonb(u.*) AS ligne FROM min.utilisateur u WHERE u.structure_id = ${idSource}`,
+    async () => tx.$executeRaw`UPDATE min.utilisateur SET structure_id = ${idCible} WHERE structure_id = ${idSource}`
+  )
 }

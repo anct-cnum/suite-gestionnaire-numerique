@@ -3,28 +3,31 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export async function ajouterContactStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  await new PrismaStructureRepository().ajouterContact(actionParams.structureId, {
-    email: actionParams.email,
-    estReferentFNE: actionParams.estReferentFNE,
-    fonction: actionParams.fonction,
-    nom: actionParams.nom,
-    prenom: actionParams.prenom,
-    telephone: actionParams.telephone,
+    await new PrismaStructureRepository().ajouterContact(actionParams.structureId, {
+      email: actionParams.email,
+      estReferentFNE: actionParams.estReferentFNE,
+      fonction: actionParams.fonction,
+      nom: actionParams.nom,
+      prenom: actionParams.prenom,
+      telephone: actionParams.telephone,
+    })
+
+    revalidatePath(actionParams.path)
+
+    return ['OK']
   })
-
-  revalidatePath(actionParams.path)
-
-  return ['OK']
 }
 
 type ActionParams = Readonly<{

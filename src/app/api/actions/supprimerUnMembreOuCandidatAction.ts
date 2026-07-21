@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -14,27 +15,29 @@ import { SupprimerUnMembreOuCandidat } from '@/use-cases/commands/SupprimerUnMem
 export async function supprimerUnMembreOuCandidatAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
-  const sessionSub = await getSessionSub()
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
+    const sessionSub = await getSessionSub()
 
-  const message = await new SupprimerUnMembreOuCandidat(
-    new PrismaMembreRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaGouvernanceRepository()
-  ).handle({
-    date: new Date(),
-    uidGouvernance: actionParams.uidGouvernance,
-    uidMembre: actionParams.uidMembre,
-    uidUtilisateurConnecte: sessionSub,
+    const message = await new SupprimerUnMembreOuCandidat(
+      new PrismaMembreRepository(),
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new PrismaGouvernanceRepository()
+    ).handle({
+      date: new Date(),
+      uidGouvernance: actionParams.uidGouvernance,
+      uidMembre: actionParams.uidMembre,
+      uidUtilisateurConnecte: sessionSub,
+    })
+
+    revalidatePath(actionParams.path)
+
+    return [message]
   })
-
-  revalidatePath(actionParams.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{

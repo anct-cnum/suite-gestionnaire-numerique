@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { deplacerNotionsDansTransaction, soumettreSoftDelete, TOUTES_NOTIONS } from './shared/deplacerNotions'
+import { journaliserDeleteBrut, journaliserUpdateBrut } from './shared/journalisationMin'
 import prisma from '../../prisma/prismaClient'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { Fusion, FusionFailure, StructureFusionRepository } from '@/use-cases/commands/FusionnerStructures'
@@ -103,16 +104,38 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     idSurvivante: number,
     idAbsorbee: number
   ): Promise<void> {
-    await tx.$executeRaw`
-      UPDATE main.personne_affectations_emploi e SET structure_administrative_id = ${idSurvivante}
-      WHERE e.structure_administrative_id = ${idAbsorbee}
-        AND NOT EXISTS (
-          SELECT 1 FROM main.personne_affectations_emploi f
-          WHERE f.structure_administrative_id = ${idSurvivante}
-            AND f.personne_id = e.personne_id AND f.source = e.source
-        )
-    `
-    await tx.$executeRaw`DELETE FROM main.personne_affectations_emploi WHERE structure_administrative_id = ${idAbsorbee}`
+    await journaliserUpdateBrut(
+      tx,
+      'main.personne_affectations_emploi',
+      Prisma.sql`
+        SELECT to_jsonb(e.*) AS ligne FROM main.personne_affectations_emploi e
+        WHERE e.structure_administrative_id = ${idAbsorbee}
+          AND NOT EXISTS (
+            SELECT 1 FROM main.personne_affectations_emploi f
+            WHERE f.structure_administrative_id = ${idSurvivante}
+              AND f.personne_id = e.personne_id AND f.source = e.source
+          )
+      `,
+      async () => tx.$executeRaw`
+        UPDATE main.personne_affectations_emploi e SET structure_administrative_id = ${idSurvivante}
+        WHERE e.structure_administrative_id = ${idAbsorbee}
+          AND NOT EXISTS (
+            SELECT 1 FROM main.personne_affectations_emploi f
+            WHERE f.structure_administrative_id = ${idSurvivante}
+              AND f.personne_id = e.personne_id AND f.source = e.source
+          )
+      `
+    )
+    await journaliserDeleteBrut(
+      tx,
+      'main.personne_affectations_emploi',
+      Prisma.sql`
+        SELECT to_jsonb(e.*) AS ligne FROM main.personne_affectations_emploi e
+        WHERE e.structure_administrative_id = ${idAbsorbee}
+      `,
+      async () =>
+        tx.$executeRaw`DELETE FROM main.personne_affectations_emploi WHERE structure_administrative_id = ${idAbsorbee}`
+    )
   }
 }
 

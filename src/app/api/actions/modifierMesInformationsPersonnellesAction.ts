@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -13,27 +14,29 @@ import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/Modifi
 export async function modifierMesInformationsPersonnellesAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  return avecJournalisationMin(async () => {
+    const validationResult = validator.safeParse(actionParams)
 
-  if (validationResult.error) {
-    return validationResult.error.issues.map(({ message }) => message)
-  }
+    if (validationResult.error) {
+      return validationResult.error.issues.map(({ message }) => message)
+    }
 
-  const message = await new ModifierMesInformationsPersonnelles(
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  ).handle({
-    modification: {
-      emailDeContact: actionParams.emailDeContact,
-      nom: actionParams.nom,
-      prenom: actionParams.prenom,
-      telephone: actionParams.telephone,
-    },
-    uidUtilisateurCourant: await getSessionSub(),
+    const message = await new ModifierMesInformationsPersonnelles(
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+    ).handle({
+      modification: {
+        emailDeContact: actionParams.emailDeContact,
+        nom: actionParams.nom,
+        prenom: actionParams.prenom,
+        telephone: actionParams.telephone,
+      },
+      uidUtilisateurCourant: await getSessionSub(),
+    })
+
+    revalidatePath(actionParams.path)
+
+    return [message]
   })
-
-  revalidatePath(actionParams.path)
-
-  return [message]
 }
 
 type ActionParams = Readonly<{
