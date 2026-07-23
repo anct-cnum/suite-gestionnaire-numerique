@@ -2,20 +2,20 @@
 
 ## Commandes
 
-- `yarn db:start` — Démarrer la base de données PostgreSQL locale (Docker)
-- `yarn dev` — Serveur de développement (Turbo)
-- `yarn test` — Migrations + vitest run
-- `yarn test:watch` — Tests en mode watch
-- `yarn test:coverage` — Tests avec couverture (seuil 90%)
-- `yarn typecheck` — Vérification TypeScript
-- `yarn lint:ts` — ESLint (max 0 warnings)
-- `yarn lint:css` — Stylelint
-- `yarn format` — Formatage Prettier
-- `yarn check` — Tous les contrôles qualité (dedupe, deadcode, typecheck, prisma format, format, lint, test:coverage)
-- `yarn deadcode` — Détection de code mort (Knip)
-- `yarn prisma:migrate` — Migrations Prisma
-- `yarn prisma:generate` — Regénérer le client Prisma après modification du schéma
-- `yarn storybook` — Lancer Storybook
+- `pnpm db:start` — Démarrer la base de données PostgreSQL locale (Docker)
+- `pnpm dev` — Serveur de développement (Turbo)
+- `pnpm test` — Migrations + vitest run
+- `pnpm test:watch` — Tests en mode watch
+- `pnpm test:coverage` — Tests avec couverture (seuil 90%)
+- `pnpm typecheck` — Vérification TypeScript
+- `pnpm lint:ts` — ESLint (max 0 warnings)
+- `pnpm lint:css` — Stylelint
+- `pnpm format` — Formatage Prettier
+- `pnpm check` — Tous les contrôles qualité (dedupe, deadcode, typecheck, prisma format, format, lint, test:coverage)
+- `pnpm deadcode` — Détection de code mort (Knip)
+- `pnpm prisma:migrate` — Migrations Prisma
+- `pnpm prisma:generate` — Regénérer le client Prisma après modification du schéma
+- `pnpm storybook` — Lancer Storybook
 
 ## Architecture
 
@@ -125,7 +125,7 @@ Pattern strict dans `src/app/api/actions/` :
 - `it.each([...])` avec `$intention` pour les tests paramétrés
 - Factories de test data : `createDefaultXxxViewModel()` dans `src/stories/`
 - Constantes de date : `epochTime`, `epochTimePlusOneDay` (jamais `new Date()`)
-- Pre-push hook (`husky`) : exécute `yarn check` complet
+- Pre-push hook (`husky`) : exécute `pnpm check` complet
 
 ## Base de données
 

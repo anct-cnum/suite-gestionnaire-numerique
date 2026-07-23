@@ -726,6 +726,18 @@ model main_structure_administrative {
   @@schema("main")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ac_accompagnements_mensuels {
+  aidant_connect_id  BigInt
+  mois               DateTime @db.Date
+  nb_accompagnements Int
+  fetched_at         DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id([aidant_connect_id, mois])
+  @@schema("main")
+}
+
 /// Intégration coop 2026 (#1700, dataspace V122) : référentiel des lieux de
 /// médiation numérique, types enum Postgres du schéma main (propriété Flyway
 /// côté dataspace — ne jamais les modifier via prisma migrate). Les valeurs

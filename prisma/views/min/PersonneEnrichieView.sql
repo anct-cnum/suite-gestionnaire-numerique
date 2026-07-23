@@ -31,13 +31,12 @@ WITH personne_avec_status AS (
         SELECT
           1
         FROM
-          main.personne_affectations pa
+          main.personne_affectations_emploi pae
         WHERE
           (
-            (pa.personne_id = p.id)
-            AND ((pa.source) :: text = 'aidants-connect' :: text)
-            AND (pa.est_active = TRUE)
-            AND ((pa.type) :: text = 'structure_emploi' :: text)
+            (pae.personne_id = p.id)
+            AND ((pae.source) :: text = 'aidants-connect' :: text)
+            AND (pae.est_active = TRUE)
           )
       )
     ) AS labellisation_aidant_connect,
@@ -49,14 +48,13 @@ WITH personne_avec_status AS (
             SELECT
               1
             FROM
-              main.personne_affectations pa
+              main.personne_affectations_emploi pae
             WHERE
               (
-                (pa.personne_id = p.id)
-                AND ((pa.type) :: text = 'structure_emploi' :: text)
-                AND (pa.est_active = TRUE)
+                (pae.personne_id = p.id)
+                AND (pae.est_active = TRUE)
                 AND (
-                  (pa.source) :: text = ANY (
+                  (pae.source) :: text = ANY (
                     ARRAY [('idposte'::character varying)::text, ('coop'::character varying)::text]
                   )
                 )
@@ -77,13 +75,12 @@ WITH personne_avec_status AS (
             SELECT
               1
             FROM
-              main.personne_affectations pa
+              main.personne_affectations_emploi pae
             WHERE
               (
-                (pa.personne_id = p.id)
-                AND ((pa.source) :: text = 'aidants-connect' :: text)
-                AND (pa.est_active = TRUE)
-                AND ((pa.type) :: text = 'structure_emploi' :: text)
+                (pae.personne_id = p.id)
+                AND ((pae.source) :: text = 'aidants-connect' :: text)
+                AND (pae.est_active = TRUE)
               )
           )
         )
@@ -122,13 +119,12 @@ SELECT
         SELECT
           1
         FROM
-          main.personne_affectations pa
+          main.personne_affectations_emploi pae
         WHERE
           (
-            (pa.personne_id = personne_avec_status.id)
-            AND ((pa.source) :: text = 'idposte' :: text)
-            AND (pa.est_active = TRUE)
-            AND ((pa.type) :: text = 'structure_emploi' :: text)
+            (pae.personne_id = personne_avec_status.id)
+            AND ((pae.source) :: text = 'idposte' :: text)
+            AND (pae.est_active = TRUE)
           )
       )
     ) THEN TRUE
@@ -148,17 +144,16 @@ SELECT
   END AS est_actuellement_coordo_actif,
   (
     SELECT
-      pa.structure_id
+      pae.structure_administrative_id
     FROM
-      main.personne_affectations pa
+      main.personne_affectations_emploi pae
     WHERE
       (
-        (pa.personne_id = personne_avec_status.id)
-        AND ((pa.type) :: text = 'structure_emploi' :: text)
-        AND (pa.est_active = TRUE)
+        (pae.personne_id = personne_avec_status.id)
+        AND (pae.est_active = TRUE)
       )
     ORDER BY
-      pa.structure_id
+      pae.structure_administrative_id
     LIMIT
       1
   ) AS structure_employeuse_id
