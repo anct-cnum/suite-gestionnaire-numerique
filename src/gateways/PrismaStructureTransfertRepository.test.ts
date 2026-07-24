@@ -25,6 +25,7 @@ const COOP_ID_SOURCE = '11111111-1111-1111-1111-111111111111'
 const AC_ID_SOURCE = '22222222-2222-2222-2222-222222222222'
 const COOP_ID_CIBLE = '33333333-3333-3333-3333-333333333333'
 const TP_ID_SOURCE = 880011
+const TP_ID_CIBLE = 880012
 
 let personnesCreees: Array<number> = []
 
@@ -86,19 +87,38 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
     await expect(estSupprimee(SOURCE)).resolves.toBe(false)
   })
 
-  it('refuse en cas de collision d’id scalaire et ne modifie rien', async () => {
-    // GIVEN source et cible portent chacune un structure_coop_id différent.
+  it('refuse en cas de collision d’id scalaire (idposte) et ne modifie rien', async () => {
+    // GIVEN source et cible portent chacune un structure_tp_id différent (id-poste resynchronise
+    // toujours par cet id : le blocage reste, contrairement à l'uuid coop).
+    await seedBase()
+    await creerUneStructure({ id: SOURCE, siret: '99001100000001', structure_tp_id: TP_ID_SOURCE })
+    await creerUneStructure({ id: CIBLE, siret: '99001100000002', structure_tp_id: TP_ID_CIBLE })
+
+    // WHEN
+    const result = await transferer(['idposte'])
+
+    // THEN
+    expect(result).toBe('collisionIdentifiantSource')
+    await expect(idsScalaires(SOURCE)).resolves.toMatchObject({ tp: TP_ID_SOURCE })
+    await expect(nombreAudits()).resolves.toBe(0)
+  })
+
+  it('abandonne l’uuid coop de la source (sans échec) quand la cible porte déjà le sien', async () => {
+    // GIVEN source et cible portent chacune un structure_coop_id différent : depuis la bascule
+    // ADR-002 l'uuid n'est plus un vecteur de resync — la cible garde le sien.
     await seedBase()
     await creerUneStructure({ id: SOURCE, siret: '99001100000001', structure_coop_id: COOP_ID_SOURCE })
     await creerUneStructure({ id: CIBLE, siret: '99001100000002', structure_coop_id: COOP_ID_CIBLE })
+    await affecter(SOURCE, 'coop')
 
     // WHEN
     const result = await transferer(['coop'])
 
-    // THEN
-    expect(result).toBe('collisionIdentifiantSource')
-    await expect(idsScalaires(SOURCE)).resolves.toMatchObject({ coop: COOP_ID_SOURCE })
-    await expect(nombreAudits()).resolves.toBe(0)
+    // THEN l'affectation est déplacée, l'uuid de la source est abandonné, la cible garde le sien.
+    expect(result).toBe('OK')
+    await expect(idsScalaires(SOURCE)).resolves.toMatchObject({ coop: null })
+    await expect(idsScalaires(CIBLE)).resolves.toMatchObject({ coop: COOP_ID_CIBLE })
+    await expect(nombreAudits()).resolves.toBe(1)
   })
 
   it('refuse en cas de collision de membre sur la même gouvernance', async () => {

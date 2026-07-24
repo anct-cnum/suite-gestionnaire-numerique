@@ -43,7 +43,7 @@ export async function deplacerNotionsDansTransaction(
     await transfererContacts(tx, idSource, idCible)
   }
   if (choisi('coop')) {
-    await transfererCoop(tx, idSource, idCible, source)
+    await transfererCoop(tx, idSource, idCible, source, cible)
   }
   if (choisi('idposte')) {
     await transfererIdposte(tx, idSource, idCible, source)
@@ -127,6 +127,9 @@ interface LigneStructure {
 }
 
 // Une notion source sélectionnée porte un id scalaire alors que la cible en porte déjà un autre.
+// L'uuid coop ne bloque plus : depuis la bascule coop → ids int natifs (ADR-002), il n'est plus un
+// vecteur de resync — en cas de doublon il est abandonné, cf. transfererCoop. idposte et Aidants
+// Connect restent bloquants (leurs ETL resynchronisent toujours par ces ids).
 function collisionIdentifiantSource(
   choisi: (notion: NotionCle) => boolean,
   source: LigneStructure,
@@ -137,7 +140,6 @@ function collisionIdentifiantSource(
   }
 
   return (
-    (choisi('coop') && conflit(source.structure_coop_id, cible.structure_coop_id)) ||
     (choisi('idposte') && conflit(source.structure_tp_id, cible.structure_tp_id)) ||
     (choisi('aidantsConnect') && conflit(source.structure_ac_id, cible.structure_ac_id))
   )
@@ -263,11 +265,17 @@ async function transfererContacts(tx: Prisma.TransactionClient, idSource: number
   )
 }
 
+// L'uuid coop de la source est transféré si la cible n'en porte pas (le resync pré-bascule suit la
+// cible), sinon ABANDONNÉ (mis à NULL, sans échec) : la cible garde le sien, l'uuid perdu est tracé
+// par la fusion dans moved_identifiers. ⚠️ À ne déployer qu'avec le décommissionnement de la
+// branche SA du coop-dag : tant qu'il tourne, un uuid abandonné ferait recréer la structure au run
+// suivant (lookup par structure_coop_id → insert).
 async function transfererCoop(
   tx: Prisma.TransactionClient,
   idSource: number,
   idCible: number,
-  source: LigneStructure
+  source: LigneStructure,
+  cible: LigneStructure
 ): Promise<void> {
   await deplacerAffectations(tx, idSource, idCible, 'coop')
   if (source.structure_coop_id === null) {
@@ -280,6 +288,9 @@ async function transfererCoop(
     UPDATE main.structure_administrative SET structure_coop_id = NULL WHERE id = ${idSource}
   `
   )
+  if (cible.structure_coop_id !== null) {
+    return
+  }
   await miseAJourStructure(
     tx,
     idCible,

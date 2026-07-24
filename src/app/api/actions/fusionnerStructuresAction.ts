@@ -13,7 +13,7 @@ import { FusionFailure, FusionnerStructures } from '@/use-cases/commands/Fusionn
 
 const MESSAGES_ECHEC: Readonly<Record<FusionFailure, string>> = {
   collisionIdentifiantSource:
-    'Conflit d’identifiant de source (Coop, Idposte ou Aidants Connect) avec la survivante : tranchez-le avant de fusionner',
+    'Conflit d’identifiant de source (Idposte ou Aidants Connect) avec la survivante : tranchez-le avant de fusionner',
   collisionMembreGouvernance: 'La survivante est déjà membre d’une gouvernance de la structure absorbée',
   fusionEchouee: 'La fusion a échoué, aucune modification effectuée',
   fusionImpossibleCanoniqueDansAntenne:

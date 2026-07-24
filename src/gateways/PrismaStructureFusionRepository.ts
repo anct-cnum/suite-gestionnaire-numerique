@@ -7,9 +7,11 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { Fusion, FusionFailure, StructureFusionRepository } from '@/use-cases/commands/FusionnerStructures'
 
 // Fusion = déplacer les 6 notions de l'absorbée vers la survivante (via le moteur partagé, qui
-// transfère aussi les ids de source coop/tp/ac — c'est le correctif du bug d'abandon), balayer les
-// FK résiduelles non rattachées à une notion (affectations source='min'…), puis soft-delete
-// l'absorbée. La survivante conserve TOUS ses champs descriptifs (aucun import depuis l'absorbée).
+// transfère aussi les ids de source tp/ac — correctif du bug d'abandon — et l'uuid coop quand la
+// survivante n'en porte pas, sinon il est abandonné et tracé), balayer les FK résiduelles non
+// rattachées à une notion (affectations source='min'…), repointer les références coop (bascule
+// ADR-002 : la coop pointe la SA par id int), puis soft-delete l'absorbée. La survivante conserve
+// TOUS ses champs descriptifs (aucun import depuis l'absorbée).
 export class PrismaStructureFusionRepository implements StructureFusionRepository {
   async fusionner(fusion: Fusion): ResultAsync<FusionFailure> {
     try {
@@ -24,7 +26,7 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     const { idAbsorbee, idSurvivante, parUtilisateur } = fusion
 
     const lignes = await tx.$queryRaw<Array<LigneStructure>>`
-      SELECT id, deleted_at, denomination_antenne, siret, ridet, rna, to_jsonb(sa.*) AS snapshot
+      SELECT id, deleted_at, denomination_antenne, siret, ridet, rna, structure_coop_id, to_jsonb(sa.*) AS snapshot
       FROM main.structure_administrative sa
       WHERE id IN (${idSurvivante}, ${idAbsorbee})
     `
@@ -55,8 +57,9 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
 
     // Balayage des FK résiduelles que les notions ne couvrent pas (affectations source='min'…).
     await this.#repointerAffectationsResiduelles(tx, idSurvivante, idAbsorbee)
+    const referencesCoop = await this.#repointerReferencesCoop(tx, idSurvivante, idAbsorbee)
     await soumettreSoftDelete(tx, idAbsorbee, parUtilisateur)
-    await this.#journaliserSucces(tx, fusion, survivante, absorbee)
+    await this.#journaliserSucces(tx, fusion, survivante, absorbee, referencesCoop)
 
     return 'OK'
   }
@@ -75,7 +78,8 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     tx: Prisma.TransactionClient,
     fusion: Fusion,
     survivante: LigneStructure,
-    absorbee: LigneStructure
+    absorbee: LigneStructure,
+    referencesCoop: Readonly<Record<string, number>>
   ): Promise<void> {
     const apres = (
       await tx.$queryRaw<Array<{ snapshot: Prisma.JsonValue }>>`
@@ -92,7 +96,7 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
         ${JSON.stringify(survivante.snapshot)}::jsonb,
         ${JSON.stringify(absorbee.snapshot)}::jsonb,
         ${JSON.stringify(apres?.snapshot ?? null)}::jsonb,
-        ${JSON.stringify(identifiantsAbandonnes(absorbee))}::jsonb
+        ${JSON.stringify({ ...identifiantsAbandonnes(absorbee, survivante), ...referencesCoop })}::jsonb
       )
     `
   }
@@ -137,6 +141,45 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
         tx.$executeRaw`DELETE FROM main.personne_affectations_emploi WHERE structure_administrative_id = ${idAbsorbee}`
     )
   }
+
+  // Depuis la bascule ADR-002, les tables coop référencent la SA par son id int (colonnes dual-write
+  // `structure_employeuse_main_id` / `structure_main_id`, renommage possible à l'échange final —
+  // repasse prévue sur les scripts coop définitifs). Sans repointage, la coop continuerait de
+  // pointer une structure soft-deleted. Détection des colonnes à chaud : no-op tant que la coop n'a
+  // pas déployé, et dans les bases (test) sans schéma coop — l'ordre de déploiement min/coop reste
+  // libre. Tables possédées par la coop (volumes jusqu'à plusieurs milliers d'activités par
+  // structure) : hors journal min__evenements, tracées en compteurs dans structure_merge_log.
+  async #repointerReferencesCoop(
+    tx: Prisma.TransactionClient,
+    idSurvivante: number,
+    idAbsorbee: number
+  ): Promise<Record<string, number>> {
+    const colonnes = await tx.$queryRaw<Array<{ nom: string }>>`
+      SELECT table_name || '.' || column_name AS nom
+      FROM information_schema.columns
+      WHERE table_schema = 'coop'
+        AND (table_name, column_name) IN (
+          ('activites', 'structure_employeuse_main_id'),
+          ('employes_structures', 'structure_main_id')
+        )
+    `
+    const presentes = new Set(colonnes.map(({ nom }) => nom))
+    const compteurs: Record<string, number> = {}
+    if (presentes.has('activites.structure_employeuse_main_id')) {
+      compteurs.coop_activites_repointees = await tx.$executeRaw`
+        UPDATE coop.activites SET structure_employeuse_main_id = ${idSurvivante}
+        WHERE structure_employeuse_main_id = ${idAbsorbee}
+      `
+    }
+    if (presentes.has('employes_structures.structure_main_id')) {
+      compteurs.coop_employes_structures_repointes = await tx.$executeRaw`
+        UPDATE coop.employes_structures SET structure_main_id = ${idSurvivante}
+        WHERE structure_main_id = ${idAbsorbee}
+      `
+    }
+
+    return compteurs
+  }
 }
 
 interface LigneStructure {
@@ -147,14 +190,19 @@ interface LigneStructure {
   rna: null | string
   siret: null | string
   snapshot: Prisma.JsonValue
+  structure_coop_id: null | string
 }
 
-// Identifiants d'IDENTITÉ de l'absorbée, perdus par la fusion (la survivante garde les siens) →
-// tracés dans le journal. Les ids de SOURCE (coop/tp/ac) n'y figurent plus : ils sont transférés.
-function identifiantsAbandonnes(absorbee: LigneStructure): Record<string, null | string> {
+// Identifiants de l'absorbée perdus par la fusion → tracés dans le journal. Identité (siret/ridet/
+// rna) : la survivante garde les siens. Uuid coop : abandonné seulement quand la survivante porte
+// déjà le sien (sinon transféré, donc absent d'ici). Les ids de source tp/ac restent transférés.
+function identifiantsAbandonnes(absorbee: LigneStructure, survivante: LigneStructure): Record<string, null | string> {
+  const coopAbandonne = absorbee.structure_coop_id !== null && survivante.structure_coop_id !== null
+
   return {
     ridet: absorbee.ridet,
     rna: absorbee.rna,
     siret: absorbee.siret,
+    structure_coop_id: coopAbandonne ? absorbee.structure_coop_id : null,
   }
 }
