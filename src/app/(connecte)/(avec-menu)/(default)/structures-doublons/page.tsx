@@ -29,7 +29,8 @@ export default async function StructuresDoublonsController({ searchParams }: Pro
 
   const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+  // Visibilité ouverte à tous les administrateurs (ANCT) ; la fusion reste réservée aux bêta-testeurs.
+  if (!contexte.aCesRoles('administrateur_dispositif')) {
     redirect('/tableau-de-bord')
   }
 

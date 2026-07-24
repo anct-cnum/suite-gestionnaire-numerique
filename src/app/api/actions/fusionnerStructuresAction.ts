@@ -4,12 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
-import prisma from '../../../../prisma/prismaClient'
-import { Administrateur } from '@/domain/Administrateur'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureFusionRepository } from '@/gateways/PrismaStructureFusionRepository'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { FusionFailure, FusionnerStructures } from '@/use-cases/commands/FusionnerStructures'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<FusionFailure, string>> = {
   collisionIdentifiantSource:
@@ -29,11 +29,12 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Garde : seul un administrateur_dispositif peut fusionner des structures.
+    // Garde : la comparaison est visible par tout administrateur, mais seul un bêta-testeur peut fusionner.
     const sub = await getSessionSub()
-    const utilisateur = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).get(sub)
-    if (!(utilisateur instanceof Administrateur)) {
-      return ['Action réservée aux administrateurs']
+    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+      return ['Action réservée aux administrateurs autorisés']
     }
 
     // Fusion séquentielle : chaque absorbée est fusionnée dans la (même) survivante, une transaction

@@ -24,7 +24,8 @@ export default async function ComparerStructuresController({ searchParams }: Pro
 
   const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
+  // Visibilité ouverte à tous les administrateurs (ANCT) ; la fusion reste réservée aux bêta-testeurs.
+  if (!contexte.aCesRoles('administrateur_dispositif')) {
     redirect('/tableau-de-bord')
   }
 
@@ -52,7 +53,7 @@ export default async function ComparerStructuresController({ searchParams }: Pro
           { label: 'Examiner' },
         ]}
       />
-      <ComparerStructures viewModel={viewModel} />
+      <ComparerStructures peutFusionner={contexte.isBetaTesteur} viewModel={viewModel} />
     </>
   )
 }
