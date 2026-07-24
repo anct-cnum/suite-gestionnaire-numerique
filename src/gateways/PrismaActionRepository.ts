@@ -99,20 +99,19 @@ export class PrismaActionRepository
   }
 
   async supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid): Promise<boolean> {
-    const result = await journaliserTransaction(prisma, async () =>
-      prisma.$transaction([
-        prisma.beneficiaireSubventionRecord.deleteMany({
-          where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) },
-        }),
-        prisma.demandeDeSubventionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
-        prisma.coFinancementRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
-        prisma.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
-        prisma.actionRecord.deleteMany({ where: { id: Number(actionId.state.value) } }),
-      ])
-    )
+    const result = await journaliserTransaction(prisma, async (transaction) => {
+      await transaction.beneficiaireSubventionRecord.deleteMany({
+        where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) },
+      })
+      await transaction.demandeDeSubventionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } })
+      await transaction.coFinancementRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } })
+      await transaction.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } })
+
+      return transaction.actionRecord.deleteMany({ where: { id: Number(actionId.state.value) } })
+    })
 
     // On vérifie uniquement que l'action a bien été supprimée
-    return result[result.length - 1].count === 1
+    return result.count === 1
   }
 
   async update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean> {

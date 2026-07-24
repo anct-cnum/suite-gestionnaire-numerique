@@ -1,6 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
-import { ReactElement } from 'react'
+import { ReactElement, Suspense } from 'react'
 
+import SectionActivitesStructure from './SectionActivitesStructure'
+import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import Structure from '@/components/Structure/Structure'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -62,6 +64,11 @@ export default async function StructureController({ params, searchParams }: Prop
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Structure' }]} />
       <Structure
+        activites={
+          <Suspense fallback={<SpinnerSimple text="Récupération des activités..." />}>
+            <SectionActivitesStructure structureId={structureIdNumeric} />
+          </Suspense>
+        }
         editionNomActive={editionNomActive}
         peutGererStructure={peutGererStructure}
         rattachements={rattachements}

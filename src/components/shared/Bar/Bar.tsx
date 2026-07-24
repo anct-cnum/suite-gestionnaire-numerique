@@ -4,7 +4,7 @@ import { Bar as ReactBar } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip)
 
-export default function Bar({ backgroundColor, data, header, labels }: Props): ReactElement {
+export default function Bar({ backgroundColor, data, header, labels, serieEmpilee, titreSerie }: Props): ReactElement {
   return (
     <>
       {header}
@@ -15,7 +15,18 @@ export default function Bar({ backgroundColor, data, header, labels }: Props): R
               backgroundColor,
               borderRadius: 5,
               data,
+              label: titreSerie,
             },
+            ...(serieEmpilee === undefined
+              ? []
+              : [
+                  {
+                    backgroundColor: serieEmpilee.backgroundColor,
+                    borderRadius: 5,
+                    data: serieEmpilee.data,
+                    label: serieEmpilee.label,
+                  },
+                ]),
           ],
           labels,
         }}
@@ -45,6 +56,7 @@ export default function Bar({ backgroundColor, data, header, labels }: Props): R
               grid: {
                 display: false,
               },
+              stacked: serieEmpilee !== undefined,
               ticks: {
                 font: {
                   size: 14,
@@ -59,6 +71,7 @@ export default function Bar({ backgroundColor, data, header, labels }: Props): R
               grid: {
                 display: false,
               },
+              stacked: serieEmpilee !== undefined,
               ticks: {
                 display: false,
               },
@@ -75,4 +88,10 @@ type Props = Readonly<{
   data: ReadonlyArray<number>
   header?: ReactNode
   labels: Array<string>
+  serieEmpilee?: Readonly<{
+    backgroundColor: ReadonlyArray<string>
+    data: ReadonlyArray<number>
+    label: string
+  }>
+  titreSerie?: string
 }>

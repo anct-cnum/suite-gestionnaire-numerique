@@ -3,19 +3,28 @@ import { Prisma } from '@prisma/client'
 import { contexteJournalisationMin, EvenementMin } from './contexteJournalisationMin'
 import { ClientExecuteur, insererEvenementsMin, resoudreActeurMin } from '../../../prisma/journalisationMinExtension'
 
-// Exécute fn (qui ouvre une transaction Prisma) en différant l'écriture des
-// événements interceptés par l'extension : écrits après commit, jetés si rollback.
+// Ouvre une transaction Prisma en différant l'écriture des événements interceptés
+// par l'extension : écrits après commit, jetés si rollback. Le client de transaction
+// est exposé dans le contexte pour que les lectures auxiliaires de l'extension passent
+// par lui (une seule connexion du pool, visibilité des écritures non commitées).
 export async function journaliserTransaction<Retour>(
-  client: ClientExecuteur,
-  fn: () => Promise<Retour>
+  client: ClientTransactionnel,
+  fn: (tx: Prisma.TransactionClient) => Promise<Retour>
 ): Promise<Retour> {
   const contexte = contexteJournalisationMin.getStore()
   if (contexte === undefined) {
-    return fn()
+    return client.$transaction(fn)
   }
   contexte.bufferTransaction = []
   try {
-    const resultat = await fn()
+    const resultat = await client.$transaction(async (transaction) => {
+      contexte.clientTransaction = transaction
+      try {
+        return await fn(transaction)
+      } finally {
+        contexte.clientTransaction = null
+      }
+    })
     await insererEvenementsMin(client, contexte.runId, contexte.bufferTransaction)
 
     return resultat
@@ -107,6 +116,11 @@ export async function journaliserUpdateBrut<Retour>(
 
   return resultat
 }
+
+type ClientTransactionnel = ClientExecuteur &
+  Readonly<{
+    $transaction<Retour>(fn: (tx: Prisma.TransactionClient) => Promise<Retour>): Promise<Retour>
+  }>
 
 type LigneJson = Record<string, unknown>
 

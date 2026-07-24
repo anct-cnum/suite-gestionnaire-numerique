@@ -5,11 +5,14 @@ import prisma from '../../prisma/prismaClient'
 // Les affectations d'emploi passees (pae.est_active = false) sont volontairement
 // incluses : les statistiques doivent faire ressortir l'activite des mediateurs
 // qui ne sont plus sous contrat aujourd'hui mais qui l'ont ete (#1472).
+// personne_enrichie.coop_id est le user_id Coop : le filtre mediateurs de l'API Coop
+// attend l'id mediateur, d'ou la traduction via coop.mediateurs.
 export class PrismaMediateursCoopLoader {
   async recupererCoopIdsParStructure(structureId: number): Promise<ReadonlyArray<string>> {
-    const rows = await prisma.$queryRaw<ReadonlyArray<{ coop_id: string }>>`
-      SELECT pe.coop_id
+    const rows = await prisma.$queryRaw<ReadonlyArray<{ mediateur_id: string }>>`
+      SELECT m.id AS mediateur_id
       FROM min.personne_enrichie pe
+      INNER JOIN coop.mediateurs m ON m.user_id = pe.coop_id
       WHERE (
         pe.structure_employeuse_id = ${structureId}
         OR EXISTS (
@@ -23,15 +26,16 @@ export class PrismaMediateursCoopLoader {
       AND pe.deleted_at IS NULL
       AND pe.aidant_connect_id IS NULL
     `
-    return rows.map((row) => row.coop_id)
+    return rows.map((row) => row.mediateur_id)
   }
 
   async recupererCoopIdsParStructures(structureIds: ReadonlyArray<string>): Promise<ReadonlyArray<string>> {
     if (structureIds.length === 0) return []
     const ids = structureIds.map(Number).filter(Boolean)
-    const rows = await prisma.$queryRaw<ReadonlyArray<{ coop_id: string }>>`
-      SELECT DISTINCT pe.coop_id
+    const rows = await prisma.$queryRaw<ReadonlyArray<{ mediateur_id: string }>>`
+      SELECT DISTINCT m.id AS mediateur_id
       FROM min.personne_enrichie pe
+      INNER JOIN coop.mediateurs m ON m.user_id = pe.coop_id
       WHERE (
         pe.structure_employeuse_id = ANY(ARRAY[${Prisma.join(ids)}]::int[])
         OR EXISTS (
@@ -45,6 +49,6 @@ export class PrismaMediateursCoopLoader {
       AND pe.deleted_at IS NULL
       AND pe.aidant_connect_id IS NULL
     `
-    return rows.map((row) => row.coop_id)
+    return rows.map((row) => row.mediateur_id)
   }
 }
