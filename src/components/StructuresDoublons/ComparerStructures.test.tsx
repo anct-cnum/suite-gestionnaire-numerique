@@ -12,7 +12,7 @@ import {
 describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
   it('affiche les cartes, prend la canonique comme cible par défaut et désactive Appliquer', () => {
     // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
     // THEN : la canonique (structure 3) est cible → carte source = structure 7.
     expect(screen.getByRole('heading', { level: 1, name: 'Examiner un doublon' })).toBeInTheDocument()
@@ -23,7 +23,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
 
   it('affiche sur chaque carte le titre « id - dénomination » dont la dénomination est un lien vers la fiche et un lien vers l’historique', () => {
     // WHEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
     // THEN
     expect(screen.getByRole('heading', { level: 2, name: '3 - Cible' })).toBeInTheDocument()
@@ -40,7 +40,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     // GIVEN
     const transfererNotionsStructureAction = stubbedServerAction(['OK'])
     const push = vi.fn<() => void>()
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />, {
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />, {
       pathname: '/structures-doublons/comparer',
       router: {
         back: vi.fn<() => void>(),
@@ -72,7 +72,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
   it('la surcoche « Fusionner » coche toutes les notions et déclenche la fusion', async () => {
     // GIVEN
     const fusionnerStructuresAction = stubbedServerAction(['OK'])
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />, {
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />, {
       fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
     })
@@ -93,7 +93,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
 
   it('une carte canonique non-cible ne propose aucune coche quand la cible est une antenne', () => {
     // GIVEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
     // WHEN : on désigne la structure 7 (antenne) comme cible → la canonique (3) devient une carte non-cible.
     fireEvent.click(screen.getAllByRole('radio', { name: 'Cible (destination)' })[1])
@@ -115,7 +115,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
         siret: '99999999900099',
       }),
     ]
-    renderComponent(<ComparerStructures viewModel={viewModel} />, {
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={viewModel} />, {
       fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
     })
@@ -140,7 +140,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     const source = carte({ concepts: [conceptAc('ac-source')], denomination: 'Source', id: 7 })
 
     // WHEN
-    renderComponent(<ComparerStructures viewModel={[cible, source]} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={[cible, source]} />)
 
     // THEN
     expect(screen.getByLabelText(/Aidants Connect/)).toBeDisabled()
@@ -152,7 +152,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     const cible = carte({ denomination: 'Cible', estCanonique: true, id: 3 })
     const sourceA = carte({ concepts: [conceptCoop('coop-a')], denomination: 'Source A', id: 7 })
     const sourceB = carte({ concepts: [conceptCoop('coop-b')], denomination: 'Source B', id: 11 })
-    renderComponent(<ComparerStructures viewModel={[cible, sourceA, sourceB]} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={[cible, sourceA, sourceB]} />)
 
     // WHEN : on coche Coop sur la source A.
     fireEvent.click(screen.getAllByLabelText(/Coop/)[0])
@@ -165,7 +165,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     // GIVEN la fusion réussit, le transfert échoue.
     const fusionnerStructuresAction = stubbedServerAction(['OK'])
     const transfererNotionsStructureAction = stubbedServerAction(['Conflit'])
-    renderComponent(<ComparerStructures viewModel={troisStructures()} />, {
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={troisStructures()} />, {
       fusionnerStructuresAction,
       pathname: '/structures-doublons/comparer',
       transfererNotionsStructureAction,
@@ -195,7 +195,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
 
   it('bascule sur la vue Distances et affiche la matrice', () => {
     // GIVEN
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
     // WHEN
     fireEvent.click(screen.getByRole('button', { name: 'Distances' }))
@@ -207,7 +207,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
 
   it('désactive le CTA « Synchroniser avec INSEE » quand une canonique de même SIRET est présente', () => {
     // WHEN : l'antenne 7 partage son SIRET avec la canonique 3.
-    renderComponent(<ComparerStructures viewModel={deuxStructures()} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
     // THEN
     expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeDisabled()
@@ -222,10 +222,37 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     ]
 
     // WHEN
-    renderComponent(<ComparerStructures viewModel={viewModel} />)
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={viewModel} />)
 
     // THEN
     expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeEnabled()
+  })
+
+  it('affiche la comparaison en lecture seule sans aucune commande pour un administrateur non bêta-testeur', () => {
+    // WHEN
+    renderComponent(<ComparerStructures peutFusionner={false} viewModel={deuxStructures()} />)
+
+    // THEN : les cartes et concepts restent visibles…
+    expect(screen.getByRole('heading', { level: 2, name: '3 - Cible' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: '7 - Antenne' })).toBeInTheDocument()
+    expect(screen.getAllByText('Concepts portés')).toHaveLength(2)
+    expect(screen.getByText(/réservées aux bêta-testeurs/)).toBeInTheDocument()
+    // … mais aucune commande de mutation n'est proposée.
+    expect(screen.queryByRole('button', { name: 'Appliquer' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Synchroniser avec l’INSEE' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: 'Cible (destination)' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  })
+
+  it('laisse la vue Distances accessible en lecture seule', () => {
+    // GIVEN
+    renderComponent(<ComparerStructures peutFusionner={false} viewModel={deuxStructures()} />)
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Distances' }))
+
+    // THEN
+    expect(screen.getByRole('columnheader', { name: 'Cible' })).toBeInTheDocument()
   })
 
   it('ouvre la modale de canonisation au clic et déclenche la récupération INSEE', async () => {
@@ -237,7 +264,9 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
       carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
       carte({ denomination: 'Antenne', id: 7, siret: '99999999900099' }),
     ]
-    renderComponent(<ComparerStructures viewModel={viewModel} />, { rechercherUneEntrepriseAction })
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={viewModel} />, {
+      rechercherUneEntrepriseAction,
+    })
 
     // WHEN
     fireEvent.click(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' }))

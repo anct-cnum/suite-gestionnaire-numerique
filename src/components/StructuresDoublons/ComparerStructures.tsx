@@ -31,7 +31,7 @@ type EtatCarte = Readonly<{
 
 const ETAT_VIDE: EtatCarte = { fusionner: false, notions: [] }
 
-export default function ComparerStructures({ viewModel }: Props): ReactElement {
+export default function ComparerStructures({ peutFusionner, viewModel }: Props): ReactElement {
   const { fusionnerStructuresAction, pathname, router, transfererNotionsStructureAction } = useContext(clientContext)
 
   // Cible par défaut : la canonique (INSEE) si elle existe — c'est la destination naturelle.
@@ -166,11 +166,18 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
   return (
     <section>
       <h1>Examiner un doublon</h1>
-      <p className="fr-text--sm fr-text-mention--grey">
-        Choisissez la structure <span className="fr-text--bold">cible (destination)</span>, puis sur chaque autre carte
-        cochez les notions à transférer — ou « Fusionner » pour tout déplacer et supprimer la structure. Une canonique
-        (INSEE) ne peut être absorbée que par une autre canonique.
-      </p>
+      {peutFusionner ? (
+        <p className="fr-text--sm fr-text-mention--grey">
+          Choisissez la structure <span className="fr-text--bold">cible (destination)</span>, puis sur chaque autre
+          carte cochez les notions à transférer — ou « Fusionner » pour tout déplacer et supprimer la structure. Une
+          canonique (INSEE) ne peut être absorbée que par une autre canonique.
+        </p>
+      ) : (
+        <p className="fr-text--sm fr-text-mention--grey">
+          Comparez les champs, concepts et rattachements des structures candidates au doublon. Les opérations de fusion
+          et de transfert sont réservées aux bêta-testeurs.
+        </p>
+      )}
 
       <div className="fr-btns-group fr-btns-group--inline fr-btns-group--sm fr-mb-2w">
         <button
@@ -215,6 +222,7 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
                 onToggleNotion={(cle) => {
                   basculerNotion(structure, cle)
                 }}
+                peutFusionner={peutFusionner}
                 structure={structure}
               />
             </div>
@@ -224,54 +232,60 @@ export default function ComparerStructures({ viewModel }: Props): ReactElement {
         <MatriceDistances matrice={matriceDistances(viewModel)} />
       )}
 
-      <div className="fr-mt-4w">
-        <button
-          className="fr-btn"
-          disabled={!operationPossible}
-          onClick={() => {
-            setIsModalOpen(true)
-          }}
-          type="button"
-        >
-          Appliquer
-        </button>
-        {operationPossible ? null : (
-          <p className="fr-text--sm fr-text-mention--grey fr-mt-1w">
-            Choisissez une cible et, sur au moins une autre carte, une notion à transférer ou « Fusionner ».
-          </p>
-        )}
-      </div>
+      {peutFusionner ? (
+        <div className="fr-mt-4w">
+          <button
+            className="fr-btn"
+            disabled={!operationPossible}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+            type="button"
+          >
+            Appliquer
+          </button>
+          {operationPossible ? null : (
+            <p className="fr-text--sm fr-text-mention--grey fr-mt-1w">
+              Choisissez une cible et, sur au moins une autre carte, une notion à transférer ou « Fusionner ».
+            </p>
+          )}
+        </div>
+      ) : null}
 
-      <ConfirmationModal
-        confirmLabel={isSubmitting ? 'Application…' : 'Confirmer'}
-        confirmVariant="error"
-        id="confirmer-consolidation"
-        isOpen={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false)
-        }}
-        onConfirm={() => {
-          void appliquer()
-        }}
-        title="Confirmer les opérations"
-      >
-        {cible === undefined ? null : (
-          <RecapitulatifOperations
-            cartesFusion={cartesFusion}
-            cartesTransfert={cartesTransfert}
-            cible={cible}
-            etatDe={etatDe}
+      {peutFusionner ? (
+        <>
+          <ConfirmationModal
+            confirmLabel={isSubmitting ? 'Application…' : 'Confirmer'}
+            confirmVariant="error"
+            id="confirmer-consolidation"
+            isOpen={isModalOpen}
+            onCancel={() => {
+              setIsModalOpen(false)
+            }}
+            onConfirm={() => {
+              void appliquer()
+            }}
+            title="Confirmer les opérations"
+          >
+            {cible === undefined ? null : (
+              <RecapitulatifOperations
+                cartesFusion={cartesFusion}
+                cartesTransfert={cartesTransfert}
+                cible={cible}
+                etatDe={etatDe}
+              />
+            )}
+          </ConfirmationModal>
+
+          <ModaleCanonisation
+            isOpen={idCanonisation !== null}
+            onClose={() => {
+              setIdCanonisation(null)
+            }}
+            structure={structureCanonisation ?? viewModel[0]}
           />
-        )}
-      </ConfirmationModal>
-
-      <ModaleCanonisation
-        isOpen={idCanonisation !== null}
-        onClose={() => {
-          setIdCanonisation(null)
-        }}
-        structure={structureCanonisation ?? viewModel[0]}
-      />
+        </>
+      ) : null}
     </section>
   )
 }
@@ -338,6 +352,7 @@ function CarteStructure({
   onCible,
   onToggleFusion,
   onToggleNotion,
+  peutFusionner,
   structure,
 }: Readonly<{
   cibleEstCanonique: boolean
@@ -349,12 +364,16 @@ function CarteStructure({
   onCible(): void
   onToggleFusion(): void
   onToggleNotion(cle: NotionCle): void
+  peutFusionner: boolean
   structure: StructureComparaisonViewModel
 }>): ReactElement {
   const rattachementsDetail = structure.rattachements.filter((rattachement) => rattachement.nombre > 0)
   const conceptsPortes = structure.concepts.filter((concept) => concept.present)
 
   function roleDe(): RoleCarte {
+    if (!peutFusionner) {
+      return 'rien'
+    }
     if (estCible) {
       return 'cible'
     }
@@ -366,6 +385,9 @@ function CarteStructure({
   }
 
   function controles(): ReactElement {
+    if (!peutFusionner) {
+      return <ConceptsPortes conceptsPortes={conceptsPortes} legende="Concepts portés" />
+    }
     if (estCible) {
       return <ConceptsPortes conceptsPortes={conceptsPortes} legende="Concepts portés (destination)" />
     }
@@ -474,7 +496,7 @@ function CarteStructure({
         ))}
       </dl>
 
-      {structure.estCanonique ? null : (
+      {structure.estCanonique || !peutFusionner ? null : (
         <div className="fr-mb-2w">
           <button
             className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left"
@@ -512,22 +534,24 @@ function CarteStructure({
         </ul>
       )}
 
-      <fieldset className="fr-fieldset fr-mt-2w">
-        <div className="fr-fieldset__content">
-          <div className="fr-radio-group">
-            <input
-              checked={estCible}
-              id={`cible-${structure.id}`}
-              name="cible-doublon"
-              onChange={onCible}
-              type="radio"
-            />
-            <label className="fr-label" htmlFor={`cible-${structure.id}`}>
-              Cible (destination)
-            </label>
+      {peutFusionner ? (
+        <fieldset className="fr-fieldset fr-mt-2w">
+          <div className="fr-fieldset__content">
+            <div className="fr-radio-group">
+              <input
+                checked={estCible}
+                id={`cible-${structure.id}`}
+                name="cible-doublon"
+                onChange={onCible}
+                type="radio"
+              />
+              <label className="fr-label" htmlFor={`cible-${structure.id}`}>
+                Cible (destination)
+              </label>
+            </div>
           </div>
-        </div>
-      </fieldset>
+        </fieldset>
+      ) : null}
 
       {controles()}
     </div>
@@ -658,5 +682,6 @@ function styleCellule(niveau: NiveauDistance): CSSProperties {
 }
 
 type Props = Readonly<{
+  peutFusionner: boolean
   viewModel: ComparaisonViewModel
 }>
