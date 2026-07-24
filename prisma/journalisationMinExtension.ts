@@ -31,23 +31,27 @@ export const extensionJournalisationMin = Prisma.defineExtension((client) =>
         if (meta === undefined) {
           return query(args)
         }
+        // Dans une transaction journalisée, les lectures auxiliaires (snapshots, relectures,
+        // résolution de l'acteur) passent par le client de transaction : une seule connexion
+        // du pool et visibilité des écritures non commitées.
+        const clientContextuel = contexteJournalisationMin.getStore()?.clientTransaction ?? client
         switch (operation) {
           case 'create':
-            return traiterCreate(client, meta, args, query)
+            return traiterCreate(clientContextuel, meta, args, query)
           case 'createMany':
-            return traiterCreateMany(client, meta, args, query)
+            return traiterCreateMany(clientContextuel, meta, args, query)
           case 'createManyAndReturn':
-            return traiterCreateManyAndReturn(client, meta, args, query)
+            return traiterCreateManyAndReturn(clientContextuel, meta, args, query)
           case 'delete':
-            return traiterDelete(client, meta, args, query)
+            return traiterDelete(clientContextuel, meta, args, query)
           case 'deleteMany':
-            return traiterDeleteMany(client, meta, args, query)
+            return traiterDeleteMany(clientContextuel, meta, args, query)
           case 'update':
-            return traiterUpdate(client, meta, args, query)
+            return traiterUpdate(clientContextuel, meta, args, query)
           case 'updateMany':
-            return traiterUpdateMany(client, meta, args, query)
+            return traiterUpdateMany(clientContextuel, meta, args, query)
           case 'upsert':
-            return traiterUpsert(client, meta, args, query)
+            return traiterUpsert(clientContextuel, meta, args, query)
           default:
             return query(args)
         }

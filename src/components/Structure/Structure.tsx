@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement } from 'react'
+import { ReactElement, ReactNode } from 'react'
 
 import StructureAidantsMediateurs from './StructureAidantsMediateurs'
 import StructureContactReferent from './StructureContactReferent'
@@ -15,6 +15,7 @@ import { RattachementsStructureViewModel } from '@/presenters/rattachementsStruc
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export default function Structure({
+  activites,
   editionNomActive,
   peutGererStructure,
   rattachements,
@@ -48,6 +49,8 @@ export default function Structure({
           <StructureContratsRattaches contratsRattaches={viewModel.contratsRattaches} />
 
           <StructureAidantsMediateurs aidantsEtMediateurs={viewModel.aidantsEtMediateurs} />
+
+          {activites}
         </div>
       </div>
     </div>
@@ -55,6 +58,7 @@ export default function Structure({
 }
 
 type Props = Readonly<{
+  activites: ReactNode
   editionNomActive: boolean
   peutGererStructure: boolean
   rattachements: RattachementsStructureViewModel
@@ -81,5 +85,9 @@ const items: ReadonlyArray<SideMenuItem> = [
   {
     linkProps: { href: '#aidants' },
     text: 'Aidants et médiateurs',
+  },
+  {
+    linkProps: { href: '#activites' },
+    text: 'Activités',
   },
 ]

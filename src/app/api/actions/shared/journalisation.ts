@@ -11,6 +11,7 @@ export async function avecJournalisationMin<Retour>(fn: () => Promise<Retour>): 
     {
       actorId: undefined,
       bufferTransaction: null,
+      clientTransaction: null,
       async resoudreSub() {
         return (await getSession())?.user.sub
       },

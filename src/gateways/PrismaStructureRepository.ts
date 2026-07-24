@@ -50,11 +50,7 @@ export class PrismaStructureRepository
   async create(data: StructureData, tx?: Prisma.TransactionClient): Promise<Structure> {
     // Si pas de transaction fournie, en créer une pour garantir l'atomicité
     if (!tx) {
-      return journaliserTransaction(prisma, async () =>
-        prisma.$transaction(async (transaction) => {
-          return this.createWithTransaction(data, transaction)
-        })
-      )
+      return journaliserTransaction(prisma, async (transaction) => this.createWithTransaction(data, transaction))
     }
 
     return this.createWithTransaction(data, tx)

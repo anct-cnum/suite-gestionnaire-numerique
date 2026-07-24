@@ -124,11 +124,9 @@ describe('journalisation des événements MIN (source.min__evenements)', () => {
 
     // WHEN
     await avecContexte(async () =>
-      journaliserTransaction(prisma, async () =>
-        prisma.$transaction(async (transaction) => {
-          await transaction.regionRecord.create({ data: { code: REGION, nom: 'Journalisation' } })
-        })
-      )
+      journaliserTransaction(prisma, async (transaction) => {
+        await transaction.regionRecord.create({ data: { code: REGION, nom: 'Journalisation' } })
+      })
     )
 
     // THEN
@@ -142,12 +140,10 @@ describe('journalisation des événements MIN (source.min__evenements)', () => {
 
     // WHEN
     const promesse = avecContexte(async () =>
-      journaliserTransaction(prisma, async () =>
-        prisma.$transaction(async (transaction) => {
-          await transaction.regionRecord.create({ data: { code: REGION, nom: 'Journalisation' } })
-          throw new Error('rollback')
-        })
-      )
+      journaliserTransaction(prisma, async (transaction) => {
+        await transaction.regionRecord.create({ data: { code: REGION, nom: 'Journalisation' } })
+        throw new Error('rollback')
+      })
     )
 
     // THEN
@@ -209,6 +205,7 @@ async function avecContexte<Retour>(fn: () => Promise<Retour>): Promise<Retour> 
     {
       actorId: undefined,
       bufferTransaction: null,
+      clientTransaction: null,
       async resoudreSub() {
         return Promise.resolve(SSO)
       },
