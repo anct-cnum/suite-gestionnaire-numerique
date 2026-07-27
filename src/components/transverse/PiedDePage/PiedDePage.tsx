@@ -58,7 +58,7 @@ export default function PiedDePage(): ReactElement {
           <ul className="fr-footer__bottom-list">
             <li className="fr-footer__bottom-item">
               <Link className="fr-footer__bottom-link" href="/accessibilite">
-                Accessibilité : partiellement conforme
+                Accessibilité : non conforme
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
