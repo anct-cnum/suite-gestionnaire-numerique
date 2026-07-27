@@ -18,7 +18,6 @@ const MESSAGES_ECHEC: Readonly<Record<CanoniserFailure, string>> = {
   canonisationEchouee: 'La canonisation a échoué, aucune modification effectuée',
   entrepriseIntrouvable: 'Aucun établissement actif trouvé à l’INSEE pour ce SIRET',
   siretManquant: 'La structure n’a pas de SIRET : impossible d’interroger l’INSEE',
-  structureDejaCanonique: 'Cette structure est déjà canonique',
   structureIntrouvable: 'Structure introuvable ou déjà supprimée',
 }
 

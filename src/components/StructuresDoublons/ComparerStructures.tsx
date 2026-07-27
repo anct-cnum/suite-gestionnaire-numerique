@@ -496,7 +496,7 @@ function CarteStructure({
         ))}
       </dl>
 
-      {structure.estCanonique || !peutFusionner ? null : (
+      {peutFusionner ? (
         <div className="fr-mb-2w">
           <button
             className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-refresh-line fr-btn--icon-left"
@@ -518,7 +518,7 @@ function CarteStructure({
             </p>
           ) : null}
         </div>
-      )}
+      ) : null}
 
       <p className="fr-text--sm fr-text--bold fr-mb-1v">Détail des rattachements</p>
       {rattachementsDetail.length === 0 ? (
