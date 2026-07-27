@@ -42,7 +42,7 @@ describe('canoniser une structure', () => {
     expect(result).toBe('structureIntrouvable')
   })
 
-  it('refuse une structure déjà canonique', async () => {
+  it('re-synchronise une structure déjà canonique sur l’image INSEE courante', async () => {
     // GIVEN
     const canoniser = creerCanoniser({ structure: structure({ denominationAntenne: null }) })
 
@@ -50,7 +50,13 @@ describe('canoniser une structure', () => {
     const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
 
     // THEN
-    expect(result).toBe('structureDejaCanonique')
+    expect(result).toBe('OK')
+    expect(spiedCanonisation).toStrictEqual({
+      entreprise: entrepriseInsee,
+      geocode: geocodeInsee,
+      parUtilisateur: 'admin-1',
+      structureId: 1,
+    })
   })
 
   it('refuse une antenne sans SIRET', async () => {

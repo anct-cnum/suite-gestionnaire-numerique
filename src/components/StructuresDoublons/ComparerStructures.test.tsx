@@ -205,12 +205,13 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     expect(screen.queryByRole('checkbox', { name: /Fusionner/ })).not.toBeInTheDocument()
   })
 
-  it('désactive le CTA « Synchroniser avec INSEE » quand une canonique de même SIRET est présente', () => {
+  it('désactive le CTA « Synchroniser avec INSEE » sur l’antenne quand une canonique de même SIRET est présente', () => {
     // WHEN : l'antenne 7 partage son SIRET avec la canonique 3.
     renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />)
 
-    // THEN
-    expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeDisabled()
+    // THEN : la carte antenne (2e carte affichée) est désactivée par la collision.
+    const boutons = screen.getAllByRole('button', { name: 'Synchroniser avec l’INSEE' })
+    expect(boutons[1]).toBeDisabled()
     expect(screen.getByText(/Une structure canonique de même SIRET est déjà présente/)).toBeInTheDocument()
   })
 
@@ -225,7 +226,23 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
     renderComponent(<ComparerStructures peutFusionner={true} viewModel={viewModel} />)
 
     // THEN
-    expect(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' })).toBeEnabled()
+    const boutons = screen.getAllByRole('button', { name: 'Synchroniser avec l’INSEE' })
+    expect(boutons[1]).toBeEnabled()
+  })
+
+  it('affiche et active le CTA « Synchroniser avec INSEE » sur une structure déjà canonique, pour la re-synchroniser', () => {
+    // GIVEN : la canonique 3 n'entre en collision avec aucune autre canonique de même SIRET.
+    const viewModel: ComparaisonViewModel = [
+      carte({ denomination: 'Cible', estCanonique: true, id: 3 }),
+      carte({ denomination: 'Antenne', id: 7, siret: '99999999900099' }),
+    ]
+
+    // WHEN
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={viewModel} />)
+
+    // THEN : le bouton est aussi proposé sur la carte canonique elle-même (re-synchronisation).
+    const boutons = screen.getAllByRole('button', { name: 'Synchroniser avec l’INSEE' })
+    expect(boutons[0]).toBeEnabled()
   })
 
   it('affiche la comparaison en lecture seule sans aucune commande pour un administrateur non bêta-testeur', () => {
@@ -268,8 +285,8 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
       rechercherUneEntrepriseAction,
     })
 
-    // WHEN
-    fireEvent.click(screen.getByRole('button', { name: 'Synchroniser avec l’INSEE' }))
+    // WHEN : clic sur le bouton de l'antenne.
+    fireEvent.click(screen.getAllByRole('button', { name: 'Synchroniser avec l’INSEE' })[1])
 
     // THEN : l'ouverture de la modale déclenche la requête INSEE pour ce SIRET.
     await vi.waitFor(() => {

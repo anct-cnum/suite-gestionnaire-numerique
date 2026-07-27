@@ -2,10 +2,10 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AdresseGeocodeReadModel, BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 import { EntrepriseReadModel, SireneLoader } from '@/use-cases/queries/RechercherUneEntreprise'
 
-// Canoniser une structure = transformer une « antenne » (denomination_antenne non nul) en forme
-// canonique (denomination_antenne = null) en l'alignant sur l'image INSEE faisant autorité. Une
-// canonique DOIT être une image de l'INSEE : on écrase donc tous les champs descriptifs (dénomination
-// SIRENE, adresse, état administratif, APE, catégorie juridique) avec les données INSEE.
+// Canoniser une structure = écraser ses champs descriptifs (dénomination SIRENE, adresse, état
+// administratif, APE, catégorie juridique) avec son image INSEE, la source faisant autorité.
+// - Sur une antenne (denomination_antenne non nul) : la fait passer en forme canonique (denomination_antenne mis à null).
+// - Sur une structure déjà canonique : la re-synchronise simplement sur l'image INSEE courante.
 export class CanoniserStructure implements CommandHandler<Command, CanoniserFailure> {
   readonly #banGeocodingGateway: BanGeocodingGateway
   readonly #repository: CanoniserStructureRepository
@@ -25,10 +25,6 @@ export class CanoniserStructure implements CommandHandler<Command, CanoniserFail
     const structure = await this.#repository.lireStructure(command.structureId)
     if (structure === null || structure.deletedAt !== null) {
       return 'structureIntrouvable'
-    }
-    // Déjà canonique : rien à faire (et on ne re-synchronise pas via cette opération).
-    if (structure.denominationAntenne === null) {
-      return 'structureDejaCanonique'
     }
     // Sans SIRET, impossible d'interroger l'INSEE pour produire l'image canonique.
     if (structure.siret === null) {
@@ -89,7 +85,6 @@ export type CanoniserFailure =
   | 'canonisationEchouee'
   | 'entrepriseIntrouvable'
   | 'siretManquant'
-  | 'structureDejaCanonique'
   | 'structureIntrouvable'
 
 type Command = Readonly<{

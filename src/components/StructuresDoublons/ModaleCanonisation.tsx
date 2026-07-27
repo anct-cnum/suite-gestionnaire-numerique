@@ -73,7 +73,14 @@ export default function ModaleCanonisation({ isOpen, onClose, structure }: Props
     >
       <p className="fr-text--sm fr-text-mention--grey">
         La synchronisation aligne la structure sur son image INSEE (dénomination, adresse, état, activité, catégorie
-        juridique) et la rend <span className="fr-text--bold">canonique</span> (suppression du libellé d’antenne).
+        juridique){' '}
+        {structure.estCanonique ? (
+          'pour refléter les données INSEE les plus récentes.'
+        ) : (
+          <>
+            et la rend <span className="fr-text--bold">canonique</span> (suppression du libellé d’antenne).
+          </>
+        )}{' '}
         Action tracée et réservée aux administrateurs autorisés.
       </p>
       <Comparaison etat={etat} structure={structure} />
