@@ -39,7 +39,7 @@ describe('pied de page', () => {
     expect(liensReglementaires).toHaveLength(5)
 
     const lienAccessibilite = within(liensReglementaires[0]).getByRole('link', {
-      name: 'Accessibilité : partiellement conforme',
+      name: 'Accessibilité : non conforme',
     })
     expect(lienAccessibilite).toHaveAttribute('href', '/accessibilite')
 
