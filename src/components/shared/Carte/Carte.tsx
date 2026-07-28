@@ -242,6 +242,10 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         return
       }
 
+      const couleurActuelle =
+        document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+      map.current.setPaintProperty('background', 'background-color', couleurActuelle)
+
       map.current.addSource('decoupage', {
         tiles: ['https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf'],
         type: 'vector',
@@ -301,9 +305,12 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     })
 
     const observer = new MutationObserver(() => {
+      if (!map.current?.isStyleLoaded()) {
+        return
+      }
       const nouvelleCouleur =
         document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
-      map.current?.setPaintProperty('background', 'background-color', nouvelleCouleur)
+      map.current.setPaintProperty('background', 'background-color', nouvelleCouleur)
     })
     observer.observe(document.documentElement, { attributeFilter: ['data-fr-theme'] })
 
