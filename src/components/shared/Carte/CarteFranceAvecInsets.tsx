@@ -219,6 +219,9 @@ export default function CarteFranceAvecInsets({
       if (!mainMap.current) {
         return
       }
+      const couleurActuelle =
+        document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+      mainMap.current.setPaintProperty('background', 'background-color', couleurActuelle)
       addLayersToMap(mainMap.current)
       initializeMainMap()
       setMapsReady((prev) => prev + 1)
@@ -249,6 +252,9 @@ export default function CarteFranceAvecInsets({
       })
 
       domTomMap.on('load', () => {
+        const couleurActuelle =
+          document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
+        domTomMap.setPaintProperty('background', 'background-color', couleurActuelle)
         addLayersToMap(domTomMap, true, code)
         initializeDomTomMap(code, domTomMap)
         setMapsReady((prev) => prev + 1)
@@ -260,9 +266,13 @@ export default function CarteFranceAvecInsets({
     const observer = new MutationObserver(() => {
       const nouvelleCouleur =
         document.documentElement.getAttribute('data-fr-theme') === 'dark' ? COULEUR_FOND_SOMBRE : COULEUR_FOND_CLAIR
-      mainMap.current?.setPaintProperty('background', 'background-color', nouvelleCouleur)
+      if (mainMap.current?.isStyleLoaded()) {
+        mainMap.current.setPaintProperty('background', 'background-color', nouvelleCouleur)
+      }
       Object.values(domTomMaps.current).forEach((map) => {
-        map.setPaintProperty('background', 'background-color', nouvelleCouleur)
+        if (map.isStyleLoaded()) {
+          map.setPaintProperty('background', 'background-color', nouvelleCouleur)
+        }
       })
     })
     observer.observe(document.documentElement, { attributeFilter: ['data-fr-theme'] })
