@@ -30,10 +30,15 @@ export class PrismaStructureLoader implements StructureLoader {
     whereClause?: string,
     whereParams: ReadonlyArray<ReadonlyArray<string> | string> = []
   ): Promise<StructuresReadModel> {
-    const mots = match
-      .trim()
-      .split(/\s+/)
-      .filter((mot) => /\p{L}/u.test(mot))
+    const terme = match.trim()
+
+    // Un terme entierement numerique est interprete comme l'identifiant de la
+    // structure (celui visible dans l'URL /structure/<id>), cf. #1583.
+    if (/^\d+$/.test(terme)) {
+      return this.#rechercheParId(terme, whereClause, whereParams)
+    }
+
+    const mots = terme.split(/\s+/).filter((mot) => /\p{L}/u.test(mot))
 
     if (mots.length === 0) {
       return []
@@ -86,17 +91,43 @@ export class PrismaStructureLoader implements StructureLoader {
       LIMIT 10
     `
 
-    interface RawResult {
-      commune: null | string
-      id: number
-      is_fne: boolean
-      is_membre: boolean
-      nom: string
-    }
-
     const params = [...mots, ...whereParams]
     const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...params)
 
+    return this.#versReadModels(results)
+  }
+
+  async #rechercheParId(
+    id: string,
+    whereClause?: string,
+    whereParams: ReadonlyArray<ReadonlyArray<string> | string> = []
+  ): Promise<StructuresReadModel> {
+    const whereExtra = whereClause === undefined || whereClause === '' ? '' : `AND ${whereClause}`
+
+    const query = `
+      SELECT
+        sa.id,
+        COALESCE(sa.denomination_antenne, sa.denomination_sirene) AS nom,
+        a.nom_commune as commune,
+        EXISTS(SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id) as is_membre,
+        EXISTS(
+          SELECT 1 FROM min.membre m
+          WHERE m.structure_id = sa.id AND m.statut = 'confirme'
+        ) as is_fne
+      FROM main.structure_administrative sa
+      LEFT JOIN main.adresse a ON sa.adresse_id = a.id
+      WHERE sa.id::text = $1
+        AND COALESCE(sa.denomination_antenne, sa.denomination_sirene) IS NOT NULL
+        AND sa.deleted_at IS NULL
+      ${whereExtra}
+    `
+
+    const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, id, ...whereParams)
+
+    return this.#versReadModels(results)
+  }
+
+  #versReadModels(results: ReadonlyArray<RawResult>): StructuresReadModel {
     return results.map((row) => ({
       commune: row.commune ?? '',
       isFne: row.is_fne,
@@ -106,3 +137,11 @@ export class PrismaStructureLoader implements StructureLoader {
     }))
   }
 }
+
+type RawResult = Readonly<{
+  commune: null | string
+  id: number
+  is_fne: boolean
+  is_membre: boolean
+  nom: string
+}>
