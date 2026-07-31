@@ -57,7 +57,7 @@
     "@codegouvfr/react-dsfr": "^1.32.0",
     "@gouvfr-anct/lieux-de-mediation-numerique": "^2.3.0",
     "@gouvfr-anct/timetable-to-osm-opening-hours": "^2.1.0",
-    "@gouvfr/dsfr": "^1.14.4",
+    "@gouvfr/dsfr": "^1.15.1",
     "@next/bundle-analyzer": "^15.3.1",
     "@prisma/client": "^6.6.0",
     "@sentry/nextjs": "^9",
