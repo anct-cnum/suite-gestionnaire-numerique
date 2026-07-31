@@ -210,7 +210,27 @@ describe('menu lateral', () => {
     expect(maStructure).not.toBeInTheDocument()
   })
 
-  it("étant un utilisateur non gestionnaire de structure, quand j'affiche le menu latéral, alors Ma structure n'est pas visible", () => {
+  it("étant un gestionnaire de département avec une structure, quand j'affiche le menu latéral, alors Ma structure pointe vers sa structure", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral
+          contexte={
+            new Contexte('gestionnaire_departement', [
+              { code: '93', type: 'departement' },
+              { code: '42', type: 'structure' },
+            ])
+          }
+        />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const maStructure = screen.getByRole('link', { name: 'Ma structure' })
+    expect(maStructure).toHaveAttribute('href', '/structure/42')
+  })
+
+  it("étant un gestionnaire de département sans structure identifiée, quand j'affiche le menu latéral, alors Ma structure pointe vers la page d'explication", () => {
     // WHEN
     render(
       <menuActifContext.Provider value="/">
@@ -219,8 +239,8 @@ describe('menu lateral', () => {
     )
 
     // THEN
-    const maStructure = screen.queryByRole('link', { name: 'Ma structure' })
-    expect(maStructure).not.toBeInTheDocument()
+    const maStructure = screen.getByRole('link', { name: 'Ma structure' })
+    expect(maStructure).toHaveAttribute('href', '/ma-structure-non-identifiee')
   })
 
   it.each([

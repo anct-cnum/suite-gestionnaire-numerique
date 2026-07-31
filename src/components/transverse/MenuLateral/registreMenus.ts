@@ -44,6 +44,12 @@ const menuMaStructure: MenuItem = {
   url: (contexte) => `/structure/${contexte.idStructure()}`,
 }
 
+const menuMaStructureNonIdentifiee: MenuItem = {
+  icon: 'building-line',
+  label: 'Ma structure',
+  url: () => '/ma-structure-non-identifiee',
+}
+
 function codeTerritoireOuPremierDepartement(contexte: Contexte): string {
   const code = contexte.codeTerritoire()
   return code === 'France' ? '01' : code
@@ -120,6 +126,8 @@ function sectionOrganisationParContexte(contexte: Contexte): Section {
   const menus: Array<MenuItem> = []
   if (contexte.idStructure() !== 0) {
     menus.push(menuMaStructure)
+  } else if (contexte.aCesRoles('gestionnaire_departement')) {
+    menus.push(menuMaStructureNonIdentifiee)
   }
   menus.push(menuMonEquipe)
   return { menus, titre: 'ORGANISATION' }
