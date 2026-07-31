@@ -113,6 +113,97 @@ describe('structures loader', () => {
     })
   })
 
+  describe('recherche par identifiant', () => {
+    it('trouve une structure par son identifiant quand la recherche est entierement numerique', async () => {
+      // GIVEN
+      await createStructures()
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('416')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'NOISY-LE-GRAND',
+          isFne: false,
+          isMembre: false,
+          nom: 'GRAND PARIS GRAND EST',
+          uid: '416',
+        },
+      ])
+    })
+
+    it('ne trouve aucune structure quand aucun identifiant ne correspond', async () => {
+      // GIVEN
+      await createStructures()
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('99999')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([])
+    })
+
+    it("et un département, alors la structure n'est remontée que si elle appartient à ce département", async () => {
+      // GIVEN
+      await createStructures()
+
+      // WHEN
+      const dansLeDepartement = await new PrismaStructureLoader().structuresByDepartement('14', '06')
+      const horsDepartement = await new PrismaStructureLoader().structuresByDepartement('14', '93')
+
+      // THEN
+      expect(dansLeDepartement).toStrictEqual([
+        {
+          commune: 'GRASSE',
+          isFne: false,
+          isMembre: false,
+          nom: 'TETRIS',
+          uid: '14',
+        },
+      ])
+      expect(horsDepartement).toStrictEqual([])
+    })
+
+    it("et une région, alors la structure n'est remontée que si elle appartient à un département de cette région", async () => {
+      // GIVEN
+      await createStructures()
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structuresByRegion('14', '93')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([
+        {
+          commune: 'GRASSE',
+          isFne: false,
+          isMembre: false,
+          nom: 'TETRIS',
+          uid: '14',
+        },
+      ])
+    })
+
+    it('exclut les structures supprimées (soft-delete) de la recherche par identifiant', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement({ code: '10', nom: 'Aube' })
+      await creerUneStructure({
+        commune: 'TROYES',
+        deleted_at: epochTime,
+        departementCode: '10',
+        id: 100,
+        nom: "Conseil départemental de l'Aube",
+      })
+
+      // WHEN
+      const structureReadModel = await new PrismaStructureLoader().structures('100')
+
+      // THEN
+      expect(structureReadModel).toStrictEqual([])
+    })
+  })
+
   describe('recherche flexible avec trigrams et unaccent', () => {
     it('trouve une structure avec des mots non contigus', async () => {
       // GIVEN

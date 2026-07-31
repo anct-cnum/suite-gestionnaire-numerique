@@ -36,7 +36,8 @@ export default function SelecteurStructure({ ariaControlsId }: Props): ReactElem
 }
 
 async function chargerLesStructures(search: string): Promise<Array<StructureOption>> {
-  if (search.length < 3) {
+  // Le seuil de 3 caracteres ne s'applique pas aux identifiants de structure, qui peuvent etre courts
+  if (search.length < 3 && !/^\d+$/.test(search)) {
     return []
   }
   const response = await fetch(`/api/structures?search=${encodeURIComponent(search)}`)

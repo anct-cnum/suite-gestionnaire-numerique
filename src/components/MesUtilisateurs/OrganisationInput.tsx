@@ -61,7 +61,8 @@ export default function OrganisationInput({
   )
 
   async function onSearch(search: string): Promise<Array<OrganisationOption>> {
-    if (search.length < 3) {
+    // Le seuil de 3 caracteres ne s'applique pas aux identifiants de structure, qui peuvent etre courts
+    if (search.length < 3 && !/^\d+$/.test(search)) {
       return []
     }
     return fetch(`/api/structures?${makeSearchParams(search, extraSearchParams).toString()}`)

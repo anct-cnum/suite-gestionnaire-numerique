@@ -32,6 +32,23 @@ describe('sélecteur de structure (superadmin)', () => {
     })
   })
 
+  it('quand je tape un identifiant de structure de moins de 3 caractères alors la recherche est quand même lancée', async () => {
+    // GIVEN
+    vi.stubGlobal('fetch', vi.fn(structuresFetch))
+    const changerMaStructureAction = stubbedServerAction(['OK'])
+    afficherSelecteurStructure({ changerMaStructureAction })
+
+    // WHEN
+    const input = screen.getByLabelText('Structure')
+    fireEvent.change(input, { target: { value: '14' } })
+    await select(input, 'TETRIS — GRASSE')
+
+    // THEN
+    await waitFor(() => {
+      expect(changerMaStructureAction).toHaveBeenCalledWith({ idStructure: 14, path: '/' })
+    })
+  })
+
   it('quand la recherche aboutit, la liste affiche un badge FNE pour les structures FNE', async () => {
     // GIVEN
     vi.stubGlobal('fetch', vi.fn(structuresFetch))
