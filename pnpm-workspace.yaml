@@ -10,6 +10,12 @@ ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 
+# @gouvfr/dsfr-nexus est l'outillage de build interne du DSFR 1.15 (inutile ici : on ne consomme
+# que les assets dist précompilés) et il déclare des peerDependencies non publiées sur npm
+# (@gouvfr/dsfr-token, @gouvfr/dsfr-weave) qui font échouer l'installation
+overrides:
+  "@gouvfr/dsfr-nexus": "npm:empty-npm-package@1.0.0"
+
 minimumReleaseAge: 14400
 minimumReleaseAgeExclude:
   - next

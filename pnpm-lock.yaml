@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@gouvfr/dsfr-nexus': npm:empty-npm-package@1.0.0
+
 importers:
 
   .:
@@ -21,8 +24,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(typescript@5.9.3)
       '@gouvfr/dsfr':
-        specifier: ^1.14.4
-        version: 1.14.4
+        specifier: ^1.15.1
+        version: 1.15.1
       '@next/bundle-analyzer':
         specifier: ^15.3.1
         version: 15.5.14
@@ -1650,8 +1653,8 @@ packages:
   '@gouvfr-anct/timetable-to-osm-opening-hours@2.1.0':
     resolution: {integrity: sha512-P5UwarBy6BVtHdGFWGNsQa6gBRcIyo6PJH3iiPSr17Oua5FWokowSYfV0Tok86uD3V7tIlpfLS29H1Fg+xztNQ==}
 
-  '@gouvfr/dsfr@1.14.4':
-    resolution: {integrity: sha512-Ca17apmTyAF2tMFwMcLwQN7fTlbfMFeyYSLUIUmjoSg1XVF4vDDkbvvKBpWJWaoTLDSFZBbvvHzcDyxw9wSkLA==}
+  '@gouvfr/dsfr@1.15.1':
+    resolution: {integrity: sha512-e4ZyoMbqcb/ScY/BjucYIei4JRl6xAn4fjyYvcZJ8iGRzfZ3n4SfxKOD0CyIJcwZf8qir8IkAb9hrp0xkull0A==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@humanfs/core@0.19.1':
@@ -4600,6 +4603,9 @@ packages:
     resolution: {integrity: sha512-i6UzDscO/XfAcNYD75CfICkmfLedpyPDdozrLMmQc5ORaQcdMoc21OnlEylMIqI7U8eniKrPMxxtj8k0vhmJhA==}
     engines: {node: '>=14'}
 
+  empty-npm-package@1.0.0:
+    resolution: {integrity: sha512-q4Mq/+XO7UNDdMiPpR/LIBIW1Zl4V0Z6UT9aKGqIAnBCtCb3lvZJM1KbDbdzdC8fKflwflModfjR29Nt0EpcwA==}
+
   enhanced-resolve@5.20.1:
     resolution: {integrity: sha512-Qohcme7V1inbAfvjItgw0EaxVX5q2rdVEZHRBrEQdRZTssLDGsL8Lwrznl8oQ/6kuTJONLaDcGjkNP247XEhcA==}
     engines: {node: '>=10.13.0'}
@@ -5121,6 +5127,7 @@ packages:
   git-raw-commits@5.0.1:
     resolution: {integrity: sha512-Y+csSm2GD/PCSh6Isd/WiMjNAydu0VBiG9J7EdQsNA5P9uXvLayqjmTsNlK5Gs9IhblFZqOU0yid5Il5JPoLiQ==}
     engines: {node: '>=18'}
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   gl-matrix@3.4.4:
@@ -6700,6 +6707,7 @@ packages:
   recharts@2.15.4:
     resolution: {integrity: sha512-UT/q6fwS3c1dHbXv2uFgYJ9BMFHu3fwnd7AYZaEQhXuYQ4hgsxLvsUXzGdKeZrW5xopzDCvuA2N41WJ88I7zIw==}
     engines: {node: '>=14'}
+    deprecated: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
     peerDependencies:
       react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -7314,6 +7322,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -9625,7 +9634,9 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@gouvfr/dsfr@1.14.4': {}
+  '@gouvfr/dsfr@1.15.1':
+    dependencies:
+      '@gouvfr/dsfr-nexus': empty-npm-package@1.0.0
 
   '@humanfs/core@0.19.1': {}
 
@@ -12896,6 +12907,8 @@ snapshots:
   emoji-regex@9.2.2: {}
 
   empathic@2.0.0: {}
+
+  empty-npm-package@1.0.0: {}
 
   enhanced-resolve@5.20.1:
     dependencies:
