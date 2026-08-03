@@ -109,26 +109,25 @@ type FormationRecord = Readonly<{
   remn: boolean | null
 }>
 
-const labelsCCP = ['CCP1', 'CCP2', 'CCP2 & CCP3']
+const labelREMN = ['CCP2', 'CCP2 & CCP3']
 
 function categoriserCertifications(formation: FormationRecord): Array<string> {
-  const certifications: Array<string> = []
+  const estREMN = formation.remn === true || (formation.label !== null && labelREMN.includes(formation.label))
+  const estCCP1 = !estREMN && formation.label === 'CCP1'
+  const estPix = formation.pix === true
+  const estAutre = !estREMN && !estCCP1 && !estPix && formation.label !== null
 
-  if (formation.label !== null && labelsCCP.includes(formation.label)) {
-    certifications.push(formation.label)
-  }
-  if (formation.pix === true) {
-    certifications.push('Pix')
-  }
-  if (formation.remn === true) {
+  const certifications: Array<string> = []
+  if (estREMN) {
     certifications.push('REMN')
   }
-  if (
-    formation.label !== null &&
-    !labelsCCP.includes(formation.label) &&
-    formation.pix !== true &&
-    formation.remn !== true
-  ) {
+  if (estCCP1) {
+    certifications.push('CCP1')
+  }
+  if (estPix) {
+    certifications.push('Pix')
+  }
+  if (estAutre) {
     certifications.push('Autres')
   }
 
