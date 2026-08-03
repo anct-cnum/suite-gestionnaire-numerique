@@ -36,7 +36,7 @@ describe('lieu details presenter', () => {
     const readModel = createReadModel({ miseAJourLe })
 
     // WHEN
-    const viewModel = lieuDetailsPresenter(readModel, false, now)
+    const viewModel = lieuDetailsPresenter(readModel, false, false, now)
 
     // THEN
     expect(viewModel.header.fraicheur?.couleur).toBe(couleurAttendue)
@@ -48,7 +48,7 @@ describe('lieu details presenter', () => {
     const readModel = createReadModel({ editeur: 'coop', miseAJourLe: new Date('2024-11-23') })
 
     // WHEN
-    const viewModel = lieuDetailsPresenter(readModel, false, now)
+    const viewModel = lieuDetailsPresenter(readModel, false, false, now)
 
     // THEN
     expect(viewModel.header.fraicheur?.date).toBe('23/11/2024')
@@ -65,7 +65,7 @@ describe('lieu details presenter', () => {
     const readModel = createReadModel({ editeur, miseAJourLe: new Date('2024-11-23') })
 
     // WHEN
-    const viewModel = lieuDetailsPresenter(readModel, false, now)
+    const viewModel = lieuDetailsPresenter(readModel, false, false, now)
 
     // THEN
     expect(viewModel.header.fraicheur?.source).toBe(sourceAttendue)
@@ -76,7 +76,7 @@ describe('lieu details presenter', () => {
     const readModel = createReadModel({})
 
     // WHEN
-    const viewModel = lieuDetailsPresenter(readModel, false, now)
+    const viewModel = lieuDetailsPresenter(readModel, false, false, now)
 
     // THEN
     expect(viewModel.header.fraicheur).toBeUndefined()

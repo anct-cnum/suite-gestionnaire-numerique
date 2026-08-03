@@ -12,6 +12,8 @@ export interface LieuDetailsReadModel {
     adresse: string
     complementAdresse?: string
     nomStructure: string
+    siret?: string
+    typologies?: ReadonlyArray<string>
   }
   lieuAccueilPublic: {
     accessibilite?: string

@@ -23,6 +23,7 @@ import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisate
 import { modifierAdresseStructureAction } from '@/app/api/actions/modifierAdresseStructureAction'
 import { modifierContactReferentStructureAction } from '@/app/api/actions/modifierContactReferentStructureAction'
 import { modifierLieuInclusionDescriptionAction } from '@/app/api/actions/modifierLieuInclusionDescriptionAction'
+import { modifierLieuInclusionInformationsGeneralesAction } from '@/app/api/actions/modifierLieuInclusionInformationsGeneralesAction'
 import { modifierLieuInclusionInformationsPratiquesAction } from '@/app/api/actions/modifierLieuInclusionInformationsPratiquesAction'
 import { modifierLieuInclusionServicesModaliteAction } from '@/app/api/actions/modifierLieuInclusionServicesModaliteAction'
 import { modifierLieuInclusionServicesTypeAccompagnementAction } from '@/app/api/actions/modifierLieuInclusionServicesTypeAccompagnementAction'
@@ -36,6 +37,7 @@ import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNo
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { previsualiserAdresseAction } from '@/app/api/actions/previsualiserAdresseAction'
+import { rechercherAdressesAction } from '@/app/api/actions/rechercherAdressesAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { rejoindreUneGouvernanceAction } from '@/app/api/actions/rejoindreUneGouvernanceAction'
@@ -83,6 +85,7 @@ export default function ClientContext({
       modifierAdresseStructureAction,
       modifierContactReferentStructureAction,
       modifierLieuInclusionDescriptionAction,
+      modifierLieuInclusionInformationsGeneralesAction,
       modifierLieuInclusionInformationsPratiquesAction,
       modifierLieuInclusionServicesModaliteAction,
       modifierLieuInclusionServicesTypeAccompagnementAction,
@@ -97,6 +100,7 @@ export default function ClientContext({
       modifierUneNotePriveeAction,
       pathname,
       previsualiserAdresseAction,
+      rechercherAdressesAction,
       rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
       rejoindreUneGouvernanceAction,
@@ -145,6 +149,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierAdresseStructureAction: typeof modifierAdresseStructureAction
   modifierContactReferentStructureAction: typeof modifierContactReferentStructureAction
   modifierLieuInclusionDescriptionAction: typeof modifierLieuInclusionDescriptionAction
+  modifierLieuInclusionInformationsGeneralesAction: typeof modifierLieuInclusionInformationsGeneralesAction
   modifierLieuInclusionInformationsPratiquesAction: typeof modifierLieuInclusionInformationsPratiquesAction
   modifierLieuInclusionServicesModaliteAction: typeof modifierLieuInclusionServicesModaliteAction
   modifierLieuInclusionServicesTypeAccompagnementAction: typeof modifierLieuInclusionServicesTypeAccompagnementAction
@@ -159,6 +164,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
   previsualiserAdresseAction: typeof previsualiserAdresseAction
+  rechercherAdressesAction: typeof rechercherAdressesAction
   rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   rejoindreUneGouvernanceAction: typeof rejoindreUneGouvernanceAction

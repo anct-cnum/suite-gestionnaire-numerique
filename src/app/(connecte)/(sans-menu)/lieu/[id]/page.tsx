@@ -7,9 +7,12 @@ import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusi
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { lieuDetailsPresenter } from '@/presenters/LieuDetailsPresenter'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: "Détails du lieu d'inclusion ",
@@ -52,7 +55,16 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
     departementsGouvernances
   )
 
-  const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier, new Date())
+  // Édition des informations générales réservée aux bêta-testeurs.
+  const contexte = await resoudreContexte(await new PrismaUtilisateurLoader().findByUid(sub), new PrismaMembreLoader())
+  const peutModifierInformationsGenerales = peutModifier && contexte.isBetaTesteur
+
+  const presentedData = lieuDetailsPresenter(
+    lieuDetailsReadModel,
+    peutModifier,
+    peutModifierInformationsGenerales,
+    new Date()
+  )
 
   return (
     <>
