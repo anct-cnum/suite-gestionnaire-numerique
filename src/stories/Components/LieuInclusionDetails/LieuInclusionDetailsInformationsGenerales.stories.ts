@@ -22,6 +22,14 @@ type Story = StoryObj
 export const Default: Story = {
   args: {
     data: createDefaultInformationsGeneralesData(),
+    peutModifier: false,
+  },
+}
+
+export const Modifiable: Story = {
+  args: {
+    data: createDefaultInformationsGeneralesData(),
+    peutModifier: true,
   },
 }
 
@@ -33,6 +41,7 @@ export const AvecTousLesChamps: Story = {
       nomStructure: 'Maison des Services Publics de Lyon Métropole',
       siret: '12345678901234',
     },
+    peutModifier: false,
   },
 }
 
@@ -43,6 +52,7 @@ export const AvecSIRETSeulement: Story = {
       nomStructure: 'Centre Social Marseille Nord',
       siret: '98765432109876',
     },
+    peutModifier: false,
   },
 }
 
@@ -53,6 +63,7 @@ export const SansComplementAdresse: Story = {
       nomStructure: 'Point Numérique Montpellier Centre',
       siret: '11122233344556',
     },
+    peutModifier: false,
   },
 }
 
@@ -62,6 +73,7 @@ export const ChampsMinimaux: Story = {
       adresse: '3 Rue de la Poste, 35000 Rennes',
       nomStructure: 'Espace Public Numérique Rennes',
     },
+    peutModifier: false,
   },
 }
 
@@ -74,5 +86,6 @@ export const NomStructureLong: Story = {
         "Maison des Services Publics et de l'Inclusion Numérique de Paris 1er Arrondissement - Antenne Châtelet-Les Halles",
       siret: '13579246801357',
     },
+    peutModifier: false,
   },
 }
