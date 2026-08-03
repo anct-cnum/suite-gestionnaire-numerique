@@ -188,7 +188,14 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         formationConditions.push(Prisma.sql`f.remn = true OR f.label IN ('CCP2', 'CCP2 & CCP3')`)
       }
       if (otherFormations.includes('CCP1')) {
-        formationConditions.push(Prisma.sql`f.label = 'CCP1'`)
+        formationConditions.push(Prisma.sql`
+          f.label = 'CCP1'
+          AND NOT EXISTS (
+            SELECT 1 FROM main.formation f2
+            WHERE f2.personne_id = f.personne_id
+              AND (f2.remn = true OR f2.label IN ('CCP2', 'CCP2 & CCP3'))
+          )
+        `)
       }
       if (otherFormations.includes('PIX')) {
         formationConditions.push(Prisma.sql`f.pix = true`)

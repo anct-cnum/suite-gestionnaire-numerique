@@ -115,7 +115,7 @@ function categoriserCertifications(formation: FormationRecord): Array<string> {
   const estREMN = formation.remn === true || (formation.label !== null && labelREMN.includes(formation.label))
   const estCCP1 = !estREMN && formation.label === 'CCP1'
   const estPix = formation.pix === true
-  const estAutre = !estREMN && !estCCP1 && !estPix && formation.label !== null
+  const estAutre = !estREMN && !estCCP1 && !estPix
 
   const certifications: Array<string> = []
   if (estREMN) {
@@ -125,7 +125,7 @@ function categoriserCertifications(formation: FormationRecord): Array<string> {
     certifications.push('CCP1')
   }
   if (estPix) {
-    certifications.push('Pix')
+    certifications.push('PIX')
   }
   if (estAutre) {
     certifications.push('Autres')

@@ -144,9 +144,9 @@ export default function ListeAidantsMediateursFiltre({
         name="formations"
         onChange={setSelectedFormations}
         options={[
-          { label: 'CCP1', value: 'CCP1' },
           { label: 'PIX', value: 'PIX' },
           { label: 'REMN', value: 'REMN' },
+          { label: 'CCP1', value: 'CCP1' },
           { label: 'Sans formation', value: 'Sans formation' },
         ]}
         selectedValues={selectedFormations}
