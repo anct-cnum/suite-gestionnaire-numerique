@@ -184,17 +184,14 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const hasSansFormation = formations.includes('Sans formation')
       const otherFormations = formations.filter((formation) => formation !== 'Sans formation')
 
-      if (otherFormations.includes('PIX')) {
-        formationConditions.push(Prisma.sql`f.pix = true`)
-      }
       if (otherFormations.includes('REMN')) {
-        formationConditions.push(Prisma.sql`f.remn = true`)
+        formationConditions.push(Prisma.sql`f.remn = true OR f.label IN ('CCP2', 'CCP2 & CCP3')`)
       }
       if (otherFormations.includes('CCP1')) {
         formationConditions.push(Prisma.sql`f.label = 'CCP1'`)
       }
-      if (otherFormations.includes('CCP2 & CCP3')) {
-        formationConditions.push(Prisma.sql`f.label = 'CCP2 & CCP3'`)
+      if (otherFormations.includes('PIX')) {
+        formationConditions.push(Prisma.sql`f.pix = true`)
       }
       if (hasSansFormation) {
         formationConditions.push(Prisma.sql`(f.id IS NULL OR (f.pix = false AND f.remn = false AND f.label IS NULL))`)
@@ -240,12 +237,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private mapToAidant(personne: PersonneQueryResult): AidantMediateurReadModel {
-    const formations = [...personne.formations.filter((item) => Boolean(item) && item.trim() !== '')]
+    const labels = personne.formations.filter((item) => Boolean(item) && item.trim() !== '')
+    const estREMN = personne.remn || labels.some((label) => labelsREMN.includes(label))
+
+    const formations: Array<string> = []
+    if (estREMN) {
+      formations.push('REMN')
+    } else if (labels.includes('CCP1')) {
+      formations.push('CCP1')
+    }
     if (personne.pix) {
       formations.push('PIX')
-    }
-    if (personne.remn) {
-      formations.push('REMN')
     }
 
     const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
@@ -367,6 +369,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     `
   }
 }
+
+const labelsREMN = ['CCP2', 'CCP2 & CCP3']
 
 interface PersonneQueryResult {
   aidants_connect: boolean
