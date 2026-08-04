@@ -17,8 +17,9 @@ export const metadata: Metadata = {
   title: 'Membres',
 }
 
-export default async function MembresController({ params }: Props): Promise<ReactElement> {
+export default async function MembresController({ params, searchParams }: Props): Promise<ReactElement> {
   const { codeDepartement } = await params
+  const { role, typologie } = await searchParams
 
   if (!codeDepartement) {
     notFound()
@@ -33,7 +34,11 @@ export default async function MembresController({ params }: Props): Promise<Reac
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const peutGererGouvernance = contexte.peutGererGouvernance(codeDepartement)
 
-  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({ codeDepartement })
+  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({
+    codeDepartement,
+    role,
+    typologie,
+  })
 
   return (
     <>
@@ -57,6 +62,12 @@ type Props = Readonly<{
   params: Promise<
     Readonly<{
       codeDepartement: string
+    }>
+  >
+  searchParams: Promise<
+    Readonly<{
+      role?: string
+      typologie?: string
     }>
   >
 }>

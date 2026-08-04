@@ -1,9 +1,9 @@
+import { Prisma } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'
-import { toRoleViewModel } from '@/presenters/shared/role'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -29,10 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             id: 'asc',
           },
           where: {
-            AND: [
-              statut === null || statut === '' ? {} : { statut },
-              typologie === null || typologie === '' ? {} : { type: typologie },
-            ],
+            AND: [statut === null || statut === '' ? {} : { statut }, filtreParTypologie(typologie)],
           },
         },
       },
@@ -42,7 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     })
 
     const membres = toMembres(gouvernanceRecord.membres).filter(
-      (membre) => !role || membre.roles.some((membreRole) => toRoleViewModel(membreRole).nom === role)
+      (membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role)
     )
     const csvContent = generateCSV(membres)
 
@@ -59,6 +56,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
+}
+
+function filtreParTypologie(typologie: null | string): Prisma.MembreRecordWhereInput {
+  if (typologie === null) {
+    return {}
+  }
+  if (typologie === '') {
+    // « Autre » : membres dont la typologie n’est pas renseignée
+    return { OR: [{ type: null }, { type: '' }] }
+  }
+  return { type: typologie }
 }
 
 type MembreAvecContacts = Readonly<{

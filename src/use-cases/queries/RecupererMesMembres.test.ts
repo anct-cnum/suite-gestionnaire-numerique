@@ -168,6 +168,81 @@ describe('recuperer mes membres', () => {
         uidGouvernance: '69',
       })
     })
+
+    it('alors quand un rôle est demandé, on ne retourne que les membres ayant ce rôle, sans réduire les rôles et typologies disponibles', async () => {
+      // GIVEN
+      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
+
+      // WHEN
+      const mesMembres = await queryHandler.handle({ codeDepartement: '69', role: 'coporteur' })
+
+      // THEN
+      expect(mesMembres.membres.map((membre) => membre.uid)).toStrictEqual([
+        'prefecture-69',
+        'departement-69-69',
+        'epci-200066587-69',
+        'structure-38012986643097-69',
+        'structure-33805291300063-69',
+      ])
+      expect(mesMembres.roles).toStrictEqual([
+        'beneficiaire',
+        'cofinanceur',
+        'coporteur',
+        'observateur',
+        'recipiendaire',
+      ])
+      expect(mesMembres.typologies).toStrictEqual([
+        '',
+        'Association',
+        'Collectivité, conseil départemental',
+        'Collectivité, EPCI',
+        'Entreprise privée',
+        'Préfecture départementale',
+      ])
+    })
+
+    it('alors quand une typologie est demandée, on ne retourne que les membres ayant cette typologie', async () => {
+      // GIVEN
+      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
+
+      // WHEN
+      const mesMembres = await queryHandler.handle({ codeDepartement: '69', typologie: 'Association' })
+
+      // THEN
+      expect(mesMembres.membres.map((membre) => membre.uid)).toStrictEqual([
+        'structure-42985163700034-69',
+        'structure-33805291300062-69',
+        'structure-79227291600034-69',
+        'structure-77567227224553-69',
+        'structure-33805291300063-69',
+      ])
+    })
+
+    it('alors quand la typologie vide est demandée, on ne retourne que les membres sans typologie', async () => {
+      // GIVEN
+      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
+
+      // WHEN
+      const mesMembres = await queryHandler.handle({ codeDepartement: '69', typologie: '' })
+
+      // THEN
+      expect(mesMembres.membres.map((membre) => membre.uid)).toStrictEqual(['structure-77978721700057-69'])
+    })
+
+    it('alors quand un rôle et une typologie sont demandés, on ne retourne que les membres correspondant aux deux filtres', async () => {
+      // GIVEN
+      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
+
+      // WHEN
+      const mesMembres = await queryHandler.handle({
+        codeDepartement: '69',
+        role: 'coporteur',
+        typologie: 'Association',
+      })
+
+      // THEN
+      expect(mesMembres.membres.map((membre) => membre.uid)).toStrictEqual(['structure-33805291300063-69'])
+    })
   })
 })
 
