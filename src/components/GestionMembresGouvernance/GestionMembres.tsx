@@ -258,9 +258,17 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         <button
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
           onClick={() => {
-            window.open(
-              `/api/export/contacts-membres-csv?codeDepartement=${membresViewModel.uidGouvernance}&statut=${membresView.statutSelectionne}`
-            )
+            const params = new URLSearchParams({
+              codeDepartement: membresViewModel.uidGouvernance,
+              statut: membresView.statutSelectionne,
+            })
+            if (membresView.roleSelectionne !== toutRole) {
+              params.set('role', membresView.roleSelectionne)
+            }
+            if (membresView.typologieSelectionnee !== touteTypologie) {
+              params.set('typologie', membresView.typologieSelectionnee)
+            }
+            window.open(`/api/export/contacts-membres-csv?${params.toString()}`)
           }}
           type="button"
         >

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'
+import { toRoleViewModel } from '@/presenters/shared/role'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -17,6 +18,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const statut = request.nextUrl.searchParams.get('statut')
+    const role = request.nextUrl.searchParams.get('role')
+    const typologie = request.nextUrl.searchParams.get('typologie')
 
     const gouvernanceRecord = await prisma.gouvernanceRecord.findUniqueOrThrow({
       include: {
@@ -25,7 +28,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           orderBy: {
             id: 'asc',
           },
-          where: statut === null || statut === '' ? undefined : { statut },
+          where: {
+            AND: [
+              statut === null || statut === '' ? {} : { statut },
+              typologie === null || typologie === '' ? {} : { type: typologie },
+            ],
+          },
         },
       },
       where: {
@@ -33,7 +41,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
 
-    const membres = toMembres(gouvernanceRecord.membres)
+    const membres = toMembres(gouvernanceRecord.membres).filter(
+      (membre) => !role || membre.roles.some((membreRole) => toRoleViewModel(membreRole).nom === role)
+    )
     const csvContent = generateCSV(membres)
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
