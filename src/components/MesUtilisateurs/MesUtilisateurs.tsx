@@ -27,7 +27,11 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
   const modalId = 'supprimer-un-utilisateur'
   const drawerInvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isDrawerInvitationOpen, setIsDrawerInvitationOpen] = useState(false)
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerFiltreOpen, setIsDrawerFiltreOpen] = useState(false)
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerDetailsOpen, setIsDrawerDetailsOpen] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
   const [termesDeRechercheNomOuEmail, setTermesDeRechercheNomOuEmail] = useState('')
@@ -107,7 +111,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
           className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mt-6w"
           data-fr-opened="false"
           onClick={() => {
-            setIsDrawerOpen(true)
+            setIsDrawerInvitationOpen(true)
           }}
           style={{ flexShrink: 0 }}
           type="button"
@@ -118,18 +122,18 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
       <Drawer
         boutonFermeture="Fermer l’invitation"
         closeDrawer={() => {
-          setIsDrawerOpen(false)
+          setIsDrawerInvitationOpen(false)
         }}
         id={drawerInvitationId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
-        isOpen={isDrawerOpen}
+        isOpen={isDrawerInvitationOpen}
         labelId={labelInvitationId}
         ref={drawerInvitationRef}
       >
         <InviterUnUtilisateur
           closeDrawer={() => {
-            setIsDrawerOpen(false)
+            setIsDrawerInvitationOpen(false)
           }}
           dialogRef={drawerInvitationRef}
           labelId={labelInvitationId}
@@ -141,17 +145,17 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
           <Drawer
             boutonFermeture="Fermer les filtres"
             closeDrawer={() => {
-              setIsDrawerOpen(false)
+              setIsDrawerFiltreOpen(false)
             }}
             id={drawerFiltreId}
             // Stryker disable next-line BooleanLiteral
             isFixedWidth={false}
-            isOpen={isDrawerOpen}
+            isOpen={isDrawerFiltreOpen}
             labelId={labelFiltreId}
           >
             <FiltrerMesUtilisateurs
               closeDrawer={() => {
-                setIsDrawerOpen(false)
+                setIsDrawerFiltreOpen(false)
               }}
               id={drawerFiltreId}
               labelId={labelFiltreId}
@@ -180,7 +184,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
                 className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
                 data-fr-opened="false"
                 onClick={() => {
-                  setIsDrawerOpen(true)
+                  setIsDrawerFiltreOpen(true)
                 }}
                 type="button"
               >
@@ -272,12 +276,12 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
       <Drawer
         boutonFermeture="Fermer les détails"
         closeDrawer={() => {
-          setIsDrawerOpen(false)
+          setIsDrawerDetailsOpen(false)
         }}
         id={drawerDetailsId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
-        isOpen={isDrawerOpen}
+        isOpen={isDrawerDetailsOpen}
         labelId={labelDetailsId}
       >
         <DetailsUtilisateur labelId={labelDetailsId} utilisateur={utilisateurSelectionne} />
@@ -309,7 +313,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
     return () => {
       if (unUtilisateurViewModel.isActif) {
         setUtilisateurSelectionne(unUtilisateurViewModel)
-        setIsDrawerOpen(true)
+        setIsDrawerDetailsOpen(true)
       } else {
         setUtilisateurEnAttenteSelectionne({
           email: unUtilisateurViewModel.emailDeContact,
