@@ -64,6 +64,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
           remn: true,
         },
         where: {
+          OR: [{ label: { not: null } }, { remn: true }, { pix: true }],
           personne_id: { in: personnesIds },
         },
       })
@@ -115,7 +116,6 @@ function categoriserCertifications(formation: FormationRecord): Array<string> {
   const estREMN = formation.remn === true || (formation.label !== null && labelREMN.includes(formation.label))
   const estCCP1 = !estREMN && formation.label === 'CCP1'
   const estPix = formation.pix === true
-  const estAutre = !estREMN && !estCCP1 && !estPix
 
   const certifications: Array<string> = []
   if (estREMN) {
@@ -126,9 +126,6 @@ function categoriserCertifications(formation: FormationRecord): Array<string> {
   }
   if (estPix) {
     certifications.push('PIX')
-  }
-  if (estAutre) {
-    certifications.push('Autres')
   }
 
   return certifications
