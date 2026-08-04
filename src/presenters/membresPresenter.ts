@@ -7,7 +7,7 @@ export function membresPresenter(mesMembresReadModel: MesMembresReadModel): Memb
   return {
     autorisations: mesMembresReadModel.autorisations,
     departement: mesMembresReadModel.departement,
-    roles: mesMembresReadModel.roles.map(toRoleViewModel),
+    roles: mesMembresReadModel.roles.map((role) => ({ label: toRoleViewModel(role).nom, value: role })),
     typologies: mesMembresReadModel.typologies.map(handleTypologieIndefinie('simple')),
     ...membresParStatut(mesMembresReadModel.membres, mesMembresReadModel.uidGouvernance),
     uidGouvernance: mesMembresReadModel.uidGouvernance,
@@ -23,7 +23,12 @@ export type MembresViewModel = Readonly<{
   candidats: ReadonlyArray<MembreViewModel>
   departement: string
   membres: ReadonlyArray<MembreViewModel>
-  roles: ReadonlyArray<RoleViewModel>
+  roles: ReadonlyArray<
+    Readonly<{
+      label: string
+      value: string
+    }>
+  >
   supprimer: ReadonlyArray<MembreViewModel>
   typologies: ReadonlyArray<TypologieViewModel>
   uidGouvernance: string
