@@ -33,6 +33,7 @@ export function dsfrSelectStyles<Option, IsMulti extends boolean = false>(): Sty
     input: (base) => ({
       ...base,
       color: 'var(--text-default-grey)',
+      visibility: base.visibility === 'hidden' ? 'hidden' : 'inherit',
     }),
     menu: (base) => ({
       ...base,
