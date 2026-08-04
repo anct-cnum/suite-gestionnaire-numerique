@@ -12,7 +12,7 @@ export type FiltreHabilitations = ReadonlyArray<
   'Aidants Connect' | 'Conseiller numérique' | 'Sans habilitation/labellisation'
 >
 
-export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN' | 'Sans formation'>
+export type FiltreFormations = ReadonlyArray<'CCP1' | 'PIX' | 'REMN' | 'Sans formation'>
 
 export type FiltresListeAidants = Readonly<{
   anciens?: boolean
