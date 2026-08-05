@@ -106,6 +106,7 @@ describe('supprimer un lieu d’inclusion action', () => {
 
 const lieuDetailsReadModel: LieuDetailsReadModel = {
   codeDepartement: '75',
+  estArchive: false,
   header: {
     nom: 'Mon lieu',
     tags: [],

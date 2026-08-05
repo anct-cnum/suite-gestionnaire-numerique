@@ -32,7 +32,6 @@ import {
 } from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusion({
-  estSuperAdmin,
   listeLieuxInclusionViewModel,
   peutSupprimer,
   searchParams,
@@ -263,21 +262,19 @@ export default function ListeLieuxInclusion({
               Lieux actuels ({viewModel.totalActifs})
             </button>
           </li>
-          {estSuperAdmin ? (
-            <li className="fr-nav__item">
-              <button
-                aria-current={estOngletArchives}
-                className="fr-nav__link"
-                onClick={() => {
-                  changerOnglet(true)
-                }}
-                role="tab"
-                type="button"
-              >
-                Lieux archivés ({viewModel.totalArchives})
-              </button>
-            </li>
-          ) : null}
+          <li className="fr-nav__item">
+            <button
+              aria-current={estOngletArchives}
+              className="fr-nav__link"
+              onClick={() => {
+                changerOnglet(true)
+              }}
+              role="tab"
+              type="button"
+            >
+              Lieux archivés ({viewModel.totalArchives})
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -561,7 +558,10 @@ function LigneLieu({
             whiteSpace: 'nowrap',
           }}
         >
-          <AdresseLieu adresse={lieu.adresse} idCartographieNationale={lieu.idCartographieNationale} />
+          <AdresseLieu
+            adresse={lieu.adresse}
+            idCartographieNationale={lieu.visiblePourCartographie ? lieu.idCartographieNationale : null}
+          />
         </div>
       </td>
       {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
@@ -734,7 +734,6 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 }
 
 type Props = Readonly<{
-  estSuperAdmin: boolean
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
   peutSupprimer: boolean
   searchParams: SerializedSearchParams

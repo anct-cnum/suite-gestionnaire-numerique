@@ -28,11 +28,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const { searchParams } = new URL(request.url)
 
-    // L'export des lieux archivés est réservé aux super admins
-    if (searchParams.get('statut') === 'archives' && !contexte.isSuperAdmin) {
-      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
-    }
-
     const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
 

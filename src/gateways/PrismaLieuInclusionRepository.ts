@@ -58,6 +58,8 @@ export class PrismaLieuInclusionRepository
         deleted_at: data.date,
         edited_by: 'min',
         updated_at_min: data.date,
+        // Un lieu supprimé ne doit plus être publié sur la cartographie nationale.
+        visible_pour_cartographie_nationale: false,
       },
       where: {
         id: data.structureUid.state.value,

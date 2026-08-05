@@ -87,6 +87,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       code_postal: null | string
       complement_adresse: null | string
       contact: null | Record<string, unknown>
+      deleted_at: Date | null
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       frais_a_charge: Array<string> | null
@@ -126,6 +127,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
     return {
       codeDepartement,
+      estArchive: structure.deleted_at !== null,
       header: {
         editeur: structure.edited_by ?? undefined,
         miseAJourLe: structure.updated_at ?? undefined,
@@ -338,6 +340,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       code_postal: null | string
       complement_adresse: null | string
       contact: null | Record<string, unknown>
+      deleted_at: Date | null
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       est_frr: boolean
@@ -389,6 +392,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.frais_a_charge,
         l.services,
         l.updated_at,
+        l.deleted_at,
         l.edited_by,
         l.siret_a_l_enrichissement,
         l.complement_adresse,
@@ -423,7 +427,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         LIMIT 1
       ) sa_first ON true
       WHERE l.id = ${parseInt(id, 10)}
-        AND l.deleted_at IS NULL
     `
   }
 }
