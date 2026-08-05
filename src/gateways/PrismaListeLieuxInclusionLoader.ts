@@ -62,7 +62,8 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
   private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
     const { geographique, scopeFiltre, statut } = filtres
-    const filtreStatut = this.buildFiltreStatut(statut)
+    // Les lieux supprimés (soft delete #1497) sont exclus quel que soit le statut.
+    const filtreStatut = Prisma.sql`AND l.deleted_at IS NULL ${this.buildFiltreStatut(statut)}`
 
     if (geographique) {
       const codesDepartements =
@@ -180,7 +181,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         GROUP BY pal.lieu_id
       )
       SELECT
-        l.id,
+        l.id::text AS id,
         l.nom,
         l.structure_cartographie_nationale_id,
         l.updated_at,

@@ -423,6 +423,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         LIMIT 1
       ) sa_first ON true
       WHERE l.id = ${parseInt(id, 10)}
+        AND l.deleted_at IS NULL
     `
   }
 }

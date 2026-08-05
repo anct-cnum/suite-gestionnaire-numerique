@@ -994,6 +994,7 @@ model main_lieu_inclusion {
   siret_a_l_enrichissement            String?                              @db.VarChar(14)
   nom_usage                           String?                              @db.VarChar(255)
   import_warnings                     Json?
+  deleted_at                          DateTime?                            @db.Timestamp(6)
   activites_coop                      activites_coop[]
   personne_affectations_lieu          main_personne_affectations_lieu[]
   adresse                             adresse?                             @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")

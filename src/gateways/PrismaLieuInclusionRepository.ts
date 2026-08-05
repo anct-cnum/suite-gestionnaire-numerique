@@ -26,6 +26,8 @@ import prisma from '../../prisma/prismaClient'
 import {
   AdresseLieuEnrichie,
   AdresseLieuSirene,
+  SupprimerLieuInclusionData,
+  SupprimerLieuInclusionRepository,
   UpdateLieuInclusionDescriptionData,
   UpdateLieuInclusionDescriptionRepository,
   UpdateLieuInclusionInformationsGeneralesData,
@@ -42,6 +44,7 @@ import {
 
 export class PrismaLieuInclusionRepository
   implements
+    SupprimerLieuInclusionRepository,
     UpdateLieuInclusionDescriptionRepository,
     UpdateLieuInclusionInformationsGeneralesRepository,
     UpdateLieuInclusionServicesModaliteRepository,
@@ -49,6 +52,19 @@ export class PrismaLieuInclusionRepository
     UpdateLieuInclusionServicesTypePublicRepository,
     UpdateLieuInclusionVisibiliteCartographieRepository
 {
+  async supprimer(data: SupprimerLieuInclusionData): Promise<void> {
+    await prisma.main_lieu_inclusion.update({
+      data: {
+        deleted_at: data.date,
+        edited_by: 'min',
+        updated_at_min: data.date,
+      },
+      where: {
+        id: data.structureUid.state.value,
+      },
+    })
+  }
+
   async updateDescription(data: UpdateLieuInclusionDescriptionData): Promise<void> {
     const existingStructure = await prisma.main_lieu_inclusion.findUnique({
       select: { contact: true },

@@ -91,6 +91,15 @@ export type UpdateLieuInclusionServicesTypePublicData = Readonly<{
   structureUid: StructureUid
 }>
 
+export interface SupprimerLieuInclusionRepository {
+  supprimer(data: SupprimerLieuInclusionData): Promise<void>
+}
+
+export type SupprimerLieuInclusionData = Readonly<{
+  date: Date
+  structureUid: StructureUid
+}>
+
 export interface UpdateLieuInclusionVisibiliteCartographieRepository {
   updateVisibiliteCartographie(data: UpdateLieuInclusionVisibiliteCartographieData): Promise<void>
 }

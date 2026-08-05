@@ -75,7 +75,7 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
           { label: presentedData.header.nom },
         ]}
       />
-      <LieuxInclusionDetails data={presentedData} />
+      <LieuxInclusionDetails data={presentedData} lieuId={id} peutSupprimer={peutModifier && contexte.isBetaTesteur} />
     </>
   )
 }
