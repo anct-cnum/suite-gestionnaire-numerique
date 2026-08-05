@@ -72,6 +72,7 @@ export default async function ListeLieuxInclusionController({
       <ListeLieuxInclusion
         estSuperAdmin={contexte.isSuperAdmin}
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
+        peutSupprimer={contexte.isBetaTesteur}
         searchParams={currentSearchParams}
         utilisateurRole={utilisateur.role.nom as TypologieRole}
       />

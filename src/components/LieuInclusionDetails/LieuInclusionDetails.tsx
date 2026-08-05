@@ -74,12 +74,17 @@ export type LieuInclusionDetailsData = Readonly<{
 }>
 
 export default function LieuxInclusionDetails(props: Props): ReactElement {
-  const { data } = props
+  const { data, lieuId, peutSupprimer } = props
 
   return (
     <>
       <div id="header">
-        <LieuInclusionDetailsHeader data={data.header} />
+        <LieuInclusionDetailsHeader
+          data={data.header}
+          suppression={
+            peutSupprimer ? { adresse: data.informationsGenerales.adresse, lieuId, nom: data.header.nom } : undefined
+          }
+        />
       </div>
 
       <div id="informations-generales">
@@ -111,4 +116,6 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
 
 type Props = Readonly<{
   data: LieuInclusionDetailsData
+  lieuId: string
+  peutSupprimer: boolean
 }>
