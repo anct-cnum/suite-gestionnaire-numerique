@@ -50,6 +50,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       codeRegion: estAdmin ? codeRegionDemande : undefined,
       formations: searchParams.get('formations') ?? undefined,
       habilitations: searchParams.get('habilitations') ?? undefined,
+      recherche: searchParams.get('recherche') ?? undefined,
       roles: searchParams.get('roles') ?? undefined,
     }
 

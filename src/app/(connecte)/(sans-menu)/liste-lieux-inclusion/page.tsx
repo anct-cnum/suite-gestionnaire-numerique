@@ -26,6 +26,7 @@ export default async function ListeLieuxInclusionController({
     codeRegion?: string
     frr?: string
     horsZonePrioritaire?: string
+    nom?: string
     page?: string
     qpv?: string
     statut?: string
@@ -58,7 +59,7 @@ export default async function ListeLieuxInclusionController({
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut } = resolvedSearchParams
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, nom, page, qpv, statut } = resolvedSearchParams
   setSearchParams()
 
   return (
@@ -94,6 +95,9 @@ export default async function ListeLieuxInclusionController({
     }
     if (horsZonePrioritaire !== undefined && horsZonePrioritaire !== '') {
       currentSearchParams.set('horsZonePrioritaire', horsZonePrioritaire)
+    }
+    if (nom !== undefined && nom !== '') {
+      currentSearchParams.set('nom', nom)
     }
   }
 }

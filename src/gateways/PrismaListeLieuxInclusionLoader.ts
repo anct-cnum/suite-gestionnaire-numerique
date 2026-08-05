@@ -122,6 +122,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   private buildWhereConditions(filtres: FiltresListeLieux): Prisma.Sql {
     const conditions: Array<Prisma.Sql> = []
 
+    if (filtres.nom !== undefined && filtres.nom !== '') {
+      conditions.push(Prisma.sql`l.nom ILIKE ${motifRecherche(filtres.nom)}`)
+    }
     if (filtres.qpv === true) {
       conditions.push(Prisma.sql`EXISTS (
         SELECT 1 FROM admin.zonage z
@@ -243,4 +246,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
 
     return Number(result[0]?.total ?? 0)
   }
+}
+
+// Recherche partielle insensible à la casse : échappe les jokers LIKE (\ % _) de la saisie utilisateur.
+function motifRecherche(valeur: string): string {
+  return `%${valeur.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_')}%`
 }

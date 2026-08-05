@@ -11,6 +11,7 @@ export type FiltresListeLieux = Readonly<{
   frr?: boolean
   geographique?: FiltreGeographiqueLieux
   horsZonePrioritaire?: boolean
+  nom?: string
   pagination: Readonly<{ limite: number; page: number }>
   qpv?: boolean
   scopeFiltre: ScopeFiltre
