@@ -44,26 +44,19 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     }
   }
 
-  // Actif = au moins une affectation active sur le lieu ; archivé = aucune.
+  // Archivé = date de suppression renseignée (soft delete #1497) ; actif = non supprimé.
   private buildFiltreStatut(statut: StatutLieux): Prisma.Sql {
     if (statut === 'archive') {
-      return Prisma.sql`AND NOT EXISTS (
-        SELECT 1 FROM main.personne_affectations_lieu pal
-        WHERE pal.lieu_id = l.id AND pal.est_active = true
-      )`
+      return Prisma.sql`AND l.deleted_at IS NOT NULL`
     }
-    return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM main.personne_affectations_lieu pal
-      WHERE pal.lieu_id = l.id AND pal.est_active = true
-    )`
+    return Prisma.sql`AND l.deleted_at IS NULL`
   }
 
   // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
   // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
   private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
     const { geographique, scopeFiltre, statut } = filtres
-    // Les lieux supprimés (soft delete #1497) sont exclus quel que soit le statut.
-    const filtreStatut = Prisma.sql`AND l.deleted_at IS NULL ${this.buildFiltreStatut(statut)}`
+    const filtreStatut = this.buildFiltreStatut(statut)
 
     if (geographique) {
       const codesDepartements =
@@ -161,7 +154,8 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       WITH ${scopeCte},
       lieux_page AS (
         SELECT
-          l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.visible_pour_cartographie_nationale,
+          l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
+          l.visible_pour_cartographie_nationale,
           COALESCE(l.typologies::text[], '{}') AS typologies,
           a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
         FROM main.lieu_inclusion l
@@ -185,6 +179,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         l.nom,
         l.structure_cartographie_nationale_id,
         l.updated_at,
+        l.deleted_at,
         l.visible_pour_cartographie_nationale,
         l.typologies,
         l.numero_voie,
@@ -201,15 +196,12 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
           THEN true ELSE false
         END AS est_qpv,
         COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
-        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac,
-        EXISTS (
-          SELECT 1 FROM main.personne_affectations_lieu pal
-          WHERE pal.lieu_id = l.id AND pal.est_active = true
-        ) AS est_actif
+        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
       FROM lieux_page l
       LEFT JOIN main.activites_coop act ON act.lieu_id = l.id
       LEFT JOIN accompagnements_ac acc ON acc.lieu_id = l.id
-      GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.visible_pour_cartographie_nationale,
+      GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
+               l.visible_pour_cartographie_nationale,
                l.typologies, l.numero_voie, l.nom_voie, l.code_postal, l.nom_commune, l.code_insee,
                l.geom, acc.nbr
       ORDER BY l.nom ASC

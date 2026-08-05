@@ -2,6 +2,7 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface LieuDetailsReadModel {
   codeDepartement?: string
+  estArchive: boolean
   header: {
     editeur?: string
     miseAJourLe?: Date

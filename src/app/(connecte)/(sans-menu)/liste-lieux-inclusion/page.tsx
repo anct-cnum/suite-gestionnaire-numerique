@@ -48,11 +48,6 @@ export default async function ListeLieuxInclusionController({
 
   const resolvedSearchParams = await searchParams
 
-  // L'onglet "Lieux archivés" est réservé aux super admins
-  if (resolvedSearchParams.statut === 'archives' && !contexte.isSuperAdmin) {
-    redirect('/liste-lieux-inclusion')
-  }
-
   const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre)
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
@@ -70,7 +65,6 @@ export default async function ListeLieuxInclusionController({
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des lieux' }]} />
       <ListeLieuxInclusion
-        estSuperAdmin={contexte.isSuperAdmin}
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
         peutSupprimer={contexte.isBetaTesteur}
         searchParams={currentSearchParams}

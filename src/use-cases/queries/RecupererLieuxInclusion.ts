@@ -31,7 +31,7 @@ export interface RecupererLieuxInclusionReadModel {
 export interface LieuInclusionNumeriqueItem {
   code_insee: string
   code_postal: string
-  est_actif: boolean
+  deleted_at: Date | null
   est_frr: boolean
   est_qpv: boolean
   id: string
