@@ -50,6 +50,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         codeRegion: codeRegionDemande,
         frr: searchParams.get('frr') ?? undefined,
         horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
+        nom: searchParams.get('nom') ?? undefined,
         qpv: searchParams.get('qpv') ?? undefined,
         statut: searchParams.get('statut') ?? undefined,
       },

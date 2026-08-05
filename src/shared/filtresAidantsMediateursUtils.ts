@@ -16,6 +16,7 @@ export interface FiltresURLParams {
   formations?: string
   habilitations?: string
   page?: string
+  recherche?: string
   roles?: string
 }
 
@@ -42,7 +43,7 @@ export function buildFiltresListeAidants(
   utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeAidants {
-  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, roles } = params
+  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, recherche, roles } = params
 
   // Construction du filtre géographique - seulement pour les administrateurs
   let filtreGeographique: FiltreGeographique | undefined
@@ -74,6 +75,7 @@ export function buildFiltresListeAidants(
       limite,
       page: Number(page ?? '1'),
     },
+    recherche: nettoyerRecherche(recherche),
     roles: roles !== undefined && roles.length > 0 ? (roles.split(',') as FiltreRoles) : undefined,
     scopeFiltre,
   }
@@ -227,6 +229,11 @@ export function getActiveFilters(params: URLSearchParams): Array<{
   }
 
   return filtres
+}
+
+function nettoyerRecherche(valeur?: string): string | undefined {
+  const nettoye = valeur?.trim() ?? ''
+  return nettoye === '' ? undefined : nettoye
 }
 
 // Types pour les filtres internes utilisés dans les composants

@@ -28,6 +28,7 @@ export default async function ListeAidantsMediateursController({
     formations?: string
     habilitations?: string
     page?: string
+    recherche?: string
     roles?: string
   }>
 }): Promise<ReactElement> {
@@ -82,7 +83,8 @@ export default async function ListeAidantsMediateursController({
 
   // Passer les paramètres actuels pour l'affichage des filtres actifs
   const currentSearchParams = new URLSearchParams()
-  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, roles } = resolvedSearchParams
+  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, recherche, roles } =
+    resolvedSearchParams
   setSearchParams()
 
   return (
@@ -105,23 +107,11 @@ export default async function ListeAidantsMediateursController({
     if (anciens === 'true') {
       currentSearchParams.set('anciens', 'true')
     }
-    if (page !== undefined && page !== '') {
-      currentSearchParams.set('page', page)
-    }
-    if (codeDepartement !== undefined && codeDepartement !== '') {
-      currentSearchParams.set('codeDepartement', codeDepartement)
-    }
-    if (codeRegion !== undefined && codeRegion !== '') {
-      currentSearchParams.set('codeRegion', codeRegion)
-    }
-    if (roles !== undefined && roles !== '') {
-      currentSearchParams.set('roles', roles)
-    }
-    if (habilitations !== undefined && habilitations !== '') {
-      currentSearchParams.set('habilitations', habilitations)
-    }
-    if (formations !== undefined && formations !== '') {
-      currentSearchParams.set('formations', formations)
+    const parametres = { codeDepartement, codeRegion, formations, habilitations, page, recherche, roles }
+    for (const [cle, valeur] of Object.entries(parametres)) {
+      if (valeur !== undefined && valeur !== '') {
+        currentSearchParams.set(cle, valeur)
+      }
     }
   }
 }

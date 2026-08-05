@@ -7,6 +7,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState }
 import styles from './ListeLieuxInclusion.module.css'
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'
 import Badge from '../shared/Badge/Badge'
+import BarreRecherche from '../shared/BarreRecherche/BarreRecherche'
 import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
@@ -67,6 +68,11 @@ export default function ListeLieuxInclusion({
     if (estOngletArchives) {
       convertedParams.set('statut', 'archives')
     }
+    // Conserver la recherche par nom, indépendante des filtres du drawer
+    const nom = normalizedSearchParams.get('nom')
+    if (nom !== null && nom !== '') {
+      convertedParams.set('nom', nom)
+    }
 
     // Navigation avec délai (solution temporaire qui fonctionne)
     setTimeout(() => {
@@ -83,6 +89,20 @@ export default function ListeLieuxInclusion({
     setTimeout(() => {
       router.push(estOngletArchives ? '/liste-lieux-inclusion?statut=archives' : '/liste-lieux-inclusion')
     }, 150)
+  }
+
+  // Recherche par nom de lieu : pilotée par l'URL, cumulable avec les autres filtres
+  function rechercherParNom(valeur: string): void {
+    setIsFilterLoading(true)
+    const params = new URLSearchParams(normalizedSearchParams)
+    params.delete('page')
+    if (valeur === '') {
+      params.delete('nom')
+    } else {
+      params.set('nom', valeur)
+    }
+    const query = params.toString()
+    router.push(query === '' ? '/liste-lieux-inclusion' : `/liste-lieux-inclusion?${query}`)
   }
 
   // Changement d'onglet : on conserve les filtres mais on repart à la première page
@@ -276,6 +296,17 @@ export default function ListeLieuxInclusion({
             </button>
           </li>
         </ul>
+      </div>
+
+      {/* Recherche par nom de lieu */}
+      <div className="fr-grid-row fr-mb-2w">
+        <div className="fr-col-12 fr-col-md-4">
+          <BarreRecherche
+            label="Rechercher par nom de lieu"
+            rechercher={rechercherParNom}
+            valeurInitiale={normalizedSearchParams.get('nom') ?? ''}
+          />
+        </div>
       </div>
 
       {/* Indicateur de filtres actifs */}
@@ -676,7 +707,7 @@ function buildExportParams(normalizedSearchParams: URLSearchParams, estOngletArc
     exportParams.set('statut', 'archives')
   }
 
-  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire']) {
+  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire', 'nom']) {
     const valeur = normalizedSearchParams.get(cle)
     if (valeur !== null && valeur !== '') {
       exportParams.set(cle, valeur)

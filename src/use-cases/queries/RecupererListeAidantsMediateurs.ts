@@ -23,6 +23,7 @@ export type FiltresListeAidants = Readonly<{
     limite: number
     page: number
   }>
+  recherche?: string
   roles?: FiltreRoles
   scopeFiltre: ScopeFiltre
 }>
