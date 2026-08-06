@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { StockageDocumentGateway } from './shared/StockageDocumentGateway'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerDocument } from './SupprimerDocument'
 import { Document, FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
@@ -12,6 +13,7 @@ import { epochTime } from '@/shared/testHelper'
 
 describe('supprimer un document d‘une feuille de route', () => {
   beforeEach(() => {
+    spiedDocumentSupprime = null
     spiedFeuilleDeRouteUidToFind = null
     spiedFeuilleDeRouteToUpdate = null
     spiedUtilisateurUidToFind = null
@@ -23,6 +25,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
+      new StockageDocumentGatewaySpy(),
       new GestionnaireRepositorySpy()
     )
 
@@ -37,6 +40,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(new FeuilleDeRouteUid(uidFeuilleDeRoute).state.value)
     expect(spiedFeuilleDeRouteToUpdate?.state.document).toBeUndefined()
+    expect(spiedDocumentSupprime).toBe(mockDocument.chemin)
     expect(result).toBe('OK')
   })
 
@@ -45,6 +49,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
+      new StockageDocumentGatewaySpy(),
       new GestionnaireAutreRepositorySpy()
     )
 
@@ -57,11 +62,13 @@ describe('supprimer un document d‘une feuille de route', () => {
 
     // THEN
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()
+    expect(spiedDocumentSupprime).toBeNull()
     expect(result).toBe('editeurNePeutPasSupprimerDocument')
   })
 })
 
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
+let spiedDocumentSupprime: null | string
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
@@ -87,6 +94,17 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
 
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
     spiedFeuilleDeRouteToUpdate = feuilleDeRoute
+    return Promise.resolve()
+  }
+}
+
+class StockageDocumentGatewaySpy implements StockageDocumentGateway {
+  async supprimer(cheminSupprime: string): Promise<void> {
+    spiedDocumentSupprime = cheminSupprime
+    return Promise.resolve()
+  }
+
+  async televerser(): Promise<void> {
     return Promise.resolve()
   }
 }
