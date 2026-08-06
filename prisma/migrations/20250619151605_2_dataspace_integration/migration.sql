@@ -1442,7 +1442,8 @@ CREATE TABLE main.lieu_inclusion (
     updated_at timestamp without time zone GENERATED ALWAYS AS (GREATEST(updated_at_carto, updated_at_coop, updated_at_min)) STORED,
     complement_adresse text,
     siret_a_l_enrichissement character varying(14),
-    nom_usage character varying(255)
+    nom_usage character varying(255),
+    deleted_at timestamp without time zone
 );
 
 

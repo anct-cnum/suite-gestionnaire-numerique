@@ -103,11 +103,12 @@ model UtilisateurRecord {
   relationRegion                  RegionRecord?                  @relation(fields: [regionCode], references: [code])
 
   comites                   ComiteRecord[]
-  notesPrivees              GouvernanceRecord[]         @relation("UtilisateurNotesPrivees")
-  noteDeContexte            GouvernanceRecord[]         @relation("UtilisateurnoteDeContexte")
+  notesPrivees              GouvernanceRecord[]            @relation("UtilisateurNotesPrivees")
+  noteDeContexte            GouvernanceRecord[]            @relation("UtilisateurnoteDeContexte")
   actionRecord              ActionRecord[]
   demandeDeSubventionRecord DemandeDeSubventionRecord[]
   FeuilleDeRouteRecord      FeuilleDeRouteRecord[]
+  feuilleDeRouteDocuments   FeuilleDeRouteDocumentRecord[]
 
   @@map("utilisateur")
   @@schema("min")
@@ -168,12 +169,29 @@ model FeuilleDeRouteRecord {
 
   oldUUID String? @map("old_uuid") @db.Uuid
 
-  relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
-  relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationMembre      MembreRecord?      @relation(fields: [porteurId], references: [id])
+  relationUtilisateur UtilisateurRecord?             @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationGouvernance GouvernanceRecord              @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationMembre      MembreRecord?                  @relation(fields: [porteurId], references: [id])
   action              ActionRecord[]
+  documents           FeuilleDeRouteDocumentRecord[]
 
   @@map("feuille_de_route")
+  @@schema("min")
+}
+
+model FeuilleDeRouteDocumentRecord {
+  id Int @id @default(autoincrement())
+
+  feuilleDeRouteId     Int      @map("feuille_de_route_id")
+  chemin               String   @unique
+  nom                  String
+  creation             DateTime
+  editeurUtilisateurId Int      @map("editeur_utilisateur_id")
+
+  relationFeuilleDeRoute FeuilleDeRouteRecord @relation(fields: [feuilleDeRouteId], references: [id])
+  relationUtilisateur    UtilisateurRecord    @relation(fields: [editeurUtilisateurId], references: [id])
+
+  @@map("feuille_de_route_document")
   @@schema("min")
 }
 
@@ -225,7 +243,9 @@ model MembreTransfertLogRecord {
   contactsDeplaces     Int      @map("contacts_deplaces")
   contactsSupprimes    Int      @map("contacts_supprimes")
   parUtilisateur       String   @map("par_utilisateur")
-  transfereLe          DateTime @default(now()) @map("transfere_le")
+  // @db.Timestamp(6) : la table a été créée à la main (et son miroir Flyway V106) avec
+  // TIMESTAMP — l'annotation évite que Prisma génère un ALTER vers son TIMESTAMP(3) par défaut.
+  transfereLe          DateTime @default(now()) @map("transfere_le") @db.Timestamp(6)
 
   @@map("membre_transfert_log")
   @@schema("min")

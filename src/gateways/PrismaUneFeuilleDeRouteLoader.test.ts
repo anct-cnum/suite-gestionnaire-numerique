@@ -7,6 +7,7 @@ import {
   creerUnCoFinancement,
   creerUnContact,
   creerUnDepartement,
+  creerUnDocumentDeFeuilleDeRoute,
   creerUneAction,
   creerUneDemandeDeSubvention,
   creerUneEnveloppeFinancement,
@@ -299,6 +300,38 @@ describe('récupérer une feuille de route loader', () => {
 
     // THEN
     expect(readModel.document).toBeUndefined()
+  })
+
+  it('quand une feuille de route est demandée et que son document est dans la table dédiée, alors le document renvoyé est celui de la table', async () => {
+    // GIVEN
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur({ id: uidUtilisateur })
+
+    await creerUneFeuilleDeRoute({
+      gouvernanceDepartementCode: codeDepartement,
+      id: Number(uidFeuilleDeRoute),
+      nom: 'Feuille de route 1',
+      pieceJointe: 'user/fooId/ancien-chemin.pdf',
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'Feuille de route 2026.pdf',
+    })
+
+    // WHEN
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
+
+    // THEN
+    expect(readModel.document).toStrictEqual({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      nom: 'Feuille de route 2026.pdf',
+    })
   })
 
   it('quand une feuille de route est demandée pour son identifiant unique non existant, alors une exception est levée', async () => {

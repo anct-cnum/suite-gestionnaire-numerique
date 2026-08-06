@@ -227,6 +227,23 @@ export async function creerUneFeuilleDeRoute(
   })
 }
 
+export async function creerUnDocumentDeFeuilleDeRoute(
+  override?: Partial<Prisma.FeuilleDeRouteDocumentRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
+): Promise<void> {
+  const client = tx ?? prisma
+  await client.feuilleDeRouteDocumentRecord.create({
+    data: {
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      creation: epochTime,
+      editeurUtilisateurId: 1,
+      feuilleDeRouteId: 1,
+      nom: 'feuille-de-route-fake.pdf',
+      ...override,
+    },
+  })
+}
+
 export async function creerUneAction(
   override?: Partial<Prisma.ActionRecordUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
