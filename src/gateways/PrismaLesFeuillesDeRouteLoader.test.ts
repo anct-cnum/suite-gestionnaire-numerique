@@ -7,6 +7,7 @@ import {
   creerUnCoFinancement,
   creerUnContact,
   creerUnDepartement,
+  creerUnDocumentDeFeuilleDeRoute,
   creerUneAction,
   creerUneDemandeDeSubvention,
   creerUneEnveloppeFinancement,
@@ -64,6 +65,7 @@ describe('récupérer les feuilles de route loader', () => {
       gouvernanceDepartementCode: '93',
       id: 1,
       nom: 'Feuille de route 1',
+      pieceJointe: 'ancienne-piece-jointe.pdf',
       porteurId: 'epci-200072056-93',
     })
     await creerUneFeuilleDeRoute({
@@ -126,6 +128,12 @@ describe('récupérer les feuilles de route loader', () => {
     })
     await creerUnCoFinancement({ actionId: 1, memberId: 'commune-94028-93', montant: 15_000 })
     await creerUnCoFinancement({ actionId: 3, memberId: 'structure-79227291600034-93', montant: 25_000 })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      editeurUtilisateurId: 1,
+      feuilleDeRouteId: 2,
+      nom: 'feuille-de-route-2026.pdf',
+    })
 
     // WHEN
     const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
@@ -135,6 +143,18 @@ describe('récupérer les feuilles de route loader', () => {
     // THEN
     expect(feuillesDeRouteReadModel.feuillesDeRoute[0].nom).to.equal('Feuille de route 2')
     expect(feuillesDeRouteReadModel.feuillesDeRoute[1].nom).to.equal('Feuille de route 1')
+    // La pièce jointe provient de la table dédiée quand la ligne existe…
+    expect(feuillesDeRouteReadModel.feuillesDeRoute[0].pieceJointe).toStrictEqual({
+      apercu: '',
+      emplacement: '',
+      nom: 'user/fooId/feuille-de-route-2026.pdf',
+    })
+    // …et de piece_jointe en repli sinon.
+    expect(feuillesDeRouteReadModel.feuillesDeRoute[1].pieceJointe).toStrictEqual({
+      apercu: '',
+      emplacement: '',
+      nom: 'ancienne-piece-jointe.pdf',
+    })
   })
 })
 

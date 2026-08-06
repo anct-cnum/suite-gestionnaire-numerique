@@ -7,6 +7,7 @@ import {
   creerUnBeneficiaireSubvention,
   creerUnComite,
   creerUnDepartement,
+  creerUnDocumentDeFeuilleDeRoute,
   creerUneAction,
   creerUneDemandeDeSubvention,
   creerUneEnveloppeFinancement,
@@ -118,6 +119,12 @@ describe('gouvernance loader', () => {
       demandeDeSubventionId: 3,
       membreId: 'structure-38012986643097-93',
     })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      editeurUtilisateurId: 0,
+      feuilleDeRouteId: 1,
+      nom: 'feuille-de-route-2026.pdf',
+    })
 
     // WHEN
     const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
@@ -125,6 +132,18 @@ describe('gouvernance loader', () => {
     // THEN
     expect(gouvernanceReadModel.uid).toBe('93')
     expect(gouvernanceReadModel.departement).toBe('Seine-Saint-Denis')
+    // La pièce jointe provient de la table dédiée quand la ligne existe…
+    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '1')?.pieceJointe).toStrictEqual({
+      apercu: '',
+      emplacement: '',
+      nom: 'user/fooId/feuille-de-route-2026.pdf',
+    })
+    // …et de piece_jointe en repli sinon.
+    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '5')?.pieceJointe).toStrictEqual({
+      apercu: '',
+      emplacement: '',
+      nom: 'feuille-de-route-fake.pdf',
+    })
   })
 
   it('quand une gouvernance est demandée par son code département inexistant, alors une erreur est levée', async () => {
