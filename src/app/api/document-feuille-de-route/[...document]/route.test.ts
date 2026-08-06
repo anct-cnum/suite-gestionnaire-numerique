@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { describe, expect, it, vi } from 'vitest'
 
 import { GET } from './route'
+import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
 
 describe('route de téléchargement de document', () => {
   it("devrait retourner une 200 quand l'utilisateur télécharge un document valide", async () => {
@@ -16,14 +17,18 @@ describe('route de téléchargement de document', () => {
     const res = {} as unknown as NextResponse
 
     // WHEN
-    const result = await GET(req, res, {
-      send: async () =>
-        Promise.resolve({
-          Body: {
-            transformToWebStream: () => ({}),
-          },
-        }),
-    } as unknown as S3Client)
+    const result = await GET(
+      req,
+      res,
+      new S3DocumentGateway({
+        send: async () =>
+          Promise.resolve({
+            Body: {
+              transformToWebStream: () => ({}),
+            },
+          }),
+      } as unknown as S3Client)
+    )
 
     // THEN
     expect(result.status).toBe(200)
@@ -47,9 +52,9 @@ describe('route de téléchargement de document', () => {
     const result = await GET(
       req,
       res,
-      {
+      new S3DocumentGateway({
         send: async () => Promise.reject(new Error('The specified key does not exist.')),
-      } as unknown as S3Client,
+      } as unknown as S3Client),
       captureException
     )
 
@@ -82,12 +87,12 @@ describe('route de téléchargement de document', () => {
     const result = await GET(
       req,
       res,
-      {
+      new S3DocumentGateway({
         send: async () =>
           Promise.resolve({
             Body: null,
           }),
-      } as unknown as S3Client,
+      } as unknown as S3Client),
       captureException
     )
 
@@ -116,10 +121,16 @@ describe('route de téléchargement de document', () => {
     const res = {} as unknown as NextResponse
 
     // WHEN
-    const result = GET(req, res)
+    const result = GET(
+      req,
+      res,
+      new S3DocumentGateway({
+        send: async () => Promise.reject(new Error('erreur non gérée')),
+      } as unknown as S3Client)
+    )
 
     // THEN
-    await expect(result).rejects.toThrow('Region is missing')
+    await expect(result).rejects.toThrow('erreur non gérée')
   })
 
   it('devrait retourner 400 et notifier Sentry quand le chemin contient un path traversal', async () => {
@@ -133,7 +144,7 @@ describe('route de téléchargement de document', () => {
     const captureException = vi.fn<typeof Sentry.captureException>()
 
     // WHEN
-    const result = await GET(req, res, {} as unknown as S3Client, captureException)
+    const result = await GET(req, res, {} as unknown as S3DocumentGateway, captureException)
 
     // THEN
     expect(result.status).toBe(400)
@@ -160,7 +171,7 @@ describe('route de téléchargement de document', () => {
     const res = {} as unknown as NextResponse
 
     // WHEN
-    const result = await GET(req, res, {} as unknown as S3Client)
+    const result = await GET(req, res, {} as unknown as S3DocumentGateway)
 
     // THEN
     expect(result.status).toBe(400)
