@@ -21,7 +21,7 @@ import {
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
-import { epochTimeMinusTwoDays } from '@/shared/testHelper'
+import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
@@ -50,6 +50,14 @@ describe('récupérer une feuille de route loader', () => {
       nom: 'Feuille de route 1',
       noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       porteurId: uidPorteur,
+    })
+    // Version historisée (close) : elle ne doit pas être exposée, seule la version courante l'est.
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/ancienne-version.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'ancienne-version.pdf',
+      suppression: epochTime,
     })
     await creerUnDocumentDeFeuilleDeRoute({
       chemin: 'user/fooId/feuille-de-route-fake.pdf',

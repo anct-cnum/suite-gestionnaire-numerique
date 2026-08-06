@@ -13,7 +13,6 @@ import { epochTime } from '@/shared/testHelper'
 
 describe('ajouter un document à une feuille de route', () => {
   beforeEach(() => {
-    spiedDocumentSupprime = null
     spiedDocumentTeleverse = null
     spiedFeuilleDeRouteUidToFind = null
     spiedFeuilleDeRouteToUpdate = null
@@ -45,11 +44,10 @@ describe('ajouter un document à une feuille de route', () => {
     expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(new FeuilleDeRouteUid(uidFeuilleDeRoute).state.value)
     expect(spiedDocumentTeleverse).toStrictEqual({ chemin, contenu })
     expect(spiedFeuilleDeRouteToUpdate?.state.document).toStrictEqual({ chemin, nom })
-    expect(spiedDocumentSupprime).toBeNull()
     expect(result).toBe('OK')
   })
 
-  it('quand un document est ajouté alors qu’un document existait déjà, alors l’ancien fichier est supprimé du stockage après l’enregistrement du nouveau', async () => {
+  it('quand un document est ajouté alors qu’un document existait déjà, alors le nouveau devient le document courant sans suppression du stockage', async () => {
     // GIVEN
     const ancienChemin = 'user/feuilleDeRouteFooId/ancien-document.pdf'
     const ajouterDocument = new AjouterDocument(
@@ -72,7 +70,6 @@ describe('ajouter un document à une feuille de route', () => {
     // THEN
     expect(spiedDocumentTeleverse).toStrictEqual({ chemin, contenu })
     expect(spiedFeuilleDeRouteToUpdate?.state.document).toStrictEqual({ chemin, nom })
-    expect(spiedDocumentSupprime).toBe(ancienChemin)
     expect(result).toBe('OK')
   })
 
@@ -106,7 +103,6 @@ const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 const chemin = 'user/feuilleDeRouteFooId/feuille-de-route-fake.pdf'
 const nom = 'feuille-de-route-fake.pdf'
 const contenu = Buffer.from('%PDF-1.4 contenu')
-let spiedDocumentSupprime: null | string
 let spiedDocumentTeleverse: null | Readonly<{ chemin: string; contenu: Buffer }>
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
@@ -132,11 +128,6 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
 }
 
 class StockageDocumentGatewaySpy implements StockageDocumentGateway {
-  async supprimer(cheminSupprime: string): Promise<void> {
-    spiedDocumentSupprime = cheminSupprime
-    return Promise.resolve()
-  }
-
   async televerser(cheminTeleverse: string, contenuTeleverse: Buffer): Promise<void> {
     spiedDocumentTeleverse = { chemin: cheminTeleverse, contenu: contenuTeleverse }
     return Promise.resolve()

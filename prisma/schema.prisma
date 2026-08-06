@@ -181,11 +181,12 @@ model FeuilleDeRouteRecord {
 model FeuilleDeRouteDocumentRecord {
   id Int @id @default(autoincrement())
 
-  feuilleDeRouteId     Int      @map("feuille_de_route_id")
-  chemin               String   @unique
+  feuilleDeRouteId     Int       @map("feuille_de_route_id")
+  chemin               String    @unique
   nom                  String
   creation             DateTime
-  editeurUtilisateurId Int      @map("editeur_utilisateur_id")
+  suppression          DateTime?
+  editeurUtilisateurId Int       @map("editeur_utilisateur_id")
 
   relationFeuilleDeRoute FeuilleDeRouteRecord @relation(fields: [feuilleDeRouteId], references: [id])
   relationUtilisateur    UtilisateurRecord    @relation(fields: [editeurUtilisateurId], references: [id])

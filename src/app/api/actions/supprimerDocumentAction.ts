@@ -9,7 +9,6 @@ import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
-import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerDocument } from '@/use-cases/commands/SupprimerDocument'
 
@@ -24,7 +23,6 @@ export async function supprimerDocumentAction(actionParam: ActionParams): Result
     const supprimerDocument = new SupprimerDocument(
       new PrismaFeuilleDeRouteRepository(),
       new PrismaGouvernanceRepository(),
-      new S3DocumentGateway(),
       new PrismaUtilisateurRepository(prisma.utilisateurRecord)
     )
     const result = await supprimerDocument.handle({

@@ -1,25 +1,21 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { StockageDocumentGateway } from './shared/StockageDocumentGateway'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class SupprimerDocument implements CommandHandler<Command> {
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
-  readonly #stockageDocumentGateway: StockageDocumentGateway
   readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     feuilleDeRouteRepository: FeuilleDeRouteRepository,
     gouvernanceRepository: GouvernanceRepository,
-    stockageDocumentGateway: StockageDocumentGateway,
     utilisateurRepository: UtilisateurRepository
   ) {
     this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#gouvernanceRepository = gouvernanceRepository
-    this.#stockageDocumentGateway = stockageDocumentGateway
     this.#utilisateurRepository = utilisateurRepository
   }
 
@@ -32,17 +28,10 @@ export class SupprimerDocument implements CommandHandler<Command> {
       return 'editeurNePeutPasSupprimerDocument'
     }
 
-    const cheminDocument = feuilleDeRoute.state.document?.chemin
-
+    // La version courante est close en base (historique) : ni la ligne ni le fichier S3 ne sont effacés.
     feuilleDeRoute.supprimerDocument()
     feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(command.date), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
-
-    // La base d'abord : si la suppression S3 échoue, on laisse un orphelin
-    // (rattrapé par le ménage de l'étape 4) plutôt qu'un lien mort.
-    if (cheminDocument !== undefined) {
-      await this.#stockageDocumentGateway.supprimer(cheminDocument)
-    }
 
     return 'OK'
   }
