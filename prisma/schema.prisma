@@ -162,7 +162,6 @@ model FeuilleDeRouteRecord {
   derniereEdition            DateTime? @map("derniere_edition")
   nom                        String
   noteDeContextualisation    String?   @map("note_de_contextualisation")
-  pieceJointe                String?   @map("piece_jointe")
   porteurId                  String?   @map("porteur_id")
   editeurUtilisateurId       String?   @map("editeur_utilisateur_id")
   perimetreGeographique      String?   @map("perimetre_geographique")

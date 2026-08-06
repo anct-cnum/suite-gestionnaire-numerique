@@ -49,8 +49,13 @@ describe('récupérer une feuille de route loader', () => {
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
       noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-      pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'feuille-de-route-fake.pdf',
     })
     await creerAction(uidAction1, true)
     await creerAction(uidAction2, false)
@@ -160,8 +165,13 @@ describe('récupérer une feuille de route loader', () => {
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
       noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-      pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'feuille-de-route-fake.pdf',
     })
     await creerAction(uidAction1, true)
     await creerAction(uidAction2, false)
@@ -290,7 +300,6 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      pieceJointe: null,
     })
 
     // WHEN
@@ -313,7 +322,6 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      pieceJointe: 'user/fooId/ancien-chemin.pdf',
     })
     await creerUnDocumentDeFeuilleDeRoute({
       chemin: 'user/fooId/feuille-de-route-fake.pdf',
@@ -345,7 +353,6 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      pieceJointe: null,
     })
 
     // WHEN
