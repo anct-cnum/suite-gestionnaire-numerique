@@ -32,6 +32,8 @@ export class AjouterDocument implements CommandHandler<Command> {
       return 'editeurNePeutPasAjouterDocument'
     }
 
+    const ancienChemin = feuilleDeRoute.state.document?.chemin
+
     // Les droits sont vérifiés avant le téléversement : un refus ne laisse aucun fichier orphelin dans le bucket.
     await this.#stockageDocumentGateway.televerser(command.chemin, command.contenu)
 
@@ -41,6 +43,13 @@ export class AjouterDocument implements CommandHandler<Command> {
     })
     feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(command.date), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
+
+    // Remplacement : l'ancien fichier n'est supprimé qu'une fois le nouveau téléversé et
+    // enregistré — jamais d'état intermédiaire sans document. Si cette suppression échoue,
+    // on laisse un orphelin (rattrapé par le ménage de l'étape 4) plutôt qu'un lien mort.
+    if (ancienChemin !== undefined && ancienChemin !== command.chemin) {
+      await this.#stockageDocumentGateway.supprimer(ancienChemin)
+    }
 
     return 'OK'
   }

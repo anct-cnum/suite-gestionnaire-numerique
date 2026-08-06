@@ -1,4 +1,6 @@
-import { ReactElement } from 'react'
+'use client'
+
+import { ChangeEvent, ReactElement, useRef } from 'react'
 
 import styles from './OuvrirPdf.module.css'
 import DocumentVide from '../DocumentVide/DocumentVide'
@@ -6,7 +8,16 @@ import ExternalLink from '../ExternalLink/ExternalLink'
 import Icon from '../Icon/Icon'
 import { isNullishOrEmpty } from '@/shared/lang'
 
-export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): ReactElement {
+export default function OuvrirPdf({
+  href,
+  isReplacing = false,
+  metadonnee,
+  nom,
+  onDelete,
+  onReplace,
+}: Props): ReactElement {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -23,13 +34,35 @@ export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): R
               Ouvrir le pdf
             </ExternalLink>
           </li>
+          {onReplace ? (
+            <li>
+              <button
+                className="fr-btn fr-btn--tertiary"
+                disabled={isReplacing}
+                onClick={() => {
+                  inputRef.current?.click()
+                }}
+                type="button"
+              >
+                {isReplacing ? 'Remplacement en cours...' : 'Remplacer'}
+              </button>
+              <input
+                accept=".pdf"
+                aria-label={`Remplacer ${nom}`}
+                className="fr-sr-only"
+                onChange={(event) => {
+                  void onReplace(event)
+                }}
+                ref={inputRef}
+                type="file"
+              />
+            </li>
+          ) : null}
           {onDelete ? (
             <li>
               <button
                 className="fr-btn fr-btn--tertiary color-red fr-ml-0"
-                onClick={() => {
-                  void onDelete()
-                }}
+                onClick={onDelete}
                 title={`Supprimer ${nom}`}
                 type="button"
               >
@@ -48,7 +81,9 @@ export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): R
 
 type Props = Readonly<{
   href: string
+  isReplacing?: boolean
   metadonnee?: string
   nom: string
-  onDelete?(): Promise<void>
+  onDelete?(): void
+  onReplace?(event: ChangeEvent<HTMLInputElement>): Promise<void>
 }>

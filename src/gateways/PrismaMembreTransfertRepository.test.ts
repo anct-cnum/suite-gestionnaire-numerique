@@ -129,8 +129,8 @@ async function seedBaseEtStructures(): Promise<void> {
   await creerUneRegion({ code: REGION, nom: 'Région de test transfert' })
   await creerUnDepartement({ code: DEPT, nom: 'Département de test transfert', regionCode: REGION })
   await creerUneGouvernance({ departementCode: DEPT })
-  await creerUneStructure({ id: SOURCE, siret: '99000100000001' })
-  await creerUneStructure({ id: CIBLE, siret: '99000100000002' })
+  await creerUneStructure({ id: SOURCE, nom: 'Structure transfert test source', siret: '99000100000001' })
+  await creerUneStructure({ id: CIBLE, nom: 'Structure transfert test cible', siret: '99000100000002' })
 }
 
 async function lier(contactId: number, structureId: number): Promise<void> {

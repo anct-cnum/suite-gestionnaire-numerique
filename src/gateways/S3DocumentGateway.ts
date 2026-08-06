@@ -1,6 +1,6 @@
 // eslint-disable devrait être inutile mais la configuration ne fonctionne pas sans ça
 /* eslint-disable import/no-restricted-paths */
-import { GetObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 
 import { StockageDocumentGateway } from '@/use-cases/commands/shared/StockageDocumentGateway'
 
@@ -31,6 +31,15 @@ export class S3DocumentGateway implements StockageDocumentGateway {
     )
 
     return objet.Body?.transformToWebStream()
+  }
+
+  async supprimer(chemin: string): Promise<void> {
+    await this.#s3.send(
+      new DeleteObjectCommand({
+        Bucket: this.#bucket,
+        Key: chemin,
+      })
+    )
   }
 
   async televerser(chemin: string, contenu: Buffer): Promise<void> {
