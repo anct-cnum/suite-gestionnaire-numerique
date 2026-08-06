@@ -1,21 +1,25 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { StockageDocumentGateway } from './shared/StockageDocumentGateway'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class AjouterDocument implements CommandHandler<Command> {
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
+  readonly #stockageDocumentGateway: StockageDocumentGateway
   readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     feuilleDeRouteRepository: FeuilleDeRouteRepository,
     gouvernanceRepository: GouvernanceRepository,
+    stockageDocumentGateway: StockageDocumentGateway,
     utilisateurRepository: UtilisateurRepository
   ) {
     this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#gouvernanceRepository = gouvernanceRepository
+    this.#stockageDocumentGateway = stockageDocumentGateway
     this.#utilisateurRepository = utilisateurRepository
   }
 
@@ -28,12 +32,14 @@ export class AjouterDocument implements CommandHandler<Command> {
       return 'editeurNePeutPasAjouterDocument'
     }
 
+    // Les droits sont vérifiés avant le téléversement : un refus ne laisse aucun fichier orphelin dans le bucket.
+    await this.#stockageDocumentGateway.televerser(command.chemin, command.contenu)
+
     feuilleDeRoute.ajouterDocument({
       chemin: command.chemin,
       nom: command.nom,
     })
-    // eslint-disable-next-line no-restricted-syntax
-    feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(), editeur)
+    feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(command.date), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
 
     return 'OK'
@@ -44,6 +50,8 @@ type Failure = 'editeurNePeutPasAjouterDocument'
 
 type Command = Readonly<{
   chemin: string
+  contenu: Buffer
+  date: string
   nom: string
   uidEditeur: string
   uidFeuilleDeRoute: string

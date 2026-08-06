@@ -1,25 +1,17 @@
 'use server'
 
-import { GetObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 
-const s3Config: S3ClientConfig = {
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY ?? '',
-    secretAccessKey: process.env.S3_SECRET_KEY ?? '',
-  },
-  endpoint: process.env.S3_ENDPOINT ?? '',
-  forcePathStyle: true,
-  region: process.env.S3_REGION,
-}
+import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
+import { isNullish } from '@/shared/lang'
 
 // Pas d'authentification requise : ces documents sont publics (exposés sur le site vitrine).
 // Les opérations d'écriture (upload, suppression) sont protégées dans leurs actions respectives.
 export async function GET(
   request: NextRequest,
   _response: NextResponse,
-  s3 = new S3Client(s3Config),
+  s3Gateway: S3DocumentGateway = new S3DocumentGateway(),
   captureException: typeof Sentry.captureException = Sentry.captureException
 ): Promise<NextResponse<null | object>> {
   const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
@@ -40,17 +32,11 @@ export async function GET(
   }
 
   try {
-    const key = nameFile
-    const recuperationPdf = await s3.send(
-      new GetObjectCommand({
-        Bucket: process.env.S3_BUCKET,
-        Key: key,
-      })
-    )
-    if (!recuperationPdf.Body) {
+    const flux = await s3Gateway.recuperer(nameFile)
+    if (isNullish(flux)) {
       throw new Error('document_empty_body')
     }
-    return new NextResponse(recuperationPdf.Body.transformToWebStream(), {
+    return new NextResponse(flux, {
       headers: {
         'Content-Disposition': `inline; filename="${encodeURIComponent(nameFile)}"`,
         'Content-Type': 'application/pdf',
