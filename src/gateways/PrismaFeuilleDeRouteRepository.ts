@@ -17,7 +17,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     const record = await prisma.feuilleDeRouteRecord.findUniqueOrThrow({
       include: {
-        documents: true,
+        documents: { where: { suppression: null } },
         relationUtilisateur: true,
       },
       where: {
@@ -74,8 +74,9 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return true
   }
 
-  // La table feuille_de_route_document est la seule source du document (étape 4 de la
-  // refonte : piece_jointe est décommissionnée).
+  // La table feuille_de_route_document est la seule source du document et porte l'historique :
+  // les anciennes versions ne sont jamais effacées, elles sont closes via la colonne suppression
+  // (version courante = suppression IS NULL). Les fichiers S3 sont conservés.
   async #synchroniserDocument(
     feuilleDeRoute: FeuilleDeRoute,
     feuilleDeRouteId: number,
@@ -83,9 +84,13 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   ): Promise<void> {
     const document = feuilleDeRoute.state.document
 
-    await tx.feuilleDeRouteDocumentRecord.deleteMany({
+    await tx.feuilleDeRouteDocumentRecord.updateMany({
+      data: {
+        suppression: feuilleDeRoute.state.dateDeModification,
+      },
       where: {
         feuilleDeRouteId,
+        suppression: null,
         ...(document ? { chemin: { not: document.chemin } } : {}),
       },
     })
@@ -105,6 +110,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         },
         update: {
           nom: document.nom,
+          suppression: null,
         },
         where: {
           chemin: document.chemin,

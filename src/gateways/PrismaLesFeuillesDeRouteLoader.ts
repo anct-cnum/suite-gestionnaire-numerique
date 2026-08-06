@@ -206,7 +206,7 @@ const include = {
       },
     },
   },
-  documents: true,
+  documents: { where: { suppression: null } },
   relationMembre: {
     include: membreInclude,
   },

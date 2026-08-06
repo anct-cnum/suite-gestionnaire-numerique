@@ -171,7 +171,7 @@ describe('feuille de route repository', () => {
     ).rejects.toThrow('ROLLBACK_TEST')
   })
 
-  it('modifier une feuille de route avec un document, alors la table des documents est synchronisée en miroir', async () => {
+  it('modifier une feuille de route avec un document, alors l’ancienne version est close et la nouvelle devient courante', async () => {
     await expect(
       prisma.$transaction(async (tx) => {
         // GIVEN
@@ -211,6 +211,16 @@ describe('feuille de route repository', () => {
           },
           tx
         )
+        const ancienEditeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
+        await tx.feuilleDeRouteDocumentRecord.create({
+          data: {
+            chemin: 'user/1/ancien.pdf',
+            creation: epochTime,
+            editeurUtilisateurId: ancienEditeur.id,
+            feuilleDeRouteId: 1,
+            nom: 'ancien.pdf',
+          },
+        })
         const feuilleDeRoute = feuilleDeRouteFactory({
           document: { chemin, nom: 'feuille-de-route.pdf' },
           uid: {
@@ -231,15 +241,28 @@ describe('feuille de route repository', () => {
 
         // THEN
         const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
-        const documents = await tx.feuilleDeRouteDocumentRecord.findMany({ where: { feuilleDeRouteId: 1 } })
+        const documents = await tx.feuilleDeRouteDocumentRecord.findMany({
+          orderBy: { chemin: 'asc' },
+          where: { feuilleDeRouteId: 1 },
+        })
         expect(documents).toStrictEqual([
+          {
+            chemin: 'user/1/ancien.pdf',
+            creation: epochTime,
+            editeurUtilisateurId: editeur.id,
+            feuilleDeRouteId: 1,
+            id: documents[0].id,
+            nom: 'ancien.pdf',
+            suppression: epochTime,
+          },
           {
             chemin,
             creation: epochTime,
             editeurUtilisateurId: editeur.id,
             feuilleDeRouteId: 1,
-            id: documents[0].id,
+            id: documents[1].id,
             nom: 'feuille-de-route.pdf',
+            suppression: null,
           },
         ])
         throw new Error('ROLLBACK_TEST')
@@ -247,7 +270,7 @@ describe('feuille de route repository', () => {
     ).rejects.toThrow('ROLLBACK_TEST')
   })
 
-  it('modifier une feuille de route sans document, alors les documents en miroir sont supprimés', async () => {
+  it('modifier une feuille de route sans document, alors la version courante est close mais conservée', async () => {
     await expect(
       prisma.$transaction(async (tx) => {
         // GIVEN
@@ -315,7 +338,17 @@ describe('feuille de route repository', () => {
 
         // THEN
         const documents = await tx.feuilleDeRouteDocumentRecord.findMany({ where: { feuilleDeRouteId: 1 } })
-        expect(documents).toStrictEqual([])
+        expect(documents).toStrictEqual([
+          {
+            chemin: 'user/1/ancien.pdf',
+            creation: epochTime,
+            editeurUtilisateurId: editeur.id,
+            feuilleDeRouteId: 1,
+            id: documents[0].id,
+            nom: 'ancien.pdf',
+            suppression: epochTime,
+          },
+        ])
         throw new Error('ROLLBACK_TEST')
       })
     ).rejects.toThrow('ROLLBACK_TEST')
