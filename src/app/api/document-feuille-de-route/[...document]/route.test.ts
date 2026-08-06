@@ -1,6 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3'
+import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { GET } from './route'
 
@@ -32,7 +33,7 @@ describe('route de téléchargement de document', () => {
     )
   })
 
-  it('devrait retourner une erreur quand le document est introuvable', async () => {
+  it('devrait retourner une erreur et notifier Sentry quand le document est introuvable', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -40,18 +41,34 @@ describe('route de téléchargement de document', () => {
       },
     } as unknown as NextRequest
     const res = {} as unknown as NextResponse
+    const captureException = vi.fn<typeof Sentry.captureException>()
 
     // WHEN
-    const result = await GET(req, res, {
-      send: async () => Promise.reject(new Error('The specified key does not exist.')),
-    } as unknown as S3Client)
+    const result = await GET(
+      req,
+      res,
+      {
+        send: async () => Promise.reject(new Error('The specified key does not exist.')),
+      } as unknown as S3Client,
+      captureException
+    )
 
     // THEN
     expect(result.status).toBe(404)
     await expect(result.json()).resolves.toStrictEqual({ message: "Le document n'existe pas" })
+    expect(captureException).toHaveBeenCalledWith(new Error('The specified key does not exist.'), {
+      extra: {
+        chemin: 'user/fdr-uid/feuille-de-route-test.pdf',
+      },
+      tags: {
+        action: 'GET',
+        location: 'document-feuille-de-route-download',
+        type: 'DOCUMENT_INTROUVABLE',
+      },
+    })
   })
 
-  it('devrait retourner une erreur quand le corps de la réponse est vide', async () => {
+  it('devrait retourner une erreur et notifier Sentry quand le corps de la réponse est vide', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -59,18 +76,34 @@ describe('route de téléchargement de document', () => {
       },
     } as unknown as NextRequest
     const res = {} as unknown as NextResponse
+    const captureException = vi.fn<typeof Sentry.captureException>()
 
     // WHEN
-    const result = await GET(req, res, {
-      send: async () =>
-        Promise.resolve({
-          Body: null,
-        }),
-    } as unknown as S3Client)
+    const result = await GET(
+      req,
+      res,
+      {
+        send: async () =>
+          Promise.resolve({
+            Body: null,
+          }),
+      } as unknown as S3Client,
+      captureException
+    )
 
     // THEN
     expect(result.status).toBe(404)
     await expect(result.json()).resolves.toStrictEqual({ message: "Le document n'existe pas" })
+    expect(captureException).toHaveBeenCalledWith(new Error('document_empty_body'), {
+      extra: {
+        chemin: 'user/fdr-uid/feuille-de-route-test.pdf',
+      },
+      tags: {
+        action: 'GET',
+        location: 'document-feuille-de-route-download',
+        type: 'DOCUMENT_INTROUVABLE',
+      },
+    })
   })
 
   it("devrait retourner une erreur quand l'erreur n'est pas gérée", async () => {
@@ -89,7 +122,7 @@ describe('route de téléchargement de document', () => {
     await expect(result).rejects.toThrow('Region is missing')
   })
 
-  it('devrait retourner 400 quand le chemin contient un path traversal', async () => {
+  it('devrait retourner 400 et notifier Sentry quand le chemin contient un path traversal', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -97,13 +130,24 @@ describe('route de téléchargement de document', () => {
       },
     } as unknown as NextRequest
     const res = {} as unknown as NextResponse
+    const captureException = vi.fn<typeof Sentry.captureException>()
 
     // WHEN
-    const result = await GET(req, res, {} as unknown as S3Client)
+    const result = await GET(req, res, {} as unknown as S3Client, captureException)
 
     // THEN
     expect(result.status).toBe(400)
     await expect(result.json()).resolves.toStrictEqual({ message: 'Chemin de document invalide' })
+    expect(captureException).toHaveBeenCalledWith(new Error('Chemin de document invalide'), {
+      extra: {
+        chemin: '../../../etc/passwd',
+      },
+      tags: {
+        action: 'GET',
+        location: 'document-feuille-de-route-download',
+        type: 'INVALID_PATH',
+      },
+    })
   })
 
   it('devrait retourner 400 quand le chemin ne commence pas par user/', async () => {
