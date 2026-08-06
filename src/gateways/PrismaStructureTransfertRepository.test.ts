@@ -45,7 +45,14 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
     })
     await creerUneStructure({ id: CIBLE, nom: 'Structure transfert notions cible', siret: '99001100000002' })
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tn.user@example.com', ssoId: 'tn-user', structureId: SOURCE })
+    // isSupprime pour rester invisible des requêtes de listing des autres fichiers de test
+    // (les données de ce fichier sont commitées, cf. commentaire en tête).
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tn.user@example.com',
+      ssoId: 'tn-user',
+      structureId: SOURCE,
+    })
     await lierContact(SOURCE)
     await affecter(SOURCE, 'coop')
     await affecter(SOURCE, 'idposte')

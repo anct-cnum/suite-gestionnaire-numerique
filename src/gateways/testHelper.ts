@@ -472,7 +472,6 @@ export function feuilleDeRouteRecordFactory(
     nom: 'Feuille de route 69',
     oldUUID: null,
     perimetreGeographique: 'departemental',
-    pieceJointe: null,
     porteurId: null,
     ...override,
   }

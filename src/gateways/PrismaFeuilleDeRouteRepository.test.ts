@@ -230,8 +230,6 @@ describe('feuille de route repository', () => {
         await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute, tx)
 
         // THEN
-        const feuilleDeRouteRecord = await tx.feuilleDeRouteRecord.findUnique({ where: { id: 1 } })
-        expect(feuilleDeRouteRecord?.pieceJointe).toBe(chemin)
         const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
         const documents = await tx.feuilleDeRouteDocumentRecord.findMany({ where: { feuilleDeRouteId: 1 } })
         expect(documents).toStrictEqual([
@@ -284,7 +282,6 @@ describe('feuille de route repository', () => {
             gouvernanceDepartementCode: departementCode,
             id: 1,
             nom: 'Feuille de route 69',
-            pieceJointe: 'user/1/ancien.pdf',
             porteurId: uidPorteur,
           },
           tx
@@ -317,8 +314,6 @@ describe('feuille de route repository', () => {
         await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute, tx)
 
         // THEN
-        const feuilleDeRouteRecord = await tx.feuilleDeRouteRecord.findUnique({ where: { id: 1 } })
-        expect(feuilleDeRouteRecord?.pieceJointe).toBeNull()
         const documents = await tx.feuilleDeRouteDocumentRecord.findMany({ where: { feuilleDeRouteId: 1 } })
         expect(documents).toStrictEqual([])
         throw new Error('ROLLBACK_TEST')
@@ -404,7 +399,6 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: 1,
       nom: 'Feuille de route test',
-      pieceJointe: 'user/fooId/ancien-chemin.pdf',
     })
     await creerUnDocumentDeFeuilleDeRoute({
       chemin: 'user/fooId/feuille-de-route-fake.pdf',
@@ -654,7 +648,6 @@ describe('feuille de route repository', () => {
           noteDeContextualisation: '<p>un contenu après<p>',
           oldUUID: null,
           perimetreGeographique: 'departemental',
-          pieceJointe: null,
           porteurId: uidPorteur,
         })
         throw new Error('ROLLBACK_TEST')
@@ -729,7 +722,6 @@ describe('feuille de route repository', () => {
           noteDeContextualisation: null,
           oldUUID: null,
           perimetreGeographique: 'departemental',
-          pieceJointe: null,
           porteurId: uidPorteur,
         })
         throw new Error('ROLLBACK_TEST')

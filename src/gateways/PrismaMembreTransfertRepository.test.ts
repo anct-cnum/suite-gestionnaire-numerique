@@ -28,8 +28,20 @@ describe('transfert de membre (repository Prisma)', () => {
     // GIVEN
     await seedBaseEtStructures()
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE_SOURCE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user1@example.com', ssoId: 'tt-user-1', structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user2@example.com', ssoId: 'tt-user-2', structureId: SOURCE })
+    // isSupprime pour rester invisible des requêtes de listing des autres fichiers de test
+    // (les données de ce fichier sont commitées, cf. commentaire en tête).
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user1@example.com',
+      ssoId: 'tt-user-1',
+      structureId: SOURCE,
+    })
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user2@example.com',
+      ssoId: 'tt-user-2',
+      structureId: SOURCE,
+    })
     const contactA = await creerUnContact({ email: 'tt.a@example.com', nom: 'TransfertTestContact' })
     const contactB = await creerUnContact({ email: 'tt.b@example.com', nom: 'TransfertTestContact' })
     await lier(contactA, SOURCE)
@@ -59,7 +71,12 @@ describe('transfert de membre (repository Prisma)', () => {
     // GIVEN
     await seedBaseEtStructures()
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE_SOURCE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user1@example.com', ssoId: 'tt-user-1', structureId: SOURCE })
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user1@example.com',
+      ssoId: 'tt-user-1',
+      structureId: SOURCE,
+    })
     const contactPartage = await creerUnContact({ email: 'tt.partage@example.com', nom: 'TransfertTestContact' })
     const contactPropre = await creerUnContact({ email: 'tt.propre@example.com', nom: 'TransfertTestContact' })
     await lier(contactPartage, SOURCE)

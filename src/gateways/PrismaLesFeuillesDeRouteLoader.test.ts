@@ -65,14 +65,12 @@ describe('récupérer les feuilles de route loader', () => {
       gouvernanceDepartementCode: '93',
       id: 1,
       nom: 'Feuille de route 1',
-      pieceJointe: 'ancienne-piece-jointe.pdf',
       porteurId: 'epci-200072056-93',
     })
     await creerUneFeuilleDeRoute({
       gouvernanceDepartementCode: '93',
       id: 2,
       nom: 'Feuille de route 2',
-      pieceJointe: 'feuille-de-route-fake.pdf',
       porteurId: 'epci-200072056-93',
     })
     await creerUneFeuilleDeRoute({
@@ -149,12 +147,8 @@ describe('récupérer les feuilles de route loader', () => {
       emplacement: '',
       nom: 'user/fooId/feuille-de-route-2026.pdf',
     })
-    // …et de piece_jointe en repli sinon.
-    expect(feuillesDeRouteReadModel.feuillesDeRoute[1].pieceJointe).toStrictEqual({
-      apercu: '',
-      emplacement: '',
-      nom: 'ancienne-piece-jointe.pdf',
-    })
+    // …et est absente sinon.
+    expect(feuillesDeRouteReadModel.feuillesDeRoute[1].pieceJointe).toBeUndefined()
   })
 })
 

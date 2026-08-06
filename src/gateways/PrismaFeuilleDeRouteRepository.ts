@@ -66,7 +66,6 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         nom: feuilleDeRoute.state.nom,
         noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation ?? null,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
-        pieceJointe: feuilleDeRoute.state.document?.chemin ?? null,
         porteurId: feuilleDeRoute.state.uidPorteur,
       },
     })
@@ -75,8 +74,8 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return true
   }
 
-  // Double écriture (étape 1 de la refonte des documents) : piece_jointe reste la source
-  // de vérité des lecteurs, la table feuille_de_route_document est tenue en miroir.
+  // La table feuille_de_route_document est la seule source du document (étape 4 de la
+  // refonte : piece_jointe est décommissionnée).
   async #synchroniserDocument(
     feuilleDeRoute: FeuilleDeRoute,
     feuilleDeRouteId: number,
@@ -122,7 +121,6 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         nom: feuilleDeRoute.state.nom,
         noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation ?? null,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
-        pieceJointe: feuilleDeRoute.state.document?.chemin ?? null,
         porteurId: feuilleDeRoute.state.uidPorteur,
       },
       where: {

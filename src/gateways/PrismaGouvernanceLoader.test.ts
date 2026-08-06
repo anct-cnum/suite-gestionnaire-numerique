@@ -138,12 +138,8 @@ describe('gouvernance loader', () => {
       emplacement: '',
       nom: 'user/fooId/feuille-de-route-2026.pdf',
     })
-    // …et de piece_jointe en repli sinon.
-    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '5')?.pieceJointe).toStrictEqual({
-      apercu: '',
-      emplacement: '',
-      nom: 'feuille-de-route-fake.pdf',
-    })
+    // …et est absente sinon.
+    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '5')?.pieceJointe).toBeUndefined()
   })
 
   it('quand une gouvernance est demandée par son code département inexistant, alors une erreur est levée', async () => {
@@ -357,7 +353,6 @@ async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incremen
     gouvernanceDepartementCode,
     id: id1,
     nom: `Feuille de route inclusion ${id1}`,
-    pieceJointe: 'feuille-de-route-fake.pdf',
   })
   await creerUneFeuilleDeRoute({
     gouvernanceDepartementCode,
