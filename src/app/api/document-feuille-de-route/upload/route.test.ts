@@ -63,6 +63,24 @@ describe("route d'upload de document", () => {
     await expect(result.json()).resolves.toStrictEqual({ message: 'Identifiant de feuille de route invalide' })
   })
 
+  it('devrait retourner une 400 quand le nom du fichier ne porte pas l’extension .pdf', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+
+    // WHEN
+    const result = await post(
+      fabriqueRequest({
+        file: fabriqueFichier('%PDF-1.4 contenu', 'document.txt'),
+        uidEditeur: 'userFooId',
+        uidFeuilleDeRoute: 'uidFdr',
+      })
+    )
+
+    // THEN
+    expect(result.status).toBe(400)
+    await expect(result.json()).resolves.toStrictEqual({ message: 'Le fichier doit porter l’extension .pdf' })
+  })
+
   it('devrait retourner une 400 quand le fichier dépasse 25 Mo', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
