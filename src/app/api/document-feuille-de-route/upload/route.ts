@@ -48,6 +48,10 @@ export async function POST(
       }
 
       const file = fileRaw as File
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        return NextResponse.json({ message: 'Le fichier doit porter l’extension .pdf' }, { status: 400 })
+      }
+
       if (file.size > tailleMaxEnOctets) {
         return NextResponse.json({ message: 'Le fichier dépasse la taille maximale de 25 Mo' }, { status: 400 })
       }

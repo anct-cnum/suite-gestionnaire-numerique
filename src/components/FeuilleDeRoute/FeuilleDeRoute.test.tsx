@@ -62,7 +62,7 @@ describe('feuille de route', () => {
     const ouvrirPdf = screen.getByRole('link', { name: 'Ouvrir le pdf' })
     expect(ouvrirPdf).toHaveAttribute('href', '/api/document-feuille-de-route/user/fooId/feuille-de-route-fake.pdf')
     expect(ouvrirPdf).toOpenInNewTab('Ouvrir le pdf')
-    const remplacerDocument = within(sectionUpload).getByRole('button', { name: 'Remplacer' })
+    const remplacerDocument = within(sectionUpload).getByRole('button', { name: 'Modifier' })
     expect(remplacerDocument).toBeEnabled()
     expect(remplacerDocument).toHaveAttribute('type', 'button')
     const supprimerDocument = screen.getByRole('button', { name: 'Supprimer feuille-de-route-fake.pdf' })

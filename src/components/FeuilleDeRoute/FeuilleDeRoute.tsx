@@ -126,7 +126,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                 <span className="fr-hint-text">Taille maximale : 25 Mo. Format .pdf</span>
               </label>
               <input
-                accept=".pdf"
+                accept="application/pdf,.pdf"
                 className="fr-upload"
                 disabled={isUploading}
                 id="file-upload"

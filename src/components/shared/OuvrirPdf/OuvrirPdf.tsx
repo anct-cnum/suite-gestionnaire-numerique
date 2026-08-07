@@ -44,11 +44,11 @@ export default function OuvrirPdf({
                 }}
                 type="button"
               >
-                {isReplacing ? 'Remplacement en cours...' : 'Remplacer'}
+                {isReplacing ? 'Modification en cours...' : 'Modifier'}
               </button>
               <input
-                accept=".pdf"
-                aria-label={`Remplacer ${nom}`}
+                accept="application/pdf,.pdf"
+                aria-label={`Modifier ${nom}`}
                 className="fr-sr-only"
                 onChange={(event) => {
                   void onReplace(event)
