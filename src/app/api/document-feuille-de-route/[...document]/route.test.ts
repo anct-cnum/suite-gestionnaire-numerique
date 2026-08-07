@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { describe, expect, it, vi } from 'vitest'
 
 import { GET } from './route'
+import { PrismaDocumentFeuilleDeRouteLoader } from '@/gateways/PrismaDocumentFeuilleDeRouteLoader'
 import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
 
 describe('route de téléchargement de document', () => {
-  it("devrait retourner une 200 quand l'utilisateur télécharge un document valide", async () => {
+  it("devrait retourner une 200 avec le nom du document quand l'utilisateur télécharge un document valide", async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -15,6 +16,9 @@ describe('route de téléchargement de document', () => {
       },
     } as unknown as NextRequest
     const res = {} as unknown as NextResponse
+    vi.spyOn(PrismaDocumentFeuilleDeRouteLoader.prototype, 'recupererNom').mockResolvedValueOnce(
+      'feuille-de-route-test.pdf'
+    )
 
     // WHEN
     const result = await GET(
@@ -33,6 +37,35 @@ describe('route de téléchargement de document', () => {
     // THEN
     expect(result.status).toBe(200)
     expect(result.headers.get('Content-Type')).toBe('application/pdf')
+    expect(result.headers.get('Content-Disposition')).toBe('inline; filename="feuille-de-route-test.pdf"')
+  })
+
+  it('devrait utiliser le chemin comme nom de repli quand le document est inconnu en base', async () => {
+    // GIVEN
+    const req = {
+      nextUrl: {
+        pathname: '/api/document-feuille-de-route/user/fdr-uid/feuille-de-route-test.pdf',
+      },
+    } as unknown as NextRequest
+    const res = {} as unknown as NextResponse
+    vi.spyOn(PrismaDocumentFeuilleDeRouteLoader.prototype, 'recupererNom').mockResolvedValueOnce(undefined)
+
+    // WHEN
+    const result = await GET(
+      req,
+      res,
+      new S3DocumentGateway({
+        send: async () =>
+          Promise.resolve({
+            Body: {
+              transformToWebStream: () => ({}),
+            },
+          }),
+      } as unknown as S3Client)
+    )
+
+    // THEN
+    expect(result.status).toBe(200)
     expect(result.headers.get('Content-Disposition')).toBe(
       'inline; filename="user%2Ffdr-uid%2Ffeuille-de-route-test.pdf"'
     )

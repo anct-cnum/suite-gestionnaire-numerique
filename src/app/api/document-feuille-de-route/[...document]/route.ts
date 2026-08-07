@@ -3,6 +3,7 @@
 import * as Sentry from '@sentry/nextjs'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { PrismaDocumentFeuilleDeRouteLoader } from '@/gateways/PrismaDocumentFeuilleDeRouteLoader'
 import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
 import { isNullish } from '@/shared/lang'
 
@@ -12,7 +13,8 @@ export async function GET(
   request: NextRequest,
   _response: NextResponse,
   s3Gateway: S3DocumentGateway = new S3DocumentGateway(),
-  captureException: typeof Sentry.captureException = Sentry.captureException
+  captureException: typeof Sentry.captureException = Sentry.captureException,
+  nomDocumentLoader: PrismaDocumentFeuilleDeRouteLoader = new PrismaDocumentFeuilleDeRouteLoader()
 ): Promise<NextResponse<null | object>> {
   const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
 
@@ -36,9 +38,10 @@ export async function GET(
     if (isNullish(flux)) {
       throw new Error('document_empty_body')
     }
+    const nom = (await nomDocumentLoader.recupererNom(nameFile)) ?? nameFile
     return new NextResponse(flux, {
       headers: {
-        'Content-Disposition': `inline; filename="${encodeURIComponent(nameFile)}"`,
+        'Content-Disposition': `inline; filename="${encodeURIComponent(nom)}"`,
         'Content-Type': 'application/pdf',
       },
       status: 200,

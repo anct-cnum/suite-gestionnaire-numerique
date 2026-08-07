@@ -26,14 +26,9 @@ type FeuilleDeRouteReadModel = Readonly<{
   coFinanceurs: number
   nom: string
   pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
-    metadonnees?: Readonly<{
-      format: string
-      taille: string
-      upload: Date
-    }>
+    chemin: string
     nom: string
+    upload: Date
   }>
   structureCoPorteuse?: Membre
   totaux: Readonly<{

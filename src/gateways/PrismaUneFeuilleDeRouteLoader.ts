@@ -62,6 +62,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
         },
       ],
     }).feuillesDeRoute[0]
+    const document = documentDeFeuilleDeRoute(feuilleDeRouteRecord)
     return {
       actions: feuilleDeRouteRecord.action.map((action, index) => {
         const demandeDeSubvention = action.demandesDeSubvention[0] as
@@ -95,7 +96,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
       budgetTotalActions: syntheseFeuilleDeRoute.budget,
       coFinanceur: syntheseFeuilleDeRoute.coFinanceurs,
       contextualisation: feuilleDeRouteRecord.noteDeContextualisation ?? undefined,
-      document: documentDeFeuilleDeRoute(feuilleDeRouteRecord),
+      document: document ? { chemin: document.chemin, nom: document.nom } : undefined,
       edition: {
         date: feuilleDeRouteRecord.derniereEdition ?? feuilleDeRouteRecord.creation,
         nom: feuilleDeRouteRecord.relationUtilisateur?.nom ?? '~',
@@ -158,7 +159,7 @@ const include = {
       },
     },
   },
-  documents: { where: { suppression: null } },
+  documents: { orderBy: { creation: 'desc' as const }, take: 1, where: { suppression: null } },
   relationMembre: {
     include: membreInclude,
   },

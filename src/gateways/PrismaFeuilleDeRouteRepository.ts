@@ -17,7 +17,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     const record = await prisma.feuilleDeRouteRecord.findUniqueOrThrow({
       include: {
-        documents: { where: { suppression: null } },
+        documents: { orderBy: { creation: 'desc' }, take: 1, where: { suppression: null } },
         relationUtilisateur: true,
       },
       where: {
@@ -25,10 +25,11 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       },
     })
 
+    const document = documentDeFeuilleDeRoute(record)
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
       dateDeModification: record.derniereEdition ?? record.creation,
-      document: documentDeFeuilleDeRoute(record),
+      document: document ? { chemin: document.chemin, nom: document.nom } : undefined,
       nom: record.nom,
       noteDeContextualisation: record.noteDeContextualisation ?? undefined,
       perimetreGeographique: record.perimetreGeographique ?? 'departemental',
