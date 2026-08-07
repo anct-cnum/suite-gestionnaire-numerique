@@ -143,9 +143,9 @@ describe('récupérer les feuilles de route loader', () => {
     expect(feuillesDeRouteReadModel.feuillesDeRoute[1].nom).to.equal('Feuille de route 1')
     // La pièce jointe provient de la table dédiée quand la ligne existe…
     expect(feuillesDeRouteReadModel.feuillesDeRoute[0].pieceJointe).toStrictEqual({
-      apercu: '',
-      emplacement: '',
-      nom: 'user/fooId/feuille-de-route-2026.pdf',
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      nom: 'feuille-de-route-2026.pdf',
+      upload: epochTime,
     })
     // …et est absente sinon.
     expect(feuillesDeRouteReadModel.feuillesDeRoute[1].pieceJointe).toBeUndefined()

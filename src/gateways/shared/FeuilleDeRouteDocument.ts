@@ -4,10 +4,10 @@ import { FeuilleDeRouteDocumentRecord } from '@prisma/client'
 // route (étape 4 de la refonte : piece_jointe est décommissionnée).
 export function documentDeFeuilleDeRoute(
   record: Readonly<{ documents: ReadonlyArray<FeuilleDeRouteDocumentRecord> }>
-): Readonly<{ chemin: string; nom: string }> | undefined {
+): Readonly<{ chemin: string; creation: Date; nom: string }> | undefined {
   const document = record.documents[0] as FeuilleDeRouteDocumentRecord | undefined
   if (document) {
-    return { chemin: document.chemin, nom: document.nom }
+    return { chemin: document.chemin, creation: document.creation, nom: document.nom }
   }
   return undefined
 }

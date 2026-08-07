@@ -134,9 +134,9 @@ describe('gouvernance loader', () => {
     expect(gouvernanceReadModel.departement).toBe('Seine-Saint-Denis')
     // La pièce jointe provient de la table dédiée quand la ligne existe…
     expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '1')?.pieceJointe).toStrictEqual({
-      apercu: '',
-      emplacement: '',
-      nom: 'user/fooId/feuille-de-route-2026.pdf',
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      nom: 'feuille-de-route-2026.pdf',
+      upload: epochTime,
     })
     // …et est absente sinon.
     expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '5')?.pieceJointe).toBeUndefined()

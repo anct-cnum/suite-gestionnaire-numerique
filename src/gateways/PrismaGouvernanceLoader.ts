@@ -156,9 +156,9 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         ...(document
           ? {
               pieceJointe: {
-                apercu: '',
-                emplacement: '',
-                nom: document.chemin,
+                chemin: document.chemin,
+                nom: document.nom,
+                upload: document.creation,
               },
             }
           : {}),
@@ -301,7 +301,7 @@ const include = {
           },
         },
       },
-      documents: { where: { suppression: null } },
+      documents: { orderBy: { creation: 'desc' as const }, take: 1, where: { suppression: null } },
       relationMembre: {
         include: membreInclude,
       },

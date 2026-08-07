@@ -20,14 +20,9 @@ describe('les feuilles de route d’une gouvernance', () => {
             beneficiaires: 5,
             coFinanceurs: 3,
             pieceJointe: {
-              apercu: '',
-              emplacement: '',
-              metadonnees: {
-                format: 'pdf',
-                taille: '25 Mo',
-                upload: epochTime,
-              },
-              nom: 'user/1234/feuille-de-route-fake.pdf',
+              chemin: 'user/1234/feuille-de-route-fake.pdf',
+              nom: 'feuille-de-route-fake.pdf',
+              upload: epochTime,
             },
           },
           {
@@ -127,7 +122,7 @@ describe('les feuilles de route d’une gouvernance', () => {
       name: 'feuille-de-route-fake.pdf',
     })
     expect(titreSectionOuvrirPdf).toBeInTheDocument()
-    const informationsFichier = within(sectionOuvrirPdf).getByText('Le 01/01/1970, 25 Mo, pdf.')
+    const informationsFichier = within(sectionOuvrirPdf).getByText('Le 01/01/1970.')
     expect(informationsFichier).toBeInTheDocument()
     const informationsLink = within(sectionOuvrirPdf).getByRole('link', { name: 'Ouvrir le pdf' })
     expect(informationsLink).toHaveAttribute(
@@ -262,29 +257,6 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(sectionOuvrirLePDF).not.toBeInTheDocument()
   })
 
-  it('quand il y a une pièce jointe sans la date d’upload alors la date n’est pas affichée', () => {
-    // GIVEN
-    const donnees = feuillesDeRouteReadModelFactory({
-      feuillesDeRoute: [
-        {
-          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
-          pieceJointe: {
-            apercu: '',
-            emplacement: '',
-            nom: 'feuille-de-route-fake.pdf',
-          },
-        },
-      ],
-    })
-
-    // WHEN
-    afficherLesFeuillesDeRoute({}, donnees)
-
-    // THEN
-    const informationsFichier = screen.queryByText('Le 01/01/1970, 25 Mo, pdf.')
-    expect(informationsFichier).not.toBeInTheDocument()
-  })
-
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     readModel = feuillesDeRouteReadModelFactory({
@@ -292,14 +264,9 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
           pieceJointe: {
-            apercu: '',
-            emplacement: '',
-            metadonnees: {
-              format: 'pdf',
-              taille: '25 Mo',
-              upload: epochTime,
-            },
-            nom: 'user/1234/feuille-de-route-fake.pdf',
+            chemin: 'user/1234/feuille-de-route-fake.pdf',
+            nom: 'feuille-de-route-fake.pdf',
+            upload: epochTime,
           },
         },
         feuillesDeRouteReadModelFactory().feuillesDeRoute[1],

@@ -125,14 +125,9 @@ export function gouvernanceReadModelFactory(override?: Partial<UneGouvernanceRea
         montantSubventionFormationAccordee: 5_000,
         nom: 'Feuille de route inclusion',
         pieceJointe: {
-          apercu: '',
-          emplacement: '',
-          metadonnees: {
-            format: 'pdf',
-            taille: '25 Mo',
-            upload: epochTime,
-          },
-          nom: 'user/1234/feuille-de-route-fake.pdf',
+          chemin: 'user/1234/feuille-de-route-fake.pdf',
+          nom: 'feuille-de-route-fake.pdf',
+          upload: epochTime,
         },
         porteur: { nom: 'Préfecture du Rhône', structureId: 4, uid: '4' },
         totalActions: 3,
