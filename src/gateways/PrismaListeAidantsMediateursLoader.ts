@@ -23,20 +23,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const offset = (safePage - 1) * pagination.limite
       const limitOffset = Prisma.sql`LIMIT ${pagination.limite} OFFSET ${offset}`
 
-      const [aidants, stats] = await Promise.all([
+      const [aidants, stats, total] = await Promise.all([
         this.queryPersonnes(filtres, limitOffset),
         this.getStatistiques(filtres),
+        this.queryTotal(filtres),
       ])
 
       return {
         aidants: aidants.map((personne) => this.mapToAidant(personne)),
-        displayPagination: stats.totalActeursNumerique > pagination.limite,
+        displayPagination: total > pagination.limite,
         limite: pagination.limite,
         page: pagination.page,
-        total: stats.totalActeursNumerique,
+        total,
         totalActeursNumerique: stats.totalActeursNumerique,
         totalConseillersNumerique: stats.totalConseillersNumerique,
-        totalPages: Math.ceil(stats.totalActeursNumerique / pagination.limite),
+        totalPages: Math.ceil(total / pagination.limite),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaListeAidantsMediateursLoader', { filtres, operation: 'get' })
@@ -223,13 +224,15 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     return conditions.length > 0 ? Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
   }
 
+  // Statistiques des blocs résumé : la recherche libre est volontairement ignorée (#1292),
+  // seuls le scope et les filtres du drawer s'appliquent.
   private async getStatistiques(filtres: FiltresListeAidants): Promise<{
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
-    const { formations, habilitations, recherche, roles } = filtres
+    const { formations, habilitations, roles } = filtres
     const scopeCte = this.buildScopeCte(filtres)
-    const whereConditions = this.buildWhereConditions(roles, habilitations, formations, recherche)
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
 
     const result = await prisma.$queryRaw<
       Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>
@@ -386,6 +389,26 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       ORDER BY pe.nom, pe.prenom
       ${limitOffset}
     `
+  }
+
+  // Total des résultats de la liste (recherche comprise) : sert à la pagination,
+  // contrairement aux statistiques des blocs résumé qui ignorent la recherche.
+  private async queryTotal(filtres: FiltresListeAidants): Promise<number> {
+    const { formations, habilitations, recherche, roles } = filtres
+    const scopeCte = this.buildScopeCte(filtres)
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations, recherche)
+
+    const result = await prisma.$queryRaw<Array<{ total: bigint }>>`
+      WITH ${scopeCte}
+      SELECT COUNT(DISTINCT pe.id) AS total
+      FROM min.personne_enrichie pe
+      JOIN personnes_dans_scope pds ON pds.id = pe.id
+      LEFT JOIN main.formation f ON pe.id = f.personne_id
+      WHERE true
+        ${whereConditions}
+    `
+
+    return Number(result[0]?.total ?? 0)
   }
 }
 

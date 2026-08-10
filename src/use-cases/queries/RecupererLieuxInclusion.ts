@@ -27,6 +27,7 @@ export interface RecupererLieuxInclusionReadModel {
   totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
+  totalSansRecherche: number
 }
 
 export interface LieuInclusionNumeriqueItem {

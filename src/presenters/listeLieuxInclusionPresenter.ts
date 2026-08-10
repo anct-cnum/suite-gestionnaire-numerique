@@ -31,6 +31,7 @@ export function listeLieuxInclusionPresenter(
     totalArchives: readModel.totalArchives,
     totalConseillerNumerique: readModel.totalConseillerNumerique,
     totalLabellise: readModel.totalLabellise,
+    totalSansRecherche: readModel.totalSansRecherche,
   }
 }
 
@@ -45,6 +46,7 @@ export interface ListeLieuxInclusionViewModel {
   totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
+  totalSansRecherche: number
 }
 
 export interface LieuInclusionViewModel {

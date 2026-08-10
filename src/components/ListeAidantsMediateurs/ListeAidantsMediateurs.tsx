@@ -289,17 +289,6 @@ export default function ListeAidantsMediateurs({
         </div>
       </div>
 
-      {/* Recherche par nom ou prénom */}
-      <div className="fr-grid-row fr-mb-2w">
-        <div className="fr-col-12 fr-col-md-4">
-          <BarreRecherche
-            label="Rechercher par nom ou prénom"
-            rechercher={rechercher}
-            valeurInitiale={normalizedSearchParams.get('recherche') ?? ''}
-          />
-        </div>
-      </div>
-
       {/* Indicateur de filtres actifs */}
       {getFiltresActifs().length > 0 ? (
         <div className="fr-mb-2w">
@@ -342,6 +331,28 @@ export default function ListeAidantsMediateurs({
         </div>
       ) : null}
 
+      <ListeAidantsMediateurInfos
+        hasActiveFilters={getFiltresActifs().length > 0}
+        peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
+        totalAccompagnementsPromise={totalAccompagnementsPromise}
+        totalBeneficiairesPromise={totalBeneficiairesPromise}
+        viewModel={{
+          totalActeursNumerique: viewModel.totalActeursNumerique,
+          totalConseillersNumerique: viewModel.totalConseillersNumerique,
+        }}
+      />
+
+      {/* Recherche par nom ou prénom */}
+      <div className="fr-grid-row fr-mt-2w fr-mb-2w">
+        <div className="fr-col-12 fr-col-md-6">
+          <BarreRecherche
+            label="Rechercher par nom ou prénom"
+            rechercher={rechercher}
+            valeurInitiale={normalizedSearchParams.get('recherche') ?? ''}
+          />
+        </div>
+      </div>
+
       {viewModel.aidants.length === 0 ? (
         <div
           style={{
@@ -356,27 +367,14 @@ export default function ListeAidantsMediateurs({
           </p>
         </div>
       ) : (
-        <>
-          <ListeAidantsMediateurInfos
-            hasActiveFilters={getFiltresActifs().length > 0}
-            peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
-            totalAccompagnementsPromise={totalAccompagnementsPromise}
-            totalBeneficiairesPromise={totalBeneficiairesPromise}
-            viewModel={{
-              totalActeursNumerique: viewModel.totalActeursNumerique,
-              totalConseillersNumerique: viewModel.totalConseillersNumerique,
-            }}
-          />
-
-          <Table
-            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', '']}
-            titre="Aidants et médiateurs numériques"
-          >
-            {viewModel.aidants.map((aidant) => (
-              <AidantRow aidant={aidant} badgeStyle={badgeStyle} key={aidant.id} />
-            ))}
-          </Table>
-        </>
+        <Table
+          enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', '']}
+          titre="Aidants et médiateurs numériques"
+        >
+          {viewModel.aidants.map((aidant) => (
+            <AidantRow aidant={aidant} badgeStyle={badgeStyle} key={aidant.id} />
+          ))}
+        </Table>
       )}
 
       {viewModel.displayPagination ? (

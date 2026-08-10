@@ -23,13 +23,16 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     const scopeCteActifs = this.buildScopeCte({ ...filtres, statut: 'actif' })
     const scopeCteArchives = this.buildScopeCte({ ...filtres, statut: 'archive' })
     const whereConditions = this.buildWhereConditions(filtres)
+    // Les blocs résumé ignorent la recherche par nom (#1292) : seuls le scope et les filtres du drawer s'appliquent.
+    const whereConditionsSansRecherche = this.buildWhereConditions({ ...filtres, nom: undefined })
     const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
 
-    const [totalActifs, totalArchives, lieux, stats] = await Promise.all([
+    const [totalActifs, totalArchives, totalSansRecherche, lieux, stats] = await Promise.all([
       this.queryTotal(scopeCteActifs, whereConditions),
       this.queryTotal(scopeCteArchives, whereConditions),
+      this.queryTotal(scopeCteActifs, whereConditionsSansRecherche),
       this.queryLieux(scopeCte, whereConditions, limitOffset),
-      this.queryStats(scopeCte, whereConditions),
+      this.queryStats(scopeCte, whereConditionsSansRecherche),
     ])
 
     return {
@@ -41,6 +44,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       totalArchives,
       totalConseillerNumerique: stats.totalConseillerNumerique,
       totalLabellise: stats.totalLabellise,
+      totalSansRecherche,
     }
   }
 
