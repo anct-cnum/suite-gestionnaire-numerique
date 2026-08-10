@@ -234,12 +234,12 @@ describe('ajouter une action à une feuille de route', () => {
 const uidGouvernance = 'gouvernanceFooId'
 const nom = 'Feuille de route 69'
 const uidPorteur = 'porteurFooId'
-const uidEditeur = 'editeurFooId'
+const uidEditeur = 1
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 const uidEnveloppeFinancement = 'enveloppeFinancementFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 let spiedFeuilleDeRouteUidToFind: null | string
 let spiedActionToAdd: Action | null
 let spiedDemandeDeSubventionToAdd: DemandeDeSubvention | null

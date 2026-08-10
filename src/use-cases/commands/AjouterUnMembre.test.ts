@@ -149,7 +149,7 @@ describe('ajouter un membre', () => {
         numeroVoie: '123',
         siret: '',
       },
-      uidGestionnaire: 'utilisateurUsurpateur',
+      uidGestionnaire: 2,
       uidGouvernance,
     })
 
@@ -160,7 +160,7 @@ describe('ajouter un membre', () => {
 })
 
 const uidGouvernance = 'gouvernanceFooId'
-const uidGestionnaire = 'userFooId'
+const uidGestionnaire = 1
 let spiedMembreCreated: Membre | null
 let spiedEntrepriseData: EntrepriseData | undefined
 let spiedStructureIdLinked: null | number

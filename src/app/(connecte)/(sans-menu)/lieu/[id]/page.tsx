@@ -6,7 +6,7 @@ import prisma from '../../../../../../prisma/prismaClient'
 import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -29,9 +29,9 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
   }
 
   // Récupérer l'utilisateur connecté
-  const sub = await getSessionSub()
+  const utilisateurId = await getSessionUtilisateurId()
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurRepository.get(sub)
+  const utilisateur = await utilisateurRepository.get(utilisateurId)
 
   // Récupérer les départements des gouvernances dont la structure est membre
   const gouvernancesDepartements = await prisma.membreRecord.findMany({
@@ -56,7 +56,10 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
   )
 
   // Édition des informations générales réservée aux bêta-testeurs.
-  const contexte = await resoudreContexte(await new PrismaUtilisateurLoader().findByUid(sub), new PrismaMembreLoader())
+  const contexte = await resoudreContexte(
+    await new PrismaUtilisateurLoader().findById(utilisateurId),
+    new PrismaMembreLoader()
+  )
   const peutModifierInformationsGenerales = peutModifier && contexte.isBetaTesteur
 
   const presentedData = lieuDetailsPresenter(

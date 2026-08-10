@@ -29,7 +29,7 @@ describe('corriger nom prenom si absents', () => {
         nom: 'Dugenoux',
         prenom: 'Micheline',
       },
-      uidUtilisateurCourant: 'fooId',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -78,12 +78,12 @@ describe('corriger nom prenom si absents', () => {
           nom: correctionNom,
           prenom: correctionPrenom,
         },
-        uidUtilisateurCourant: 'fooId',
+        uidUtilisateurCourant: 1,
       })
 
       // THEN
       expect(result).toBe('miseAJourInvalide')
-      expect(spiedUidToFind).toBe('fooId')
+      expect(spiedUidToFind).toBe(1)
       expect(spiedUtilisateurToUpdate).toBeNull()
     }
   )
@@ -141,12 +141,12 @@ describe('corriger nom prenom si absents', () => {
           nom: correctionNom,
           prenom: correctionPrenom,
         },
-        uidUtilisateurCourant: 'fooId',
+        uidUtilisateurCourant: 1,
       })
 
       // THEN
       expect(result).toBe('okAvecMiseAJour')
-      expect(spiedUidToFind).toBe('fooId')
+      expect(spiedUidToFind).toBe(1)
       expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
         utilisateurFactory({
           nom: nomApresCorrection,
@@ -157,7 +157,7 @@ describe('corriger nom prenom si absents', () => {
   )
 })
 
-let spiedUidToFind: null | string
+let spiedUidToFind: null | number
 let spiedUtilisateurToUpdate: null | Utilisateur
 
 class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {

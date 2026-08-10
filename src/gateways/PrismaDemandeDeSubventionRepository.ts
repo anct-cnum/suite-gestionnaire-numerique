@@ -19,17 +19,10 @@ export class PrismaDemandeDeSubventionRepository
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
-    const utilisateurResource = client.utilisateurRecord
-
-    const user = await utilisateurResource.findUniqueOrThrow({
-      where: {
-        ssoId: demandeDeSubvention.state.uidCreateur,
-      },
-    })
     const demande = await client.demandeDeSubventionRecord.create({
       data: {
         actionId: Number(demandeDeSubvention.state.uidAction),
-        createurId: user.id,
+        createurId: demandeDeSubvention.state.uidCreateur,
         creation: new Date(demandeDeSubvention.state.dateDeCreation),
         derniereModification: new Date(demandeDeSubvention.state.derniereModification),
         enveloppeFinancementId: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
@@ -78,7 +71,7 @@ export class PrismaDemandeDeSubventionRepository
       subventionPrestation: demande.subventionPrestation,
       uid: { value: String(demande.id) },
       uidAction: { value: String(demande.actionId) },
-      uidCreateur: String(demande.createurId),
+      uidCreateur: demande.createurId,
       uidEnveloppeFinancement: { value: String(demande.enveloppeFinancementId) },
     })
 

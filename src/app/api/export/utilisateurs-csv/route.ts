@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaTerritoireLoader } from '@/gateways/PrismaTerritoireLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
@@ -15,9 +15,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const uid = await getSessionSub()
+    const uid = await getSessionUtilisateurId()
     const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateurCourant = await utilisateurLoader.findByUid(uid)
+    const utilisateurCourant = await utilisateurLoader.findById(uid)
 
     if (!utilisateurCourant.role.doesItBelongToGroupeAdmin) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })

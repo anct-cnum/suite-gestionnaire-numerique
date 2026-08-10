@@ -6,7 +6,7 @@ import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxIncl
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -38,7 +38,7 @@ export default async function ListeLieuxInclusionController({
   }
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const scopeFiltre = contexte.scopeFiltre()

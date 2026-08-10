@@ -23,7 +23,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ structure: null })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('structureIntrouvable')
@@ -36,7 +36,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ structure: structure({ deletedAt: epochTime }) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('structureIntrouvable')
@@ -47,14 +47,14 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ structure: structure({ denominationAntenne: null }) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('OK')
     expect(spiedCanonisation).toStrictEqual({
       entreprise: entrepriseInsee,
       geocode: geocodeInsee,
-      parUtilisateur: 'admin-1',
+      parUtilisateur: 1,
       structureId: 1,
     })
   })
@@ -64,7 +64,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ structure: structure({ siret: null }) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('siretManquant')
@@ -76,7 +76,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ existeCanonique: true, structure: structure({}) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('canoniqueExistante')
@@ -89,7 +89,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ entreprise: { estTrouvee: false }, structure: structure({}) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('entrepriseIntrouvable')
@@ -101,7 +101,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ structure: structure({}) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('OK')
@@ -109,7 +109,7 @@ describe('canoniser une structure', () => {
     expect(spiedCanonisation).toStrictEqual({
       entreprise: entrepriseInsee,
       geocode: geocodeInsee,
-      parUtilisateur: 'admin-1',
+      parUtilisateur: 1,
       structureId: 1,
     })
   })
@@ -119,7 +119,7 @@ describe('canoniser une structure', () => {
     const canoniser = creerCanoniser({ geocode: null, structure: structure({}) })
 
     // WHEN
-    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 'admin-1' })
+    const result = await canoniser.handle({ structureId: 1, uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('OK')

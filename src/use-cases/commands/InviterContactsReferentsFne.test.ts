@@ -36,7 +36,7 @@ describe('inviter les contacts référents FNE', () => {
     // WHEN
     const result = await inviterContactsReferentsFne.handle({
       structureId: 1,
-      uidUtilisateurCourant: 'userFooId',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -67,7 +67,7 @@ describe('inviter les contacts référents FNE', () => {
     // WHEN
     const result = await inviterContactsReferentsFne.handle({
       structureId: 1,
-      uidUtilisateurCourant: 'userFooId',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -89,7 +89,7 @@ describe('inviter les contacts référents FNE', () => {
     // WHEN
     const result = await inviterContactsReferentsFne.handle({
       structureId: 1,
-      uidUtilisateurCourant: 'userFooId',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -133,7 +133,7 @@ class UtilisateurRepositoryAvecUtilisateurExistantSpy extends UtilisateurReposit
   override async findByEmail(email: string): Promise<undefined | Utilisateur> {
     spiedEmailsRecherches.push(email)
     if (email === 'jean.dupont@example.net') {
-      return Promise.resolve(utilisateurFactory({ uid: { email, value: email } }))
+      return Promise.resolve(utilisateurFactory({ uid: { email, value: 2 } }))
     }
     return Promise.resolve(undefined)
   }

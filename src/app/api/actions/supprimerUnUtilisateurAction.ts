@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
@@ -20,7 +20,7 @@ export async function supprimerUnUtilisateurAction(actionParams: ActionParams): 
 
     const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
       uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
-      uidUtilisateurCourant: await getSessionSub(),
+      uidUtilisateurCourant: await getSessionUtilisateurId(),
     })
 
     revalidatePath(actionParams.path)
@@ -31,9 +31,13 @@ export async function supprimerUnUtilisateurAction(actionParams: ActionParams): 
 
 type ActionParams = Readonly<{
   path: string
-  uidUtilisateurASupprimer: string
+  uidUtilisateurASupprimer: number
 }>
 
 const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
+  uidUtilisateurASupprimer: z
+    .number()
+    .int()
+    .min(1, { message: 'L’identifiant de l’utilisateur à supprimer doit être renseigné' }),
 })

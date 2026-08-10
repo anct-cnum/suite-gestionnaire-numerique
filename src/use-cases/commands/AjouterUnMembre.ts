@@ -133,7 +133,7 @@ type Command = Readonly<{
     numeroVoie: string
     siret: string
   }>
-  uidGestionnaire: string
+  uidGestionnaire: number
   uidGouvernance: string
 }>
 

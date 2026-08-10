@@ -488,7 +488,7 @@ describe('inviter un utilisateur', () => {
   }
 
   function afficherMesUtilisateurs(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 11, rolesAvecStructure, epochTime)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 1, 11, rolesAvecStructure, epochTime)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {

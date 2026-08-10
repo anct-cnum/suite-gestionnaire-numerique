@@ -29,16 +29,14 @@ describe('mes informations personnelles loader', () => {
       roleLabel: 'Gestionnaire groupement',
     },
   ])(
-    'cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure',
+    'cherchant un utilisateur $roleLabel qui existe par son id alors cela retourne ses informations personnelles sans notion de structure',
     async ({ role, roleLabel }) => {
       // GIVEN
-      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await creerUnUtilisateur({ role, ssoId: ssoIdExistant })
+      const idExistant = 1
+      await creerUnUtilisateur({ id: idExistant, role })
 
       // WHEN
-      const mesInformationsPersonnellesReadModel = await new PrismaMesInformationsPersonnellesLoader().byUid(
-        ssoIdExistant
-      )
+      const mesInformationsPersonnellesReadModel = await new PrismaMesInformationsPersonnellesLoader().byUid(idExistant)
 
       // THEN
       expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -51,23 +49,21 @@ describe('mes informations personnelles loader', () => {
     }
   )
 
-  it('cherchant un utilisateur "Gestionnaire structure" qui existe par son ssoId alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
+  it('cherchant un utilisateur "Gestionnaire structure" qui existe par son id alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
     // GIVEN
-    const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const idExistant = 1
     const structureId = 10
     await creerUneRegion()
     await creerUnDepartement()
     await creerUneStructure({ departementCode: '75', id: structureId })
     await creerUnUtilisateur({
+      id: idExistant,
       role: 'gestionnaire_structure',
-      ssoId: ssoIdExistant,
       structureId,
     })
 
     // WHEN
-    const mesInformationsPersonnellesReadModel = await new PrismaMesInformationsPersonnellesLoader().byUid(
-      ssoIdExistant
-    )
+    const mesInformationsPersonnellesReadModel = await new PrismaMesInformationsPersonnellesLoader().byUid(idExistant)
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -96,14 +92,14 @@ describe('mes informations personnelles loader', () => {
     })
   })
 
-  it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
+  it('quand je cherche un utilisateur qui n’existe pas par son id alors je ne le trouve pas', async () => {
     // GIVEN
-    const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    await creerUnUtilisateur({ ssoId: 'userFooId' })
+    const idInexistant = 2
+    await creerUnUtilisateur({ id: 1 })
 
     // WHEN
     const utilisateurReadModel = async (): Promise<MesInformationsPersonnellesReadModel> => {
-      return new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdInexistant)
+      return new PrismaMesInformationsPersonnellesLoader().byUid(idInexistant)
     }
 
     // THEN

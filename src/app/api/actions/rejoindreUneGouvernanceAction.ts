@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
@@ -34,7 +34,7 @@ export async function rejoindreUneGouvernanceAction(actionParams: ActionParams):
       codeDepartement: actionParams.codeDepartement,
       contact: actionParams.contact,
       contactTechnique: actionParams.contactTechnique,
-      uidUtilisateur: await getSessionSub(),
+      uidUtilisateur: await getSessionUtilisateurId(),
     })
 
     revalidatePath(validationResult.data.path)

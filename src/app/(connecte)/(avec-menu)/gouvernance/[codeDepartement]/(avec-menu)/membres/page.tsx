@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -30,7 +30,7 @@ export default async function MembresController({ params, searchParams }: Props)
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const peutGererGouvernance = contexte.peutGererGouvernance(codeDepartement)
 

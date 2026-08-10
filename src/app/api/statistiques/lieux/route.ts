@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import type { LieuCoopOption } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<null | Rea
   const recherche = request.nextUrl.searchParams.get('q') ?? ''
   if (recherche.length < 2) return NextResponse.json([])
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const scopeFiltre: ScopeFiltre =
     contexte.role === 'gestionnaire_structure'

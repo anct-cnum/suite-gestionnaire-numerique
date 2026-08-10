@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import departements from '../../../../ressources/departements.json'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMonDepartement } from '@/use-cases/commands/ChangerMonDepartement'
@@ -19,7 +19,7 @@ export async function changerMonDepartementAction(actionParams: ActionParams): R
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    const uid = await getSessionSub()
+    const uid = await getSessionUtilisateurId()
 
     const message = await new ChangerMonDepartement(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
       nouveauCodeDepartement: validationResult.data.nouveauCodeDepartement,

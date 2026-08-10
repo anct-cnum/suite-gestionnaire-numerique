@@ -8,7 +8,7 @@ import { SupprimerUneNoteDeContexte } from '@/use-cases/commands/SupprimerUneNot
 describe('supprimer une note de contexte', () => {
   it('quand une note de contexte est supprimée, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -22,7 +22,7 @@ describe('supprimer une note de contexte', () => {
     expect(messages).toStrictEqual(['OK'])
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(SupprimerUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'gouvernanceFooId',
     })
   })

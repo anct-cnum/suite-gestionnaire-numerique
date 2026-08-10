@@ -36,7 +36,7 @@ export function utilisateurReadModelFactory(override?: Partial<UnUtilisateurRead
     },
     structureId: null,
     telephone: '0102030405',
-    uid: 'fooId',
+    uid: 1,
     ...override,
   }
 }

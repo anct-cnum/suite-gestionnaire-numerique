@@ -104,5 +104,5 @@ const utilisateurProps = {
   nom: 'tartempion',
   prenom: 'martin',
   role: 'Gestionnaire structure',
-  uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+  uid: { email: 'martin.tartempion@example.net', value: 1 },
 }

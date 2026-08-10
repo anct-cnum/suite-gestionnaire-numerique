@@ -26,7 +26,7 @@ describe("route d'upload de document", () => {
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
 
     // WHEN
-    const result = await post(fabriqueRequest({ file: fabriquePdf(), uidEditeur: 'userFooId' }))
+    const result = await post(fabriqueRequest({ file: fabriquePdf(), uidEditeur: '1' }))
 
     // THEN
     expect(result.status).toBe(400)
@@ -38,11 +38,10 @@ describe("route d'upload de document", () => {
   it("devrait retourner une 403 quand l'utilisateur authentifié ne correspond pas à l'uidEditeur", async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
 
     // WHEN
-    const result = await post(
-      fabriqueRequest({ file: fabriquePdf(), uidEditeur: 'autreUtilisateur', uidFeuilleDeRoute: 'uidFdr' })
-    )
+    const result = await post(fabriqueRequest({ file: fabriquePdf(), uidEditeur: '2', uidFeuilleDeRoute: 'uidFdr' }))
 
     // THEN
     expect(result.status).toBe(403)
@@ -52,11 +51,10 @@ describe("route d'upload de document", () => {
   it("devrait retourner une 400 quand l'identifiant de feuille de route contient des caractères invalides", async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
 
     // WHEN
-    const result = await post(
-      fabriqueRequest({ file: fabriquePdf(), uidEditeur: 'userFooId', uidFeuilleDeRoute: '../autre' })
-    )
+    const result = await post(fabriqueRequest({ file: fabriquePdf(), uidEditeur: '1', uidFeuilleDeRoute: '../autre' }))
 
     // THEN
     expect(result.status).toBe(400)
@@ -66,12 +64,13 @@ describe("route d'upload de document", () => {
   it('devrait retourner une 400 quand le nom du fichier ne porte pas l’extension .pdf', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
 
     // WHEN
     const result = await post(
       fabriqueRequest({
         file: fabriqueFichier('%PDF-1.4 contenu', 'document.txt'),
-        uidEditeur: 'userFooId',
+        uidEditeur: '1',
         uidFeuilleDeRoute: 'uidFdr',
       })
     )
@@ -84,15 +83,14 @@ describe("route d'upload de document", () => {
   it('devrait retourner une 400 quand le fichier dépasse 25 Mo', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     const fichierTropGros = {
       name: 'document.pdf',
       size: 25 * 1024 * 1024 + 1,
     } as unknown as File
 
     // WHEN
-    const result = await post(
-      fabriqueRequest({ file: fichierTropGros, uidEditeur: 'userFooId', uidFeuilleDeRoute: 'uidFdr' })
-    )
+    const result = await post(fabriqueRequest({ file: fichierTropGros, uidEditeur: '1', uidFeuilleDeRoute: 'uidFdr' }))
 
     // THEN
     expect(result.status).toBe(400)
@@ -102,12 +100,13 @@ describe("route d'upload de document", () => {
   it("devrait retourner une 400 quand le fichier n'est pas un PDF", async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
 
     // WHEN
     const result = await post(
       fabriqueRequest({
         file: fabriqueFichier('pas un pdf'),
-        uidEditeur: 'userFooId',
+        uidEditeur: '1',
         uidFeuilleDeRoute: 'uidFdr',
       })
     )
@@ -120,12 +119,13 @@ describe("route d'upload de document", () => {
   it("devrait retourner une 400 quand l'éditeur n'a pas les droits", async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(AjouterDocument.prototype, 'handle').mockResolvedValueOnce('editeurNePeutPasAjouterDocument')
     const captureException = vi.fn<typeof Sentry.captureException>()
 
     // WHEN
     const result = await post(
-      fabriqueRequest({ file: fabriquePdf(), uidEditeur: 'userFooId', uidFeuilleDeRoute: 'uidFdr' }),
+      fabriqueRequest({ file: fabriquePdf(), uidEditeur: '1', uidFeuilleDeRoute: 'uidFdr' }),
       captureException
     )
 
@@ -137,13 +137,14 @@ describe("route d'upload de document", () => {
   it('devrait appeler le use case avec un nom assaini et retourner le lien quand tout est valide', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     const handle = vi.spyOn(AjouterDocument.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const result = await post(
       fabriqueRequest({
         file: fabriquePdf('../../feuille de route.pdf'),
-        uidEditeur: 'userFooId',
+        uidEditeur: '1',
         uidFeuilleDeRoute: 'uidFdr',
       })
     )
@@ -158,7 +159,7 @@ describe("route d'upload de document", () => {
         chemin: json.href.replace('/api/document-feuille-de-route/', ''),
         contenu: Buffer.from('%PDF-1.4 contenu'),
         nom: 'feuille de route.pdf',
-        uidEditeur: 'userFooId',
+        uidEditeur: 1,
         uidFeuilleDeRoute: 'uidFdr',
       })
     )
@@ -167,6 +168,7 @@ describe("route d'upload de document", () => {
   it('devrait retourner une 503 quand le stockage S3 échoue', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(fabriqueSession())
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     const erreurS3 = new Error('boom')
     erreurS3.name = 'S3ServiceException'
     vi.spyOn(AjouterDocument.prototype, 'handle').mockRejectedValueOnce(erreurS3)
@@ -174,7 +176,7 @@ describe("route d'upload de document", () => {
 
     // WHEN
     const result = await post(
-      fabriqueRequest({ file: fabriquePdf(), uidEditeur: 'userFooId', uidFeuilleDeRoute: 'uidFdr' }),
+      fabriqueRequest({ file: fabriquePdf(), uidEditeur: '1', uidFeuilleDeRoute: 'uidFdr' }),
       captureException
     )
 

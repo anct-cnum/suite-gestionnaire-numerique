@@ -8,7 +8,7 @@ import { SupprimerDocument } from '@/use-cases/commands/SupprimerDocument'
 describe('supprimer un document', () => {
   it('quand un document est supprimé avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerDocument.prototype, 'handle').mockResolvedValueOnce('OK')
 

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaContactReferentFneLoader } from '@/gateways/PrismaContactReferentFneLoader'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
@@ -25,7 +25,7 @@ export async function accepterUnMembreAction(actionParams: ActionParams): Result
 
     const membreRepository = new PrismaMembreRepository()
     const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const uidUtilisateurCourant = await getSessionSub()
+    const uidUtilisateurCourant = await getSessionUtilisateurId()
 
     const result = await new AccepterUnMembre(
       utilisateurRepository,

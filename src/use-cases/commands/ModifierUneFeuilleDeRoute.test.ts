@@ -131,12 +131,12 @@ describe('modifier une feuille de route', () => {
 
 const uidGouvernance = 'gouvernanceFooId'
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 const nom = 'Feuille de route 69'
 const uidPorteur = 'porteurFooId'
 const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 

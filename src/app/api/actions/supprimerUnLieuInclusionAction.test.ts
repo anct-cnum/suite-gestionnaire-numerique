@@ -15,8 +15,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('supprimer un lieu d’inclusion action', () => {
   it('supprime le lieu et purge le cache quand un bêta-testeur avec les droits confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
@@ -48,8 +48,8 @@ describe('supprimer un lieu d’inclusion action', () => {
 
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false })
     )
 
@@ -62,8 +62,8 @@ describe('supprimer un lieu d’inclusion action', () => {
 
   it('renvoie une erreur quand le lieu est introuvable', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
@@ -83,8 +83,8 @@ describe('supprimer un lieu d’inclusion action', () => {
 
   it('refuse l’action à un utilisateur bêta-testeur sans les droits de modification du lieu', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(

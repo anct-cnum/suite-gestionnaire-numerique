@@ -32,7 +32,7 @@ export interface StructureFusionRepository {
 export type Fusion = Readonly<{
   idAbsorbee: number
   idSurvivante: number
-  parUtilisateur: string
+  parUtilisateur: number
 }>
 
 export type FusionFailure =
@@ -48,5 +48,5 @@ export type FusionFailure =
 type Command = Readonly<{
   idAbsorbee: number
   idSurvivante: number
-  uidUtilisateur: string
+  uidUtilisateur: number
 }>

@@ -135,7 +135,7 @@ function createUtilisateurReadModel(
     },
     structureId: overrides.structureId ?? null,
     telephone: overrides.telephone ?? '0123456789',
-    uid: overrides.uid ?? 'test-uid',
+    uid: overrides.uid ?? 1,
   }
 }
 

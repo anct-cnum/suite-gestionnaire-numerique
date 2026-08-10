@@ -150,7 +150,7 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
       idCible: 999999,
       idSource: SOURCE,
       notions: ['contacts'],
-      parUtilisateur: 'admin-test',
+      parUtilisateur: 1,
     })
 
     // THEN
@@ -163,7 +163,7 @@ async function transferer(notions: ReadonlyArray<NotionCle>): Promise<string> {
     idCible: CIBLE,
     idSource: SOURCE,
     notions,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
   })
 }
 

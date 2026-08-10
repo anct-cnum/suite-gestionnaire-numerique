@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -39,7 +39,7 @@ export default async function ListeAidantsMediateursController({
     redirect('/connexion')
   }
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const scopeFiltre = contexte.scopeFiltre()

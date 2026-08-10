@@ -48,7 +48,7 @@ const nextAuthOptions = {
           return false
         }
         await corrigerNomPrenomUtilisateur(utilisateurReadModel, profile as Profile, utilisateurRepository)
-        await mettreAJourDateConnexion(profile.sub, utilisateurRepository)
+        await mettreAJourDateConnexion(utilisateurReadModel.uid, utilisateurRepository)
       }
       return true
     },
@@ -104,9 +104,17 @@ export async function getSession(): Promise<{ user: Profile } | null> {
   return getServerSession(nextAuthOptions)
 }
 
-export async function getSessionSub(): Promise<string> {
+export async function getSessionUtilisateurId(): Promise<number> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return (await getSession())!.user.sub
+  const sub = (await getSession())!.user.sub
+  const utilisateur = await prisma.utilisateurRecord.findUnique({
+    select: { id: true },
+    where: { isSupprime: false, ssoId: sub },
+  })
+  if (!utilisateur) {
+    throw new Error('Utilisateur non trouvé')
+  }
+  return utilisateur.id
 }
 
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>
@@ -168,12 +176,12 @@ async function corrigerNomPrenomUtilisateur(
       nom: profile.usual_name,
       prenom: profile.given_name,
     },
-    uidUtilisateurCourant: profile.sub,
+    uidUtilisateurCourant: utilisateurReadModel.uid,
   })
 }
 
 async function mettreAJourDateConnexion(
-  uid: string,
+  uid: number,
   utilisateurRepository: PrismaUtilisateurRepository
 ): Promise<string> {
   // eslint-disable-next-line no-restricted-syntax

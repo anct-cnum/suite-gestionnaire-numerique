@@ -10,8 +10,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('transférer un membre action', () => {
   it('transfère le membre et purge le cache quand un administrateur autorisé confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererMembre.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -30,7 +30,7 @@ describe('transférer un membre action', () => {
       idCible: 9867,
       idMembre: 'structure-77944552700046-26',
       idSource: 9869,
-      uidUtilisateur: 'userFooId',
+      uidUtilisateur: 1,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/membres-a-consolider')
     expect(messages).toStrictEqual(['OK'])
@@ -51,8 +51,8 @@ describe('transférer un membre action', () => {
 
   it('refuse l’action à un utilisateur non administrateur autorisé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({
         isBetaTesteur: false,
         role: {
@@ -80,8 +80,8 @@ describe('transférer un membre action', () => {
 
   it('remonte le message d’échec métier renvoyé par la commande', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererMembre.prototype, 'handle').mockResolvedValueOnce('transfertCreeraitDoublonMembre')

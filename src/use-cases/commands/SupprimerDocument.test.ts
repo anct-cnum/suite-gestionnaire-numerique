@@ -19,7 +19,7 @@ describe('supprimer un document d‘une feuille de route', () => {
 
   it('quand un document est supprimé par son gestionnaire, alors il est supprimé', async () => {
     // GIVEN
-    const uidEditeur = 'userFooId2'
+    const uidEditeur = 2
     const supprimerDocument = new SupprimerDocument(
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
@@ -51,7 +51,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     // WHEN
     const result = await supprimerDocument.handle({
       date: epochTime.toISOString(),
-      uidEditeur: 'utilisateurUsurpateur',
+      uidEditeur: 2,
       uidFeuilleDeRoute,
     })
 
@@ -64,7 +64,7 @@ describe('supprimer un document d‘une feuille de route', () => {
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 const mockDocument: Document = {
   chemin: '/api/document-feuille-de-route/user/fooId/feuille-de-route-fake.pdf',

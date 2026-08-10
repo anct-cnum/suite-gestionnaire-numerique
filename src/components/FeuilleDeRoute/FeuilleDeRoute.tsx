@@ -55,7 +55,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('uidFeuilleDeRoute', viewModel.uidFeuilleDeRoute)
-      formData.append('uidEditeur', sessionUtilisateurViewModel.uid)
+      formData.append('uidEditeur', String(sessionUtilisateurViewModel.uid))
 
       const response = await fetch('/api/document-feuille-de-route/upload', {
         body: formData,

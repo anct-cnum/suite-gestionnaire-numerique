@@ -31,7 +31,7 @@ export type Transfert = Readonly<{
   idCible: number
   idMembre: string
   idSource: number
-  parUtilisateur: string
+  parUtilisateur: number
 }>
 
 export type TransfertFailure =
@@ -45,5 +45,5 @@ type Command = Readonly<{
   idCible: number
   idMembre: string
   idSource: number
-  uidUtilisateur: string
+  uidUtilisateur: number
 }>

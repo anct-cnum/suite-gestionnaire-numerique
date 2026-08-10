@@ -39,7 +39,7 @@ export default function SupprimerUnUtilisateur({ closeModal, id, isOpen, utilisa
     </Modal>
   )
 
-  async function supprimer(uidUtilisateurASupprimer: string): Promise<void> {
+  async function supprimer(uidUtilisateurASupprimer: number): Promise<void> {
     setIsDisabled(true)
     const messages = await supprimerUnUtilisateurAction({ path: pathname, uidUtilisateurASupprimer })
     if (messages.includes('OK')) {
@@ -61,5 +61,5 @@ type Props = Readonly<{
 
 type UtilisateurASupprimer = Readonly<{
   prenomEtNom: string
-  uid: string
+  uid: number
 }>

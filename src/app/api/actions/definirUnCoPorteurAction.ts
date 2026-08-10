@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -21,7 +21,7 @@ export async function definirUnCoPorteurAction(actionParams: ActionParams): Resu
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    const sessionSub = await getSessionSub()
+    const sessionSub = await getSessionUtilisateurId()
 
     const message = await new DefinirUnCoPorteur(
       new PrismaMembreRepository(),

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -25,9 +25,9 @@ export async function modifierLieuInclusionInformationsPratiquesAction(
 
     try {
       // Vérification des droits
-      const sub = await getSessionSub()
+      const utilisateurId = await getSessionUtilisateurId()
       const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-      const utilisateur = await utilisateurRepository.get(sub)
+      const utilisateur = await utilisateurRepository.get(utilisateurId)
 
       const loader = new PrismaRecupererLieuDetailsLoader()
       const lieuDetailsReadModel = await loader.recuperer(actionParams.structureId)

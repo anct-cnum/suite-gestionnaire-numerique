@@ -18,7 +18,7 @@ describe('transférer des notions entre structures', () => {
     const transferer = new TransfererNotionsStructure(repositoryQuiRend('OK'))
 
     // WHEN
-    const result = await transferer.handle({ idCible: 5, idSource: 5, notions: ['membre'], uidUtilisateur: 'bob' })
+    const result = await transferer.handle({ idCible: 5, idSource: 5, notions: ['membre'], uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('transfertImpossibleMemeStructure')
@@ -30,7 +30,7 @@ describe('transférer des notions entre structures', () => {
     const transferer = new TransfererNotionsStructure(repositoryQuiRend('OK'))
 
     // WHEN
-    const result = await transferer.handle({ idCible: 2, idSource: 1, notions: [], uidUtilisateur: 'bob' })
+    const result = await transferer.handle({ idCible: 2, idSource: 1, notions: [], uidUtilisateur: 1 })
 
     // THEN
     expect(result).toBe('aucuneNotionSelectionnee')
@@ -46,7 +46,7 @@ describe('transférer des notions entre structures', () => {
       idCible: 2,
       idSource: 1,
       notions: ['membre', 'coop'],
-      uidUtilisateur: 'alice',
+      uidUtilisateur: 2,
     })
 
     // THEN
@@ -55,7 +55,7 @@ describe('transférer des notions entre structures', () => {
       idCible: 2,
       idSource: 1,
       notions: ['membre', 'coop'],
-      parUtilisateur: 'alice',
+      parUtilisateur: 2,
     })
   })
 
@@ -64,7 +64,7 @@ describe('transférer des notions entre structures', () => {
     const transferer = new TransfererNotionsStructure(repositoryQuiRend('collisionIdentifiantSource'))
 
     // WHEN
-    const result = await transferer.handle({ idCible: 2, idSource: 1, notions: ['coop'], uidUtilisateur: 'alice' })
+    const result = await transferer.handle({ idCible: 2, idSource: 1, notions: ['coop'], uidUtilisateur: 2 })
 
     // THEN
     expect(result).toBe('collisionIdentifiantSource')

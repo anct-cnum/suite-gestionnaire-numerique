@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { telephonePattern } from '@/shared/patterns'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -30,7 +30,7 @@ export async function modifierMesInformationsPersonnellesAction(
         prenom: actionParams.prenom,
         telephone: actionParams.telephone,
       },
-      uidUtilisateurCourant: await getSessionSub(),
+      uidUtilisateurCourant: await getSessionUtilisateurId(),
     })
 
     revalidatePath(actionParams.path)

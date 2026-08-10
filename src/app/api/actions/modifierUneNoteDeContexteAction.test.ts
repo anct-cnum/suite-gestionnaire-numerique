@@ -8,7 +8,7 @@ import { ModifierUneNoteDeContexte } from '@/use-cases/commands/ModifierUneNoteD
 describe('modifier une note de contexte', () => {
   it('quand une note de contexte est modifiée avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -24,7 +24,7 @@ describe('modifier une note de contexte', () => {
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(ModifierUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>ma note de contexte modifiée</p>',
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'uidGouvernance',
     })
   })
@@ -43,7 +43,7 @@ describe('modifier une note de contexte', () => {
 
   it('quand une note de contexte modifiée contient du HTML malveillant, alors le contenu est assaini', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -59,7 +59,7 @@ describe('modifier une note de contexte', () => {
     // THEN
     expect(ModifierUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>Contenu légitime</p>',
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'uidGouvernance',
     })
   })

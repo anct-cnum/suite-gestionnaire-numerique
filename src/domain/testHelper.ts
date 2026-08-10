@@ -27,7 +27,7 @@ export function utilisateurFactory(
     nom: 'Tartempion',
     prenom: 'Martin',
     telephone: '0102030405',
-    uid: { email: 'martin.tartempion@example.net', value: 'userFooId' },
+    uid: { email: 'martin.tartempion@example.net', value: 1 },
     ...override,
   }).create(override?.role ?? 'Gestionnaire structure', override?.codeOrganisation)
 }
@@ -59,7 +59,7 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
     },
     uidEditeur: {
       email: 'martin.tartempion@example.net',
-      value: 'userFooId',
+      value: 1,
     },
     uidGouvernance: {
       value: 'gouvernanceFooId',
@@ -79,7 +79,7 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
     },
     uidEditeur: {
       email: 'martin.tartempion@example.net',
-      value: 'userFooId',
+      value: 1,
     },
     uidGouvernance: {
       value: 'gouvernanceFooId',
@@ -104,7 +104,7 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     uid: {
       value: 'feuilleDeRouteFooId',
     },
-    uidCreateur: 'userFooId',
+    uidCreateur: 1,
     uidFeuilleDeRoute: {
       value: 'feuilleDeRouteFooId',
     },
@@ -175,7 +175,7 @@ export function demandeDeSubventionFactory(
     uidAction: {
       value: 'actionFooId',
     },
-    uidCreateur: 'userFooId',
+    uidCreateur: 1,
     uidEnveloppeFinancement: {
       value: 'enveloppeFinancementFooId',
     },

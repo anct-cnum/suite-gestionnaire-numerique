@@ -41,8 +41,8 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
 type Failure = 'utilisateurAReinviterDejaActif' | 'utilisateurNePeutPasGererUtilisateurAReinviter' | UtilisateurFailure
 
 type Command = Readonly<{
-  uidUtilisateurAReinviter: string
-  uidUtilisateurCourant: string
+  uidUtilisateurAReinviter: number
+  uidUtilisateurCourant: number
 }>
 
 interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

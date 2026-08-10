@@ -50,7 +50,8 @@ export class InviterContactsReferentsFne implements CommandHandler<Command> {
       prenom: contact.prenom,
       structureUid: structureId,
       telephone: contact.telephone,
-      uid: { email: contact.email, value: contact.email },
+      // 0 = sentinelle « id généré par la base » : jamais écrite en base
+      uid: { email: contact.email, value: 0 },
     }).create('Gestionnaire structure', String(structureId))
 
     const isUtilisateurCreeOuReactive = await this.#utilisateurRepository.add(utilisateurACreer)
@@ -77,7 +78,7 @@ export interface ContactReferentFneLoader {
 
 type Command = Readonly<{
   structureId: number
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 type UtilisateurRepository = AddUtilisateurRepository & FindUtilisateurByEmailRepository & GetUtilisateurRepository

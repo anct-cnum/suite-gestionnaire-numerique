@@ -89,6 +89,7 @@ describe('prisma utilisateur query', () => {
         await creerUnUtilisateur({
           departementCode: '75',
           groupementId: 10,
+          id: 1,
           regionCode: '11',
           role,
           ssoId: ssoIdExistant,
@@ -116,7 +117,7 @@ describe('prisma utilisateur query', () => {
           role: roleReadModel,
           structureId: 10,
           telephone: '0102030405',
-          uid: ssoIdExistant,
+          uid: 1,
         })
       }
     )
@@ -134,6 +135,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({
         departementCode: '75',
         groupementId: 10,
+        id: 1,
         regionCode: '11',
         role: 'gestionnaire_structure',
         ssoId: ssoIdExistant,
@@ -168,7 +170,7 @@ describe('prisma utilisateur query', () => {
         },
         structureId: 10,
         telephone: '0102030405',
-        uid: ssoIdExistant,
+        uid: 1,
       })
     })
 
@@ -237,9 +239,10 @@ describe('prisma utilisateur query', () => {
       await creerUneRegion()
       await creerUnDepartement()
       await creerUneStructure()
-      await creerUnUtilisateur({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId })
+      await creerUnUtilisateur({ id: 1, nom: 'Tartempion', role: 'administrateur_dispositif', ssoId })
       await creerUnUtilisateur({
         departementCode: '75',
+        id: 2,
         nom: 'dupont',
         role: 'gestionnaire_departement',
         ssoEmail: 'martin.tartempion2@example.net',
@@ -285,7 +288,7 @@ describe('prisma utilisateur query', () => {
             },
             structureId: null,
             telephone: '0102030405',
-            uid: '123456',
+            uid: 2,
           },
           {
             departementCode: null,
@@ -311,7 +314,7 @@ describe('prisma utilisateur query', () => {
             },
             structureId: null,
             telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
+            uid: 1,
           },
         ],
       })
@@ -331,24 +334,27 @@ describe('prisma utilisateur query', () => {
           rolesGerables: [],
           type: 'gestionnaire_departement',
         },
-        uid: ssoId,
+        uid: 1,
       })
       await creerUneRegion({ code: regionCode })
       await creerUnDepartement({ code: departementCode, regionCode })
       await creerUnUtilisateur({
         departementCode,
+        id: 1,
         nom: 'Tartempion',
         role: 'gestionnaire_departement',
         ssoId,
       })
       await creerUnUtilisateur({
         departementCode,
+        id: 2,
         nom: 'Dupont',
         role: 'gestionnaire_departement',
         ssoEmail: 'alois.leroy@example.com',
         ssoId: '123456',
       })
       await creerUnUtilisateur({
+        id: 3,
         nom: 'Durant',
         role: 'administrateur_dispositif',
         ssoEmail: 'martin.tartempion@example.fr',
@@ -369,9 +375,9 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire département')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire département')
     })
 
@@ -388,16 +394,18 @@ describe('prisma utilisateur query', () => {
           rolesGerables: [],
           type: 'gestionnaire_region',
         },
-        uid: ssoId,
+        uid: 1,
       })
       await creerUneRegion({ code: regionCode })
       await creerUnUtilisateur({
+        id: 1,
         nom: 'Tartempion',
         regionCode,
         role: 'gestionnaire_region',
         ssoId,
       })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'Dupont',
         regionCode,
         role: 'gestionnaire_region',
@@ -405,6 +413,7 @@ describe('prisma utilisateur query', () => {
         ssoId: '123456',
       })
       await creerUnUtilisateur({
+        id: 3,
         nom: 'Durant',
         role: 'administrateur_dispositif',
         ssoEmail: 'martin.tartempion@example.fr',
@@ -425,9 +434,9 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire région')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire région')
     })
 
@@ -444,23 +453,26 @@ describe('prisma utilisateur query', () => {
           rolesGerables: [],
           type: 'gestionnaire_groupement',
         },
-        uid: ssoId,
+        uid: 1,
       })
       await creerUnGroupement({ id: groupementId })
       await creerUnUtilisateur({
         groupementId,
+        id: 1,
         nom: 'Tartempion',
         role: 'gestionnaire_groupement',
         ssoId,
       })
       await creerUnUtilisateur({
         groupementId,
+        id: 2,
         nom: 'Dupont',
         role: 'gestionnaire_groupement',
         ssoEmail: 'martin.tartempion@example.com',
         ssoId: '123456',
       })
       await creerUnUtilisateur({
+        id: 3,
         nom: 'Durant',
         role: 'administrateur_dispositif',
         ssoEmail: 'fakeSsoEmail@example.com',
@@ -481,9 +493,9 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire groupement')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire groupement')
     })
 
@@ -500,18 +512,20 @@ describe('prisma utilisateur query', () => {
           type: 'gestionnaire_structure',
         },
         structureId,
-        uid: ssoId,
+        uid: 1,
       })
       await creerUneRegion()
       await creerUnDepartement()
       await creerUneStructure({ id: structureId })
       await creerUnUtilisateur({
+        id: 1,
         nom: 'Tartempion',
         role: 'gestionnaire_structure',
         ssoId,
         structureId,
       })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'Dupont',
         role: 'gestionnaire_structure',
         ssoEmail: 'martin.tartempion@example.org',
@@ -519,6 +533,7 @@ describe('prisma utilisateur query', () => {
         structureId,
       })
       await creerUnUtilisateur({
+        id: 3,
         nom: 'Durant',
         role: 'administrateur_dispositif',
         ssoEmail: 'fakeSsoEmail@example.com',
@@ -539,16 +554,17 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire structure')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
       // GIVEN
-      await creerUnUtilisateur({ nom: 'Tartempion', ssoId })
+      await creerUnUtilisateur({ id: 1, nom: 'Tartempion', ssoId })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'Dupont',
         ssoEmail: 'anthony.parquet@example.com',
         ssoId: '123456',
@@ -570,13 +586,14 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
     })
 
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
       // GIVEN
-      await creerUnUtilisateur({ isSupprime: false, ssoId })
+      await creerUnUtilisateur({ id: 1, isSupprime: false, ssoId })
       await creerUnUtilisateur({
+        id: 2,
         isSupprime: true,
         ssoEmail: 'anthony.parquet@example.com',
         ssoId: '123456',
@@ -596,15 +613,16 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
     it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
-      await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
+      await creerUnUtilisateur({ derniereConnexion: epochTime, id: 1, nom: 'a', ssoId })
       await creerUnUtilisateur({
         derniereConnexion: null,
+        id: 2,
         nom: 'b',
         ssoEmail: 'anthony.parquet@example.com',
         ssoId: '123456',
@@ -628,9 +646,10 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs actifs alors je trouve tous ceux qui sont actifs', async () => {
       // GIVEN
-      await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
+      await creerUnUtilisateur({ derniereConnexion: epochTime, id: 1, nom: 'a', ssoId })
       await creerUnUtilisateur({
         derniereConnexion: null,
+        id: 2,
         nom: 'b',
         ssoEmail: 'anthony.parquet@example.com',
         ssoId: '123456',
@@ -651,14 +670,15 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
     it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
-      await creerUnUtilisateur({ nom: 'a', role: 'administrateur_dispositif', ssoId })
+      await creerUnUtilisateur({ id: 1, nom: 'a', role: 'administrateur_dispositif', ssoId })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'c',
         role: 'gestionnaire_structure',
         ssoEmail: 'nicolas.james@example.com',
@@ -680,9 +700,9 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Administrateur dispositif')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
@@ -698,23 +718,27 @@ describe('prisma utilisateur query', () => {
       await creerUneStructure({ departementCode: codeDepartement, id: 11 })
       await creerUnUtilisateur({
         departementCode: codeDepartement,
+        id: 1,
         nom: 'a',
         role: 'gestionnaire_departement',
         ssoId,
       })
       await creerUnUtilisateur({
         departementCode: '75',
+        id: 2,
         nom: 'b',
         role: 'gestionnaire_departement',
         ssoEmail: 'nicolas.james@example.com',
         ssoId: '123456',
       })
       await creerUnUtilisateur({
+        id: 3,
         ssoEmail: 'nicolas.james@example.net',
         ssoId: '1234567',
         structureId: 10,
       })
       await creerUnUtilisateur({
+        id: 4,
         ssoEmail: 'nicolas.james@example.org',
         ssoId: '1234568',
         structureId: 11,
@@ -734,8 +758,8 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('1234568')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(4)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].departementCode).toBe('93')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(11)
     })
@@ -753,12 +777,14 @@ describe('prisma utilisateur query', () => {
       await creerUneStructure({ departementCode: '75' })
       await creerUneStructure({ departementCode: '10', id: 11 })
       await creerUnUtilisateur({
+        id: 1,
         nom: 'a',
         regionCode: codeRegion,
         role: 'gestionnaire_region',
         ssoId,
       })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'b',
         regionCode: '21',
         role: 'gestionnaire_region',
@@ -767,6 +793,7 @@ describe('prisma utilisateur query', () => {
       })
       await creerUnUtilisateur({
         departementCode: '75',
+        id: 3,
         nom: 'c',
         role: 'gestionnaire_departement',
         ssoEmail: 'jean.lebrun@example.com',
@@ -774,17 +801,20 @@ describe('prisma utilisateur query', () => {
       })
       await creerUnUtilisateur({
         departementCode: '10',
+        id: 4,
         nom: 'D',
         role: 'gestionnaire_departement',
         ssoEmail: 'anthony.parquet@example.com',
         ssoId: 'azerty',
       })
       await creerUnUtilisateur({
+        id: 5,
         ssoEmail: 'anthony.parquet@example.net',
         ssoId: 'uiopq',
         structureId: 10,
       })
       await creerUnUtilisateur({
+        id: 6,
         ssoEmail: 'anthony.parquet@example.org',
         ssoId: 'sdfghj',
         structureId: 11,
@@ -804,11 +834,11 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(3)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(3)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].regionCode).toBe('11')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(3)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].departementCode).toBe('75')
-      expect(mesUtilisateursReadModel.utilisateursCourants[2].uid).toBe('uiopq')
+      expect(mesUtilisateursReadModel.utilisateursCourants[2].uid).toBe(5)
       expect(mesUtilisateursReadModel.utilisateursCourants[2].structureId).toBe(10)
     })
 
@@ -829,8 +859,9 @@ describe('prisma utilisateur query', () => {
         id: 416,
         nom: 'GRAND PARIS GRAND EST',
       })
-      await creerUnUtilisateur({ nom: 'Tartempion', prenom: 'Martin', structureId })
+      await creerUnUtilisateur({ id: 1, nom: 'Tartempion', prenom: 'Martin', structureId })
       await creerUnUtilisateur({
+        id: 2,
         nom: 'Dugenoux',
         prenom: 'Martine',
         ssoEmail: 'martine.dugenoux@example.com',
@@ -838,6 +869,7 @@ describe('prisma utilisateur query', () => {
         structureId: 416,
       })
       await creerUnUtilisateur({
+        id: 3,
         nom: 'Duchmolle',
         prenom: 'Martine',
         ssoEmail: 'martine.duchmolle@example.com',
@@ -860,8 +892,8 @@ describe('prisma utilisateur query', () => {
       // THEN
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('31512478-64eb-4993-af47-a728ec4d8e06')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('userFooId')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe(3)
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe(1)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].structureId).toBe(structureId)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(structureId)
     })
@@ -871,7 +903,7 @@ describe('prisma utilisateur query', () => {
     const utilisateursParPage = 10
     const isActive = false
     const utilisateurAuthentifie = utilisateurReadModelFactory({
-      uid: ssoId,
+      uid: 1,
     })
     const roles: ReadonlyArray<string> = []
     const utilisateurLoader = new PrismaUtilisateurLoader()
@@ -881,12 +913,11 @@ describe('prisma utilisateur query', () => {
 
   describe('chercher un utilisateur par son nom ou son email', () => {
     const structureId = 15
-    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const pageCourante = 0
     const utilisateursParPage = 10
     const isActive = false
     const utilisateurAuthentifie = utilisateurReadModelFactory({
-      uid: ssoId,
+      uid: 1,
     })
     const roles: ReadonlyArray<string> = []
     const utilisateurLoader = new PrismaUtilisateurLoader()

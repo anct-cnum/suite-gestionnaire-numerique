@@ -17,7 +17,7 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation ?? undefined,
       uid: this.#uid.state,
       uidAction: this.#uidAction.state.value,
-      uidCreateur: this.#uidCreateur.state.value,
+      uidCreateur: this.#uidCreateur,
       uidEnveloppeFinancement: this.#uidEnveloppeFinancement.state.value,
     }
   }
@@ -31,7 +31,7 @@ export class DemandeDeSubvention extends Entity<State> {
   readonly #subventionPrestation: null | number
   readonly #uid: DemandeDeSubventionUid
   readonly #uidAction: ActionUid
-  readonly #uidCreateur: MembreUid
+  readonly #uidCreateur: number
   readonly #uidEnveloppeFinancement: EnveloppeFinancementUid
 
   private constructor(
@@ -45,7 +45,7 @@ export class DemandeDeSubvention extends Entity<State> {
     subventionPrestation: null | number,
     uidAction: ActionUid,
     uidEnveloppeFinancement: EnveloppeFinancementUid,
-    uidCreateur: MembreUid
+    uidCreateur: number
   ) {
     super(uid)
     this.#uid = uid
@@ -89,7 +89,7 @@ export class DemandeDeSubvention extends Entity<State> {
         subventionPrestation,
         new ActionUid(uidAction.value),
         new EnveloppeFinancementUid(uidEnveloppeFinancement.value),
-        new MembreUid(uidCreateur)
+        uidCreateur
       )
     } catch (error) {
       return (error as Exception<DemandeDeSubventionFailure>).message as DemandeDeSubventionFailure
@@ -107,7 +107,7 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation,
       uid: this.#uid.state,
       uidAction: { value: uidAction },
-      uidCreateur: this.#uidCreateur.state.value,
+      uidCreateur: this.#uidCreateur,
       uidEnveloppeFinancement: { value: this.#uidEnveloppeFinancement.state.value },
     }) as DemandeDeSubvention
   }
@@ -144,7 +144,7 @@ type FactoryParams = Readonly<{
   subventionPrestation: null | number
   uid: UidState
   uidAction: UidState
-  uidCreateur: string
+  uidCreateur: number
   uidEnveloppeFinancement: UidState
 }>
 
@@ -158,7 +158,7 @@ type State = Readonly<{
   subventionPrestation?: number
   uid: UidState
   uidAction: string
-  uidCreateur: string
+  uidCreateur: number
   uidEnveloppeFinancement: string
 }>
 

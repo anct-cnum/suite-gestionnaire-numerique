@@ -106,10 +106,10 @@ describe('modifier une note de contextualisation', () => {
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>'
 const uidFeuilleDeRoute = 'gouvernanceFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteUidToUpdate: FeuilleDeRoute | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
@@ -175,7 +175,7 @@ class GestionnaireRepositorySpy implements GetUtilisateurRepository {
       utilisateurFactory({
         codeOrganisation: '75',
         role: 'Gestionnaire département',
-        uid: { email: 'michel.tartempion@example.net', value: 'userFooId' },
+        uid: { email: 'michel.tartempion@example.net', value: 1 },
       })
     )
   }

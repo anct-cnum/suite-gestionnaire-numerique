@@ -67,7 +67,7 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     await prisma.$executeRaw`
       INSERT INTO audit.structure_merge_log
         (status, dag_id, task_id, winner_id, loser_id, error_message)
-      VALUES ('FAILURE', 'min-ui', ${fusion.parUtilisateur}, ${fusion.idSurvivante}, ${fusion.idAbsorbee}, ${message})
+      VALUES ('FAILURE', 'min-ui', ${String(fusion.parUtilisateur)}, ${fusion.idSurvivante}, ${fusion.idAbsorbee}, ${message})
     `
   }
 
@@ -87,7 +87,7 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
       INSERT INTO audit.structure_merge_log
         (status, dag_id, task_id, winner_id, loser_id, winner_before, loser_before, winner_after, moved_identifiers)
       VALUES (
-        'SUCCESS', 'min-ui', ${fusion.parUtilisateur},
+        'SUCCESS', 'min-ui', ${String(fusion.parUtilisateur)},
         ${fusion.idSurvivante}, ${fusion.idAbsorbee},
         ${JSON.stringify(survivante.snapshot)}::jsonb,
         ${JSON.stringify(absorbee.snapshot)}::jsonb,

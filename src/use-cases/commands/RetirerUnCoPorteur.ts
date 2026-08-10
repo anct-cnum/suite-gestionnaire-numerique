@@ -61,5 +61,5 @@ type Failure = 'MembreDéjàNonCoPorteur' | 'MembreDoitEtreConfirmer' | 'Utilisa
 type Command = Readonly<{
   uidGouvernance: string
   uidMembre: string
-  uidUtilisateurConnecte: string
+  uidUtilisateurConnecte: number
 }>

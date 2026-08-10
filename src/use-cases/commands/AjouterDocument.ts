@@ -54,7 +54,7 @@ type Command = Readonly<{
   contenu: Buffer
   date: string
   nom: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

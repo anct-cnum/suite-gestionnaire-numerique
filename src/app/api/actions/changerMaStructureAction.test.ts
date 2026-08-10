@@ -8,10 +8,10 @@ import { ChangerMaStructure } from '@/use-cases/commands/ChangerMaStructure'
 describe('changer ma structure action', () => {
   it('étant donné un identifiant de structure correct, quand ma structure est changée, alors cela modifie mon compte', async () => {
     // GIVEN
-    const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
+    const sub = 1
     const path = '/'
     const idStructure = 42
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ChangerMaStructure.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -42,10 +42,10 @@ describe('changer ma structure action', () => {
 
   it("étant donné un échec métier, quand ma structure est changée, alors cela renvoie le message d'échec", async () => {
     // GIVEN
-    const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
+    const sub = 1
     const path = '/'
     const idStructure = 42
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ChangerMaStructure.prototype, 'handle').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSaStructure')
 

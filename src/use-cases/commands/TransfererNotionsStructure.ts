@@ -39,7 +39,7 @@ export type TransfertNotions = Readonly<{
   idCible: number
   idSource: number
   notions: ReadonlyArray<NotionCle>
-  parUtilisateur: string
+  parUtilisateur: number
 }>
 
 export type TransfertNotionsFailure =
@@ -56,5 +56,5 @@ type Command = Readonly<{
   idCible: number
   idSource: number
   notions: ReadonlyArray<NotionCle>
-  uidUtilisateur: string
+  uidUtilisateur: number
 }>

@@ -19,7 +19,7 @@ export class Action extends Entity<State> {
       destinataires: this.#destinataires.map((destinataire) => destinataire.state.value),
       nom: this.#nom,
       uid: this.#uid.state,
-      uidCreateur: this.#uidCreateur.state.value,
+      uidCreateur: this.#uidCreateur,
       uidFeuilleDeRoute: this.#uidFeuilleDeRoute.state.value,
       uidPorteurs: this.#uidPorteurs.map((uidPorteur) => uidPorteur.state.value),
     }
@@ -36,7 +36,7 @@ export class Action extends Entity<State> {
   readonly #destinataires: Array<MembreUid>
   readonly #nom: string
   readonly #uid: ActionUid
-  readonly #uidCreateur: MembreUid
+  readonly #uidCreateur: number
   readonly #uidFeuilleDeRoute: FeuilleDeRouteUid
   readonly #uidPorteurs: Array<MembreUid>
 
@@ -51,7 +51,7 @@ export class Action extends Entity<State> {
     budgetGlobal: number,
     uidFeuilleDeRoute: FeuilleDeRouteUid,
     uidPorteurs: Array<MembreUid>,
-    uidCreateur: MembreUid,
+    uidCreateur: number,
     dateDeDebut: ValidDateFromYearString<ActionFailure>,
     dateDeFin: null | ValidDateFromYearString<ActionFailure>,
     dateDeCreation: ValidDate<ActionFailure>
@@ -107,7 +107,7 @@ export class Action extends Entity<State> {
         budgetGlobal,
         new FeuilleDeRouteUid(uidFeuilleDeRoute.value),
         uidPorteurs.map((uidPorteur) => new MembreUid(uidPorteur)),
-        new MembreUid(uidCreateur),
+        uidCreateur,
         dateDeDebutValidee,
         dateDeFinValidee,
         dateDeCreationValidee
@@ -138,7 +138,7 @@ type FactoryParams = Readonly<{
   destinataires: Array<string>
   nom: string
   uid: UidState
-  uidCreateur: string
+  uidCreateur: number
   uidFeuilleDeRoute: UidState
   uidPorteurs: Array<string>
 }>
@@ -155,7 +155,7 @@ type State = Readonly<{
   destinataires: Array<string>
   nom: string
   uid: UidState
-  uidCreateur: string
+  uidCreateur: number
   uidFeuilleDeRoute: string
   uidPorteurs: Array<string>
 }>

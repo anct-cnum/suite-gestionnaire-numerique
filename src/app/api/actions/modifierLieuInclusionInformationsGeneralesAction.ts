@@ -8,7 +8,7 @@ import prisma from '../../../../prisma/prismaClient'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { createApiEntrepriseLoader } from '@/gateways/factories/apiEntrepriseLoaderFactory'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -124,16 +124,19 @@ async function construireModification(params: ParamsValides): Promise<Modificati
 }
 
 async function verifierDroits(structureId: string): Promise<string> {
-  const sub = await getSessionSub()
+  const utilisateurId = await getSessionUtilisateurId()
 
   // Garde : édition réservée aux bêta-testeurs.
-  const contexte = await resoudreContexte(await new PrismaUtilisateurLoader().findByUid(sub), new PrismaMembreLoader())
+  const contexte = await resoudreContexte(
+    await new PrismaUtilisateurLoader().findById(utilisateurId),
+    new PrismaMembreLoader()
+  )
   if (!contexte.isBetaTesteur) {
     return 'Action réservée aux bêta-testeurs'
   }
 
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurRepository.get(sub)
+  const utilisateur = await utilisateurRepository.get(utilisateurId)
 
   const loader = new PrismaRecupererLieuDetailsLoader()
   const lieuDetailsReadModel = await loader.recuperer(structureId)

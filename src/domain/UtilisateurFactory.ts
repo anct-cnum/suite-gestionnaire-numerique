@@ -42,25 +42,6 @@ export class UtilisateurFactory {
     this.#groupementUid = params.groupementUid
   }
 
-  static avecNouvelUid(utilisateur: Utilisateur, uid: string): Utilisateur {
-    const state = utilisateur.state
-    return new UtilisateurFactory({
-      departement: state.departement,
-      derniereConnexion: undefined,
-      emailDeContact: state.emailDeContact,
-      groupementUid: state.groupementUid?.value,
-      inviteLe: new Date(state.inviteLe),
-      isBetaTesteur: state.isBetaTesteur,
-      isSuperAdmin: state.isSuperAdmin,
-      nom: state.nom,
-      prenom: state.prenom,
-      region: state.region,
-      structureUid: state.structureUid?.value,
-      telephone: state.telephone,
-      uid: { email: state.uid.email, value: uid },
-    }).create(state.role.nom)
-  }
-
   create(role: TypologieRole, codeOrganisation = ''): Utilisateur {
     //Suppression du default car tous les cas sont gérés et vérifiés par TypeScript
 

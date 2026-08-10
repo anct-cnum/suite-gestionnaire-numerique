@@ -70,7 +70,7 @@ export function sessionUtilisateurViewModelFactory(
       codes: ['93'],
       type: 'departement',
     },
-    uid: 'fooId',
+    uid: 1,
     ...override,
   }
 }

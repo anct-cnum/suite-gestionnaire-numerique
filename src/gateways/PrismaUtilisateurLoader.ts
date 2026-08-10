@@ -12,29 +12,27 @@ import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/sha
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
-  async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
-    const includeRelations = {
-      relationDepartement: true,
-      relationGroupement: true,
-      relationRegion: true,
-      relationStructureAdministrative: {
-        include: {
-          membres: {
-            select: {
-              gouvernanceDepartementCode: true,
-            },
-            take: 1,
-            where: {
-              statut: 'confirme',
-            },
-          },
-        },
+  async findById(id: number): Promise<UnUtilisateurReadModel> {
+    const utilisateur = await this.#dataResource.findUnique({
+      include: includeRelationsAvecMembres,
+      where: {
+        id,
+        isSupprime: false,
       },
+    })
+
+    if (!utilisateur) {
+      throw new Error('Utilisateur non trouvé')
     }
 
+    return transform(utilisateur as UtilisateurAvecMembresRecord)
+  }
+
+  // Réservé au flow de connexion : résout le sub ProConnect (ou l'email en fallback) vers l'utilisateur
+  async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
     // 1. Recherche par ssoId (cas nominal)
     const utilisateurParSsoId = await this.#dataResource.findUnique({
-      include: includeRelations,
+      include: includeRelationsAvecMembres,
       where: {
         isSupprime: false,
         ssoId: uid,
@@ -49,7 +47,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     if (email !== undefined && email !== '') {
       const emailNormalise = email.toLowerCase()
       const utilisateurParEmail = await this.#dataResource.findUnique({
-        include: includeRelations,
+        include: includeRelationsAvecMembres,
         where: {
           isSupprime: false,
           ssoEmail: emailNormalise,
@@ -77,10 +75,10 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
     // Recherche flexible par nom/prénom/email avec word_similarity
-    let ssoIdsFromSearch: ReadonlyArray<string> | undefined
+    let idsFromSearch: ReadonlyArray<number> | undefined
     if (prenomOuNomOuEmail !== undefined) {
-      ssoIdsFromSearch = await this.#rechercheFlexibleUtilisateurs(prenomOuNomOuEmail)
-      if (ssoIdsFromSearch.length === 0) {
+      idsFromSearch = await this.#rechercheFlexibleUtilisateurs(prenomOuNomOuEmail)
+      if (idsFromSearch.length === 0) {
         return { total: 0, utilisateursCourants: [] }
       }
     }
@@ -92,7 +90,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       codeDepartement,
       codeRegion,
       idStructure,
-      ssoIdsFromSearch
+      idsFromSearch
     )
 
     const total = await this.#dataResource.count({
@@ -123,8 +121,8 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     } as const
 
     // Si recherche flexible, pagination et tri gérés via les IDs pré-triés par pertinence
-    if (ssoIdsFromSearch !== undefined) {
-      const ssoIdsPagines = ssoIdsFromSearch.slice(
+    if (idsFromSearch !== undefined) {
+      const idsPagines = idsFromSearch.slice(
         utilisateursParPage * pageCourante,
         utilisateursParPage * (pageCourante + 1)
       )
@@ -133,13 +131,13 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         include: includeRelations,
         where: {
           ...where,
+          id: { in: [...idsPagines] },
           isSupprime: false,
-          ssoId: { in: [...ssoIdsPagines] },
         },
       })
 
       // Réordonner selon l'ordre de pertinence
-      const utilisateursTries = this.#trierParPertinence(utilisateursRecord, ssoIdsFromSearch)
+      const utilisateursTries = this.#trierParPertinence(utilisateursRecord, idsFromSearch)
 
       return {
         total,
@@ -173,14 +171,14 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     codeDepartement: string,
     codeRegion: string,
     idStructure?: number,
-    ssoIdsFromSearch?: ReadonlyArray<string>
+    idsFromSearch?: ReadonlyArray<number>
   ): Promise<Prisma.UtilisateurRecordWhereInput> {
     const departementInexistant = '0'
     const regionInexistante = '0'
     const where: Prisma.UtilisateurRecordWhereInput = {}
 
-    if (ssoIdsFromSearch !== undefined) {
-      where.ssoId = { in: [...ssoIdsFromSearch] }
+    if (idsFromSearch !== undefined) {
+      where.id = { in: [...idsFromSearch] }
     }
 
     if (utilisateurCourant.role.nom === 'Gestionnaire structure') {
@@ -250,7 +248,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     return departements.map((departement) => departement.code)
   }
 
-  async #rechercheFlexibleUtilisateurs(match: string): Promise<ReadonlyArray<string>> {
+  async #rechercheFlexibleUtilisateurs(match: string): Promise<ReadonlyArray<number>> {
     const mots = match
       .trim()
       .split(/\s+/)
@@ -284,7 +282,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     const scoreMoyen = `(${scoreCalcul}) / ${mots.length}`
 
     const query = `
-      SELECT u.sso_id
+      SELECT u.id
       FROM min.utilisateur u
       WHERE (${conditionsMots})
         AND u.is_supprime = false
@@ -292,25 +290,44 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     `
 
     interface RawResult {
-      sso_id: string
+      id: number
     }
     const results = await prisma.$queryRawUnsafe<Array<RawResult>>(query, ...mots)
 
-    return results.map((row) => row.sso_id)
+    return results.map((row) => row.id)
   }
 
-  #trierParPertinence<T extends { ssoId: string }>(
+  #trierParPertinence<T extends { id: number }>(
     utilisateurs: Array<T>,
-    ordreParPertinence: ReadonlyArray<string>
+    ordreParPertinence: ReadonlyArray<number>
   ): Array<T> {
-    const indexParSsoId = new Map(ordreParPertinence.map((ssoId, index) => [ssoId, index]))
+    const indexParId = new Map(ordreParPertinence.map((id, index) => [id, index]))
     return [...utilisateurs].sort((utilisateurA, utilisateurB) => {
-      const indexA = indexParSsoId.get(utilisateurA.ssoId) ?? Number.MAX_SAFE_INTEGER
-      const indexB = indexParSsoId.get(utilisateurB.ssoId) ?? Number.MAX_SAFE_INTEGER
+      const indexA = indexParId.get(utilisateurA.id) ?? Number.MAX_SAFE_INTEGER
+      const indexB = indexParId.get(utilisateurB.id) ?? Number.MAX_SAFE_INTEGER
       return indexA - indexB
     })
   }
 }
+
+const includeRelationsAvecMembres = {
+  relationDepartement: true,
+  relationGroupement: true,
+  relationRegion: true,
+  relationStructureAdministrative: {
+    include: {
+      membres: {
+        select: {
+          gouvernanceDepartementCode: true,
+        },
+        take: 1,
+        where: {
+          statut: 'confirme',
+        },
+      },
+    },
+  },
+} as const
 
 type UtilisateurAvecMembresRecord = {
   relationStructureAdministrative:
@@ -366,6 +383,6 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
     },
     structureId: utilisateurRecord.structureId,
     telephone: utilisateurRecord.telephone,
-    uid: utilisateurRecord.ssoId,
+    uid: utilisateurRecord.id,
   }
 }

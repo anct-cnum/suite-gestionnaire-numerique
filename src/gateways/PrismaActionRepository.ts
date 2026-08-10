@@ -20,18 +20,12 @@ export class PrismaActionRepository
 
   async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
-    const utilisateurResource = client.utilisateurRecord
-    const user = await utilisateurResource.findUniqueOrThrow({
-      where: {
-        ssoId: action.state.uidCreateur,
-      },
-    })
     const actionRecord = await client.actionRecord.create({
       data: {
         besoins: action.state.besoins,
         budgetGlobal: action.state.budgetGlobal,
         contexte: action.state.contexte,
-        createurId: user.id,
+        createurId: action.state.uidCreateur,
         creation: new Date(action.state.dateDeCreation),
         dateDeDebut: new Date(action.state.dateDeDebut),
         dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
@@ -63,7 +57,6 @@ export class PrismaActionRepository
           },
         },
         porteurAction: true,
-        utilisateur: true,
       },
       where: {
         id: Number(uid),
@@ -86,7 +79,7 @@ export class PrismaActionRepository
       destinataires,
       nom: actionRecord.nom,
       uid: { value: String(actionRecord.id) },
-      uidCreateur: actionRecord.utilisateur.ssoId,
+      uidCreateur: actionRecord.createurId,
       uidFeuilleDeRoute: { value: String(actionRecord.feuilleDeRouteId) },
       uidPorteurs: actionRecord.porteurAction.map((porteur) => porteur.membreId),
     })

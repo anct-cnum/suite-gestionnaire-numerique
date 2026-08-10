@@ -27,12 +27,12 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '69'
-        const uidEditeur = 'userFooId'
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         await creerUneRegion(undefined, tx)
         await creerUnDepartement({ code: departementCode }, tx)
         await creerUneGouvernance({ departementCode }, tx)
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUnContact(
           {
             email: 'structure@example.com',
@@ -84,7 +84,7 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '69'
-        const uidEditeur = 'userFooId'
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         await creerUneRegion(undefined, tx)
         await creerUnDepartement({ code: departementCode }, tx)
@@ -105,7 +105,7 @@ describe('feuille de route repository', () => {
           },
           tx
         )
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUneFeuilleDeRoute(
           {
             creation: epochTime,
@@ -176,7 +176,7 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '69'
-        const uidEditeur = 'userFooId'
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         const chemin = 'user/1/nanoid_feuille-de-route.pdf'
         await creerUneRegion(undefined, tx)
@@ -198,7 +198,7 @@ describe('feuille de route repository', () => {
           },
           tx
         )
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUneFeuilleDeRoute(
           {
             creation: epochTime,
@@ -211,7 +211,7 @@ describe('feuille de route repository', () => {
           },
           tx
         )
-        const ancienEditeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
+        const ancienEditeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { id: uidEditeur } })
         await tx.feuilleDeRouteDocumentRecord.create({
           data: {
             chemin: 'user/1/ancien.pdf',
@@ -240,7 +240,7 @@ describe('feuille de route repository', () => {
         await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute, tx)
 
         // THEN
-        const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
+        const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { id: uidEditeur } })
         const documents = await tx.feuilleDeRouteDocumentRecord.findMany({
           orderBy: { chemin: 'asc' },
           where: { feuilleDeRouteId: 1 },
@@ -275,7 +275,7 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '69'
-        const uidEditeur = 'userFooId'
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         await creerUneRegion(undefined, tx)
         await creerUnDepartement({ code: departementCode }, tx)
@@ -296,7 +296,7 @@ describe('feuille de route repository', () => {
           },
           tx
         )
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUneFeuilleDeRoute(
           {
             creation: epochTime,
@@ -309,7 +309,7 @@ describe('feuille de route repository', () => {
           },
           tx
         )
-        const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { ssoId: uidEditeur } })
+        const editeur = await tx.utilisateurRecord.findUniqueOrThrow({ where: { id: uidEditeur } })
         await tx.feuilleDeRouteDocumentRecord.create({
           data: {
             chemin: 'user/1/ancien.pdf',
@@ -357,12 +357,12 @@ describe('feuille de route repository', () => {
   it('trouver une feuille de route complète', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     const uidPorteur = 'porteurId'
 
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
 
     await creerUnContact({
@@ -419,11 +419,11 @@ describe('feuille de route repository', () => {
   it('trouver une feuille de route dont le document est dans la table dédiée, alors le document renvoyé est celui de la table', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
 
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ id: 1, ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUneFeuilleDeRoute({
       creation: epochTime,
@@ -500,7 +500,7 @@ describe('feuille de route repository', () => {
       uid: { value: '1' },
       uidEditeur: {
         email: '~',
-        value: '~',
+        value: 0,
       },
       uidGouvernance: { value: departementCode },
       uidPorteur: '~',
@@ -511,12 +511,12 @@ describe('feuille de route repository', () => {
   it('trouver une feuille de route sans note de contextualisation', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     const uidPorteur = 'porteurId'
 
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnContact({
       email: 'structure@example.com',
@@ -560,7 +560,7 @@ describe('feuille de route repository', () => {
       perimetreGeographique: 'departemental',
       uid: { value: '1' },
       uidEditeur: {
-        email: uidEditeur,
+        email: 'martin.tartempion@example.net',
         value: uidEditeur,
       },
       uidGouvernance: { value: departementCode },
@@ -609,11 +609,11 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '75'
-        const uidEditeur = 'userFooId'
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         await creerUneRegion(undefined, tx)
         await creerUnDepartement(undefined, tx)
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUneGouvernance({ departementCode }, tx)
         await creerUneFeuilleDeRoute(
           {
@@ -674,7 +674,7 @@ describe('feuille de route repository', () => {
         expect(result).toStrictEqual({
           creation: epochTime,
           derniereEdition: epochTime,
-          editeurUtilisateurId: 'userFooId',
+          editeurUtilisateurId: uidEditeur,
           gouvernanceDepartementCode: '75',
           id: 1,
           nom: 'Feuille de route 69',
@@ -693,13 +693,13 @@ describe('feuille de route repository', () => {
       prisma.$transaction(async (tx) => {
         // GIVEN
         const departementCode = '75'
-        const uidEditeurAvant = 'userFooId0'
-        const uidEditeur = 'userFooId'
+        const uidEditeurAvant = 2
+        const uidEditeur = 1
         const uidPorteur = 'porteurId'
         await creerUneRegion(undefined, tx)
         await creerUnDepartement(undefined, tx)
-        await creerUnUtilisateur({ ssoEmail: 'toto@exemple.fr', ssoId: uidEditeurAvant }, tx)
-        await creerUnUtilisateur({ ssoId: uidEditeur }, tx)
+        await creerUnUtilisateur({ id: uidEditeurAvant, ssoEmail: 'toto@exemple.fr', ssoId: 'userFooId0' }, tx)
+        await creerUnUtilisateur({ id: uidEditeur }, tx)
         await creerUneGouvernance({ departementCode }, tx)
         await creerUnContact(
           {

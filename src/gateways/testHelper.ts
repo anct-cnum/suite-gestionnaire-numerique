@@ -49,7 +49,7 @@ export function comiteRecordFactory(
     creation: epochTime,
     date: epochTime,
     derniereEdition: epochTime,
-    editeurUtilisateurId: '1',
+    editeurUtilisateurId: 1,
     frequence: 'annuelle',
     gouvernanceDepartementCode: '11',
     type: 'strategique',

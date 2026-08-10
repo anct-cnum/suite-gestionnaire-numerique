@@ -39,7 +39,7 @@ export class SupprimerUneNoteDeContextualisation implements CommandHandler<Comma
 type Failure = 'editeurNePeutPasSupprimerNoteDeContextualisation'
 
 type Command = Readonly<{
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

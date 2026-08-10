@@ -11,7 +11,7 @@ import { epochTime } from '@/shared/testHelper'
 
 describe('inviter un utilisateur', () => {
   beforeEach(() => {
-    spiedUidToFind = ''
+    spiedUidToFind = 0
     spiedUtilisateurToAdd = null
     spiedDestinataire = {
       email: '',
@@ -33,7 +33,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           role: 'Administrateur dispositif' as const,
-          uid: 'utilisateurAdminUid',
+          uid: 1,
         },
       },
       {
@@ -49,7 +49,7 @@ describe('inviter un utilisateur', () => {
           codeOrganisation: '53',
 
           role: 'Gestionnaire région' as const,
-          uid: 'utilisateurGestionnaireUid',
+          uid: 2,
         },
       },
       {
@@ -61,7 +61,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           role: 'Administrateur dispositif' as const,
-          uid: 'utilisateurAdminUid',
+          uid: 1,
         },
       },
       {
@@ -75,7 +75,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           role: 'Administrateur dispositif' as const,
-          uid: 'utilisateurAdminUid',
+          uid: 1,
         },
       },
       {
@@ -91,7 +91,7 @@ describe('inviter un utilisateur', () => {
           codeOrganisation: '53',
 
           role: 'Gestionnaire région' as const,
-          uid: 'utilisateurGestionnaireUid',
+          uid: 2,
         },
       },
     ])('$desc puis un e-mail lui est envoyé', async ({ utilisateurAInviter, utilisateurCourant }) => {
@@ -129,7 +129,7 @@ describe('inviter un utilisateur', () => {
         prenom: 'Martine',
         role: utilisateurAInviter.role,
         telephone: '',
-        uid: { email: 'martine.dugenoux@example.com', value: 'martine.dugenoux@example.com' },
+        uid: { email: 'martine.dugenoux@example.com', value: 0 },
       })
       expect(result).toBe('OK')
       expect(spiedUidToFind).toBe(utilisateurCourant.uid)
@@ -155,12 +155,12 @@ describe('inviter un utilisateur', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
-      uidUtilisateurCourant: 'utilisateurGestionnaireUid',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
     expect(result).toBe('utilisateurNePeutPasGererUtilisateurACreer')
-    expect(spiedUidToFind).toBe('utilisateurGestionnaireUid')
+    expect(spiedUidToFind).toBe(2)
     expect(spiedUtilisateurToAdd).toBeNull()
     expect(spiedDestinataire).toStrictEqual({
       email: '',
@@ -176,7 +176,7 @@ describe('inviter un utilisateur', () => {
       derniereConnexion: undefined,
       inviteLe: date,
       telephone: '',
-      uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
+      uid: { email: 'martin.tartempion@example.net', value: 0 },
     })
     const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
     const emailGatewayFactory = emailGatewayFactorySpy
@@ -189,12 +189,12 @@ describe('inviter un utilisateur', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
-      uidUtilisateurCourant: 'utilisateurAdminUid',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
     expect(result).toBe('emailExistant')
-    expect(spiedUidToFind).toBe('utilisateurAdminUid')
+    expect(spiedUidToFind).toBe(1)
     expect(spiedUtilisateurToAdd?.state).toStrictEqual(utilisateurACreer.state)
     expect(spiedDestinataire).toStrictEqual({
       email: '',
@@ -204,7 +204,7 @@ describe('inviter un utilisateur', () => {
   })
 })
 
-let spiedUidToFind: string
+let spiedUidToFind: number
 let spiedUtilisateurToAdd: null | Utilisateur
 let spiedDestinataire: Destinataire
 class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepository {

@@ -80,7 +80,7 @@ export async function sourceEstVide(tx: Prisma.TransactionClient, idSource: numb
 export async function soumettreSoftDelete(
   tx: Prisma.TransactionClient,
   idSource: number,
-  parUtilisateur: string
+  parUtilisateur: number
 ): Promise<void> {
   await miseAJourStructure(
     tx,
@@ -88,7 +88,7 @@ export async function soumettreSoftDelete(
     async () => tx.$executeRaw`
     UPDATE main.structure_administrative
     SET deleted_at = now(),
-        deleted_by = array_append(COALESCE(deleted_by, '{}'), ${parUtilisateur}),
+        deleted_by = array_append(COALESCE(deleted_by, '{}'), ${String(parUtilisateur)}),
         updated_at = now()
     WHERE id = ${idSource}
   `

@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -25,7 +25,7 @@ export async function ajouterUneNotePriveeAction(actionParams: ActionParams): Re
       new Date()
     ).handle({
       contenu: actionParams.contenu,
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidGouvernance: actionParams.uidGouvernance,
     })
 

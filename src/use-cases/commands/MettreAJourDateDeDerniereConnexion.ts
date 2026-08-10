@@ -22,7 +22,7 @@ export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Comman
 type Failure = 'dateInvalide' | UtilisateurFailure
 
 type Command = Readonly<{
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}
