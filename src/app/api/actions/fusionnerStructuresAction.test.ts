@@ -10,8 +10,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('fusionner des structures action', () => {
   it('fusionne et purge le cache quand un bêta-testeur confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(FusionnerStructures.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -28,7 +28,7 @@ describe('fusionner des structures action', () => {
     expect(FusionnerStructures.prototype.handle).toHaveBeenCalledWith({
       idAbsorbee: 7,
       idSurvivante: 3,
-      uidUtilisateur: 'userFooId',
+      uidUtilisateur: 1,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/structures-doublons/comparer?ids=3,7')
     expect(messages).toStrictEqual(['OK'])
@@ -36,8 +36,8 @@ describe('fusionner des structures action', () => {
 
   it('refuse la fusion à un administrateur non bêta-testeur, même si la comparaison lui est visible', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false })
     )
     const handle = vi.spyOn(FusionnerStructures.prototype, 'handle')

@@ -155,7 +155,7 @@ type SyntheseMembres = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {

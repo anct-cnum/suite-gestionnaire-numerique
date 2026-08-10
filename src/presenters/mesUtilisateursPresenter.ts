@@ -4,7 +4,7 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 
 export function mesUtilisateursPresenter(
   mesUtilisateursReadModel: ReadonlyArray<UnUtilisateurReadModel>,
-  uid: string,
+  uid: number,
   totalUtilisateur: number,
   rolesAvecStructure: RolesAvecStructure,
   now: Date
@@ -63,7 +63,7 @@ export type MonUtilisateur = DetailsUtilisateurViewModel &
       couleur: 'grey-main' | 'success'
       libelle: 'Activé' | 'En attente'
     }>
-    uid: string
+    uid: number
   }>
 
 export type DetailsUtilisateurViewModel = Readonly<{

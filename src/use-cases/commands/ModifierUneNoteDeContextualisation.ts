@@ -51,7 +51,7 @@ type GouvernanceRepository = GetGouvernanceRepository
 
 type Command = Readonly<{
   contenu: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

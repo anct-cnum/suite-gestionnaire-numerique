@@ -118,14 +118,14 @@ model GouvernanceRecord {
   departementCode               String    @id @map("departement_code")
   /// [NotePrivee]
   notePrivee                    Json?     @map("note_privee")
-  editeurNotePriveeId           String?   @map("editeur_note_privee_id")
+  editeurNotePriveeId           Int?      @map("editeur_note_privee_id")
   noteDeContexte                String?   @map("note_de_contexte")
-  editeurNoteDeContexteId       String?   @map("editeur_note_de_contexte_id")
+  editeurNoteDeContexteId       Int?      @map("editeur_note_de_contexte_id")
   derniereEditionNoteDeContexte DateTime? @map("derniere_edition_note_de_contexte")
 
   relationDepartement           DepartementRecord  @relation(fields: [departementCode], references: [code])
-  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [ssoId])
-  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [ssoId])
+  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [id])
+  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [id])
 
   comites         ComiteRecord[]
   feuillesDeRoute FeuilleDeRouteRecord[]
@@ -145,9 +145,9 @@ model ComiteRecord {
   frequence                  String
   commentaire                String?
   date                       DateTime?
-  editeurUtilisateurId       String    @map("editeur_utilisateur_id")
+  editeurUtilisateurId       Int       @map("editeur_utilisateur_id")
 
-  relationUtilisateur UtilisateurRecord @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationUtilisateur UtilisateurRecord @relation(fields: [editeurUtilisateurId], references: [id])
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
@@ -163,12 +163,12 @@ model FeuilleDeRouteRecord {
   nom                        String
   noteDeContextualisation    String?   @map("note_de_contextualisation")
   porteurId                  String?   @map("porteur_id")
-  editeurUtilisateurId       String?   @map("editeur_utilisateur_id")
+  editeurUtilisateurId       Int?      @map("editeur_utilisateur_id")
   perimetreGeographique      String?   @map("perimetre_geographique")
 
   oldUUID String? @map("old_uuid") @db.Uuid
 
-  relationUtilisateur UtilisateurRecord?             @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationUtilisateur UtilisateurRecord?             @relation(fields: [editeurUtilisateurId], references: [id])
   relationGouvernance GouvernanceRecord              @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationMembre      MembreRecord?                  @relation(fields: [porteurId], references: [id])
   action              ActionRecord[]

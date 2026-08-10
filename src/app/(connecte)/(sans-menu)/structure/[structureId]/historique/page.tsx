@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import StructureEmployeuseHistorique from '@/components/StructureEmployeuseHistorique/StructureEmployeuseHistorique'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureHistoriqueLoader } from '@/gateways/PrismaStructureHistoriqueLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -21,7 +21,7 @@ async function StructureHistoriquePage({ params }: Props): Promise<ReactElement>
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     redirect('/tableau-de-bord')

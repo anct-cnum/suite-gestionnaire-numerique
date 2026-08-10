@@ -8,7 +8,7 @@ import { ModifierUneNotePrivee } from '@/use-cases/commands/ModifierUneNotePrive
 describe('modifier une note privée action', () => {
   it('quand un note privée est modifiée, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUneNotePrivee.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -22,7 +22,7 @@ describe('modifier une note privée action', () => {
     // THEN
     expect(ModifierUneNotePrivee.prototype.handle).toHaveBeenCalledWith({
       contenu: 'un contenu quelconque',
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'gouvernanceFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')

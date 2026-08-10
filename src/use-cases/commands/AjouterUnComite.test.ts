@@ -72,7 +72,7 @@ describe('ajouter un comité à une gouvernance', () => {
           },
           uidEditeur: {
             email: 'martin.tartempion@example.net',
-            value: 'userFooId',
+            value: 1,
           },
           uidGouvernance: {
             value: uidGouvernance,
@@ -172,9 +172,9 @@ const date = epochTime.toISOString()
 const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
 const uidGouvernance = 'gouvernanceFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 let spiedComiteToAdd: Comite | null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {

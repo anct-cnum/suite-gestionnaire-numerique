@@ -17,7 +17,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
 
   it('étant donné une gouvernance existante, quand une note de contexte est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
-    const uidEditeur = 'userFooId2'
+    const uidEditeur = 2
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContexte(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy()
@@ -49,7 +49,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
     )
 
     // WHEN
-    const result = await supprimerNoteDeContexte.handle({ uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await supprimerNoteDeContexte.handle({ uidEditeur: 2, uidGouvernance })
 
     // THEN
     expect(spiedGouvernanceToUpdate).toBeNull()
@@ -59,10 +59,10 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
 
 const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
@@ -99,7 +99,7 @@ class GestionnaireRepositorySpy implements GetUtilisateurRepository {
       utilisateurFactory({
         codeOrganisation: '75',
         role: 'Gestionnaire département',
-        uid: { email: 'michel.tartempion@example.net', value: 'userFooId2' },
+        uid: { email: 'michel.tartempion@example.net', value: 2 },
       })
     )
   }

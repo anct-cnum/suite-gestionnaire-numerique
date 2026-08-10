@@ -130,7 +130,7 @@ describe('fusion de structures (repository Prisma)', () => {
     const result = await new PrismaStructureFusionRepository().fusionner({
       idAbsorbee: ABSORBEE,
       idSurvivante: 999999,
-      parUtilisateur: 'admin-test',
+      parUtilisateur: 1,
     })
 
     // THEN
@@ -142,7 +142,7 @@ async function fusionner(): Promise<string> {
   return new PrismaStructureFusionRepository().fusionner({
     idAbsorbee: ABSORBEE,
     idSurvivante: SURVIVANTE,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
   })
 }
 

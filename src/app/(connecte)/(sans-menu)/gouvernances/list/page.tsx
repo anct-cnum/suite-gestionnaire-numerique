@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 
 import GouvernancesList from '@/components/Gouvernances/GouvernancesList'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { gouvernancePresenter } from '@/presenters/gouvernancesPresenter'
@@ -17,7 +17,7 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   }
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const codesDepartements = contexte.codesDepartements()

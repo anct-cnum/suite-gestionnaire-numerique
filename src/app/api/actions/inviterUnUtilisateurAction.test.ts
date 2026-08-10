@@ -11,7 +11,7 @@ import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 describe('inviter un utilisateur action', () => {
   describe('étant donné une invitation valide quand on invite un utilisateur alors cela invite l’utilisateur', () => {
-    const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
+    const sub = 1
 
     it.each([
       {
@@ -69,7 +69,7 @@ describe('inviter un utilisateur action', () => {
     ])('$desc', async ({ actionParams, expectedCommand }) => {
       // GIVEN
       vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
-      vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+      vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
       vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
       // WHEN
@@ -84,8 +84,8 @@ describe('inviter un utilisateur action', () => {
 
   it('étant donné une invitation valide quand on invite un utilisateur qui existe déjà alors cela renvoie une erreur', async () => {
     // GIVEN
-    const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    const sub = 1
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('emailExistant')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
@@ -179,7 +179,7 @@ describe('inviter un utilisateur action', () => {
   it('[URL] quand un email d invitation est envoye, alors il utilise le parametrage SMTP', async () => {
     // GIVEN
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('sub')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(utilisateurFactory())
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
     const spiedMailerTransport = vi

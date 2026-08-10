@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { sanitizeDefaultOptions } from '@/app/shared/sanitizeDefaultOptions'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -28,7 +28,7 @@ export async function modifierUneNoteDeContexteAction(actionParam: ActionParams)
     )
     const result = await modifierUneNoteDeContexte.handle({
       contenu: sanitize(actionParam.contenu, sanitizeDefaultOptions),
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidGouvernance: actionParam.uidGouvernance,
     })
     revalidatePath(validationResult.data.path)

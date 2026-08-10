@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { sanitizeDefaultOptions } from '@/app/shared/sanitizeDefaultOptions'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -32,7 +32,7 @@ export async function ajouterUneNoteDeContextualisationAction(
     )
     const result = await ajouterUneNoteDeContextualisation.handle({
       contenu: sanitize(actionParam.contenu, sanitizeDefaultOptions),
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidFeuilleDeRoute: actionParam.uidFeuilleDeRoute,
     })
     revalidatePath(validationResult.data.path)

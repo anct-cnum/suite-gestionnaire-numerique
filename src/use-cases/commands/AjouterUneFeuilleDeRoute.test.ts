@@ -124,13 +124,13 @@ describe('ajouter une feuille de route à une gouvernance', () => {
 })
 
 const uidGouvernance = 'gouvernanceFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 const nom = 'Feuille de route 69'
 const uidPorteur = 'porteurFooId'
 const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 let spiedFeuilleDeRouteToAdd: FeuilleDeRoute | null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {

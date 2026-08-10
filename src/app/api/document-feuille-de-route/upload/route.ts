@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
 import { avecJournalisationMin } from '../../actions/shared/journalisation'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -32,14 +32,14 @@ export async function POST(
       const formData = await request.formData()
       const fileRaw = formData.get('file')
       const uidFeuilleDeRoute = formData.get('uidFeuilleDeRoute') as string
-      const uidEditeur = formData.get('uidEditeur') as string
+      const uidEditeur = Number(formData.get('uidEditeur'))
 
-      if (fileRaw === null || !uidFeuilleDeRoute || !uidEditeur) {
+      if (fileRaw === null || !uidFeuilleDeRoute || !Number.isInteger(uidEditeur) || uidEditeur < 1) {
         return NextResponse.json({ message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' }, { status: 400 })
       }
 
       // Vérification que l'utilisateur authentifié correspond à l'uidEditeur
-      if (session?.user.sub !== uidEditeur) {
+      if ((await getSessionUtilisateurId()) !== uidEditeur) {
         return NextResponse.json({ message: 'Accès non autorisé' }, { status: 403 })
       }
 
@@ -176,7 +176,7 @@ type UseCaseParams = Readonly<{
   chemin: string
   contenu: Buffer
   nom: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

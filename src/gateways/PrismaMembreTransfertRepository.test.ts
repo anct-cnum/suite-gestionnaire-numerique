@@ -124,7 +124,7 @@ describe('transfert de membre (repository Prisma)', () => {
       idCible: 999999,
       idMembre: MEMBRE_SOURCE,
       idSource: SOURCE,
-      parUtilisateur: 'admin-test',
+      parUtilisateur: 1,
     })
 
     // THEN
@@ -138,7 +138,7 @@ async function transferer(): Promise<string> {
     idCible: CIBLE,
     idMembre: MEMBRE_SOURCE,
     idSource: SOURCE,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
   })
 }
 

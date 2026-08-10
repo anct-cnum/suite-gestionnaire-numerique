@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
@@ -41,7 +41,7 @@ export async function ajouterUnMembreAction(actionParams: ActionParams): ResultA
       contact: actionParams.contact,
       contactTechnique: actionParams.contactTechnique,
       entreprise: actionParams.entreprise,
-      uidGestionnaire: await getSessionSub(),
+      uidGestionnaire: await getSessionUtilisateurId(),
       uidGouvernance: actionParams.codeDepartement, // Pour l'instant, on utilise le code département
     })
 

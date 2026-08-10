@@ -119,13 +119,13 @@ describe('accepter un membre', () => {
   })
 })
 
-const uidGestionnaire = 'userFooId'
+const uidGestionnaire = 1
 const uidGouvernance = 'gouvernanceFooId'
 const uidMembrePotentiel = 'membrePotentielFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedMembrePotentielUidToFind: MembreState['uid']['value'] | null
 let spiedMembrePotentielToUpdate: Membre | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {

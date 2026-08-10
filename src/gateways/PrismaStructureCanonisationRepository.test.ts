@@ -195,7 +195,7 @@ function canonisation(override: Partial<Canonisation>): Canonisation {
   return {
     entreprise: entrepriseInsee,
     geocode: geocodeInsee,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
     structureId: ANTENNE,
     ...override,
   }

@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindUtilisateurByEmailRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
-import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
+import { FindUtilisateurByEmailRepository, UpdateUtilisateurSsoIdRepository } from './shared/UtilisateurRepository'
 
 export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Command> {
   readonly #utilisateurRepository: UtilisateurRepository
@@ -16,8 +15,8 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
       throw new Error('Utilisateur non trouvé')
     }
 
-    const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurCourant, command.uid)
-    await this.#utilisateurRepository.updateUid(utilisateurAvecNouvelUid)
+    // Le uid reçu est le sub ProConnect : il ne sert qu'à l'authentification, pas au domaine
+    await this.#utilisateurRepository.updateSsoId(command.email, command.uid)
 
     return 'OK'
   }
@@ -28,4 +27,4 @@ type Command = Readonly<{
   uid: string
 }>
 
-type UtilisateurRepository = FindUtilisateurByEmailRepository & UpdateUtilisateurUidRepository
+type UtilisateurRepository = FindUtilisateurByEmailRepository & UpdateUtilisateurSsoIdRepository

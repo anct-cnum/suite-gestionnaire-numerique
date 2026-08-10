@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import ListeStructuresAdministratives from '@/components/ListeStructuresAdministratives/ListeStructuresAdministratives'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresAdministrativesLoader } from '@/gateways/PrismaStructuresAdministrativesLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -43,7 +43,7 @@ export default async function ListeStructuresAdministrativesController({
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
   if (!contexte.isBetaTesteur) {

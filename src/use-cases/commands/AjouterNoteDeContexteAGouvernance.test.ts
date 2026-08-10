@@ -59,7 +59,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // WHEN
     const result = await ajouterNoteDeContexteAGouvernance.handle({
       contenu,
-      uidEditeur: 'utilisateurUsurpateur',
+      uidEditeur: 2,
       uidGouvernance,
     })
 
@@ -91,10 +91,10 @@ describe('ajouter une note de contexte à une gouvernance', () => {
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
 const uidGouvernance = 'gouvernanceFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {

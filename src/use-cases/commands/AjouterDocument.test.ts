@@ -21,7 +21,7 @@ describe('ajouter un document à une feuille de route', () => {
 
   it('quand un document est ajouté par son gestionnaire, alors il est téléversé puis enregistré', async () => {
     // GIVEN
-    const uidEditeur = 'userFooId2'
+    const uidEditeur = 2
     const ajouterDocument = new AjouterDocument(
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
@@ -63,7 +63,7 @@ describe('ajouter un document à une feuille de route', () => {
       contenu,
       date: epochTime.toISOString(),
       nom,
-      uidEditeur: 'userFooId2',
+      uidEditeur: 2,
       uidFeuilleDeRoute,
     })
 
@@ -88,7 +88,7 @@ describe('ajouter un document à une feuille de route', () => {
       contenu,
       date: epochTime.toISOString(),
       nom,
-      uidEditeur: 'utilisateurUsurpateur',
+      uidEditeur: 3,
       uidFeuilleDeRoute,
     })
 
@@ -106,7 +106,7 @@ const contenu = Buffer.from('%PDF-1.4 contenu')
 let spiedDocumentTeleverse: null | Readonly<{ chemin: string; contenu: Buffer }>
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {

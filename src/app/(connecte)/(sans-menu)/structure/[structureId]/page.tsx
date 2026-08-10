@@ -5,7 +5,7 @@ import SectionActivitesStructure from './SectionActivitesStructure'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import Structure from '@/components/Structure/Structure'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRattachementsStructureLoader } from '@/gateways/PrismaRattachementsStructureLoader'
 import { PrismaUneStructureLoader } from '@/gateways/PrismaUneStructureLoader'
@@ -35,7 +35,7 @@ export default async function StructureController({ params, searchParams }: Prop
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
   const uneStructureReadModel = await new RecupererUneStructure(new PrismaUneStructureLoader()).handle({

@@ -27,10 +27,7 @@ describe('utilisateur factory', () => {
       desc: 'un gestionnaire groupement est lié à un groupement',
       expectedType: GestionnaireGroupement,
       params: {
-        groupement: {
-          nom: 'Hubikoop',
-          uid: { value: 10 },
-        },
+        groupementUid: 10,
       },
       role: 'Gestionnaire groupement' as const,
     },
@@ -49,10 +46,7 @@ describe('utilisateur factory', () => {
       desc: 'un gestionnaire structure est lié à une structure',
       expectedType: GestionnaireStructure,
       params: {
-        structure: {
-          nom: 'Solidarnum',
-          uid: { value: 10 },
-        },
+        structureUid: 10,
       },
       role: 'Gestionnaire structure' as const,
     },
@@ -73,7 +67,7 @@ describe('utilisateur factory', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone: '0102030405',
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      uid: { email: 'martin.tartempion@example.net', value: 1 },
       ...params,
     }
 
@@ -105,7 +99,7 @@ describe('utilisateur factory', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone: '0102030405',
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      uid: { email: 'martin.tartempion@example.net', value: 1 },
     }
 
     // WHEN
@@ -136,7 +130,7 @@ describe('utilisateur factory', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone,
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      uid: { email: 'martin.tartempion@example.net', value: 1 },
     }
 
     // WHEN
@@ -156,7 +150,7 @@ describe('utilisateur factory', () => {
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      uid: { email: 'martin.tartempion@example.net', value: 1 },
     }
 
     // WHEN
@@ -177,7 +171,7 @@ describe('utilisateur factory', () => {
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
-      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+      uid: { email: 'martin.tartempion@example.net', value: 1 },
     }
 
     // WHEN

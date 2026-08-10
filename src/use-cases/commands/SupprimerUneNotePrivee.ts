@@ -32,7 +32,7 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
 type Failure = 'editeurNePeutPasSupprimerNotePrivee'
 
 type Command = Readonly<{
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

@@ -7,7 +7,7 @@ import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFa
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
@@ -34,7 +34,7 @@ export async function inviterUnUtilisateurAction(actionParams: ActionParams): Re
             type: validationResult.data.role,
           }
         : undefined,
-      uidUtilisateurCourant: await getSessionSub(),
+      uidUtilisateurCourant: await getSessionUtilisateurId(),
     })
 
     revalidatePath(validationResult.data.path)

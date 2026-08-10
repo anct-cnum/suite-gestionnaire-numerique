@@ -3,7 +3,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
 import GouvernanceProvider from '@/components/shared/GouvernanceContext'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -19,7 +19,7 @@ export default async function Layout({ children, params }: Props): Promise<React
   }
   const codeDepartement = (await params).codeDepartement
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
   const gouvernanceReadModel = await new RecupererUneGouvernance(
     new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)

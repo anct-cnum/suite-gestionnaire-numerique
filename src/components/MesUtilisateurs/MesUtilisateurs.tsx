@@ -23,7 +23,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
   const { router, sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
-  const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
+  const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: 0 })
   const modalId = 'supprimer-un-utilisateur'
   const drawerInvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
@@ -47,7 +47,7 @@ export default function MesUtilisateurs({ mesUtilisateursViewModel }: Props): Re
   const [utilisateurEnAttenteSelectionne, setUtilisateurEnAttenteSelectionne] = useState({
     email: '',
     inviteLe: '',
-    uid: '',
+    uid: 0,
   })
   const drawerFiltreId = 'drawer-filtre-utilisateurs'
   const labelFiltreId = useId()

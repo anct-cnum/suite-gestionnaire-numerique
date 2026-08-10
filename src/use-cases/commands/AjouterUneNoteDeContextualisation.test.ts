@@ -59,7 +59,7 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
     // WHEN
     const result = await ajouterNoteDeContextualisation.handle({
       contenu,
-      uidEditeur: 'utilisateurUsurpateur',
+      uidEditeur: 2,
       uidFeuilleDeRoute,
     })
 
@@ -88,10 +88,10 @@ describe('ajouter une note de contextualisation à une feuille de route', () => 
 
 const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {

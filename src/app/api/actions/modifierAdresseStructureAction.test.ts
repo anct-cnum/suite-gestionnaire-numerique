@@ -10,8 +10,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('modifier l’adresse d’une structure action', () => {
   it('modifie l’adresse et purge le cache quand un bêta-testeur confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(ModifierAdresseStructure.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -43,8 +43,8 @@ describe('modifier l’adresse d’une structure action', () => {
 
   it('traduit l’échec « adresse introuvable » renvoyé par la commande', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(ModifierAdresseStructure.prototype, 'handle').mockResolvedValueOnce('adresseIntrouvable')
@@ -62,8 +62,8 @@ describe('modifier l’adresse d’une structure action', () => {
 
   it('traduit le refus de modifier une structure canonique', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(ModifierAdresseStructure.prototype, 'handle').mockResolvedValueOnce('structureCanoniqueNonModifiable')
@@ -81,8 +81,8 @@ describe('modifier l’adresse d’une structure action', () => {
 
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false })
     )
 

@@ -168,7 +168,7 @@ describe('récupérer une feuille de route loader', () => {
     await creerMembre(uidPorteur, 'Emmaüs Connect')
     await creerUneFeuilleDeRoute({
       derniereEdition: epochTimeMinusTwoDays,
-      editeurUtilisateurId: 'userFooId',
+      editeurUtilisateurId: uidUtilisateur,
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',

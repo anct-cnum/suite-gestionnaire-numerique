@@ -10,7 +10,7 @@ import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { Administrateur } from '@/domain/Administrateur'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import {
   accompagnementsEtMediateursPresenter,
@@ -35,7 +35,7 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
   }
 
   const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+  const utilisateur = await utilisateurLoader.get(await getSessionUtilisateurId())
 
   // Vérifier que l'utilisateur est bien administrateur_dispositif
   if (!(utilisateur instanceof Administrateur)) {

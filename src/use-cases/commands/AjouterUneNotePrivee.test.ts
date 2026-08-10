@@ -57,7 +57,7 @@ describe('ajouter une note privée à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNotePrivee.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await ajouterNotePrivee.handle({ contenu, uidEditeur: 2, uidGouvernance })
 
     // THEN
     expect(spiedGouvernanceToUpdate).toBeNull()
@@ -83,10 +83,10 @@ describe('ajouter une note privée à une gouvernance', () => {
 
 const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
 const uidGouvernance = 'gouvernanceFooId'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {

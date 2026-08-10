@@ -77,7 +77,7 @@ describe('action repository', () => {
           uid: {
             value: 'actionId',
           },
-          uidCreateur: uidEditeur,
+          uidCreateur: utilisateurId,
           uidFeuilleDeRoute: { value: feuilleDeRouteId.toString() },
           uidPorteurs: [uidPorteur],
         })

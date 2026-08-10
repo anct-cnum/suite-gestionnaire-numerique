@@ -17,8 +17,8 @@ describe('supprimer un utilisateur', () => {
 
     // WHEN
     const result = await supprimerUnUtilisateur.handle({
-      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-      uidUtilisateurCourant: 'utilisateurCourantExistantUid',
+      uidUtilisateurASupprimer: utilisateurASupprimerExistantUid,
+      uidUtilisateurCourant: utilisateurCourantExistantUid,
     })
 
     // THEN
@@ -35,13 +35,13 @@ describe('supprimer un utilisateur', () => {
 
       // WHEN
       const result = await commandHandler.handle({
-        uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-        uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+        uidUtilisateurASupprimer: utilisateurASupprimerExistantUid,
+        uidUtilisateurCourant: utilisateurCourantExistantAutreUid,
       })
 
       // THEN
       expect(spiedUtilisateurToDrop).not.toBeNull()
-      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
+      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid[utilisateurASupprimerExistantUid].state)
       expect(result).toBe('compteASupprimerDejaSupprime')
     }
   )
@@ -55,34 +55,38 @@ describe('supprimer un utilisateur', () => {
 
       // WHEN
       const result = await commandHandler.handle({
-        uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-        uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+        uidUtilisateurASupprimer: utilisateurASupprimerExistantUid,
+        uidUtilisateurCourant: utilisateurCourantExistantAutreUid,
       })
 
       // THEN
-      expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantExistantAutreUid', 'utilisateurASupprimerExistantUid'])
-      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
+      expect(spiedUidsToFind).toStrictEqual([utilisateurCourantExistantAutreUid, utilisateurASupprimerExistantUid])
+      expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid[utilisateurASupprimerExistantUid].state)
       expect(result).toBe('OK')
     }
   )
 })
 
-const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurASupprimerExistantUid: utilisateurFactory({
+const utilisateurCourantExistantUid = 1
+const utilisateurASupprimerExistantUid = 2
+const utilisateurCourantExistantAutreUid = 3
+
+const utilisateursByUid: Readonly<Record<number, Utilisateur>> = {
+  [utilisateurASupprimerExistantUid]: utilisateurFactory({
     role: 'Gestionnaire structure',
-    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurASupprimerExistantUid' },
+    uid: { email: 'martin.tartempion@example.com', value: utilisateurASupprimerExistantUid },
   }),
-  utilisateurCourantExistantAutreUid: utilisateurFactory({
+  [utilisateurCourantExistantAutreUid]: utilisateurFactory({
     role: 'Administrateur dispositif',
-    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurCourantExistantAutreUid' },
+    uid: { email: 'martin.tartempion@example.com', value: utilisateurCourantExistantAutreUid },
   }),
-  utilisateurCourantExistantUid: utilisateurFactory({
+  [utilisateurCourantExistantUid]: utilisateurFactory({
     role: 'Gestionnaire département',
-    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurCourantExistantUid' },
+    uid: { email: 'martin.tartempion@example.com', value: utilisateurCourantExistantUid },
   }),
 }
 
-const spiedUidsToFind: Array<string> = []
+const spiedUidsToFind: Array<number> = []
 let spiedUtilisateurToDrop: null | Utilisateur
 
 class UtilisateurRepositorySpy implements DropUtilisateurRepository, GetUtilisateurRepository {

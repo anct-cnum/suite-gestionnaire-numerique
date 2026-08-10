@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -23,11 +23,11 @@ export async function supprimerUnLieuInclusionAction(actionParams: ActionParams)
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    const sub = await getSessionSub()
+    const utilisateurId = await getSessionUtilisateurId()
 
     // Garde : suppression réservée aux bêta-testeurs.
     const contexte = await resoudreContexte(
-      await new PrismaUtilisateurLoader().findByUid(sub),
+      await new PrismaUtilisateurLoader().findById(utilisateurId),
       new PrismaMembreLoader()
     )
     if (!contexte.isBetaTesteur) {
@@ -35,7 +35,7 @@ export async function supprimerUnLieuInclusionAction(actionParams: ActionParams)
     }
 
     const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const utilisateur = await utilisateurRepository.get(sub)
+    const utilisateur = await utilisateurRepository.get(utilisateurId)
 
     const loader = new PrismaRecupererLieuDetailsLoader()
     const lieuDetailsReadModel = await loader.recuperer(validationResult.data.lieuId)

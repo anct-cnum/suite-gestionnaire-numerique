@@ -41,5 +41,5 @@ type Command = Readonly<{
   date: Date
   uidGouvernance: string
   uidMembre: string
-  uidUtilisateurConnecte: string
+  uidUtilisateurConnecte: number
 }>

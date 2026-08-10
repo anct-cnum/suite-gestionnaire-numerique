@@ -32,7 +32,7 @@ export class SupprimerUneNoteDeContexte implements CommandHandler<Command> {
 type Failure = 'editeurNePeutPasSupprimerNoteDeContexte'
 
 type Command = Readonly<{
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

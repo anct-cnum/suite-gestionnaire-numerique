@@ -47,7 +47,7 @@ type Command = Readonly<{
     nom: string
     prenom: string
   }>
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 type Failure = 'miseAJourInvalide'

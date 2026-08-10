@@ -8,7 +8,7 @@ import { SupprimerUnComite } from '@/use-cases/commands/SupprimerUnComite'
 describe('supprimer un comité action', () => {
   it('quand un comité est supprimé, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(SupprimerUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -22,7 +22,7 @@ describe('supprimer un comité action', () => {
     // THEN
     expect(SupprimerUnComite.prototype.handle).toHaveBeenCalledWith({
       uid: '1',
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'gouvernanceFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')

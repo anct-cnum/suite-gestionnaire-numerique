@@ -18,7 +18,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
 
   it('quand une note de contextualisation est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
-    const uidEditeur = 'userFooId2'
+    const uidEditeur = 2
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContextualisation(
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
@@ -52,7 +52,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
     )
 
     // WHEN
-    const result = await supprimerNoteDeContexte.handle({ uidEditeur: 'utilisateurUsurpateur', uidFeuilleDeRoute })
+    const result = await supprimerNoteDeContexte.handle({ uidEditeur: 2, uidFeuilleDeRoute })
 
     // THEN
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()
@@ -63,7 +63,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {

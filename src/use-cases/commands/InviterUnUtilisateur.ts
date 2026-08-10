@@ -30,7 +30,8 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       region: utilisateurCourantState.region,
       structureUid: utilisateurCourantState.structureUid?.value,
       telephone: '',
-      uid: { email: command.email, value: command.email },
+      // L'id interne est généré par la base à l'insertion : 0 = sentinelle « pas encore persisté »
+      uid: { email: command.email, value: 0 },
     }).create(command.role?.type ?? utilisateurCourantState.role.nom, command.role?.codeOrganisation)
 
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
@@ -60,7 +61,7 @@ type Command = Readonly<{
     codeOrganisation?: string
     type: TypologieRole
   }>
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 type Failure = 'emailExistant' | 'utilisateurNePeutPasGererUtilisateurACreer'

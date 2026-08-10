@@ -7,8 +7,8 @@ import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisat
 describe('supprimer mon compte action', () => {
   it('quand mon compte est supprimé, alors cela modifie mon compte', async () => {
     // GIVEN
-    const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    const sub = 1
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

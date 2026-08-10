@@ -47,7 +47,7 @@ export class AjouterUneNoteDeContextualisation implements CommandHandler<Command
 
 type Command = Readonly<{
   contenu: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

@@ -399,7 +399,7 @@ function utilisateurAvecRole(
     },
     structureId: overrides.structureId ?? null,
     telephone: '',
-    uid: 'uid-test',
+    uid: 1,
   }
 }
 

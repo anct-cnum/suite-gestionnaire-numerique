@@ -216,12 +216,12 @@ type State = Readonly<{
 
 type NoteDeContexteState = Readonly<{
   dateDeModification: string
-  uidEditeur: string
+  uidEditeur: number
   value: string
 }>
 
 type NotePriveeState = Readonly<{
   dateDeModification: string
-  uidEditeur: string
+  uidEditeur: number
   value: string
 }>

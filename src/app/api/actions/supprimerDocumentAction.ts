@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -27,7 +27,7 @@ export async function supprimerDocumentAction(actionParam: ActionParams): Result
     )
     const result = await supprimerDocument.handle({
       date: new Date().toISOString(),
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidFeuilleDeRoute: actionParam.uidFeuilleDeRoute,
     })
 

@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureFusionRepository } from '@/gateways/PrismaStructureFusionRepository'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -30,8 +30,8 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
     }
 
     // Garde : la comparaison est visible par tout administrateur, mais seul un bêta-testeur peut fusionner.
-    const sub = await getSessionSub()
-    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const utilisateurId = await getSessionUtilisateurId()
+    const utilisateur = await new PrismaUtilisateurLoader().findById(utilisateurId)
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
     if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
       return ['Action réservée aux administrateurs autorisés']
@@ -46,7 +46,7 @@ export async function fusionnerStructuresAction(actionParams: ActionParams): Pro
       const result = await fusionnerStructures.handle({
         idAbsorbee,
         idSurvivante: actionParams.idSurvivante,
-        uidUtilisateur: sub,
+        uidUtilisateur: utilisateurId,
       })
       if (result !== 'OK') {
         echecs.push(`Structure ${idAbsorbee} : ${MESSAGES_ECHEC[result]}`)

@@ -36,7 +36,8 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       uid: { value: String(record.id) },
       uidEditeur: {
         email: record.relationUtilisateur?.ssoEmail ?? '~',
-        value: record.relationUtilisateur?.ssoId ?? '~',
+        // 0 = sentinelle « éditeur inconnu » : ne doit jamais être écrite en base (FK)
+        value: record.relationUtilisateur?.id ?? 0,
       },
       uidGouvernance: { value: record.gouvernanceDepartementCode },
       uidPorteur: record.porteurId ?? '~',
@@ -97,15 +98,11 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     })
 
     if (document) {
-      const editeur = await tx.utilisateurRecord.findUniqueOrThrow({
-        select: { id: true },
-        where: { ssoId: feuilleDeRoute.state.uidEditeur },
-      })
       await tx.feuilleDeRouteDocumentRecord.upsert({
         create: {
           chemin: document.chemin,
           creation: feuilleDeRoute.state.dateDeModification,
-          editeurUtilisateurId: editeur.id,
+          editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
           feuilleDeRouteId,
           nom: document.nom,
         },

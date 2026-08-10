@@ -18,7 +18,7 @@ describe('modifier une note privée', () => {
   it('étant donné une gouvernance, quand une note privée est modifiée par son gestionnaire, alors elle est modifiée', async () => {
     // GIVEN
     const dateDeModification = epochTime
-    const uidEditeur = 'userFooId2'
+    const uidEditeur = 2
     const modifierNotePrivee = new ModifierUneNotePrivee(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
@@ -59,7 +59,7 @@ describe('modifier une note privée', () => {
     )
 
     // WHEN
-    const result = await modifierNotePrivee.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await modifierNotePrivee.handle({ contenu, uidEditeur: 2, uidGouvernance })
 
     // THEN
     expect(spiedGouvernanceToUpdate).toBeNull()
@@ -86,10 +86,10 @@ describe('modifier une note privée', () => {
 const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
 const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
-let spiedUtilisateurUidToFind: null | string
+let spiedUtilisateurUidToFind: null | number
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
@@ -137,7 +137,7 @@ class GestionnaireRepositorySpy implements GetUtilisateurRepository {
       utilisateurFactory({
         codeOrganisation: '75',
         role: 'Gestionnaire département',
-        uid: { email: 'michel.tartempion@example.net', value: 'userFooId2' },
+        uid: { email: 'michel.tartempion@example.net', value: 2 },
       })
     )
   }

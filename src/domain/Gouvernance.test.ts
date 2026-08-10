@@ -107,7 +107,7 @@ describe('gouvernance', () => {
         contenu: 'contenu',
         dateDeModification: epochTime,
         uidEditeur: new UtilisateurUid(
-          utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'userFooId' } }).state.uid
+          utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 1 } }).state.uid
         ),
       },
       uid: 'gouvernanceFooId',

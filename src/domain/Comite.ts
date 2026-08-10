@@ -143,7 +143,7 @@ type State = Readonly<{
   frequence: string
   type: string
   uid: UidState
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

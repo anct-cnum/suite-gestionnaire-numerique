@@ -18,7 +18,7 @@ describe('changer mon rôle', () => {
     // WHEN
     const result = await changerMonRole.handle({
       nouveauRole,
-      uidUtilisateurCourant: 'utilisateurSuperAdminUid',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -27,7 +27,7 @@ describe('changer mon rôle', () => {
       utilisateurFactory({
         isSuperAdmin: true,
         role: 'Gestionnaire structure',
-        uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
+        uid: { email: 'martin.tartempion@example.fr', value: 1 },
       }).state
     )
   })
@@ -40,7 +40,7 @@ describe('changer mon rôle', () => {
     // WHEN
     const result = await changerMonRole.handle({
       nouveauRole,
-      uidUtilisateurCourant: 'utilisateurNonSuperAdminUid',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
@@ -53,14 +53,14 @@ const nullUtilisateur = {} as Utilisateur
 
 let spiedUtilisateur: Utilisateur
 
-const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurNonSuperAdminUid: utilisateurFactory({
-    isSuperAdmin: false,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurNonSuperAdminUid' },
-  }),
-  utilisateurSuperAdminUid: utilisateurFactory({
+const utilisateurByUid: Readonly<Record<number, Utilisateur>> = {
+  1: utilisateurFactory({
     isSuperAdmin: true,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
+    uid: { email: 'martin.tartempion@example.fr', value: 1 },
+  }),
+  2: utilisateurFactory({
+    isSuperAdmin: false,
+    uid: { email: 'martin.tartempion@example.fr', value: 2 },
   }),
 }
 

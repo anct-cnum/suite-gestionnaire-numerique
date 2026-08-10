@@ -125,7 +125,7 @@ describe('demande de subvention repository', () => {
       subventionPrestation: 15000,
       uid: { value: demandeDeSubventionId.toString() },
       uidAction: { value: actionId.toString() },
-      uidCreateur: 'createurSSOId',
+      uidCreateur: createurId,
       uidEnveloppeFinancement: { value: enveloppeFinancementId.toString() },
     })
 

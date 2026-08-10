@@ -41,7 +41,7 @@ type Failure = 'editeurNePeutPasSupprimerDocument'
 
 type Command = Readonly<{
   date: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

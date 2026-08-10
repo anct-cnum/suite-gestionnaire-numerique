@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import departements from '../../../../../../ressources/departements.json'
 import StructuresDoublons from '@/components/StructuresDoublons/StructuresDoublons'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresDoublonsLoader } from '@/gateways/PrismaStructuresDoublonsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -27,7 +27,7 @@ export default async function StructuresDoublonsController({ searchParams }: Pro
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   // Visibilité ouverte à tous les administrateurs (ANCT) ; la fusion reste réservée aux bêta-testeurs.
   if (!contexte.aCesRoles('administrateur_dispositif')) {

@@ -16,7 +16,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { ApiCoopStatistiquesLoader } from '@/gateways/apiCoop/ApiCoopStatistiquesLoader'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMediateursCoopLoader } from '@/gateways/PrismaMediateursCoopLoader'
@@ -39,7 +39,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const scopeFiltre: ScopeFiltre =
     contexte.role === 'gestionnaire_structure'

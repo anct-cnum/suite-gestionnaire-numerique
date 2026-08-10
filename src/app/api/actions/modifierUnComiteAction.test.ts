@@ -8,7 +8,7 @@ import { ModifierUnComite } from '@/use-cases/commands/ModifierUnComite'
 describe('modifier un comité action', () => {
   it('quand un comité est modifié avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(ModifierUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -30,7 +30,7 @@ describe('modifier un comité action', () => {
       frequence: 'Mensuelle',
       type: 'Stratégique',
       uid: '1',
-      uidEditeur: 'userFooId',
+      uidEditeur: 1,
       uidGouvernance: 'gouvernanceFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')

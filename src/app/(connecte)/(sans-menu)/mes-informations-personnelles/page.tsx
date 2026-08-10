@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 
 import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelles/MesInformationsPersonnelles'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMesInformationsPersonnellesLoader } from '@/gateways/PrismaMesInformationsPersonnellesLoader'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 
@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const mesInformationsPersonnellesQuery = new PrismaMesInformationsPersonnellesLoader()
-  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.byUid(await getSessionSub())
+  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.byUid(
+    await getSessionUtilisateurId()
+  )
   const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(
     mesInformationsPersonnellesReadModel
   )

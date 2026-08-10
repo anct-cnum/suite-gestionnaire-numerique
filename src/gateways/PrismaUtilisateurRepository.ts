@@ -41,7 +41,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           regionCode: utilisateurState.region?.code,
           role: fromTypologieRole(utilisateurState.role.nom),
           ssoEmail: utilisateurState.uid.email.toLowerCase(),
-          ssoId: utilisateurState.uid.value,
+          // Placeholder jusqu'à la première connexion : le vrai sub ProConnect remplacera l'email
+          ssoId: utilisateurState.uid.email.toLowerCase(),
           structureId: utilisateurState.structureUid?.value,
           telephone: '',
         },
@@ -92,7 +93,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       region: record.relationRegion ?? undefined,
       structureUid: record.relationStructureAdministrative?.id,
       telephone: record.telephone,
-      uid: { email: record.ssoEmail, value: record.ssoId },
+      uid: { email: record.ssoEmail, value: record.id },
     }).create(toTypologieRole(record.role))
   }
 
@@ -105,8 +106,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         relationStructureAdministrative: true,
       },
       where: {
+        id: uid,
         isSupprime: false,
-        ssoId: uid,
       },
     })
     if (!record) {
@@ -125,7 +126,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       region: record.relationRegion ?? undefined,
       structureUid: record.relationStructureAdministrative?.id,
       telephone: record.telephone,
-      uid: { email: record.ssoEmail, value: record.ssoId },
+      uid: { email: record.ssoEmail, value: record.id },
     }).create(toTypologieRole(record.role))
   }
 
@@ -143,7 +144,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         telephone: utilisateurState.telephone,
       },
       where: {
-        ssoId: utilisateurState.uid.value,
+        id: utilisateurState.uid.value,
       },
     })
   }
@@ -154,7 +155,18 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         departementCode: codeDepartement,
       },
       where: {
-        ssoId: uid,
+        id: uid,
+      },
+    })
+  }
+
+  async updateSsoId(email: string, ssoId: string): Promise<void> {
+    await this.#dataResource.update({
+      data: {
+        ssoId,
+      },
+      where: {
+        ssoEmail: email.toLowerCase(),
       },
     })
   }
@@ -165,33 +177,20 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         structureId: idStructure,
       },
       where: {
-        ssoId: uid,
+        id: uid,
       },
     })
   }
 
-  async updateUid(utilisateur: Utilisateur): Promise<void> {
-    const utilisateurState = utilisateur.state
-
-    await this.#dataResource.update({
-      data: {
-        ssoId: utilisateurState.uid.value,
-      },
-      where: {
-        ssoEmail: utilisateurState.uid.email.toLowerCase(),
-      },
-    })
-  }
-
-  async #drop(ssoId: string): Promise<boolean> {
+  async #drop(id: number): Promise<boolean> {
     return this.#dataResource
       .update({
         data: {
           isSupprime: true,
         },
         where: {
+          id,
           isSupprime: false,
-          ssoId,
         },
       })
       .then(() => true)

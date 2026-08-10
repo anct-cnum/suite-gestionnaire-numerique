@@ -12,7 +12,7 @@ import BlocGouvernance from './blocs/BlocGouvernance'
 import BlocMediateurs from './blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from './blocs/BlocRejoindreGouvernance'
 import { blocsParContexte, IdentifiantBloc } from './registreBlocs'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { gouvernancesSelecteurPresenteur } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
@@ -30,7 +30,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   }
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 

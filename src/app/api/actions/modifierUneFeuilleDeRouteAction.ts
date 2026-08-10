@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -28,7 +28,7 @@ export async function modifierUneFeuilleDeRouteAction(actionParams: ActionParams
     ).handle({
       nom: actionParams.nom,
       perimetreGeographique: actionParams.perimetre,
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidFeuilleDeRoute: actionParams.uidFeuilleDeRoute,
       uidGouvernance: actionParams.uidGouvernance,
       uidPorteur: actionParams.uidPorteur,

@@ -110,7 +110,7 @@ export class PrismaMembreTransfertRepository implements MembreTransfertRepositor
         (membre_id, structure_source_id, structure_cible_id,
          utilisateurs_deplaces, contacts_deplaces, contacts_supprimes, par_utilisateur)
       VALUES (${idMembre}, ${idSource}, ${idCible},
-              ${utilisateursDeplaces}, ${contactsDeplaces}, ${contactsSupprimes}, ${parUtilisateur})
+              ${utilisateursDeplaces}, ${contactsDeplaces}, ${contactsSupprimes}, ${String(parUtilisateur)})
     `
 
     return 'OK'
