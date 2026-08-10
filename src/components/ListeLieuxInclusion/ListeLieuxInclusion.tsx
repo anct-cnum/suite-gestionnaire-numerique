@@ -298,17 +298,6 @@ export default function ListeLieuxInclusion({
         </ul>
       </div>
 
-      {/* Recherche par nom de lieu */}
-      <div className="fr-grid-row fr-mb-2w">
-        <div className="fr-col-12 fr-col-md-4">
-          <BarreRecherche
-            label="Rechercher par nom de lieu"
-            rechercher={rechercherParNom}
-            valeurInitiale={normalizedSearchParams.get('nom') ?? ''}
-          />
-        </div>
-      </div>
-
       {/* Indicateur de filtres actifs */}
       {getFiltresActifs().length > 0 ? (
         <div className="fr-mb-2w">
@@ -351,6 +340,27 @@ export default function ListeLieuxInclusion({
         </div>
       ) : null}
 
+      {estOngletArchives ? null : (
+        <ListeLieuxInclusionInfo
+          infos={{
+            total: viewModel.totalSansRecherche,
+            totalConseillerNumerique: viewModel.totalConseillerNumerique,
+            totalLabellise: viewModel.totalLabellise,
+          }}
+        />
+      )}
+
+      {/* Recherche par nom de lieu */}
+      <div className="fr-grid-row fr-mt-2w fr-mb-2w">
+        <div className="fr-col-12 fr-col-md-6">
+          <BarreRecherche
+            label="Rechercher par nom de lieu"
+            rechercher={rechercherParNom}
+            valeurInitiale={normalizedSearchParams.get('nom') ?? ''}
+          />
+        </div>
+      </div>
+
       {viewModel.lieux.length === 0 ? (
         <div
           style={{
@@ -367,15 +377,6 @@ export default function ListeLieuxInclusion({
         </div>
       ) : (
         <>
-          {estOngletArchives ? null : (
-            <ListeLieuxInclusionInfo
-              infos={{
-                total: viewModel.total,
-                totalConseillerNumerique: viewModel.totalConseillerNumerique,
-                totalLabellise: viewModel.totalLabellise,
-              }}
-            />
-          )}
           <Table enTetes={buildEnTetes(estOngletArchives, afficherColonneMajInfos)} titre="Lieux d'inclusion numérique">
             {viewModel.lieux.map((lieu) => (
               <LigneLieu
