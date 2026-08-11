@@ -12,7 +12,14 @@ import { modifierContactStructureAction } from '@/app/api/actions/modifierContac
 import { supprimerContactStructureAction } from '@/app/api/actions/supprimerContactStructureAction'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
-export default function StructureContactReferent({ contacts, peutGererStructure, structureId }: Props): ReactElement {
+export default function StructureContactReferent({
+  contacts,
+  notificationAjout = { description: 'ajouté', title: 'Contact ' },
+  notificationModification = { description: 'modifié', title: 'Contact ' },
+  peutGererStructure,
+  structureId,
+  titre = 'Contacts',
+}: Props): ReactElement {
   const pathname = usePathname()
   const [drawerMode, setDrawerMode] = useState<'ajouter' | 'modifier'>('ajouter')
   const [contactAModifier, setContactAModifier] = useState<Contact | null>(null)
@@ -73,7 +80,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
       telephone: data.telephone,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'ajouté', title: 'Contact ' })
+      Notification('success', notificationAjout)
       closeDrawer()
     } else {
       messages.forEach((message) => {
@@ -98,7 +105,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
       telephone: data.telephone,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifié', title: 'Contact ' })
+      Notification('success', notificationModification)
       closeDrawer()
     } else {
       messages.forEach((message) => {
@@ -129,7 +136,7 @@ export default function StructureContactReferent({ contacts, peutGererStructure,
         <header>
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
             <h2 className="fr-h6 fr-mb-0" id="contact" style={{ scrollMarginTop: '56px' }}>
-              Contacts
+              {titre}
             </h2>
             {peutGererStructure ? (
               <button
@@ -289,8 +296,11 @@ type Contact = ContactFormData & Readonly<{ id: number }>
 
 type Props = Readonly<{
   contacts: StructureViewModel['contacts']
+  notificationAjout?: Readonly<{ description: string; title: string }>
+  notificationModification?: Readonly<{ description: string; title: string }>
   peutGererStructure: boolean
   structureId: number
+  titre?: string
 }>
 
 type ContactCardProps = Readonly<{

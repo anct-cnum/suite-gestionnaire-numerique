@@ -3,9 +3,12 @@ import { Prisma } from '@prisma/client'
 import { journaliserCreateBrut, journaliserTransaction } from './shared/journalisationMin'
 import prisma from '../../prisma/prismaClient'
 import { Structure, StructureAdresse } from '@/domain/Structure'
+import { ETAT_ADMINISTRATIF_CANONIQUE } from '@/shared/etatAdministratif'
 import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactReferentStructure'
 import {
   AdresseARattacher,
+  DonneesLegalesEntreprise,
+  MettreAJourStructureDepuisEntrepriseRepository,
   ModifierAdresseStructureRepository,
   ModifierNomStructureData,
   ModifierNomStructureRepository,
@@ -23,6 +26,7 @@ import {
 export class PrismaStructureRepository
   implements
     ContactReferentRepository,
+    MettreAJourStructureDepuisEntrepriseRepository,
     ModifierAdresseStructureRepository,
     ModifierNomStructureRepository,
     StructureRepository
@@ -111,6 +115,28 @@ export class PrismaStructureRepository
     return structure === null ? null : { denominationAntenne: structure.denomination_antenne }
   }
 
+  async mettreAJourDepuisEntreprise(
+    structureId: number,
+    donneesLegales: DonneesLegalesEntreprise,
+    adresse: AdresseARattacher
+  ): Promise<void> {
+    const adresseId = await this.trouverOuCreerAdresse(adresse)
+    // L'API Sirene rejette les établissements inactifs : l'état administratif est donc
+    // toujours celui d'un établissement actif.
+    await prisma.main_structure_administrative.update({
+      data: {
+        adresse_id: adresseId,
+        categorie_juridique: donneesLegales.categorieJuridique,
+        code_activite_principale: donneesLegales.codeActivitePrincipale,
+        denomination_sirene: donneesLegales.denominationSirene,
+        edited_by: 'min',
+        etat_administratif: ETAT_ADMINISTRATIF_CANONIQUE,
+        siret: donneesLegales.siret,
+      },
+      where: { id: structureId },
+    })
+  }
+
   async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
     await prisma.main_contact.update({
       data: {
@@ -150,6 +176,11 @@ export class PrismaStructureRepository
       data: { adresse_id: adresseId },
       where: { id: structureId },
     })
+  }
+
+  async structureExiste(structureId: number): Promise<boolean> {
+    const nombre = await prisma.main_structure_administrative.count({ where: { id: structureId } })
+    return nombre > 0
   }
 
   async supprimerContact(structureId: number, contactId: number): Promise<void> {
