@@ -1,10 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import ConnexionLabel from './ConnexionLabel'
 
 describe('connexion label : en tant qu’utilisateur non authentifié', () => {
+  afterEach(() => {
+    delete (globalThis as { _paq?: unknown })._paq
+  })
+
   it('quand je me rends sur la page de connexion label alors elle s’affiche', () => {
     // WHEN
     render(<ConnexionLabel idProvider="pro-connect" />)
@@ -46,5 +50,19 @@ describe('connexion label : en tant qu’utilisateur non authentifié', () => {
 
     // THEN
     expect(nextAuth.signIn).toHaveBeenCalledWith('pro-connect', { callbackUrl: '/' })
+  })
+
+  it('quand je clique sur le bouton de connexion alors le clic est suivi dans le plan de marquage', () => {
+    // GIVEN
+    vi.spyOn(nextAuth, 'signIn').mockImplementationOnce(vi.fn())
+    const push = vi.fn<(evenement: ReadonlyArray<string>) => void>()
+    Object.assign(globalThis, { _paq: { push } })
+    render(<ConnexionLabel idProvider="pro-connect" />)
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'S’identifier avec ProConnect' }))
+
+    // THEN
+    expect(push).toHaveBeenCalledWith(['trackEvent', 'connexion_label', 'clic_connexion_proconnect'])
   })
 })
