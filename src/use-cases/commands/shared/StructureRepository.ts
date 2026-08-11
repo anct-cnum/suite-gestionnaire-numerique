@@ -51,6 +51,24 @@ export interface ModifierAdresseStructureRepository {
   rattacherAdresse(structureId: number, adresse: AdresseARattacher): Promise<void>
 }
 
+export interface MettreAJourStructureDepuisEntrepriseRepository {
+  // Met à jour les champs légaux (données officielles API Entreprise) et re-pointe l'adresse
+  // (réutilisation par clef_interop BAN ou création — on ne modifie jamais une ligne adresse).
+  mettreAJourDepuisEntreprise(
+    structureId: number,
+    donneesLegales: DonneesLegalesEntreprise,
+    adresse: AdresseARattacher
+  ): Promise<void>
+  structureExiste(structureId: number): Promise<boolean>
+}
+
+export type DonneesLegalesEntreprise = Readonly<{
+  categorieJuridique: string
+  codeActivitePrincipale: string
+  denominationSirene: string
+  siret: string
+}>
+
 export type AdresseARattacher = Readonly<{
   clefInterop: string
   codeBan: null | string
