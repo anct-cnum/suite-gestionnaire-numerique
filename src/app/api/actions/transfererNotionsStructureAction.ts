@@ -18,7 +18,7 @@ import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 const MESSAGES_ECHEC: Readonly<Record<TransfertNotionsFailure, string>> = {
   aucuneNotionSelectionnee: 'Sélectionnez au moins une notion à transférer',
   collisionIdentifiantSource:
-    'Un identifiant source (Coop, Idposte ou Aidants Connect) entre en collision avec la structure cible',
+    'Un identifiant source (Idposte ou Aidants Connect) entre en collision avec la structure cible',
   collisionMembreGouvernance: 'La structure cible est déjà membre d’une gouvernance de la structure source',
   structureIntrouvable: 'Structure introuvable ou déjà supprimée',
   transfertEchoue: 'Le transfert a échoué, aucune modification effectuée',

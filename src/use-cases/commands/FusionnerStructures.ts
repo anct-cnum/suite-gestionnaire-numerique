@@ -27,8 +27,11 @@ export interface StructureFusionRepository {
 // La fusion = déplacer la TOTALITÉ des notions de l'absorbée vers la survivante puis soft-delete
 // l'absorbée. On ne récupère JAMAIS les champs descriptifs de l'absorbée (dénomination, adresse, APE,
 // catégorie juridique…) : la survivante garde les siens — importer ceux d'un doublon casserait la
-// cohérence INSEE. Les identifiants d'identité (siret/ridet/rna) de l'absorbée sont abandonnés (loggés) ;
-// les ids de source (coop/tp/ac) sont, eux, transférés (sinon le doublon ressuscite au resync).
+// cohérence INSEE. Les identifiants d'identité (siret/ridet/rna) de l'absorbée sont abandonnés (loggés).
+// Les ids de source tp/ac sont transférés (sinon le doublon ressuscite au resync) et bloquent en cas
+// de conflit ; l'uuid coop est transféré si la survivante n'en porte pas, sinon abandonné et loggé
+// (bascule ADR-002 : la coop référence la SA par id int, repointé par la fusion — l'uuid n'est plus
+// un vecteur de resync).
 export type Fusion = Readonly<{
   idAbsorbee: number
   idSurvivante: number
