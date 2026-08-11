@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { ChangerMonDepartement, StructureDuDepartementLoader } from './ChangerMonDepartement'
+import { ChangerMonDepartement } from './ChangerMonDepartement'
+import { StructurePrefectureDuDepartementLoader } from './InviterUnUtilisateur'
 import {
   GetUtilisateurRepository,
   UpdateDepartementUtilisateurRepository,
@@ -12,17 +13,16 @@ import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 describe('changer mon département', () => {
   beforeEach(() => {
     spiedCodeDepartement = ''
-    spiedCodeDepartementDemande = ''
+    spiedCodeDepartementPrefecture = ''
     spiedIdStructure = 0
     spiedUid = ''
-    spiedUidExclu = ''
-    structureDuDepartement = null
+    structurePrefecture = null
   })
 
-  it('étant superadmin quand je change de département alors le département et la structure du premier gestionnaire de ce département sont mis à jour', async () => {
+  it('étant superadmin quand je change de département alors le département et la structure de la préfecture départementale sont mis à jour', async () => {
     // GIVEN
-    structureDuDepartement = 162
-    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structureDuDepartementLoader)
+    structurePrefecture = 163
+    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structurePrefectureLoaderSpy)
 
     // WHEN
     const result = await changerMonDepartement.handle({
@@ -34,15 +34,14 @@ describe('changer mon département', () => {
     expect(result).toBe('OK')
     expect(spiedUid).toBe('utilisateurSuperAdminUid')
     expect(spiedCodeDepartement).toBe('02')
-    expect(spiedCodeDepartementDemande).toBe('02')
-    expect(spiedIdStructure).toBe(162)
-    expect(spiedUidExclu).toBe('utilisateurSuperAdminUid')
+    expect(spiedCodeDepartementPrefecture).toBe('02')
+    expect(spiedIdStructure).toBe(163)
   })
 
-  it('étant superadmin quand je change de département sans gestionnaire rattaché à une structure alors la structure est remise à null', async () => {
+  it('étant superadmin quand je change de département sans membre préfecture alors la structure est remise à null', async () => {
     // GIVEN
-    structureDuDepartement = null
-    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structureDuDepartementLoader)
+    structurePrefecture = null
+    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structurePrefectureLoaderSpy)
 
     // WHEN
     const result = await changerMonDepartement.handle({
@@ -57,7 +56,7 @@ describe('changer mon département', () => {
 
   it('n’étant pas superadmin quand je change de département alors rien n’est mis à jour', async () => {
     // GIVEN
-    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structureDuDepartementLoader)
+    const changerMonDepartement = new ChangerMonDepartement(utilisateurRepository, structurePrefectureLoaderSpy)
 
     // WHEN
     const result = await changerMonDepartement.handle({
@@ -73,11 +72,10 @@ describe('changer mon département', () => {
 })
 
 let spiedCodeDepartement: string
-let spiedCodeDepartementDemande: string
+let spiedCodeDepartementPrefecture: string
 let spiedIdStructure: null | number
 let spiedUid: string
-let spiedUidExclu: string
-let structureDuDepartement: null | number
+let structurePrefecture: null | number
 
 const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurNonSuperAdminUid: utilisateurFactory({
@@ -110,13 +108,9 @@ const utilisateurRepository = new (class
   }
 })()
 
-const structureDuDepartementLoader = new (class implements StructureDuDepartementLoader {
-  async structureDuPremierGestionnaireDepartement(
-    codeDepartement: string,
-    uidUtilisateurExclu: string
-  ): Promise<null | number> {
-    spiedCodeDepartementDemande = codeDepartement
-    spiedUidExclu = uidUtilisateurExclu
-    return Promise.resolve(structureDuDepartement)
+const structurePrefectureLoaderSpy = new (class implements StructurePrefectureDuDepartementLoader {
+  async structurePrefectureDuDepartement(codeDepartement: string): Promise<null | number> {
+    spiedCodeDepartementPrefecture = codeDepartement
+    return Promise.resolve(structurePrefecture)
   }
 })()

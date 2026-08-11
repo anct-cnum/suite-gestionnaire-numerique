@@ -3,14 +3,13 @@ import { Prisma } from '@prisma/client'
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
-import { StructureDuDepartementLoader } from '@/use-cases/commands/ChangerMonDepartement'
 import {
   MesUtilisateursLoader,
   UtilisateursCourantsEtTotalReadModel,
 } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
-export class PrismaUtilisateurLoader implements MesUtilisateursLoader, StructureDuDepartementLoader {
+export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
   async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
@@ -165,30 +164,6 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader, Structure
       total,
       utilisateursCourants: utilisateursRecord.map(transform),
     }
-  }
-
-  async structureDuPremierGestionnaireDepartement(
-    codeDepartement: string,
-    uidUtilisateurExclu: string
-  ): Promise<null | number> {
-    const utilisateurRecord = await this.#dataResource.findFirst({
-      orderBy: {
-        id: 'asc',
-      },
-      where: {
-        departementCode: codeDepartement,
-        isSupprime: false,
-        role: 'gestionnaire_departement',
-        ssoId: {
-          not: uidUtilisateurExclu,
-        },
-        structureId: {
-          not: null,
-        },
-      },
-    })
-
-    return utilisateurRecord?.structureId ?? null
   }
 
   async #construireFiltreWhere(

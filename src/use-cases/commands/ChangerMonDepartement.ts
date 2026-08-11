@@ -1,4 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { StructurePrefectureDuDepartementLoader } from './InviterUnUtilisateur'
 import {
   GetUtilisateurRepository,
   UpdateDepartementUtilisateurRepository,
@@ -7,22 +8,15 @@ import {
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
-export interface StructureDuDepartementLoader {
-  structureDuPremierGestionnaireDepartement(
-    codeDepartement: string,
-    uidUtilisateurExclu: string
-  ): Promise<null | number>
-}
-
 export class ChangerMonDepartement implements CommandHandler<Command> {
-  readonly #structureDuDepartementLoader: StructureDuDepartementLoader
+  readonly #structurePrefectureDuDepartementLoader: StructurePrefectureDuDepartementLoader
   readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     utilisateurRepository: UtilisateurRepository,
-    structureDuDepartementLoader: StructureDuDepartementLoader
+    structurePrefectureDuDepartementLoader: StructurePrefectureDuDepartementLoader
   ) {
-    this.#structureDuDepartementLoader = structureDuDepartementLoader
+    this.#structurePrefectureDuDepartementLoader = structurePrefectureDuDepartementLoader
     this.#utilisateurRepository = utilisateurRepository
   }
 
@@ -31,11 +25,11 @@ export class ChangerMonDepartement implements CommandHandler<Command> {
     const result = utilisateurCourant.changerDepartement()
     if (isOk(result)) {
       await this.#utilisateurRepository.updateDepartement(command.uidUtilisateurCourant, command.nouveauCodeDepartement)
-      // La structure suit le département : celle du premier gestionnaire du nouveau département,
-      // ou null si aucune n'est identifiée (le menu retombe alors sur la page d'explication).
-      const idStructure = await this.#structureDuDepartementLoader.structureDuPremierGestionnaireDepartement(
-        command.nouveauCodeDepartement,
-        command.uidUtilisateurCourant
+      // La structure suit le département : la préfecture départementale (même règle qu'à
+      // l'invitation), ou null si aucune n'est identifiée (le menu retombe alors sur la
+      // page d'explication).
+      const idStructure = await this.#structurePrefectureDuDepartementLoader.structurePrefectureDuDepartement(
+        command.nouveauCodeDepartement
       )
       await this.#utilisateurRepository.updateStructure(command.uidUtilisateurCourant, idStructure)
     }
