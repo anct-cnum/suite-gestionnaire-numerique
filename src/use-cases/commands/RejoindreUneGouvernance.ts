@@ -35,6 +35,12 @@ export class RejoindreUneGouvernance implements CommandHandler<Command> {
   async handle(command: Command): ResultAsync<Failure> {
     const utilisateur = await this.#utilisateurRepository.get(command.uidUtilisateur)
 
+    // Réservé aux gestionnaires structure : un gestionnaire département rattaché à une structure
+    // (sa préfecture) ne doit pas pouvoir la candidater à une gouvernance.
+    if (utilisateur.state.role.nom !== 'Gestionnaire structure') {
+      return 'utilisateurNonGestionnaireStructure'
+    }
+
     const structureUid = utilisateur.state.structureUid
     if (structureUid === undefined) {
       return 'utilisateurSansStructure'
@@ -93,7 +99,7 @@ export type StructureCandidature = Readonly<{
   siret: string
 }>
 
-type Failure = 'structureDejaMembreDeLaGouvernance' | 'utilisateurSansStructure'
+type Failure = 'structureDejaMembreDeLaGouvernance' | 'utilisateurNonGestionnaireStructure' | 'utilisateurSansStructure'
 
 type Command = Readonly<{
   codeDepartement: string

@@ -8,6 +8,7 @@ import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
@@ -23,7 +24,8 @@ export async function inviterUnUtilisateurAction(actionParams: ActionParams): Re
     const message = await new InviterUnUtilisateur(
       new PrismaUtilisateurRepository(prisma.utilisateurRecord),
       emailInvitationGatewayFactory,
-      new Date()
+      new Date(),
+      new PrismaMembreLoader()
     ).handle({
       email: validationResult.data.email,
       nom: validationResult.data.nom,

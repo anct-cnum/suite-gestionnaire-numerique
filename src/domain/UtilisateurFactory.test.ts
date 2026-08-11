@@ -117,6 +117,40 @@ describe('utilisateur factory', () => {
 
   it.each([
     {
+      desc: 'un gestionnaire département rattaché à une structure expose sa structure',
+      expectedStructureUid: { value: 163 },
+      structureUid: 163,
+    },
+    {
+      desc: 'un gestionnaire département sans structure n’expose pas de structure',
+      expectedStructureUid: undefined,
+      structureUid: undefined,
+    },
+  ])('$desc', ({ expectedStructureUid, structureUid }) => {
+    // GIVEN
+    const utilisateurParams = {
+      departement: { code: '02', codeRegion: '32', nom: 'Aisne' },
+      derniereConnexion: epochTime,
+      emailDeContact: 'martin.tartempion@example.net',
+      inviteLe: epochTime,
+      isBetaTesteur: false,
+      isSuperAdmin: false,
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      structureUid,
+      telephone: '0102030405',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+    }
+
+    // WHEN
+    const utilisateur = new UtilisateurFactory(utilisateurParams).create('Gestionnaire département')
+
+    // THEN
+    expect(utilisateur.state.structureUid).toStrictEqual(expectedStructureUid)
+  })
+
+  it.each([
+    {
       desc: 'un utilisateur ayant un numéro de téléphone est créé avec ce numéro',
       expectedTelephone: '0102030405',
       telephone: '0102030405',
