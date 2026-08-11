@@ -1,5 +1,6 @@
 import { Departement, DepartementState } from './Departement'
 import { Role } from './Role'
+import { StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, UtilisateurUid } from './Utilisateur'
 
 export class GestionnaireDepartement extends Utilisateur {
@@ -7,10 +8,12 @@ export class GestionnaireDepartement extends Utilisateur {
     return {
       ...super.state,
       departement: this.#departement.state,
+      ...(this.#structureUid === undefined ? {} : { structureUid: this.#structureUid.state }),
     }
   }
 
   readonly #departement: Departement
+  readonly #structureUid?: StructureUid
 
   constructor(
     uid: UtilisateurUid,
@@ -22,7 +25,8 @@ export class GestionnaireDepartement extends Utilisateur {
     inviteLe: Date,
     telephone: Telephone,
     departement: Departement,
-    derniereConnexion?: Date
+    derniereConnexion?: Date,
+    structureUid?: StructureUid
   ) {
     super(
       uid,
@@ -37,6 +41,7 @@ export class GestionnaireDepartement extends Utilisateur {
       derniereConnexion
     )
     this.#departement = departement
+    this.#structureUid = structureUid
   }
 
   override peutGerer(autre: Utilisateur): boolean {

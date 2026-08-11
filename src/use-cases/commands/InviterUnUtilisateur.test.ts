@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { InviterUnUtilisateur } from './InviterUnUtilisateur'
+import { InviterUnUtilisateur, StructurePrefectureDuDepartementLoader } from './InviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
@@ -13,6 +13,8 @@ describe('inviter un utilisateur', () => {
   beforeEach(() => {
     spiedUidToFind = 0
     spiedUtilisateurToAdd = null
+    spiedCodeDepartementPrefecture = ''
+    structurePrefecture = null
     spiedDestinataire = {
       email: '',
       nom: '',
@@ -104,7 +106,12 @@ describe('inviter un utilisateur', () => {
           role: utilisateurCourant.role,
         })
       )
-      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactorySpy, date)
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        date,
+        structurePrefectureLoaderSpy
+      )
 
       // WHEN
       const result = await inviterUnUtilisateur.handle({
@@ -142,11 +149,122 @@ describe('inviter un utilisateur', () => {
     })
   })
 
+  describe('rattachement à une structure d’un gestionnaire département invité', () => {
+    it('étant donné un admin qui invite un gestionnaire département, quand il l’invite, alors celui-ci est rattaché à la structure de la préfecture du département choisi', async () => {
+      // GIVEN
+      structurePrefecture = 163
+      const repository = new RepositorySpy(utilisateurFactory({ role: 'Administrateur dispositif' }))
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: { codeOrganisation: '02', type: 'Gestionnaire département' },
+        uidUtilisateurCourant: 1,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeDepartementPrefecture).toBe('02')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 163 })
+    })
+
+    it('étant donné un admin qui invite un gestionnaire département d’un département sans membre préfecture, quand il l’invite, alors celui-ci est créé sans structure', async () => {
+      // GIVEN
+      structurePrefecture = null
+      const repository = new RepositorySpy(utilisateurFactory({ role: 'Administrateur dispositif' }))
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: { codeOrganisation: '02', type: 'Gestionnaire département' },
+        uidUtilisateurCourant: 1,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toBeUndefined()
+    })
+
+    it('étant donné un gestionnaire département rattaché à une structure qui invite un pair, quand il l’invite, alors celui-ci hérite de sa structure sans appel à la préfecture', async () => {
+      // GIVEN
+      const repository = new RepositorySpy(
+        utilisateurFactory({ codeOrganisation: '02', role: 'Gestionnaire département', structureUid: 163 })
+      )
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        uidUtilisateurCourant: 2,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeDepartementPrefecture).toBe('')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 163 })
+    })
+
+    it('étant donné un gestionnaire département sans structure qui invite un pair, quand il l’invite, alors celui-ci est rattaché à la structure de la préfecture de son département', async () => {
+      // GIVEN
+      structurePrefecture = 163
+      const repository = new RepositorySpy(
+        utilisateurFactory({ codeOrganisation: '02', role: 'Gestionnaire département' })
+      )
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        uidUtilisateurCourant: 2,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeDepartementPrefecture).toBe('02')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 163 })
+    })
+  })
+
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy(utilisateurFactory({ role: 'Gestionnaire structure' }))
     const emailGatewayFactory = emailGatewayFactorySpy
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, epochTime)
+    const inviterUnUtilisateur = new InviterUnUtilisateur(
+      repository,
+      emailGatewayFactory,
+      epochTime,
+      structurePrefectureLoaderSpy
+    )
     const roleUtilisateurAInviter: TypologieRole = 'Administrateur dispositif'
 
     // WHEN
@@ -180,7 +298,12 @@ describe('inviter un utilisateur', () => {
     })
     const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
     const emailGatewayFactory = emailGatewayFactorySpy
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, date)
+    const inviterUnUtilisateur = new InviterUnUtilisateur(
+      repository,
+      emailGatewayFactory,
+      date,
+      structurePrefectureLoaderSpy
+    )
     const roleUtilisateurAInviter: TypologieRole = 'Gestionnaire structure'
 
     // WHEN
@@ -207,6 +330,15 @@ describe('inviter un utilisateur', () => {
 let spiedUidToFind: number
 let spiedUtilisateurToAdd: null | Utilisateur
 let spiedDestinataire: Destinataire
+let spiedCodeDepartementPrefecture: string
+let structurePrefecture: null | number
+
+const structurePrefectureLoaderSpy = new (class implements StructurePrefectureDuDepartementLoader {
+  async structurePrefectureDuDepartement(codeDepartement: string): Promise<null | number> {
+    spiedCodeDepartementPrefecture = codeDepartement
+    return Promise.resolve(structurePrefecture)
+  }
+})()
 class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepository {
   readonly #utilisateurCourant: Utilisateur
 

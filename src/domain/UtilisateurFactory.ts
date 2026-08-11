@@ -76,6 +76,7 @@ export class UtilisateurFactory {
 
   #createGestionnaireDepartement(code: string): Utilisateur {
     const departement = new Departement(this.#departement ?? { code, codeRegion: '', nom: '' })
+    const structureUid = this.#structureUid === undefined ? undefined : new StructureUid(this.#structureUid)
     return new GestionnaireDepartement(
       this.#uid,
       this.#nom,
@@ -86,7 +87,8 @@ export class UtilisateurFactory {
       this.#inviteLe,
       this.#telephone,
       departement,
-      this.#derniereConnexion
+      this.#derniereConnexion,
+      structureUid
     )
   }
 

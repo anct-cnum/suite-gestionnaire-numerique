@@ -173,6 +173,12 @@ async function construireScopes(
 
   if (utilisateur.role.type === 'gestionnaire_departement' && utilisateur.departementCode !== null) {
     scopes.push({ code: utilisateur.departementCode, type: 'departement' })
+    // Scope structure seul, sans les appartenances aux gouvernances : la structure de rattachement
+    // (souvent une préfecture, membre de sa gouvernance) ne doit pas ajouter de scope membre/coporteur
+    // qui ferait basculer nbGouvernances() et le menu Gouvernance.
+    if (utilisateur.structureId !== null) {
+      scopes.push({ code: String(utilisateur.structureId), type: 'structure' })
+    }
   }
 
   if (utilisateur.structureId !== null && utilisateur.role.type === 'gestionnaire_structure') {

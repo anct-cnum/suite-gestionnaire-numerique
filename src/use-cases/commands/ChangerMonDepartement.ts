@@ -1,12 +1,22 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { GetUtilisateurRepository, UpdateDepartementUtilisateurRepository } from './shared/UtilisateurRepository'
+import { StructurePrefectureDuDepartementLoader } from './InviterUnUtilisateur'
+import {
+  GetUtilisateurRepository,
+  UpdateDepartementUtilisateurRepository,
+  UpdateStructureUtilisateurRepository,
+} from './shared/UtilisateurRepository'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class ChangerMonDepartement implements CommandHandler<Command> {
+  readonly #structurePrefectureDuDepartementLoader: StructurePrefectureDuDepartementLoader
   readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(utilisateurRepository: UtilisateurRepository) {
+  constructor(
+    utilisateurRepository: UtilisateurRepository,
+    structurePrefectureDuDepartementLoader: StructurePrefectureDuDepartementLoader
+  ) {
+    this.#structurePrefectureDuDepartementLoader = structurePrefectureDuDepartementLoader
     this.#utilisateurRepository = utilisateurRepository
   }
 
@@ -15,6 +25,13 @@ export class ChangerMonDepartement implements CommandHandler<Command> {
     const result = utilisateurCourant.changerDepartement()
     if (isOk(result)) {
       await this.#utilisateurRepository.updateDepartement(command.uidUtilisateurCourant, command.nouveauCodeDepartement)
+      // La structure suit le département : la préfecture départementale (même règle qu'à
+      // l'invitation), ou null si aucune n'est identifiée (le menu retombe alors sur la
+      // page d'explication).
+      const idStructure = await this.#structurePrefectureDuDepartementLoader.structurePrefectureDuDepartement(
+        command.nouveauCodeDepartement
+      )
+      await this.#utilisateurRepository.updateStructure(command.uidUtilisateurCourant, idStructure)
     }
 
     return result
@@ -28,4 +45,5 @@ type Command = Readonly<{
   uidUtilisateurCourant: number
 }>
 
-interface UtilisateurRepository extends GetUtilisateurRepository, UpdateDepartementUtilisateurRepository {}
+interface UtilisateurRepository
+  extends GetUtilisateurRepository, UpdateDepartementUtilisateurRepository, UpdateStructureUtilisateurRepository {}

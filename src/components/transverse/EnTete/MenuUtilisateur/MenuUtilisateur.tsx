@@ -64,7 +64,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
       {sessionUtilisateurViewModel.peutChangerDeRole ? (
         <SelecteurRole ariaControlsId={ariaControlsId} startRoleTransition={startRoleTransition} />
       ) : null}
-      <div className={styles['zone-selecteurs']}>
+      <div className={`fr-mb-6v ${styles['zone-selecteurs']}`}>
         {isChangingRole ? (
           <SpinnerSimple size="small" text="Changement de rôle..." />
         ) : (

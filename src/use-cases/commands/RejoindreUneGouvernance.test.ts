@@ -80,7 +80,35 @@ describe('rejoindre une gouvernance', () => {
     })
   })
 
-  it('étant donné un utilisateur sans structure, quand il candidate à une gouvernance, alors une erreur est renvoyée et aucun membre n’est créé', async () => {
+  it('étant donné un gestionnaire département rattaché à une structure, quand il candidate à une gouvernance, alors une erreur est renvoyée et aucun membre n’est créé', async () => {
+    // GIVEN
+    const rejoindreUneGouvernance = new RejoindreUneGouvernance(
+      new UtilisateurGestionnaireDepartementAvecStructureRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new MembreRepositorySpy(),
+      new MembreInexistantLoaderSpy(),
+      new StructureCandidatureLoaderSpy(),
+      new TransactionRepositorySpy()
+    )
+
+    // WHEN
+    const result = await rejoindreUneGouvernance.handle({
+      codeDepartement: '75',
+      contact: {
+        email: 'contact@example.com',
+        fonction: 'Directeur',
+        nom: 'Dupont',
+        prenom: 'Jean',
+      },
+      uidUtilisateur,
+    })
+
+    // THEN
+    expect(result).toBe('utilisateurNonGestionnaireStructure')
+    expect(spiedMembreCreated).toBeNull()
+  })
+
+  it('étant donné un utilisateur qui n’est pas gestionnaire structure, quand il candidate à une gouvernance, alors une erreur est renvoyée et aucun membre n’est créé', async () => {
     // GIVEN
     const rejoindreUneGouvernance = new RejoindreUneGouvernance(
       new UtilisateurSansStructureRepositorySpy(),
@@ -104,7 +132,7 @@ describe('rejoindre une gouvernance', () => {
     })
 
     // THEN
-    expect(result).toBe('utilisateurSansStructure')
+    expect(result).toBe('utilisateurNonGestionnaireStructure')
     expect(spiedMembreCreated).toBeNull()
   })
 
@@ -155,6 +183,14 @@ class UtilisateurAvecStructureRepositorySpy implements GetUtilisateurRepository 
 class UtilisateurSansStructureRepositorySpy implements GetUtilisateurRepository {
   async get(_: UtilisateurUidState['value']): Promise<Utilisateur> {
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
+  }
+}
+
+class UtilisateurGestionnaireDepartementAvecStructureRepositorySpy implements GetUtilisateurRepository {
+  async get(_: UtilisateurUidState['value']): Promise<Utilisateur> {
+    return Promise.resolve(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département', structureUid: structureId })
+    )
   }
 }
 

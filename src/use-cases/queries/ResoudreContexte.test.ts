@@ -104,7 +104,7 @@ describe('résoudre contexte - scopes', () => {
     ])
   })
 
-  it('un gestionnaire département avec une structure ne reçoit que le scope département', async () => {
+  it('un gestionnaire département avec une structure reçoit les scopes département et structure, sans les appartenances de la structure aux gouvernances', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '75', structureId: 42 })
     const loader = loaderStub({
@@ -115,7 +115,24 @@ describe('résoudre contexte - scopes', () => {
     const contexte = await resoudreContexte(utilisateur, loader)
 
     // THEN
+    expect(contexte.scopes).toStrictEqual([
+      { code: '75', type: 'departement' },
+      { code: '42', type: 'structure' },
+    ])
+    expect(contexte.nbGouvernances()).toBe(1)
+    expect(contexte.idStructure()).toBe(42)
+  })
+
+  it('un gestionnaire département sans structure ne reçoit que le scope département', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '75', structureId: null })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
     expect(contexte.scopes).toStrictEqual([{ code: '75', type: 'departement' }])
+    expect(contexte.idStructure()).toBe(0)
   })
 
   it('un gestionnaire structure sans structure a un scope vide', async () => {

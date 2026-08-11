@@ -194,6 +194,36 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
     })
 
+    it.each([
+      { intention: 'étant superadmin', peutChangerDeRole: true },
+      { intention: 'n’étant pas superadmin', peutChangerDeRole: false },
+    ])(
+      'si le rôle est gestionnaire_departement, $intention, alors le sélecteur de département s’affiche mais pas celui de structure',
+      ({ peutChangerDeRole }) => {
+        // GIVEN
+        renderComponent(<EnTete />, {
+          sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+            peutChangerDeRole,
+            role: {
+              doesItBelongToGroupeAdmin: false,
+              libelle: 'Rhône',
+              nom: 'Gestionnaire département',
+              pictogramme: 'maille',
+              rolesGerables: [],
+              type: 'gestionnaire_departement',
+            },
+          }),
+        })
+
+        // WHEN
+        jOuvreLeMenuUtilisateur()
+
+        // THEN
+        expect(screen.getByLabelText('Département')).toBeInTheDocument()
+        expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
+      }
+    )
+
     it('si le rôle est gestionnaire_structure mais que je ne suis pas superadmin, alors le sélecteur de structure ne s’affiche pas', () => {
       // GIVEN
       renderComponent(<EnTete />, {
