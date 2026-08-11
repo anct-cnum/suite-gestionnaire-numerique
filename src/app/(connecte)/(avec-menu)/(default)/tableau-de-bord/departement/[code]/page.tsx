@@ -9,6 +9,7 @@ import BlocDonneesStructure from '../../blocs/BlocDonneesStructure'
 import BlocEtatDesLieux from '../../blocs/BlocEtatDesLieux'
 import BlocFinancements from '../../blocs/BlocFinancements'
 import BlocGouvernance from '../../blocs/BlocGouvernance'
+import BlocLabelConum from '../../blocs/BlocLabelConum'
 import BlocMediateurs from '../../blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
 import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
@@ -55,6 +56,7 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
     etatDesLieux: <BlocEtatDesLieux key="etatDesLieux" scope={scope} />,
     financements: <BlocFinancements key="financements" scope={scope} />,
     gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
+    labelConum: <BlocLabelConum key="labelConum" structureId={contexte.idStructure()} />,
     mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
   }

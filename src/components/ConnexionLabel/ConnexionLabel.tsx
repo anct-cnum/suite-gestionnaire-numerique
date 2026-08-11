@@ -8,6 +8,7 @@ import styles from './ConnexionLabel.module.css'
 import ProConnect from '../Connexion/ProConnect'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import { suivreEvenement } from '@/shared/matomo'
 
 export default function ConnexionLabel({ idProvider }: Props): ReactElement {
   return (
@@ -57,6 +58,8 @@ export default function ConnexionLabel({ idProvider }: Props): ReactElement {
             <button
               className={`fr-btn fr-mb-2w fr-text--lg ${styles.bouton}`}
               onClick={() => {
+                // Plan de marquage : suivi du clic sur le CTA, sans donnée personnelle.
+                suivreEvenement('connexion_label', 'clic_connexion_proconnect')
                 void signIn(idProvider, { callbackUrl: '/' })
               }}
               title="S’identifier avec ProConnect"

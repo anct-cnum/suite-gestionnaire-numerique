@@ -8,11 +8,16 @@ export type IdentifiantBloc =
   | 'etatDesLieux'
   | 'financements'
   | 'gouvernance'
+  | 'labelConum'
   | 'mediateurs'
   | 'rejoindreGouvernance'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
   const blocs: Array<IdentifiantBloc> = ['accueil']
+
+  if (contexte.aCesRoles('gestionnaire_structure') && contexte.isBetaTesteur) {
+    blocs.push('labelConum')
+  }
 
   if (contexte.estGestionnaireStructureSansCoportage()) {
     blocs.push('donneesStructure')
