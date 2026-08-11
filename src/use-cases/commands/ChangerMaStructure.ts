@@ -25,7 +25,7 @@ type Failure = UtilisateurFailure
 
 type Command = Readonly<{
   idStructure: null | number
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 interface UtilisateurRepository extends GetUtilisateurRepository, UpdateStructureUtilisateurRepository {}

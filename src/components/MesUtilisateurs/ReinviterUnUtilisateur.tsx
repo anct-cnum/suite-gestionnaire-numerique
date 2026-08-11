@@ -55,6 +55,6 @@ type Props = Readonly<{
   utilisateur: Readonly<{
     email: string
     inviteLe: string
-    uid: string
+    uid: number
   }>
 }>

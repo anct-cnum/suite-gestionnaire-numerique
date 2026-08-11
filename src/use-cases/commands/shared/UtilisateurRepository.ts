@@ -12,8 +12,8 @@ export interface UpdateUtilisateurRepository {
   update(utilisateur: Utilisateur): Promise<void>
 }
 
-export interface UpdateUtilisateurUidRepository {
-  updateUid(utilisateur: Utilisateur): Promise<void>
+export interface UpdateUtilisateurSsoIdRepository {
+  updateSsoId(email: string, ssoId: string): Promise<void>
 }
 
 export interface UpdateDepartementUtilisateurRepository {

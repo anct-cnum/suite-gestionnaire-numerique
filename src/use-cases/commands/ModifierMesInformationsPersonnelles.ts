@@ -50,7 +50,7 @@ type Command = Readonly<{
     prenom: string
     telephone: string
   }>
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 type Failure = UtilisateurFailure

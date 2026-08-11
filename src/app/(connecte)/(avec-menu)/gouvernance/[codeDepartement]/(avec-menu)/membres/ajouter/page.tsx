@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import AjouterUnMembrePage from '@/components/GestionMembresGouvernance/AjouterUnMembrePage'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { nomDepartement } from '@/shared/urlHelpers'
@@ -26,7 +26,7 @@ export default async function Page({ params }: Props): Promise<ReactElement> {
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.peutGererGouvernance(codeDepartement)) {
     notFound()

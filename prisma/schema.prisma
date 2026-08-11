@@ -103,11 +103,12 @@ model UtilisateurRecord {
   relationRegion                  RegionRecord?                  @relation(fields: [regionCode], references: [code])
 
   comites                   ComiteRecord[]
-  notesPrivees              GouvernanceRecord[]         @relation("UtilisateurNotesPrivees")
-  noteDeContexte            GouvernanceRecord[]         @relation("UtilisateurnoteDeContexte")
+  notesPrivees              GouvernanceRecord[]            @relation("UtilisateurNotesPrivees")
+  noteDeContexte            GouvernanceRecord[]            @relation("UtilisateurnoteDeContexte")
   actionRecord              ActionRecord[]
   demandeDeSubventionRecord DemandeDeSubventionRecord[]
   FeuilleDeRouteRecord      FeuilleDeRouteRecord[]
+  feuilleDeRouteDocuments   FeuilleDeRouteDocumentRecord[]
 
   @@map("utilisateur")
   @@schema("min")
@@ -117,14 +118,14 @@ model GouvernanceRecord {
   departementCode               String    @id @map("departement_code")
   /// [NotePrivee]
   notePrivee                    Json?     @map("note_privee")
-  editeurNotePriveeId           String?   @map("editeur_note_privee_id")
+  editeurNotePriveeId           Int?      @map("editeur_note_privee_id")
   noteDeContexte                String?   @map("note_de_contexte")
-  editeurNoteDeContexteId       String?   @map("editeur_note_de_contexte_id")
+  editeurNoteDeContexteId       Int?      @map("editeur_note_de_contexte_id")
   derniereEditionNoteDeContexte DateTime? @map("derniere_edition_note_de_contexte")
 
   relationDepartement           DepartementRecord  @relation(fields: [departementCode], references: [code])
-  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [ssoId])
-  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [ssoId])
+  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [id])
+  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [id])
 
   comites         ComiteRecord[]
   feuillesDeRoute FeuilleDeRouteRecord[]
@@ -144,9 +145,9 @@ model ComiteRecord {
   frequence                  String
   commentaire                String?
   date                       DateTime?
-  editeurUtilisateurId       String    @map("editeur_utilisateur_id")
+  editeurUtilisateurId       Int       @map("editeur_utilisateur_id")
 
-  relationUtilisateur UtilisateurRecord @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationUtilisateur UtilisateurRecord @relation(fields: [editeurUtilisateurId], references: [id])
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
@@ -161,19 +162,36 @@ model FeuilleDeRouteRecord {
   derniereEdition            DateTime? @map("derniere_edition")
   nom                        String
   noteDeContextualisation    String?   @map("note_de_contextualisation")
-  pieceJointe                String?   @map("piece_jointe")
   porteurId                  String?   @map("porteur_id")
-  editeurUtilisateurId       String?   @map("editeur_utilisateur_id")
+  editeurUtilisateurId       Int?      @map("editeur_utilisateur_id")
   perimetreGeographique      String?   @map("perimetre_geographique")
 
   oldUUID String? @map("old_uuid") @db.Uuid
 
-  relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
-  relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationMembre      MembreRecord?      @relation(fields: [porteurId], references: [id])
+  relationUtilisateur UtilisateurRecord?             @relation(fields: [editeurUtilisateurId], references: [id])
+  relationGouvernance GouvernanceRecord              @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationMembre      MembreRecord?                  @relation(fields: [porteurId], references: [id])
   action              ActionRecord[]
+  documents           FeuilleDeRouteDocumentRecord[]
 
   @@map("feuille_de_route")
+  @@schema("min")
+}
+
+model FeuilleDeRouteDocumentRecord {
+  id Int @id @default(autoincrement())
+
+  feuilleDeRouteId     Int       @map("feuille_de_route_id")
+  chemin               String    @unique
+  nom                  String
+  creation             DateTime
+  suppression          DateTime?
+  editeurUtilisateurId Int       @map("editeur_utilisateur_id")
+
+  relationFeuilleDeRoute FeuilleDeRouteRecord @relation(fields: [feuilleDeRouteId], references: [id])
+  relationUtilisateur    UtilisateurRecord    @relation(fields: [editeurUtilisateurId], references: [id])
+
+  @@map("feuille_de_route_document")
   @@schema("min")
 }
 
@@ -225,7 +243,9 @@ model MembreTransfertLogRecord {
   contactsDeplaces     Int      @map("contacts_deplaces")
   contactsSupprimes    Int      @map("contacts_supprimes")
   parUtilisateur       String   @map("par_utilisateur")
-  transfereLe          DateTime @default(now()) @map("transfere_le")
+  // @db.Timestamp(6) : la table a été créée à la main (et son miroir Flyway V106) avec
+  // TIMESTAMP — l'annotation évite que Prisma génère un ALTER vers son TIMESTAMP(3) par défaut.
+  transfereLe          DateTime @default(now()) @map("transfere_le") @db.Timestamp(6)
 
   @@map("membre_transfert_log")
   @@schema("min")
@@ -994,6 +1014,7 @@ model main_lieu_inclusion {
   siret_a_l_enrichissement            String?                              @db.VarChar(14)
   nom_usage                           String?                              @db.VarChar(255)
   import_warnings                     Json?
+  deleted_at                          DateTime?                            @db.Timestamp(6)
   activites_coop                      activites_coop[]
   personne_affectations_lieu          main_personne_affectations_lieu[]
   adresse                             adresse?                             @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")

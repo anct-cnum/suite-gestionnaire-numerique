@@ -16,7 +16,7 @@ describe('fusionner deux structures', () => {
     const result = await fusionner.handle({
       idAbsorbee: 42,
       idSurvivante: 42,
-      uidUtilisateur: 'admin-1',
+      uidUtilisateur: 1,
     })
 
     // THEN
@@ -32,7 +32,7 @@ describe('fusionner deux structures', () => {
     const result = await fusionner.handle({
       idAbsorbee: 7,
       idSurvivante: 3,
-      uidUtilisateur: 'admin-1',
+      uidUtilisateur: 1,
     })
 
     // THEN
@@ -40,7 +40,7 @@ describe('fusionner deux structures', () => {
     expect(spiedFusion).toStrictEqual({
       idAbsorbee: 7,
       idSurvivante: 3,
-      parUtilisateur: 'admin-1',
+      parUtilisateur: 1,
     })
   })
 })

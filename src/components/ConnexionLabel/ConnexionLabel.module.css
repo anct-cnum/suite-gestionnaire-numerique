@@ -1,0 +1,73 @@
+.plein-ecran {
+  min-height: 100vh;
+}
+
+.gauche {
+  align-items: center;
+  background-color: var(--brown-opera-950-100);
+  display: flex;
+  justify-content: center;
+}
+
+.droite {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.contenu {
+  max-width: 32rem;
+  padding: 3.5rem 0 5rem;
+  text-align: center;
+}
+
+.contenu-droite {
+  max-width: 24rem;
+}
+
+.etapes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.etape {
+  border-top: 0.0625rem solid var(--brown-opera-850-200);
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.etape:last-child {
+  border-bottom: 0.0625rem solid var(--brown-opera-850-200);
+}
+
+.puce {
+  display: block;
+  flex-shrink: 0;
+  height: 2rem;
+  position: relative;
+  width: 1.75rem;
+}
+
+.puce svg {
+  display: block;
+}
+
+.numero {
+  align-items: center;
+  color: var(--brown-opera-sun-395-moon-820);
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 700;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+}
+
+.bouton {
+  justify-content: center;
+  width: 100%;
+}

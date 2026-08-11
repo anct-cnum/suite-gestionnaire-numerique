@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaPostesConseillerNumeriqueLoader } from '@/gateways/PrismaPostesConseillerNumeriqueLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+    const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
     const scopeFiltre = contexte.scopeFiltre()

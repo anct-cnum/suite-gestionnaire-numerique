@@ -32,7 +32,7 @@ export function buildFiltresLieuxInclusion(
   scopeFiltre: ScopeFiltre,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut } = params
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
 
   let geographique: FiltreGeographiqueLieux | undefined
   if (scopeFiltre.type === 'national') {
@@ -47,6 +47,7 @@ export function buildFiltresLieuxInclusion(
     frr: frr === 'true' ? true : undefined,
     geographique,
     horsZonePrioritaire: horsZonePrioritaire === 'true' ? true : undefined,
+    nom: nom !== undefined && nom.trim() !== '' ? nom.trim() : undefined,
     pagination: { limite, page: Number(page ?? '1') - 1 },
     qpv: qpv === 'true' ? true : undefined,
     scopeFiltre,
@@ -164,6 +165,7 @@ interface FiltresLieuxInclusionURLParams {
   codeRegion?: string
   frr?: string
   horsZonePrioritaire?: string
+  nom?: string
   page?: string
   qpv?: string
   statut?: string

@@ -37,7 +37,7 @@ type Failure = 'editeurNePeutPasModifierNoteDeContexte' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

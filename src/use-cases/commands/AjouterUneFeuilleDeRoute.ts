@@ -57,7 +57,7 @@ type Failure = 'utilisateurNePeutPasAjouterFeuilleDeRoute' | FeuilleDeRouteFailu
 type Command = Readonly<{
   nom: string
   perimetreGeographique: PerimetreGeographiqueTypes
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
   uidPorteur: string
 }>

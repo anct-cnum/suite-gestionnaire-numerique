@@ -89,14 +89,9 @@ export type FeuilleDeRouteReadModel = Readonly<{
   montantSubventionFormationAccordee: number
   nom: string
   pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
-    metadonnees?: Readonly<{
-      format: string
-      taille: string
-      upload: Date
-    }>
+    chemin: string
     nom: string
+    upload: Date
   }>
   porteur?: MembreReadModel
   totalActions: number
@@ -160,7 +155,7 @@ type SyntheseMembres = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {

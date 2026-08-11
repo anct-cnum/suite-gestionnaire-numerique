@@ -10,6 +10,7 @@ import {
   Prisma,
 } from '@prisma/client'
 
+import { journaliserCreateBrut, journaliserTransaction } from './shared/journalisationMin'
 import {
   fraisAChargeVersEnum,
   itineranceVersEnum,
@@ -23,8 +24,14 @@ import {
 } from './shared/lieuInclusionEnums'
 import prisma from '../../prisma/prismaClient'
 import {
+  AdresseLieuEnrichie,
+  AdresseLieuSirene,
+  SupprimerLieuInclusionData,
+  SupprimerLieuInclusionRepository,
   UpdateLieuInclusionDescriptionData,
   UpdateLieuInclusionDescriptionRepository,
+  UpdateLieuInclusionInformationsGeneralesData,
+  UpdateLieuInclusionInformationsGeneralesRepository,
   UpdateLieuInclusionServicesModaliteData,
   UpdateLieuInclusionServicesModaliteRepository,
   UpdateLieuInclusionServicesTypeAccompagnementData,
@@ -37,12 +44,29 @@ import {
 
 export class PrismaLieuInclusionRepository
   implements
+    SupprimerLieuInclusionRepository,
     UpdateLieuInclusionDescriptionRepository,
+    UpdateLieuInclusionInformationsGeneralesRepository,
     UpdateLieuInclusionServicesModaliteRepository,
     UpdateLieuInclusionServicesTypeAccompagnementRepository,
     UpdateLieuInclusionServicesTypePublicRepository,
     UpdateLieuInclusionVisibiliteCartographieRepository
 {
+  async supprimer(data: SupprimerLieuInclusionData): Promise<void> {
+    await prisma.main_lieu_inclusion.update({
+      data: {
+        deleted_at: data.date,
+        edited_by: 'min',
+        updated_at_min: data.date,
+        // Un lieu supprimé ne doit plus être publié sur la cartographie nationale.
+        visible_pour_cartographie_nationale: false,
+      },
+      where: {
+        id: data.structureUid.state.value,
+      },
+    })
+  }
+
   async updateDescription(data: UpdateLieuInclusionDescriptionData): Promise<void> {
     const existingStructure = await prisma.main_lieu_inclusion.findUnique({
       select: { contact: true },
@@ -58,6 +82,45 @@ export class PrismaLieuInclusionRepository
       where: {
         id: data.structureUid.state.value,
       },
+    })
+  }
+
+  async updateInformationsGenerales(data: UpdateLieuInclusionInformationsGeneralesData): Promise<void> {
+    await journaliserTransaction(prisma, async (transaction) => {
+      const adresseId = await this.trouverOuCreerAdresseLieu(transaction, data.adresseEnrichie, data.adresseSirene)
+
+      const updateData: {
+        adresse_id: null | number
+        complement_adresse: null | string
+        edited_by: string
+        itinerance?: Array<main_itinerance>
+        nom: string
+        siret_a_l_enrichissement: null | string
+        typologies?: Array<main_typologie>
+        updated_at_min: Date
+      } = {
+        adresse_id: adresseId,
+        complement_adresse: data.complementAdresse,
+        edited_by: 'min',
+        nom: data.nom,
+        siret_a_l_enrichissement: data.siret,
+        updated_at_min: data.date,
+      }
+
+      if (data.itinerance !== undefined) {
+        updateData.itinerance = versEnumsLieuInclusion(data.itinerance, itineranceVersEnum, 'itinerance')
+      }
+
+      if (data.typologies !== undefined) {
+        updateData.typologies = versEnumsLieuInclusion(data.typologies, typologiesVersEnum, 'typologies')
+      }
+
+      await transaction.main_lieu_inclusion.update({
+        data: updateData,
+        where: {
+          id: data.structureUid.state.value,
+        },
+      })
     })
   }
 
@@ -263,5 +326,74 @@ export class PrismaLieuInclusionRepository
     }
 
     return updateData
+  }
+
+  // On ne modifie jamais une ligne main.adresse (partagée entre lieux et structures) :
+  // on réutilise une adresse existante (clef_interop BAN ou composants SIRENE identiques)
+  // ou on en crée une nouvelle, puis lieu_inclusion.adresse_id est re-pointé.
+  private async trouverOuCreerAdresseLieu(
+    transaction: Prisma.TransactionClient,
+    adresseEnrichie: AdresseLieuEnrichie | null,
+    adresseSirene: AdresseLieuSirene | null
+  ): Promise<null | number> {
+    if (adresseEnrichie !== null) {
+      const existante = await transaction.adresse.findFirst({
+        where: { clef_interop: adresseEnrichie.banClefInterop },
+      })
+      if (existante) {
+        return existante.id
+      }
+
+      const resultat = await transaction.$queryRaw<Array<{ id: number }>>`
+        INSERT INTO main.adresse (
+          clef_interop, code_ban, code_insee, code_postal,
+          nom_commune, nom_voie, numero_voie, repetition, geom
+        ) VALUES (
+          ${adresseEnrichie.banClefInterop},
+          ${adresseEnrichie.banCodeBan}::uuid,
+          ${adresseEnrichie.banCodeInsee},
+          ${adresseEnrichie.banCodePostal},
+          ${adresseEnrichie.banNomCommune},
+          ${adresseEnrichie.banNomVoie},
+          ${adresseEnrichie.banNumeroVoie},
+          ${adresseEnrichie.banRepetition},
+          public.ST_Point(${adresseEnrichie.banLongitude}::double precision, ${adresseEnrichie.banLatitude}::double precision, 4326)
+        )
+        RETURNING id
+      `
+      await journaliserCreateBrut(transaction, 'main.adresse', resultat[0].id)
+
+      return resultat[0].id
+    }
+
+    if (adresseSirene !== null) {
+      const existante = await transaction.adresse.findFirst({
+        where: {
+          code_insee: adresseSirene.codeInsee,
+          code_postal: adresseSirene.codePostal,
+          nom_commune: adresseSirene.commune,
+          nom_voie: adresseSirene.nomVoie,
+          numero_voie: adresseSirene.numeroVoie,
+        },
+      })
+      if (existante) {
+        return existante.id
+      }
+
+      // Les champs BAN restent NULL (clef_interop, code_ban, geom, repetition)
+      const creee = await transaction.adresse.create({
+        data: {
+          code_insee: adresseSirene.codeInsee,
+          code_postal: adresseSirene.codePostal,
+          nom_commune: adresseSirene.commune,
+          nom_voie: adresseSirene.nomVoie,
+          numero_voie: adresseSirene.numeroVoie,
+        },
+      })
+
+      return creee.id
+    }
+
+    return null
   }
 }

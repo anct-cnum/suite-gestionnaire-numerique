@@ -29,5 +29,5 @@ export type UnUtilisateurReadModel = Readonly<{
   }>
   structureId: null | number
   telephone: string
-  uid: string
+  uid: number
 }>

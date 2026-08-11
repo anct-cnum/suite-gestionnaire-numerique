@@ -9,9 +9,8 @@ export function listeLieuxInclusionPresenter(
 ): ListeLieuxInclusionViewModel {
   const lieux = readModel.lieux.map((lieu) => ({
     adresse: formatAdresse(lieu),
-    dateArchivage: lieu.updated_at === null ? null : formaterEnDateFrancaise(lieu.updated_at),
+    dateArchivage: lieu.deleted_at === null ? null : formaterEnDateFrancaise(lieu.deleted_at),
     derniereMiseAJour: getDerniereMiseAJour(lieu.updated_at, now),
-    estActif: lieu.est_actif,
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
     nbAccompagnements: lieu.nb_accompagnements_coop + lieu.nb_accompagnements_ac,
@@ -32,6 +31,7 @@ export function listeLieuxInclusionPresenter(
     totalArchives: readModel.totalArchives,
     totalConseillerNumerique: readModel.totalConseillerNumerique,
     totalLabellise: readModel.totalLabellise,
+    totalSansRecherche: readModel.totalSansRecherche,
   }
 }
 
@@ -46,13 +46,13 @@ export interface ListeLieuxInclusionViewModel {
   totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
+  totalSansRecherche: number
 }
 
 export interface LieuInclusionViewModel {
   adresse: AdresseViewModel
   dateArchivage: null | string
   derniereMiseAJour: DerniereMiseAJourViewModel | null
-  estActif: boolean
   id: string
   idCartographieNationale: null | string
   nbAccompagnements: number

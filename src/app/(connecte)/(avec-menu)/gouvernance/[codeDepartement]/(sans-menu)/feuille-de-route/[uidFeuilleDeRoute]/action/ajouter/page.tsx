@@ -5,7 +5,7 @@ import styles from '@/components/Action/Action.module.css'
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -25,7 +25,7 @@ export default async function ActionAjouterController({ params }: Props): Promis
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.peutGererGouvernance(codeDepartement)) {
     notFound()

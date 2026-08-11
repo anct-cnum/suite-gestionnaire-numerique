@@ -43,6 +43,31 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
     }
   }
 
+  // Recherche d'adresses pour l'autocomplétion : renvoie jusqu'à 5 propositions BAN.
+  async rechercher(adresse: string): Promise<Array<AdresseGeocodeReadModel>> {
+    try {
+      const urlParams = new URLSearchParams({
+        autocomplete: '1',
+        limit: '5',
+        q: adresse.trim(), // eslint-disable-line id-length -- 'q' est le paramètre standard de l'API BAN
+      })
+
+      const response = await this.recupererAvecTentatives(`${this.apiUrl}?${urlParams.toString()}`)
+
+      const donnees = await this.gererReponse(response)
+
+      return donnees.features
+        .map((feature) => this.mapperFeature(feature))
+        .filter((resultat): resultat is AdresseGeocodeReadModel => resultat !== null)
+    } catch (error: unknown) {
+      reportLoaderError(error, 'ApiBanGeocodingGateway', {
+        operation: 'rechercher',
+        params: { adresse },
+      })
+      return []
+    }
+  }
+
   private async gererReponse(reponse: Response): Promise<BanApiResponse> {
     if (!reponse.ok) {
       const texteErreur = await reponse.text()
@@ -55,6 +80,51 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
     }
 
     return (await reponse.json()) as BanApiResponse
+  }
+
+  private mapperFeature(feature: BanFeature): AdresseGeocodeReadModel | null {
+    const properties = feature.properties
+    const coordinates = feature.geometry.coordinates
+
+    // Vérifier le type d'adresse (accepter housenumber, street, locality)
+    if (properties.type !== 'housenumber' && properties.type !== 'street' && properties.type !== 'locality') {
+      return null
+    }
+
+    // Parser le numéro de voie pour extraire le numéro et la répétition
+    let numeroVoie: null | number = null
+    let repetition: null | string = null
+
+    if (properties.housenumber !== undefined) {
+      const match = /^(\d+)([a-zA-Z]*)$/.exec(properties.housenumber.trim())
+      if (match) {
+        numeroVoie = Number.parseInt(match[1], 10)
+        repetition = match[2] || null
+      }
+    }
+
+    // Déterminer le nom de voie selon le type
+    let nomVoie: string
+    if (properties.type === 'housenumber' || properties.type === 'street') {
+      nomVoie = properties.street ?? ''
+    } else {
+      nomVoie = properties.locality ?? ''
+    }
+
+    return {
+      banClefInterop: properties.id,
+      banCodeBan: properties.banId ?? null,
+      banCodeInsee: properties.citycode,
+      banCodePostal: properties.postcode,
+      banLatitude: coordinates[1],
+      banLongitude: coordinates[0],
+      banNomCommune: properties.city,
+      banNomVoie: nomVoie,
+      banNumeroVoie: numeroVoie,
+      banRepetition: repetition,
+      score: properties.score,
+      type: properties.type,
+    }
   }
 
   private async recupererAvecTentatives(url: string): Promise<Response> {
@@ -111,54 +181,14 @@ export class ApiBanGeocodingGateway implements BanGeocodingGateway {
       return null
     }
 
-    const feature = donnees.features[0]
-    const properties = feature.properties
-    const coordinates = feature.geometry.coordinates
+    const resultat = this.mapperFeature(donnees.features[0])
 
     // Vérifier le score minimum
-    if (properties.score < this.scoreMinimum) {
+    if (resultat === null || resultat.score < this.scoreMinimum) {
       return null
     }
 
-    // Vérifier le type d'adresse (accepter housenumber, street, locality)
-    if (properties.type !== 'housenumber' && properties.type !== 'street' && properties.type !== 'locality') {
-      return null
-    }
-
-    // Parser le numéro de voie pour extraire le numéro et la répétition
-    let numeroVoie: null | number = null
-    let repetition: null | string = null
-
-    if (properties.housenumber !== undefined) {
-      const match = /^(\d+)([a-zA-Z]*)$/.exec(properties.housenumber.trim())
-      if (match) {
-        numeroVoie = Number.parseInt(match[1], 10)
-        repetition = match[2] || null
-      }
-    }
-
-    // Déterminer le nom de voie selon le type
-    let nomVoie: string
-    if (properties.type === 'housenumber' || properties.type === 'street') {
-      nomVoie = properties.street ?? ''
-    } else {
-      nomVoie = properties.locality ?? ''
-    }
-
-    return {
-      banClefInterop: properties.id,
-      banCodeBan: properties.banId ?? null,
-      banCodeInsee: properties.citycode,
-      banCodePostal: properties.postcode,
-      banLatitude: coordinates[1],
-      banLongitude: coordinates[0],
-      banNomCommune: properties.city,
-      banNomVoie: nomVoie,
-      banNumeroVoie: numeroVoie,
-      banRepetition: repetition,
-      score: properties.score,
-      type: properties.type,
-    }
+    return resultat
   }
 }
 

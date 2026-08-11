@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import AjouterUnMembrePage from '@/components/GestionMembresGouvernance/AjouterUnMembrePage'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaRejoindreUneGouvernanceLoader } from '@/gateways/PrismaRejoindreUneGouvernanceLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { rejoindreUneGouvernancePresenter } from '@/presenters/rejoindreUneGouvernancePresenter'
@@ -20,7 +20,7 @@ export default async function RejoindreUneGouvernanceController(): Promise<React
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   if (utilisateur.structureId === null) {
     notFound()
   }

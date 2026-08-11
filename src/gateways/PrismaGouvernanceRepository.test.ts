@@ -25,7 +25,7 @@ describe('gouvernance repository', () => {
     const departementCode = '75'
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({ departementCode })
 
     // WHEN
@@ -42,7 +42,7 @@ describe('gouvernance repository', () => {
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUnDepartement({ code: '76' })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({ departementCode })
     await creerUneGouvernance({ departementCode: '76' })
 
@@ -60,11 +60,11 @@ describe('gouvernance repository', () => {
     const departementCode = '75'
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({
       departementCode,
       derniereEditionNoteDeContexte: epochTime,
-      editeurNoteDeContexteId: 'userFooId',
+      editeurNoteDeContexteId: 1,
       noteDeContexte: '<p>contenu HTML</p>',
     })
 
@@ -79,7 +79,7 @@ describe('gouvernance repository', () => {
           dateDeModification: epochTime,
           uidEditeur: new UtilisateurUid({
             email: 'martin.tartempion@example.net',
-            value: 'userFooId',
+            value: 1,
           }),
         },
         uid: departementCode,
@@ -93,7 +93,7 @@ describe('gouvernance repository', () => {
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUnDepartement({ code: '76' })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({ departementCode, notePrivee: undefined })
     await creerUneGouvernance({ departementCode: '76' })
 
@@ -111,7 +111,7 @@ describe('gouvernance repository', () => {
     const departementCode = '75'
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur({ ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({ departementCode, notePrivee: undefined })
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
@@ -119,7 +119,7 @@ describe('gouvernance repository', () => {
         dateDeModification: epochTime,
         uidEditeur: new UtilisateurUid({
           email: 'martin.tartempion@example.net',
-          value: 'userFooId',
+          value: 1,
         }),
       },
       notePrivee: undefined,
@@ -139,7 +139,7 @@ describe('gouvernance repository', () => {
       gouvernanceRecordFactory({
         departementCode: '75',
         derniereEditionNoteDeContexte: epochTime,
-        editeurNoteDeContexteId: 'userFooId',
+        editeurNoteDeContexteId: 1,
         noteDeContexte: '<p>lorem ipsum dolor sit amet</p>',
       })
     )
@@ -150,7 +150,7 @@ describe('gouvernance repository', () => {
     const departementCode = '75'
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUneGouvernance({ departementCode })
     const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: departementCode })
 
@@ -169,11 +169,11 @@ describe('gouvernance repository', () => {
   it('ajouter une note privée à une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUnDepartement({ code: '93' })
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({
       departementCode,
       editeurNotePriveeId: undefined,
@@ -231,11 +231,11 @@ describe('gouvernance repository', () => {
   it('modifier une note privée d’une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUnDepartement({ code: '93' })
-    await creerUnUtilisateur({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur, ssoEmail: 'userFooId@example.com', ssoId: 'userFooId' })
     await creerUnUtilisateur({ id: 2, ssoEmail: 'userFooId2@example.com', ssoId: 'userFooId2' })
     await creerUneGouvernance({
       departementCode,
@@ -261,7 +261,7 @@ describe('gouvernance repository', () => {
             utilisateurFactory({
               uid: {
                 email: 'userFooId2@example.com',
-                value: 'userFooId2',
+                value: 2,
               },
             }).state.uid
           ),
@@ -277,7 +277,7 @@ describe('gouvernance repository', () => {
     expect(modifiedRecords[0]).toStrictEqual(
       gouvernanceRecordFactory({
         departementCode,
-        editeurNotePriveeId: 'userFooId2',
+        editeurNotePriveeId: 2,
         notePrivee: {
           contenu: 'un autre contenu quelconque',
           derniereEdition: epochTime.toISOString(),
@@ -297,10 +297,10 @@ describe('gouvernance repository', () => {
   it('supprimer une note privée d’une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur({ ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur, ssoEmail: 'userFooId@example.com', ssoId: 'userFooId' })
     await creerUneGouvernance({
       departementCode,
       editeurNotePriveeId: uidEditeur,
@@ -333,10 +333,10 @@ describe('gouvernance repository', () => {
   it('supprimer une note de contexte d’une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
-    await creerUnUtilisateur({ ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur, ssoEmail: 'userFooId@example.com', ssoId: 'userFooId' })
     await creerUneGouvernance({
       departementCode,
       derniereEditionNoteDeContexte: epochTime,

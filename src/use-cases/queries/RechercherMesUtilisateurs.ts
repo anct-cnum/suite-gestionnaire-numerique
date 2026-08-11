@@ -21,7 +21,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<Query, Utilisateu
     utilisateursActives = false,
     utilisateursParPage = config.utilisateursParPage,
   }: Query): Promise<UtilisateursCourantsEtTotalReadModel> {
-    const utilisateur = await this.#mesUtilisateursLoader.findByUid(uid)
+    const utilisateur = await this.#mesUtilisateursLoader.findById(uid)
 
     return this.#mesUtilisateursLoader.mesUtilisateursEtLeTotal(
       utilisateur,
@@ -69,5 +69,5 @@ type Query = Partial<
   }>
 > &
   Readonly<{
-    uid: string
+    uid: number
   }>

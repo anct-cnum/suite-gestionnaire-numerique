@@ -115,7 +115,7 @@ type Command = Readonly<{
     nom: string
     prenom: string
   }>
-  uidUtilisateur: string
+  uidUtilisateur: number
 }>
 
 type UtilisateurRepository = GetUtilisateurRepository

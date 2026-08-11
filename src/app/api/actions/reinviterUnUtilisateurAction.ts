@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisateur'
@@ -25,7 +25,7 @@ export async function reinviterUnUtilisateurAction(actionParams: ActionParams): 
       new Date()
     ).handle({
       uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
-      uidUtilisateurCourant: await getSessionSub(),
+      uidUtilisateurCourant: await getSessionUtilisateurId(),
     })
 
     revalidatePath(validationResult.data.path)
@@ -36,9 +36,13 @@ export async function reinviterUnUtilisateurAction(actionParams: ActionParams): 
 
 type ActionParams = Readonly<{
   path: string
-  uidUtilisateurAReinviter: string
+  uidUtilisateurAReinviter: number
 }>
 
 const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
+  uidUtilisateurAReinviter: z
+    .number()
+    .int()
+    .min(1, { message: 'L’identifiant de l’utilisateur à réinviter doit être renseigné' }),
 })

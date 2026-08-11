@@ -14,7 +14,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
 
   it('étant donné une nouvelle date de connexion d’un utilisateur, quand une mise à jour est demandée, alors elle est mise à jour', async () => {
     // GIVEN
-    const uidUtilisateurCourant = 'fooId'
+    const uidUtilisateurCourant = 1
     const date = epochTime
     const repository = new UtilisateurRepositorySpy()
     const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, date)
@@ -24,7 +24,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUidToFind).toBe('fooId')
+    expect(spiedUidToFind).toBe(1)
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(
       utilisateurFactory({
         derniereConnexion: date,
@@ -38,7 +38,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
 
   it('étant donné une date invalide de connexion d’un utilisateur, quand une mise à jour est demandée, alors elle n’est pas mise à jour', async () => {
     // GIVEN
-    const uidUtilisateurCourant = 'fooId'
+    const uidUtilisateurCourant = 1
     const repository = new UtilisateurRepositorySpy()
     const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, invalidDate)
 
@@ -50,7 +50,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
   })
 })
 
-let spiedUidToFind: null | string
+let spiedUidToFind: null | number
 let spiedUtilisateurToUpdate: null | Utilisateur
 
 class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
@@ -58,7 +58,7 @@ class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilis
     spiedUidToFind = uid
     return Promise.resolve(
       utilisateurFactory({
-        uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+        uid: { email: 'martin.tartempion@example.net', value: 1 },
       })
     )
   }

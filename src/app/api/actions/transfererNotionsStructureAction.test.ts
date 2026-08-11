@@ -10,8 +10,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('transférer des notions de structure action', () => {
   it('transfère les notions et purge le cache quand un administrateur autorisé confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererNotionsStructure.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -30,7 +30,7 @@ describe('transférer des notions de structure action', () => {
       idCible: 3,
       idSource: 7,
       notions: ['membre', 'coop'],
-      uidUtilisateur: 'userFooId',
+      uidUtilisateur: 1,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/structures-doublons/comparer')
     expect(messages).toStrictEqual(['OK'])
@@ -51,8 +51,8 @@ describe('transférer des notions de structure action', () => {
 
   it('refuse l’action à un utilisateur non administrateur autorisé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({
         isBetaTesteur: false,
         role: {
@@ -80,8 +80,8 @@ describe('transférer des notions de structure action', () => {
 
   it('remonte le message d’échec métier renvoyé par la commande', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(TransfererNotionsStructure.prototype, 'handle').mockResolvedValueOnce('collisionMembreGouvernance')

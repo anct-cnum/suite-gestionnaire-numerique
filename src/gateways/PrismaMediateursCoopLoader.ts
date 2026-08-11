@@ -24,7 +24,6 @@ export class PrismaMediateursCoopLoader {
       AND pe.is_mediateur = true
       AND pe.coop_id IS NOT NULL
       AND pe.deleted_at IS NULL
-      AND pe.aidant_connect_id IS NULL
     `
     return rows.map((row) => row.mediateur_id)
   }
@@ -47,7 +46,6 @@ export class PrismaMediateursCoopLoader {
       AND pe.is_mediateur = true
       AND pe.coop_id IS NOT NULL
       AND pe.deleted_at IS NULL
-      AND pe.aidant_connect_id IS NULL
     `
     return rows.map((row) => row.mediateur_id)
   }

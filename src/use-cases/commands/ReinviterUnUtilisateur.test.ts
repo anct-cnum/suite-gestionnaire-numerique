@@ -10,7 +10,7 @@ import { epochTime, epochTimeMinusOneDay, invalidDate } from '@/shared/testHelpe
 
 describe('réinviter un utilisateur', () => {
   beforeEach(() => {
-    spiedUidToFind = ''
+    spiedUidToFind = 0
     spiedUtilisateurToUpdate = null
   })
 
@@ -24,8 +24,8 @@ describe('réinviter un utilisateur', () => {
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
-      uidUtilisateurCourant: 'uidUtilisateurCourantAvecMemeRole',
+      uidUtilisateurAReinviter: uidUtilisateurAReinviterInactif,
+      uidUtilisateurCourant: uidUtilisateurCourantAvecMemeRole,
     })
 
     // THEN
@@ -39,7 +39,7 @@ describe('réinviter un utilisateur', () => {
         derniereConnexion: undefined,
         inviteLe: epochTimeMinusOneDay,
         role: 'Gestionnaire structure',
-        uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
+        uid: { email: 'utilisateur.a.reinviter.inactif@example.net', value: uidUtilisateurAReinviterInactif },
       }).state
     )
     expect(result).toBe('OK')
@@ -51,12 +51,12 @@ describe('réinviter un utilisateur', () => {
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
-      uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
+      uidUtilisateurAReinviter: uidUtilisateurAReinviterInactif,
+      uidUtilisateurCourant: uidUtilisateurCourantAvecRoleDifferent,
     })
 
     // THEN
-    expect(spiedUidToFind).toBe('uidUtilisateurAReinviterInactif')
+    expect(spiedUidToFind).toBe(uidUtilisateurAReinviterInactif)
     expect(spiedUtilisateurToUpdate).toBeNull()
     expect(result).toBe('utilisateurNePeutPasGererUtilisateurAReinviter')
   })
@@ -67,12 +67,12 @@ describe('réinviter un utilisateur', () => {
 
     // WHEN
     const result = await reinviterUnUtilisateur.handle({
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterActif',
-      uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
+      uidUtilisateurAReinviter: uidUtilisateurAReinviterActif,
+      uidUtilisateurCourant: uidUtilisateurCourantAvecRoleDifferent,
     })
 
     // THEN
-    expect(spiedUidToFind).toBe('uidUtilisateurAReinviterActif')
+    expect(spiedUidToFind).toBe(uidUtilisateurAReinviterActif)
     expect(spiedUtilisateurToUpdate).toBeNull()
     expect(result).toBe('utilisateurAReinviterDejaActif')
   })
@@ -83,8 +83,8 @@ describe('réinviter un utilisateur', () => {
 
     // WHEN
     const asyncResult = reinviterUnUtilisateur.handle({
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
-      uidUtilisateurCourant: 'uidUtilisateurCourantAvecMemeRole',
+      uidUtilisateurAReinviter: uidUtilisateurAReinviterInactif,
+      uidUtilisateurCourant: uidUtilisateurCourantAvecMemeRole,
     })
 
     // THEN
@@ -92,33 +92,38 @@ describe('réinviter un utilisateur', () => {
   })
 })
 
-const utilisateursByUid: Record<string, Utilisateur> = {
-  uidUtilisateurAReinviterActif: utilisateurFactory({
+const uidUtilisateurCourantAvecMemeRole = 1
+const uidUtilisateurAReinviterInactif = 2
+const uidUtilisateurAReinviterActif = 3
+const uidUtilisateurCourantAvecRoleDifferent = 4
+
+const utilisateursByUid: Record<number, Utilisateur> = {
+  [uidUtilisateurAReinviterActif]: utilisateurFactory({
     derniereConnexion: epochTime,
     inviteLe: epochTime,
     role: 'Gestionnaire structure',
-    uid: { email: 'uidUtilisateurAReinviterActif', value: 'uidUtilisateurAReinviterActif' },
+    uid: { email: 'utilisateur.a.reinviter.actif@example.net', value: uidUtilisateurAReinviterActif },
   }),
-  uidUtilisateurAReinviterInactif: utilisateurFactory({
+  [uidUtilisateurAReinviterInactif]: utilisateurFactory({
     derniereConnexion: undefined,
     inviteLe: epochTime,
     role: 'Gestionnaire structure',
-    uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
+    uid: { email: 'utilisateur.a.reinviter.inactif@example.net', value: uidUtilisateurAReinviterInactif },
   }),
-  uidUtilisateurCourantAvecMemeRole: utilisateurFactory({
+  [uidUtilisateurCourantAvecMemeRole]: utilisateurFactory({
     role: 'Gestionnaire structure',
-    uid: { email: 'uidUtilisateurCourantAvecMemeRole', value: 'uidUtilisateurCourantAvecMemeRole' },
+    uid: { email: 'utilisateur.courant.meme.role@example.net', value: uidUtilisateurCourantAvecMemeRole },
   }),
-  uidUtilisateurCourantAvecRoleDifferent: utilisateurFactory({
+  [uidUtilisateurCourantAvecRoleDifferent]: utilisateurFactory({
     role: 'Gestionnaire département',
     uid: {
-      email: 'uidUtilisateurCourantAvecRoleDifferent',
-      value: 'uidUtilisateurCourantAvecRoleDifferent',
+      email: 'utilisateur.courant.role.different@example.net',
+      value: uidUtilisateurCourantAvecRoleDifferent,
     },
   }),
 }
 
-let spiedUidToFind: string
+let spiedUidToFind: number
 let spiedUtilisateurToUpdate: null | Utilisateur
 let spiedDestinataire: Destinataire
 

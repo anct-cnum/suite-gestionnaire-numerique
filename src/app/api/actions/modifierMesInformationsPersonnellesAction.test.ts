@@ -9,8 +9,8 @@ describe('modifier mes informations personnelles action', () => {
   it('si les informations personnelles sont correctes, alors c’est valide', async () => {
     // GIVEN
     const path = '/mes-informations-personnelles'
-    const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    const sub = 1
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -73,9 +73,9 @@ describe('modifier mes informations personnelles action', () => {
 
   it('si le téléphone est vide, alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN
-    const sub = 'fooId'
+    const sub = 1
     const telephoneVide = ''
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 

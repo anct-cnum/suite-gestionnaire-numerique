@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -19,7 +19,7 @@ export async function retirerUnCoPorteurAction(actionParams: ActionParams): Resu
     if (validationResult.error) {
       return validationResult.error.issues.map(({ message }) => message)
     }
-    const sessionSub = await getSessionSub()
+    const sessionSub = await getSessionUtilisateurId()
 
     const message = await new RetirerUnCoPorteur(
       new PrismaMembreRepository(),

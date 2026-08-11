@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
+import { Fragment, ReactElement, useContext, useId, useState } from 'react'
 
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
@@ -20,17 +20,11 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
 
   const router = useRouter()
   const searchParams = useSearchParams()
-  const statutInitial: StatutSelectionnable = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
+  const statutSelectionne: StatutSelectionnable = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
+  const roleSelectionne = searchParams.get('role') ?? toutRole
+  const typologieSelectionnee = searchParams.get('typologie') ?? touteTypologie
   const [memberToDelete, setMemberToDelete] = useState<MembreViewModel>()
   const [memberToRemoveCoPorteur, setMemberToRemoveCoPorteur] = useState<MembreViewModel>()
-
-  useEffect(() => {
-    if (searchParams.get('statut') === null) {
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.set('statut', 'confirme')
-      router.replace(newUrl.pathname + newUrl.search)
-    }
-  }, [searchParams, router])
 
   const {
     accepterUnMembreAction,
@@ -44,21 +38,6 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
     candidat: membresViewModel.candidats,
     confirme: membresViewModel.membres,
   }
-
-  const [membresView, setMembresView] = useState({
-    membres: membresByStatut[statutInitial],
-    roleSelectionne: toutRole,
-    statutSelectionne: statutInitial,
-    typologieSelectionnee: touteTypologie,
-  })
-  useEffect(() => {
-    setMembresView({
-      membres: membresByStatut[statutInitial],
-      roleSelectionne: toutRole,
-      statutSelectionne: statutInitial,
-      typologieSelectionnee: touteTypologie,
-    })
-  }, [membresViewModel.membres, statutInitial])
 
   function getMenuMembreCoPorteur(membre: MembreViewModel): Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
@@ -143,7 +122,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
       )
     }
     let menuItem
-    if (membresView.statutSelectionne === 'candidat') {
+    if (statutSelectionne === 'candidat') {
       menuItem = getMenuCandidat(membre)
     } else if (membre.roles.some((role) => role.nom === 'Co-porteur')) {
       menuItem = getMenuMembreCoPorteur(membre)
@@ -220,36 +199,38 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
       </div>
       <div className="fr-grid-row space-between fr-mt-4w fr-grid-row--middle">
         <div className="fr-grid-row fr-grid-row--middle">
-          <div className="fr-pr-1w">Filtres :</div>
-          <div className="fr-mr-1w">
+          <div className="fr-pr-1w fr-mt-1w">Filtres :</div>
+          <div className="fr-mr-1w" style={{ minWidth: '11rem' }}>
             <Select
               id={selectRoleId}
               onChange={(option) => {
                 setFiltreRole(option?.value ?? toutRole)
               }}
               options={[
-                { isSelected: true, label: 'Rôles', value: toutRole },
+                { label: 'Rôles', value: toutRole },
                 ...membresViewModel.roles
-                  .filter((role) => role.nom !== 'Observateur')
-                  .map((role) => ({ label: role.nom, value: role.nom })),
+                  .filter((role) => role.value !== 'observateur')
+                  .map((role) => ({ label: role.label, value: role.value })),
               ]}
+              value={roleSelectionne}
             >
               <span className="fr-sr-only">Filtrer par rôle</span>
             </Select>
           </div>
-          <div>
+          <div style={{ minWidth: '11rem' }}>
             <Select
               id={selectTypologieId}
               onChange={(option) => {
                 setFiltreTypologie(option?.value ?? touteTypologie)
               }}
               options={[
-                { isSelected: true, label: 'Typologie', value: touteTypologie },
+                { label: 'Typologie', value: touteTypologie },
                 ...membresViewModel.typologies.map((typologie) => ({
                   label: typologie.label,
                   value: typologie.value,
                 })),
               ]}
+              value={typologieSelectionnee}
             >
               <span className="fr-sr-only">Filtrer par typologie</span>
             </Select>
@@ -258,9 +239,17 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         <button
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
           onClick={() => {
-            window.open(
-              `/api/export/contacts-membres-csv?codeDepartement=${membresViewModel.uidGouvernance}&statut=${membresView.statutSelectionne}`
-            )
+            const params = new URLSearchParams({
+              codeDepartement: membresViewModel.uidGouvernance,
+              statut: statutSelectionne,
+            })
+            if (roleSelectionne !== toutRole) {
+              params.set('role', roleSelectionne)
+            }
+            if (typologieSelectionnee !== touteTypologie) {
+              params.set('typologie', typologieSelectionnee)
+            }
+            window.open(`/api/export/contacts-membres-csv?${params.toString()}`)
           }}
           type="button"
         >
@@ -268,7 +257,7 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
         </button>
       </div>
       <Table enTetes={getEnTetes()} titre="Membres">
-        {membresView.membres.map((membre, index) => (
+        {membresByStatut[statutSelectionne].map((membre, index) => (
           <tr data-row-key={index} key={membre.uid}>
             <td
               style={{
@@ -386,42 +375,40 @@ export default function GestionMembres({ membresViewModel, peutGererGouvernance 
   )
 
   function isSelectionne(statut: StatutSelectionnable): 'page' | false {
-    return statut === membresView.statutSelectionne ? 'page' : false
+    return statut === statutSelectionne ? 'page' : false
+  }
+
+  function naviguerAvecFiltres(modifierParams: (params: URLSearchParams) => void): void {
+    const params = new URLSearchParams(searchParams)
+    modifierParams(params)
+    const queryString = params.toString()
+    router.push(queryString === '' ? pathname : `${pathname}?${queryString}`)
   }
 
   function setStatut(statut: StatutSelectionnable): void {
-    const newUrl = new URL(window.location.href)
-    newUrl.searchParams.set('statut', statut)
-    router.replace(newUrl.pathname + newUrl.search)
-
-    setMembresView({
-      ...membresView,
-      membres: membresByStatut[statut],
-      statutSelectionne: statut,
+    naviguerAvecFiltres((params) => {
+      params.set('statut', statut)
     })
   }
 
-  function setFiltreRole(roleSelectionne: string): void {
-    setMembresView({
-      ...membresView,
-      membres: filtrerMembres(roleSelectionne, membresView.typologieSelectionnee),
-      roleSelectionne,
+  function setFiltreRole(role: string): void {
+    naviguerAvecFiltres((params) => {
+      if (role === toutRole) {
+        params.delete('role')
+      } else {
+        params.set('role', role)
+      }
     })
   }
 
-  function setFiltreTypologie(typologieSelectionnee: string): void {
-    setMembresView({
-      ...membresView,
-      membres: filtrerMembres(membresView.roleSelectionne, typologieSelectionnee),
-      typologieSelectionnee,
+  function setFiltreTypologie(typologie: string): void {
+    naviguerAvecFiltres((params) => {
+      if (typologie === touteTypologie) {
+        params.delete('typologie')
+      } else {
+        params.set('typologie', typologie)
+      }
     })
-  }
-
-  function filtrerMembres(role: string, typologie: string): ReadonlyArray<MembreViewModel> {
-    const membres = membresByStatut[membresView.statutSelectionne]
-    return membres
-      .filter(({ roles }) => (role === toutRole ? true : roles.map(({ nom }) => nom).includes(role)))
-      .filter((membre) => (typologie === touteTypologie ? true : typologie === membre.typologie.simple.value))
   }
 
   async function ajouterUnMembre(membre: MembreViewModel): Promise<void> {

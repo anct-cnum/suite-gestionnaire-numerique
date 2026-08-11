@@ -11,6 +11,7 @@ export type FiltresListeLieux = Readonly<{
   frr?: boolean
   geographique?: FiltreGeographiqueLieux
   horsZonePrioritaire?: boolean
+  nom?: string
   pagination: Readonly<{ limite: number; page: number }>
   qpv?: boolean
   scopeFiltre: ScopeFiltre
@@ -26,12 +27,13 @@ export interface RecupererLieuxInclusionReadModel {
   totalArchives: number
   totalConseillerNumerique: number
   totalLabellise: number
+  totalSansRecherche: number
 }
 
 export interface LieuInclusionNumeriqueItem {
   code_insee: string
   code_postal: string
-  est_actif: boolean
+  deleted_at: Date | null
   est_frr: boolean
   est_qpv: boolean
   id: string

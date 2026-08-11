@@ -5,6 +5,7 @@ import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
 export function lieuDetailsPresenter(
   lieuDetailsReadModel: LieuDetailsReadModel,
   peutModifier: boolean,
+  peutModifierInformationsGenerales: boolean,
   now: Date
 ): LieuInclusionDetailsData {
   return {
@@ -17,6 +18,8 @@ export function lieuDetailsPresenter(
       adresse: lieuDetailsReadModel.informationsGenerales.adresse,
       complementAdresse: lieuDetailsReadModel.informationsGenerales.complementAdresse,
       nomStructure: lieuDetailsReadModel.informationsGenerales.nomStructure,
+      siret: lieuDetailsReadModel.informationsGenerales.siret,
+      typologies: lieuDetailsReadModel.informationsGenerales.typologies,
     },
     lieuAccueilPublic: {
       accessibilite: lieuDetailsReadModel.lieuAccueilPublic.accessibilite,
@@ -39,6 +42,7 @@ export function lieuDetailsPresenter(
     },
     personnesTravaillant: lieuDetailsReadModel.personnesTravaillant,
     peutModifier,
+    peutModifierInformationsGenerales,
     servicesInclusionNumerique: lieuDetailsReadModel.servicesInclusionNumerique,
   }
 }
@@ -67,6 +71,7 @@ const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
   'aidants-connect': 'Aidants Connect',
   carto: 'la Cartographie nationale',
   coop: 'la Coop',
+  min: 'Mon Inclusion Numérique',
   min_scalingo: 'Mon Inclusion Numérique',
   sonum: 'Mon Inclusion Numérique',
 }
@@ -86,6 +91,8 @@ interface LieuInclusionDetailsData {
     adresse: string
     complementAdresse?: string
     nomStructure: string
+    siret?: string
+    typologies?: ReadonlyArray<string>
   }
   lieuAccueilPublic: {
     accessibilite?: string
@@ -116,6 +123,7 @@ interface LieuInclusionDetailsData {
     telephone?: string
   }>
   peutModifier: boolean
+  peutModifierInformationsGenerales: boolean
   servicesInclusionNumerique: ReadonlyArray<{
     description?: string
     modalites: ReadonlyArray<string>

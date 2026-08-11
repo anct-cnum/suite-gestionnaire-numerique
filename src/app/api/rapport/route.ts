@@ -14,7 +14,7 @@ import {
 import { NextRequest, NextResponse } from 'next/server'
 import PDFDocument from 'pdfkit'
 
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRapportRegionLoader, RapportPerimetre, RapportReadModel } from '@/gateways/PrismaRapportRegionLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
     }
 
-    const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+    const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
     if (!contexte.aCesRoles('administrateur_dispositif')) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })

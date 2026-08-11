@@ -8,23 +8,23 @@ import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisat
 describe('reinviter un utilisateur action', () => {
   it('étant donné que l’uid utilisateur courant et l’uid utilisateur a réinviter sont valides quand la réinvitation est demandée alors elle est validée', async () => {
     // GIVEN
-    const sub = 'uidUtilisateurCourant'
+    const sub = 1
     const path = '/mes-utilisateurs'
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(ReinviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const messages = await reinviterUnUtilisateurAction({
       path,
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
+      uidUtilisateurAReinviter: 2,
     })
 
     // THEN
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
     expect(ReinviterUnUtilisateur.prototype.handle).toHaveBeenCalledWith({
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
-      uidUtilisateurCourant: 'uidUtilisateurCourant',
+      uidUtilisateurAReinviter: 2,
+      uidUtilisateurCourant: 1,
     })
     expect(messages).toStrictEqual(['OK'])
   })
@@ -33,7 +33,7 @@ describe('reinviter un utilisateur action', () => {
     // WHEN
     const messages = await reinviterUnUtilisateurAction({
       path: '',
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
+      uidUtilisateurAReinviter: 2,
     })
 
     // THEN

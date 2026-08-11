@@ -12,6 +12,7 @@ import { clientContext } from '../shared/ClientContext'
 import DocumentVide from '../shared/DocumentVide/DocumentVide'
 import Historique from '../shared/Historique/Historique'
 import Icon from '../shared/Icon/Icon'
+import ConfirmationModal from '../shared/Modal/ConfirmationModal'
 import { Notification } from '../shared/Notification/Notification'
 import OuvrirPdf from '../shared/OuvrirPdf/OuvrirPdf'
 import PageTitle from '../shared/PageTitle/PageTitle'
@@ -29,6 +30,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
   const modalId = 'supprimer-une-action'
   const [actionASupprimer, setActionASupprimer] = useState({ nom: '', uid: '' })
   const [isUploading, setIsUploading] = useState(false)
+  const [isModaleSuppressionDocumentOpen, setIsModaleSuppressionDocumentOpen] = useState(false)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -53,7 +55,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('uidFeuilleDeRoute', viewModel.uidFeuilleDeRoute)
-      formData.append('uidEditeur', sessionUtilisateurViewModel.uid)
+      formData.append('uidEditeur', String(sessionUtilisateurViewModel.uid))
 
       const response = await fetch('/api/document-feuille-de-route/upload', {
         body: formData,
@@ -99,10 +101,12 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
         content = (
           <OuvrirPdf
             href={viewModel.document.href}
+            isReplacing={isUploading}
             nom={viewModel.document.nom}
-            onDelete={async () => {
-              await handleSupprimerDocument()
+            onDelete={() => {
+              setIsModaleSuppressionDocumentOpen(true)
             }}
+            onReplace={handleFileUpload}
           />
         )
       } else {
@@ -122,7 +126,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                 <span className="fr-hint-text">Taille maximale : 25 Mo. Format .pdf</span>
               </label>
               <input
-                accept=".pdf"
+                accept="application/pdf,.pdf"
                 className="fr-upload"
                 disabled={isUploading}
                 id="file-upload"
@@ -319,6 +323,22 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             </article>
           ))}
         </section>
+        <ConfirmationModal
+          confirmLabel="Supprimer"
+          confirmVariant="error"
+          id="supprimer-document"
+          isOpen={isModaleSuppressionDocumentOpen}
+          onCancel={() => {
+            setIsModaleSuppressionDocumentOpen(false)
+          }}
+          onConfirm={() => {
+            setIsModaleSuppressionDocumentOpen(false)
+            void handleSupprimerDocument()
+          }}
+          title="Supprimer le document"
+        >
+          <p className="fr-text--sm">Le document sera définitivement supprimé et ne sera plus téléchargeable.</p>
+        </ConfirmationModal>
         <SupprimerUneAction
           actionASupprimer={actionASupprimer}
           closeModal={() => {

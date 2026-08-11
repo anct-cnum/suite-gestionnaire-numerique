@@ -28,6 +28,7 @@ export class SupprimerDocument implements CommandHandler<Command> {
       return 'editeurNePeutPasSupprimerDocument'
     }
 
+    // La version courante est close en base (historique) : ni la ligne ni le fichier S3 ne sont effacés.
     feuilleDeRoute.supprimerDocument()
     feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(command.date), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
@@ -40,7 +41,7 @@ type Failure = 'editeurNePeutPasSupprimerDocument'
 
 type Command = Readonly<{
   date: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
 }>
 

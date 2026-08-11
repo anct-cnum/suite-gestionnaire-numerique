@@ -7,6 +7,7 @@ import {
   creerUnBeneficiaireSubvention,
   creerUnComite,
   creerUnDepartement,
+  creerUnDocumentDeFeuilleDeRoute,
   creerUneAction,
   creerUneDemandeDeSubvention,
   creerUneEnveloppeFinancement,
@@ -31,13 +32,13 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '53', nom: 'Bretagne' })
     await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
-    await creerUnUtilisateur({ id: 0, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 1, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUneGouvernance({ departementCode: '75' })
     await creerUneGouvernance({
       departementCode: '93',
       derniereEditionNoteDeContexte: epochTime.toISOString(),
-      editeurNoteDeContexteId: 'userFooId',
-      editeurNotePriveeId: 'userFooId',
+      editeurNoteDeContexteId: 1,
+      editeurNotePriveeId: 1,
       noteDeContexte:
         '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       notePrivee: {
@@ -54,28 +55,28 @@ describe('gouvernance loader', () => {
     await creerFeuillesDeRoute('93', 4)
     await creerUneAction({
       budgetGlobal: 70_000,
-      createurId: 0,
+      createurId: 1,
       feuilleDeRouteId: 1,
       id: 1,
       nom: 'Structurer une filière de reconditionnement locale 1',
     })
     await creerUneAction({
       budgetGlobal: 25_000,
-      createurId: 0,
+      createurId: 1,
       feuilleDeRouteId: 2,
       id: 2,
       nom: 'Organiser un marathon',
     })
     await creerUneAction({
       budgetGlobal: 55_500,
-      createurId: 0,
+      createurId: 1,
       feuilleDeRouteId: 6,
       id: 3,
       nom: 'Structurer une filière de reconditionnement locale 2',
     })
     await creerUneAction({
       budgetGlobal: 55_500,
-      createurId: 0,
+      createurId: 1,
       feuilleDeRouteId: 6,
       id: 4,
       nom: 'Structurer une filière de reconditionnement locale 2',
@@ -84,13 +85,13 @@ describe('gouvernance loader', () => {
     await creerUneEnveloppeFinancement({ id: 2, libelle: 'Enveloppe de formation' })
     await creerUneDemandeDeSubvention({
       actionId: 1,
-      createurId: 0,
+      createurId: 1,
       enveloppeFinancementId: 1,
       id: 1,
     })
     await creerUneDemandeDeSubvention({
       actionId: 3,
-      createurId: 0,
+      createurId: 1,
       enveloppeFinancementId: 1,
       id: 2,
       subventionDemandee: 25_000,
@@ -99,7 +100,7 @@ describe('gouvernance loader', () => {
     })
     await creerUneDemandeDeSubvention({
       actionId: 4,
-      createurId: 0,
+      createurId: 1,
       enveloppeFinancementId: 2,
       id: 3,
       subventionDemandee: 50,
@@ -118,6 +119,12 @@ describe('gouvernance loader', () => {
       demandeDeSubventionId: 3,
       membreId: 'structure-38012986643097-93',
     })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      editeurUtilisateurId: 1,
+      feuilleDeRouteId: 1,
+      nom: 'feuille-de-route-2026.pdf',
+    })
 
     // WHEN
     const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
@@ -125,6 +132,14 @@ describe('gouvernance loader', () => {
     // THEN
     expect(gouvernanceReadModel.uid).toBe('93')
     expect(gouvernanceReadModel.departement).toBe('Seine-Saint-Denis')
+    // La pièce jointe provient de la table dédiée quand la ligne existe…
+    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '1')?.pieceJointe).toStrictEqual({
+      chemin: 'user/fooId/feuille-de-route-2026.pdf',
+      nom: 'feuille-de-route-2026.pdf',
+      upload: epochTime,
+    })
+    // …et est absente sinon.
+    expect(gouvernanceReadModel.feuillesDeRoute.find(({ uid }) => uid === '5')?.pieceJointe).toBeUndefined()
   })
 
   it('quand une gouvernance est demandée par son code département inexistant, alors une erreur est levée', async () => {
@@ -152,10 +167,10 @@ describe('gouvernance loader', () => {
     await creerUneGouvernance({ departementCode: '93' })
     await creerMembres('93')
     await creerFeuillesDeRoute('93', 0)
-    await creerUnUtilisateur({ id: 0, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 1, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUneAction({
       budgetGlobal: 70_000,
-      createurId: 0,
+      createurId: 1,
       feuilleDeRouteId: 1,
       id: 1,
       nom: 'Structurer une filière de reconditionnement locale 1',
@@ -163,7 +178,7 @@ describe('gouvernance loader', () => {
     await creerUneEnveloppeFinancement({ id: 1 })
     await creerUneDemandeDeSubvention({
       actionId: 1,
-      createurId: 0,
+      createurId: 1,
       enveloppeFinancementId: 1,
       id: 1,
       subventionDemandee: 30_000,
@@ -194,13 +209,13 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '11' })
     await creerUnDepartement({ code: codeDepartement })
     await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 1, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUnComite({
       commentaire: 'commentaire',
       creation: epochTime,
       date: undefined,
       derniereEdition: epochTime,
-      editeurUtilisateurId: 'userFooId',
+      editeurUtilisateurId: 1,
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
       id: 1,
@@ -233,13 +248,13 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '11' })
     await creerUnDepartement({ code: codeDepartement })
     await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 1, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUnComite({
       commentaire: undefined,
       creation: epochTime,
       date: epochTime,
       derniereEdition: epochTime,
-      editeurUtilisateurId: 'userFooId',
+      editeurUtilisateurId: 1,
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
       id: 1,
@@ -272,13 +287,13 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '11' })
     await creerUnDepartement({ code: codeDepartement })
     await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerUnUtilisateur()
+    await creerUnUtilisateur({ id: 1 })
     await creerUnComite({
       commentaire: 'commentaire',
       creation: epochTime,
       date: epochTime,
       derniereEdition: epochTime,
-      editeurUtilisateurId: 'userFooId',
+      editeurUtilisateurId: 1,
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
       id: 1,
@@ -312,7 +327,7 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
     creation: epochTime,
     date: epochTime,
     derniereEdition: epochTime,
-    editeurUtilisateurId: 'userFooId',
+    editeurUtilisateurId: 1,
     frequence: 'trimestrielle',
     gouvernanceDepartementCode,
     id: 1 + incrementId,
@@ -323,7 +338,7 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
     creation: epochTime,
     date: epochTimeMinusOneDay,
     derniereEdition: epochTime,
-    editeurUtilisateurId: 'userFooId',
+    editeurUtilisateurId: 1,
     frequence: 'trimestrielle',
     gouvernanceDepartementCode,
     id: 2 + incrementId,
@@ -338,7 +353,6 @@ async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incremen
     gouvernanceDepartementCode,
     id: id1,
     nom: `Feuille de route inclusion ${id1}`,
-    pieceJointe: 'feuille-de-route-fake.pdf',
   })
   await creerUneFeuilleDeRoute({
     gouvernanceDepartementCode,

@@ -28,8 +28,20 @@ describe('transfert de membre (repository Prisma)', () => {
     // GIVEN
     await seedBaseEtStructures()
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE_SOURCE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user1@example.com', ssoId: 'tt-user-1', structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user2@example.com', ssoId: 'tt-user-2', structureId: SOURCE })
+    // isSupprime pour rester invisible des requêtes de listing des autres fichiers de test
+    // (les données de ce fichier sont commitées, cf. commentaire en tête).
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user1@example.com',
+      ssoId: 'tt-user-1',
+      structureId: SOURCE,
+    })
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user2@example.com',
+      ssoId: 'tt-user-2',
+      structureId: SOURCE,
+    })
     const contactA = await creerUnContact({ email: 'tt.a@example.com', nom: 'TransfertTestContact' })
     const contactB = await creerUnContact({ email: 'tt.b@example.com', nom: 'TransfertTestContact' })
     await lier(contactA, SOURCE)
@@ -59,7 +71,12 @@ describe('transfert de membre (repository Prisma)', () => {
     // GIVEN
     await seedBaseEtStructures()
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE_SOURCE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tt.user1@example.com', ssoId: 'tt-user-1', structureId: SOURCE })
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tt.user1@example.com',
+      ssoId: 'tt-user-1',
+      structureId: SOURCE,
+    })
     const contactPartage = await creerUnContact({ email: 'tt.partage@example.com', nom: 'TransfertTestContact' })
     const contactPropre = await creerUnContact({ email: 'tt.propre@example.com', nom: 'TransfertTestContact' })
     await lier(contactPartage, SOURCE)
@@ -107,7 +124,7 @@ describe('transfert de membre (repository Prisma)', () => {
       idCible: 999999,
       idMembre: MEMBRE_SOURCE,
       idSource: SOURCE,
-      parUtilisateur: 'admin-test',
+      parUtilisateur: 1,
     })
 
     // THEN
@@ -121,7 +138,7 @@ async function transferer(): Promise<string> {
     idCible: CIBLE,
     idMembre: MEMBRE_SOURCE,
     idSource: SOURCE,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
   })
 }
 
@@ -129,8 +146,8 @@ async function seedBaseEtStructures(): Promise<void> {
   await creerUneRegion({ code: REGION, nom: 'Région de test transfert' })
   await creerUnDepartement({ code: DEPT, nom: 'Département de test transfert', regionCode: REGION })
   await creerUneGouvernance({ departementCode: DEPT })
-  await creerUneStructure({ id: SOURCE, siret: '99000100000001' })
-  await creerUneStructure({ id: CIBLE, siret: '99000100000002' })
+  await creerUneStructure({ id: SOURCE, nom: 'Structure transfert test source', siret: '99000100000001' })
+  await creerUneStructure({ id: CIBLE, nom: 'Structure transfert test cible', siret: '99000100000002' })
 }
 
 async function lier(contactId: number, structureId: number): Promise<void> {

@@ -6,10 +6,13 @@ import prisma from '../../../../../../prisma/prismaClient'
 import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { lieuDetailsPresenter } from '@/presenters/LieuDetailsPresenter'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: "Détails du lieu d'inclusion ",
@@ -26,9 +29,9 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
   }
 
   // Récupérer l'utilisateur connecté
-  const sub = await getSessionSub()
+  const utilisateurId = await getSessionUtilisateurId()
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurRepository.get(sub)
+  const utilisateur = await utilisateurRepository.get(utilisateurId)
 
   // Récupérer les départements des gouvernances dont la structure est membre
   const gouvernancesDepartements = await prisma.membreRecord.findMany({
@@ -52,7 +55,19 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
     departementsGouvernances
   )
 
-  const presentedData = lieuDetailsPresenter(lieuDetailsReadModel, peutModifier, new Date())
+  // Édition des informations générales réservée aux bêta-testeurs.
+  const contexte = await resoudreContexte(
+    await new PrismaUtilisateurLoader().findById(utilisateurId),
+    new PrismaMembreLoader()
+  )
+  const peutModifierInformationsGenerales = peutModifier && contexte.isBetaTesteur
+
+  const presentedData = lieuDetailsPresenter(
+    lieuDetailsReadModel,
+    peutModifier,
+    peutModifierInformationsGenerales,
+    new Date()
+  )
 
   return (
     <>
@@ -63,7 +78,11 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
           { label: presentedData.header.nom },
         ]}
       />
-      <LieuxInclusionDetails data={presentedData} />
+      <LieuxInclusionDetails
+        data={presentedData}
+        lieuId={id}
+        peutSupprimer={peutModifier && contexte.isBetaTesteur && !lieuDetailsReadModel.estArchive}
+      />
     </>
   )
 }

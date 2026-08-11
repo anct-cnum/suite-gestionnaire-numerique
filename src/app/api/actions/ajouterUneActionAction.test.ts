@@ -8,7 +8,7 @@ import { AjouterUneAction } from '@/use-cases/commands/AjouterUneAction'
 describe('ajouter une action action', () => {
   it('quand une action est ajoutée avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(AjouterUneAction.prototype, 'handle').mockResolvedValueOnce('OK')
 

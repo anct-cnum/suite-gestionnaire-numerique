@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -17,8 +17,9 @@ export const metadata: Metadata = {
   title: 'Membres',
 }
 
-export default async function MembresController({ params }: Props): Promise<ReactElement> {
+export default async function MembresController({ params, searchParams }: Props): Promise<ReactElement> {
   const { codeDepartement } = await params
+  const { role, typologie } = await searchParams
 
   if (!codeDepartement) {
     notFound()
@@ -29,11 +30,15 @@ export default async function MembresController({ params }: Props): Promise<Reac
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const peutGererGouvernance = contexte.peutGererGouvernance(codeDepartement)
 
-  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({ codeDepartement })
+  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({
+    codeDepartement,
+    role,
+    typologie,
+  })
 
   return (
     <>
@@ -57,6 +62,12 @@ type Props = Readonly<{
   params: Promise<
     Readonly<{
       codeDepartement: string
+    }>
+  >
+  searchParams: Promise<
+    Readonly<{
+      role?: string
+      typologie?: string
     }>
   >
 }>

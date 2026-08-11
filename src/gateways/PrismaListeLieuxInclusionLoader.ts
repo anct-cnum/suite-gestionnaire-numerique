@@ -23,13 +23,16 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     const scopeCteActifs = this.buildScopeCte({ ...filtres, statut: 'actif' })
     const scopeCteArchives = this.buildScopeCte({ ...filtres, statut: 'archive' })
     const whereConditions = this.buildWhereConditions(filtres)
+    // Les blocs résumé ignorent la recherche par nom (#1292) : seuls le scope et les filtres du drawer s'appliquent.
+    const whereConditionsSansRecherche = this.buildWhereConditions({ ...filtres, nom: undefined })
     const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
 
-    const [totalActifs, totalArchives, lieux, stats] = await Promise.all([
+    const [totalActifs, totalArchives, totalSansRecherche, lieux, stats] = await Promise.all([
       this.queryTotal(scopeCteActifs, whereConditions),
       this.queryTotal(scopeCteArchives, whereConditions),
+      this.queryTotal(scopeCteActifs, whereConditionsSansRecherche),
       this.queryLieux(scopeCte, whereConditions, limitOffset),
-      this.queryStats(scopeCte, whereConditions),
+      this.queryStats(scopeCte, whereConditionsSansRecherche),
     ])
 
     return {
@@ -41,21 +44,16 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       totalArchives,
       totalConseillerNumerique: stats.totalConseillerNumerique,
       totalLabellise: stats.totalLabellise,
+      totalSansRecherche,
     }
   }
 
-  // Actif = au moins une affectation active sur le lieu ; archivé = aucune.
+  // Archivé = date de suppression renseignée (soft delete #1497) ; actif = non supprimé.
   private buildFiltreStatut(statut: StatutLieux): Prisma.Sql {
     if (statut === 'archive') {
-      return Prisma.sql`AND NOT EXISTS (
-        SELECT 1 FROM main.personne_affectations_lieu pal
-        WHERE pal.lieu_id = l.id AND pal.est_active = true
-      )`
+      return Prisma.sql`AND l.deleted_at IS NOT NULL`
     }
-    return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM main.personne_affectations_lieu pal
-      WHERE pal.lieu_id = l.id AND pal.est_active = true
-    )`
+    return Prisma.sql`AND l.deleted_at IS NULL`
   }
 
   // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
@@ -128,6 +126,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   private buildWhereConditions(filtres: FiltresListeLieux): Prisma.Sql {
     const conditions: Array<Prisma.Sql> = []
 
+    if (filtres.nom !== undefined && filtres.nom !== '') {
+      conditions.push(Prisma.sql`l.nom ILIKE ${motifRecherche(filtres.nom)}`)
+    }
     if (filtres.qpv === true) {
       conditions.push(Prisma.sql`EXISTS (
         SELECT 1 FROM admin.zonage z
@@ -160,7 +161,8 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       WITH ${scopeCte},
       lieux_page AS (
         SELECT
-          l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.visible_pour_cartographie_nationale,
+          l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
+          l.visible_pour_cartographie_nationale,
           COALESCE(l.typologies::text[], '{}') AS typologies,
           a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
         FROM main.lieu_inclusion l
@@ -180,10 +182,11 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         GROUP BY pal.lieu_id
       )
       SELECT
-        l.id,
+        l.id::text AS id,
         l.nom,
         l.structure_cartographie_nationale_id,
         l.updated_at,
+        l.deleted_at,
         l.visible_pour_cartographie_nationale,
         l.typologies,
         l.numero_voie,
@@ -200,15 +203,12 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
           THEN true ELSE false
         END AS est_qpv,
         COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
-        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac,
-        EXISTS (
-          SELECT 1 FROM main.personne_affectations_lieu pal
-          WHERE pal.lieu_id = l.id AND pal.est_active = true
-        ) AS est_actif
+        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
       FROM lieux_page l
       LEFT JOIN main.activites_coop act ON act.lieu_id = l.id
       LEFT JOIN accompagnements_ac acc ON acc.lieu_id = l.id
-      GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.visible_pour_cartographie_nationale,
+      GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
+               l.visible_pour_cartographie_nationale,
                l.typologies, l.numero_voie, l.nom_voie, l.code_postal, l.nom_commune, l.code_insee,
                l.geom, acc.nbr
       ORDER BY l.nom ASC
@@ -250,4 +250,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
 
     return Number(result[0]?.total ?? 0)
   }
+}
+
+// Recherche partielle insensible à la casse : échappe les jokers LIKE (\ % _) de la saisie utilisateur.
+function motifRecherche(valeur: string): string {
+  return `%${valeur.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_')}%`
 }

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { ActionValidator } from './shared/action'
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
 import { PrismaCoFinancementRepository } from '@/gateways/PrismaCoFinancementRepository'
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
@@ -48,7 +48,7 @@ export async function modifierUneActionAction(actionParams: ActionParams): Resul
       nom: actionParams.nom,
       porteurs: actionParams.porteurs,
       uid: actionParams.uid,
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidFeuilleDeRoute: actionParams.feuilleDeRoute,
       uidGouvernance: actionParams.gouvernance,
       uidPorteurs: [...actionParams.porteurs],

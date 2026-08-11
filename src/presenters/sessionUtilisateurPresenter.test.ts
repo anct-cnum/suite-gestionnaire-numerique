@@ -17,7 +17,7 @@ describe('session utilisateur presenter', () => {
         rolesGerables: [],
         type: 'gestionnaire_structure' as RoleUtilisateur,
       },
-      uid: 'fooId',
+      uid: 1,
     })
 
     const territoire: TerritoireReadModel = {
@@ -50,7 +50,7 @@ describe('session utilisateur presenter', () => {
         codes: ['75'],
         type: 'departement',
       },
-      uid: 'fooId',
+      uid: 1,
     })
   })
 
@@ -65,7 +65,7 @@ describe('session utilisateur presenter', () => {
         rolesGerables: [],
         type: 'gestionnaire_structure' as RoleUtilisateur,
       },
-      uid: 'fooId',
+      uid: 1,
     })
 
     const territoire: TerritoireReadModel = {
@@ -98,7 +98,7 @@ describe('session utilisateur presenter', () => {
         codes: [],
         type: 'departement',
       },
-      uid: 'fooId',
+      uid: 1,
     })
   })
 })

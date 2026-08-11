@@ -49,7 +49,7 @@ export function comiteRecordFactory(
     creation: epochTime,
     date: epochTime,
     derniereEdition: epochTime,
-    editeurUtilisateurId: '1',
+    editeurUtilisateurId: 1,
     frequence: 'annuelle',
     gouvernanceDepartementCode: '11',
     type: 'strategique',
@@ -224,6 +224,23 @@ export async function creerUneFeuilleDeRoute(
   const client = tx ?? prisma
   await client.feuilleDeRouteRecord.create({
     data: feuilleDeRouteRecordFactory(override),
+  })
+}
+
+export async function creerUnDocumentDeFeuilleDeRoute(
+  override?: Partial<Prisma.FeuilleDeRouteDocumentRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
+): Promise<void> {
+  const client = tx ?? prisma
+  await client.feuilleDeRouteDocumentRecord.create({
+    data: {
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      creation: epochTime,
+      editeurUtilisateurId: 1,
+      feuilleDeRouteId: 1,
+      nom: 'feuille-de-route-fake.pdf',
+      ...override,
+    },
   })
 }
 
@@ -455,7 +472,6 @@ export function feuilleDeRouteRecordFactory(
     nom: 'Feuille de route 69',
     oldUUID: null,
     perimetreGeographique: 'departemental',
-    pieceJointe: null,
     porteurId: null,
     ...override,
   }

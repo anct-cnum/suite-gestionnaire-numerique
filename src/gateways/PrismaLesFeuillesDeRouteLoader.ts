@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { isEnveloppeDeFormation } from './shared/Action'
+import { documentDeFeuilleDeRoute } from './shared/FeuilleDeRouteDocument'
 import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -83,62 +84,66 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
       })),
     })
     return {
-      feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord, indexDeuilleDeRoute) => ({
-        actions: feuilleDeRouteRecord.action.map((action, indexAction) => {
-          const demandeDeSubvention = action.demandesDeSubvention[0] as
-            | (typeof action.demandesDeSubvention)[number]
-            | undefined
-          const syntheseAction = synthese.feuillesDeRoute[indexDeuilleDeRoute].actions[indexAction]
-          return {
-            beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-            besoins: action.besoins.map((besoin) => besoin as BesoinsPossible),
-            budgetGlobal: action.budgetGlobal,
-            coFinancements: action.coFinancement.map(({ membre, montant }) => ({
-              coFinanceur: fromMembre(toMembre(membre)),
-              montant,
-            })),
-            contexte: action.contexte,
-            description: action.description,
-            nom: action.nom,
-            porteurs: toMembres(action.porteurAction.map(({ membre }) => membre)).map(fromMembre),
-            subvention: demandeDeSubvention
-              ? {
-                  enveloppe: demandeDeSubvention.enveloppe.libelle,
-                  montants: {
-                    prestation: demandeDeSubvention.subventionPrestation ?? 0,
-                    ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
-                  },
-                  statut: demandeDeSubvention.statut as StatutSubvention,
-                }
-              : undefined,
-            totaux: {
-              coFinancement: syntheseAction.coFinancement,
-              financementAccorde: syntheseAction.financemenTotalAccorde,
-            },
-            uid: String(action.id),
-          }
-        }),
-        beneficiaires: 0,
-        coFinanceurs: 0,
-        nom: feuilleDeRouteRecord.nom,
-        ...(Boolean(feuilleDeRouteRecord.pieceJointe) && {
-          pieceJointe: {
-            apercu: '',
-            emplacement: '',
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            nom: feuilleDeRouteRecord.pieceJointe!,
+      feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord, indexDeuilleDeRoute) => {
+        const document = documentDeFeuilleDeRoute(feuilleDeRouteRecord)
+        return {
+          actions: feuilleDeRouteRecord.action.map((action, indexAction) => {
+            const demandeDeSubvention = action.demandesDeSubvention[0] as
+              | (typeof action.demandesDeSubvention)[number]
+              | undefined
+            const syntheseAction = synthese.feuillesDeRoute[indexDeuilleDeRoute].actions[indexAction]
+            return {
+              beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
+              besoins: action.besoins.map((besoin) => besoin as BesoinsPossible),
+              budgetGlobal: action.budgetGlobal,
+              coFinancements: action.coFinancement.map(({ membre, montant }) => ({
+                coFinanceur: fromMembre(toMembre(membre)),
+                montant,
+              })),
+              contexte: action.contexte,
+              description: action.description,
+              nom: action.nom,
+              porteurs: toMembres(action.porteurAction.map(({ membre }) => membre)).map(fromMembre),
+              subvention: demandeDeSubvention
+                ? {
+                    enveloppe: demandeDeSubvention.enveloppe.libelle,
+                    montants: {
+                      prestation: demandeDeSubvention.subventionPrestation ?? 0,
+                      ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
+                    },
+                    statut: demandeDeSubvention.statut as StatutSubvention,
+                  }
+                : undefined,
+              totaux: {
+                coFinancement: syntheseAction.coFinancement,
+                financementAccorde: syntheseAction.financemenTotalAccorde,
+              },
+              uid: String(action.id),
+            }
+          }),
+          beneficiaires: 0,
+          coFinanceurs: 0,
+          nom: feuilleDeRouteRecord.nom,
+          ...(document
+            ? {
+                pieceJointe: {
+                  chemin: document.chemin,
+                  nom: document.nom,
+                  upload: document.creation,
+                },
+              }
+            : {}),
+          structureCoPorteuse: feuilleDeRouteRecord.relationMembre
+            ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
+            : undefined,
+          totaux: {
+            budget: synthese.feuillesDeRoute[indexDeuilleDeRoute].budget,
+            coFinancement: synthese.feuillesDeRoute[indexDeuilleDeRoute].coFinancement,
+            financementAccorde: synthese.feuillesDeRoute[indexDeuilleDeRoute].financemenTotalAccorde,
           },
-        }),
-        structureCoPorteuse: feuilleDeRouteRecord.relationMembre
-          ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
-          : undefined,
-        totaux: {
-          budget: synthese.feuillesDeRoute[indexDeuilleDeRoute].budget,
-          coFinancement: synthese.feuillesDeRoute[indexDeuilleDeRoute].coFinancement,
-          financementAccorde: synthese.feuillesDeRoute[indexDeuilleDeRoute].financemenTotalAccorde,
-        },
-        uid: String(feuilleDeRouteRecord.id),
-      })),
+          uid: String(feuilleDeRouteRecord.id),
+        }
+      }),
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: toMembres(membresConfirmesGouvernance)
         .toSorted(alphaAsc('id'))
         .toSorted(alphaAsc('nom'))
@@ -201,6 +206,7 @@ const include = {
       },
     },
   },
+  documents: { orderBy: { creation: 'desc' as const }, take: 1, where: { suppression: null } },
   relationMembre: {
     include: membreInclude,
   },

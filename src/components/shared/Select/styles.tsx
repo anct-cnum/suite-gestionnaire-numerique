@@ -12,7 +12,14 @@ export function creerInputAvecAriaControls(ariaControlsId: string) {
 
 export function DropdownIndicator(): ReactElement {
   return (
-    <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      fill="currentColor"
+      height="16"
+      style={{ margin: '0 .5rem' }}
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path d="m12 13.1 5-4.9 1.4 1.4-6.4 6.3-6.4-6.4L7 8.1l5 5z" />
     </svg>
   )
@@ -30,12 +37,17 @@ export function dsfrSelectStyles<Option, IsMulti extends boolean = false>(): Sty
       color: 'var(--text-default-grey)',
       cursor: 'pointer',
     }),
+    indicatorSeparator: () => ({
+      display: 'none',
+    }),
     input: (base) => ({
       ...base,
       color: 'var(--text-default-grey)',
+      visibility: base.visibility === 'hidden' ? 'hidden' : 'inherit',
     }),
     menu: (base) => ({
       ...base,
+      minWidth: 'max-content',
       zIndex: 1000,
     }),
     option: (base, { isFocused }) => ({

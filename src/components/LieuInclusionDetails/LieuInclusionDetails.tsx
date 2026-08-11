@@ -52,6 +52,8 @@ export type InformationsGeneralesData = Readonly<{
   adresse: string
   complementAdresse?: string
   nomStructure: string
+  siret?: string
+  typologies?: ReadonlyArray<string>
 }>
 
 export type ServiceInclusionNumeriqueData = Readonly<{
@@ -67,20 +69,29 @@ export type LieuInclusionDetailsData = Readonly<{
   lieuAccueilPublic: LieuAccueilPublicData
   personnesTravaillant: ReadonlyArray<PersonneTravaillantData>
   peutModifier: boolean
+  peutModifierInformationsGenerales: boolean
   servicesInclusionNumerique: ReadonlyArray<ServiceInclusionNumeriqueData>
 }>
 
 export default function LieuxInclusionDetails(props: Props): ReactElement {
-  const { data } = props
+  const { data, lieuId, peutSupprimer } = props
 
   return (
     <>
       <div id="header">
-        <LieuInclusionDetailsHeader data={data.header} />
+        <LieuInclusionDetailsHeader
+          data={data.header}
+          suppression={
+            peutSupprimer ? { adresse: data.informationsGenerales.adresse, lieuId, nom: data.header.nom } : undefined
+          }
+        />
       </div>
 
       <div id="informations-generales">
-        <LieuInclusionDetailsInformationsGenerales data={data.informationsGenerales} />
+        <LieuInclusionDetailsInformationsGenerales
+          data={data.informationsGenerales}
+          peutModifier={data.peutModifierInformationsGenerales}
+        />
       </div>
 
       <div id="personnes-travaillant">
@@ -105,4 +116,6 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
 
 type Props = Readonly<{
   data: LieuInclusionDetailsData
+  lieuId: string
+  peutSupprimer: boolean
 }>

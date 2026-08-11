@@ -65,8 +65,6 @@ export type FeuilleDeRouteViewModel = Readonly<{
   nom: string
   nombreDActionsAttachees: string
   pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
     href: string
     metadonnee: string
     nom: string
@@ -84,8 +82,6 @@ export type FeuilleDeRouteViewModel = Readonly<{
 
 function toFeuilleDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => {
-    const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
-    const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
       links: {
@@ -95,13 +91,9 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
       nom: feuilleDeRoute.nom,
       nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
       pieceJointe: feuilleDeRoute.pieceJointe && {
-        ...feuilleDeRoute.pieceJointe,
-        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
-        metadonnee: feuilleDeRoute.pieceJointe.metadonnees
-          ? `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.`
-          : '',
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        nom: feuilleDeRoute.pieceJointe.nom.split('/').pop()!,
+        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.chemin),
+        metadonnee: `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.upload)}.`,
+        nom: feuilleDeRoute.pieceJointe.nom,
       },
       porteur: feuilleDeRoute.structureCoPorteuse
         ? {

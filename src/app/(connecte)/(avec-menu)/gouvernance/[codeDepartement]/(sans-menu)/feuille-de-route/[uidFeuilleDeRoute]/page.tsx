@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import prisma from '../../../../../../../../../prisma/prismaClient'
 import FeuilleDeRoute from '@/components/FeuilleDeRoute/FeuilleDeRoute'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { PrismaUneFeuilleDeRouteLoader } from '@/gateways/PrismaUneFeuilleDeRouteLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -33,7 +33,7 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
     }
 
     const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+    const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),

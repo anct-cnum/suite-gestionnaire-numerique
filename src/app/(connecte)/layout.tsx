@@ -10,7 +10,7 @@ import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import Sondage from '@/components/transverse/Sondage/Sondage'
 import { Roles } from '@/domain/Role'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
@@ -27,7 +27,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   let utilisateurReadModel: UnUtilisateurReadModel
   try {
     const utilisateurLoader = new PrismaUtilisateurLoader()
-    utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
+    utilisateurReadModel = await utilisateurLoader.findById(await getSessionUtilisateurId())
   } catch {
     redirect('/api/auth/signout?callbackUrl=/connexion')
   }

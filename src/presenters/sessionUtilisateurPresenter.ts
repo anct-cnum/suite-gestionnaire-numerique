@@ -46,5 +46,5 @@ export type SessionUtilisateurViewModel = Readonly<{
   structureId: null | number
   telephone: string
   territoire: TerritoireReadModel
-  uid: string
+  uid: number
 }>

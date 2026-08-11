@@ -60,7 +60,7 @@ describe('modifier mes informations personnelles', () => {
     const result = await commandHandler.handle(informationsPersonnellesModifiees)
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('fooId')
+    expect(spiedUtilisateurUidToFind).toBe(1)
     expect(spiedMesInformationsPersonnellesToModify?.state).toStrictEqual(
       utilisateurFactory({
         emailDeContact: 'martine.dugenoux@example.com',
@@ -80,7 +80,7 @@ const informationsPersonnellesModifiees = {
     prenom: 'Martine',
     telephone: '0102030406',
   },
-  uidUtilisateurCourant: 'fooId',
+  uidUtilisateurCourant: 1,
 }
 let spiedMesInformationsPersonnellesToModify: null | Utilisateur
 let spiedUtilisateurUidToFind: null | UtilisateurUidState['value']

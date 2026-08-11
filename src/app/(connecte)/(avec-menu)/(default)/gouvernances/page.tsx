@@ -7,7 +7,7 @@ import Gouvernances from '@/components/Gouvernances/Gouvernances'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { Administrateur } from '@/domain/Administrateur'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { PrismaAutresStructuresLoader } from '@/gateways/tableauDeBord/PrismaAutresStructuresImpliquéesLoader'
 import { PrismaCollectivitesLoader } from '@/gateways/tableauDeBord/PrismaCollectivitesImpliquéesLoader'
@@ -30,7 +30,7 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   }
 
   const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+  const utilisateur = await utilisateurLoader.get(await getSessionUtilisateurId())
 
   // Vérifier que l'utilisateur est bien administrateur_dispositif
   if (!(utilisateur instanceof Administrateur)) {

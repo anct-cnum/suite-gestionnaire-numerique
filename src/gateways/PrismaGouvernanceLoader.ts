@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { isEnveloppeDeFormation } from './shared/Action'
+import { documentDeFeuilleDeRoute } from './shared/FeuilleDeRouteDocument'
 import { isCoporteur, Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -137,6 +138,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       })),
     })
     const feuillesDeRoute = gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute, index) => {
+      const document = documentDeFeuilleDeRoute(feuilleDeRoute)
       return {
         beneficiairesSubvention: beneficiairesSubvention(
           feuilleDeRoute.action,
@@ -151,14 +153,15 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           feuilleDeRoute.action,
           isEnveloppeDeFormation
         ),
-        ...(Boolean(feuilleDeRoute.pieceJointe) && {
-          pieceJointe: {
-            apercu: '',
-            emplacement: '',
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            nom: feuilleDeRoute.pieceJointe!,
-          },
-        }),
+        ...(document
+          ? {
+              pieceJointe: {
+                chemin: document.chemin,
+                nom: document.nom,
+                upload: document.creation,
+              },
+            }
+          : {}),
         budgetGlobal: synthese.feuillesDeRoute[index].budget,
         montantSubventionAccordee: synthese.feuillesDeRoute[index].financemenTotalAccorde,
         montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
@@ -298,6 +301,7 @@ const include = {
           },
         },
       },
+      documents: { orderBy: { creation: 'desc' as const }, take: 1, where: { suppression: null } },
       relationMembre: {
         include: membreInclude,
       },

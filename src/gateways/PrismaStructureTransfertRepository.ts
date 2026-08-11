@@ -31,7 +31,7 @@ export class PrismaStructureTransfertRepository implements StructureTransfertRep
       INSERT INTO audit.structure_merge_log
         (status, dag_id, task_id, winner_id, loser_id, moved_identifiers)
       VALUES (
-        'SUCCESS', 'min-ui-transfert', ${transfert.parUtilisateur},
+        'SUCCESS', 'min-ui-transfert', ${String(transfert.parUtilisateur)},
         ${transfert.idCible}, ${transfert.idSource},
         ${JSON.stringify({ notions: transfert.notions, sourceSupprimee })}::jsonb
       )

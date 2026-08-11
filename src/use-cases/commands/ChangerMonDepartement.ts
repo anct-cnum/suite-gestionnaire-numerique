@@ -42,7 +42,7 @@ type Failure = UtilisateurFailure
 
 type Command = Readonly<{
   nouveauCodeDepartement: string
-  uidUtilisateurCourant: string
+  uidUtilisateurCourant: number
 }>
 
 interface UtilisateurRepository

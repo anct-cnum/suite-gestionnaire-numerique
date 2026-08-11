@@ -9,11 +9,12 @@ import BlocDonneesStructure from '../../blocs/BlocDonneesStructure'
 import BlocEtatDesLieux from '../../blocs/BlocEtatDesLieux'
 import BlocFinancements from '../../blocs/BlocFinancements'
 import BlocGouvernance from '../../blocs/BlocGouvernance'
+import BlocLabelConum from '../../blocs/BlocLabelConum'
 import BlocMediateurs from '../../blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
 import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { nomDepartement } from '@/shared/urlHelpers'
@@ -33,7 +34,7 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
   const { code } = await params
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const codesDepartements = contexte.codesDepartements()
@@ -55,6 +56,7 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
     etatDesLieux: <BlocEtatDesLieux key="etatDesLieux" scope={scope} />,
     financements: <BlocFinancements key="financements" scope={scope} />,
     gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
+    labelConum: <BlocLabelConum key="labelConum" structureId={contexte.idStructure()} />,
     mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
   }

@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import MembresAConsolider from '@/components/MembresAConsolider/MembresAConsolider'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaMembresAConsoliderLoader } from '@/gateways/PrismaMembresAConsoliderLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -26,7 +26,7 @@ export default async function MembresAConsoliderController({ searchParams }: Pro
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
     redirect('/tableau-de-bord')

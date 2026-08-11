@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaComiteRepository } from '@/gateways/PrismaComiteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -30,7 +30,7 @@ export async function ajouterUnComiteAction(actionParams: ActionParams): ResultA
       date: actionParams.date,
       frequence: actionParams.frequence,
       type: actionParams.type,
-      uidEditeur: await getSessionSub(),
+      uidEditeur: await getSessionUtilisateurId(),
       uidGouvernance: actionParams.uidGouvernance,
     })
 

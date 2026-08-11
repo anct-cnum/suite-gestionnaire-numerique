@@ -75,7 +75,7 @@ export type StructureACanoniser = Readonly<{
 export type Canonisation = Readonly<{
   entreprise: EntrepriseReadModel
   geocode: AdresseGeocodeReadModel | null
-  parUtilisateur: string
+  parUtilisateur: number
   structureId: number
 }>
 
@@ -89,5 +89,5 @@ export type CanoniserFailure =
 
 type Command = Readonly<{
   structureId: number
-  uidUtilisateur: string
+  uidUtilisateur: number
 }>

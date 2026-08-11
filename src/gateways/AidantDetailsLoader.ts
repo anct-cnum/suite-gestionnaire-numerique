@@ -66,7 +66,10 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         SELECT
           lieux.lieu_id AS structure_id,
           l.nom,
-          l.structure_cartographie_nationale_id,
+          -- Pas de lien carto si le lieu n'y est pas publié (visibilité passée à false à la suppression)
+          CASE WHEN l.visible_pour_cartographie_nationale
+            THEN l.structure_cartographie_nationale_id
+          END AS structure_cartographie_nationale_id,
           a.numero_voie,
           a.nom_voie,
           a.code_postal,
@@ -83,6 +86,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           lieux.lieu_id,
           l.nom,
           l.structure_cartographie_nationale_id,
+          l.visible_pour_cartographie_nationale,
           a.numero_voie,
           a.nom_voie,
           a.code_postal,

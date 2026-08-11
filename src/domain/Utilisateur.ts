@@ -136,7 +136,7 @@ export class UtilisateurUid extends Uid<UtilisateurUidState> {}
 
 export type UtilisateurUidState = Readonly<{
   email: string
-  value: string
+  value: number
 }>
 
 export type UtilisateurState = Readonly<{

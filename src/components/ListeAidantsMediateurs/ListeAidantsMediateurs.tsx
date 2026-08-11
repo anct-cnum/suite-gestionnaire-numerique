@@ -7,6 +7,7 @@ import React, { memo, ReactElement, useEffect, useId, useMemo, useState } from '
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
 import ListeAidantsMediateursFiltre from './ListeAidantsMediateursFiltre'
 import Badge from '../shared/Badge/Badge'
+import BarreRecherche from '../shared/BarreRecherche/BarreRecherche'
 import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
@@ -156,6 +157,12 @@ export default function ListeAidantsMediateurs({
     // Utiliser la fonction utilitaire pour convertir les paramètres
     const convertedParams = buildURLSearchParamsFromFilters(params)
 
+    // Conserver la recherche nom/prénom, indépendante des filtres du drawer
+    const recherche = normalizedSearchParams.get('recherche')
+    if (recherche !== null && recherche !== '') {
+      convertedParams.set('recherche', recherche)
+    }
+
     // Naviguer avec les nouveaux paramètres
     const url = new URL(window.location.href)
     url.search = convertedParams.toString()
@@ -166,6 +173,20 @@ export default function ListeAidantsMediateurs({
   function onReset(): void {
     setIsFilterLoading(true)
     router.push('/liste-aidants-mediateurs')
+  }
+
+  // Recherche par nom ou prénom : pilotée par l'URL, cumulable avec les autres filtres
+  function rechercher(valeur: string): void {
+    setIsFilterLoading(true)
+    const params = new URLSearchParams(normalizedSearchParams)
+    params.delete('page')
+    if (valeur === '') {
+      params.delete('recherche')
+    } else {
+      params.set('recherche', valeur)
+    }
+    const query = params.toString()
+    router.push(query === '' ? '/liste-aidants-mediateurs' : `/liste-aidants-mediateurs?${query}`)
   }
 
   // Fonction d'export CSV
@@ -197,6 +218,10 @@ export default function ListeAidantsMediateurs({
     }
     if (formations !== null && formations !== '') {
       exportParams.set('formations', formations)
+    }
+    const recherche = normalizedSearchParams.get('recherche')
+    if (recherche !== null && recherche !== '') {
+      exportParams.set('recherche', recherche)
     }
 
     // Déclencher le téléchargement
@@ -306,6 +331,28 @@ export default function ListeAidantsMediateurs({
         </div>
       ) : null}
 
+      <ListeAidantsMediateurInfos
+        hasActiveFilters={getFiltresActifs().length > 0}
+        peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
+        totalAccompagnementsPromise={totalAccompagnementsPromise}
+        totalBeneficiairesPromise={totalBeneficiairesPromise}
+        viewModel={{
+          totalActeursNumerique: viewModel.totalActeursNumerique,
+          totalConseillersNumerique: viewModel.totalConseillersNumerique,
+        }}
+      />
+
+      {/* Recherche par nom ou prénom */}
+      <div className="fr-grid-row fr-mt-2w fr-mb-2w">
+        <div className="fr-col-12 fr-col-md-6">
+          <BarreRecherche
+            label="Rechercher par nom ou prénom"
+            rechercher={rechercher}
+            valeurInitiale={normalizedSearchParams.get('recherche') ?? ''}
+          />
+        </div>
+      </div>
+
       {viewModel.aidants.length === 0 ? (
         <div
           style={{
@@ -320,27 +367,14 @@ export default function ListeAidantsMediateurs({
           </p>
         </div>
       ) : (
-        <>
-          <ListeAidantsMediateurInfos
-            hasActiveFilters={getFiltresActifs().length > 0}
-            peutAfficherStatistiques30Jours={peutAfficherStatistiques30Jours}
-            totalAccompagnementsPromise={totalAccompagnementsPromise}
-            totalBeneficiairesPromise={totalBeneficiairesPromise}
-            viewModel={{
-              totalActeursNumerique: viewModel.totalActeursNumerique,
-              totalConseillersNumerique: viewModel.totalConseillersNumerique,
-            }}
-          />
-
-          <Table
-            enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', '']}
-            titre="Aidants et médiateurs numériques"
-          >
-            {viewModel.aidants.map((aidant) => (
-              <AidantRow aidant={aidant} badgeStyle={badgeStyle} key={aidant.id} />
-            ))}
-          </Table>
-        </>
+        <Table
+          enTetes={['Prénom et nom', 'Rôle', 'Labelisation / habilitation', 'Formation', '']}
+          titre="Aidants et médiateurs numériques"
+        >
+          {viewModel.aidants.map((aidant) => (
+            <AidantRow aidant={aidant} badgeStyle={badgeStyle} key={aidant.id} />
+          ))}
+        </Table>
       )}
 
       {viewModel.displayPagination ? (

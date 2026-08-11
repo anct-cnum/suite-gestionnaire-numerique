@@ -220,7 +220,7 @@ type Command = Readonly<{
   destinataires: Array<string>
   nom: string
   uid: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
   uidGouvernance: string
   uidPorteurs: Array<string>

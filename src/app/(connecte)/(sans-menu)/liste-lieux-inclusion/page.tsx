@@ -6,7 +6,7 @@ import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxIncl
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { TypologieRole } from '@/domain/Role'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -26,6 +26,7 @@ export default async function ListeLieuxInclusionController({
     codeRegion?: string
     frr?: string
     horsZonePrioritaire?: string
+    nom?: string
     page?: string
     qpv?: string
     statut?: string
@@ -37,7 +38,7 @@ export default async function ListeLieuxInclusionController({
   }
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+  const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const scopeFiltre = contexte.scopeFiltre()
@@ -47,11 +48,6 @@ export default async function ListeLieuxInclusionController({
   }
 
   const resolvedSearchParams = await searchParams
-
-  // L'onglet "Lieux archivés" est réservé aux super admins
-  if (resolvedSearchParams.statut === 'archives' && !contexte.isSuperAdmin) {
-    redirect('/liste-lieux-inclusion')
-  }
 
   const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre)
 
@@ -63,15 +59,15 @@ export default async function ListeLieuxInclusionController({
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, page, qpv, statut } = resolvedSearchParams
+  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, nom, page, qpv, statut } = resolvedSearchParams
   setSearchParams()
 
   return (
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des lieux' }]} />
       <ListeLieuxInclusion
-        estSuperAdmin={contexte.isSuperAdmin}
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
+        peutSupprimer={contexte.isBetaTesteur}
         searchParams={currentSearchParams}
         utilisateurRole={utilisateur.role.nom as TypologieRole}
       />
@@ -99,6 +95,9 @@ export default async function ListeLieuxInclusionController({
     }
     if (horsZonePrioritaire !== undefined && horsZonePrioritaire !== '') {
       currentSearchParams.set('horsZonePrioritaire', horsZonePrioritaire)
+    }
+    if (nom !== undefined && nom !== '') {
+      currentSearchParams.set('nom', nom)
     }
   }
 }

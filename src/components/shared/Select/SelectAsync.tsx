@@ -1,6 +1,7 @@
 'use client'
 
 import { PropsWithChildren, ReactElement, useMemo } from 'react'
+import { InputActionMeta } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
 import { creerInputAvecAriaControls, DropdownIndicator, dsfrSelectStyles } from './styles'
@@ -10,6 +11,7 @@ export default function SelectAsync<Option>({
   children,
   formatOptionLabel,
   id,
+  inputValue,
   isClearable = false,
   loadingMessage = 'Chargement...',
   loadOptions,
@@ -17,6 +19,9 @@ export default function SelectAsync<Option>({
   name,
   noOptionsMessage = () => 'Pas de résultat',
   onChange,
+  onFocus,
+  onInputChange,
+  onMenuOpen,
   placeholder = 'Choisir',
   required = false,
   value,
@@ -38,6 +43,7 @@ export default function SelectAsync<Option>({
         components={componentsConfig}
         formatOptionLabel={formatOptionLabel}
         inputId={id}
+        inputValue={inputValue}
         instanceId={id}
         isClearable={isClearable}
         loadingMessage={() => loadingMessage}
@@ -46,6 +52,9 @@ export default function SelectAsync<Option>({
         name={name}
         noOptionsMessage={({ inputValue }) => noOptionsMessage(inputValue)}
         onChange={(option) => onChange?.(option)}
+        onFocus={onFocus}
+        onInputChange={onInputChange}
+        onMenuOpen={onMenuOpen}
         placeholder={placeholder}
         required={required}
         styles={dsfrSelectStyles<Option>()}
@@ -60,6 +69,7 @@ type Props<Option> = PropsWithChildren<
     ariaControlsId?: string
     formatOptionLabel?(option: Option): ReactElement
     id: string
+    inputValue?: string
     isClearable?: boolean
     loadingMessage?: string
     loadOptions(recherche: string): Promise<Array<Option>>
@@ -67,6 +77,9 @@ type Props<Option> = PropsWithChildren<
     name?: string
     noOptionsMessage?(inputValue: string): string
     onChange?(option: null | Option): void
+    onFocus?(): void
+    onInputChange?(valeur: string, actionMeta: InputActionMeta): void
+    onMenuOpen?(): void
     placeholder?: string
     required?: boolean
     value?: null | Option

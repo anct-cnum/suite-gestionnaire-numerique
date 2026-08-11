@@ -85,7 +85,9 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   private construireReadModel(
     structure: {
       code_postal: null | string
+      complement_adresse: null | string
       contact: null | Record<string, unknown>
+      deleted_at: Date | null
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       frais_a_charge: Array<string> | null
@@ -100,6 +102,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       prise_rdv: null | string
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
+      siret_a_l_enrichissement: null | string
       typologies: Array<string> | null
       updated_at: Date | null
     },
@@ -124,6 +127,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
     return {
       codeDepartement,
+      estArchive: structure.deleted_at !== null,
       header: {
         editeur: structure.edited_by ?? undefined,
         miseAJourLe: structure.updated_at ?? undefined,
@@ -132,7 +136,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       },
       informationsGenerales: {
         adresse: adresseComplete.length > 0 ? adresseComplete : 'Adresse non renseignée',
+        complementAdresse: structure.complement_adresse ?? undefined,
         nomStructure: structure.nom,
+        siret: structure.siret_a_l_enrichissement ?? undefined,
+        typologies: structure.typologies ?? [],
       },
       lieuAccueilPublic,
       personnesTravaillant,
@@ -331,7 +338,9 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     Array<{
       code_insee: null | string
       code_postal: null | string
+      complement_adresse: null | string
       contact: null | Record<string, unknown>
+      deleted_at: Date | null
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       est_frr: boolean
@@ -353,6 +362,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
       siret: null | string
+      siret_a_l_enrichissement: null | string
       structure_administrative_id: null | number
       typologies: Array<string> | null
       updated_at: Date | null
@@ -382,7 +392,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.frais_a_charge,
         l.services,
         l.updated_at,
+        l.deleted_at,
         l.edited_by,
+        l.siret_a_l_enrichissement,
+        l.complement_adresse,
         a.numero_voie,
         a.nom_voie,
         a.code_postal,

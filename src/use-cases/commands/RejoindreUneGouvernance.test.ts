@@ -166,7 +166,7 @@ describe('rejoindre une gouvernance', () => {
   })
 })
 
-const uidUtilisateur = 'userFooId'
+const uidUtilisateur = 1
 const structureId = 123
 let spiedMembreCreated: Membre | null
 let spiedEntrepriseData: EntrepriseData | undefined

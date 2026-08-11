@@ -65,7 +65,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -94,7 +94,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -126,7 +126,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -176,7 +176,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -252,7 +252,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -277,7 +277,7 @@ describe('définir un coporteur', () => {
         nom: 'Dupont',
         prenom: 'Jean',
         structureUid: 123,
-        uid: { email: 'referent@example.com', value: 'referent@example.com' },
+        uid: { email: 'referent@example.com', value: 10 },
       })
 
       const contacts: ReadonlyArray<ContactData> = [
@@ -309,7 +309,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -336,7 +336,7 @@ describe('définir un coporteur', () => {
         nom: 'Dupont',
         prenom: 'Jean',
         structureUid: 456, // Autre structure
-        uid: { email: 'referent@example.com', value: 'referent@example.com' },
+        uid: { email: 'referent@example.com', value: 10 },
       })
 
       const contacts: ReadonlyArray<ContactData> = [
@@ -368,7 +368,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -412,7 +412,7 @@ describe('définir un coporteur', () => {
         nom: 'Dupont',
         prenom: 'Jean',
         structureUid: 456,
-        uid: { email: 'referent@example.com', value: 'referent@example.com' },
+        uid: { email: 'referent@example.com', value: 10 },
       })
 
       const utilisateurTechniqueAutreStructure = utilisateurFactory({
@@ -420,7 +420,7 @@ describe('définir un coporteur', () => {
         nom: 'Martin',
         prenom: 'Sophie',
         structureUid: 789,
-        uid: { email: 'technique@example.com', value: 'technique@example.com' },
+        uid: { email: 'technique@example.com', value: 11 },
       })
 
       const contacts: ReadonlyArray<ContactData> = [
@@ -455,7 +455,7 @@ describe('définir un coporteur', () => {
       ).handle({
         uidGouvernance: 'gouvernanceFooId',
         uidMembre: 'membreUid',
-        uidUtilisateurConnecte: 'userFooId',
+        uidUtilisateurConnecte: 1,
       })
 
       // THEN
@@ -527,7 +527,7 @@ class UtilisateurRepositorySpy
     return Promise.resolve(this.#utilisateursExistants.find((utilisateur) => utilisateur.state.uid.email === email))
   }
 
-  async get(_uid: string): Promise<Utilisateur> {
+  async get(_uid: number): Promise<Utilisateur> {
     return Promise.resolve(this.#utilisateurCourant)
   }
 }

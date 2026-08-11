@@ -4,7 +4,7 @@ import { PropsWithChildren, ReactElement, Suspense } from 'react'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import { MenuActifProvider } from '@/components/transverse/MenuLateral/MenuActifContext'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -16,7 +16,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(session.user.sub)
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
   return (

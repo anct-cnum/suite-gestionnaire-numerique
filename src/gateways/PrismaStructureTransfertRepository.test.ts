@@ -37,14 +37,22 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
     await creerUneStructure({
       id: SOURCE,
       nb_mandats_ac: 4,
+      nom: 'Structure transfert notions source',
       siret: '99001100000001',
       structure_ac_id: AC_ID_SOURCE,
       structure_coop_id: COOP_ID_SOURCE,
       structure_tp_id: TP_ID_SOURCE,
     })
-    await creerUneStructure({ id: CIBLE, siret: '99001100000002' })
+    await creerUneStructure({ id: CIBLE, nom: 'Structure transfert notions cible', siret: '99001100000002' })
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE, structureId: SOURCE })
-    await creerUnUtilisateur({ ssoEmail: 'tn.user@example.com', ssoId: 'tn-user', structureId: SOURCE })
+    // isSupprime pour rester invisible des requêtes de listing des autres fichiers de test
+    // (les données de ce fichier sont commitées, cf. commentaire en tête).
+    await creerUnUtilisateur({
+      isSupprime: true,
+      ssoEmail: 'tn.user@example.com',
+      ssoId: 'tn-user',
+      structureId: SOURCE,
+    })
     await lierContact(SOURCE)
     await affecter(SOURCE, 'coop')
     await affecter(SOURCE, 'idposte')
@@ -70,8 +78,13 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
   it('transfert partiel : ne déplace que la notion choisie et conserve la source non supprimée', async () => {
     // GIVEN une source portant coop ET un membre.
     await seedBase()
-    await creerUneStructure({ id: SOURCE, siret: '99001100000001', structure_coop_id: COOP_ID_SOURCE })
-    await creerUneStructure({ id: CIBLE, siret: '99001100000002' })
+    await creerUneStructure({
+      id: SOURCE,
+      nom: 'Structure transfert notions source',
+      siret: '99001100000001',
+      structure_coop_id: COOP_ID_SOURCE,
+    })
+    await creerUneStructure({ id: CIBLE, nom: 'Structure transfert notions cible', siret: '99001100000002' })
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE, structureId: SOURCE })
     await affecter(SOURCE, 'coop')
 
@@ -89,8 +102,18 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
   it('refuse en cas de collision d’id scalaire et ne modifie rien', async () => {
     // GIVEN source et cible portent chacune un structure_coop_id différent.
     await seedBase()
-    await creerUneStructure({ id: SOURCE, siret: '99001100000001', structure_coop_id: COOP_ID_SOURCE })
-    await creerUneStructure({ id: CIBLE, siret: '99001100000002', structure_coop_id: COOP_ID_CIBLE })
+    await creerUneStructure({
+      id: SOURCE,
+      nom: 'Structure transfert notions source',
+      siret: '99001100000001',
+      structure_coop_id: COOP_ID_SOURCE,
+    })
+    await creerUneStructure({
+      id: CIBLE,
+      nom: 'Structure transfert notions cible',
+      siret: '99001100000002',
+      structure_coop_id: COOP_ID_CIBLE,
+    })
 
     // WHEN
     const result = await transferer(['coop'])
@@ -104,8 +127,8 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
   it('refuse en cas de collision de membre sur la même gouvernance', async () => {
     // GIVEN source et cible déjà membres de la même gouvernance.
     await seedBase()
-    await creerUneStructure({ id: SOURCE, siret: '99001100000001' })
-    await creerUneStructure({ id: CIBLE, siret: '99001100000002' })
+    await creerUneStructure({ id: SOURCE, nom: 'Structure transfert notions source', siret: '99001100000001' })
+    await creerUneStructure({ id: CIBLE, nom: 'Structure transfert notions cible', siret: '99001100000002' })
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: MEMBRE, structureId: SOURCE })
     await creerUnMembre({ gouvernanceDepartementCode: DEPT, id: 'transfert-notions-cible', structureId: CIBLE })
 
@@ -120,14 +143,14 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
   it('retourne structureIntrouvable quand une structure n’existe pas', async () => {
     // GIVEN seule la source existe.
     await seedBase()
-    await creerUneStructure({ id: SOURCE, siret: '99001100000001' })
+    await creerUneStructure({ id: SOURCE, nom: 'Structure transfert notions source', siret: '99001100000001' })
 
     // WHEN
     const result = await new PrismaStructureTransfertRepository().transfererNotions({
       idCible: 999999,
       idSource: SOURCE,
       notions: ['contacts'],
-      parUtilisateur: 'admin-test',
+      parUtilisateur: 1,
     })
 
     // THEN
@@ -140,7 +163,7 @@ async function transferer(notions: ReadonlyArray<NotionCle>): Promise<string> {
     idCible: CIBLE,
     idSource: SOURCE,
     notions,
-    parUtilisateur: 'admin-test',
+    parUtilisateur: 1,
   })
 }
 

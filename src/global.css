@@ -150,11 +150,6 @@ table button {
   justify-content: center;
 }
 
-/* permet de rendre invisible un react-select quand il est intégré à un drawer mais pas encore affiché */
-.css-19bb58m {
-  visibility: unset !important;
-}
-
 .reset-button {
   background: none;
   border: none;

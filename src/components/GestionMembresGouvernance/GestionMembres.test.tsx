@@ -1,27 +1,33 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import GestionMembres from './GestionMembres'
 import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
+const mockPush = vi.hoisted(() => vi.fn<(url: string) => void>())
+const mockSearchParams = vi.hoisted(() => ({ current: new URLSearchParams() }))
+
 // eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
-    push: vi.fn<() => void>(),
+    push: mockPush,
     refresh: vi.fn<() => void>(),
     replace: vi.fn<() => void>(),
   }),
-  useSearchParams: vi.fn<() => object>().mockReturnValue({
-    get: vi.fn<() => null>().mockReturnValue(null),
-  }),
+  useSearchParams: vi.fn<() => URLSearchParams>(() => mockSearchParams.current),
 }))
 
 describe('gestion des membres gouvernance', () => {
+  beforeEach(() => {
+    mockPush.mockClear()
+    mockSearchParams.current = new URLSearchParams()
+  })
+
   it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', async () => {
     // WHEN
     afficherMembres()
@@ -130,6 +136,33 @@ describe('gestion des membres gouvernance', () => {
 
   it.each([
     {
+      expectedUrl: '/?statut=candidat',
+      position: 1,
+      vue: 'candidats',
+    },
+    {
+      expectedUrl: '/?statut=confirme',
+      position: 0,
+      vue: 'membres',
+    },
+  ])(
+    'quand je sélectionne la vue "$vue", alors je navigue vers l’url portant le statut sélectionné',
+    ({ expectedUrl, position }) => {
+      // GIVEN
+      afficherMembres()
+
+      // WHEN
+      const navigationTypesMembres = screen.getByRole('list')
+      const ongletsStatutsMembres = within(navigationTypesMembres).getAllByRole('tab')
+      fireEvent.click(ongletsStatutsMembres[position])
+
+      // THEN
+      expect(mockPush).toHaveBeenCalledWith(expectedUrl)
+    }
+  )
+
+  it.each([
+    {
       expectedAriaCurrents: ['false', 'page'],
       expectedLength: 5,
       expectedRows: [
@@ -139,7 +172,7 @@ describe('gestion des membres gouvernance', () => {
         'Emmaüs ConnectAssociation',
         'Croix Rouge FrançaiseAssociation',
       ],
-      position: 1,
+      statut: 'candidat',
       vue: 'candidats',
     },
     {
@@ -152,21 +185,21 @@ describe('gestion des membres gouvernance', () => {
         'OrangeEntreprise privée',
         'Info-Jeunes Rhône (CRIJ)Association',
       ],
-      position: 0,
+      statut: 'confirme',
       vue: 'membres',
     },
   ])(
-    'quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné',
-    ({ expectedAriaCurrents, expectedLength, expectedRows, position }) => {
+    'quand l’url porte le statut "$statut", alors la liste n’affiche que les membres correspondant à ce statut',
+    ({ expectedAriaCurrents, expectedLength, expectedRows, statut }) => {
       // GIVEN
-      afficherMembres()
+      mockSearchParams.current = new URLSearchParams({ statut })
 
       // WHEN
-      const navigationTypesMembres = screen.getByRole('list')
-      const ongletsStatutsMembres = within(navigationTypesMembres).getAllByRole('tab')
-      fireEvent.click(ongletsStatutsMembres[position])
+      afficherMembres()
 
       // THEN
+      const navigationTypesMembres = screen.getByRole('list')
+      const ongletsStatutsMembres = within(navigationTypesMembres).getAllByRole('tab')
       const membres = screen.getByRole('table', { name: 'Membres' })
       const rowsGroup = within(membres).getAllByRole('rowgroup')
       const body = rowsGroup[1]
@@ -182,7 +215,7 @@ describe('gestion des membres gouvernance', () => {
     }
   )
 
-  it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', async () => {
+  it('quand je filtre sur un rôle, alors je navigue vers l’url portant le rôle sélectionné', async () => {
     // GIVEN
     afficherMembres()
 
@@ -191,94 +224,58 @@ describe('gestion des membres gouvernance', () => {
     await jeSelectionneLOption(labelFiltreRoles, 'Co-porteur')
 
     // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    expect(rowsBody).toHaveLength(4)
-    rowsBody.forEach((_, index) => {
-      const columnsBody = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(4)
-      expect(columnsBody[2].textContent).toContain('Co-porteur')
-    })
+    expect(mockPush).toHaveBeenCalledWith('/?role=coporteur')
   })
 
-  it('quand je sélectionne tous les rôles après avoir filtré sur un rôle, alors la liste se rafraîchit en annulant le filtrage', async () => {
+  it('quand je sélectionne tous les rôles après avoir filtré sur un rôle, alors je navigue vers l’url sans filtre de rôle', async () => {
     // GIVEN
+    mockSearchParams.current = new URLSearchParams({ role: 'coporteur' })
     afficherMembres()
 
     // WHEN
-    const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
-    await jeSelectionneLOption(labelFiltreTypologies, 'Co-porteur')
-    await jeSelectionneLOption(labelFiltreTypologies, 'Rôles')
+    const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
+    await jeSelectionneLOption(labelFiltreRoles, 'Rôles')
 
     // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).queryAllByRole('row')
-    expect(rowsBody).toHaveLength(5)
+    expect(mockPush).toHaveBeenCalledWith('/')
   })
 
-  it('quand je filtre sur une typologie, alors la liste se rafraîchit, n’affichant que les membres correspondant à la typologie sélectionné', async () => {
-    // GIVEN
-    afficherMembres()
-
-    // WHEN
-    const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
-    await jeSelectionneLOption(labelFiltreRoles, 'Association')
-
-    // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    expect(rowsBody).toHaveLength(2)
-    rowsBody.forEach((_, index) => {
-      const columnsBody = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(4)
-      expect(columnsBody[0].textContent).toContain('Association')
-    })
-  })
-
-  it('quand je sélectionne toutes les typologies après avoir filtré sur une typologie, alors la liste se rafraîchit en annulant le filtrage', async () => {
+  it('quand je filtre sur une typologie, alors je navigue vers l’url portant la typologie sélectionnée', async () => {
     // GIVEN
     afficherMembres()
 
     // WHEN
     const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
     await jeSelectionneLOption(labelFiltreTypologies, 'Association')
+
+    // THEN
+    expect(mockPush).toHaveBeenCalledWith('/?typologie=Association')
+  })
+
+  it('quand je sélectionne toutes les typologies après avoir filtré sur une typologie, alors je navigue vers l’url sans filtre de typologie', async () => {
+    // GIVEN
+    mockSearchParams.current = new URLSearchParams({ typologie: 'Association' })
+    afficherMembres()
+
+    // WHEN
+    const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
     await jeSelectionneLOption(labelFiltreTypologies, 'Typologie')
 
     // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).queryAllByRole('row')
-    expect(rowsBody).toHaveLength(5)
+    expect(mockPush).toHaveBeenCalledWith('/')
   })
 
-  it('quand je filtre sur un rôle et une typologie, alors la liste se rafraîchit n’affichant que les membres correspondant au rôle et à la typologie sélectionnés', async () => {
+  it('quand je filtre sur une typologie après avoir filtré sur un rôle, alors je navigue vers l’url portant les deux filtres', async () => {
     // GIVEN
+    mockSearchParams.current = new URLSearchParams({ role: 'coporteur' })
     afficherMembres()
 
     // WHEN
-    const labelFiltreRoles = screen.getByRole('combobox', { name: 'Filtrer par rôle' })
     const labelFiltreTypologies = screen.getByRole('combobox', { name: 'Filtrer par typologie' })
-    await jeSelectionneLOption(labelFiltreRoles, 'Co-porteur')
     await jeSelectionneLOption(labelFiltreTypologies, 'Association')
 
     // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).queryAllByRole('row')
-    expect(rowsBody).toHaveLength(1)
-    const columnsBody = membresRow(rowsBody, 0)
-    expect(columnsBody).toHaveLength(4)
-    expect(columnsBody[0].textContent).toBe('Info-Jeunes Rhône (CRIJ)Association')
-    expect(columnsBody[1].textContent).toBe('1 contact')
-    expect(columnsBody[2].textContent).toBe('Co-porteur ')
+    expect(mockPush).toHaveBeenCalledWith('/?role=coporteur&typologie=Association')
   })
 })
 

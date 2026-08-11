@@ -18,7 +18,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
-    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 1 })
 
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceEnrichie)
@@ -38,7 +38,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
-    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 1 })
 
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceSansMembre)
@@ -79,7 +79,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
-    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 1 })
 
     // THEN
     expect(gouvernance.syntheseMembres).toStrictEqual<UneGouvernanceReadModel['syntheseMembres']>({
@@ -143,7 +143,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new UtilisateurRepositoryStub())
 
     // WHEN
-    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 1 })
 
     // THEN
     expect(gouvernance.syntheseMembres).toStrictEqual<UneGouvernanceReadModel['syntheseMembres']>({
@@ -215,7 +215,7 @@ describe('recupérer une gouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.handle({
       codeDepartement: '69',
-      uidUtilisateurCourant: 'membreNonCoporteurId',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
@@ -264,7 +264,7 @@ describe('recupérer une gouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.handle({
       codeDepartement: '69',
-      uidUtilisateurCourant: 'membreNonCoporteurId',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
@@ -313,7 +313,7 @@ describe('recupérer une gouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.handle({
       codeDepartement: '69',
-      uidUtilisateurCourant: 'membreNonCoporteurId',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN

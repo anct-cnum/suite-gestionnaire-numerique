@@ -6,7 +6,7 @@ import RapportsForm from '@/components/Rapports/RapportsForm'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -21,7 +21,7 @@ export default async function RapportsController(): Promise<ReactElement> {
     redirect('/connexion')
   }
 
-  const utilisateur = await new PrismaUtilisateurLoader().findByUid(await getSessionSub())
+  const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.aCesRoles('administrateur_dispositif')) {
     redirect('/tableau-de-bord')

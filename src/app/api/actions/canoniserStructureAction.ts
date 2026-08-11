@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { avecJournalisationMin } from './shared/journalisation'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { ApiSireneLoader } from '@/gateways/apiEntreprise/ApiSireneLoader'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructureCanonisationRepository } from '@/gateways/PrismaStructureCanonisationRepository'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -29,8 +29,8 @@ export async function canoniserStructureAction(actionParams: ActionParams): Prom
     }
 
     // Garde : opération réservée aux bêta-testeurs.
-    const sub = await getSessionSub()
-    const utilisateur = await new PrismaUtilisateurLoader().findByUid(sub)
+    const utilisateurId = await getSessionUtilisateurId()
+    const utilisateur = await new PrismaUtilisateurLoader().findById(utilisateurId)
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
     if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
       return ['Action réservée aux administrateurs autorisés']
@@ -40,7 +40,7 @@ export async function canoniserStructureAction(actionParams: ActionParams): Prom
       new ApiSireneLoader(),
       new ApiBanGeocodingGateway(),
       new PrismaStructureCanonisationRepository()
-    ).handle({ structureId: validationResult.data.structureId, uidUtilisateur: sub })
+    ).handle({ structureId: validationResult.data.structureId, uidUtilisateur: utilisateurId })
 
     if (result !== 'OK') {
       return [MESSAGES_ECHEC[result]]

@@ -22,10 +22,10 @@ describe('comité repository', () => {
   it('ajouter un comité à une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     const comite = comiteFactory({
       uidEditeur: {
@@ -61,7 +61,7 @@ describe('comité repository', () => {
       date: epochTime,
       editeurUtilisateurId: {
         email: 'martin.tartempion@example.net',
-        value: 'userFooId',
+        value: 1,
       },
       id: 101,
       intention: 'complet',
@@ -71,7 +71,7 @@ describe('comité repository', () => {
       date: undefined,
       editeurUtilisateurId: {
         email: 'martin.tartempion@example.net',
-        value: 'userFooId',
+        value: 1,
       },
       id: 102,
       intention: 'sans commentaire ni date',
@@ -81,7 +81,7 @@ describe('comité repository', () => {
     const departementCode = '75'
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: editeurUtilisateurId.value })
+    await creerUnUtilisateur({ id: editeurUtilisateurId.value })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({
       commentaire,
@@ -127,10 +127,10 @@ describe('comité repository', () => {
   it('ne trouve pas un comité quand il n’existe pas', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({
       editeurUtilisateurId: uidEditeur,
@@ -148,11 +148,11 @@ describe('comité repository', () => {
   it('modifier un comité', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     const comiteId = 201
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({
       commentaire: 'premier commentaire',
@@ -206,7 +206,7 @@ describe('comité repository', () => {
         creation: epochTime,
         date: epochTimePlusOneDay,
         derniereEdition: epochTimePlusOneDay,
-        editeurUtilisateurId: 'userFooId',
+        editeurUtilisateurId: 1,
         frequence: 'mensuelle',
         gouvernanceDepartementCode: departementCode,
         id: comiteId,
@@ -218,11 +218,11 @@ describe('comité repository', () => {
   it('modifier un comité sans date', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     const comiteId = 301
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({
       commentaire: 'premier commentaire',
@@ -258,11 +258,11 @@ describe('comité repository', () => {
   it('supprimer un comité', async () => {
     // GIVEN
     const departementCode = '75'
-    const uidEditeur = 'userFooId'
+    const uidEditeur = 1
     const comiteId = 401
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({
       commentaire: 'premier commentaire',

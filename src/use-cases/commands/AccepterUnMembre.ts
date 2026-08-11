@@ -52,7 +52,7 @@ type Failure =
   | MembreFailure
 
 type Command = Readonly<{
-  uidGestionnaire: string
+  uidGestionnaire: number
   uidGouvernance: string
   uidMembrePotentiel: string
 }>

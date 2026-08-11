@@ -10,7 +10,7 @@ import { InviterContactsReferentsFne } from '@/use-cases/commands/InviterContact
 describe('accepter un membre action', () => {
   it('quand un candidat ou un suggéré est ajouté à une gouvernance, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
     vi.spyOn(AccepterUnMembre.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(PrismaMembreRepository.prototype, 'getStructureId').mockResolvedValueOnce(1)
@@ -25,7 +25,7 @@ describe('accepter un membre action', () => {
 
     // THEN
     expect(AccepterUnMembre.prototype.handle).toHaveBeenCalledWith({
-      uidGestionnaire: 'userFooId',
+      uidGestionnaire: 1,
       uidGouvernance: 'gouvernanceFooId',
       uidMembrePotentiel: 'membreFooId',
     })

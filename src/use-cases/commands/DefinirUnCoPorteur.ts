@@ -156,7 +156,8 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
       region: undefined,
       structureUid: structureId,
       telephone: '',
-      uid: { email: contact.email, value: contact.email },
+      // 0 = sentinelle « id généré par la base » : jamais écrite en base
+      uid: { email: contact.email, value: 0 },
     }).create('Gestionnaire structure')
 
     const utilisateurCree = await this.utilisateurRepository.add(nouvelUtilisateur)
@@ -178,7 +179,7 @@ type Failure = 'MembreDéjàCoPorteur' | 'MembreDoitEtreConfirmer' | 'Utilisateu
 type Command = Readonly<{
   uidGouvernance: string
   uidMembre: string
-  uidUtilisateurConnecte: string
+  uidUtilisateurConnecte: number
 }>
 
 type MembreRepositoryForDefinirUnCoPorteur = GetMembreRepository &

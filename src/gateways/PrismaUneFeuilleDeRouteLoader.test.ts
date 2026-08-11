@@ -7,6 +7,7 @@ import {
   creerUnCoFinancement,
   creerUnContact,
   creerUnDepartement,
+  creerUnDocumentDeFeuilleDeRoute,
   creerUneAction,
   creerUneDemandeDeSubvention,
   creerUneEnveloppeFinancement,
@@ -20,7 +21,7 @@ import {
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
-import { epochTimeMinusTwoDays } from '@/shared/testHelper'
+import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
@@ -48,8 +49,21 @@ describe('récupérer une feuille de route loader', () => {
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
       noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-      pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
+    })
+    // Version historisée (close) : elle ne doit pas être exposée, seule la version courante l'est.
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/ancienne-version.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'ancienne-version.pdf',
+      suppression: epochTime,
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'feuille-de-route-fake.pdf',
     })
     await creerAction(uidAction1, true)
     await creerAction(uidAction2, false)
@@ -154,13 +168,18 @@ describe('récupérer une feuille de route loader', () => {
     await creerMembre(uidPorteur, 'Emmaüs Connect')
     await creerUneFeuilleDeRoute({
       derniereEdition: epochTimeMinusTwoDays,
-      editeurUtilisateurId: 'userFooId',
+      editeurUtilisateurId: uidUtilisateur,
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
       noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-      pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'feuille-de-route-fake.pdf',
     })
     await creerAction(uidAction1, true)
     await creerAction(uidAction2, false)
@@ -289,7 +308,6 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      pieceJointe: null,
     })
 
     // WHEN
@@ -299,6 +317,37 @@ describe('récupérer une feuille de route loader', () => {
 
     // THEN
     expect(readModel.document).toBeUndefined()
+  })
+
+  it('quand une feuille de route est demandée et que son document est dans la table dédiée, alors le document renvoyé est celui de la table', async () => {
+    // GIVEN
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur({ id: uidUtilisateur })
+
+    await creerUneFeuilleDeRoute({
+      gouvernanceDepartementCode: codeDepartement,
+      id: Number(uidFeuilleDeRoute),
+      nom: 'Feuille de route 1',
+    })
+    await creerUnDocumentDeFeuilleDeRoute({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      editeurUtilisateurId: uidUtilisateur,
+      feuilleDeRouteId: Number(uidFeuilleDeRoute),
+      nom: 'Feuille de route 2026.pdf',
+    })
+
+    // WHEN
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get(
+      uidFeuilleDeRoute
+    )
+
+    // THEN
+    expect(readModel.document).toStrictEqual({
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      nom: 'Feuille de route 2026.pdf',
+    })
   })
 
   it('quand une feuille de route est demandée pour son identifiant unique non existant, alors une exception est levée', async () => {
@@ -312,7 +361,6 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
-      pieceJointe: null,
     })
 
     // WHEN

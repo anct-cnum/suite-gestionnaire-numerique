@@ -8,10 +8,10 @@ import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisat
 describe('supprimer un utilisateur action', () => {
   it('quand la commande de suppression d’un utilisateur est passée, alors il est supprimé', async () => {
     // GIVEN
-    const sub = 'fooId'
+    const sub = 1
     const path = '/mes-utilisateurs'
-    const uidUtilisateurASupprimer = 'barId'
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
+    const uidUtilisateurASupprimer = 2
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
 
@@ -29,7 +29,7 @@ describe('supprimer un utilisateur action', () => {
 
   it('étant donné un path non renseigné, quand la suppression d’un utilisateur est passée, alors cela renvoie une erreur', async () => {
     // GIVEN
-    const uidUtilisateurASupprimer = 'barId'
+    const uidUtilisateurASupprimer = 2
     const pathIncorrect = ''
 
     // WHEN

@@ -156,8 +156,6 @@ type FeuilleDeRouteViewModel = Readonly<{
   montantSubventionFormationAccordee: string
   nom: string
   pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
     href: string
     metadonnee: string
     nom: string
@@ -213,8 +211,6 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
     const nombreDeBeneficiairesSubventionFormationAccordee =
       feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
-    const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
-    const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel()),
       beneficiairesSubventionAccordee: feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel()),
@@ -229,11 +225,9 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       montantSubventionFormationAccordee: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccordee),
       nom: feuilleDeRoute.nom,
       pieceJointe: feuilleDeRoute.pieceJointe && {
-        ...feuilleDeRoute.pieceJointe,
-        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
-        metadonnee: feuilleDeRoute.pieceJointe.metadonnees
-          ? `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.`
-          : '',
+        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.chemin),
+        metadonnee: `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.upload)}.`,
+        nom: feuilleDeRoute.pieceJointe.nom,
       },
       porteur: feuilleDeRoute.porteur
         ? {

@@ -109,7 +109,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
     beneficiaires: Array<string>,
     uidAction: string,
-    uidCreateur: string
+    uidCreateur: number
   ): DemandeDeSubvention | DemandeDeSubventionFailure {
     const demande = demandesDeSubventionCommand[0]
     return DemandeDeSubvention.create({
@@ -201,7 +201,7 @@ type Command = Readonly<{
   description: string
   destinataires: Array<string>
   nom: string
-  uidEditeur: string
+  uidEditeur: number
   uidFeuilleDeRoute: string
   uidGouvernance: string
   uidPorteurs: Array<string>

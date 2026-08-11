@@ -6,7 +6,7 @@ import groupements from '../../../../../ressources/groupements.json'
 import regions from '../../../../../ressources/regions.json'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { isNullishOrEmpty } from '@/shared/lang'
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 }
 
 export default async function MesUtilisateursController({ searchParams }: Props): Promise<ReactElement> {
-  const sub = await getSessionSub()
+  const utilisateurId = await getSessionUtilisateurId()
   const searchParamsAwaited = await searchParams
   const pageAwaited = searchParamsAwaited.page
   const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) - 1 }
@@ -38,7 +38,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { total, utilisateursCourants } = await rechercherMesUtilisateurs.handle({
-    uid: sub,
+    uid: utilisateurId,
     utilisateursActives,
     ...codeDepartement,
     ...codeRegion,
@@ -73,7 +73,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
 
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
-    sub,
+    utilisateurId,
     total,
     rolesAvecStructure,
     new Date()

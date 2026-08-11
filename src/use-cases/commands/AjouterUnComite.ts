@@ -61,7 +61,7 @@ type Command = Readonly<{
   date?: string
   frequence: string
   type: string
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

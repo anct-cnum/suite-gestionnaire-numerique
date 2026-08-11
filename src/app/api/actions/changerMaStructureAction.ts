@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
 import prisma from '../../../../prisma/prismaClient'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMaStructure } from '@/use-cases/commands/ChangerMaStructure'
@@ -18,7 +18,7 @@ export async function changerMaStructureAction(actionParams: ActionParams): Resu
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    const uid = await getSessionSub()
+    const uid = await getSessionUtilisateurId()
 
     const message = await new ChangerMaStructure(new PrismaUtilisateurRepository(prisma.utilisateurRecord)).handle({
       idStructure: validationResult.data.idStructure,

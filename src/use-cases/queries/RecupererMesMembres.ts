@@ -10,13 +10,16 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 
   async handle(query: Query): Promise<MesMembresReadModel> {
     return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
+      const membres = mesMembres.membres.map((membre) => ({
+        ...membre,
+        isDeletable: !isPrefectureDepartementale(membre),
+      }))
       return {
         ...mesMembres,
-        membres: mesMembres.membres.map((membre) => ({
-          ...membre,
-          isDeletable: !isPrefectureDepartementale(membre),
-        })),
-        ...rolesEtTypologies(mesMembres.membres),
+        membres: membres
+          .filter((membre) => query.role === undefined || membre.roles.some((role) => role === query.role))
+          .filter((membre) => query.typologie === undefined || membre.typologie === query.typologie),
+        ...rolesEtTypologies(membres),
       }
     })
   }
@@ -76,6 +79,8 @@ function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypol
 
 type Query = Readonly<{
   codeDepartement: string
+  role?: string
+  typologie?: string
 }>
 
 type RoleEtTypologie = Pick<MesMembresReadModel, 'roles' | 'typologies'>

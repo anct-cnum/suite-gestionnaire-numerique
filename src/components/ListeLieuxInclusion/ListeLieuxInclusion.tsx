@@ -7,6 +7,7 @@ import React, { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState }
 import styles from './ListeLieuxInclusion.module.css'
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'
 import Badge from '../shared/Badge/Badge'
+import BarreRecherche from '../shared/BarreRecherche/BarreRecherche'
 import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
@@ -14,9 +15,11 @@ import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { modifierLieuInclusionVisibiliteCartographieAction } from '@/app/api/actions/modifierLieuInclusionVisibiliteCartographieAction'
+import { supprimerUnLieuInclusionAction } from '@/app/api/actions/supprimerUnLieuInclusionAction'
 import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import ModaleSuppressionLieu from '@/components/shared/ModaleSuppressionLieu/ModaleSuppressionLieu'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
@@ -30,8 +33,8 @@ import {
 } from '@/shared/filtresLieuxInclusionUtils'
 
 export default function ListeLieuxInclusion({
-  estSuperAdmin,
   listeLieuxInclusionViewModel,
+  peutSupprimer,
   searchParams,
   utilisateurRole,
 }: Props): ReactElement {
@@ -40,6 +43,7 @@ export default function ListeLieuxInclusion({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false)
   const [isFilterLoading, setIsFilterLoading] = useState(false)
+  const [lieuASupprimer, setLieuASupprimer] = useState<LieuInclusionViewModel | null>(null)
   const drawerId = 'drawerFiltreLieux'
   const drawerInfoId = 'drawerInfoFraicheur'
   const labelId = useId()
@@ -64,6 +68,11 @@ export default function ListeLieuxInclusion({
     if (estOngletArchives) {
       convertedParams.set('statut', 'archives')
     }
+    // Conserver la recherche par nom, indépendante des filtres du drawer
+    const nom = normalizedSearchParams.get('nom')
+    if (nom !== null && nom !== '') {
+      convertedParams.set('nom', nom)
+    }
 
     // Navigation avec délai (solution temporaire qui fonctionne)
     setTimeout(() => {
@@ -80,6 +89,20 @@ export default function ListeLieuxInclusion({
     setTimeout(() => {
       router.push(estOngletArchives ? '/liste-lieux-inclusion?statut=archives' : '/liste-lieux-inclusion')
     }, 150)
+  }
+
+  // Recherche par nom de lieu : pilotée par l'URL, cumulable avec les autres filtres
+  function rechercherParNom(valeur: string): void {
+    setIsFilterLoading(true)
+    const params = new URLSearchParams(normalizedSearchParams)
+    params.delete('page')
+    if (valeur === '') {
+      params.delete('nom')
+    } else {
+      params.set('nom', valeur)
+    }
+    const query = params.toString()
+    router.push(query === '' ? '/liste-lieux-inclusion' : `/liste-lieux-inclusion?${query}`)
   }
 
   // Changement d'onglet : on conserve les filtres mais on repart à la première page
@@ -169,11 +192,35 @@ export default function ListeLieuxInclusion({
     }
   }
 
+  async function handleSupprimerLieu(): Promise<void> {
+    if (lieuASupprimer === null) {
+      return
+    }
+    const messages = await supprimerUnLieuInclusionAction({
+      lieuId: lieuASupprimer.id,
+      path: '/liste-lieux-inclusion',
+    })
+    setLieuASupprimer(null)
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'supprimé', title: 'Lieu ' })
+      router.refresh()
+    } else {
+      Notification('error', {
+        description: (messages as ReadonlyArray<string>).join(', '),
+        title: 'Erreur : ',
+      })
+    }
+  }
+
   const afficherColonneMajInfos =
     (utilisateurRole === 'Administrateur dispositif' ||
       utilisateurRole === 'Gestionnaire département' ||
       utilisateurRole === 'Gestionnaire structure') &&
     !estOngletArchives
+
+  // Suppression (#1497) : mêmes rôles que la modification + feature flag bêta-testeur.
+  const afficherSuppression = peutSupprimer && afficherColonneMajInfos
 
   if ('type' in listeLieuxInclusionViewModel) {
     return (
@@ -235,21 +282,19 @@ export default function ListeLieuxInclusion({
               Lieux actuels ({viewModel.totalActifs})
             </button>
           </li>
-          {estSuperAdmin ? (
-            <li className="fr-nav__item">
-              <button
-                aria-current={estOngletArchives}
-                className="fr-nav__link"
-                onClick={() => {
-                  changerOnglet(true)
-                }}
-                role="tab"
-                type="button"
-              >
-                Lieux archivés ({viewModel.totalArchives})
-              </button>
-            </li>
-          ) : null}
+          <li className="fr-nav__item">
+            <button
+              aria-current={estOngletArchives}
+              className="fr-nav__link"
+              onClick={() => {
+                changerOnglet(true)
+              }}
+              role="tab"
+              type="button"
+            >
+              Lieux archivés ({viewModel.totalArchives})
+            </button>
+          </li>
         </ul>
       </div>
 
@@ -295,6 +340,27 @@ export default function ListeLieuxInclusion({
         </div>
       ) : null}
 
+      {estOngletArchives ? null : (
+        <ListeLieuxInclusionInfo
+          infos={{
+            total: viewModel.totalSansRecherche,
+            totalConseillerNumerique: viewModel.totalConseillerNumerique,
+            totalLabellise: viewModel.totalLabellise,
+          }}
+        />
+      )}
+
+      {/* Recherche par nom de lieu */}
+      <div className="fr-grid-row fr-mt-2w fr-mb-2w">
+        <div className="fr-col-12 fr-col-md-6">
+          <BarreRecherche
+            label="Rechercher par nom de lieu"
+            rechercher={rechercherParNom}
+            valeurInitiale={normalizedSearchParams.get('nom') ?? ''}
+          />
+        </div>
+      </div>
+
       {viewModel.lieux.length === 0 ? (
         <div
           style={{
@@ -311,25 +377,20 @@ export default function ListeLieuxInclusion({
         </div>
       ) : (
         <>
-          {estOngletArchives ? null : (
-            <ListeLieuxInclusionInfo
-              infos={{
-                total: viewModel.total,
-                totalConseillerNumerique: viewModel.totalConseillerNumerique,
-                totalLabellise: viewModel.totalLabellise,
-              }}
-            />
-          )}
           <Table enTetes={buildEnTetes(estOngletArchives, afficherColonneMajInfos)} titre="Lieux d'inclusion numérique">
             {viewModel.lieux.map((lieu) => (
               <LigneLieu
                 afficherColonneMajInfos={afficherColonneMajInfos}
+                afficherSuppression={afficherSuppression}
                 drawerInfoId={drawerInfoId}
                 estOngletArchives={estOngletArchives}
                 key={lieu.id}
                 lieu={lieu}
                 onOpenInfoDrawer={() => {
                   setIsInfoDrawerOpen(true)
+                }}
+                onSupprimer={() => {
+                  setLieuASupprimer(lieu)
                 }}
                 onToggleVisibleCarto={handleToggleVisibleCarto}
               />
@@ -427,8 +488,23 @@ export default function ListeLieuxInclusion({
           ))}
         </div>
       </Drawer>
+
+      <ModaleSuppressionLieu
+        adresse={lieuASupprimer === null ? '' : formaterAdresseSurUneLigne(lieuASupprimer.adresse)}
+        id="modaleSuppressionLieu"
+        isOpen={lieuASupprimer !== null}
+        nom={lieuASupprimer?.nom ?? ''}
+        onCancel={() => {
+          setLieuASupprimer(null)
+        }}
+        onConfirm={handleSupprimerLieu}
+      />
     </>
   )
+}
+
+function formaterAdresseSurUneLigne(adresse: LieuInclusionViewModel['adresse']): string {
+  return [adresse.ligne1, adresse.ligne2].filter((ligne) => ligne !== '').join(', ')
 }
 
 const couleursFraicheur: Readonly<Record<CouleurFraicheur, string>> = {
@@ -472,17 +548,21 @@ const niveauxFraicheur = [
 
 function LigneLieu({
   afficherColonneMajInfos,
+  afficherSuppression,
   drawerInfoId,
   estOngletArchives,
   lieu,
   onOpenInfoDrawer,
+  onSupprimer,
   onToggleVisibleCarto,
 }: Readonly<{
   afficherColonneMajInfos: boolean
+  afficherSuppression: boolean
   drawerInfoId: string
   estOngletArchives: boolean
   lieu: LieuInclusionViewModel
   onOpenInfoDrawer(): void
+  onSupprimer(): void
   onToggleVisibleCarto(event: ChangeEvent<HTMLInputElement>, lieuId: string): Promise<void>
 }>): ReactElement {
   return (
@@ -510,7 +590,10 @@ function LigneLieu({
             whiteSpace: 'nowrap',
           }}
         >
-          <AdresseLieu adresse={lieu.adresse} idCartographieNationale={lieu.idCartographieNationale} />
+          <AdresseLieu
+            adresse={lieu.adresse}
+            idCartographieNationale={lieu.visiblePourCartographie ? lieu.idCartographieNationale : null}
+          />
         </div>
       </td>
       {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
@@ -578,13 +661,28 @@ function LigneLieu({
         </td>
       ) : null}
       <td className="fr-cell--center">
-        <Link
-          className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-eye-line"
-          href={`/lieu/${lieu.id}`}
-          title={`Voir le détail de ${lieu.nom}`}
+        <div
+          className="fr-btns-group fr-btns-group--inline-sm"
+          style={{ flexWrap: 'nowrap', justifyContent: 'center' }}
         >
-          {`Voir le détail de ${lieu.nom}`}
-        </Link>
+          <Link
+            className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-eye-line fr-mb-0"
+            href={`/lieu/${lieu.id}`}
+            title={`Voir le détail de ${lieu.nom}`}
+          >
+            {`Voir le détail de ${lieu.nom}`}
+          </Link>
+          {afficherSuppression ? (
+            <button
+              className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-line color-red fr-mb-0"
+              onClick={onSupprimer}
+              title={`Supprimer ${lieu.nom}`}
+              type="button"
+            >
+              {`Supprimer ${lieu.nom}`}
+            </button>
+          ) : null}
+        </div>
       </td>
     </tr>
   )
@@ -610,7 +708,7 @@ function buildExportParams(normalizedSearchParams: URLSearchParams, estOngletArc
     exportParams.set('statut', 'archives')
   }
 
-  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire']) {
+  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire', 'nom']) {
     const valeur = normalizedSearchParams.get(cle)
     if (valeur !== null && valeur !== '') {
       exportParams.set(cle, valeur)
@@ -668,8 +766,8 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 }
 
 type Props = Readonly<{
-  estSuperAdmin: boolean
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
+  peutSupprimer: boolean
   searchParams: SerializedSearchParams
   utilisateurRole: TypologieRole
 }>

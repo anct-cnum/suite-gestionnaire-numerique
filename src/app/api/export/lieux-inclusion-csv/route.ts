@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
+    const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
     const scopeFiltre = contexte.scopeFiltre()
@@ -27,11 +27,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const { searchParams } = new URL(request.url)
-
-    // L'export des lieux archivés est réservé aux super admins
-    if (searchParams.get('statut') === 'archives' && !contexte.isSuperAdmin) {
-      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
-    }
 
     const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
@@ -55,6 +50,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         codeRegion: codeRegionDemande,
         frr: searchParams.get('frr') ?? undefined,
         horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
+        nom: searchParams.get('nom') ?? undefined,
         qpv: searchParams.get('qpv') ?? undefined,
         statut: searchParams.get('statut') ?? undefined,
       },

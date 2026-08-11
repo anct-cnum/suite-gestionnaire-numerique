@@ -8,7 +8,7 @@ import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 describe('changer ma structure', () => {
   beforeEach(() => {
     spiedIdStructure = 0
-    spiedUid = ''
+    spiedUid = 0
   })
 
   it('étant superadmin quand je change de structure alors la structure est mise à jour', async () => {
@@ -18,13 +18,13 @@ describe('changer ma structure', () => {
     // WHEN
     const result = await changerMaStructure.handle({
       idStructure: 42,
-      uidUtilisateurCourant: 'utilisateurSuperAdminUid',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
     expect(result).toBe('OK')
     expect(spiedIdStructure).toBe(42)
-    expect(spiedUid).toBe('utilisateurSuperAdminUid')
+    expect(spiedUid).toBe(1)
   })
 
   it('n\u2019étant pas superadmin quand je change de structure alors la structure n\u2019est pas mise à jour', async () => {
@@ -34,7 +34,7 @@ describe('changer ma structure', () => {
     // WHEN
     const result = await changerMaStructure.handle({
       idStructure: 42,
-      uidUtilisateurCourant: 'utilisateurNonSuperAdminUid',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
@@ -44,16 +44,16 @@ describe('changer ma structure', () => {
 })
 
 let spiedIdStructure: number
-let spiedUid: string
+let spiedUid: number
 
-const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurNonSuperAdminUid: utilisateurFactory({
-    isSuperAdmin: false,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurNonSuperAdminUid' },
-  }),
-  utilisateurSuperAdminUid: utilisateurFactory({
+const utilisateurByUid: Readonly<Record<number, Utilisateur>> = {
+  1: utilisateurFactory({
     isSuperAdmin: true,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
+    uid: { email: 'martin.tartempion@example.fr', value: 1 },
+  }),
+  2: utilisateurFactory({
+    isSuperAdmin: false,
+    uid: { email: 'martin.tartempion@example.fr', value: 2 },
   }),
 }
 

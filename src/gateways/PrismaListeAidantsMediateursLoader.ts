@@ -23,20 +23,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const offset = (safePage - 1) * pagination.limite
       const limitOffset = Prisma.sql`LIMIT ${pagination.limite} OFFSET ${offset}`
 
-      const [aidants, stats] = await Promise.all([
+      const [aidants, stats, total] = await Promise.all([
         this.queryPersonnes(filtres, limitOffset),
         this.getStatistiques(filtres),
+        this.queryTotal(filtres),
       ])
 
       return {
         aidants: aidants.map((personne) => this.mapToAidant(personne)),
-        displayPagination: stats.totalActeursNumerique > pagination.limite,
+        displayPagination: total > pagination.limite,
         limite: pagination.limite,
         page: pagination.page,
-        total: stats.totalActeursNumerique,
+        total,
         totalActeursNumerique: stats.totalActeursNumerique,
         totalConseillersNumerique: stats.totalConseillersNumerique,
-        totalPages: Math.ceil(stats.totalActeursNumerique / pagination.limite),
+        totalPages: Math.ceil(total / pagination.limite),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaListeAidantsMediateursLoader', { filtres, operation: 'get' })
@@ -139,9 +140,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   private buildWhereConditions(
     roles?: FiltreRoles,
     habilitations?: FiltreHabilitations,
-    formations?: FiltreFormations
+    formations?: FiltreFormations,
+    recherche?: string
   ): Prisma.Sql {
     const conditions: Array<Prisma.Sql> = []
+
+    // Recherche libre sur le nom, le prénom, ou le nom complet dans les deux sens ("Jean Dupont" / "Dupont Jean")
+    if (recherche !== undefined && recherche !== '') {
+      const motif = motifRecherche(recherche)
+      conditions.push(Prisma.sql`(
+        pe.nom ILIKE ${motif}
+        OR pe.prenom ILIKE ${motif}
+        OR CONCAT(pe.prenom, ' ', pe.nom) ILIKE ${motif}
+        OR CONCAT(pe.nom, ' ', pe.prenom) ILIKE ${motif}
+      )`)
+    }
 
     if (roles && roles.length > 0) {
       const roleConditions: Array<Prisma.Sql> = []
@@ -184,17 +197,21 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const hasSansFormation = formations.includes('Sans formation')
       const otherFormations = formations.filter((formation) => formation !== 'Sans formation')
 
-      if (otherFormations.includes('PIX')) {
-        formationConditions.push(Prisma.sql`f.pix = true`)
-      }
       if (otherFormations.includes('REMN')) {
-        formationConditions.push(Prisma.sql`f.remn = true`)
+        formationConditions.push(Prisma.sql`f.remn = true OR f.label IN ('CCP2', 'CCP2 & CCP3')`)
       }
       if (otherFormations.includes('CCP1')) {
-        formationConditions.push(Prisma.sql`f.label = 'CCP1'`)
+        formationConditions.push(Prisma.sql`
+          f.label = 'CCP1'
+          AND NOT EXISTS (
+            SELECT 1 FROM main.formation f2
+            WHERE f2.personne_id = f.personne_id
+              AND (f2.remn = true OR f2.label IN ('CCP2', 'CCP2 & CCP3'))
+          )
+        `)
       }
-      if (otherFormations.includes('CCP2 & CCP3')) {
-        formationConditions.push(Prisma.sql`f.label = 'CCP2 & CCP3'`)
+      if (otherFormations.includes('PIX')) {
+        formationConditions.push(Prisma.sql`f.pix = true`)
       }
       if (hasSansFormation) {
         formationConditions.push(Prisma.sql`(f.id IS NULL OR (f.pix = false AND f.remn = false AND f.label IS NULL))`)
@@ -207,6 +224,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     return conditions.length > 0 ? Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
   }
 
+  // Statistiques des blocs résumé : la recherche libre est volontairement ignorée (#1292),
+  // seuls le scope et les filtres du drawer s'appliquent.
   private async getStatistiques(filtres: FiltresListeAidants): Promise<{
     totalActeursNumerique: number
     totalConseillersNumerique: number
@@ -240,12 +259,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private mapToAidant(personne: PersonneQueryResult): AidantMediateurReadModel {
-    const formations = [...personne.formations.filter((item) => Boolean(item) && item.trim() !== '')]
+    const labels = personne.formations.filter((item) => Boolean(item) && item.trim() !== '')
+    const estREMN = personne.remn || labels.some((label) => labelsREMN.includes(label))
+
+    const formations: Array<string> = []
+    if (estREMN) {
+      formations.push('REMN')
+    } else if (labels.includes('CCP1')) {
+      formations.push('CCP1')
+    }
     if (personne.pix) {
       formations.push('PIX')
-    }
-    if (personne.remn) {
-      formations.push('REMN')
     }
 
     const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
@@ -292,9 +316,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     filtres: FiltresListeAidants,
     limitOffset: Prisma.Sql
   ): Promise<Array<PersonneQueryResult>> {
-    const { formations, habilitations, roles } = filtres
+    const { formations, habilitations, recherche, roles } = filtres
     const scopeCte = this.buildScopeCte(filtres)
-    const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations, recherche)
 
     return prisma.$queryRaw<Array<PersonneQueryResult>>`
       WITH ${scopeCte}
@@ -329,9 +353,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     filtres: FiltresListeAidants,
     limitOffset = Prisma.empty
   ): Promise<Array<PersonneAvecAccompagnementQueryResult>> {
-    const { formations, habilitations, roles } = filtres
+    const { formations, habilitations, recherche, roles } = filtres
     const scopeCte = this.buildScopeCte(filtres)
-    const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations, recherche)
 
     return prisma.$queryRaw<Array<PersonneAvecAccompagnementQueryResult>>`
       WITH ${scopeCte}
@@ -366,6 +390,33 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       ${limitOffset}
     `
   }
+
+  // Total des résultats de la liste (recherche comprise) : sert à la pagination,
+  // contrairement aux statistiques des blocs résumé qui ignorent la recherche.
+  private async queryTotal(filtres: FiltresListeAidants): Promise<number> {
+    const { formations, habilitations, recherche, roles } = filtres
+    const scopeCte = this.buildScopeCte(filtres)
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations, recherche)
+
+    const result = await prisma.$queryRaw<Array<{ total: bigint }>>`
+      WITH ${scopeCte}
+      SELECT COUNT(DISTINCT pe.id) AS total
+      FROM min.personne_enrichie pe
+      JOIN personnes_dans_scope pds ON pds.id = pe.id
+      LEFT JOIN main.formation f ON pe.id = f.personne_id
+      WHERE true
+        ${whereConditions}
+    `
+
+    return Number(result[0]?.total ?? 0)
+  }
+}
+
+const labelsREMN = ['CCP2', 'CCP2 & CCP3']
+
+// Recherche partielle insensible à la casse : échappe les jokers LIKE (\ % _) de la saisie utilisateur.
+function motifRecherche(valeur: string): string {
+  return `%${valeur.replaceAll('\\', '\\\\').replaceAll('%', '\\%').replaceAll('_', '\\_')}%`
 }
 
 interface PersonneQueryResult {

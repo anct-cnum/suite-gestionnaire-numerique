@@ -413,13 +413,7 @@ describe('filtrer mes utilisateurs', () => {
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     totalUtilisateur = 11
   ): void {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(
-      [],
-      'fooId',
-      totalUtilisateur,
-      rolesAvecStructure,
-      epochTime
-    )
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 1, totalUtilisateur, rolesAvecStructure, epochTime)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
   }
 

@@ -17,7 +17,7 @@ describe('transférer un membre', () => {
       idCible: 42,
       idMembre: 'structure-1-26',
       idSource: 42,
-      uidUtilisateur: 'admin-1',
+      uidUtilisateur: 1,
     })
 
     // THEN
@@ -34,7 +34,7 @@ describe('transférer un membre', () => {
       idCible: 3,
       idMembre: 'structure-1-26',
       idSource: 7,
-      uidUtilisateur: 'admin-1',
+      uidUtilisateur: 1,
     })
 
     // THEN
@@ -43,7 +43,7 @@ describe('transférer un membre', () => {
       idCible: 3,
       idMembre: 'structure-1-26',
       idSource: 7,
-      parUtilisateur: 'admin-1',
+      parUtilisateur: 1,
     })
   })
 })

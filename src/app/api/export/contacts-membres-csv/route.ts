@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
@@ -17,6 +18,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const statut = request.nextUrl.searchParams.get('statut')
+    const role = request.nextUrl.searchParams.get('role')
+    const typologie = request.nextUrl.searchParams.get('typologie')
 
     const gouvernanceRecord = await prisma.gouvernanceRecord.findUniqueOrThrow({
       include: {
@@ -25,7 +28,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           orderBy: {
             id: 'asc',
           },
-          where: statut === null || statut === '' ? undefined : { statut },
+          where: {
+            AND: [statut === null || statut === '' ? {} : { statut }, filtreParTypologie(typologie)],
+          },
         },
       },
       where: {
@@ -33,7 +38,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
 
-    const membres = toMembres(gouvernanceRecord.membres)
+    const membres = toMembres(gouvernanceRecord.membres).filter(
+      (membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role)
+    )
     const csvContent = generateCSV(membres)
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
@@ -49,6 +56,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     console.error("Erreur lors de l'export CSV:", error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
+}
+
+function filtreParTypologie(typologie: null | string): Prisma.MembreRecordWhereInput {
+  if (typologie === null) {
+    return {}
+  }
+  if (typologie === '') {
+    // « Autre » : membres dont la typologie n’est pas renseignée
+    return { OR: [{ type: null }, { type: '' }] }
+  }
+  return { type: typologie }
 }
 
 type MembreAvecContacts = Readonly<{

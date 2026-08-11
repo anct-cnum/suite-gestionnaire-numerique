@@ -22,6 +22,39 @@ describe('blocs par contexte', () => {
     expect(blocs).not.toContain('rejoindreGouvernance')
   })
 
+  it('un gestionnaire de structure béta testeur voit le bandeau du label conseiller numérique', () => {
+    // GIVEN
+    const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }], true)
+
+    // WHEN
+    const blocs = blocsParContexte(contexte)
+
+    // THEN
+    expect(blocs).toContain('labelConum')
+  })
+
+  it('un gestionnaire de structure non béta testeur ne voit pas le bandeau du label conseiller numérique', () => {
+    // GIVEN
+    const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }])
+
+    // WHEN
+    const blocs = blocsParContexte(contexte)
+
+    // THEN
+    expect(blocs).not.toContain('labelConum')
+  })
+
+  it('un béta testeur qui n’est pas gestionnaire de structure ne voit pas le bandeau du label conseiller numérique', () => {
+    // GIVEN
+    const contexte = new Contexte('gestionnaire_departement', [{ code: '93', type: 'departement' }], true)
+
+    // WHEN
+    const blocs = blocsParContexte(contexte)
+
+    // THEN
+    expect(blocs).not.toContain('labelConum')
+  })
+
   it('un gestionnaire de structure coporteur voit la vue départementale de la gouvernance', () => {
     // GIVEN
     const contexte = new Contexte('gestionnaire_structure', [

@@ -39,7 +39,7 @@ type Failure = 'editeurNePeutPasSupprimerComite'
 
 type Command = Readonly<{
   uid: string
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
 }>
 

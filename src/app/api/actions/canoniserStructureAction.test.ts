@@ -10,8 +10,8 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('canoniser une structure action', () => {
   it('canonise et purge le cache quand un bêta-testeur confirme', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(CanoniserStructure.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -21,7 +21,7 @@ describe('canoniser une structure action', () => {
     const messages = await canoniserStructureAction({ path: '/structures-doublons/comparer?ids=3,4', structureId: 3 })
 
     // THEN
-    expect(CanoniserStructure.prototype.handle).toHaveBeenCalledWith({ structureId: 3, uidUtilisateur: 'userFooId' })
+    expect(CanoniserStructure.prototype.handle).toHaveBeenCalledWith({ structureId: 3, uidUtilisateur: 1 })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/structures-doublons/comparer?ids=3,4')
     expect(messages).toStrictEqual(['OK'])
   })
@@ -36,8 +36,8 @@ describe('canoniser une structure action', () => {
 
   it('traduit le refus de canoniser quand une canonique de même SIRET existe', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(CanoniserStructure.prototype, 'handle').mockResolvedValueOnce('canoniqueExistante')
@@ -51,8 +51,8 @@ describe('canoniser une structure action', () => {
 
   it('refuse l’action à un utilisateur non bêta-testeur', async () => {
     // GIVEN
-    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
-    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findByUid').mockResolvedValueOnce(
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false })
     )
 

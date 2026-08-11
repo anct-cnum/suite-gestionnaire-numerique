@@ -111,7 +111,7 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
     await prisma.$executeRaw`
       INSERT INTO audit.structure_merge_log
         (status, dag_id, task_id, winner_id, loser_id, error_message)
-      VALUES ('FAILURE', 'min-ui-canonisation', ${canonisation.parUtilisateur},
+      VALUES ('FAILURE', 'min-ui-canonisation', ${String(canonisation.parUtilisateur)},
         ${canonisation.structureId}, ${canonisation.structureId}, ${message})
     `
   }
@@ -128,7 +128,7 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
       INSERT INTO audit.structure_merge_log
         (status, dag_id, task_id, winner_id, loser_id, winner_before, winner_after, moved_identifiers)
       VALUES (
-        'SUCCESS', 'min-ui-canonisation', ${canonisation.parUtilisateur},
+        'SUCCESS', 'min-ui-canonisation', ${String(canonisation.parUtilisateur)},
         ${canonisation.structureId}, ${canonisation.structureId},
         ${JSON.stringify(avant)}::jsonb,
         ${JSON.stringify(apres)}::jsonb,

@@ -220,7 +220,7 @@ type State = Readonly<{
   noteDeContextualisation?: string
   perimetreGeographique: string
   uid: UidState
-  uidEditeur: string
+  uidEditeur: number
   uidGouvernance: string
   uidPorteur: string
 }>

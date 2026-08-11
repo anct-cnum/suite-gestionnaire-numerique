@@ -1,12 +1,13 @@
 import { ReactElement } from 'react'
 
 import { LieuInclusionDetailsHeaderData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import SupprimerLieuBouton from '@/components/LieuInclusionDetails/SupprimerLieuBouton'
 import Menu from '@/components/shared/Menu/Menu'
 import Tag from '@/components/shared/Tag/Tag'
 import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
 
 export default function LieuInclusionDetailsHeader(props: Props): ReactElement {
-  const { data } = props
+  const { data, suppression } = props
   const { fraicheur, nom, tags } = data
 
   return (
@@ -17,6 +18,11 @@ export default function LieuInclusionDetailsHeader(props: Props): ReactElement {
             {nom}
           </h1>
         </div>
+        {suppression ? (
+          <div className="fr-col-auto">
+            <SupprimerLieuBouton adresse={suppression.adresse} lieuId={suppression.lieuId} nom={suppression.nom} />
+          </div>
+        ) : null}
         <div className="fr-col-auto" style={{ display: 'none' }}>
           <Menu items={[]} />
         </div>
@@ -83,4 +89,9 @@ const stylesFraicheur: Readonly<Record<CouleurFraicheur, Readonly<{ fond: string
 
 type Props = Readonly<{
   data: LieuInclusionDetailsHeaderData
+  suppression?: Readonly<{
+    adresse: string
+    lieuId: string
+    nom: string
+  }>
 }>

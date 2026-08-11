@@ -77,7 +77,7 @@ describe('supprimer un comité', () => {
 const uidComite = 'comiteFooId'
 const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.net'
-const uidEditeur = 'userFooId'
+const uidEditeur = 1
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedUtilisateurUidToFind: null | UtilisateurUidState['value']
 let spiedComiteToDrop: Comite | null

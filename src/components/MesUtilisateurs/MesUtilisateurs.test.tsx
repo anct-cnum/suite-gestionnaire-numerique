@@ -296,7 +296,7 @@ describe('mes utilisateurs', () => {
       expect(envoyer).toBeDisabled()
       expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({
         path: '/mes-utilisateurs',
-        uidUtilisateurAReinviter: '123456',
+        uidUtilisateurAReinviter: 2,
       })
       const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Invitation envoyée à julien.deschamps@example.com')
@@ -426,7 +426,7 @@ describe('mes utilisateurs', () => {
       expect(supprimer).toBeDisabled()
       expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({
         path: '/mes-utilisateurs',
-        uidUtilisateurASupprimer: '123456',
+        uidUtilisateurASupprimer: 2,
       })
       const notification = await screen.findByRole('status')
       expect(notification.textContent).toBe('Utilisateur supprimé')
@@ -478,7 +478,7 @@ describe('mes utilisateurs', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(
       [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
-      'fooId',
+      1,
       10,
       rolesAvecStructure,
       epochTime
@@ -552,7 +552,7 @@ function afficherMesUtilisateurs(
 ): void {
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     mesUtilisateursReadModel,
-    'fooId',
+    1,
     11,
     rolesAvecStructure,
     epochTime
@@ -584,7 +584,7 @@ const utilisateurActifReadModel = utilisateurReadModelFactory({
     rolesGerables: [],
     type: 'administrateur_dispositif',
   },
-  uid: 'fooId',
+  uid: 1,
 })
 
 const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
@@ -593,7 +593,7 @@ const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
   isActive: false,
   nom: 'Deschamps',
   prenom: 'Julien',
-  uid: '123456',
+  uid: 2,
 })
 
 const utilisateurEnAttenteDAujourdhuiReadModel = utilisateurReadModelFactory({

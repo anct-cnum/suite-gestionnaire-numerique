@@ -10,7 +10,7 @@ import {
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
-  async byUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
+  async byUid(uid: number): Promise<MesInformationsPersonnellesReadModel> {
     const utilisateurRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
@@ -23,7 +23,7 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
         },
       },
       where: {
-        ssoId: uid,
+        id: uid,
       },
     })
 

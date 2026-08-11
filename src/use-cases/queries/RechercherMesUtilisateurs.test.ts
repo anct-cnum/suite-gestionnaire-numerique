@@ -11,7 +11,7 @@ import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 describe('rechercher mes utilisateurs', () => {
   it('recherchant sans filtre alors je récupère mes utilisateurs et leur nombre total', async () => {
     // GIVEN
-    const uid = 'uid'
+    const uid = 1
     const pageCourante = 0
     const utilisateursParPage = 10
     const utilisateursActives = false
@@ -22,7 +22,7 @@ describe('rechercher mes utilisateurs', () => {
     await rechercherMesUtilisateurs.handle({ uid })
 
     // THEN
-    expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])
+    expect(mesUtilisateursLoader.spiedFindByIdArgs).toStrictEqual([uid])
     expect(mesUtilisateursLoader.spiedFindMesUtilisateursEtLeTotalArgs).toStrictEqual([
       dummyUtilisateur,
       pageCourante,
@@ -38,13 +38,13 @@ describe('rechercher mes utilisateurs', () => {
 const dummyUtilisateur = utilisateurReadModelFactory()
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
-  spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
+  spiedFindByIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findById> | undefined
   spiedFindMesUtilisateursEtLeTotalArgs:
     | Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal>
     | undefined
 
-  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    this.spiedFindByUidIdArgs = [uid]
+  async findById(id: number): Promise<UnUtilisateurReadModel> {
+    this.spiedFindByIdArgs = [id]
     return Promise.resolve(dummyUtilisateur)
   }
 

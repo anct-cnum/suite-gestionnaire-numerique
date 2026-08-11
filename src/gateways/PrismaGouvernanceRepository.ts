@@ -29,7 +29,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
             dateDeModification: new Date(record.notePrivee.derniereEdition),
             uidEditeur: new UtilisateurUid({
               email: record.relationEditeurNotePrivee.ssoEmail,
-              value: record.relationEditeurNotePrivee.ssoId,
+              value: record.relationEditeurNotePrivee.id,
             }),
           }
         : undefined
@@ -41,7 +41,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
             dateDeModification: new Date(record.derniereEditionNoteDeContexte),
             uidEditeur: new UtilisateurUid({
               email: record.relationEditeurNoteDeContexte.ssoEmail,
-              value: record.relationEditeurNoteDeContexte.ssoId,
+              value: record.relationEditeurNoteDeContexte.id,
             }),
           }
         : undefined

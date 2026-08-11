@@ -15,7 +15,7 @@ export async function supprimerUneActionAction(action: ActionParams): ResultAsyn
     if (validationResult.error) {
       return validationResult.error.issues.map(({ message }) => message)
     }
-    //const sub = await getSessionSub()
+    //const utilisateurId = await getSessionUtilisateurId()
     const message = await new SupprimerUneAction(
       new PrismaActionRepository(),
       new PrismaDemandeDeSubventionRepository()

@@ -15,7 +15,7 @@ describe('changer mon département', () => {
     spiedCodeDepartement = ''
     spiedCodeDepartementPrefecture = ''
     spiedIdStructure = 0
-    spiedUid = ''
+    spiedUid = 0
     structurePrefecture = null
   })
 
@@ -27,12 +27,12 @@ describe('changer mon département', () => {
     // WHEN
     const result = await changerMonDepartement.handle({
       nouveauCodeDepartement: '02',
-      uidUtilisateurCourant: 'utilisateurSuperAdminUid',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUid).toBe('utilisateurSuperAdminUid')
+    expect(spiedUid).toBe(1)
     expect(spiedCodeDepartement).toBe('02')
     expect(spiedCodeDepartementPrefecture).toBe('02')
     expect(spiedIdStructure).toBe(163)
@@ -46,7 +46,7 @@ describe('changer mon département', () => {
     // WHEN
     const result = await changerMonDepartement.handle({
       nouveauCodeDepartement: '02',
-      uidUtilisateurCourant: 'utilisateurSuperAdminUid',
+      uidUtilisateurCourant: 1,
     })
 
     // THEN
@@ -61,7 +61,7 @@ describe('changer mon département', () => {
     // WHEN
     const result = await changerMonDepartement.handle({
       nouveauCodeDepartement: '02',
-      uidUtilisateurCourant: 'utilisateurNonSuperAdminUid',
+      uidUtilisateurCourant: 2,
     })
 
     // THEN
@@ -74,17 +74,17 @@ describe('changer mon département', () => {
 let spiedCodeDepartement: string
 let spiedCodeDepartementPrefecture: string
 let spiedIdStructure: null | number
-let spiedUid: string
+let spiedUid: number
 let structurePrefecture: null | number
 
-const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurNonSuperAdminUid: utilisateurFactory({
-    isSuperAdmin: false,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurNonSuperAdminUid' },
-  }),
-  utilisateurSuperAdminUid: utilisateurFactory({
+const utilisateurByUid: Readonly<Record<number, Utilisateur>> = {
+  1: utilisateurFactory({
     isSuperAdmin: true,
-    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
+    uid: { email: 'martin.tartempion@example.fr', value: 1 },
+  }),
+  2: utilisateurFactory({
+    isSuperAdmin: false,
+    uid: { email: 'martin.tartempion@example.fr', value: 2 },
   }),
 }
 
