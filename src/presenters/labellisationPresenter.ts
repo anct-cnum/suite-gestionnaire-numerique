@@ -22,6 +22,7 @@ export function labellisationEtape2Presenter(readModel: StructureLabelReadModel)
       nom: ouTiret(readModel.identite.nom),
       siret: readModel.identite.siret,
     },
+    structureId: readModel.structureId,
   }
 }
 
@@ -54,6 +55,7 @@ export type LabellisationEtape2ViewModel = Readonly<{
     nom: string
     siret: string
   }>
+  structureId: number
 }>
 
 function ouTiret(valeur: string): string {

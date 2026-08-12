@@ -109,6 +109,7 @@ model UtilisateurRecord {
   demandeDeSubventionRecord DemandeDeSubventionRecord[]
   FeuilleDeRouteRecord      FeuilleDeRouteRecord[]
   feuilleDeRouteDocuments   FeuilleDeRouteDocumentRecord[]
+  structureLabellisations   main_conum_labellisation[]
 
   @@map("utilisateur")
   @@schema("min")
@@ -734,6 +735,7 @@ model main_structure_administrative {
   categories_juridiques        categories_juridiques?              @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_administrative_categorie_juridique_fkey")
   membres                      MembreRecord[]
   utilisateurs                 UtilisateurRecord[]
+  labellisations               main_conum_labellisation[]
 
   /// Refonte 2026 : remplace l'ancienne UNIQUE (siret) seule. Contrainte
   /// reelle en base : UNIQUE NULLS NOT DISTINCT (pgsql 15+) — non
@@ -743,6 +745,24 @@ model main_structure_administrative {
   @@index([adresse_id], map: "structure_administrative_adresse_id_idx")
   @@index([denomination_sirene], map: "structure_administrative_denomination_sirene_idx")
   @@map("structure_administrative")
+  @@schema("main")
+}
+
+/// Labellisation conseiller numérique (#1776) : une ligne par attestation sur
+/// l'honneur, table append-only (jamais d'UPDATE). Label actif =
+/// date_attestation la plus récente de moins d'un an (durée non stockée, non
+/// figée métier). Table du schéma main gérée par Flyway côté dataspace (V143).
+model main_conum_labellisation {
+  id               Int      @id @default(autoincrement())
+  structure_id     Int
+  utilisateur_id   Int
+  date_attestation DateTime
+
+  structure   main_structure_administrative @relation(fields: [structure_id], references: [id])
+  utilisateur UtilisateurRecord             @relation(fields: [utilisateur_id], references: [id])
+
+  @@index([structure_id], map: "conum_labellisation_structure_id_idx")
+  @@map("conum_labellisation")
   @@schema("main")
 }
 

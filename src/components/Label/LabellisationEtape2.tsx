@@ -1,18 +1,43 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ReactElement, useId, useState } from 'react'
 
 import Checkbox from '../shared/Checkbox/Checkbox'
+import { Notification } from '../shared/Notification/Notification'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Stepper from '../shared/Stepper/Stepper'
+import { attesterLabellisationAction } from '@/app/api/actions/attesterLabellisationAction'
 import { LabellisationEtape2ViewModel } from '@/presenters/labellisationPresenter'
 
 export default function LabellisationEtape2({ viewModel }: Props): ReactElement {
+  const router = useRouter()
   const attestationActiviteId = useId()
   const attestationSignalementId = useId()
   const [attesteActivite, setAttesteActivite] = useState(false)
   const [attesteSignalement, setAttesteSignalement] = useState(false)
+  const [activationEnCours, setActivationEnCours] = useState(false)
+
+  async function confirmerEtActiver(): Promise<void> {
+    setActivationEnCours(true)
+    const messages = await attesterLabellisationAction({
+      path: '/tableau-de-bord',
+      structureId: viewModel.structureId,
+    })
+    if (messages.includes('OK')) {
+      Notification('success', {
+        description: 'Votre structure est désormais labellisée conseiller numérique.',
+        title: 'Label activé ',
+      })
+      router.push('/tableau-de-bord')
+    } else {
+      setActivationEnCours(false)
+      messages.forEach((message) => {
+        Notification('error', { description: message, title: 'Erreur ' })
+      })
+    }
+  }
 
   return (
     <div className="fr-container fr-py-4w">
@@ -106,8 +131,15 @@ export default function LabellisationEtape2({ viewModel }: Props): ReactElement 
           </Link>
         </div>
         <div className="fr-col-6 fr-grid-row--right" style={{ display: 'flex' }}>
-          <button className="fr-btn" disabled={!attesteActivite || !attesteSignalement} type="button">
-            Confirmer et activer le label
+          <button
+            className="fr-btn"
+            disabled={!attesteActivite || !attesteSignalement || activationEnCours}
+            onClick={() => {
+              void confirmerEtActiver()
+            }}
+            type="button"
+          >
+            {activationEnCours ? 'Activation en cours...' : 'Confirmer et activer le label'}
           </button>
         </div>
       </div>
