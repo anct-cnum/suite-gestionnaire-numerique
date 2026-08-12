@@ -15,7 +15,7 @@ import type { StatistiquesMediateursData } from '@/components/coop/Statistiques/
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { ApiCoopStatistiquesLoader } from '@/gateways/apiCoop/ApiCoopStatistiquesLoader'
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
@@ -253,7 +253,8 @@ async function recupererStatistiques(
       types: filtres.types,
     }
 
-    const readModel = await new ApiCoopStatistiquesLoader().recupererStatistiques(coopFiltres)
+    // Sans cache : les filtres fins (lieux, médiateurs…) ne font pas partie de la clé du cache partagé.
+    const readModel = await createApiCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
     return statistiquesCoopToMediateursData(readModel)
   } catch {
     return {
