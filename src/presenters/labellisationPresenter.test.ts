@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { labellisationEtape1Presenter } from './labellisationPresenter'
+import { labellisationEtape1Presenter, labellisationEtape2Presenter } from './labellisationPresenter'
 import { StructureLabelReadModel } from '@/use-cases/queries/RecupererStructureLabel'
 
 describe('labellisation presenter', () => {
@@ -83,6 +83,60 @@ describe('labellisation presenter', () => {
       region: '-',
       siret: '',
       typologie: '-',
+    })
+  })
+
+  it('la structure porteuse du label est présentée pour l’étape 2', () => {
+    // GIVEN
+    const readModel: StructureLabelReadModel = {
+      contacts: [],
+      identite: {
+        adresse: '201 bis rue de la plaine, 69000 Lyon',
+        departement: 'Rhône',
+        nom: 'La Voie Du Num',
+        region: 'Auvergne-Rhône-Alpes',
+        siret: '79227291600034',
+        typologie: 'Communauté urbaine',
+      },
+      structureId: 4901,
+    }
+
+    // WHEN
+    const viewModel = labellisationEtape2Presenter(readModel)
+
+    // THEN
+    expect(viewModel).toStrictEqual({
+      structure: {
+        adresse: '201 bis rue de la plaine, 69000 Lyon',
+        nom: 'La Voie Du Num',
+        siret: '79227291600034',
+      },
+    })
+  })
+
+  it('les valeurs inconnues de la structure porteuse sont affichées avec un tiret pour l’étape 2', () => {
+    // GIVEN
+    const readModel: StructureLabelReadModel = {
+      contacts: [],
+      identite: {
+        adresse: '',
+        departement: '',
+        nom: '',
+        region: '',
+        siret: '',
+        typologie: '',
+      },
+      structureId: 4901,
+    }
+
+    // WHEN
+    const viewModel = labellisationEtape2Presenter(readModel)
+
+    // THEN
+    expect(viewModel.structure).toStrictEqual({
+      adresse: '-',
+      nom: '-',
+      siret: '',
     })
   })
 })
