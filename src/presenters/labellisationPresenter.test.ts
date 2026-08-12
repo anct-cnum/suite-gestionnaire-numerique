@@ -18,6 +18,7 @@ describe('labellisation presenter', () => {
           telephone: '0550594314',
         },
       ],
+      derniereAttestation: null,
       identite: {
         adresse: '201 bis rue de la plaine, 69000 Lyon',
         departement: 'Rhône',
@@ -61,6 +62,7 @@ describe('labellisation presenter', () => {
     // GIVEN
     const readModel: StructureLabelReadModel = {
       contacts: [],
+      derniereAttestation: null,
       identite: {
         adresse: '',
         departement: '',
@@ -90,6 +92,7 @@ describe('labellisation presenter', () => {
     // GIVEN
     const readModel: StructureLabelReadModel = {
       contacts: [],
+      derniereAttestation: null,
       identite: {
         adresse: '201 bis rue de la plaine, 69000 Lyon',
         departement: 'Rhône',
@@ -111,6 +114,7 @@ describe('labellisation presenter', () => {
         nom: 'La Voie Du Num',
         siret: '79227291600034',
       },
+      structureId: 4901,
     })
   })
 
@@ -118,6 +122,7 @@ describe('labellisation presenter', () => {
     // GIVEN
     const readModel: StructureLabelReadModel = {
       contacts: [],
+      derniereAttestation: null,
       identite: {
         adresse: '',
         departement: '',

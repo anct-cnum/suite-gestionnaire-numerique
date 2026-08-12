@@ -46,6 +46,12 @@ export class PrismaStructureLabelLoader implements StructureLabelLoader {
       WHERE main.structure_administrative.id = ${structureId}
     `
 
+    const derniereAttestation = await prisma.main_conum_labellisation.findFirst({
+      orderBy: { date_attestation: 'desc' },
+      select: { date_attestation: true },
+      where: { structure_id: structureId },
+    })
+
     return {
       contacts: structureRecord.contact_structures.map((contactStructure) => ({
         email: contactStructure.contact.email,
@@ -56,6 +62,7 @@ export class PrismaStructureLabelLoader implements StructureLabelLoader {
         prenom: contactStructure.contact.prenom,
         telephone: contactStructure.contact.telephone,
       })),
+      derniereAttestation: derniereAttestation?.date_attestation ?? null,
       identite: {
         adresse: this.#formatAdresse(structureRecord.adresse),
         departement: departementRegionResult[0]?.departement_nom ?? '',

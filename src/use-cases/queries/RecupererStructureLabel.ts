@@ -14,6 +14,8 @@ export type StructureLabelReadModel = Readonly<{
       telephone: string
     }>
   >
+  // Date de la dernière attestation sur l'honneur ; null si jamais labellisée.
+  derniereAttestation: Date | null
   identite: Readonly<{
     adresse: string
     departement: string

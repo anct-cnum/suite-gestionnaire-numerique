@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStructureLabelLoader } from './PrismaStructureLabelLoader'
-import { creerUnContact, creerUneStructure } from './testHelper'
+import { creerUnContact, creerUneStructure, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('structure label loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -61,6 +62,7 @@ describe('structure label loader', () => {
           telephone: '0550594314',
         },
       ],
+      derniereAttestation: null,
       identite: {
         adresse: '201 bis rue de la plaine - Dept 69, 69000 Lyon',
         departement: 'Rhône',
@@ -83,6 +85,7 @@ describe('structure label loader', () => {
     // THEN
     expect(readModel).toStrictEqual({
       contacts: [],
+      derniereAttestation: null,
       identite: {
         adresse: '',
         departement: '',
@@ -93,5 +96,23 @@ describe('structure label loader', () => {
       },
       structureId: 4902,
     })
+  })
+
+  it('la date de la dernière attestation est retournée quand la structure est labellisée', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 4903, identifiantEtablissement: '79227291600059', nom: 'Labellisée' })
+    await creerUnUtilisateur({ id: 7 })
+    await prisma.main_conum_labellisation.create({
+      data: { date_attestation: epochTime, structure_id: 4903, utilisateur_id: 7 },
+    })
+    await prisma.main_conum_labellisation.create({
+      data: { date_attestation: epochTimePlusOneDay, structure_id: 4903, utilisateur_id: 7 },
+    })
+
+    // WHEN
+    const readModel = await new PrismaStructureLabelLoader().get(4903)
+
+    // THEN
+    expect(readModel.derniereAttestation).toStrictEqual(epochTimePlusOneDay)
   })
 })

@@ -32,5 +32,6 @@ export function createDefaultLabellisationEtape2ViewModel(): LabellisationEtape2
       nom: 'Emmaus Connect',
       siret: '79227291600034',
     },
+    structureId: 978,
   }
 }
