@@ -1,26 +1,25 @@
 import { ApiCoopStatistiquesLoader } from '../apiCoop/ApiCoopStatistiquesLoader'
 import { CachedApiCoopStatistiquesLoader } from '../apiCoop/CachedApiCoopStatistiquesLoader'
 import { MockConfig, MockStatistiquesCoopLoader } from '../apiCoop/MockStatistiquesCoopLoader'
+import { PrismaStatistiquesCoopLoader } from '../PrismaStatistiquesCoopLoader'
 import { StatistiquesCoopLoader } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesCoopLoader {
   const coopToken = process.env.COOP_TOKEN
-  if (coopToken === undefined) {
-    throw new Error('COOP_TOKEN is not set')
-  }
-  // Si le token commence par "FAKE_TOKEN", utiliser le mock loader
-  if (coopToken.startsWith('FAKE_TOKEN')) {
+  // Si le token commence par "FAKE_TOKEN", utiliser le mock loader (dev sans schéma coop en base)
+  if (coopToken?.startsWith('FAKE_TOKEN') === true) {
     const config = parseFakeToken(coopToken)
 
     console.log(`🎭 Mode FAKE_TOKEN activé - ${config.shouldFail ? 'Erreur' : 'Succès'} après ${config.delaySeconds}s`)
     return new MockStatistiquesCoopLoader(config)
   }
 
-  // Sinon, utiliser le vrai loader avec ou sans cache
-  const baseLoader = new ApiCoopStatistiquesLoader()
+  // Levier de repli (#1793) : COOP_STATS_SOURCE=api pour revenir à l'appel HTTP API Coop sans redéployer.
+  const baseLoader =
+    process.env.COOP_STATS_SOURCE === 'api' ? new ApiCoopStatistiquesLoader() : new PrismaStatistiquesCoopLoader()
 
   if (avecCache) {
-    console.log('💾 Cache API Coop activé (durée: 1 heure)')
+    console.log('💾 Cache statistiques Coop activé (durée: 1 heure)')
     return new CachedApiCoopStatistiquesLoader(baseLoader)
   }
 
