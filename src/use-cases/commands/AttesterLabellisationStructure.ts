@@ -5,19 +5,23 @@ export function estLabelConumActif(derniereAttestation: Date | null, now: Date):
   if (derniereAttestation === null) {
     return false
   }
-  const expiration = new Date(derniereAttestation)
-  expiration.setFullYear(expiration.getFullYear() + 1)
-  return now < expiration
+  return now < dateRenouvellementLabelConum(derniereAttestation)
 }
 
 // Une attestation = une ligne (append-only) : le renouvellement du label
 // insère une nouvelle attestation, le label actif se déduit de la plus récente.
 export class AttesterLabellisationStructure implements CommandHandler<Command, Failure> {
   readonly #date: Date
+  readonly #emailConfirmationGateway: EmailConfirmationLabellisationGateway
   readonly #structureLabellisationRepository: StructureLabellisationRepository
 
-  constructor(structureLabellisationRepository: StructureLabellisationRepository, date: Date) {
+  constructor(
+    structureLabellisationRepository: StructureLabellisationRepository,
+    emailConfirmationGateway: EmailConfirmationLabellisationGateway,
+    date: Date
+  ) {
     this.#structureLabellisationRepository = structureLabellisationRepository
+    this.#emailConfirmationGateway = emailConfirmationGateway
     this.#date = date
   }
 
@@ -34,8 +38,26 @@ export class AttesterLabellisationStructure implements CommandHandler<Command, F
       utilisateurId: command.utilisateurId,
     })
 
+    // L'email de confirmation n'est envoyé qu'après l'enregistrement effectif de l'attestation ;
+    // le gateway ne lève jamais : un échec d'envoi n'annule pas la labellisation.
+    await this.#emailConfirmationGateway.envoyer({
+      dateRenouvellement: dateRenouvellementLabelConum(this.#date),
+      structureId: command.structureId,
+    })
+
     return 'OK'
   }
+}
+
+// Envoie l'email de confirmation aux contacts de la structure labellisée.
+// L'implémentation ne doit jamais lever : l'erreur d'envoi est tracée techniquement, sans annuler la labellisation.
+export interface EmailConfirmationLabellisationGateway {
+  envoyer(
+    confirmation: Readonly<{
+      dateRenouvellement: Date
+      structureId: number
+    }>
+  ): Promise<void>
 }
 
 export interface StructureLabellisationRepository {
@@ -50,6 +72,12 @@ export interface StructureLabellisationRepository {
 }
 
 export type Failure = 'dejaLabellisee'
+
+function dateRenouvellementLabelConum(attestation: Date): Date {
+  const renouvellement = new Date(attestation)
+  renouvellement.setFullYear(renouvellement.getFullYear() + 1)
+  return renouvellement
+}
 
 type Command = Readonly<{
   structureId: number
