@@ -7,7 +7,8 @@ export function statistiquesCoopToMediateursData(readModel: StatistiquesCoopRead
       count: item.count,
       label: item.label,
     })),
-    accompagnementsParMois: readModel.accompagnementsParMois.map((item) => ({
+    // #1286 : le graphe affiche au plus les 12 derniers mois de la période sélectionnée
+    accompagnementsParMois: readModel.accompagnementsParMois.slice(-12).map((item) => ({
       count: item.count,
       label: item.label,
     })),
