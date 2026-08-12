@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaEligibiliteLabelConumLoader } from './PrismaEligibiliteLabelConumLoader'
 import prisma from '../../../prisma/prismaClient'
-import { creerUneStructure } from '../testHelper'
-import { epochTime } from '@/shared/testHelper'
+import { creerUneStructure, creerUnUtilisateur } from '../testHelper'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('éligibilité label conum loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -38,5 +38,34 @@ describe('éligibilité label conum loader', () => {
 
     // THEN
     expect(estEligible).toBe(false)
+  })
+
+  it('la date de l’attestation la plus récente est retournée quand la structure est labellisée', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 4901 })
+    await creerUnUtilisateur({ id: 7 })
+    await prisma.main_conum_labellisation.create({
+      data: { date_attestation: epochTime, structure_id: 4901, utilisateur_id: 7 },
+    })
+    await prisma.main_conum_labellisation.create({
+      data: { date_attestation: epochTimePlusOneDay, structure_id: 4901, utilisateur_id: 7 },
+    })
+
+    // WHEN
+    const derniereAttestation = await new PrismaEligibiliteLabelConumLoader().derniereAttestation(4901)
+
+    // THEN
+    expect(derniereAttestation).toStrictEqual(epochTimePlusOneDay)
+  })
+
+  it('aucune date n’est retournée quand la structure n’a jamais été labellisée', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 4901 })
+
+    // WHEN
+    const derniereAttestation = await new PrismaEligibiliteLabelConumLoader().derniereAttestation(4901)
+
+    // THEN
+    expect(derniereAttestation).toBeNull()
   })
 })
