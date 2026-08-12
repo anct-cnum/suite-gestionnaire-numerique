@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { emailConfirmationLabellisationGatewayFactory } from './shared/emailConfirmationLabellisationGatewayFactory'
 import { avecJournalisationMin } from './shared/journalisation'
 import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -41,6 +42,7 @@ export async function attesterLabellisationAction(actionParams: ActionParams): P
 
     const result = await new AttesterLabellisationStructure(
       new PrismaStructureLabellisationRepository(),
+      emailConfirmationLabellisationGatewayFactory(),
       new Date()
     ).handle({
       structureId,
