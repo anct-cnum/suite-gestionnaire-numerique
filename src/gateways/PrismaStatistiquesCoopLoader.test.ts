@@ -160,12 +160,8 @@ describe('statistiques coop loader', () => {
       { count: 1, label: '11/03' },
       { count: 3, label: '12/03' },
     ])
-    // Comme l'API Coop : parMois couvre toujours les 12 derniers mois glissants (hors période demandée ici).
-    expect(resultat.accompagnementsParMois).toHaveLength(12)
-    for (const item of resultat.accompagnementsParMois) {
-      expect(item.label).toMatch(/^\d{2}\/\d{2}$/u)
-      expect(item.count).toBe(0)
-    }
+    // #1286 : la fenêtre mensuelle suit la période sélectionnée (comme la page « mes statistiques » de la Coop).
+    expect(resultat.accompagnementsParMois).toStrictEqual([{ count: 5, label: '03/25' }])
   })
 
   it('sans bornes de dates : fenêtres par défaut (30 jours / 12 mois) et nouveaux à zéro', async () => {
@@ -178,7 +174,11 @@ describe('statistiques coop loader', () => {
     // THEN : seule l'activité récente (A6, il y a 15 jours, 2 participants) est dans les fenêtres glissantes
     expect(resultat.accompagnementsParJour).toHaveLength(30)
     expect(resultat.accompagnementsParJour.reduce((somme, item) => somme + item.count, 0)).toBe(2)
+    expect(resultat.accompagnementsParMois).toHaveLength(12)
     expect(resultat.accompagnementsParMois.reduce((somme, item) => somme + item.count, 0)).toBe(2)
+    for (const item of resultat.accompagnementsParMois) {
+      expect(item.label).toMatch(/^\d{2}\/\d{2}$/u)
+    }
     // Comme l'API Coop : pas de comptage des nouveaux sans période complète du/au.
     expect(resultat.totaux.beneficiaires.nouveaux).toBe(0)
     expect(resultat.totaux.activites.total).toBe(4)

@@ -13,8 +13,9 @@ import {
 // - activites.total = somme des participants (accompagnements_count) ≠ totaux.activites.total (nombre de CRA) ;
 // - totaux.accompagnements.collectifs.total = nombre d'ateliers collectifs (pas de participants), comme l'API ;
 // - totaux.*.demarches vaut toujours 0 (l'API ne renvoie pas ces clés) ;
-// - le type « Demarche » n'est pas filtrable (l'API ne le supporte pas) ;
-// - accompagnementsParMois couvre toujours les 12 derniers mois glissants, quels que soient du/au.
+// - le type « Demarche » n'est pas filtrable (l'API ne le supporte pas).
+// Écart assumé (#1286) : accompagnementsParMois suit la période du/au (repli : 12 derniers mois),
+// comme la page « mes statistiques » de la Coop — l'API v1 renvoyait toujours les 12 derniers mois.
 export class PrismaStatistiquesCoopLoader implements StatistiquesCoopLoader {
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     const requete = construireRequete(filtres ?? {})
@@ -112,8 +113,8 @@ function construireRequete(filtres: StatistiquesFilters): Requete {
         LEFT JOIN coop.users u ON med.user_id = u.id`
 
   return {
-    au: filtres.au,
-    du: filtres.du,
+    au: filtres.au === '' ? undefined : filtres.au,
+    du: filtres.du === '' ? undefined : filtres.du,
     jointures: Prisma.sql`${jointureStructure} ${jointureConseillerNumerique}`,
     where: Prisma.join(conditions, ' AND '),
   }
@@ -226,6 +227,14 @@ async function recupererAccompagnementsParJour(requete: Requete): Promise<Readon
 }
 
 async function recupererAccompagnementsParMois(requete: Requete): Promise<ReadonlyArray<LigneLabelCount>> {
+  // #1286 : la fenêtre suit la période sélectionnée (comme la page « mes statistiques » de la Coop),
+  // contrairement à l'API v1 qui renvoyait toujours les 12 derniers mois glissants.
+  const fin = requete.au === undefined ? Prisma.sql`CURRENT_DATE` : Prisma.sql`${requete.au}::date`
+  const debut =
+    requete.du === undefined
+      ? Prisma.sql`DATE_TRUNC('month', ${fin} - INTERVAL '11 months')`
+      : Prisma.sql`${requete.du}::date`
+
   const lignes = await prisma.$queryRaw<Array<Readonly<{ annee: number; count: number; mois: number }>>>`
     WITH accompagnements_filtres AS (
       SELECT act.date
@@ -233,13 +242,13 @@ async function recupererAccompagnementsParMois(requete: Requete): Promise<Readon
         INNER JOIN coop.accompagnements acc ON acc.activite_id = act.id
         ${requete.jointures}
       WHERE ${requete.where}
-        AND act.date <= CURRENT_DATE
-        AND act.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months')
+        AND act.date <= ${fin}
+        AND act.date >= ${debut}
     ),
     mois AS (
       SELECT DATE_TRUNC(
         'month',
-        generate_series(DATE_TRUNC('month', CURRENT_DATE - INTERVAL '11 months'), CURRENT_DATE, '1 month'::interval)
+        generate_series(${debut}, ${fin}, '1 month'::interval)
       ) AS mois
     )
     SELECT EXTRACT(MONTH FROM mois.mois)::int AS mois,
