@@ -2,6 +2,7 @@ import { StatutContratViewModel, toStatutContratViewModel } from './shared/contr
 import { formaterEnDateFrancaise } from './shared/date'
 import { formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
+import { dateRenouvellementLabelConum, estLabelConumActif } from '@/use-cases/commands/AttesterLabellisationStructure'
 import { UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure'
 
 export function structurePresenter(uneStructureReadModel: UneStructureReadModel, now: Date): StructureViewModel {
@@ -77,6 +78,10 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
       region: uneStructureReadModel.identite.region,
       siret: uneStructureReadModel.identite.siret ?? '',
       typologie: uneStructureReadModel.identite.typologie,
+    },
+    labellisations: {
+      estHabiliteeAidantsConnect: uneStructureReadModel.labellisations.estHabiliteeAidantsConnect,
+      labelConum: toLabelConumViewModel(uneStructureReadModel.labellisations.derniereAttestationLabelConum, now),
     },
     role: {
       feuillesDeRoute: uneStructureReadModel.role.feuillesDeRoute,
@@ -157,6 +162,10 @@ export type StructureViewModel = Readonly<{
     siret: string
     typologie: string
   }>
+  labellisations: Readonly<{
+    estHabiliteeAidantsConnect: boolean
+    labelConum: LabelConumViewModel | undefined
+  }>
   role: Readonly<{
     feuillesDeRoute: ReadonlyArray<{
       libelle: string
@@ -170,6 +179,29 @@ export type StructureViewModel = Readonly<{
     membreDepuisLe: string
   }>
   structureId: number
+}>
+
+// Statut du label : « Jusqu'au JJ/MM/AAAA » (attestation + 1 an) tant que le label est actif,
+// « Suspendu » quand la dernière attestation est expirée, pas de ligne sans attestation.
+function toLabelConumViewModel(derniereAttestation: Date | null, now: Date): LabelConumViewModel | undefined {
+  if (derniereAttestation === null) {
+    return undefined
+  }
+  if (estLabelConumActif(derniereAttestation, now)) {
+    return {
+      estActif: true,
+      statut: `Jusqu'au ${formaterEnDateFrancaise(dateRenouvellementLabelConum(derniereAttestation))}`,
+    }
+  }
+  return {
+    estActif: false,
+    statut: 'Suspendu',
+  }
+}
+
+type LabelConumViewModel = Readonly<{
+  estActif: boolean
+  statut: string
 }>
 
 type Statut = Readonly<{

@@ -132,6 +132,13 @@ export function createDefaultStructureViewModel(): StructureViewModel {
       siret: '12345678901234',
       typologie: 'Association',
     },
+    labellisations: {
+      estHabiliteeAidantsConnect: true,
+      labelConum: {
+        estActif: true,
+        statut: "Jusqu'au 12/12/2026",
+      },
+    },
     role: {
       feuillesDeRoute: [
         {
@@ -207,6 +214,10 @@ export function createStructureViewModelWithMinimalData(): StructureViewModel {
       region: 'Île-de-France',
       siret: '12345678901234',
       typologie: 'Association',
+    },
+    labellisations: {
+      estHabiliteeAidantsConnect: false,
+      labelConum: undefined,
     },
     role: {
       feuillesDeRoute: [],

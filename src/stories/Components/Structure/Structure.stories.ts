@@ -20,6 +20,7 @@ type Story = StoryObj
 
 export const Default: Story = {
   args: {
+    labellisationsActives: true,
     viewModel: createDefaultStructureViewModel(),
   },
 }

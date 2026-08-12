@@ -73,7 +73,7 @@ export interface StructureLabellisationRepository {
 
 export type Failure = 'dejaLabellisee'
 
-function dateRenouvellementLabelConum(attestation: Date): Date {
+export function dateRenouvellementLabelConum(attestation: Date): Date {
   const renouvellement = new Date(attestation)
   renouvellement.setFullYear(renouvellement.getFullYear() + 1)
   return renouvellement

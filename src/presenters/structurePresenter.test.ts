@@ -66,8 +66,70 @@ describe('structure presenter : caractérisation des enveloppes (Conum ET FNE, a
   })
 })
 
+describe('structure presenter : statut du label conseiller numérique', () => {
+  it('sans attestation, aucun label conum n’est présenté', () => {
+    // GIVEN
+    const readModel = structureReadModel([], null)
+
+    // WHEN
+    const viewModel = structurePresenter(readModel, epochTimePlusOneDay)
+
+    // THEN
+    expect(viewModel.labellisations.labelConum).toBeUndefined()
+  })
+
+  it('avec une attestation de moins d’un an, le label est actif jusqu’à la date de renouvellement (attestation + 1 an)', () => {
+    // GIVEN
+    const readModel = structureReadModel([], new Date('2025-12-12'))
+
+    // WHEN
+    const viewModel = structurePresenter(readModel, new Date('2026-08-12'))
+
+    // THEN
+    expect(viewModel.labellisations.labelConum).toStrictEqual({
+      estActif: true,
+      statut: "Jusqu'au 12/12/2026",
+    })
+  })
+
+  it('avec une attestation de plus d’un an, le label est suspendu', () => {
+    // GIVEN
+    const readModel = structureReadModel([], new Date('2024-06-01'))
+
+    // WHEN
+    const viewModel = structurePresenter(readModel, new Date('2026-08-12'))
+
+    // THEN
+    expect(viewModel.labellisations.labelConum).toStrictEqual({
+      estActif: false,
+      statut: 'Suspendu',
+    })
+  })
+})
+
+describe('structure presenter : habilitation aidants connect', () => {
+  it.each([
+    { estHabiliteeAidantsConnect: true, intention: 'avec un rattachement Aidants Connect, la structure est habilitée' },
+    {
+      estHabiliteeAidantsConnect: false,
+      intention: 'sans rattachement Aidants Connect, la structure n’est pas habilitée',
+    },
+  ])('$intention', ({ estHabiliteeAidantsConnect }) => {
+    // GIVEN
+    const readModel = structureReadModel([], null, estHabiliteeAidantsConnect)
+
+    // WHEN
+    const viewModel = structurePresenter(readModel, epochTimePlusOneDay)
+
+    // THEN
+    expect(viewModel.labellisations.estHabiliteeAidantsConnect).toBe(estHabiliteeAidantsConnect)
+  })
+})
+
 function structureReadModel(
-  enveloppes: ReadonlyArray<{ libelle: string; montant: number; type: 'conseiller_numerique' | 'fne' }>
+  enveloppes: ReadonlyArray<{ libelle: string; montant: number; type: 'conseiller_numerique' | 'fne' }>,
+  derniereAttestationLabelConum: Date | null = null,
+  estHabiliteeAidantsConnect = false
 ): UneStructureReadModel {
   const creditsEngagesParLEtat = enveloppes.reduce((somme, enveloppe) => somme + enveloppe.montant, 0)
 
@@ -99,6 +161,10 @@ function structureReadModel(
       region: 'Normandie',
       siret: '22140118500014',
       typologie: 'DEPT',
+    },
+    labellisations: {
+      derniereAttestationLabelConum,
+      estHabiliteeAidantsConnect,
     },
     role: {
       feuillesDeRoute: [],
