@@ -1,4 +1,4 @@
-import { LabellisationEtape1ViewModel } from '@/presenters/labellisationPresenter'
+import { LabellisationEtape1ViewModel, LabellisationEtape2ViewModel } from '@/presenters/labellisationPresenter'
 
 export function createDefaultLabellisationEtape1ViewModel(): LabellisationEtape1ViewModel {
   return {
@@ -22,5 +22,15 @@ export function createDefaultLabellisationEtape1ViewModel(): LabellisationEtape1
       typologie: 'Association déclarée',
     },
     structureId: 978,
+  }
+}
+
+export function createDefaultLabellisationEtape2ViewModel(): LabellisationEtape2ViewModel {
+  return {
+    structure: {
+      adresse: '172 B route de Lyon, 42300 Roanne',
+      nom: 'Emmaus Connect',
+      siret: '79227291600034',
+    },
   }
 }

@@ -50,6 +50,15 @@ describe('labellisation étape 1', () => {
     expect(screen.getByRole('link', { name: 'Étape suivante' })).toBeInTheDocument()
   })
 
+  it('désactive l’étape suivante quand aucun contact n’est renseigné', () => {
+    // WHEN
+    afficherEtape1({ ...createDefaultLabellisationEtape1ViewModel(), contacts: [] })
+
+    // THEN
+    expect(screen.queryByRole('link', { name: 'Étape suivante' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeDisabled()
+  })
+
   it('recherche une entreprise par SIRET puis l’enregistre et notifie le succès', async () => {
     // GIVEN
     vi.spyOn(rechercherUneEntreprise, 'rechercherUneEntrepriseAction').mockResolvedValueOnce(entrepriseTrouvee())

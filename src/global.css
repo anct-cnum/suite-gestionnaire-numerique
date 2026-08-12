@@ -226,3 +226,25 @@ address {
   font-weight: 700;
   line-height: 2.5rem;
 }
+
+@media print {
+  body:has(.zone-impression) * {
+    visibility: hidden;
+  }
+
+  body .zone-impression,
+  body .zone-impression * {
+    visibility: visible;
+  }
+
+  body .zone-impression {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  body .zone-impression .masquer-impression {
+    display: none;
+  }
+}

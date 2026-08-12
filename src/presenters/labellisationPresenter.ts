@@ -15,6 +15,16 @@ export function labellisationEtape1Presenter(readModel: StructureLabelReadModel)
   }
 }
 
+export function labellisationEtape2Presenter(readModel: StructureLabelReadModel): LabellisationEtape2ViewModel {
+  return {
+    structure: {
+      adresse: ouTiret(readModel.identite.adresse),
+      nom: ouTiret(readModel.identite.nom),
+      siret: readModel.identite.siret,
+    },
+  }
+}
+
 export type LabellisationEtape1ViewModel = Readonly<{
   contacts: ReadonlyArray<
     Readonly<{
@@ -36,6 +46,14 @@ export type LabellisationEtape1ViewModel = Readonly<{
     typologie: string
   }>
   structureId: number
+}>
+
+export type LabellisationEtape2ViewModel = Readonly<{
+  structure: Readonly<{
+    adresse: string
+    nom: string
+    siret: string
+  }>
 }>
 
 function ouTiret(valeur: string): string {

@@ -11,6 +11,7 @@ import { LabellisationEtape1ViewModel } from '@/presenters/labellisationPresente
 
 export default function LabellisationEtape1({ viewModel }: Props): ReactElement {
   const [structureEnEdition, setStructureEnEdition] = useState(false)
+  const auMoinsUnContact = viewModel.contacts.length > 0
 
   return (
     <div className="fr-container fr-py-4w">
@@ -36,7 +37,7 @@ export default function LabellisationEtape1({ viewModel }: Props): ReactElement 
           </Link>
         </div>
         <div className="fr-col-6 fr-grid-row--right" style={{ display: 'flex' }}>
-          {structureEnEdition ? (
+          {structureEnEdition || !auMoinsUnContact ? (
             <button className="fr-btn" disabled={true} type="button">
               Étape suivante
             </button>
