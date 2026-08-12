@@ -83,6 +83,12 @@ export type UneStructureReadModel = Readonly<{
     siret: string | undefined
     typologie: string
   }>
+  labellisations: Readonly<{
+    // Table append-only : le statut du label (actif / suspendu) se déduit de l'attestation la plus récente.
+    derniereAttestationLabelConum: Date | null
+    // Une structure rattachée à Aidants Connect (structure_ac_id renseigné) est habilitée.
+    estHabiliteeAidantsConnect: boolean
+  }>
   role: Readonly<{
     feuillesDeRoute: ReadonlyArray<{
       libelle: string

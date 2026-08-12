@@ -101,6 +101,7 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
     const conventionsEtFinancements = await buildConventionsEtFinancements(structureId, structureRecord.membres)
     const feuillesDeRoute = extractFeuillesDeRoute(structureRecord.membres)
     const contacts = await buildContacts(structureId)
+    const derniereAttestationLabelConum = await recupererDerniereAttestationLabelConum(structureId)
 
     return {
       aidantsEtMediateurs,
@@ -124,6 +125,10 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
         siret: structureRecord.siret ?? undefined,
         typologie: structureRecord.categories_juridiques?.nom ?? '',
       },
+      labellisations: {
+        derniereAttestationLabelConum,
+        estHabiliteeAidantsConnect: structureRecord.structure_ac_id !== null,
+      },
       role: {
         feuillesDeRoute,
         gouvernances,
@@ -132,6 +137,16 @@ export class PrismaUneStructureLoader implements UneStructureLoader {
       structureId,
     }
   }
+}
+
+// Le label actif se déduit de l'attestation la plus récente (table append-only).
+async function recupererDerniereAttestationLabelConum(structureId: number): Promise<Date | null> {
+  const attestation = await prisma.main_conum_labellisation.findFirst({
+    orderBy: { date_attestation: 'desc' },
+    select: { date_attestation: true },
+    where: { structure_id: structureId },
+  })
+  return attestation?.date_attestation ?? null
 }
 
 interface PersonneAffectation {

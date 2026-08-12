@@ -70,6 +70,7 @@ export default async function StructureController({ params, searchParams }: Prop
           </Suspense>
         }
         editionNomActive={editionNomActive}
+        labellisationsActives={contexte.isBetaTesteur}
         peutGererStructure={peutGererStructure}
         rattachements={rattachements}
         viewModel={viewModel}
