@@ -55,7 +55,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
       const params = new URLSearchParams(searchParams.toString())
 
       if (selectedDebut !== null) {
-        const iso = selectedDebut.toISOString().slice(0, 10)
+        const iso = formaterDateISO(selectedDebut)
         if (iso !== DATE_DEBUT_DISPOSITIF) {
           params.set('du', iso)
         } else {
@@ -66,8 +66,8 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
       }
 
       if (selectedFin !== null) {
-        const iso = selectedFin.toISOString().slice(0, 10)
-        const aujourdhui = new Date().toISOString().slice(0, 10)
+        const iso = formaterDateISO(selectedFin)
+        const aujourdhui = formaterDateISO(new Date())
         if (iso !== aujourdhui) {
           params.set('au', iso)
         } else {
@@ -157,4 +157,12 @@ function formaterDateCourte(date: Date): string {
   const mois = String(date.getMonth() + 1).padStart(2, '0')
   const annee = String(date.getFullYear()).slice(2)
   return `${jour}.${mois}.${annee}`
+}
+
+// Format local (pas toISOString, qui convertit en UTC et peut faire glisser la date d'un jour).
+function formaterDateISO(date: Date): string {
+  const annee = date.getFullYear()
+  const mois = String(date.getMonth() + 1).padStart(2, '0')
+  const jour = String(date.getDate()).padStart(2, '0')
+  return `${annee}-${mois}-${jour}`
 }

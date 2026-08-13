@@ -19,7 +19,6 @@ import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoa
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
-import { PrismaMediateursCoopLoader } from '@/gateways/PrismaMediateursCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -219,27 +218,19 @@ async function recupererStatistiques(
 ): Promise<ErrorViewModel | StatistiquesMediateursData> {
   try {
     // Traduire les IDs SGN en coop_ids (UUIDs attendus par l'API Coop)
-    const [lieuxCoopIds, structuresCoopIds] = await Promise.all([
-      filtres.lieux ? new PrismaLieuxCoopLoader().recupererCoopIds(filtres.lieux) : Promise.resolve([]),
-      filtres.structuresEmployeuses
-        ? new PrismaMediateursCoopLoader().recupererCoopIdsParStructures(filtres.structuresEmployeuses)
-        : Promise.resolve([]),
-    ])
+    const lieuxCoopIds = filtres.lieux ? await new PrismaLieuxCoopLoader().recupererCoopIds(filtres.lieux) : []
 
     // Scope implicite → filtres Coop
     let departementsDuScope: ReadonlyArray<string> | undefined
-    let mediateursCoopIdsScope: ReadonlyArray<string> | undefined
     if (filtres.scopeFiltre.type === 'departemental' && !filtres.departements) {
       departementsDuScope = [...filtres.scopeFiltre.codes]
     }
-    if (filtres.scopeFiltre.type === 'structure' && filtres.structuresEmployeuses === undefined) {
-      mediateursCoopIdsScope = await new PrismaMediateursCoopLoader().recupererCoopIdsParStructure(
-        filtres.scopeFiltre.id
-      )
-    }
 
-    // Résolution des médiateurs : structures employeuses explicites, sinon scope implicite
-    const mediateursFiltres = structuresCoopIds.length > 0 ? structuresCoopIds : mediateursCoopIdsScope
+    // Filtre à la maille activité (structure_employeuse_main_id), pas médiateur : un médiateur ayant eu
+    // plusieurs employeurs ne doit compter que pour les activités réalisées pour celle-ci.
+    const structuresEmployeusesFiltre =
+      filtres.structuresEmployeuses ??
+      (filtres.scopeFiltre.type === 'structure' ? [String(filtres.scopeFiltre.id)] : undefined)
 
     const coopFiltres: StatistiquesFilters = {
       au: filtres.au,
@@ -247,13 +238,12 @@ async function recupererStatistiques(
       departements: filtres.departements ?? departementsDuScope,
       du: filtres.du,
       lieux: lieuxCoopIds.length > 0 ? lieuxCoopIds : undefined,
-      mediateurs: mediateursFiltres && mediateursFiltres.length > 0 ? mediateursFiltres : undefined,
+      structuresEmployeuses: structuresEmployeusesFiltre,
       thematiqueAdministratives: filtres.thematiqueAdministratives,
       thematiqueNonAdministratives: filtres.thematiqueNonAdministratives,
       types: filtres.types,
     }
 
-    // Sans cache : les filtres fins (lieux, médiateurs…) ne font pas partie de la clé du cache partagé.
     const readModel = await createApiCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
     return statistiquesCoopToMediateursData(readModel)
   } catch {

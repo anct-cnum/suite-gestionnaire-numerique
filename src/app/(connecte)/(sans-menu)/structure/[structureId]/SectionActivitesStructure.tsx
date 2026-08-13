@@ -3,15 +3,12 @@ import { ReactElement } from 'react'
 import StructureActivites from '@/components/Structure/StructureActivites'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { PrismaAccompagnementsAcStructureLoader } from '@/gateways/PrismaAccompagnementsAcStructureLoader'
-import { PrismaMediateursCoopLoader } from '@/gateways/PrismaMediateursCoopLoader'
 import { activitesStructurePresenter } from '@/presenters/activitesStructurePresenter'
 import { RecupererActivitesStructure } from '@/use-cases/queries/RecupererActivitesStructure'
 
 export default async function SectionActivitesStructure({ structureId }: Props): Promise<ReactElement> {
   try {
     const readModel = await new RecupererActivitesStructure(
-      new PrismaMediateursCoopLoader(),
-      // Sans cache : le filtre médiateurs ne fait pas partie de la clé du cache partagé.
       createApiCoopStatistiquesLoader(false),
       new PrismaAccompagnementsAcStructureLoader()
     ).handle({ structureId })

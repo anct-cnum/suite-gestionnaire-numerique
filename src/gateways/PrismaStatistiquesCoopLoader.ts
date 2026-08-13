@@ -180,6 +180,12 @@ function conditionsPersonnes(filtres: StatistiquesFilters): Array<Prisma.Sql> {
   if (filtres.mediateurs !== undefined && filtres.mediateurs.length > 0) {
     conditions.push(Prisma.sql`act.mediateur_id = ANY(ARRAY[${Prisma.join([...filtres.mediateurs])}]::uuid[])`)
   }
+  if (filtres.structuresEmployeuses !== undefined && filtres.structuresEmployeuses.length > 0) {
+    const idsStructures = filtres.structuresEmployeuses.map(Number).filter((id) => Number.isInteger(id))
+    if (idsStructures.length > 0) {
+      conditions.push(Prisma.sql`act.structure_employeuse_main_id = ANY(ARRAY[${Prisma.join(idsStructures)}]::int[])`)
+    }
+  }
   if (filtres.conseillerNumerique !== undefined) {
     conditions.push(
       filtres.conseillerNumerique
