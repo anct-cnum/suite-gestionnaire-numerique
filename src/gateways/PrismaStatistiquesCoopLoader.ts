@@ -21,12 +21,13 @@ export class PrismaStatistiquesCoopLoader implements StatistiquesCoopLoader {
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     const requete = construireRequete(filtres ?? {})
 
-    const [parJour, parMois, beneficiaires, activites, nouveaux] = await Promise.all([
+    const [parJour, parMois, beneficiaires, activites, nouveaux, tags] = await Promise.all([
       recupererAccompagnementsParJour(requete),
       recupererAccompagnementsParMois(requete),
       recupererStatistiquesBeneficiaires(requete),
       recupererStatistiquesActivites(requete),
       recupererNouveauxAccompagnements(requete),
+      recupererTags(requete),
     ])
 
     const [proportionActivitesIndividuelles, proportionActivitesCollectives] = allouerPourcentages([
@@ -41,7 +42,7 @@ export class PrismaStatistiquesCoopLoader implements StatistiquesCoopLoader {
     return {
       accompagnementsParJour: parJour,
       accompagnementsParMois: parMois,
-      activites: activites.repartitions,
+      activites: { ...activites.repartitions, tags },
       beneficiaires: beneficiaires.repartitions,
       totaux: {
         accompagnements: {
@@ -311,7 +312,7 @@ async function recupererStatistiquesActivites(requete: Requete): Promise<
     nombreCollectifs: number
     nombreIndividuels: number
     participantsCollectifs: number
-    repartitions: StatistiquesCoopReadModel['activites']
+    repartitions: Omit<StatistiquesCoopReadModel['activites'], 'tags'>
     totalAccompagnements: number
   }>
 > {
@@ -368,6 +369,28 @@ async function recupererStatistiquesActivites(requete: Requete): Promise<
     },
     totalAccompagnements: comptages.total_accompagnements,
   }
+}
+
+// Vue globale, comme la branche admin de la Coop : uniquement les tags partagés
+// (coordinations/structures, mediateur_id IS NULL), pondérés par accompagnement.
+async function recupererTags(requete: Requete): Promise<StatistiquesCoopReadModel['activites']['tags']> {
+  const lignes = await prisma.$queryRaw<Array<Readonly<{ count: number; id: string; label: string }>>>`
+    SELECT t.id::text AS id,
+           t.nom AS label,
+           COUNT(act.id)::int AS count
+    FROM coop.accompagnements acc
+      INNER JOIN coop.activites act ON acc.activite_id = act.id
+      INNER JOIN coop.activite_tags activite_tag ON activite_tag.activite_id = act.id
+      INNER JOIN coop.tags t ON t.id = activite_tag.tag_id
+      ${requete.jointures}
+    WHERE t.mediateur_id IS NULL
+      AND t.suppression IS NULL
+      AND ${requete.where}
+    GROUP BY t.id, t.nom
+    ORDER BY count DESC`
+  const proportions = allouerPourcentages(lignes.map(({ count }) => count))
+
+  return lignes.map(({ count, id, label }, index) => ({ count, label, proportion: proportions[index], value: id }))
 }
 
 async function recupererNouveauxAccompagnements(requete: Requete): Promise<number> {

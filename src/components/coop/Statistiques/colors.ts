@@ -34,3 +34,4 @@ export const tranchesAgeColors = [
 export const statusColors = ['#e4794a', '#a558a0', '#009099', '#c08c65', '#e3e3fd']
 export const genresColors = ['#d1b781', '#009099', '#e3e3fd']
 export const communeColor = '#6A6AF4'
+export const tagsColor = ['#8ba7f8']

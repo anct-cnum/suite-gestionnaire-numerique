@@ -130,6 +130,20 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           value: 'Autre',
         },
       ],
+      tags: [
+        {
+          count: Math.round(12000 * facteur),
+          label: 'Quartier prioritaire',
+          proportion: 60,
+          value: 'mock-tag-quartier-prioritaire',
+        },
+        {
+          count: Math.round(8000 * facteur),
+          label: 'France Services',
+          proportion: 40,
+          value: 'mock-tag-france-services',
+        },
+      ],
       thematiques: [
         {
           count: Math.round(180000 * facteur),

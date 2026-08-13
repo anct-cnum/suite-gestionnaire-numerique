@@ -104,6 +104,8 @@ describe('apiCoopStatistiquesLoader', () => {
       activites: {
         durees: [{ count: 100000, label: "Moins d'une heure", proportion: 10.0, value: 'MoinsUneHeure' }],
         materiels: [{ count: 329338, label: 'Ordinateur', proportion: 56.605, value: 'Ordinateur' }],
+        // Toujours vide via l'API v1
+        tags: [],
         thematiques: [
           {
             count: 200000,

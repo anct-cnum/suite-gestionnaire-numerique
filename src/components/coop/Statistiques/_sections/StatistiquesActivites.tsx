@@ -8,7 +8,12 @@ import { ProgressItemList } from '../_components/ProgressItemList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
 import { StatistiqueAccompagnement } from '../_components/StatistiqueAccompagnement'
 import { StatistiqueMateriel } from '../_components/StatistiqueMateriel'
-import { canauxAccompagnementColors, dureesAccompagnementColors, thematiquesAccompagnementColors } from '../colors'
+import {
+  canauxAccompagnementColors,
+  dureesAccompagnementColors,
+  tagsColor,
+  thematiquesAccompagnementColors,
+} from '../colors'
 import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
 import { numberToString, sPluriel } from '../utils'
 
@@ -47,6 +52,15 @@ export const StatistiquesActivites = ({
       items: activites.thematiquesDemarches.sort(desc),
       colors: thematiquesAccompagnementColors,
       maxProportion: activites.thematiquesDemarches.reduce(toMaxProportion, 0),
+    },
+    {
+      category: 'tags',
+      title: 'Tags spécifiques',
+      description:
+        "Tags spécifiques sélectionnés lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs tags.",
+      items: (activites.tags ?? []).sort(desc),
+      colors: tagsColor,
+      maxProportion: (activites.tags ?? []).reduce(toMaxProportion, 0),
     },
   ]
 
@@ -94,6 +108,18 @@ export const StatistiquesActivites = ({
                 nativeInputProps: {
                   checked: accompagnementCategory === 'demarches',
                   onChange: () => setAccompagnementCategory('demarches'),
+                },
+              },
+              {
+                label: (
+                  <>
+                    <span className="ri-price-tag-3-line" aria-hidden />
+                    &ensp;Tags spécifiques
+                  </>
+                ),
+                nativeInputProps: {
+                  checked: accompagnementCategory === 'tags',
+                  onChange: () => setAccompagnementCategory('tags'),
                 },
               },
             ]}

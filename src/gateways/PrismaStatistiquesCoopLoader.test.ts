@@ -67,6 +67,16 @@ describe('statistiques coop loader', () => {
       id uuid PRIMARY KEY,
       is_conseiller_numerique boolean
     )`
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.tags (
+      id uuid PRIMARY KEY,
+      nom text,
+      mediateur_id uuid,
+      suppression timestamp
+    )`
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.activite_tags (
+      activite_id uuid,
+      tag_id uuid
+    )`
   })
 
   beforeEach(async () => {
@@ -104,6 +114,11 @@ describe('statistiques coop loader', () => {
     })
     // Somme des participations, distincte de totaux.activites.total (nombre de CRA)
     expect(resultat.activites.totalAccompagnements).toBe(5)
+    // Seul le tag partagé compte (ni le tag personnel d'un médiateur, ni le tag supprimé),
+    // pondéré par accompagnement (A1 : 1, A3 : 3)
+    expect(resultat.activites.tags).toStrictEqual([
+      { count: 4, label: 'Quartier prioritaire', proportion: 100, value: TAG_PARTAGE },
+    ])
     expect(resultat.activites.typeActivites).toStrictEqual([
       { count: 2, label: 'Accompagnement individuel', proportion: 40, value: 'Individuel' },
       { count: 3, label: 'Atelier collectif', proportion: 60, value: 'Collectif' },
@@ -283,6 +298,9 @@ const A3 = '63333333-3333-4333-8333-333333333333'
 const A4 = '64444444-4444-4444-8444-444444444444'
 const A5 = '65555555-5555-4555-8555-555555555555'
 const A6 = '66666666-6666-4666-8666-666666666666'
+const TAG_PARTAGE = '71111111-1111-4111-8111-111111111111'
+const TAG_PERSONNEL = '72222222-2222-4222-8222-222222222222'
+const TAG_SUPPRIME = '73333333-3333-4333-8333-333333333333'
 
 async function creerJeuDeDonnees(): Promise<void> {
   await prisma.$executeRaw`INSERT INTO coop.users (id, is_conseiller_numerique) VALUES
@@ -290,6 +308,15 @@ async function creerJeuDeDonnees(): Promise<void> {
   await prisma.$executeRaw`INSERT INTO coop.mediateurs (id, user_id) VALUES
     (${M1}::uuid, ${U1}::uuid), (${M2}::uuid, ${U2}::uuid)`
   await prisma.$executeRaw`INSERT INTO coop.lieu_inclusion (id, code_insee) VALUES (${S1}::uuid, '69381')`
+  await prisma.$executeRaw`INSERT INTO coop.tags (id, nom, mediateur_id, suppression) VALUES
+    (${TAG_PARTAGE}::uuid, 'Quartier prioritaire', NULL, NULL),
+    (${TAG_PERSONNEL}::uuid, 'Mes suivis', ${M1}::uuid, NULL),
+    (${TAG_SUPPRIME}::uuid, 'Ancien dispositif', NULL, NOW())`
+  await prisma.$executeRaw`INSERT INTO coop.activite_tags (activite_id, tag_id) VALUES
+    (${A1}::uuid, ${TAG_PARTAGE}::uuid),
+    (${A3}::uuid, ${TAG_PARTAGE}::uuid),
+    (${A2}::uuid, ${TAG_PERSONNEL}::uuid),
+    (${A2}::uuid, ${TAG_SUPPRIME}::uuid)`
   await prisma.$executeRaw`INSERT INTO coop.beneficiaires
     (id, genre, statut_social, tranche_age, annee_naissance, anonyme) VALUES
     (${BEN1}::uuid, 'masculin', 'retraite', NULL, 1950, false),
