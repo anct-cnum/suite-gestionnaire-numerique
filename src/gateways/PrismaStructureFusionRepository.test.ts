@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { PrismaStructureFusionRepository } from './PrismaStructureFusionRepository'
 import {
@@ -26,6 +26,13 @@ const TP_ID_ABSORBEE = 990032
 let personnesCreees: Array<number> = []
 
 describe('fusion de structures (repository Prisma)', () => {
+  // Sérialise les fichiers de tests qui matérialisent le schéma coop (verrou tenu par la connexion
+  // unique du worker, connection_limit=1) : le DROP SCHEMA de nettoyer() ne doit pas s'exécuter
+  // pendant qu'un autre fichier (loader statistiques, données structure) utilise ces tables.
+  beforeAll(async () => prisma.$queryRaw`SELECT pg_advisory_lock(420001)::text`)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
+
   afterEach(nettoyer)
 
   it('déplace les notions (ids de source inclus), balaie les FK résiduelles, soft-delete l’absorbée et préserve les champs de la survivante', async () => {
