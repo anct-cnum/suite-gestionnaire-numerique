@@ -4,20 +4,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './EnTeteLabel.module.css'
+
 export default function EnTeteLabel(): ReactElement {
   return (
     <header className="fr-header">
       <div className="fr-header__body">
         <div className="fr-header__body-row fr-px-5w">
-          <div className="fr-header__brand fr-enlarge-link">
+          <div className="fr-header__brand">
             <div className="fr-header__brand-top">
               <div className="fr-header__logo">
-                <Image
-                  alt="Agence Nationale de la Cohésion des Territoires"
-                  height={40}
-                  src="/anct-texte.svg"
-                  width={120}
-                />
+                <Link href="/tableau-de-bord" title="Retour au tableau de bord">
+                  <Image alt="ANCT Société Numérique" height={64} src="/societe-numerique.svg" width={150} />
+                </Link>
               </div>
               <div className="fr-header__navbar">
                 <button
@@ -32,6 +31,7 @@ export default function EnTeteLabel(): ReactElement {
                 </button>
               </div>
             </div>
+            <div aria-hidden="true" className={styles.separateur} />
             <div className="fr-header__service">
               <Link href="/label" title="Accueil labellisation">
                 <p
@@ -50,9 +50,12 @@ export default function EnTeteLabel(): ReactElement {
           </div>
           <div className="fr-header__tools">
             <div className="fr-header__tools-links">
-              <ul className="fr-links-group">
+              <ul className="fr-btns-group">
                 <li>
-                  <a className="fr-link fr-icon-question-line" href="mailto:moninclusionnumerique@anct.gouv.fr">
+                  <a
+                    className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-question-answer-line"
+                    href="mailto:moninclusionnumerique@anct.gouv.fr"
+                  >
                     J’ai une question
                   </a>
                 </li>
