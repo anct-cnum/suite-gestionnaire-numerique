@@ -22,7 +22,7 @@ import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
+import { clamperPeriode } from '@/shared/dispositif'
 import type { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 import { StatistiquesPageFilters } from '@/use-cases/queries/RecupererStatistiquesPage'
 import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
@@ -56,8 +56,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
     types: typesParam,
   } = await searchParams
   const aujourdhui = new Date().toISOString().slice(0, 10)
-  const dateDebut = du ?? DATE_DEBUT_DISPOSITIF
-  const dateFin = au ?? aujourdhui
+  const { au: dateFin, du: dateDebut } = clamperPeriode(du, au, aujourdhui)
 
   const communesActives = communesParam?.split(',').filter(Boolean) ?? []
   const lieuxActifs = lieuxParam?.split(',').filter(Boolean) ?? []
@@ -167,6 +166,8 @@ export default async function StatistiquesController({ searchParams }: Props): P
 
       <FilterTags
         communesSelectionnees={communesSelectionnees}
+        dateDebut={dateDebut}
+        dateFin={dateFin}
         departementsOptions={departementsOptions}
         lieuxSelectionnes={lieuxSelectionnes}
         structuresEmployeusesSelectionnees={structuresEmployeusesSelectionnees}

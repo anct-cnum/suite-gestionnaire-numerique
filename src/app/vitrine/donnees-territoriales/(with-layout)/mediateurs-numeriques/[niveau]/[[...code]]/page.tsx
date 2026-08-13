@@ -21,7 +21,7 @@ import {
   statistiquesMediateursPresenter,
   StatistiquesMediateursViewModel,
 } from '@/presenters/vitrine/statistiquesMediateursPresenter'
-import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
+import { clamperPeriode } from '@/shared/dispositif'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -64,8 +64,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
 
   // Dates pour le filtre (par défaut : début du dispositif jusqu'à aujourd'hui)
   const aujourdhui = new Date().toISOString().slice(0, 10)
-  const dateDebut = du ?? DATE_DEBUT_DISPOSITIF
-  const dateFin = au ?? aujourdhui
+  const { au: dateFin, du: dateDebut } = clamperPeriode(du, au, aujourdhui)
 
   // Récupérer les statistiques synchrones des médiateurs
   const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()

@@ -8,6 +8,8 @@ import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 
 export default function FilterTags({
   communesSelectionnees,
+  dateDebut,
+  dateFin,
   departementsOptions,
   lieuxSelectionnes,
   structuresEmployeusesSelectionnees,
@@ -19,20 +21,20 @@ export default function FilterTags({
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const du = searchParams.get('du')
-  const au = searchParams.get('au')
+  const aujourdhui = new Date().toISOString().slice(0, 10)
+  const periodeParDefaut = dateDebut === DATE_DEBUT_DISPOSITIF && dateFin === aujourdhui
 
   const tags: ReadonlyArray<ActiveTag> = [
-    ...(du !== null || au !== null
-      ? [
+    ...(periodeParDefaut
+      ? []
+      : [
           {
             key: 'periode',
-            label: `${formaterDateCourte(du ?? DATE_DEBUT_DISPOSITIF)} - ${formaterDateCourte(au ?? new Date().toISOString().slice(0, 10))}`,
+            label: `${formaterDateCourte(dateDebut)} - ${formaterDateCourte(dateFin)}`,
             param: 'periode',
             value: 'periode',
           },
-        ]
-      : []),
+        ]),
     ...tagsDepuisParam(searchParams.get('departements'), 'departements', 'dep', departementsOptions),
     ...tagsDepuisParam(searchParams.get('communes'), 'communes', 'commune', communesSelectionnees),
     ...tagsDepuisParam(
@@ -154,6 +156,8 @@ type ActiveTag = Readonly<{
 
 type Props = Readonly<{
   communesSelectionnees: ReadonlyArray<FiltreOption>
+  dateDebut: string
+  dateFin: string
   departementsOptions: ReadonlyArray<FiltreOption>
   lieuxSelectionnes: ReadonlyArray<FiltreOption>
   structuresEmployeusesSelectionnees: ReadonlyArray<FiltreOption>
