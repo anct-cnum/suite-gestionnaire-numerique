@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 
 import { PrismaStructureFusionRepository } from './PrismaStructureFusionRepository'
 import {
@@ -26,7 +26,14 @@ const TP_ID_ABSORBEE = 990032
 let personnesCreees: Array<number> = []
 
 describe('fusion de structures (repository Prisma)', () => {
+  // Sérialise les fichiers de tests qui matérialisent le schéma coop (verrou tenu par la connexion
+  // unique du worker, connection_limit=1) : le DROP SCHEMA de nettoyer() ne doit pas s'exécuter
+  // pendant qu'un autre fichier (loader statistiques, données structure) utilise ces tables.
+  beforeAll(async () => prisma.$queryRaw`SELECT pg_advisory_lock(420001)::text`)
+
   afterEach(nettoyer)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
 
   it('déplace les notions (ids de source inclus), balaie les FK résiduelles, soft-delete l’absorbée et préserve les champs de la survivante', async () => {
     // GIVEN une survivante canonique (APE 84.11Z) et une absorbée antenne portant membre, coop et une
@@ -246,6 +253,10 @@ async function estSupprimee(id: number): Promise<boolean> {
 // (les vraies vivent côté coop) — seules les colonnes détectées par le repointage comptent.
 async function creerSchemaCoopPostBascule(): Promise<void> {
   await prisma.$executeRaw`CREATE SCHEMA IF NOT EXISTS coop`
+  // D'autres tests (PrismaStatistiquesCoopLoader, PrismaDonneesStructureLoader) matérialisent aussi
+  // coop.activites, avec une autre forme (id uuid) : on repart de tables propres quel que soit l'ordre.
+  await prisma.$executeRaw`DROP TABLE IF EXISTS coop.activites CASCADE`
+  await prisma.$executeRaw`DROP TABLE IF EXISTS coop.employes_structures CASCADE`
   await prisma.$executeRaw`CREATE TABLE coop.activites (id serial PRIMARY KEY, structure_employeuse_main_id integer)`
   await prisma.$executeRaw`CREATE TABLE coop.employes_structures (id serial PRIMARY KEY, structure_main_id integer)`
   await prisma.$executeRaw`INSERT INTO coop.activites (structure_employeuse_main_id) VALUES (${ABSORBEE}), (${ABSORBEE})`
@@ -273,7 +284,8 @@ async function dernierAuditReussi(): Promise<Record<string, unknown> | undefined
 }
 
 async function nettoyer(): Promise<void> {
-  // Le schéma coop n'existe pas dans la base de test MIN hors du test de repointage qui le crée.
+  // On supprime le schéma coop matérialisé : les autres fichiers de tests qui l'utilisent
+  // (PrismaStatistiquesCoopLoader, PrismaDonneesStructureLoader) le recréent dans leur beforeAll.
   await prisma.$executeRaw`DROP SCHEMA IF EXISTS coop CASCADE`
   await prisma.$executeRaw`
     DELETE FROM audit.structure_merge_log

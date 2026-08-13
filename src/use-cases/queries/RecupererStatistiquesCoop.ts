@@ -31,7 +31,8 @@ export type StatistiquesCoopReadModel = Readonly<{
     materiels: ReadonlyArray<StatistiqueItem>
     thematiques: ReadonlyArray<StatistiqueItem>
     thematiquesDemarches: ReadonlyArray<StatistiqueItem>
-    total: number
+    // Somme des participations (accompagnements), pas le nombre d'activités : cf. totaux.activites.total
+    totalAccompagnements: number
     typeActivites: ReadonlyArray<StatistiqueItem>
     typeLieu: ReadonlyArray<StatistiqueItem>
   }>

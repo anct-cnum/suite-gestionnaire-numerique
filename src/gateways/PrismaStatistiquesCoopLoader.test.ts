@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStatistiquesCoopLoader } from './PrismaStatistiquesCoopLoader'
 import prisma from '../../prisma/prismaClient'
@@ -8,6 +8,10 @@ describe('statistiques coop loader', () => {
   // Le schéma coop (répliqué depuis dataspace en prod) n'est pas couvert par les
   // migrations Prisma : on matérialise le minimum requis par le loader.
   beforeAll(async () => {
+    // Sérialise les fichiers de tests qui matérialisent le schéma coop (verrou tenu par la connexion
+    // unique du worker, connection_limit=1) : le DROP SCHEMA du test de repointage ne doit pas
+    // s'exécuter pendant qu'un autre fichier utilise ces tables.
+    await prisma.$queryRaw`SELECT pg_advisory_lock(420001)::text`
     await prisma.$executeRaw`CREATE SCHEMA IF NOT EXISTS coop`
     await prisma.$executeRaw`DO $$ BEGIN
       CREATE TYPE coop.thematique AS ENUM (
@@ -72,6 +76,8 @@ describe('statistiques coop loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
+
   it('calcule les répartitions et totaux identiques à l’API Coop sur une période donnée', async () => {
     // GIVEN
     const loader = new PrismaStatistiquesCoopLoader()
@@ -82,8 +88,8 @@ describe('statistiques coop loader', () => {
     // THEN
     expect(resultat.totaux).toStrictEqual({
       accompagnements: {
-        // Comme l'API Coop : collectifs.total = nombre d'ateliers, pas de participants.
-        collectifs: { proportion: 60, total: 1 },
+        // #1796 : collectifs.total = participants aux ateliers (l'API y mettait le nombre d'ateliers).
+        collectifs: { proportion: 60, total: 3 },
         demarches: { proportion: 0, total: 0 },
         individuels: { proportion: 40, total: 2 },
         total: 5,
@@ -96,8 +102,8 @@ describe('statistiques coop loader', () => {
       },
       beneficiaires: { anonymes: 1, nouveaux: 3, suivis: 3, total: 4 },
     })
-    // Comme l'API Coop : activites.total = somme des participants, pas le nombre de CRA.
-    expect(resultat.activites.total).toBe(5)
+    // Somme des participations, distincte de totaux.activites.total (nombre de CRA)
+    expect(resultat.activites.totalAccompagnements).toBe(5)
     expect(resultat.activites.typeActivites).toStrictEqual([
       { count: 2, label: 'Accompagnement individuel', proportion: 40, value: 'Individuel' },
       { count: 3, label: 'Atelier collectif', proportion: 60, value: 'Collectif' },

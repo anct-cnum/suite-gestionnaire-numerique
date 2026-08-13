@@ -113,7 +113,7 @@ describe('apiCoopStatistiquesLoader', () => {
           },
         ],
         thematiquesDemarches: [{ count: 50000, label: 'CAF', proportion: 25.0, value: 'Caf' }],
-        total: 1161183,
+        totalAccompagnements: 1161183,
         typeActivites: [{ count: 461503, label: 'Individuel', proportion: 45.706, value: 'Individuel' }],
         typeLieu: [{ count: 50000, label: 'À distance', proportion: 5.0, value: 'ADistance' }],
       },

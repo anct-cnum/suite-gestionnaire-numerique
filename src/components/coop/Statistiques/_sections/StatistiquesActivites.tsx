@@ -68,9 +68,8 @@ export const StatistiquesActivites = ({
             {value === 'Collectif' && (
               <span className="fr-text-mention--grey fr-text--sm fr-mb-0">
                 &nbsp;·&nbsp;sur{' '}
-                <span className="fr-text--bold">{numberToString(totalCounts.accompagnements.collectifs.total)}</span>{' '}
-                atelier
-                {sPluriel(totalCounts.accompagnements.collectifs.total)}
+                <span className="fr-text--bold">{numberToString(totalCounts.activites.collectifs.total)}</span> atelier
+                {sPluriel(totalCounts.activites.collectifs.total)}
               </span>
             )}
           </StatistiqueAccompagnement>

@@ -51,7 +51,7 @@ const statistiquesCoop: StatistiquesCoopReadModel = {
     materiels: [],
     thematiques: [],
     thematiquesDemarches: [],
-    total: 0,
+    totalAccompagnements: 0,
     typeActivites: [],
     typeLieu: [],
   },

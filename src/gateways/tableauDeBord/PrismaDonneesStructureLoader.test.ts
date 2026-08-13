@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaDonneesStructureLoader } from './PrismaDonneesStructureLoader'
 import prisma from '../../../prisma/prismaClient'
@@ -9,6 +9,10 @@ describe('données structure loader', () => {
   // Le schéma coop (répliqué depuis dataspace en prod) n'est pas couvert par les
   // migrations Prisma : on matérialise le minimum requis par le loader.
   beforeAll(async () => {
+    // Sérialise les fichiers de tests qui matérialisent le schéma coop (verrou tenu par la connexion
+    // unique du worker, connection_limit=1) : le DROP SCHEMA du test de repointage ne doit pas
+    // s'exécuter pendant qu'un autre fichier utilise ces tables.
+    await prisma.$queryRaw`SELECT pg_advisory_lock(420001)::text`
     await prisma.$executeRaw`CREATE SCHEMA IF NOT EXISTS coop`
     await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.activites (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -22,6 +26,8 @@ describe('données structure loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
 
   it('compte les lieux où une personne employée par la structure a une affectation active', async () => {
     // GIVEN

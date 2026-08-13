@@ -194,7 +194,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           value: 'Autre',
         },
       ],
-      total: Math.round(950000 * facteur),
+      totalAccompagnements: Math.round(950000 * facteur),
       typeActivites: [
         {
           count: Math.round(520000 * facteur),
