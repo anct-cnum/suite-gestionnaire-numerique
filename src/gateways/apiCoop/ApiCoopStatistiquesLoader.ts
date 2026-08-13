@@ -72,6 +72,9 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       if (filtres.lieux) {
         url.searchParams.append('filter[lieux]', filtres.lieux.join(','))
       }
+      if (filtres.structuresEmployeuses) {
+        url.searchParams.append('filter[structuresEmployeuses]', filtres.structuresEmployeuses.join(','))
+      }
       if (filtres.thematiqueNonAdministratives) {
         url.searchParams.append('filter[thematiqueNonAdministratives]', filtres.thematiqueNonAdministratives.join(','))
       }
