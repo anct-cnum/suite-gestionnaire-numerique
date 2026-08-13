@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { AccompagnementsAcStructureLoader, RecupererActivitesStructure } from './RecupererActivitesStructure'
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel } from './RecupererStatistiquesCoop'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('récupérer les activités d’une structure', () => {
   it('agrège les statistiques Coop de la structure (filtre structuresEmployeuses) et le total Aidants Connect', async () => {
@@ -21,13 +22,19 @@ describe('récupérer les activités d’une structure', () => {
 
     // WHEN
     const readModel = await new RecupererActivitesStructure(statistiquesCoopLoader, accompagnementsAcLoader).handle({
+      au: epochTimePlusOneDay.toISOString().slice(0, 10),
+      du: epochTime.toISOString().slice(0, 10),
       structureId: 42,
     })
 
     // THEN
     expect(recupererTotalParStructure).toHaveBeenCalledWith(42)
     expect(recupererParMoisParStructure).toHaveBeenCalledWith(42)
-    expect(recupererStatistiques).toHaveBeenCalledWith({ structuresEmployeuses: ['42'] })
+    expect(recupererStatistiques).toHaveBeenCalledWith({
+      au: epochTimePlusOneDay.toISOString().slice(0, 10),
+      du: epochTime.toISOString().slice(0, 10),
+      structuresEmployeuses: ['42'],
+    })
     expect(readModel).toStrictEqual({
       accompagnementsAidantsConnect: 18,
       accompagnementsMediationNumerique: 120,

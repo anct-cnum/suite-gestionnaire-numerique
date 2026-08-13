@@ -22,11 +22,10 @@ import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 import type { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 import { StatistiquesPageFilters } from '@/use-cases/queries/RecupererStatistiquesPage'
 import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
-
-const DATE_DEBUT_DISPOSITIF = '2020-11-07'
 
 export const metadata: Metadata = {
   title: 'Statistiques médiation numérique',

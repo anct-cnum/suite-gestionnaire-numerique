@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import type { FiltreOption } from './FiltreRecherche'
+import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 
 export default function FilterTags({
   communesSelectionnees,
@@ -123,8 +124,6 @@ export default function FilterTags({
     </>
   )
 }
-
-const DATE_DEBUT_DISPOSITIF = '2020-11-07'
 
 function tagsDepuisParam(
   raw: null | string,

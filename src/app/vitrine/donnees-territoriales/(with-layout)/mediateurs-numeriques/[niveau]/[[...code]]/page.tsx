@@ -21,9 +21,8 @@ import {
   statistiquesMediateursPresenter,
   StatistiquesMediateursViewModel,
 } from '@/presenters/vitrine/statistiquesMediateursPresenter'
+import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
-
-const DATE_DEBUT_DISPOSITIF = '2020-11-07'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, niveau } = await params

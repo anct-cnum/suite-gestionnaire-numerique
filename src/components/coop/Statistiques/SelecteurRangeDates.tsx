@@ -3,10 +3,9 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CSSProperties, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
+import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 import DateRangePicker from './DateRangePicker'
 import styles from './SelecteurRangeDates.module.css'
-
-const DATE_DEBUT_DISPOSITIF = '2020-11-07'
 
 export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): ReactElement {
   const router = useRouter()
