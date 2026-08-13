@@ -34,6 +34,33 @@ export const StatistiquesActivites = ({
 }) => {
   const [accompagnementCategory, setAccompagnementCategory] = useState<AccompagnementCategory>('thematiques')
 
+  const segmentMediationNumerique = {
+    label: 'Médiation numérique',
+    nativeInputProps: {
+      checked: accompagnementCategory === 'thematiques',
+      onChange: () => setAccompagnementCategory('thematiques'),
+    },
+  }
+  const segmentDemarches = {
+    label: 'Démarches administratives',
+    nativeInputProps: {
+      checked: accompagnementCategory === 'demarches',
+      onChange: () => setAccompagnementCategory('demarches'),
+    },
+  }
+  const segmentTags = {
+    label: (
+      <>
+        <span className="ri-price-tag-3-line" aria-hidden />
+        &ensp;Tags spécifiques
+      </>
+    ),
+    nativeInputProps: {
+      checked: accompagnementCategory === 'tags',
+      onChange: () => setAccompagnementCategory('tags'),
+    },
+  }
+
   const accompagnementCategories = [
     {
       category: 'thematiques',
@@ -53,15 +80,20 @@ export const StatistiquesActivites = ({
       colors: thematiquesAccompagnementColors,
       maxProportion: activites.thematiquesDemarches.reduce(toMaxProportion, 0),
     },
-    {
-      category: 'tags',
-      title: 'Tags spécifiques',
-      description:
-        "Tags spécifiques sélectionnés lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs tags.",
-      items: (activites.tags ?? []).sort(desc),
-      colors: tagsColor,
-      maxProportion: (activites.tags ?? []).reduce(toMaxProportion, 0),
-    },
+    // Tags absents (vue France) : ni la catégorie ni le segment ne sont rendus
+    ...(activites.tags === undefined
+      ? []
+      : [
+          {
+            category: 'tags',
+            title: 'Tags spécifiques',
+            description:
+              "Tags spécifiques sélectionnés lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs tags.",
+            items: activites.tags.sort(desc),
+            colors: tagsColor,
+            maxProportion: activites.tags.reduce(toMaxProportion, 0),
+          },
+        ]),
   ]
 
   return (
@@ -95,34 +127,11 @@ export const StatistiquesActivites = ({
             className="fr-md-col fr-col-12 fr-ml-auto"
             hideLegend
             legend="Bascule entre les thématiques"
-            segments={[
-              {
-                label: 'Médiation numérique',
-                nativeInputProps: {
-                  checked: accompagnementCategory === 'thematiques',
-                  onChange: () => setAccompagnementCategory('thematiques'),
-                },
-              },
-              {
-                label: 'Démarches administratives',
-                nativeInputProps: {
-                  checked: accompagnementCategory === 'demarches',
-                  onChange: () => setAccompagnementCategory('demarches'),
-                },
-              },
-              {
-                label: (
-                  <>
-                    <span className="ri-price-tag-3-line" aria-hidden />
-                    &ensp;Tags spécifiques
-                  </>
-                ),
-                nativeInputProps: {
-                  checked: accompagnementCategory === 'tags',
-                  onChange: () => setAccompagnementCategory('tags'),
-                },
-              },
-            ]}
+            segments={
+              activites.tags === undefined
+                ? [segmentMediationNumerique, segmentDemarches]
+                : [segmentMediationNumerique, segmentDemarches, segmentTags]
+            }
           />
         </div>
         <hr className="fr-separator-8v" />

@@ -245,7 +245,12 @@ async function recupererStatistiques(
     }
 
     const readModel = await createApiCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
-    return statistiquesCoopToMediateursData(readModel)
+    const vueTerritorialisee =
+      (coopFiltres.departements?.length ?? 0) > 0 ||
+      (coopFiltres.communes?.length ?? 0) > 0 ||
+      (coopFiltres.lieux?.length ?? 0) > 0 ||
+      (coopFiltres.structuresEmployeuses?.length ?? 0) > 0
+    return statistiquesCoopToMediateursData(readModel, vueTerritorialisee)
   } catch {
     return {
       message: 'Erreur de récupération des données',

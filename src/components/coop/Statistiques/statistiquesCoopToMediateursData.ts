@@ -1,7 +1,12 @@
 import type { StatistiquesMediateursData } from './types'
 import type { StatistiquesCoopReadModel } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
-export function statistiquesCoopToMediateursData(readModel: StatistiquesCoopReadModel): StatistiquesMediateursData {
+// avecTags : les tags spécifiques ne sont affichés qu'en vue territorialisée ou ciblée, jamais en vue France
+// (tags absents du ViewModel → le toggle « Tags spécifiques » n'est pas rendu).
+export function statistiquesCoopToMediateursData(
+  readModel: StatistiquesCoopReadModel,
+  avecTags: boolean
+): StatistiquesMediateursData {
   return {
     accompagnementsParJour: readModel.accompagnementsParJour.map((item) => ({
       count: item.count,
@@ -25,12 +30,16 @@ export function statistiquesCoopToMediateursData(readModel: StatistiquesCoopRead
         proportion: item.proportion,
         value: item.value,
       })),
-      tags: readModel.activites.tags.map((item) => ({
-        count: item.count,
-        label: item.label,
-        proportion: item.proportion,
-        value: item.value,
-      })),
+      ...(avecTags
+        ? {
+            tags: readModel.activites.tags.map((item) => ({
+              count: item.count,
+              label: item.label,
+              proportion: item.proportion,
+              value: item.value,
+            })),
+          }
+        : {}),
       thematiques: readModel.activites.thematiques.map((item) => ({
         count: item.count,
         label: item.label,
