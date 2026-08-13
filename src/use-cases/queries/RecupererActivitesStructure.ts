@@ -20,7 +20,11 @@ export class RecupererActivitesStructure implements QueryHandler<Query, Activite
 
   async handle(query: Query): Promise<ActivitesStructureReadModel> {
     const [statistiques, accompagnementsAidantsConnect, parMoisAidantsConnect] = await Promise.all([
-      this.#statistiquesCoopLoader.recupererStatistiques({ structuresEmployeuses: [String(query.structureId)] }),
+      this.#statistiquesCoopLoader.recupererStatistiques({
+        au: query.au,
+        du: query.du,
+        structuresEmployeuses: [String(query.structureId)],
+      }),
       this.#accompagnementsAcLoader.recupererTotalParStructure(query.structureId),
       this.#accompagnementsAcLoader.recupererParMoisParStructure(query.structureId),
     ])
@@ -70,5 +74,8 @@ type PointGraphiqueReadModel = Readonly<{
 }>
 
 type Query = Readonly<{
+  // du & au : Date au format YYYY-MM-DD
+  au: string
+  du: string
   structureId: number
 }>
