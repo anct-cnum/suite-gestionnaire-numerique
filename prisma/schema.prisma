@@ -539,46 +539,39 @@ model zonage {
   @@schema("admin")
 }
 
-model activites_coop {
-  id                                  Int                  @id @default(autoincrement())
-  coop_id                             String?              @unique(map: "activites_coop_coop_id_ukey") @db.Uuid
+// #1805 (Flyway V144 dataspace) : plus une table repliquee par l'ETL mais une
+// VUE sur coop.activites (temps reel, suppressions exclues). La colonne
+// technique id, les FK, index et defaults ont disparu avec la table ;
+// lieu_id / personne_id restent resolus par la vue (lieu_inclusion.
+// structure_coop_id, coop.mediateurs.user_id -> personne.coop_id — NULL si
+// mediateur sans echo entrepot). Lue uniquement en $queryRaw cote MIN.
+view activites_coop {
+  coop_id                             String    @unique @db.Uuid
   lieu_id                             Int?
   personne_id                         Int?
-  type                                String               @db.VarChar(100)
-  date                                DateTime             @db.Date
+  type                                String
+  date                                DateTime  @db.Date
   duree                               Int
-  lieu_code_insee                     String?              @db.VarChar(5)
-  type_lieu                           String               @db.VarChar(100)
-  autonomie                           String?              @db.VarChar(100)
-  structure_de_redirection            String?              @db.VarChar(255)
+  lieu_code_insee                     String?
+  type_lieu                           String
+  autonomie                           String?
+  structure_de_redirection            String?
   oriente_vers_structure              Boolean?
   precisions_demarche                 String?
-  degre_de_finalisation_demarche      String?              @db.VarChar(50)
-  titre_atelier                       String?              @db.VarChar(255)
-  niveau_atelier                      String?              @db.VarChar(50)
-  accompagnements                     Int                  @default(0)
+  degre_de_finalisation_demarche      String?   @db.VarChar(50)
+  titre_atelier                       String?
+  niveau_atelier                      String?
+  accompagnements                     Int
   thematiques                         String[]
   materiels                           String[]
   thematiques_demarche_administrative String[]
-  created_at                          DateTime?            @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?            @db.Timestamp(6)
-  periode                             DateTime?            @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
-  created_at_coop                     DateTime?            @db.Timestamp(6)
-  updated_at_coop                     DateTime?            @db.Timestamp(6)
-  // Alimente par dataspace (ingest coop), non lu par MIN. Declare pour eviter
-  // un faux drop par prisma migrate dev.
+  created_at                          DateTime? @db.Timestamp(6)
+  updated_at                          DateTime? @db.Timestamp(6)
+  periode                             DateTime? @db.Date
+  created_at_coop                     DateTime? @db.Timestamp(6)
+  updated_at_coop                     DateTime? @db.Timestamp(6)
   beneficiaires                       Json?
-  personne                            personne?            @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
-  lieu                                main_lieu_inclusion? @relation(fields: [lieu_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "activites_coop_lieu_id_fkey")
 
-  @@index([lieu_code_insee])
-  @@index([periode])
-  @@index([personne_id])
-  // Nom historique conserve : la Flyway V084 dataspace a renomme la colonne
-  // structure_id -> lieu_id mais pas l'index (qui s'appelait deja
-  // idx_activites_coop_structure_id et non activites_coop_structure_id_idx
-  // attendu par la migration). Renommage propre a faire dans une future V09x.
-  @@index([lieu_id], map: "idx_activites_coop_structure_id")
   @@schema("main")
 }
 
@@ -650,7 +643,6 @@ model personne {
   is_visible                                                              Boolean?
   updated_at_coop                                                         DateTime?                           @db.Timestamp(6)
   updated_at_idposte                                                      DateTime?                           @db.Timestamp(6)
-  activites_coop                                                          activites_coop[]
   contrat                                                                 contrat[]
   coordination_mediation_coordination_mediation_coordinateur_idTopersonne coordination_mediation[]            @relation("coordination_mediation_coordinateur_idTopersonne")
   coordination_mediation_coordination_mediation_mediateur_idTopersonne    coordination_mediation[]            @relation("coordination_mediation_mediateur_idTopersonne")
@@ -1035,7 +1027,6 @@ model main_lieu_inclusion {
   nom_usage                           String?                              @db.VarChar(255)
   import_warnings                     Json?
   deleted_at                          DateTime?                            @db.Timestamp(6)
-  activites_coop                      activites_coop[]
   personne_affectations_lieu          main_personne_affectations_lieu[]
   adresse                             adresse?                             @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "lieu_inclusion_adresse_fkey")
 
