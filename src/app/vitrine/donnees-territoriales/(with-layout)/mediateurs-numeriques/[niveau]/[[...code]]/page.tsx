@@ -171,7 +171,7 @@ async function recupererStatistiques(
     }
 
     const readModel = await loader.recupererStatistiques(Object.keys(filtres).length > 0 ? filtres : undefined)
-    return statistiquesCoopToMediateursData(readModel)
+    return statistiquesCoopToMediateursData(readModel, codeDepartement !== undefined)
   } catch {
     return {
       message: 'Erreur de récupération de la donnée depuis la Coop',
