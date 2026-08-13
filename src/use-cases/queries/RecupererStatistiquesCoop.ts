@@ -29,6 +29,8 @@ export type StatistiquesCoopReadModel = Readonly<{
   activites: Readonly<{
     durees: ReadonlyArray<StatistiqueItem>
     materiels: ReadonlyArray<StatistiqueItem>
+    // Tags partagés (coordinations/structures) uniquement ; value = id du tag
+    tags: ReadonlyArray<StatistiqueItem>
     thematiques: ReadonlyArray<StatistiqueItem>
     thematiquesDemarches: ReadonlyArray<StatistiqueItem>
     // Somme des participations (accompagnements), pas le nombre d'activités : cf. totaux.activites.total

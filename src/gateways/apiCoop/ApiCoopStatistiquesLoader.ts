@@ -180,6 +180,12 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
           proportion: item.proportion,
           value: item.value,
         })),
+        tags: (attributes.activites.tags ?? []).map((item) => ({
+          count: item.count,
+          label: item.label,
+          proportion: item.proportion,
+          value: item.label,
+        })),
         thematiques: attributes.activites.thematiques.map((item) => ({
           count: item.count,
           label: item.label,
@@ -308,6 +314,8 @@ type CoopStatistiquesAttributes = Readonly<{
   activites: Readonly<{
     durees: ReadonlyArray<StatistiquesItem>
     materiels: ReadonlyArray<StatistiquesItem>
+    // Toujours vide via l'API v1 (requête court-circuitée sans contexte admin) et sans value
+    tags?: ReadonlyArray<Readonly<{ count: number; label: string; proportion: number }>>
     thematiques: ReadonlyArray<StatistiquesItem>
     thematiques_demarches: ReadonlyArray<StatistiquesItem>
     total: number
