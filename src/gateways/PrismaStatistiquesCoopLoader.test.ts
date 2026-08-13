@@ -82,8 +82,8 @@ describe('statistiques coop loader', () => {
     // THEN
     expect(resultat.totaux).toStrictEqual({
       accompagnements: {
-        // Comme l'API Coop : collectifs.total = nombre d'ateliers, pas de participants.
-        collectifs: { proportion: 60, total: 1 },
+        // #1796 : collectifs.total = participants aux ateliers (l'API y mettait le nombre d'ateliers).
+        collectifs: { proportion: 60, total: 3 },
         demarches: { proportion: 0, total: 0 },
         individuels: { proportion: 40, total: 2 },
         total: 5,
@@ -96,8 +96,8 @@ describe('statistiques coop loader', () => {
       },
       beneficiaires: { anonymes: 1, nouveaux: 3, suivis: 3, total: 4 },
     })
-    // Comme l'API Coop : activites.total = somme des participants, pas le nombre de CRA.
-    expect(resultat.activites.total).toBe(5)
+    // Somme des participations, distincte de totaux.activites.total (nombre de CRA)
+    expect(resultat.activites.totalAccompagnements).toBe(5)
     expect(resultat.activites.typeActivites).toStrictEqual([
       { count: 2, label: 'Accompagnement individuel', proportion: 40, value: 'Individuel' },
       { count: 3, label: 'Atelier collectif', proportion: 60, value: 'Collectif' },

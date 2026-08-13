@@ -9,13 +9,14 @@ import {
 
 // Remplace l'appel HTTP à l'API Coop GET /api/v1/statistiques par les mêmes agrégations SQL,
 // exécutées sur le schéma coop répliqué en base (ingestion dataspace).
-// La sémantique reproduit exactement celle de l'API (bornes de dates, valeurs, labels, arrondis), y compris :
-// - activites.total = somme des participants (accompagnements_count) ≠ totaux.activites.total (nombre de CRA) ;
-// - totaux.accompagnements.collectifs.total = nombre d'ateliers collectifs (pas de participants), comme l'API ;
+// La sémantique reproduit celle de l'API (bornes de dates, valeurs, labels, arrondis), y compris :
 // - totaux.*.demarches vaut toujours 0 (l'API ne renvoie pas ces clés) ;
 // - le type « Demarche » n'est pas filtrable (l'API ne le supporte pas).
-// Écart assumé (#1286) : accompagnementsParMois suit la période du/au (repli : 12 derniers mois),
-// comme la page « mes statistiques » de la Coop — l'API v1 renvoyait toujours les 12 derniers mois.
+// Écarts assumés avec l'API v1 :
+// - #1286 : accompagnementsParMois suit la période du/au (repli : 12 derniers mois), comme la page
+//   « mes statistiques » de la Coop — l'API renvoyait toujours les 12 derniers mois ;
+// - #1796 : totaux.accompagnements.collectifs.total = participants aux ateliers (l'API y mettait le
+//   nombre d'ateliers, incohérent avec la proportion adjacente calculée sur les participants).
 export class PrismaStatistiquesCoopLoader implements StatistiquesCoopLoader {
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     const requete = construireRequete(filtres ?? {})
@@ -46,7 +47,7 @@ export class PrismaStatistiquesCoopLoader implements StatistiquesCoopLoader {
         accompagnements: {
           collectifs: {
             proportion: proportionAccompagnementsCollectifs,
-            total: activites.nombreCollectifs,
+            total: activites.participantsCollectifs,
           },
           demarches: {
             proportion: 0,
@@ -361,8 +362,7 @@ async function recupererStatistiquesActivites(requete: Requete): Promise<
       materiels: repartir(MATERIELS, comptages, 'materiel'),
       thematiques: repartir(THEMATIQUES_NON_ADMINISTRATIVES, comptages, 'thematiques'),
       thematiquesDemarches: repartir(THEMATIQUES_ADMINISTRATIVES, comptages, 'thematiques'),
-      // Comme l'API Coop : le total des activités est la somme des participants, pas le nombre de CRA.
-      total: comptages.total_accompagnements,
+      totalAccompagnements: comptages.total_accompagnements,
       typeActivites: repartir(TYPES_ACTIVITE, comptages, 'type'),
       typeLieu: repartir(TYPES_LIEU, comptages, 'type_lieu'),
     },

@@ -37,7 +37,7 @@ export function statistiquesCoopToMediateursData(readModel: StatistiquesCoopRead
         proportion: item.proportion,
         value: item.value,
       })),
-      total: readModel.activites.total,
+      total: readModel.activites.totalAccompagnements,
       typeActivites: readModel.activites.typeActivites.map((item) => ({
         count: item.count,
         label: item.label,

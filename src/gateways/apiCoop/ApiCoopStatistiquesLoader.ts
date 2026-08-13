@@ -192,7 +192,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
           proportion: item.proportion,
           value: item.value,
         })),
-        total: attributes.activites.total,
+        totalAccompagnements: attributes.activites.total,
         typeActivites: attributes.activites.type_activites.map((item) => ({
           count: item.count,
           label: item.label,
@@ -231,7 +231,8 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         accompagnements: {
           collectifs: {
             proportion: attributes.totaux.accompagnements.collectifs.proportion,
-            total: attributes.totaux.accompagnements.collectifs.total,
+            // #1796 : l'API met le nombre d'ateliers dans ce champ ; le contrat attend les participants
+            total: attributes.totaux.activites.collectifs.participants,
           },
           demarches: {
             proportion: attributes.totaux.accompagnements.demarches?.proportion ?? 0,
