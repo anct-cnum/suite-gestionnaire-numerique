@@ -1,0 +1,11 @@
+.separateur {
+  align-self: stretch;
+  border-left: 0.0625rem solid var(--border-default-grey);
+  margin: 1rem 0;
+}
+
+@media (width <= 61.9375em) {
+  .separateur {
+    display: none;
+  }
+}
