@@ -23,11 +23,11 @@ describe('données structure loader', () => {
     )`
   })
 
-  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
-
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
 
   it('compte les lieux où une personne employée par la structure a une affectation active', async () => {
     // GIVEN

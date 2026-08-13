@@ -31,9 +31,9 @@ describe('fusion de structures (repository Prisma)', () => {
   // pendant qu'un autre fichier (loader statistiques, données structure) utilise ces tables.
   beforeAll(async () => prisma.$queryRaw`SELECT pg_advisory_lock(420001)::text`)
 
-  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
-
   afterEach(nettoyer)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
 
   it('déplace les notions (ids de source inclus), balaie les FK résiduelles, soft-delete l’absorbée et préserve les champs de la survivante', async () => {
     // GIVEN une survivante canonique (APE 84.11Z) et une absorbée antenne portant membre, coop et une

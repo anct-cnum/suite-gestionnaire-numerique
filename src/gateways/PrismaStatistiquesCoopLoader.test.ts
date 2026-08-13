@@ -69,14 +69,14 @@ describe('statistiques coop loader', () => {
     )`
   })
 
-  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
-
   beforeEach(async () => {
     await prisma.$queryRaw`START TRANSACTION`
     await creerJeuDeDonnees()
   })
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
+
+  afterAll(async () => prisma.$queryRaw`SELECT pg_advisory_unlock(420001)`)
 
   it('calcule les répartitions et totaux identiques à l’API Coop sur une période donnée', async () => {
     // GIVEN
