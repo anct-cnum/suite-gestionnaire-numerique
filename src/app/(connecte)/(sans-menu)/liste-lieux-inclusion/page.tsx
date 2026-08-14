@@ -24,6 +24,7 @@ export default async function ListeLieuxInclusionController({
   readonly searchParams: Promise<{
     codeDepartement?: string
     codeRegion?: string
+    fraicheur?: string
     frr?: string
     horsZonePrioritaire?: string
     nom?: string
@@ -49,17 +50,19 @@ export default async function ListeLieuxInclusionController({
 
   const resolvedSearchParams = await searchParams
 
-  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre)
+  const now = new Date()
+  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre, now)
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
   const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieux(filtres)
 
   const listeLieuxInclusionViewModel = handleReadModelOrError(listeLieuxInclusionReadModel, (readModel) =>
-    listeLieuxInclusionPresenter(readModel, new Date())
+    listeLieuxInclusionPresenter(readModel, now)
   )
 
   const currentSearchParams = new URLSearchParams()
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, nom, page, qpv, statut } = resolvedSearchParams
+  const { codeDepartement, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } =
+    resolvedSearchParams
   setSearchParams()
 
   return (
@@ -78,26 +81,11 @@ export default async function ListeLieuxInclusionController({
     if (statut === 'archives') {
       currentSearchParams.set('statut', 'archives')
     }
-    if (page !== undefined && page !== '') {
-      currentSearchParams.set('page', page)
-    }
-    if (codeDepartement !== undefined && codeDepartement !== '') {
-      currentSearchParams.set('codeDepartement', codeDepartement)
-    }
-    if (codeRegion !== undefined && codeRegion !== '') {
-      currentSearchParams.set('codeRegion', codeRegion)
-    }
-    if (qpv !== undefined && qpv !== '') {
-      currentSearchParams.set('qpv', qpv)
-    }
-    if (frr !== undefined && frr !== '') {
-      currentSearchParams.set('frr', frr)
-    }
-    if (horsZonePrioritaire !== undefined && horsZonePrioritaire !== '') {
-      currentSearchParams.set('horsZonePrioritaire', horsZonePrioritaire)
-    }
-    if (nom !== undefined && nom !== '') {
-      currentSearchParams.set('nom', nom)
+    const parametres = { codeDepartement, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv }
+    for (const [cle, valeur] of Object.entries(parametres)) {
+      if (valeur !== undefined && valeur !== '') {
+        currentSearchParams.set(cle, valeur)
+      }
     }
   }
 }

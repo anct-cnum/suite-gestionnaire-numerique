@@ -48,6 +48,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       {
         codeDepartement: codeDepartementDemande,
         codeRegion: codeRegionDemande,
+        fraicheur: searchParams.get('fraicheur') ?? undefined,
         frr: searchParams.get('frr') ?? undefined,
         horsZonePrioritaire: searchParams.get('horsZonePrioritaire') ?? undefined,
         nom: searchParams.get('nom') ?? undefined,
@@ -55,6 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         statut: searchParams.get('statut') ?? undefined,
       },
       scopeFiltre,
+      new Date(),
       100_000
     )
 

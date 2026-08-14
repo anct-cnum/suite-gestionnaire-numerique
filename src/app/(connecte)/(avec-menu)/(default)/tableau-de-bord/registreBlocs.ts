@@ -11,9 +11,11 @@ export type IdentifiantBloc =
   | 'labelConum'
   | 'mediateurs'
   | 'rejoindreGouvernance'
+  | 'vigilanceLieux'
 
 export function blocsParContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
-  const blocs: Array<IdentifiantBloc> = ['accueil']
+  // Points de vigilance des lieux : visible pour tous les rôles, dans le périmètre de chacun (#1488).
+  const blocs: Array<IdentifiantBloc> = ['accueil', 'vigilanceLieux']
 
   if (contexte.aCesRoles('gestionnaire_structure') && contexte.isBetaTesteur) {
     blocs.push('labelConum')

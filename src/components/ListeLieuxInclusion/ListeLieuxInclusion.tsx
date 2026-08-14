@@ -24,13 +24,13 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { LieuInclusionViewModel, ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
-import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
 import {
   buildURLSearchParamsFromLieuxInclusionFilters,
   getActiveLieuxInclusionFilters,
   parseURLParamsToFiltresLieuxInclusionInternes,
   removeLieuxInclusionFilterFromParams,
 } from '@/shared/filtresLieuxInclusionUtils'
+import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
@@ -599,35 +599,33 @@ function LigneLieu({
       {estOngletArchives ? <td>{lieu.dateArchivage}</td> : null}
       {afficherColonneMajInfos ? (
         <td>
-          {lieu.derniereMiseAJour !== null ? (
-            <button
-              aria-controls={drawerInfoId}
-              data-fr-opened="false"
-              onClick={onOpenInfoDrawer}
+          <button
+            aria-controls={drawerInfoId}
+            data-fr-opened="false"
+            onClick={onOpenInfoDrawer}
+            style={{
+              alignItems: 'center',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              gap: '4px',
+              padding: 0,
+            }}
+            type="button"
+          >
+            <span
               style={{
-                alignItems: 'center',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                gap: '4px',
-                padding: 0,
+                backgroundColor: couleursFraicheur[lieu.derniereMiseAJour.couleur],
+                borderRadius: '50%',
+                display: 'inline-block',
+                flexShrink: 0,
+                height: '12px',
+                width: '12px',
               }}
-              type="button"
-            >
-              <span
-                style={{
-                  backgroundColor: couleursFraicheur[lieu.derniereMiseAJour.couleur],
-                  borderRadius: '50%',
-                  display: 'inline-block',
-                  flexShrink: 0,
-                  height: '12px',
-                  width: '12px',
-                }}
-              />
-              {lieu.derniereMiseAJour.date}
-            </button>
-          ) : null}
+            />
+            {lieu.derniereMiseAJour.date}
+          </button>
         </td>
       ) : null}
       <td>
@@ -708,7 +706,7 @@ function buildExportParams(normalizedSearchParams: URLSearchParams, estOngletArc
     exportParams.set('statut', 'archives')
   }
 
-  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire', 'nom']) {
+  for (const cle of ['codeDepartement', 'codeRegion', 'qpv', 'frr', 'horsZonePrioritaire', 'nom', 'fraicheur']) {
     const valeur = normalizedSearchParams.get(cle)
     if (valeur !== null && valeur !== '') {
       exportParams.set(cle, valeur)

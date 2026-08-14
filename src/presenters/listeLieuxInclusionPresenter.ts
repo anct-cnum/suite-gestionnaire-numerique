@@ -1,6 +1,6 @@
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
-import { CouleurFraicheur, couleurFraicheur } from '@/presenters/shared/fraicheur'
 import { libelleTypologie } from '@/presenters/shared/typologie'
+import { CouleurFraicheur, couleurFraicheur } from '@/shared/fraicheur'
 import { RecupererLieuxInclusionReadModel } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 export function listeLieuxInclusionPresenter(
@@ -52,7 +52,7 @@ export interface ListeLieuxInclusionViewModel {
 export interface LieuInclusionViewModel {
   adresse: AdresseViewModel
   dateArchivage: null | string
-  derniereMiseAJour: DerniereMiseAJourViewModel | null
+  derniereMiseAJour: DerniereMiseAJourViewModel
   id: string
   idCartographieNationale: null | string
   nbAccompagnements: number
@@ -107,10 +107,10 @@ function getTags(lieu: { est_frr: boolean; est_qpv: boolean }): Array<Tag> {
   return tags
 }
 
-function getDerniereMiseAJour(updatedAt: Date | null, now: Date): DerniereMiseAJourViewModel | null {
-  if (updatedAt === null) {
-    return null
+// Sans date de mise à jour, le lieu est « À actualiser » et la date est inconnue (#1488).
+function getDerniereMiseAJour(updatedAt: Date | null, now: Date): DerniereMiseAJourViewModel {
+  return {
+    couleur: couleurFraicheur(updatedAt, now),
+    date: updatedAt === null ? '-' : formaterEnDateFrancaise(updatedAt),
   }
-
-  return { couleur: couleurFraicheur(updatedAt, now), date: formaterEnDateFrancaise(updatedAt) }
 }
