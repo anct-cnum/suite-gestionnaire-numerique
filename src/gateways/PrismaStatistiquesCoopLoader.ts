@@ -371,8 +371,9 @@ async function recupererStatistiquesActivites(requete: Requete): Promise<
   }
 }
 
-// Vue globale, comme la branche admin de la Coop : uniquement les tags partagés
-// (coordinations/structures, mediateur_id IS NULL), pondérés par accompagnement.
+// Tags « organisationnels » uniquement (#1811, aligné sur le tagScope de la Coop) : les portées
+// nationale, départementale et d'équipe — jamais les tags personnels (médiateur ou coordinateur).
+// Pondérés par accompagnement ; le périmètre territorial vient de la jointure sur les activités.
 async function recupererTags(requete: Requete): Promise<StatistiquesCoopReadModel['activites']['tags']> {
   const lignes = await prisma.$queryRaw<Array<Readonly<{ count: number; id: string; label: string }>>>`
     SELECT t.id::text AS id,
@@ -383,7 +384,7 @@ async function recupererTags(requete: Requete): Promise<StatistiquesCoopReadMode
       INNER JOIN coop.activite_tags activite_tag ON activite_tag.activite_id = act.id
       INNER JOIN coop.tags t ON t.id = activite_tag.tag_id
       ${requete.jointures}
-    WHERE t.mediateur_id IS NULL
+    WHERE (t.equipe = true OR (t.mediateur_id IS NULL AND t.coordinateur_id IS NULL))
       AND t.suppression IS NULL
       AND ${requete.where}
     GROUP BY t.id, t.nom
