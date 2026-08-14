@@ -4,7 +4,7 @@ import Button from '@codegouvfr/react-dsfr/Button'
 import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
 import { Fragment, useState } from 'react'
 import { AccompagnementPieChart } from '../_components/AccompagnementPieChart'
-import { ProgressItemList } from '../_components/ProgressItemList'
+import { QuantifiedShareList } from '../_components/QuantifiedShareList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
 import { StatistiqueAccompagnement } from '../_components/StatistiqueAccompagnement'
 import { StatistiqueMateriel } from '../_components/StatistiqueMateriel'
@@ -20,8 +20,6 @@ import { numberToString, sPluriel } from '../utils'
 type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
 
 const desc = ({ count: countA }: { count: number }, { count: countB }: { count: number }) => countB - countA
-
-const toMaxProportion = (max: number, { proportion }: { proportion: number }) => (proportion > max ? proportion : max)
 
 export const StatistiquesActivites = ({
   activites,
@@ -69,7 +67,7 @@ export const StatistiquesActivites = ({
         "Thématiques sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques.",
       items: activites.thematiques.sort(desc),
       colors: thematiquesAccompagnementColors,
-      maxProportion: activites.thematiques.reduce(toMaxProportion, 0),
+      limite: undefined,
     },
     {
       category: 'demarches',
@@ -78,7 +76,7 @@ export const StatistiquesActivites = ({
         "Thématiques des démarches administratives sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques administratives.",
       items: activites.thematiquesDemarches.sort(desc),
       colors: thematiquesAccompagnementColors,
-      maxProportion: activites.thematiquesDemarches.reduce(toMaxProportion, 0),
+      limite: undefined,
     },
     // Tags absents (vue France) : ni la catégorie ni le segment ne sont rendus
     ...(activites.tags === undefined
@@ -91,7 +89,8 @@ export const StatistiquesActivites = ({
               "Tags spécifiques sélectionnés lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs tags.",
             items: activites.tags.sort(desc),
             colors: tagsColor,
-            maxProportion: activites.tags.reduce(toMaxProportion, 0),
+            // Jusqu'à ~50 tags dans un département : top 10 + « Voir tous », comme les lieux/communes de la Coop
+            limite: { count: 10, hideLabel: 'Réduire', showLabel: 'Voir tous les tags' },
           },
         ]),
   ]
@@ -136,7 +135,7 @@ export const StatistiquesActivites = ({
         </div>
         <hr className="fr-separator-8v" />
         {accompagnementCategories.map(
-          ({ category, title, description, items, colors, maxProportion }) =>
+          ({ category, title, description, items, colors, limite }) =>
             category === accompagnementCategory && (
               <Fragment key={category}>
                 <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
@@ -162,11 +161,11 @@ export const StatistiquesActivites = ({
                     </span>
                   </div>
                 </div>
-                <ProgressItemList
-                  items={items}
+                <QuantifiedShareList
                   colors={colors}
-                  maxProportion={maxProportion}
+                  limit={limite}
                   oneLineLabel
+                  quantifiedShares={items}
                   tooltipKey={category}
                 />
               </Fragment>
