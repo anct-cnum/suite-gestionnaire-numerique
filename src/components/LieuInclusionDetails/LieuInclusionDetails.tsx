@@ -5,7 +5,7 @@ import LieuInclusionDetailsHeader from '@/components/LieuInclusionDetails/LieuIn
 import LieuInclusionDetailsInformationsGenerales from '@/components/LieuInclusionDetails/LieuInclusionDetailsInformationsGenerales'
 import LieuInclusionDetailsPersonnes from '@/components/LieuInclusionDetails/LieuInclusionDetailsPersonnes'
 import LieuInclusionDetailsServices from '@/components/LieuInclusionDetails/LieuInclusionDetailsServices'
-import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
+import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export type LieuInclusionDetailsHeaderData = Readonly<{
   fraicheur?: Readonly<{

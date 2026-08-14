@@ -12,6 +12,7 @@ import BlocGouvernance from '../../blocs/BlocGouvernance'
 import BlocLabelConum from '../../blocs/BlocLabelConum'
 import BlocMediateurs from '../../blocs/BlocMediateurs'
 import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
+import BlocVigilanceLieux from '../../blocs/BlocVigilanceLieux'
 import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
@@ -59,6 +60,7 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
     labelConum: <BlocLabelConum key="labelConum" structureId={contexte.idStructure()} />,
     mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
     rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
+    vigilanceLieux: <BlocVigilanceLieux key="vigilanceLieux" scope={scope} />,
   }
 
   return (

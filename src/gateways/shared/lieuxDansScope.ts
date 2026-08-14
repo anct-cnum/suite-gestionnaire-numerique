@@ -1,0 +1,84 @@
+import { Prisma } from '@prisma/client'
+
+import departements from '../../../ressources/departements.json'
+import { FiltreGeographiqueLieux, StatutLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
+import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+
+// Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
+// Source unique pour la liste des lieux et les compteurs du tableau de bord (#1488) afin
+// que les volumes affichés soient strictement identiques.
+// Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
+export function buildLieuxDansScopeCte(
+  scopeFiltre: ScopeFiltre,
+  statut: StatutLieux,
+  geographique?: FiltreGeographiqueLieux
+): Prisma.Sql {
+  const filtreStatut = buildFiltreStatut(statut)
+
+  if (geographique) {
+    const codesDepartements =
+      geographique.type === 'region'
+        ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)
+        : [geographique.code]
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT l.id
+      FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse a ON a.id = l.adresse_id
+      WHERE a.departement = ANY(${codesDepartements})
+        ${filtreStatut}
+    )`
+  }
+
+  if (scopeFiltre.type === 'departemental') {
+    const codesDepartements = [...scopeFiltre.codes]
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT l.id
+      FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse a ON a.id = l.adresse_id
+      WHERE a.departement = ANY(${codesDepartements})
+        ${filtreStatut}
+    )`
+  }
+
+  if (scopeFiltre.type === 'structure') {
+    // scopeFiltre.id refere a une structure_administrative.id. Depuis le
+    // retrait de l'asso lieu ↔ SA (#1711), un gestionnaire de SA voit les
+    // lieux ou travaillent des personnes employees par sa SA (paf_lieu ×
+    // paf_emploi croises, plus min.personne_enrichie pour les mediateurs Coop
+    // sans paf_emploi). Pour les lieux archivés, le périmètre est calculé sans
+    // exiger d'affectations actives, puis le statut est appliqué.
+    const filtreEmploiActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
+    const filtreLieuActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT l.id
+      FROM main.lieu_inclusion l
+      WHERE EXISTS (
+          SELECT 1 FROM main.personne_affectations_lieu pal
+          WHERE pal.lieu_id = l.id ${filtreLieuActif}
+            AND pal.personne_id IN (
+              SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+              WHERE pae.structure_administrative_id = ${scopeFiltre.id} ${filtreEmploiActif}
+              UNION
+              SELECT pe.id FROM min.personne_enrichie pe
+              WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
+            )
+        )
+        ${filtreStatut}
+    )`
+  }
+
+  // Scope national : aucune restriction d'accès
+  return Prisma.sql`lieux_dans_scope AS (
+    SELECT l.id FROM main.lieu_inclusion l
+    WHERE true
+      ${filtreStatut}
+  )`
+}
+
+// Archivé = date de suppression renseignée (soft delete #1497) ; actif = non supprimé.
+function buildFiltreStatut(statut: StatutLieux): Prisma.Sql {
+  if (statut === 'archive') {
+    return Prisma.sql`AND l.deleted_at IS NOT NULL`
+  }
+  return Prisma.sql`AND l.deleted_at IS NULL`
+}

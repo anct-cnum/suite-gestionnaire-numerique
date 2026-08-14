@@ -1,3 +1,4 @@
+import { couleurParSlugFraicheur, libellesFraicheur, SlugFraicheur } from '@/shared/fraicheur'
 import { FiltreGeographiqueLieux, FiltresListeLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
@@ -5,6 +6,7 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 export interface FiltresLieuxInclusionInternes {
   codeDepartement: null | string
   codeRegion: null | string
+  fraicheur: null | SlugFraicheur
   frr: boolean
   horsZonePrioritaire: boolean
   qpv: boolean
@@ -17,6 +19,7 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
   return {
     codeDepartement: params.get('codeDepartement'),
     codeRegion: params.get('codeRegion'),
+    fraicheur: parseSlugFraicheur(params.get('fraicheur')),
     frr: params.get('frr') === 'true',
     horsZonePrioritaire: params.get('horsZonePrioritaire') === 'true',
     qpv: params.get('qpv') === 'true',
@@ -30,9 +33,10 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
 export function buildFiltresLieuxInclusion(
   params: FiltresLieuxInclusionURLParams,
   scopeFiltre: ScopeFiltre,
+  now: Date,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeRegion, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
+  const { codeDepartement, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
 
   let geographique: FiltreGeographiqueLieux | undefined
   if (scopeFiltre.type === 'national') {
@@ -43,7 +47,10 @@ export function buildFiltresLieuxInclusion(
     }
   }
 
+  const slugFraicheur = parseSlugFraicheur(fraicheur)
+
   return {
+    fraicheur: slugFraicheur === null ? undefined : { couleur: couleurParSlugFraicheur[slugFraicheur], now },
     frr: frr === 'true' ? true : undefined,
     geographique,
     horsZonePrioritaire: horsZonePrioritaire === 'true' ? true : undefined,
@@ -67,7 +74,11 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
   const qpv = params.get('qpv')
   const frr = params.get('frr')
   const horsZonePrioritaire = params.get('horsZonePrioritaire')
+  const fraicheur = parseSlugFraicheur(params.get('fraicheur'))
 
+  if (fraicheur !== null) {
+    convertedParams.set('fraicheur', fraicheur)
+  }
   if (codeDepartement !== null && codeDepartement !== '') {
     convertedParams.set('codeDepartement', codeDepartement)
   }
@@ -111,6 +122,15 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
   const qpv = params.get('qpv')
   const frr = params.get('frr')
   const horsZonePrioritaire = params.get('horsZonePrioritaire')
+  const fraicheur = parseSlugFraicheur(params.get('fraicheur'))
+
+  if (fraicheur !== null) {
+    filtres.push({
+      label: libellesFraicheur[couleurParSlugFraicheur[fraicheur]],
+      paramKey: 'fraicheur',
+      paramValue: fraicheur,
+    })
+  }
 
   if (codeDepartement !== null && codeDepartement !== '') {
     // Chercher le nom du département
@@ -159,10 +179,15 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
   return filtres
 }
 
+function parseSlugFraicheur(valeur: null | string | undefined): null | SlugFraicheur {
+  return valeur !== null && valeur !== undefined && valeur in couleurParSlugFraicheur ? (valeur as SlugFraicheur) : null
+}
+
 // Types pour les paramètres d'URL des lieux d'inclusion
 interface FiltresLieuxInclusionURLParams {
   codeDepartement?: string
   codeRegion?: string
+  fraicheur?: string
   frr?: string
   horsZonePrioritaire?: string
   nom?: string

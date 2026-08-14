@@ -1,5 +1,5 @@
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
-import { CouleurFraicheur, couleurFraicheur, libellesFraicheur } from '@/presenters/shared/fraicheur'
+import { CouleurFraicheur, couleurFraicheur, libellesFraicheur } from '@/shared/fraicheur'
 import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
 
 export function lieuDetailsPresenter(

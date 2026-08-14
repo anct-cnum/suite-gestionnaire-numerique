@@ -1,13 +1,13 @@
 import { Prisma } from '@prisma/client'
 
+import { buildLieuxDansScopeCte } from './shared/lieuxDansScope'
 import prisma from '../../prisma/prismaClient'
-import departements from '../../ressources/departements.json'
+import { bornesFraicheur } from '@/shared/fraicheur'
 import {
   FiltresListeLieux,
   LieuInclusionNumeriqueItem,
   RecupererLieuxInclusionPort,
   RecupererLieuxInclusionReadModel,
-  StatutLieux,
 } from '@/use-cases/queries/RecupererLieuxInclusion'
 
 // Refonte 2026 : ce loader cible main.lieu_inclusion. Le lien lieu ↔ structure
@@ -48,78 +48,9 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     }
   }
 
-  // Archivé = date de suppression renseignée (soft delete #1497) ; actif = non supprimé.
-  private buildFiltreStatut(statut: StatutLieux): Prisma.Sql {
-    if (statut === 'archive') {
-      return Prisma.sql`AND l.deleted_at IS NOT NULL`
-    }
-    return Prisma.sql`AND l.deleted_at IS NULL`
-  }
-
-  // Étape 1 — Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
-  // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
+  // Étape 1 — Périmètre d'accès : délégué au module partagé avec le tableau de bord (#1488).
   private buildScopeCte(filtres: FiltresListeLieux): Prisma.Sql {
-    const { geographique, scopeFiltre, statut } = filtres
-    const filtreStatut = this.buildFiltreStatut(statut)
-
-    if (geographique) {
-      const codesDepartements =
-        geographique.type === 'region'
-          ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)
-          : [geographique.code]
-      return Prisma.sql`lieux_dans_scope AS (
-        SELECT l.id
-        FROM main.lieu_inclusion l
-        LEFT JOIN main.adresse a ON a.id = l.adresse_id
-        WHERE a.departement = ANY(${codesDepartements})
-          ${filtreStatut}
-      )`
-    }
-
-    if (scopeFiltre.type === 'departemental') {
-      const codesDepartements = [...scopeFiltre.codes]
-      return Prisma.sql`lieux_dans_scope AS (
-        SELECT l.id
-        FROM main.lieu_inclusion l
-        LEFT JOIN main.adresse a ON a.id = l.adresse_id
-        WHERE a.departement = ANY(${codesDepartements})
-          ${filtreStatut}
-      )`
-    }
-
-    if (scopeFiltre.type === 'structure') {
-      // scopeFiltre.id refere a une structure_administrative.id. Depuis le
-      // retrait de l'asso lieu ↔ SA (#1711), un gestionnaire de SA voit les
-      // lieux ou travaillent des personnes employees par sa SA (paf_lieu ×
-      // paf_emploi croises, plus min.personne_enrichie pour les mediateurs Coop
-      // sans paf_emploi). Pour les lieux archivés, le périmètre est calculé sans
-      // exiger d'affectations actives, puis le statut est appliqué.
-      const filtreEmploiActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
-      const filtreLieuActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
-      return Prisma.sql`lieux_dans_scope AS (
-        SELECT l.id
-        FROM main.lieu_inclusion l
-        WHERE EXISTS (
-            SELECT 1 FROM main.personne_affectations_lieu pal
-            WHERE pal.lieu_id = l.id ${filtreLieuActif}
-              AND pal.personne_id IN (
-                SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-                WHERE pae.structure_administrative_id = ${scopeFiltre.id} ${filtreEmploiActif}
-                UNION
-                SELECT pe.id FROM min.personne_enrichie pe
-                WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
-              )
-          )
-          ${filtreStatut}
-      )`
-    }
-
-    // Scope national : aucune restriction d'accès
-    return Prisma.sql`lieux_dans_scope AS (
-      SELECT l.id FROM main.lieu_inclusion l
-      WHERE true
-        ${filtreStatut}
-    )`
+    return buildLieuxDansScopeCte(filtres.scopeFiltre, filtres.statut, filtres.geographique)
   }
 
   // Étape 2 — Filtres UI : "parmi les lieux accessibles, lesquels correspondent à la recherche ?"
@@ -147,6 +78,18 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         WHERE (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
            OR (z.type = 'FRR' AND z.code_insee = a.code_insee)
       )`)
+    }
+    if (filtres.fraicheur !== undefined) {
+      // Seuils identiques à couleurFraicheur (RG7 #1488) : updated_at ∈ ]apres, jusqua].
+      const { apres, jusqua } = bornesFraicheur(filtres.fraicheur.couleur, filtres.fraicheur.now)
+      if (apres !== undefined && jusqua !== undefined) {
+        conditions.push(Prisma.sql`l.updated_at > ${apres} AND l.updated_at <= ${jusqua}`)
+      } else if (apres !== undefined) {
+        conditions.push(Prisma.sql`l.updated_at > ${apres}`)
+      } else if (jusqua !== undefined) {
+        // Sans borne basse (« À actualiser »), les lieux sans date de mise à jour sont inclus.
+        conditions.push(Prisma.sql`(l.updated_at IS NULL OR l.updated_at <= ${jusqua})`)
+      }
     }
 
     return conditions.length > 0 ? Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}` : Prisma.empty
