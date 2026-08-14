@@ -96,15 +96,12 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
         fallback={
           <div className="fr-py-4w">
             <div className="fr-alert fr-alert--error">
-              <p>Erreur de récupération de la donnée depuis la Coop</p>
+              <p>Erreur de récupération de la donnée</p>
             </div>
           </div>
         }
       >
-        <Suspense
-          fallback={<SpinnerSimple text="Récupération des données depuis la Coop" />}
-          key={`${dateDebut}-${dateFin}`}
-        >
+        <Suspense fallback={<SpinnerSimple text="Récupération des données" />} key={`${dateDebut}-${dateFin}`}>
           <StatistiquesAsyncContent dateDebut={dateDebut} dateFin={dateFin} statistiquesPromise={statistiquesPromise} />
         </Suspense>
       </AsyncLoaderErrorBoundary>
@@ -174,7 +171,7 @@ async function recupererStatistiques(
     return statistiquesCoopToMediateursData(readModel, codeDepartement !== undefined)
   } catch {
     return {
-      message: 'Erreur de récupération de la donnée depuis la Coop',
+      message: 'Erreur de récupération de la donnée',
       type: 'error',
     }
   }

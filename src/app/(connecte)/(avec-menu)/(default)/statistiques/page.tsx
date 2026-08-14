@@ -180,7 +180,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
         fallback={
           <div className="fr-py-4w">
             <div className="fr-alert fr-alert--error">
-              <p>Erreur de récupération des données depuis la Coop</p>
+              <p>Erreur de récupération des données</p>
             </div>
           </div>
         }

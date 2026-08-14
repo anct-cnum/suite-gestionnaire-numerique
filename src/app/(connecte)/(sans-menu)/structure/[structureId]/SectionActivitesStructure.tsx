@@ -26,7 +26,7 @@ export default async function SectionActivitesStructure({ structureId }: Props):
       >
         <h2 className="fr-h6 fr-m-0">Activités</h2>
         <div className="fr-alert fr-alert--error fr-mt-2w">
-          <p>Erreur de récupération des données d&apos;activité depuis la Coop</p>
+          <p>Erreur de récupération des données d&apos;activité</p>
         </div>
       </section>
     )

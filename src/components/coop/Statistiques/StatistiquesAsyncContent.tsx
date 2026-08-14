@@ -16,7 +16,7 @@ export default function StatistiquesAsyncContent({ dateDebut, dateFin, statistiq
     return (
       <div className="fr-py-4w">
         <div className="fr-alert fr-alert--error">
-          <p>Erreur de récupération de la donnée depuis la Coop</p>
+          <p>Erreur de récupération de la donnée</p>
         </div>
       </div>
     )
