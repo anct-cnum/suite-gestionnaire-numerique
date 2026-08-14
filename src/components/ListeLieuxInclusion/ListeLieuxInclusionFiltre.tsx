@@ -4,7 +4,7 @@ import { ReactElement, useEffect, useId, useRef, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
-import { SelectInstance } from '../shared/Select/Select'
+import Select, { SelectInstance } from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
 import {
   toutesLesRegions,
@@ -12,6 +12,15 @@ import {
   zoneGeographiqueToURLSearchParams,
 } from '@/presenters/filtresUtilisateurPresenter'
 import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUtils'
+import { libellesFraicheur, SlugFraicheur, slugParCouleurFraicheur, temporalitesFraicheur } from '@/shared/fraicheur'
+
+const optionsFraicheur: ReadonlyArray<Readonly<{ label: string; value: '' | SlugFraicheur }>> = [
+  { label: 'Tous', value: '' },
+  ...(['blue', 'yellow', 'orange', 'red'] as const).map((couleur) => ({
+    label: `${libellesFraicheur[couleur]} (${temporalitesFraicheur[couleur]})`,
+    value: slugParCouleurFraicheur[couleur],
+  })),
+]
 
 export default function ListeLieuxInclusionFiltre({
   closeDrawer,
@@ -25,10 +34,12 @@ export default function ListeLieuxInclusionFiltre({
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
   const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)
   const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(currentFilters.horsZonePrioritaire)
+  const [selectedFraicheur, setSelectedFraicheur] = useState<'' | SlugFraicheur>(currentFilters.fraicheur ?? '')
 
   const qpvCheckboxId = useId()
   const frrCheckboxId = useId()
   const horsZonePrioritaireCheckboxId = useId()
+  const fraicheurSelectId = useId()
 
   const typologiesTerritoire = [
     {
@@ -59,6 +70,7 @@ export default function ListeLieuxInclusionFiltre({
     setIsQpvSelected(currentFilters.qpv)
     setIsFrrSelected(currentFilters.frr)
     setIsHorsZonePrioritaireSelected(currentFilters.horsZonePrioritaire)
+    setSelectedFraicheur(currentFilters.fraicheur ?? '')
   }, [currentFilters])
 
   function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
@@ -90,6 +102,9 @@ export default function ListeLieuxInclusionFiltre({
     if (isHorsZonePrioritaireSelected) {
       params.set('horsZonePrioritaire', 'true')
     }
+    if (selectedFraicheur !== '') {
+      params.set('fraicheur', selectedFraicheur)
+    }
 
     onFilterAction(params)
     closeDrawer()
@@ -101,6 +116,7 @@ export default function ListeLieuxInclusionFiltre({
     setIsQpvSelected(false)
     setIsFrrSelected(false)
     setIsHorsZonePrioritaireSelected(false)
+    setSelectedFraicheur('')
     onResetAction()
     closeDrawer()
   }
@@ -113,6 +129,18 @@ export default function ListeLieuxInclusionFiltre({
           <hr className="fr-hr" />
         </>
       )}
+
+      <Select
+        id={fraicheurSelectId}
+        onChange={(option) => {
+          setSelectedFraicheur(option?.value ?? '')
+        }}
+        options={optionsFraicheur}
+        value={selectedFraicheur}
+      >
+        Statut des données
+      </Select>
+      <hr className="fr-hr" />
 
       <div className="fr-fieldset">
         <legend className="fr-fieldset__legend fr-text--regular">Typologie de territoire</legend>

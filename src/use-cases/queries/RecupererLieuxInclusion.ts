@@ -1,4 +1,5 @@
 import { ScopeFiltre } from './ResoudreContexte'
+import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export type FiltreGeographiqueLieux = Readonly<{
   code: string
@@ -8,6 +9,8 @@ export type FiltreGeographiqueLieux = Readonly<{
 export type StatutLieux = 'actif' | 'archive'
 
 export type FiltresListeLieux = Readonly<{
+  // La date de référence accompagne le statut pour que le gateway calcule les mêmes seuils que l'affichage (RG7 #1488).
+  fraicheur?: Readonly<{ couleur: CouleurFraicheur; now: Date }>
   frr?: boolean
   geographique?: FiltreGeographiqueLieux
   horsZonePrioritaire?: boolean

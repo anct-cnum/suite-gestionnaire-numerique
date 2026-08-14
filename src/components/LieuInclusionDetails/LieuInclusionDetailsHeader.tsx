@@ -4,7 +4,7 @@ import { LieuInclusionDetailsHeaderData } from '@/components/LieuInclusionDetail
 import SupprimerLieuBouton from '@/components/LieuInclusionDetails/SupprimerLieuBouton'
 import Menu from '@/components/shared/Menu/Menu'
 import Tag from '@/components/shared/Tag/Tag'
-import { CouleurFraicheur } from '@/presenters/shared/fraicheur'
+import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export default function LieuInclusionDetailsHeader(props: Props): ReactElement {
   const { data, suppression } = props
