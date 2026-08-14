@@ -26,12 +26,13 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     // Les blocs résumé ignorent la recherche par nom (#1292) : seuls le scope et les filtres du drawer s'appliquent.
     const whereConditionsSansRecherche = this.buildWhereConditions({ ...filtres, nom: undefined })
     const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
+    const filtreEmployeuseActivites = this.buildFiltreEmployeuseActivites(filtres)
 
     const [totalActifs, totalArchives, totalSansRecherche, lieux, stats] = await Promise.all([
       this.queryTotal(scopeCteActifs, whereConditions),
       this.queryTotal(scopeCteArchives, whereConditions),
       this.queryTotal(scopeCteActifs, whereConditionsSansRecherche),
-      this.queryLieux(scopeCte, whereConditions, limitOffset),
+      this.queryLieux(scopeCte, whereConditions, limitOffset, filtreEmployeuseActivites),
       this.queryStats(scopeCte, whereConditionsSansRecherche),
     ])
 
@@ -46,6 +47,14 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       totalLabellise: stats.totalLabellise,
       totalSansRecherche,
     }
+  }
+
+  // Un lieu peut être mutualisé entre plusieurs structures : ne compter que les accompagnements
+  // de la structure du gestionnaire, pas ceux des autres structures présentes au même lieu.
+  private buildFiltreEmployeuseActivites(filtres: FiltresListeLieux): Prisma.Sql {
+    return filtres.scopeFiltre.type === 'structure'
+      ? Prisma.sql`AND act.structure_employeuse_main_id = ${filtres.scopeFiltre.id}`
+      : Prisma.empty
   }
 
   // Archivé = date de suppression renseignée (soft delete #1497) ; actif = non supprimé.
@@ -155,14 +164,15 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
   private async queryLieux(
     scopeCte: Prisma.Sql,
     whereConditions: Prisma.Sql,
-    limitOffset: Prisma.Sql
+    limitOffset: Prisma.Sql,
+    filtreEmployeuseActivites: Prisma.Sql
   ): Promise<Array<LieuInclusionNumeriqueItem>> {
     return prisma.$queryRaw<Array<LieuInclusionNumeriqueItem>>`
       WITH ${scopeCte},
       lieux_page AS (
         SELECT
           l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
-          l.visible_pour_cartographie_nationale,
+          l.visible_pour_cartographie_nationale, l.structure_coop_id,
           COALESCE(l.typologies::text[], '{}') AS typologies,
           a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
         FROM main.lieu_inclusion l
@@ -202,10 +212,11 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
           WHEN EXISTS (SELECT 1 FROM admin.zonage z WHERE z.type = 'QPV' AND public.st_contains(z.geom, l.geom))
           THEN true ELSE false
         END AS est_qpv,
-        COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
+        COALESCE(SUM(act.accompagnements_count)::int, 0) AS nb_accompagnements_coop,
         COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
       FROM lieux_page l
-      LEFT JOIN main.activites_coop act ON act.lieu_id = l.id
+      LEFT JOIN coop.activites act ON act.structure_id = l.structure_coop_id AND act.suppression IS NULL
+        ${filtreEmployeuseActivites}
       LEFT JOIN accompagnements_ac acc ON acc.lieu_id = l.id
       GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
                l.visible_pour_cartographie_nationale,
