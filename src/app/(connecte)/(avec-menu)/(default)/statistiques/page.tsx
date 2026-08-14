@@ -4,27 +4,24 @@ import { ReactElement, Suspense } from 'react'
 
 import FilterTags from './FilterTags'
 import FiltreRecherche, { FiltreOption } from './FiltreRecherche'
-import PlusDesFiltres, { THEMATIQUE_ADMIN_OPTIONS, THEMATIQUE_NON_ADMIN_OPTIONS, TYPES_OPTIONS } from './PlusDesFiltres'
+import { THEMATIQUE_ADMIN_OPTIONS, THEMATIQUE_NON_ADMIN_OPTIONS, TYPES_OPTIONS } from './filtresOptions'
+import { construireLibellesFiltres } from './libellesFiltres'
+import PlusDesFiltres from './PlusDesFiltres'
 import StatistiquesPageContent from './StatistiquesPageContent'
+import { construireFiltres, recupererStatistiques, StatistiquesSearchParams } from './statistiquesServeur'
 import departementsJson from '../../../../../../ressources/departements.json'
 import AsyncLoaderErrorBoundary from '@/components/AidantsMediateurs/GenericErrorBoundary'
 import '@/components/coop/Statistiques/statistiques.css'
+import ExportStatistiques from '@/components/coop/Statistiques/_components/ExportStatistiques'
 import SelecteurRangeDates from '@/components/coop/Statistiques/SelecteurRangeDates'
-import { statistiquesCoopToMediateursData } from '@/components/coop/Statistiques/statistiquesCoopToMediateursData'
-import type { StatistiquesMediateursData } from '@/components/coop/Statistiques/types'
-import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { clamperPeriode } from '@/shared/dispositif'
-import type { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
-import { StatistiquesPageFilters } from '@/use-cases/queries/RecupererStatistiquesPage'
 import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
@@ -44,40 +41,17 @@ export default async function StatistiquesController({ searchParams }: Props): P
       ? { id: contexte.idStructure(), type: 'structure' }
       : contexte.scopeFiltre()
 
-  const {
-    au,
-    communes: communesParam,
-    departements: departementsParam,
-    du,
-    lieux: lieuxParam,
-    structuresEmployeuses: structuresEmployeusesParam,
-    thematiqueAdministratives: thematiqueAdminParam,
-    thematiqueNonAdministratives: thematiqueNonAdminParam,
-    types: typesParam,
-  } = await searchParams
+  const params = await searchParams
   const aujourdhui = new Date().toISOString().slice(0, 10)
-  const { au: dateFin, du: dateDebut } = clamperPeriode(du, au, aujourdhui)
+  const filtres = construireFiltres(params, scopeFiltre, aujourdhui)
+  const { au: dateFin, du: dateDebut } = filtres
 
-  const communesActives = communesParam?.split(',').filter(Boolean) ?? []
-  const lieuxActifs = lieuxParam?.split(',').filter(Boolean) ?? []
-  const structuresEmployeusesActives = structuresEmployeusesParam?.split(',').filter(Boolean) ?? []
-  const typesActifs = typesParam?.split(',').filter(Boolean) ?? []
-  const thematiqueNonAdminActifs = thematiqueNonAdminParam?.split(',').filter(Boolean) ?? []
-  const thematiqueAdminActifs = thematiqueAdminParam?.split(',').filter(Boolean) ?? []
-
-  // Les filtres sont exprimés en termes SGN : pas de coop_id ici.
-  const filtres: StatistiquesPageFilters = {
-    au: dateFin,
-    communes: communesActives.length > 0 ? communesActives : undefined,
-    departements: departementsParam ? departementsParam.split(',').filter(Boolean) : undefined,
-    du: dateDebut,
-    lieux: lieuxActifs.length > 0 ? lieuxActifs : undefined,
-    scopeFiltre,
-    structuresEmployeuses: structuresEmployeusesActives.length > 0 ? structuresEmployeusesActives : undefined,
-    thematiqueAdministratives: thematiqueAdminActifs.length > 0 ? thematiqueAdminActifs : undefined,
-    thematiqueNonAdministratives: thematiqueNonAdminActifs.length > 0 ? thematiqueNonAdminActifs : undefined,
-    types: typesActifs.length > 0 ? (typesActifs as ReadonlyArray<'Collectif' | 'Demarche' | 'Individuel'>) : undefined,
-  }
+  const communesActives = filtres.communes ?? []
+  const lieuxActifs = filtres.lieux ?? []
+  const structuresEmployeusesActives = filtres.structuresEmployeuses ?? []
+  const typesActifs = filtres.types ?? []
+  const thematiqueNonAdminActifs = filtres.thematiqueNonAdministratives ?? []
+  const thematiqueAdminActifs = filtres.thematiqueAdministratives ?? []
 
   // Démarrer les stats immédiatement (Suspense les affichera quand prêt)
   const statistiquesPromise = recupererStatistiques(filtres)
@@ -97,84 +71,94 @@ export default async function StatistiquesController({ searchParams }: Props): P
         : Promise.resolve([]),
     ])
   const departementsOptions = departementsParScope(scopeFiltre)
-  const departementsSelectionnes = departementsOptions.filter((opt) =>
-    (departementsParam?.split(',').filter(Boolean) ?? []).includes(opt.value)
-  )
+  const departementsSelectionnes = departementsOptions.filter((opt) => (filtres.departements ?? []).includes(opt.value))
   const nomStructure = structureDuScope.at(0)?.label
+  const titre = nomStructure === undefined ? 'Statistiques médiation numérique' : `Statistiques de ${nomStructure}`
+
+  const libellesFiltres = construireLibellesFiltres({
+    aujourdhui,
+    communesSelectionnees,
+    dateDebut,
+    dateFin,
+    departementsSelectionnes,
+    lieuxSelectionnes,
+    structuresEmployeusesSelectionnees,
+    thematiqueAdministratives: thematiqueAdminActifs,
+    thematiqueNonAdministratives: thematiqueNonAdminActifs,
+    types: typesActifs,
+  })
 
   return (
     <>
-      <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Statistiques' }]} />
+      <div className="fr-no-print">
+        <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Statistiques' }]} />
 
-      <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-mb-4v fr-flex-wrap">
-        <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-flex-grow-1 fr-flex-wrap">
-          <SelecteurRangeDates dateDebut={dateDebut} dateFin={dateFin} />
-          <FiltreRecherche
-            libelle="Département"
-            libelleBouton="Départements"
-            libellePluriel="départements sélectionnés"
-            libelleSingulier="département sélectionné"
-            options={departementsOptions}
-            param="departements"
-            placeholder="Chercher un département"
-            selection={departementsSelectionnes}
-          />
-          <FiltreRecherche
-            libelle="Commune"
-            libelleBouton="Communes"
-            libellePluriel="communes sélectionnées"
-            libelleSingulier="commune sélectionnée"
-            param="communes"
-            placeholder="Chercher une commune"
-            selection={communesSelectionnees}
-            urlRecherche="/api/statistiques/communes"
-          />
-          <FiltreRecherche
-            libelle="Structure"
-            libelleBouton="Structures employeuses"
-            libellePluriel="structures sélectionnées"
-            libelleSingulier="structure sélectionnée"
-            param="structuresEmployeuses"
-            placeholder="Chercher une structure employeuse"
-            selection={structuresEmployeusesSelectionnees}
-            urlRecherche="/api/statistiques/structures-employeuses"
-          />
-          <FiltreRecherche
-            libelle="Lieu"
-            libelleBouton="Lieux"
-            libellePluriel="lieux sélectionnés"
-            libelleSingulier="lieu sélectionné"
-            param="lieux"
-            placeholder="Chercher un lieu d'inclusion"
-            selection={lieuxSelectionnes}
-            urlRecherche="/api/statistiques/lieux"
-          />
-          <PlusDesFiltres
-            thematiqueAdministratives={thematiqueAdminActifs}
-            thematiqueNonAdministratives={thematiqueNonAdminActifs}
-            types={typesActifs}
-          />
+        <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-mb-4v fr-flex-wrap">
+          <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-flex-grow-1 fr-flex-wrap">
+            <SelecteurRangeDates dateDebut={dateDebut} dateFin={dateFin} />
+            <FiltreRecherche
+              libelle="Département"
+              libelleBouton="Départements"
+              libellePluriel="départements sélectionnés"
+              libelleSingulier="département sélectionné"
+              options={departementsOptions}
+              param="departements"
+              placeholder="Chercher un département"
+              selection={departementsSelectionnes}
+            />
+            <FiltreRecherche
+              libelle="Commune"
+              libelleBouton="Communes"
+              libellePluriel="communes sélectionnées"
+              libelleSingulier="commune sélectionnée"
+              param="communes"
+              placeholder="Chercher une commune"
+              selection={communesSelectionnees}
+              urlRecherche="/api/statistiques/communes"
+            />
+            <FiltreRecherche
+              libelle="Structure"
+              libelleBouton="Structures employeuses"
+              libellePluriel="structures sélectionnées"
+              libelleSingulier="structure sélectionnée"
+              param="structuresEmployeuses"
+              placeholder="Chercher une structure employeuse"
+              selection={structuresEmployeusesSelectionnees}
+              urlRecherche="/api/statistiques/structures-employeuses"
+            />
+            <FiltreRecherche
+              libelle="Lieu"
+              libelleBouton="Lieux"
+              libellePluriel="lieux sélectionnés"
+              libelleSingulier="lieu sélectionné"
+              param="lieux"
+              placeholder="Chercher un lieu d'inclusion"
+              selection={lieuxSelectionnes}
+              urlRecherche="/api/statistiques/lieux"
+            />
+            <PlusDesFiltres
+              thematiqueAdministratives={thematiqueAdminActifs}
+              thematiqueNonAdministratives={thematiqueNonAdminActifs}
+              types={typesActifs}
+            />
+          </div>
+          <ExportStatistiques filtres={libellesFiltres} />
         </div>
-        <button className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-download-line" type="button">
-          Exporter
-        </button>
+
+        <h1 className="fr-h2 color-blue-france fr-mb-4v">{titre}</h1>
+
+        <FilterTags
+          communesSelectionnees={communesSelectionnees}
+          dateDebut={dateDebut}
+          dateFin={dateFin}
+          departementsOptions={departementsOptions}
+          lieuxSelectionnes={lieuxSelectionnes}
+          structuresEmployeusesSelectionnees={structuresEmployeusesSelectionnees}
+          thematiqueAdminOptions={THEMATIQUE_ADMIN_OPTIONS}
+          thematiqueNonAdminOptions={THEMATIQUE_NON_ADMIN_OPTIONS}
+          typesOptions={TYPES_OPTIONS}
+        />
       </div>
-
-      <h1 className="fr-h2 color-blue-france fr-mb-4v">
-        {nomStructure === undefined ? 'Statistiques médiation numérique' : `Statistiques de ${nomStructure}`}
-      </h1>
-
-      <FilterTags
-        communesSelectionnees={communesSelectionnees}
-        dateDebut={dateDebut}
-        dateFin={dateFin}
-        departementsOptions={departementsOptions}
-        lieuxSelectionnes={lieuxSelectionnes}
-        structuresEmployeusesSelectionnees={structuresEmployeusesSelectionnees}
-        thematiqueAdminOptions={THEMATIQUE_ADMIN_OPTIONS}
-        thematiqueNonAdminOptions={THEMATIQUE_NON_ADMIN_OPTIONS}
-        typesOptions={TYPES_OPTIONS}
-      />
 
       <AsyncLoaderErrorBoundary
         fallback={
@@ -187,9 +171,13 @@ export default async function StatistiquesController({ searchParams }: Props): P
       >
         <Suspense
           fallback={<SpinnerSimple text="Récupération des statistiques..." />}
-          key={`${dateDebut}-${dateFin}-${communesParam ?? ''}-${departementsParam ?? ''}-${lieuxParam ?? ''}-${structuresEmployeusesParam ?? ''}-${typesParam ?? ''}-${thematiqueNonAdminParam ?? ''}-${thematiqueAdminParam ?? ''}`}
+          key={`${dateDebut}-${dateFin}-${params.communes ?? ''}-${params.departements ?? ''}-${params.lieux ?? ''}-${params.structuresEmployeuses ?? ''}-${params.types ?? ''}-${params.thematiqueNonAdministratives ?? ''}-${params.thematiqueAdministratives ?? ''}`}
         >
-          <StatistiquesPageContent statistiquesPromise={statistiquesPromise} />
+          <StatistiquesPageContent
+            libellesFiltres={libellesFiltres}
+            statistiquesPromise={statistiquesPromise}
+            titre={titre}
+          />
         </Suspense>
       </AsyncLoaderErrorBoundary>
     </>
@@ -213,62 +201,6 @@ function departementsParScope(scopeFiltre: ScopeFiltre): ReadonlyArray<FiltreOpt
   return []
 }
 
-async function recupererStatistiques(
-  filtres: StatistiquesPageFilters
-): Promise<ErrorViewModel | StatistiquesMediateursData> {
-  try {
-    // Traduire les IDs SGN en coop_ids (UUIDs attendus par l'API Coop)
-    const lieuxCoopIds = filtres.lieux ? await new PrismaLieuxCoopLoader().recupererCoopIds(filtres.lieux) : []
-
-    // Scope implicite → filtres Coop
-    let departementsDuScope: ReadonlyArray<string> | undefined
-    if (filtres.scopeFiltre.type === 'departemental' && !filtres.departements) {
-      departementsDuScope = [...filtres.scopeFiltre.codes]
-    }
-
-    // Filtre à la maille activité (structure_employeuse_main_id), pas médiateur : un médiateur ayant eu
-    // plusieurs employeurs ne doit compter que pour les activités réalisées pour celle-ci.
-    const structuresEmployeusesFiltre =
-      filtres.structuresEmployeuses ??
-      (filtres.scopeFiltre.type === 'structure' ? [String(filtres.scopeFiltre.id)] : undefined)
-
-    const coopFiltres: StatistiquesFilters = {
-      au: filtres.au,
-      communes: filtres.communes,
-      departements: filtres.departements ?? departementsDuScope,
-      du: filtres.du,
-      lieux: lieuxCoopIds.length > 0 ? lieuxCoopIds : undefined,
-      structuresEmployeuses: structuresEmployeusesFiltre,
-      thematiqueAdministratives: filtres.thematiqueAdministratives,
-      thematiqueNonAdministratives: filtres.thematiqueNonAdministratives,
-      types: filtres.types,
-    }
-
-    const readModel = await createApiCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
-    const vueTerritorialisee =
-      (coopFiltres.departements?.length ?? 0) > 0 ||
-      (coopFiltres.communes?.length ?? 0) > 0 ||
-      (coopFiltres.lieux?.length ?? 0) > 0 ||
-      (coopFiltres.structuresEmployeuses?.length ?? 0) > 0
-    return statistiquesCoopToMediateursData(readModel, vueTerritorialisee)
-  } catch {
-    return {
-      message: 'Erreur de récupération des données',
-      type: 'error',
-    }
-  }
-}
-
 type Props = Readonly<{
-  searchParams: Promise<{
-    au?: string
-    communes?: string
-    departements?: string
-    du?: string
-    lieux?: string
-    structuresEmployeuses?: string
-    thematiqueAdministratives?: string
-    thematiqueNonAdministratives?: string
-    types?: string
-  }>
+  searchParams: Promise<StatistiquesSearchParams>
 }>
