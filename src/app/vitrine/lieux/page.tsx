@@ -110,12 +110,15 @@ export default function LieuxPage(): ReactElement {
                 données de votre choix. Vous pouvez également télécharger les données de votre territoire depuis notre
                 API.
               </p>
-              <div>
+              <div style={{ alignItems: 'flex-start', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <Link className="fr-btn" href="https://tally.so/r/VLV5K6">
+                  Intégrer la cartographie
+                </Link>
                 <Link
-                  className="fr-btn"
+                  className="fr-btn fr-btn--tertiary"
                   href="https://github.com/anct-cartographie-nationale/client-application#documentation"
                 >
-                  Intégrer la cartographie
+                  Documentation technique
                 </Link>
               </div>
             </div>
@@ -177,7 +180,7 @@ export default function LieuxPage(): ReactElement {
                     margin: 0,
                   }}
                 >
-                  Mednum Hub Antilles
+                  Hub Normandie
                 </h3>
                 <div
                   style={{
@@ -197,22 +200,21 @@ export default function LieuxPage(): ReactElement {
                       lineHeight: '1.5rem',
                     }}
                   >
-                    Martinique
+                    Normandie
                   </span>
                 </div>
                 <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                  Cartographie des lieux d&apos;inclusion numérique de la Martinique
+                  Cartographie des lieux d&apos;inclusion numérique du Hub Normandie
                 </p>
                 <div>
                   <a
                     className="fr-link fr-fi-external-link-line fr-link--icon-right"
-                    // eslint-disable-next-line sonarjs/no-clear-text-protocols
-                    href="http://anct-carto-client-feature-hub-antilles-default-view.s3-website.eu-west-3.amazonaws.com/orientation"
+                    href="https://www.hub-numi-normandie.fr/cartographie"
                     rel="noopener noreferrer"
                     style={{ display: 'inline-block' }}
                     target="_blank"
                   >
-                    Cartographie de la martinique
+                    Cartographie du Hub Normandie
                   </a>
                 </div>
               </div>
@@ -228,9 +230,9 @@ export default function LieuxPage(): ReactElement {
                 }}
               >
                 <img
-                  alt="Logo Medium Hub Antilles"
-                  src="/vitrine/lieux/logo-medium.png"
-                  style={{ height: 'auto', maxHeight: '3.1875rem', maxWidth: '10.875rem', width: 'auto' }}
+                  alt="Logo Numi Hub Normandie"
+                  src="/vitrine/lieux/logo-hub-normandie.png"
+                  style={{ height: 'auto', maxHeight: '5rem', maxWidth: '10.875rem', width: 'auto' }}
                 />
               </div>
             </div>
