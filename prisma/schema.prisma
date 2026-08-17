@@ -592,8 +592,6 @@ model adresse {
   departement                String?                         @default(dbgenerated("\nCASE\n    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN \"left\"((code_insee)::text, 3)\n    ELSE \"left\"((code_insee)::text, 2)\nEND")) @db.VarChar(3)
   structures_administratives main_structure_administrative[]
   lieux_inclusion            main_lieu_inclusion[]
-  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
-  structures_legacy          main_structure[]                @relation("legacy_structure_adresse") @ignore
 
   @@index([geom], type: Gist)
   @@index([code_insee])
@@ -650,8 +648,6 @@ model personne {
   personne_affectations_emploi                                            main_personne_affectations_emploi[]
   personne_affectations_lieu                                              main_personne_affectations_lieu[]
   poste                                                                   poste[]
-  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
-  personne_affectations_legacy                                            personne_affectations[]             @relation("legacy_personne_affectations_personne") @ignore
 
   @@index([nom, prenom], map: "personne_patronyme")
   @@schema("main")
@@ -1039,90 +1035,6 @@ model main_lieu_inclusion {
   @@schema("main")
 }
 
-/// LEGACY post-refonte 2026 : table conservee en base pour les consommateurs
-/// historiques (dataviz, vues api heritees, ETL externes). MIN ecrit
-/// desormais dans main_structure_administrative + main_lieu_inclusion.
-/// Drop final planifie dans la doc dataspace (refonte-structure-plan.md > Next).
-model main_structure {
-  id                                  Int                    @id @default(autoincrement())
-  structure_coop_id                   String?                @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
-  structure_ac_id                     String?                @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
-  structure_tp_id                     Int?                   @unique(map: "structure_structure_tp_id_ukey")
-  nom                                 String                 @db.VarChar(255)
-  denomination_sirene                 String?                @db.VarChar
-  siret                               String?                @db.VarChar(14)
-  rna                                 String?                @db.VarChar(10)
-  adresse_id                          Int?
-  contact                             Json?
-  etat_administratif                  String?                @db.VarChar
-  code_activite_principale            String?                @db.VarChar(6)
-  categorie_juridique                 String?                @db.VarChar(4)
-  nb_mandats_ac                       Int?
-  publique                            Boolean?
-  structure_cartographie_nationale_id String?                @unique(map: "structure_cartographie_ukey") @db.VarChar
-  visible_pour_cartographie_nationale Boolean?
-  typologies                          String[]
-  presentation_resume                 String?
-  presentation_detail                 String?
-  horaires                            String?                @db.VarChar
-  prise_rdv                           String?                @db.VarChar
-  services                            String[]
-  publics_specifiquement_adresses     String[]
-  prise_en_charge_specifique          String[]
-  frais_a_charge                      String[]
-  dispositif_programmes_nationaux     String[]
-  formations_labels                   String[]
-  autres_formations_labels            String[]
-  itinerance                          String[]
-  modalites_acces                     String[]
-  modalites_accompagnement            String[]
-  mediateurs_en_activite              Int?
-  emplois                             Int?
-  source                              String?                @db.VarChar
-  last_sirene_enrich_at               DateTime?              @db.Date
-  created_at                          DateTime?              @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?              @db.Timestamp(6)
-  fiche_acces_libre                   String?                @db.VarChar
-  edited_by                           String?                @db.VarChar(50)
-  deleted_at                          DateTime?              @db.Timestamp(6)
-  deleted_by                          String[]
-  adresse                             adresse?               @relation("legacy_structure_adresse", fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
-  categories_juridiques               categories_juridiques? @relation("legacy_structure_categorie_juridique", fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
-
-  /// Back-relation pour personne_affectations legacy (@@ignore'd). Cf N11 dataspace.
-  personne_affectations_legacy personne_affectations[] @relation("legacy_personne_affectations_structure")
-
-  @@unique([siret, nom, adresse_id], map: "structure_ukey")
-  @@unique([structure_cartographie_nationale_id, source], map: "structure_carto_ukey")
-  @@map("structure")
-  @@ignore
-  @@schema("main")
-}
-
-/// LEGACY post-refonte 2026 : remplacee par main_personne_affectations_emploi
-/// (type='structure_emploi') et main_personne_affectations_lieu (type='lieu_activite').
-/// Conservee pour consommateurs historiques. Drop final planifie (Next dataspace).
-model personne_affectations {
-  id                Int             @id @default(autoincrement())
-  personne_id       Int
-  structure_id      Int?
-  structure_coop_id String?         @db.Uuid
-  mediateur_coop_id String?         @db.Uuid
-  type              String          @db.VarChar
-  created_at        DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at        DateTime?       @db.Timestamp(6)
-  source            String          @db.VarChar
-  est_active        Boolean         @default(true)
-  personne          personne        @relation("legacy_personne_affectations_personne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_personne_id_fkey")
-  structure         main_structure? @relation("legacy_personne_affectations_structure", fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personne_affectations_structure_id_fkey")
-
-  @@unique([structure_id, personne_id, type, source], map: "personne_affectations_unique_key")
-  @@index([personne_id], map: "idx_personne_affectations_personne_id")
-  @@index([structure_id], map: "idx_personne_affectations_structure_id")
-  @@ignore
-  @@schema("main")
-}
-
 model main_contact {
   id                 Int                                @id @default(autoincrement())
   nom                String                             @db.VarChar(255)
@@ -1272,8 +1184,6 @@ model categories_juridiques {
   created_at               DateTime?                       @default(now()) @db.Timestamp(6)
   updated_at               DateTime?                       @db.Timestamp(6)
   structure_administrative main_structure_administrative[]
-  /// Back-relation pour main_structure legacy (@@ignore'd). Cf N11 dataspace.
-  structures_legacy        main_structure[]                @relation("legacy_structure_categorie_juridique") @ignore
 
   @@schema("reference")
 }
