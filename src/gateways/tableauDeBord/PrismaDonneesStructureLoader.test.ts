@@ -21,6 +21,10 @@ describe('données structure loader', () => {
       accompagnements_count integer,
       structure_employeuse_id uuid
     )`
+    // Un autre fichier de test partageant ce schéma a pu créer la table en premier sans cette
+    // colonne (ordre non garanti entre fichiers, notamment en mode --coverage) : on la complète.
+    await prisma.$executeRaw`ALTER TABLE coop.activites
+      ADD COLUMN IF NOT EXISTS structure_employeuse_main_id integer`
   })
 
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)

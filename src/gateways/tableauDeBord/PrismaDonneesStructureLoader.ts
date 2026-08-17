@@ -88,11 +88,7 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
           to_char(date_trunc('month', a.date), 'YYYY-MM-DD') AS mois,
           COALESCE(SUM(a.accompagnements_count), 0)::bigint AS nombre
         FROM coop.activites a
-        WHERE a.structure_employeuse_id = (
-          SELECT sa.structure_coop_id
-          FROM main.structure_administrative sa
-          WHERE sa.id = ${structureId}
-        )
+        WHERE a.structure_employeuse_main_id = ${structureId}
           AND a.suppression IS NULL
           AND a.date >= ${debutPeriode}::date
           AND a.date < ${finPeriode}::date
