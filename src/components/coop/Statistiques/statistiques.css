@@ -405,3 +405,54 @@
 .fr-background-alt--brown-caramel {
   background-color: var(--background-alt-brown-caramel, #f3ebe5);
 }
+
+/* ============================================
+   EXPORT PDF (impression) — adapté de la Coop
+   ============================================ */
+
+/* Contenu d'impression caché à l'écran mais rendu (les graphiques doivent être montés) */
+.statistiques-print {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+@media print {
+  .statistiques-print {
+    height: auto;
+    overflow: visible;
+    visibility: visible;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Garder les titres avec le contenu qui suit */
+  .statistiques-print h1,
+  .statistiques-print h2,
+  .statistiques-print h3,
+  .statistiques-print h4 {
+    break-after: avoid;
+  }
+
+  /* Blocs insécables (titre + graphique/liste) */
+  .statistiques-print .print-bloc-insecable {
+    break-inside: avoid;
+  }
+
+  /* Masquer le chrome applicatif (header, footer, menu latéral) sur la page statistiques */
+  body:has(.statistiques-print) header,
+  body:has(.statistiques-print) footer,
+  body:has(.statistiques-print) dialog,
+  body:has(.statistiques-print) .Toastify {
+    display: none !important;
+  }
+
+  body:has(.statistiques-print) div:has(> nav.fr-sidemenu) {
+    display: none !important;
+  }
+
+  body:has(.statistiques-print) .menu-border {
+    border: none !important;
+    padding: 0 !important;
+  }
+}
