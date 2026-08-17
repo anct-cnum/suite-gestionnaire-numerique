@@ -5,10 +5,10 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "main"."lieu_inclusion_structure_administrative" DROP CONSTRAINT "lieu_inclusion_structure_administrative_admin_fkey";
+ALTER TABLE IF EXISTS "main"."lieu_inclusion_structure_administrative" DROP CONSTRAINT IF EXISTS "lieu_inclusion_structure_administrative_admin_fkey";
 
 -- DropForeignKey
-ALTER TABLE "main"."lieu_inclusion_structure_administrative" DROP CONSTRAINT "lieu_inclusion_structure_administrative_lieu_fkey";
+ALTER TABLE IF EXISTS "main"."lieu_inclusion_structure_administrative" DROP CONSTRAINT IF EXISTS "lieu_inclusion_structure_administrative_lieu_fkey";
 
 -- DropTable
-DROP TABLE "main"."lieu_inclusion_structure_administrative";
+DROP TABLE IF EXISTS "main"."lieu_inclusion_structure_administrative";

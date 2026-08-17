@@ -16,13 +16,10 @@ ALTER TABLE "min"."utilisateur" RENAME COLUMN "structure_id" TO "old_structure_i
 -- Étape 3: Créer une nouvelle colonne structure_id (NULL par défaut)
 ALTER TABLE "min"."utilisateur" ADD COLUMN "structure_id" INTEGER;
 
--- Étape 4: Créer la contrainte de clé étrangère vers main.structure pour la nouvelle colonne
-ALTER TABLE "min"."utilisateur"
-  ADD CONSTRAINT "utilisateur_structure_id_fkey"
-  FOREIGN KEY (structure_id)
-  REFERENCES "main"."structure"(id)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+-- Étape 4 (retirée, chantier N11 2026-08) : la FK vers main.structure n'est
+-- plus créée — la table legacy est droppée (dataspace V148) et absente du
+-- snapshot. La migration 20260525150000 pose la FK définitive vers
+-- main.structure_administrative (son DROP CONSTRAINT IF EXISTS reste valide).
 
 -- ============================================================================
 -- TABLE: min.membre
@@ -37,10 +34,5 @@ ALTER TABLE "min"."membre" RENAME COLUMN "structure_id" TO "old_structure_id";
 -- Étape 3: Créer une nouvelle colonne structure_id (NULL par défaut)
 ALTER TABLE "min"."membre" ADD COLUMN "structure_id" INTEGER;
 
--- Étape 4: Créer la contrainte de clé étrangère vers main.structure pour la nouvelle colonne
-ALTER TABLE "min"."membre"
-  ADD CONSTRAINT "membre_structure_id_fkey"
-  FOREIGN KEY (structure_id)
-  REFERENCES "main"."structure"(id)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
+-- Étape 4 (retirée, chantier N11 2026-08) : idem min.utilisateur ci-dessus —
+-- pas de FK vers la table legacy droppée ; cf migration 20260525150000.

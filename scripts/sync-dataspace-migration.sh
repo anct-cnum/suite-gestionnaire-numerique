@@ -114,6 +114,37 @@ sed -i \
   -e 's/OWNER TO dataspace;$/OWNER TO sonum;/' \
   "$POST"
 
+# Les GRANT vers les rôles non provisionnés côté min cassent le replay :
+# `coop` (rôle applicatif coop-mediation-numerique) et `nao_ro` (lecture seule
+# analyste) existent sur la base dataspace mais pas dans la migration
+# "1_create_roles_and_schema" — et MIN n'en a pas l'usage.
+sed -i -E '/^(GRANT|REVOKE|ALTER DEFAULT PRIVILEGES) .* (TO|FROM) (coop|nao_ro);$/d' "$PRE" "$POST"
+
+# main.activites_coop est une vue sur coop.activites (dataspace V144, #1805)
+# alors que le schéma coop est exclu du dump : son CREATE VIEW casserait le
+# replay. On la remplace par un stub vide de même forme (colonnes/types iso) —
+# suffisant pour Prisma (`view` non migrée, lue seulement en $queryRaw) et pour
+# le replay CI ; aucune donnée coop en local de test de toute façon.
+awk '
+  /^CREATE VIEW main\.activites_coop AS$/ {
+    print "CREATE VIEW main.activites_coop AS"
+    print " SELECT NULL::uuid AS coop_id, NULL::integer AS lieu_id, NULL::integer AS personne_id,"
+    print "    NULL::text AS type, NULL::date AS date, NULL::integer AS duree, NULL::text AS lieu_code_insee,"
+    print "    NULL::text AS type_lieu, NULL::text AS autonomie, NULL::text AS structure_de_redirection,"
+    print "    NULL::boolean AS oriente_vers_structure, NULL::text AS precisions_demarche,"
+    print "    NULL::character varying(50) AS degre_de_finalisation_demarche, NULL::text AS titre_atelier,"
+    print "    NULL::text AS niveau_atelier, NULL::integer AS accompagnements, NULL::text[] AS thematiques,"
+    print "    NULL::text[] AS materiels, NULL::text[] AS thematiques_demarche_administrative,"
+    print "    NULL::timestamp AS created_at, NULL::timestamp AS updated_at, NULL::date AS periode,"
+    print "    NULL::timestamp AS created_at_coop, NULL::timestamp AS updated_at_coop, NULL::jsonb AS beneficiaires"
+    print " WHERE false;"
+    skip = 1; next
+  }
+  skip && /;$/ { skip = 0; next }
+  skip { next }
+  { print }
+' "$PRE" > "$PRE.tmp" && mv "$PRE.tmp" "$PRE"
+
 # Tâche `functions` du DAG : ces fonctions vivent dans le schéma public et
 # sont référencées par des triggers dans la post-data ; il faut donc qu'elles
 # soient définies avant.
