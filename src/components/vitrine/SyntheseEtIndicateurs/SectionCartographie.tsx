@@ -1,5 +1,7 @@
 import { ReactElement } from 'react'
 
+import styles from './SectionCartographie.module.css'
+
 export default function SectionCartographie(): ReactElement {
   return (
     <div
@@ -41,15 +43,7 @@ export default function SectionCartographie(): ReactElement {
           padding: '40px',
         }}
       >
-        <h2
-          className="fr-mb-0"
-          style={{
-            color: '#000091',
-            fontSize: '30px',
-            fontWeight: 700,
-            lineHeight: '36px',
-          }}
-        >
+        <h2 className={`fr-mb-0 ${styles.titre}`}>
           Voir tous les lieux
           <br />
           sur la cartographie

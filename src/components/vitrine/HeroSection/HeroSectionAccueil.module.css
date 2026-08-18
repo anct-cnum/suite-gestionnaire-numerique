@@ -5,9 +5,6 @@
 
 .title {
   color: var(--blue-france-sun-113-625);
-  font-size: 4rem;
-  font-weight: 700;
-  line-height: 4.5rem;
   margin-left: auto;
   margin-right: auto;
   max-width: 60rem;
@@ -24,11 +21,6 @@
 }
 
 @media (width <= 48rem) {
-  .title {
-    font-size: 1.75rem;
-    line-height: 2.25rem;
-  }
-
   .subtitle {
     font-size: 1rem;
     line-height: 1.5rem;

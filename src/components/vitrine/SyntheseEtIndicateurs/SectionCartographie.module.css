@@ -1,0 +1,13 @@
+.titre {
+  color: var(--blue-france-sun-113-625);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 2.25rem;
+}
+
+@media (width <= 48rem) {
+  .titre {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}

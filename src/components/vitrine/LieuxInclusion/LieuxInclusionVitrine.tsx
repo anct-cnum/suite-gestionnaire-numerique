@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { ReactElement } from 'react'
 
+import styles from './LieuxInclusionVitrine.module.css'
 import GraphiqueDemiCercle from '@/components/GraphiqueDemiCercle/GraphiqueDemiCercle'
 import LieuxInclusionCategory from '@/components/LieuxInclusion/LieuxInclusionCategory'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
@@ -132,7 +133,9 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
           }}
         >
           <div style={{ height: 'auto', textAlign: 'start', width: '60%' }}>
-            <span className="fr-h2 fr-text-label--blue-france">Voir tous les lieux sur la cartographie</span>
+            <span className={`fr-h2 fr-text-label--blue-france ${styles.titreCartographie}`}>
+              Voir tous les lieux sur la cartographie
+            </span>
           </div>
           <div className="fr-mt-2w">
             <a
