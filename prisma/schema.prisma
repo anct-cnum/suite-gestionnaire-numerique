@@ -449,6 +449,7 @@ model admin_departement {
   created_at DateTime?               @default(now()) @db.Timestamp(6)
   updated_at DateTime?               @db.Timestamp(6)
   commune    commune[]
+  epci       epci[]
   region     admin_region            @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "departement_region_id")
 
   @@unique([code], map: "departement_code_idx")
@@ -458,15 +459,22 @@ model admin_departement {
 }
 
 model epci {
-  id           Int                     @id @default(autoincrement())
-  geom         Unsupported("geometry")
-  code         String                  @unique(map: "epci_ukey") @db.VarChar(9)
-  type         String                  @db.VarChar(32)
-  nom          String                  @db.VarChar(90)
-  created_at   DateTime?               @default(now()) @db.Timestamp(6)
-  updated_at   DateTime?               @db.Timestamp(6)
-  commune_epci commune_epci[]
+  id             Int                     @id @default(autoincrement())
+  geom           Unsupported("geometry")
+  code           String                  @unique(map: "epci_ukey") @db.VarChar(9)
+  type           String                  @db.VarChar(32)
+  nom            String                  @db.VarChar(90)
+  created_at     DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?               @db.Timestamp(6)
+  /// Département de rattachement officiel (Flyway V149) : référentiel Banatic
+  /// (DGCL, département de la commune siège), repli « majoritaire en nombre de
+  /// communes membres » si absent de Banatic. Recalculé à chaque run du DAG
+  /// init_ref_data.
+  departement_id Int?
+  departement    admin_departement?      @relation(fields: [departement_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "epci_departement_id")
+  commune_epci   commune_epci[]
 
+  @@index([departement_id], map: "epci_departement_id_idx")
   @@schema("admin")
 }
 
