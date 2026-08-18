@@ -327,16 +327,7 @@ export default function LieuxPage(): ReactElement {
           </div>
           <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>Les avantages de cet outil</h2>
 
-          <div
-            style={{
-              backgroundColor: '#fff',
-              border: '1px solid #ddd',
-              borderRadius: '1rem',
-              display: 'flex',
-              gap: '1rem',
-              padding: '2.5rem',
-            }}
-          >
+          <div className={styles.avantagesCarte}>
             <div
               style={{
                 display: 'flex',
@@ -369,7 +360,7 @@ export default function LieuxPage(): ReactElement {
               </p>
             </div>
 
-            <div style={{ borderLeft: '1px solid #ddd', height: 'auto', width: '1px' }} />
+            <div className={styles.avantagesSeparateur} />
 
             <div
               style={{
@@ -404,7 +395,7 @@ export default function LieuxPage(): ReactElement {
               </p>
             </div>
 
-            <div style={{ borderLeft: '1px solid #ddd', height: 'auto', width: '1px' }} />
+            <div className={styles.avantagesSeparateur} />
 
             <div
               style={{
@@ -439,7 +430,7 @@ export default function LieuxPage(): ReactElement {
               </p>
             </div>
 
-            <div style={{ borderLeft: '1px solid #ddd', height: 'auto', width: '1px' }} />
+            <div className={styles.avantagesSeparateur} />
 
             <div
               style={{

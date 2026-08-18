@@ -24,6 +24,34 @@
   }
 }
 
+.avantagesCarte {
+  background-color: var(--background-default-grey);
+  border: 0.0625rem solid var(--border-default-grey);
+  border-radius: 1rem;
+  display: flex;
+  gap: 1rem;
+  padding: 2.5rem;
+}
+
+.avantagesSeparateur {
+  border-left: 0.0625rem solid var(--border-default-grey);
+  width: 0.0625rem;
+}
+
+@media (width <= 48rem) {
+  .avantagesCarte {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .avantagesSeparateur {
+    border-left: none;
+    border-top: 0.0625rem solid var(--border-default-grey);
+    height: 0.0625rem;
+    width: 100%;
+  }
+}
+
 .visualisationImage {
   order: 1;
   padding: 0;
