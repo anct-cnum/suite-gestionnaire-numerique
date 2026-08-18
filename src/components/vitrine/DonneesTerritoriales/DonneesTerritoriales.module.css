@@ -1,3 +1,18 @@
+.colonneGauche {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+}
+
+@media (width >= 62rem) {
+  .colonneGauche {
+    min-height: 39.9375rem;
+    padding: 0 2rem;
+  }
+}
+
 .carteColonne {
   height: 0;
   overflow: hidden;

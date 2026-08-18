@@ -39,9 +39,9 @@ export default function LieuxPage(): ReactElement {
       />
 
       {/* Section Cartographie des lieux */}
-      <section className="fr-py-12w">
+      <section className="fr-py-7w fr-py-md-12w">
         <div className="fr-container">
-          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
+          <div className={`fr-grid-row ${styles.sectionRow}`}>
             <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 Cartographie des lieux d&apos;inclusion numérique
@@ -69,9 +69,9 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section Visualisation des indicateurs */}
-      <section className="fr-py-12w">
+      <section className="fr-py-7w fr-py-md-12w">
         <div className="fr-container">
-          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
+          <div className={`fr-grid-row ${styles.sectionRow}`}>
             <div className={`fr-col-12 fr-col-md-6 ${styles.visualisationImage}`}>
               <img
                 alt="Visualisation des indicateurs territoriaux"
@@ -98,9 +98,9 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section Implémentation */}
-      <section className="fr-py-12w">
+      <section className="fr-py-7w fr-py-md-12w">
         <div className="fr-container">
-          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '5rem' }}>
+          <div className={`fr-grid-row ${styles.sectionRow}`}>
             <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 Implémentez facilement la cartographie sur votre site internet
@@ -135,7 +135,7 @@ export default function LieuxPage(): ReactElement {
 
       {/* Section Exemples d'intégration */}
       <section
-        className="fr-py-12w"
+        className="fr-py-7w fr-py-md-12w"
         style={{
           backgroundImage: 'url(/vitrine/lieux/background-integration.png)',
           backgroundPosition: 'center',
@@ -316,7 +316,7 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section Les avantages */}
-      <section className="fr-py-12w">
+      <section className="fr-py-7w fr-py-md-12w">
         <div className="fr-container">
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
@@ -478,9 +478,9 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section CTA */}
-      <section className="fr-py-12w" style={{ backgroundColor: '#fff8e1' }}>
+      <section className="fr-py-7w fr-py-md-12w" style={{ backgroundColor: '#fff8e1' }}>
         <div className="fr-container">
-          <div className="fr-grid-row" style={{ alignItems: 'center', gap: '80px' }}>
+          <div className={`fr-grid-row ${styles.sectionRow}`}>
             <div className="fr-col-12 fr-col-md-6">
               <img
                 alt="Cartographie et mise à jour"
@@ -506,7 +506,7 @@ export default function LieuxPage(): ReactElement {
       </section>
 
       {/* Section Ressources Les Bases */}
-      <section className="fr-py-12w">
+      <section className="fr-py-7w fr-py-md-12w">
         <div className="fr-container">
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img

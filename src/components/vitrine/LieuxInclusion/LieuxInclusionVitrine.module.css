@@ -1,0 +1,6 @@
+@media (width <= 48rem) {
+  .titreCartographie {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}

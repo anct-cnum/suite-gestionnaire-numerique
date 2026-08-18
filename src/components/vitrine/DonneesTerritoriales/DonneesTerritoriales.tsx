@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { memo, ReactElement, useEffect, useState } from 'react'
 
 import styles from './DonneesTerritoriales.module.css'
+import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import CarteFranceVitrine from '@/components/vitrine/CarteFranceVitrine/CarteFranceVitrine'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import SelecteurZoneGeographique from '@/components/vitrine/SelecteurZoneGeographique/SelecteurZoneGeographique'
@@ -14,6 +15,7 @@ const MemoizedCarteFranceVitrine = memo(CarteFranceVitrine)
 
 export default function DonneesTerritoriales(): ReactElement {
   const [zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
+  const [navigationEnCours, setNavigationEnCours] = useState(false)
 
   const router = useRouter()
 
@@ -23,6 +25,7 @@ export default function DonneesTerritoriales(): ReactElement {
 
       // Si la valeur est "all", naviguer vers /national
       if (value === 'all') {
+        setNavigationEnCours(true)
         router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
         return
       }
@@ -34,6 +37,7 @@ export default function DonneesTerritoriales(): ReactElement {
 
         // Ne naviguer que pour les départements, pas pour les régions
         if (type === 'departement' && codeDepartement !== '00') {
+          setNavigationEnCours(true)
           router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeDepartement}`)
         }
       }
@@ -48,16 +52,7 @@ export default function DonneesTerritoriales(): ReactElement {
           <div className="fr-grid-row fr-grid-row--gutters">
             {/* Colonne gauche - Titre + Dropdown + Bouton */}
             <div className="fr-col-12 fr-col-lg-6">
-              <div
-                style={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  minHeight: '639px',
-                  padding: '0 2rem',
-                }}
-              >
+              <div className={styles.colonneGauche}>
                 <div style={{ maxWidth: '512px', width: '100%' }}>
                   {/* Image France miniature */}
                   <div
@@ -95,18 +90,25 @@ export default function DonneesTerritoriales(): ReactElement {
                     <SelecteurZoneGeographique onChange={setZoneGeographique} />
                   </div>
 
-                  {/* Bouton */}
-                  <div style={{ textAlign: 'center' }}>
-                    <button
-                      className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-                      onClick={() => {
-                        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
-                      }}
-                      type="button"
-                    >
-                      Voir les données nationales
-                    </button>
-                  </div>
+                  {/* Bouton ou loader pendant la navigation */}
+                  {navigationEnCours ? (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <SpinnerSimple text="Chargement…" />
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center' }}>
+                      <button
+                        className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+                        onClick={() => {
+                          setNavigationEnCours(true)
+                          router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+                        }}
+                        type="button"
+                      >
+                        Voir les données nationales
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
