@@ -219,6 +219,12 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
   }
 
   menus.push({
+    icon: 'building-line',
+    label: 'Structures',
+    url: () => '/liste-structures',
+  })
+
+  menus.push({
     customIcon: `${process.env.NEXT_PUBLIC_HOST}/conum-full.svg`,
     label: 'Suivi des postes CoNum',
     url: () => '/postes-conseiller-numerique',
