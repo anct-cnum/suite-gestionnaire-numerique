@@ -33,7 +33,10 @@ describe('labellisation étape 2', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Ce que le label reconnaît' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 3, name: 'Ce que votre structure atteste' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 3, name: 'Ce à quoi votre structure s’engage' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Détail sur le fonctionnement du label' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Détail sur le fonctionnement du label' })).toHaveAttribute(
+      'href',
+      'https://www.conseiller-numerique.gouv.fr/label'
+    )
     expect(screen.getByText('Structure porteuse du label')).toBeInTheDocument()
     // Le nom de la structure apparaît dans le récapitulatif et dans la phrase d’introduction des attestations.
     expect(screen.getAllByText('Emmaus Connect')).toHaveLength(2)
