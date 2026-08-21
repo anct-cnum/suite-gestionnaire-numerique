@@ -25,6 +25,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const searchParams = request.nextUrl.searchParams
     const codeDepartement = searchParams.get('codeDepartement') ?? '0'
+    const codeEpci = searchParams.get('codeEpci') ?? '0'
     const codeRegion = searchParams.get('codeRegion') ?? '0'
     const roles = searchParams.get('roles')?.split(',').filter(Boolean) ?? []
     const utilisateursActives = searchParams.get('utilisateursActives') === 'on'
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
     const result = await rechercherMesUtilisateurs.handle({
       codeDepartement,
+      codeEpci,
       codeRegion,
       idStructure,
       pageCourante: 0,

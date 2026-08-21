@@ -3,7 +3,7 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export type FiltreGeographique = Readonly<{
   code: string
-  type: 'departement' | 'region'
+  type: 'departement' | 'epci' | 'region'
 }>
 
 export type FiltreRoles = ReadonlyArray<'Aidant' | 'Coordinateur' | 'Médiateur'>

@@ -36,7 +36,11 @@ MIGRATION_FILE="${MIGRATION_FILE:-$MIN_ROOT/prisma/migrations/20250619151605_2_d
 # `coop` (moteur SQL commun coop-mediation-numerique, migré par le Prisma de
 # la coop) est exclu : ses ALTER DEFAULT PRIVILEGES FOR ROLE dataspace
 # casseraient le replay (rôle absent), et MIN n'y accède pas via Prisma.
-EXCLUDE_SCHEMAS=(coop min api auth cache dataviz import llm public pseudonymisation opendata source)
+# `tiger` / `tiger_data` / `topology` sont exclus : provisionnés par l'image
+# postgis/postgis (extensions postgis_tiger_geocoder / postgis_topology),
+# déjà présents sur la base de test min → CREATE SCHEMA tiger casserait le
+# replay (42P06). Les CREATE EXTENSION correspondants sont filtrés plus bas.
+EXCLUDE_SCHEMAS=(coop min api auth cache dataviz import llm public pseudonymisation opendata source tiger tiger_data topology)
 EXCLUDE_ARGS=()
 for s in "${EXCLUDE_SCHEMAS[@]}"; do
   EXCLUDE_ARGS+=(-N "$s")
@@ -95,6 +99,9 @@ sed -i \
   -e '/^COMMENT ON EXTENSION vector /d' \
   -e '/^-- Name: vector; Type: EXTENSION/d' \
   -e '/^-- Name: EXTENSION vector;/d' \
+  -e '/fuzzystrmatch/d' \
+  -e '/postgis_tiger_geocoder/d' \
+  -e '/postgis_topology/d' \
   -e '/^--$/d' \
   -e '/transaction_timeout/d' \
   -e "/^SELECT pg_catalog.set_config('search_path'/d" \
@@ -103,6 +110,7 @@ sed -i \
   -e '/^CREATE SCHEMA \(admin\|main\|reference\|audit\);$/d' \
   -e '/^ALTER SCHEMA \(admin\|main\|reference\|audit\) OWNER TO /d' \
   -e 's/OWNER TO dataspace;$/OWNER TO sonum;/' \
+  -e 's/FOR ROLE dataspace /FOR ROLE sonum /' \
   "$PRE"
 
 sed -i \
@@ -112,6 +120,7 @@ sed -i \
   -e '/^\\restrict/d' \
   -e '/^\\unrestrict/d' \
   -e 's/OWNER TO dataspace;$/OWNER TO sonum;/' \
+  -e 's/FOR ROLE dataspace /FOR ROLE sonum /' \
   "$POST"
 
 # Les GRANT vers les rôles non provisionnés côté min cassent le replay :

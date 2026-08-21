@@ -60,8 +60,6 @@ export default function Select<Option extends LabelValue<number | string>>({
   )
 }
 
-export type { SelectInstance } from 'react-select'
-
 type Props<Option extends LabelValue<number | string>> = PropsWithChildren<
   Readonly<{
     ariaControlsId?: string

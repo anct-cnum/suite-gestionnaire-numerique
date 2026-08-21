@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -8,6 +10,23 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
   readonly #demandeDeSubventionDao = prisma.demandeDeSubventionRecord
 
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderBeneficiaires> {
+    return this.#charger(
+      territoire === 'France' ? { not: 'zzz' } : territoire,
+      territoire === 'France' ? Prisma.empty : Prisma.sql`WHERE a.departement = ${territoire}`,
+      territoire
+    )
+  }
+
+  // Agrégat régional : cumul des bénéficiaires des départements de la région (liens de détail masqués côté bloc).
+  async getPourDepartements(codes: ReadonlyArray<string>): Promise<ErrorReadModel | TableauDeBordLoaderBeneficiaires> {
+    return this.#charger({ in: [...codes] }, Prisma.sql`WHERE a.departement = ANY(${[...codes]})`, codes.join(','))
+  }
+
+  async #charger(
+    gouvernanceDepartementCode: Prisma.FeuilleDeRouteRecordWhereInput['gouvernanceDepartementCode'],
+    filtreTerritoireSql: Prisma.Sql,
+    territoire: string
+  ): Promise<ErrorReadModel | TableauDeBordLoaderBeneficiaires> {
     try {
       const [demandesAcceptees, beneficiairesCn] = await Promise.all([
         this.#demandeDeSubventionDao.findMany({
@@ -22,21 +41,14 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
           },
           where: {
             action: {
-              feuilleDeRoute:
-                territoire === 'France'
-                  ? {
-                      gouvernanceDepartementCode: {
-                        not: 'zzz',
-                      },
-                    }
-                  : {
-                      gouvernanceDepartementCode: territoire,
-                    },
+              feuilleDeRoute: {
+                gouvernanceDepartementCode,
+              },
             },
             statut: StatutSubvention.ACCEPTEE,
           },
         }),
-        this.#queryBeneficiairesCn(territoire),
+        this.#queryBeneficiairesCn(filtreTerritoireSql),
       ])
 
       // Regrouper les bénéficiaires par enveloppe
@@ -92,26 +104,7 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
     }
   }
 
-  async #queryBeneficiairesCn(territoire: string): Promise<ReadonlyArray<BeneficiairesCnQueryResult>> {
-    if (territoire === 'France') {
-      return prisma.$queryRaw<Array<BeneficiairesCnQueryResult>>`
-        WITH agg AS (
-          SELECT
-            COUNT(DISTINCT CASE WHEN s.montant_subvention_v1 > 0 THEN p.structure_id END) AS total_v1,
-            COUNT(DISTINCT CASE WHEN s.montant_subvention_v2 > 0 THEN p.structure_id END) AS total_v2
-          FROM main.subvention s
-          JOIN main.poste p ON p.id = s.poste_id
-        )
-        SELECT
-          e.libelle AS label,
-          CASE WHEN e.libelle LIKE '%Renouvellement%' THEN agg.total_v2 WHEN e.libelle LIKE '%Plan France Relance%' THEN agg.total_v1 ELSE 0 END AS total
-        FROM min.enveloppe_financement e
-        CROSS JOIN agg
-        WHERE e.libelle LIKE 'Conseiller Numérique%'
-        ORDER BY e.libelle
-      `
-    }
-
+  async #queryBeneficiairesCn(filtreTerritoire: Prisma.Sql): Promise<ReadonlyArray<BeneficiairesCnQueryResult>> {
     return prisma.$queryRaw<Array<BeneficiairesCnQueryResult>>`
       WITH agg AS (
         SELECT
@@ -120,9 +113,9 @@ export class PrismaBeneficiairesLoader implements BeneficiairesLoader {
         -- Refonte 2026 : main.poste.structure_id pointe sur SA (V078 dataspace).
         FROM main.subvention s
         JOIN main.poste p ON p.id = s.poste_id
-        JOIN main.structure_administrative st ON st.id = p.structure_id
-        JOIN main.adresse a ON a.id = st.adresse_id
-        WHERE a.departement = ${territoire}
+        LEFT JOIN main.structure_administrative st ON st.id = p.structure_id
+        LEFT JOIN main.adresse a ON a.id = st.adresse_id
+        ${filtreTerritoire}
       )
       SELECT
         e.libelle AS label,

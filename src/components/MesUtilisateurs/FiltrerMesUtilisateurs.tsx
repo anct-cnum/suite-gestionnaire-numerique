@@ -1,26 +1,27 @@
 'use client'
 
-import { ReactElement, SyntheticEvent, useContext, useRef, useState } from 'react'
+import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import { SelectInstance } from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import Toggle from '../shared/Toggle/Toggle'
-import {
-  toutesLesRegions,
-  urlDeFiltrage,
-  ZoneGeographique,
-  zoneGeographiqueToURLSearchParams,
-} from '@/presenters/filtresUtilisateurPresenter'
+import { urlDeFiltrage } from '@/presenters/filtresUtilisateurPresenter'
+import { territoireDepuisCodes, TerritoireViewModel } from '@/presenters/rechercheTerritoiresPresenter'
 
 export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, resetSearch }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
-  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
+  const territoireInitial = territoireDepuisCodes({
+    codeDepartement: searchParams.get('codeDepartement'),
+    codeEpci: searchParams.get('codeEpci'),
+    codeRegion: searchParams.get('codeRegion'),
+  })
+  const [territoire, setTerritoire] = useState(territoireInitial)
+  const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [structuresSearchParams, setStructuresSearchParams] = useState(new URLSearchParams())
   const [structure, setStructure] = useState<null | OrganisationOption>(null)
 
@@ -37,7 +38,11 @@ export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, reset
           Uniquement les utilisateurs activés
         </Toggle>
         <hr />
-        <ZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
+        <ZonesGeographiques
+          key={cleReinitialisation}
+          onSelectionner={handleZoneGeographiqueChange}
+          valeurInitiale={territoire}
+        />
         <hr />
         <OrganisationInput
           extraSearchParams={structuresSearchParams}
@@ -61,14 +66,24 @@ export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, reset
     </>
   )
 
-  function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
-    setStructure(null)
-    setStructuresSearchParams(zoneGeographiqueToURLSearchParams(zoneGeographique))
+  function handleZoneGeographiqueChange(territoireSelectionne: null | TerritoireViewModel): void {
+    setTerritoire(territoireSelectionne)
+    // Effacer la zone élargit le périmètre : la structure sélectionnée reste valide.
+    if (territoireSelectionne !== null) {
+      setStructure(null)
+    }
+    // La recherche de structures ne sait restreindre que par région ou département (pas par EPCI).
+    const zoneParams = new URLSearchParams()
+    if (territoireSelectionne !== null && territoireSelectionne.type !== 'epci') {
+      zoneParams.set(territoireSelectionne.type, territoireSelectionne.code)
+    }
+    setStructuresSearchParams(zoneParams)
   }
 
   function reinitialiser(): void {
-    // Stryker disable next-line OptionalChaining
-    ref.current?.setValue(toutesLesRegions, 'select-option')
+    setCleReinitialisation((cle) => cle + 1)
+    setTerritoire(null)
+    setStructuresSearchParams(new URLSearchParams())
     setStructure(null)
     router.push('/mes-utilisateurs')
     resetSearch()
@@ -81,7 +96,7 @@ export default function FiltrerMesUtilisateurs({ closeDrawer, id, labelId, reset
 
     const form = new FormData(event.currentTarget)
 
-    const url = urlDeFiltrage(form, roles.length)
+    const url = urlDeFiltrage(form, roles.length, territoire)
     router.push(url.toString())
   }
 }

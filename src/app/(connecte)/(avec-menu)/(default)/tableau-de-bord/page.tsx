@@ -2,23 +2,15 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import BlocAccueil from './blocs/BlocAccueil'
-import BlocBeneficiaires from './blocs/BlocBeneficiaires'
-import BlocCartographie from './blocs/BlocCartographie'
-import BlocDonneesStructure from './blocs/BlocDonneesStructure'
-import BlocEtatDesLieux from './blocs/BlocEtatDesLieux'
-import BlocFinancements from './blocs/BlocFinancements'
-import BlocGouvernance from './blocs/BlocGouvernance'
-import BlocLabelConum from './blocs/BlocLabelConum'
-import BlocMediateurs from './blocs/BlocMediateurs'
-import BlocRejoindreGouvernance from './blocs/BlocRejoindreGouvernance'
-import BlocVigilanceLieux from './blocs/BlocVigilanceLieux'
-import { blocsParContexte, IdentifiantBloc } from './registreBlocs'
+import { construireBlocs } from './blocsTableauDeBord'
+import { blocsParContexte } from './registreBlocs'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { gouvernancesSelecteurPresenteur } from '@/presenters/tableauDeBord/selecteurGouvernancePresenter'
+import { perimetreRechercheDuContexte } from '@/use-cases/queries/PerimetreRechercheTerritoire'
 import { resoudreContexte, Scope } from '@/use-cases/queries/ResoudreContexte'
+import { TerritoireTableauDeBord } from '@/use-cases/queries/shared/TerritoireTableauDeBord'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -41,8 +33,6 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     redirect(`/tableau-de-bord/departement/${options[0].value}`)
   }
 
-  const blocs = blocsParContexte(contexte)
-
   let scope: Scope | undefined
   if (contexte.aCesRoles('administrateur_dispositif')) {
     scope = contexte.scopes.find((scope) => scope.type === 'france')
@@ -60,21 +50,21 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     redirect('/mes-utilisateurs')
   }
 
-  const blocsElements: Record<IdentifiantBloc, ReactElement> = {
-    accueil: <BlocAccueil contexte={contexte} key="accueil" prenom={utilisateur.prenom} scope={scope} />,
-    beneficiaires: <BlocBeneficiaires key="beneficiaires" scope={scope} />,
-    cartographie: <BlocCartographie key="cartographie" />,
-    donneesStructure: (
-      <BlocDonneesStructure key="donneesStructure" scope={scope} structureId={contexte.idStructure()} />
-    ),
-    etatDesLieux: <BlocEtatDesLieux key="etatDesLieux" scope={scope} />,
-    financements: <BlocFinancements key="financements" scope={scope} />,
-    gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
-    labelConum: <BlocLabelConum key="labelConum" structureId={contexte.idStructure()} />,
-    mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
-    rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
-    vigilanceLieux: <BlocVigilanceLieux key="vigilanceLieux" scope={scope} />,
-  }
+  const territoire = territoireDuScope(scope)
+  const perimetre = perimetreRechercheDuContexte(contexte)
+
+  const blocs = blocsParContexte(contexte, territoire.type)
+  const blocsElements = construireBlocs({ contexte, perimetre, prenom: utilisateur.prenom, territoire })
 
   return <>{blocs.map((bloc) => blocsElements[bloc])}</>
+}
+
+function territoireDuScope(scope: Scope): TerritoireTableauDeBord {
+  if (scope.type === 'france') {
+    return { type: 'france' }
+  }
+  if (scope.type === 'structure') {
+    return { structureId: parseInt(scope.code, 10), type: 'structure' }
+  }
+  return { code: scope.code, type: 'departement' }
 }

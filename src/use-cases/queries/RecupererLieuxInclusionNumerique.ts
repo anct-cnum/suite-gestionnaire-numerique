@@ -1,7 +1,8 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
+import { FiltreTerritorial } from './shared/FiltreTerritorial'
 
 export interface LieuxInclusionNumeriqueLoader {
-  get(territoire: string): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel>
+  get(filtre: FiltreTerritorial): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel>
 }
 
 export type LieuxInclusionNumeriqueReadModel = Readonly<{

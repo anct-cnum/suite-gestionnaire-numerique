@@ -2,12 +2,42 @@ import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import {
   CommuneReadModel,
+  DepartementIfnReadModel,
   DepartementsReadModel,
   IndicesLoader,
 } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
+  async getForCommunes(codesInsee: ReadonlyArray<string>): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
+    try {
+      const communes = await prisma.ifnCommune.findMany({
+        select: {
+          codeInsee: true,
+          score: true,
+        },
+        where: {
+          codeInsee: {
+            in: [...codesInsee],
+          },
+        },
+      })
+
+      return communes.map((commune) => ({
+        codeInsee: commune.codeInsee,
+        ifn: Number(commune.score),
+      }))
+    } catch (error) {
+      reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
+        operation: 'getForCommunes',
+      })
+      return {
+        message: 'Impossible de récupérer les données des indices de fragilité',
+        type: 'error',
+      }
+    }
+  }
+
   async getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
     try {
       const communes = await prisma.ifnCommune.findMany({
@@ -30,6 +60,37 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
         codeDepartement,
         operation: 'getForDepartement',
+      })
+      return {
+        message: 'Impossible de récupérer les données des indices de fragilité',
+        type: 'error',
+      }
+    }
+  }
+
+  async getForDepartements(
+    codesDepartement: ReadonlyArray<string>
+  ): Promise<ErrorReadModel | ReadonlyArray<DepartementIfnReadModel>> {
+    try {
+      const departements = await prisma.ifn_departement.findMany({
+        select: {
+          code: true,
+          score: true,
+        },
+        where: {
+          code: {
+            in: [...codesDepartement],
+          },
+        },
+      })
+
+      return departements.map((departement) => ({
+        codeDepartement: departement.code,
+        ifn: Number(departement.score),
+      }))
+    } catch (error) {
+      reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
+        operation: 'getForDepartements',
       })
       return {
         message: 'Impossible de récupérer les données des indices de fragilité',

@@ -2,23 +2,14 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import BlocAccueil from '../../blocs/BlocAccueil'
-import BlocBeneficiaires from '../../blocs/BlocBeneficiaires'
-import BlocCartographie from '../../blocs/BlocCartographie'
-import BlocDonneesStructure from '../../blocs/BlocDonneesStructure'
-import BlocEtatDesLieux from '../../blocs/BlocEtatDesLieux'
-import BlocFinancements from '../../blocs/BlocFinancements'
-import BlocGouvernance from '../../blocs/BlocGouvernance'
-import BlocLabelConum from '../../blocs/BlocLabelConum'
-import BlocMediateurs from '../../blocs/BlocMediateurs'
-import BlocRejoindreGouvernance from '../../blocs/BlocRejoindreGouvernance'
-import BlocVigilanceLieux from '../../blocs/BlocVigilanceLieux'
-import { blocsParContexte, IdentifiantBloc } from '../../registreBlocs'
+import { construireBlocs } from '../../blocsTableauDeBord'
+import { blocsParContexte } from '../../registreBlocs'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { nomDepartement } from '@/shared/urlHelpers'
+import { perimetreRechercheDuContexte } from '@/use-cases/queries/PerimetreRechercheTerritoire'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
@@ -39,29 +30,21 @@ export default async function TableauDeBordGouvernanceController({ params }: Pro
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   const codesDepartements = contexte.codesDepartements()
+  const perimetre = perimetreRechercheDuContexte(contexte)
 
-  if (!(codesDepartements.includes(code) || contexte.aCesRoles('administrateur_dispositif'))) {
+  // Accès aligné sur le périmètre de recherche (source d'autorité unique) : un territoire
+  // proposé par le sélecteur est toujours navigable. On conserve codesDepartements() pour
+  // les rôles sans périmètre de recherche (ex. gestionnaire_region).
+  const dansPerimetre =
+    perimetre !== null && (perimetre.type === 'complet' || perimetre.codesDepartement.includes(code))
+
+  if (!(dansPerimetre || codesDepartements.includes(code) || contexte.aCesRoles('administrateur_dispositif'))) {
     redirect('/tableau-de-bord')
   }
 
-  const blocs = blocsParContexte(contexte)
-  const scope = { code, type: 'departement' } as const
-
-  const blocsElements: Record<IdentifiantBloc, ReactElement> = {
-    accueil: <BlocAccueil contexte={contexte} key="accueil" prenom={utilisateur.prenom} scope={scope} />,
-    beneficiaires: <BlocBeneficiaires key="beneficiaires" scope={scope} />,
-    cartographie: <BlocCartographie key="cartographie" />,
-    donneesStructure: (
-      <BlocDonneesStructure key="donneesStructure" scope={scope} structureId={contexte.idStructure()} />
-    ),
-    etatDesLieux: <BlocEtatDesLieux key="etatDesLieux" scope={scope} />,
-    financements: <BlocFinancements key="financements" scope={scope} />,
-    gouvernance: <BlocGouvernance key="gouvernance" scope={scope} />,
-    labelConum: <BlocLabelConum key="labelConum" structureId={contexte.idStructure()} />,
-    mediateurs: <BlocMediateurs key="mediateurs" scope={scope} />,
-    rejoindreGouvernance: <BlocRejoindreGouvernance key="rejoindreGouvernance" />,
-    vigilanceLieux: <BlocVigilanceLieux key="vigilanceLieux" scope={scope} />,
-  }
+  const territoire = { code, type: 'departement' } as const
+  const blocs = blocsParContexte(contexte, territoire.type)
+  const blocsElements = construireBlocs({ contexte, perimetre, prenom: utilisateur.prenom, territoire })
 
   return (
     <>

@@ -15,22 +15,22 @@ import {
 import { financementAdminPresenter } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { financementsStructurePresenter } from '@/presenters/tableauDeBord/financementsStructurePresenter'
-import { Scope } from '@/use-cases/queries/ResoudreContexte'
+import { TerritoireTableauDeBord } from '@/use-cases/queries/shared/TerritoireTableauDeBord'
 
-export default async function BlocFinancements({ scope }: Props): Promise<ReactElement> {
-  if (scope.type === 'france') {
-    return financementsNationaux()
+export default async function BlocFinancements({ territoire }: Props): Promise<ReactElement> {
+  switch (territoire.type) {
+    case 'departement':
+      return financementsDepartement(territoire.code)
+    case 'france':
+      return financementsNationaux()
+    case 'region':
+      return financementsRegion(territoire.codesDepartement)
+    case 'structure':
+      return financementsStructure(territoire.structureId)
+    default:
+      // EPCI : bloc masqué par le registre.
+      return <></>
   }
-
-  if (scope.type === 'structure') {
-    return financementsStructure(parseInt(scope.code, 10))
-  }
-
-  if (scope.type === 'departement') {
-    return financementsDepartement(scope.code)
-  }
-
-  return financementsDepartement(scope.code)
 }
 
 async function chargerEnveloppesConseillerNumerique(
@@ -73,6 +73,18 @@ async function financementsDepartement(code: string): Promise<ReactElement> {
   )
 }
 
+// Agrégat des départements de la région ; lien de détail masqué (les pages /gouvernance ne connaissent pas la région).
+async function financementsRegion(codesDepartement: ReadonlyArray<string>): Promise<ReactElement> {
+  const [financementsReadModel, enveloppesConumReadModel] = await Promise.all([
+    new PrismaFinancementsLoader().getPourDepartements(codesDepartement),
+    new PrismaEnveloppesConseillerNumeriqueLoader().getPourDepartements(codesDepartement),
+  ])
+  const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsPrefPresenter)
+  const enveloppesConum = enveloppesConseillerNumeriquePresenter(enveloppesConumReadModel.enveloppes, new Date())
+
+  return <FinancementsPref conventionnement={financementsViewModel} enveloppesConseillerNumerique={enveloppesConum} />
+}
+
 async function financementsStructure(structureId: number): Promise<ReactElement> {
   const cnLoader = new PrismaEnveloppesConseillerNumeriqueLoader()
   const [financementsReadModel, enveloppesConumReadModel] = await Promise.all([
@@ -94,5 +106,5 @@ async function financementsStructure(structureId: number): Promise<ReactElement>
 }
 
 type Props = Readonly<{
-  scope: Scope
+  territoire: TerritoireTableauDeBord
 }>

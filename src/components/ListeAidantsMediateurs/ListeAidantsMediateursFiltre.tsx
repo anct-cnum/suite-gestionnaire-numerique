@@ -1,16 +1,11 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import CheckboxGroup from '../shared/CheckboxGroup/CheckboxGroup'
-import { SelectInstance } from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
-import {
-  toutesLesRegions,
-  ZoneGeographique,
-  zoneGeographiqueToURLSearchParams,
-} from '@/presenters/filtresUtilisateurPresenter'
+import { cleGeographiqueParType, territoireDepuisCodes } from '@/presenters/rechercheTerritoiresPresenter'
 
 export default function ListeAidantsMediateursFiltre({
   closeDrawer,
@@ -20,10 +15,10 @@ export default function ListeAidantsMediateursFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const toggleId = useId()
   const [selectedAnciens, setSelectedAnciens] = useState(false)
-  const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
+  const [selectedZone, setSelectedZone] = useState(territoireDepuisCodes(currentFilters))
+  const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [selectedRoles, setSelectedRoles] = useState<Array<string>>([])
   const [selectedHabilitations, setSelectedHabilitations] = useState<Array<string>>([])
   const [selectedFormations, setSelectedFormations] = useState<Array<string>>([])
@@ -34,17 +29,11 @@ export default function ListeAidantsMediateursFiltre({
     setSelectedRoles(currentFilters.roles.filter(Boolean))
     setSelectedHabilitations(currentFilters.habilitations.filter(Boolean))
     setSelectedFormations(currentFilters.formations.filter(Boolean))
-
-    // Pour la zone géographique, on pourrait aussi la synchroniser si nécessaire
-    // mais c'est plus complexe car il faut reconstruire l'objet ZoneGeographique
+    setSelectedZone(territoireDepuisCodes(currentFilters))
   }, [currentFilters])
 
-  function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
-    setSelectedZone(zoneGeographique)
-  }
-
   function reinitialiser(): void {
-    ref.current?.setValue(toutesLesRegions, 'select-option')
+    setCleReinitialisation((cle) => cle + 1)
     setSelectedAnciens(false)
     setSelectedZone(null)
     setSelectedRoles([])
@@ -64,10 +53,7 @@ export default function ListeAidantsMediateursFiltre({
 
     // Filtre géographique - seulement pour les administrateur_dispositif
     if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
-      const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
-      geoParams.forEach((value, key) => {
-        params.set(key, value)
-      })
+      params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
     // Filtres rôles
@@ -109,7 +95,11 @@ export default function ListeAidantsMediateursFiltre({
 
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
-          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
+          <FiltrerParZonesGeographiques
+            key={cleReinitialisation}
+            onSelectionner={setSelectedZone}
+            valeurInitiale={selectedZone}
+          />
 
           <hr className="fr-hr" />
         </>
@@ -169,6 +159,7 @@ type Props = Readonly<{
   currentFilters: {
     anciens: boolean
     codeDepartement: null | string
+    codeEpci: null | string
     codeRegion: null | string
     formations: Array<string>
     habilitations: Array<string>

@@ -257,7 +257,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -369,7 +370,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -428,7 +430,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -487,7 +490,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -548,7 +552,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -580,7 +585,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -607,7 +613,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -636,7 +643,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -664,7 +672,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -694,7 +703,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -752,7 +762,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -828,7 +839,8 @@ describe('prisma utilisateur query', () => {
         isActive,
         roles,
         codeDepartement,
-        codeRegion
+        codeRegion,
+        '0'
       )
 
       // THEN
@@ -886,6 +898,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId
       )
 
@@ -938,6 +951,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )
@@ -961,6 +975,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )
@@ -985,6 +1000,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )
@@ -1008,6 +1024,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )
@@ -1031,6 +1048,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )
@@ -1054,6 +1072,7 @@ describe('prisma utilisateur query', () => {
         roles,
         codeDepartement,
         codeRegion,
+        '0',
         structureId,
         prenomOuNomOuEmail
       )

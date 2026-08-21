@@ -3,7 +3,7 @@ import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export type FiltreGeographiqueLieux = Readonly<{
   code: string
-  type: 'departement' | 'region'
+  type: 'departement' | 'epci' | 'region'
 }>
 
 export type StatutLieux = 'actif' | 'archive'

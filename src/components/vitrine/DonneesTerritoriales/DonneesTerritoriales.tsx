@@ -1,48 +1,30 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { memo, ReactElement, useEffect, useState } from 'react'
+import { memo, ReactElement, useState } from 'react'
 
 import styles from './DonneesTerritoriales.module.css'
+import { rechercherTerritoires } from './rechercherTerritoires'
+import RechercheTerritoire from '@/components/shared/Select/RechercheTerritoire'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import CarteFranceVitrine from '@/components/vitrine/CarteFranceVitrine/CarteFranceVitrine'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
-import SelecteurZoneGeographique from '@/components/vitrine/SelecteurZoneGeographique/SelecteurZoneGeographique'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
-import { ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
+import { TerritoireViewModel } from '@/presenters/rechercheTerritoiresPresenter'
 
 const MemoizedCarteFranceVitrine = memo(CarteFranceVitrine)
 
 export default function DonneesTerritoriales(): ReactElement {
-  const [zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
   const [navigationEnCours, setNavigationEnCours] = useState(false)
 
   const router = useRouter()
 
-  useEffect(() => {
-    if (zoneGeographique) {
-      const { type, value } = zoneGeographique
-
-      // Si la valeur est "all", naviguer vers /national
-      if (value === 'all') {
-        setNavigationEnCours(true)
-        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
-        return
-      }
-
-      // Si la valeur contient un underscore, extraire le code région et département
-      if (value.includes('_')) {
-        // eslint-disable-next-line sonarjs/no-unused-vars,@typescript-eslint/no-unused-vars
-        const [_, codeDepartement] = value.split('_')
-
-        // Ne naviguer que pour les départements, pas pour les régions
-        if (type === 'departement' && codeDepartement !== '00') {
-          setNavigationEnCours(true)
-          router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeDepartement}`)
-        }
-      }
+  function handleTerritoireChange(territoire: null | TerritoireViewModel): void {
+    if (territoire !== null) {
+      setNavigationEnCours(true)
+      router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${territoire.type}/${territoire.code}`)
     }
-  }, [router, zoneGeographique])
+  }
 
   return (
     <>
@@ -87,7 +69,11 @@ export default function DonneesTerritoriales(): ReactElement {
 
                   {/* Selecteur de territoire */}
                   <div className="fr-mb-4w">
-                    <SelecteurZoneGeographique onChange={setZoneGeographique} />
+                    <RechercheTerritoire
+                      id="rechercheTerritoire"
+                      onSelectionner={handleTerritoireChange}
+                      rechercher={rechercherTerritoires}
+                    />
                   </div>
 
                   {/* Bouton ou loader pendant la navigation */}

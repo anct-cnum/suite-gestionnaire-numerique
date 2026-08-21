@@ -4,13 +4,13 @@ import { isErrorReadModel } from '@/components/shared/ErrorHandler'
 import DonneesStructure, { DonneesStructureViewModel } from '@/components/TableauDeBord/DonneesStructure'
 import { PrismaDonneesStructureLoader } from '@/gateways/tableauDeBord/PrismaDonneesStructureLoader'
 import { DonneesStructureReadModel } from '@/use-cases/queries/RecupererDonneesStructure'
-import { Scope } from '@/use-cases/queries/ResoudreContexte'
+import { TerritoireTableauDeBord } from '@/use-cases/queries/shared/TerritoireTableauDeBord'
 
 export default async function BlocDonneesStructure({
-  scope,
   structureId: structureIdProp,
+  territoire,
 }: Props): Promise<ReactElement> {
-  const structureId = structureIdProp ?? (scope.type === 'structure' ? parseInt(scope.code, 10) : 0)
+  const structureId = structureIdProp ?? (territoire.type === 'structure' ? territoire.structureId : 0)
 
   if (structureId === 0) {
     return <DonneesStructure viewModel={viewModelVide} />
@@ -66,6 +66,6 @@ const viewModelVide: DonneesStructureViewModel = {
 }
 
 type Props = Readonly<{
-  scope: Scope
   structureId?: number
+  territoire: TerritoireTableauDeBord
 }>

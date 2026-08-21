@@ -1,14 +1,10 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
-import Select, { SelectInstance } from '../shared/Select/Select'
-import {
-  toutesLesRegions,
-  ZoneGeographique,
-  zoneGeographiqueToURLSearchParams,
-} from '@/presenters/filtresUtilisateurPresenter'
+import Select from '../shared/Select/Select'
+import { cleGeographiqueParType, territoireDepuisCodes } from '@/presenters/rechercheTerritoiresPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export default function ListeStructuresFiltre({
@@ -20,18 +16,19 @@ export default function ListeStructuresFiltre({
   onFilterAction,
   onResetAction,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
   const selectLabellisationId = useId()
-  const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
+  const [selectedZone, setSelectedZone] = useState(territoireDepuisCodes(currentFilters))
+  const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [selectedLabellisation, setSelectedLabellisation] = useState('')
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
+    setSelectedZone(territoireDepuisCodes(currentFilters))
     setSelectedLabellisation(currentFilters.labellisation ?? '')
   }, [currentFilters])
 
   function reinitialiser(): void {
-    ref.current?.setValue(toutesLesRegions, 'select-option')
+    setCleReinitialisation((cle) => cle + 1)
     setSelectedZone(null)
     setSelectedLabellisation('')
     onResetAction()
@@ -43,9 +40,7 @@ export default function ListeStructuresFiltre({
 
     // Filtre géographique - réservé au scope national
     if (estScopeNational && selectedZone) {
-      zoneGeographiqueToURLSearchParams(selectedZone).forEach((value, key) => {
-        params.set(key, value)
-      })
+      params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
     if (selectedLabellisation !== '') {
@@ -60,7 +55,11 @@ export default function ListeStructuresFiltre({
     <div className="sidepanel__content">
       {estScopeNational ? (
         <>
-          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={setSelectedZone} />
+          <FiltrerParZonesGeographiques
+            key={cleReinitialisation}
+            onSelectionner={setSelectedZone}
+            valeurInitiale={selectedZone}
+          />
           <hr className="fr-hr" />
         </>
       ) : null}
@@ -101,6 +100,9 @@ const optionsLabellisation: ReadonlyArray<LabelValue> = [
 type Props = Readonly<{
   closeDrawer(): void
   currentFilters: Readonly<{
+    codeDepartement: null | string
+    codeEpci: null | string
+    codeRegion: null | string
     labellisation: null | string
   }>
   estScopeNational: boolean

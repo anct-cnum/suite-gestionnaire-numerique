@@ -6,14 +6,14 @@ import {
   PrismaStatistiquesMediateursLoader,
   StatistiquesMediateursReadModel,
 } from '@/gateways/PrismaStatistiquesMediateursLoader'
-import { Scope } from '@/use-cases/queries/ResoudreContexte'
+import {
+  filtreTerritorialDuTerritoire,
+  TerritoireGeographique,
+} from '@/use-cases/queries/shared/TerritoireTableauDeBord'
 
-export default async function BlocMediateurs({ scope }: Props): Promise<ReactElement> {
+export default async function BlocMediateurs({ territoire }: Props): Promise<ReactElement> {
   const loader = new PrismaStatistiquesMediateursLoader()
-  const readModel = await loader.get(
-    scope.type === 'france' ? 'France' : scope.code,
-    scope.type === 'region' ? 'region' : 'departement'
-  )
+  const readModel = await loader.get(filtreTerritorialDuTerritoire(territoire))
 
   if (isErrorReadModel(readModel)) {
     return <MediateursAidants viewModel={viewModelVide} />
@@ -63,5 +63,5 @@ const viewModelVide: MediateursAidantsViewModel = {
 }
 
 type Props = Readonly<{
-  scope: Scope
+  territoire: TerritoireGeographique
 }>

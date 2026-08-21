@@ -71,6 +71,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
+    codeEpci: string,
     idStructure?: number,
     prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
@@ -89,6 +90,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       roles,
       codeDepartement,
       codeRegion,
+      codeEpci,
       idStructure,
       idsFromSearch
     )
@@ -170,10 +172,12 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
+    codeEpci: string,
     idStructure?: number,
     idsFromSearch?: ReadonlyArray<number>
   ): Promise<Prisma.UtilisateurRecordWhereInput> {
     const departementInexistant = '0'
+    const epciInexistant = '0'
     const regionInexistante = '0'
     const where: Prisma.UtilisateurRecordWhereInput = {}
 
@@ -214,7 +218,12 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       where.role = { in: roles as Array<RoleUtilisateur> }
     }
 
-    if (codeDepartement !== departementInexistant) {
+    if (codeEpci !== epciInexistant) {
+      // Un utilisateur est dans l'EPCI si l'adresse de sa structure administrative est dans une commune membre
+      where.relationStructureAdministrative = {
+        adresse: { code_insee: { in: await this.#getCommunesInEpci(codeEpci) } },
+      }
+    } else if (codeDepartement !== departementInexistant) {
       where.OR = [
         { departementCode: codeDepartement },
         { relationStructureAdministrative: { adresse: { departement: codeDepartement } } },
@@ -234,6 +243,22 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     where.AND = [{ structureId: idStructure }]
 
     return where
+  }
+
+  async #getCommunesInEpci(codeEpci: string): Promise<Array<string>> {
+    const communes = await prisma.commune.findMany({
+      select: {
+        code_insee: true,
+      },
+      where: {
+        commune_epci: {
+          some: {
+            epci: { code: codeEpci },
+          },
+        },
+      },
+    })
+    return communes.map((commune) => commune.code_insee)
   }
 
   async #getDepartementsInRegion(codeRegion: string): Promise<Array<string>> {

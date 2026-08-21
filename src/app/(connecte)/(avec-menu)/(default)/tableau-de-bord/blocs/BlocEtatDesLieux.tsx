@@ -13,31 +13,36 @@ import {
 } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
-import { Scope } from '@/use-cases/queries/ResoudreContexte'
+import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
+import { FiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'
+import {
+  filtreTerritorialDuTerritoire,
+  TerritoireGeographique,
+  TerritoireTableauDeBord,
+} from '@/use-cases/queries/shared/TerritoireTableauDeBord'
 
-export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactElement> {
-  const code = scope.type === 'france' ? 'France' : scope.code
+export default async function BlocEtatDesLieux({ territoire }: Props): Promise<ReactElement> {
+  const filtre: FiltreTerritorial =
+    territoire.type === 'structure'
+      ? { code: String(territoire.structureId), type: 'departement' }
+      : filtreTerritorialDuTerritoire(territoire)
 
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
 
-  const lieuxInclusionReadModel = await lieuxInclusionLoader.get(code)
+  const lieuxInclusionReadModel = await lieuxInclusionLoader.get(filtre)
   const lieuxInclusionViewModel = handleReadModelOrError(lieuxInclusionReadModel, lieuxInclusionNumeriquePresenter)
 
-  const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(code)
+  const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(filtre)
   const mediateursEtAidantsViewModel = handleReadModelOrError(
     mediateursEtAidantsReadModel,
     mediateursEtAidantsPresenter
   )
 
-  const carte =
-    scope.type === 'france' ? await carteNationale(indicesLoader) : await carteDepartement(indicesLoader, scope.code)
+  const carte = territoire.type === 'structure' ? <></> : await carteDuTerritoire(indicesLoader, territoire)
 
-  const accompagnementsProps =
-    scope.type === 'structure'
-      ? { accompagnementsStructureId: parseInt(scope.code, 10) }
-      : { accompagnementsTerritoire: code }
+  const accompagnementsProps = accompagnements(territoire, filtre)
 
   return (
     <EtatDesLieux
@@ -49,29 +54,75 @@ export default async function BlocEtatDesLieux({ scope }: Props): Promise<ReactE
   )
 }
 
-async function carteNationale(indicesLoader: PrismaIndicesDeFragiliteLoader): Promise<ReactElement> {
-  const indicesReadModel = await indicesLoader.getForFrance()
+type AccompagnementsProps =
+  | Readonly<{ accompagnementsRealisesPromise: ReturnType<typeof fetchAccompagnementsRealises> }>
+  | Readonly<{ accompagnementsStructureId: number }>
+  | Readonly<{ accompagnementsTerritoire: string }>
 
-  if (isErrorReadModel(indicesReadModel)) {
-    return <CarteIndicesFrance departementsFragilite={[]} />
+function accompagnements(territoire: TerritoireTableauDeBord, filtre: FiltreTerritorial): AccompagnementsProps {
+  switch (territoire.type) {
+    case 'departement':
+      return { accompagnementsTerritoire: territoire.code }
+    case 'france':
+      return { accompagnementsTerritoire: 'France' }
+    case 'structure':
+      return { accompagnementsStructureId: territoire.structureId }
+    default:
+      // Région et EPCI : la route client des accompagnements ne connaît que France/département,
+      // on résout la promesse côté serveur avec le filtre territorial complet.
+      return { accompagnementsRealisesPromise: fetchAccompagnementsRealises(filtre) }
   }
-
-  return (
-    <CarteIndicesFrance departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)} />
-  )
 }
 
-async function carteDepartement(indicesLoader: PrismaIndicesDeFragiliteLoader, code: string): Promise<ReactElement> {
-  const indicesReadModel = await indicesLoader.getForDepartement(code)
-  const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
-
-  if ('type' in indicesFragilite) {
-    return <CarteFragiliteDepartement communesFragilite={[]} departement={code} />
+async function carteDuTerritoire(
+  indicesLoader: PrismaIndicesDeFragiliteLoader,
+  territoire: TerritoireGeographique
+): Promise<ReactElement> {
+  switch (territoire.type) {
+    case 'departement': {
+      const indicesReadModel = await indicesLoader.getForDepartement(territoire.code)
+      const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
+      return (
+        <CarteFragiliteDepartement
+          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+          territoire={{ code: territoire.code, type: 'departement' }}
+        />
+      )
+    }
+    case 'epci': {
+      const indicesReadModel = await indicesLoader.getForCommunes(territoire.codesInsee)
+      const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
+      return (
+        <CarteFragiliteDepartement
+          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+          territoire={{ bbox: territoire.bbox, code: territoire.code, codesInsee: territoire.codesInsee, type: 'epci' }}
+        />
+      )
+    }
+    case 'france': {
+      const indicesReadModel = await indicesLoader.getForFrance()
+      if (isErrorReadModel(indicesReadModel)) {
+        return <CarteIndicesFrance departementsFragilite={[]} />
+      }
+      return (
+        <CarteIndicesFrance
+          departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)}
+        />
+      )
+    }
+    case 'region': {
+      const indicesReadModel = await indicesLoader.getForDepartements(territoire.codesDepartement)
+      const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragiliteDepartementsPresenter)
+      return (
+        <CarteFragiliteDepartement
+          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+          territoire={{ bbox: territoire.bbox, codesDepartement: territoire.codesDepartement, type: 'region' }}
+        />
+      )
+    }
   }
-
-  return <CarteFragiliteDepartement communesFragilite={indicesFragilite} departement={code} />
 }
 
 type Props = Readonly<{
-  scope: Scope
+  territoire: TerritoireTableauDeBord
 }>

@@ -42,6 +42,7 @@ export type PostesConseillerNumeriqueReadModel = Readonly<{
 export type FiltresPostesConseillerNumerique = Readonly<{
   bonification?: boolean
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   conventions?: Array<string>
   pagination: Readonly<{

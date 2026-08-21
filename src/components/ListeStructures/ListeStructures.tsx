@@ -260,7 +260,12 @@ export default function ListeStructures({
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
-          currentFilters={{ labellisation: normalizedSearchParams.get('labellisation') }}
+          currentFilters={{
+            codeDepartement: normalizedSearchParams.get('codeDepartement'),
+            codeEpci: normalizedSearchParams.get('codeEpci'),
+            codeRegion: normalizedSearchParams.get('codeRegion'),
+            labellisation: normalizedSearchParams.get('labellisation'),
+          }}
           estScopeNational={estScopeNational}
           id={drawerId}
           libelleTerritoireRestreint={libelleTerritoireRestreint}

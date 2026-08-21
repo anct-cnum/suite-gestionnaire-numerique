@@ -1,16 +1,15 @@
 import prisma from '../../../prisma/prismaClient'
-import { buildLieuxDansScopeCte } from '../shared/lieuxDansScope'
+import { buildLieuxDansScopeCte, FiltreLieuxDansScope } from '../shared/lieuxDansScope'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { bornesFraicheur } from '@/shared/fraicheur'
 import {
   PointsVigilanceLieuxLoader,
   PointsVigilanceLieuxReadModel,
 } from '@/use-cases/queries/RecupererPointsVigilanceLieux'
-import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaPointsVigilanceLieuxLoader implements PointsVigilanceLieuxLoader {
-  async get(scopeFiltre: ScopeFiltre, now: Date): Promise<ErrorReadModel | PointsVigilanceLieuxReadModel> {
+  async get(scopeFiltre: FiltreLieuxDansScope, now: Date): Promise<ErrorReadModel | PointsVigilanceLieuxReadModel> {
     try {
       // Mêmes seuils que la liste des lieux (RG7 #1488) : « À actualiser » inclut les lieux sans date de mise à jour.
       const bornesAActualiser = bornesFraicheur('red', now)

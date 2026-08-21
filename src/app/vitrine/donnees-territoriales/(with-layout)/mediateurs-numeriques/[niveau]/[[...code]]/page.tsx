@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement, Suspense } from 'react'
 
+import { filtreDuTerritoire, recupererTerritoireVitrine } from '../../../../territoire'
 import AsyncLoaderErrorBoundary from '@/components/AidantsMediateurs/GenericErrorBoundary'
 import {
   StatistiquesAsyncContent,
@@ -23,44 +24,41 @@ import {
 } from '@/presenters/vitrine/statistiquesMediateursPresenter'
 import { clamperPeriode } from '@/shared/dispositif'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
+import { filtresCoop } from '@/use-cases/queries/fetchAccompagnementsRealises'
+import { FiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, niveau } = await params
-  const codeDepartement = code?.[0]
+  const territoire = await recupererTerritoireVitrine(niveau, code?.[0])
 
-  return generateTerritoireMetadata(niveau, codeDepartement, {
-    descriptionTemplate:
-      'Découvrez les médiateurs numériques pour {territoire}. Statistiques sur les conseillers numériques, aidants Connect et professionnels de la médiation numérique.',
-    keywords: [
-      'médiateurs numériques',
-      'conseillers numériques',
-      'Aidants Connect',
-      'médiation numérique',
-      'accompagnement numérique',
-    ],
-    titleTemplate: 'Médiateurs numériques - {territoire} - Inclusion Numérique',
-  })
+  return generateTerritoireMetadata(
+    niveau,
+    code?.[0],
+    {
+      descriptionTemplate:
+        'Découvrez les médiateurs numériques pour {territoire}. Statistiques sur les conseillers numériques, aidants Connect et professionnels de la médiation numérique.',
+      keywords: [
+        'médiateurs numériques',
+        'conseillers numériques',
+        'Aidants Connect',
+        'médiation numérique',
+        'accompagnement numérique',
+      ],
+      titleTemplate: 'Médiateurs numériques - {territoire} - Inclusion Numérique',
+    },
+    territoire !== null && (territoire.type === 'region' || territoire.type === 'epci') ? territoire.nom : undefined
+  )
 }
 
 export default async function MediateursNumeriques({ params, searchParams }: Props): Promise<ReactElement> {
   const { code, niveau } = await params
   const { au, du } = await searchParams
 
-  // Validation : niveau doit être 'national' ou 'departement'
-  if (niveau !== 'national' && niveau !== 'departement') {
+  const territoire = await recupererTerritoireVitrine(niveau, code?.[0])
+  if (territoire === null) {
     notFound()
   }
-
-  // Validation : si niveau = 'departement', code est obligatoire
-  if (niveau === 'departement' && (code === undefined || code.length === 0)) {
-    notFound()
-  }
-
-  // Extraction du code département si présent
-  const codeDepartement = niveau === 'departement' && code !== undefined ? code[0] : undefined
-
-  // Déterminer le territoire pour les loaders
-  const territoire = niveau === 'national' ? 'France' : (codeDepartement ?? '')
+  const filtre = filtreDuTerritoire(territoire)
 
   // Dates pour le filtre (par défaut : début du dispositif jusqu'à aujourd'hui)
   const aujourdhui = new Date().toISOString().slice(0, 10)
@@ -68,17 +66,14 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
 
   // Récupérer les statistiques synchrones des médiateurs
   const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()
-  const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(
-    territoire,
-    niveau === 'national' ? 'national' : 'departement'
-  )
+  const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(filtre)
   const statistiquesMediateursViewModel = handleReadModelOrError(
     statistiquesMediateursReadModel,
     statistiquesMediateursPresenter
   )
 
   // Créer la promesse de récupération des statistiques async (Coop)
-  const statistiquesPromise = recupererStatistiques(codeDepartement, dateDebut, dateFin)
+  const statistiquesPromise = recupererStatistiques(filtre, dateDebut, dateFin)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -145,30 +140,20 @@ function renderCartesStatistiques(viewModel: ErrorViewModel | StatistiquesMediat
 }
 
 async function recupererStatistiques(
-  codeDepartement?: string,
+  filtre: FiltreTerritorial,
   dateDebut?: string,
   dateFin?: string
 ): Promise<ErrorViewModel | StatistiquesMediateursData> {
   try {
     const loader = createApiCoopStatistiquesLoader()
-    const filtres: {
-      au?: string
-      departements?: ReadonlyArray<string>
-      du?: string
-    } = {}
-
-    if (codeDepartement !== undefined) {
-      filtres.departements = [codeDepartement]
-    }
-    if (dateDebut !== undefined) {
-      filtres.du = dateDebut
-    }
-    if (dateFin !== undefined) {
-      filtres.au = dateFin
+    const filtres = {
+      ...filtresCoop(filtre),
+      ...(dateDebut !== undefined ? { du: dateDebut } : {}),
+      ...(dateFin !== undefined ? { au: dateFin } : {}),
     }
 
     const readModel = await loader.recupererStatistiques(Object.keys(filtres).length > 0 ? filtres : undefined)
-    return statistiquesCoopToMediateursData(readModel, codeDepartement !== undefined)
+    return statistiquesCoopToMediateursData(readModel, filtre.type !== 'national')
   } catch {
     return {
       message: 'Erreur de récupération de la donnée',

@@ -12,6 +12,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<Query, Utilisateu
 
   async handle({
     codeDepartement = '0',
+    codeEpci = '0',
     codeRegion = '0',
     idStructure,
     pageCourante = 0,
@@ -31,6 +32,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<Query, Utilisateu
       roles,
       codeDepartement,
       codeRegion,
+      codeEpci,
       idStructure,
       prenomOuNomOuEmail
     )
@@ -51,6 +53,7 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
+    codeEpci: string,
     idStructure?: number,
     prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel>
@@ -59,6 +62,7 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
 type Query = Partial<
   Readonly<{
     codeDepartement: string
+    codeEpci: string
     codeRegion: string
     idStructure?: number
     pageCourante: number

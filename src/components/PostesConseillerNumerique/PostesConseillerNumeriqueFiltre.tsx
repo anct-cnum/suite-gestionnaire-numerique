@@ -1,16 +1,12 @@
 'use client'
 
-import { ReactElement, useId, useRef, useState } from 'react'
+import { ReactElement, useId, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
-import Select, { SelectInstance } from '../shared/Select/Select'
+import Select from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
-import {
-  toutesLesRegions,
-  ZoneGeographique,
-  zoneGeographiqueToURLSearchParams,
-} from '@/presenters/filtresUtilisateurPresenter'
+import { cleGeographiqueParType, territoireDepuisCodes } from '@/presenters/rechercheTerritoiresPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 import { FiltresPostesConseillerNumeriqueInternes } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 
@@ -21,8 +17,8 @@ export default function PostesConseillerNumeriqueFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
-  const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
+  const [selectedZone, setSelectedZone] = useState(territoireDepuisCodes(currentFilters))
+  const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [selectedStatut, setSelectedStatut] = useState(currentFilters.statut)
   const [isBonificationSelected, setIsBonificationSelected] = useState(currentFilters.bonification)
   const [selectedTypesPoste, setSelectedTypesPoste] = useState(currentFilters.typesPoste)
@@ -31,10 +27,6 @@ export default function PostesConseillerNumeriqueFiltre({
 
   const statutSelectId = useId()
   const bonificationToggleId = useId()
-
-  function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
-    setSelectedZone(zoneGeographique)
-  }
 
   function createCheckboxHandler(
     currentValues: Array<string>,
@@ -58,23 +50,9 @@ export default function PostesConseillerNumeriqueFiltre({
 
     function applyGeographicFilter(urlParams: URLSearchParams): void {
       if (selectedZone === null) {
-        // Préserver le filtre géographique existant si l'utilisateur ne l'a pas modifié
-        if (currentFilters.codeDepartement !== null) {
-          urlParams.set('codeDepartement', currentFilters.codeDepartement)
-        } else if (currentFilters.codeRegion !== null) {
-          urlParams.set('codeRegion', currentFilters.codeRegion)
-        }
         return
       }
-      // L'utilisateur a changé la zone géographique
-      const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
-      geoParams.forEach((value, key) => {
-        if (key === 'region') {
-          urlParams.set('codeRegion', value)
-        } else if (key === 'departement') {
-          urlParams.set('codeDepartement', value)
-        }
-      })
+      urlParams.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
     if (selectedStatut !== '') {
@@ -98,7 +76,7 @@ export default function PostesConseillerNumeriqueFiltre({
   }
 
   function handleReset(): void {
-    ref.current?.setValue(toutesLesRegions, 'select-option')
+    setCleReinitialisation((cle) => cle + 1)
     setSelectedZone(null)
     setSelectedStatut('')
     setIsBonificationSelected(false)
@@ -135,7 +113,11 @@ export default function PostesConseillerNumeriqueFiltre({
     <div>
       {utilisateurRole === 'Administrateur dispositif' ? (
         <>
-          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
+          <FiltrerParZonesGeographiques
+            key={cleReinitialisation}
+            onSelectionner={setSelectedZone}
+            valeurInitiale={selectedZone}
+          />
           <hr className="fr-hr" />
         </>
       ) : null}

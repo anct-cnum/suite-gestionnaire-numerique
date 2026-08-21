@@ -1,3 +1,4 @@
+import epci from '../../ressources/epci.json'
 import { couleurParSlugFraicheur, libellesFraicheur, SlugFraicheur } from '@/shared/fraicheur'
 import { FiltreGeographiqueLieux, FiltresListeLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
@@ -5,6 +6,7 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 // Types pour les filtres internes utilisés dans les composants
 export interface FiltresLieuxInclusionInternes {
   codeDepartement: null | string
+  codeEpci: null | string
   codeRegion: null | string
   fraicheur: null | SlugFraicheur
   frr: boolean
@@ -18,6 +20,7 @@ export interface FiltresLieuxInclusionInternes {
 export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchParams): FiltresLieuxInclusionInternes {
   return {
     codeDepartement: params.get('codeDepartement'),
+    codeEpci: params.get('codeEpci'),
     codeRegion: params.get('codeRegion'),
     fraicheur: parseSlugFraicheur(params.get('fraicheur')),
     frr: params.get('frr') === 'true',
@@ -36,11 +39,13 @@ export function buildFiltresLieuxInclusion(
   now: Date,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
+  const { codeDepartement, codeEpci, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
 
   let geographique: FiltreGeographiqueLieux | undefined
   if (scopeFiltre.type === 'national') {
-    if (codeRegion) {
+    if (codeEpci) {
+      geographique = { code: codeEpci, type: 'epci' }
+    } else if (codeRegion) {
       geographique = { code: codeRegion, type: 'region' }
     } else if (codeDepartement) {
       geographique = { code: codeDepartement, type: 'departement' }
@@ -70,6 +75,7 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
 
   // Copie directe des paramètres
   const codeDepartement = params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const codeRegion = params.get('codeRegion')
   const qpv = params.get('qpv')
   const frr = params.get('frr')
@@ -81,6 +87,9 @@ export function buildURLSearchParamsFromLieuxInclusionFilters(params: URLSearchP
   }
   if (codeDepartement !== null && codeDepartement !== '') {
     convertedParams.set('codeDepartement', codeDepartement)
+  }
+  if (codeEpci !== null && codeEpci !== '') {
+    convertedParams.set('codeEpci', codeEpci)
   }
   if (codeRegion !== null && codeRegion !== '') {
     convertedParams.set('codeRegion', codeRegion)
@@ -118,6 +127,7 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
   const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
 
   const codeDepartement = params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const codeRegion = params.get('codeRegion')
   const qpv = params.get('qpv')
   const frr = params.get('frr')
@@ -139,6 +149,14 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
       label: departementName,
       paramKey: 'codeDepartement',
       paramValue: codeDepartement,
+    })
+  }
+
+  if (codeEpci !== null && codeEpci !== '') {
+    filtres.push({
+      label: getEpciName(codeEpci),
+      paramKey: 'codeEpci',
+      paramValue: codeEpci,
     })
   }
 
@@ -186,6 +204,7 @@ function parseSlugFraicheur(valeur: null | string | undefined): null | SlugFraic
 // Types pour les paramètres d'URL des lieux d'inclusion
 interface FiltresLieuxInclusionURLParams {
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   fraicheur?: string
   frr?: string
@@ -305,6 +324,13 @@ function getDepartementName(code: string): string {
   }
 
   return departements[code] ?? `Département ${code}`
+}
+
+/**
+ * Fonction utilitaire pour obtenir le nom d'un EPCI par son code
+ */
+function getEpciName(code: string): string {
+  return epci.find((candidat) => candidat.code === code)?.nom ?? `EPCI ${code}`
 }
 
 /**

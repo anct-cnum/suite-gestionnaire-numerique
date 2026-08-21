@@ -3,13 +3,13 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'
-import Carte from '../../shared/Carte/Carte'
+import Carte, { TerritoireCarte } from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
+import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
-export default function CarteFragiliteDepartement({ communesFragilite, departement }: Props): ReactElement {
+export default function CarteFragiliteDepartement({ fragilite, territoire }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -36,7 +36,7 @@ export default function CarteFragiliteDepartement({ communesFragilite, departeme
     }
   }, [])
 
-  if (isErrorViewModel(communesFragilite)) {
+  if (isErrorViewModel(fragilite)) {
     return (
       <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
         <div
@@ -64,7 +64,7 @@ export default function CarteFragiliteDepartement({ communesFragilite, departeme
           <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
             <div style={{ textAlign: 'center' }}>
               <TitleIcon background="white" icon="error-warning-line" />
-              <div className="fr-text--sm color-blue-france fr-mt-2w">{communesFragilite.message}</div>
+              <div className="fr-text--sm color-blue-france fr-mt-2w">{fragilite.message}</div>
             </div>
           </div>
         </div>
@@ -97,18 +97,20 @@ export default function CarteFragiliteDepartement({ communesFragilite, departeme
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ? <Carte communesFragilite={communesFragilite} departement={departement} /> : null}
+          {isReady ? <Carte fragilite={fragilite} territoire={territoire} /> : null}
         </div>
       </div>
     </div>
   )
 }
 
-function isErrorViewModel(viewModel: Array<CommuneFragilite> | ErrorViewModel): viewModel is ErrorViewModel {
+function isErrorViewModel(
+  viewModel: ErrorViewModel | ReadonlyArray<CommuneFragilite | DepartementFragilite>
+): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 
 type Props = Readonly<{
-  communesFragilite: Array<CommuneFragilite> | ErrorViewModel
-  departement: string
+  fragilite: ErrorViewModel | ReadonlyArray<CommuneFragilite | DepartementFragilite>
+  territoire: TerritoireCarte
 }>

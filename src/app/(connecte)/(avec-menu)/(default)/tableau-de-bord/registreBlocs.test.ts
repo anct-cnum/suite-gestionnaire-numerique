@@ -12,7 +12,7 @@ describe('blocs par contexte', () => {
     ])
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).toContain('donneesStructure')
@@ -27,7 +27,7 @@ describe('blocs par contexte', () => {
     const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }], true)
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).toContain('labelConum')
@@ -38,7 +38,7 @@ describe('blocs par contexte', () => {
     const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }])
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).not.toContain('labelConum')
@@ -49,7 +49,7 @@ describe('blocs par contexte', () => {
     const contexte = new Contexte('gestionnaire_departement', [{ code: '93', type: 'departement' }], true)
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).not.toContain('labelConum')
@@ -63,7 +63,7 @@ describe('blocs par contexte', () => {
     ])
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).toContain('etatDesLieux')
@@ -77,7 +77,7 @@ describe('blocs par contexte', () => {
     const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }])
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).toContain('donneesStructure')
@@ -103,7 +103,7 @@ describe('blocs par contexte', () => {
     const contexte = new Contexte(role, scopes)
 
     // WHEN
-    const blocs = blocsParContexte(contexte)
+    const blocs = blocsParContexte(contexte, 'departement')
 
     // THEN
     expect(blocs).toContain('etatDesLieux')
@@ -111,5 +111,34 @@ describe('blocs par contexte', () => {
     expect(blocs).toContain('financements')
     expect(blocs).toContain('beneficiaires')
     expect(blocs).not.toContain('donneesStructure')
+  })
+
+  it('à la maille EPCI, la gouvernance, les financements et les bénéficiaires ne sont pas déclinés', () => {
+    // GIVEN
+    const contexte = new Contexte('administrateur_dispositif', [{ type: 'france' }])
+
+    // WHEN
+    const blocs = blocsParContexte(contexte, 'epci')
+
+    // THEN
+    expect(blocs).toContain('etatDesLieux')
+    expect(blocs).toContain('vigilanceLieux')
+    expect(blocs).not.toContain('gouvernance')
+    expect(blocs).not.toContain('financements')
+    expect(blocs).not.toContain('beneficiaires')
+  })
+
+  it('à la maille région, tous les blocs du contexte sont conservés', () => {
+    // GIVEN
+    const contexte = new Contexte('administrateur_dispositif', [{ type: 'france' }])
+
+    // WHEN
+    const blocs = blocsParContexte(contexte, 'region')
+
+    // THEN
+    expect(blocs).toContain('etatDesLieux')
+    expect(blocs).toContain('gouvernance')
+    expect(blocs).toContain('financements')
+    expect(blocs).toContain('beneficiaires')
   })
 })

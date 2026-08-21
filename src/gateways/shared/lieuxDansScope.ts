@@ -4,18 +4,37 @@ import departements from '../../../ressources/departements.json'
 import { FiltreGeographiqueLieux, StatutLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
+// Filtre élargi côté loader : ScopeFiltre encode les droits (Contexte.scopeFiltre()),
+// la maille communes (EPCI du tableau de bord) est une vue territoriale sans équivalent en droits.
+export type FiltreLieuxDansScope = Readonly<{ codesInsee: ReadonlyArray<string>; type: 'communes' }> | ScopeFiltre
+
 // Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
 // Source unique pour la liste des lieux et les compteurs du tableau de bord (#1488) afin
 // que les volumes affichés soient strictement identiques.
 // Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
 export function buildLieuxDansScopeCte(
-  scopeFiltre: ScopeFiltre,
+  scopeFiltre: FiltreLieuxDansScope,
   statut: StatutLieux,
   geographique?: FiltreGeographiqueLieux
 ): Prisma.Sql {
   const filtreStatut = buildFiltreStatut(statut)
 
   if (geographique) {
+    if (geographique.type === 'epci') {
+      return Prisma.sql`lieux_dans_scope AS (
+        SELECT l.id
+        FROM main.lieu_inclusion l
+        LEFT JOIN main.adresse a ON a.id = l.adresse_id
+        WHERE a.code_insee IN (
+            SELECT c.code_insee
+            FROM admin.commune c
+            JOIN admin.commune_epci ce ON ce.commune_id = c.id
+            JOIN admin.epci e ON e.id = ce.epci_id
+            WHERE e.code = ${geographique.code}
+          )
+          ${filtreStatut}
+      )`
+    }
     const codesDepartements =
       geographique.type === 'region'
         ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)
@@ -25,6 +44,17 @@ export function buildLieuxDansScopeCte(
       FROM main.lieu_inclusion l
       LEFT JOIN main.adresse a ON a.id = l.adresse_id
       WHERE a.departement = ANY(${codesDepartements})
+        ${filtreStatut}
+    )`
+  }
+
+  if (scopeFiltre.type === 'communes') {
+    const codesInsee = [...scopeFiltre.codesInsee]
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT l.id
+      FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse a ON a.id = l.adresse_id
+      WHERE a.code_insee = ANY(${codesInsee})
         ${filtreStatut}
     )`
   }

@@ -32,7 +32,7 @@ describe('route /api/tableau-de-bord/accompagnements-realises', () => {
     const result = await GET(req)
 
     // THEN
-    expect(spy).toHaveBeenCalledWith('06')
+    expect(spy).toHaveBeenCalledWith({ code: '06', type: 'departement' })
     expect(result.status).toBe(200)
     await expect(result.json()).resolves.toStrictEqual(resultat)
   })
@@ -49,6 +49,6 @@ describe('route /api/tableau-de-bord/accompagnements-realises', () => {
     await GET(req)
 
     // THEN
-    expect(spy).toHaveBeenCalledWith('France')
+    expect(spy).toHaveBeenCalledWith({ type: 'national' })
   })
 })

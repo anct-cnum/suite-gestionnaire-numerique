@@ -23,7 +23,9 @@ export async function GET(
   }
 
   const territoire = request.nextUrl.searchParams.get('territoire') ?? 'France'
-  const resultat = await fetchAccompagnementsRealises(territoire)
+  const resultat = await fetchAccompagnementsRealises(
+    territoire === 'France' ? { type: 'national' } : { code: territoire, type: 'departement' }
+  )
 
   return NextResponse.json(resultat)
 }

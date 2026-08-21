@@ -1,3 +1,4 @@
+import epci from '../../ressources/epci.json'
 import { TypologieRole } from '@/domain/Role'
 import {
   FiltreFormations,
@@ -12,6 +13,7 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 export interface FiltresURLParams {
   anciens?: string
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   formations?: string
   habilitations?: string
@@ -27,6 +29,7 @@ export function parseURLParamsToFiltresInternes(params: URLSearchParams): Filtre
   return {
     anciens: params.get('anciens') === 'true',
     codeDepartement: params.get('codeDepartement'),
+    codeEpci: params.get('codeEpci'),
     codeRegion: params.get('codeRegion'),
     formations: params.get('formations')?.split(',').filter(Boolean) ?? [],
     habilitations: params.get('habilitations')?.split(',').filter(Boolean) ?? [],
@@ -43,13 +46,18 @@ export function buildFiltresListeAidants(
   utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeAidants {
-  const { anciens, codeDepartement, codeRegion, formations, habilitations, page, recherche, roles } = params
+  const { anciens, codeDepartement, codeEpci, codeRegion, formations, habilitations, page, recherche, roles } = params
 
   // Construction du filtre géographique - seulement pour les administrateurs
   let filtreGeographique: FiltreGeographique | undefined
 
   if (utilisateurRole === 'Administrateur dispositif') {
-    if (codeDepartement !== undefined && codeDepartement !== '') {
+    if (codeEpci !== undefined && codeEpci !== '') {
+      filtreGeographique = {
+        code: codeEpci,
+        type: 'epci',
+      }
+    } else if (codeDepartement !== undefined && codeDepartement !== '') {
       filtreGeographique = {
         code: codeDepartement,
         type: 'departement',
@@ -107,14 +115,18 @@ export function buildURLSearchParamsFromFilters(params: URLSearchParams): URLSea
   const convertedParams = new URLSearchParams()
 
   // Filtre géographique - conversion des noms
-  const region = params.get('region')
-  const departement = params.get('departement')
+  const region = params.get('region') ?? params.get('codeRegion')
+  const departement = params.get('departement') ?? params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
 
   if (region !== null && region !== '') {
     convertedParams.set('codeRegion', region)
   }
   if (departement !== null && departement !== '') {
     convertedParams.set('codeDepartement', departement)
+  }
+  if (codeEpci !== null && codeEpci !== '') {
+    convertedParams.set('codeEpci', codeEpci)
   }
 
   // Filtre anciens
@@ -149,10 +161,11 @@ export function removeFilterFromParams(params: URLSearchParams, paramKey: string
 
   if (paramKey === 'anciens') {
     newParams.delete('anciens')
-  } else if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
-    // Pour les filtres géographiques, supprimer complètement les deux
+  } else if (paramKey === 'codeRegion' || paramKey === 'codeDepartement' || paramKey === 'codeEpci') {
+    // Pour les filtres géographiques, supprimer complètement les trois
     newParams.delete('codeRegion')
     newParams.delete('codeDepartement')
+    newParams.delete('codeEpci')
   } else {
     // Pour les autres filtres, retirer la valeur spécifique
     const currentValue = newParams.get(paramKey)
@@ -182,6 +195,7 @@ export function getActiveFilters(params: URLSearchParams): Array<{
   const anciensParam = params.get('anciens')
   const codeRegion = params.get('codeRegion')
   const codeDepartement = params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const roles = params.get('roles')
   const habilitations = params.get('habilitations')
   const formations = params.get('formations')
@@ -195,7 +209,14 @@ export function getActiveFilters(params: URLSearchParams): Array<{
   }
 
   // Filtre géographique
-  if (codeDepartement !== null && codeDepartement !== '') {
+  if (codeEpci !== null && codeEpci !== '') {
+    const unEpci = epci.find((candidat) => candidat.code === codeEpci)
+    filtres.push({
+      label: unEpci?.nom ?? `EPCI ${codeEpci}`,
+      paramKey: 'codeEpci',
+      paramValue: codeEpci,
+    })
+  } else if (codeDepartement !== null && codeDepartement !== '') {
     filtres.push({
       label: `Dép: ${codeDepartement}`,
       paramKey: 'codeDepartement',
@@ -240,6 +261,7 @@ function nettoyerRecherche(valeur?: string): string | undefined {
 interface FiltresInternes {
   anciens: boolean
   codeDepartement: null | string
+  codeEpci: null | string
   codeRegion: null | string
   formations: Array<string>
   habilitations: Array<string>

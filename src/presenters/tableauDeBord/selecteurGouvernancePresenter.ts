@@ -1,11 +1,6 @@
 import departements from '../../../ressources/departements.json'
 import { Contexte } from '@/use-cases/queries/ResoudreContexte'
 
-export type OptionGouvernance = Readonly<{
-  label: string
-  value: string
-}>
-
 export function gouvernancesSelecteurPresenteur(contexte: Contexte): ReadonlyArray<OptionGouvernance> {
   const options: Array<OptionGouvernance> = []
   if (contexte.estNational()) {
@@ -19,3 +14,8 @@ export function gouvernancesSelecteurPresenteur(contexte: Contexte): ReadonlyArr
       .map((dep) => ({ label: `${dep.nom} - ${dep.code}`, value: dep.code })),
   ]
 }
+
+type OptionGouvernance = Readonly<{
+  label: string
+  value: string
+}>

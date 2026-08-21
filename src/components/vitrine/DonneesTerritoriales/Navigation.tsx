@@ -133,5 +133,9 @@ function getTerritoirePath(niveau?: string, code?: string): string {
     return `/departement/${code}`
   }
 
+  if (niveau === 'epci') {
+    return `/epci/${code}`
+  }
+
   return '/national'
 }
