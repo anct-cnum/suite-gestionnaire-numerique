@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ReactElement, useId, useState } from 'react'
 
 import Checkbox from '../shared/Checkbox/Checkbox'
+import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import { Notification } from '../shared/Notification/Notification'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Stepper from '../shared/Stepper/Stepper'
@@ -86,9 +87,13 @@ export default function LabellisationEtape2({ viewModel }: Props): ReactElement 
           changement de responsable.
         </p>
         <p>Répondre à la demande de renouvellement (un simple clic de confirmation).</p>
-        <a className="fr-link" href="#fonctionnement-du-label">
+        <ExternalLink
+          className="fr-link"
+          href="https://www.conseiller-numerique.gouv.fr/label"
+          title="Détail sur le fonctionnement du label"
+        >
           Détail sur le fonctionnement du label
-        </a>
+        </ExternalLink>
         <div className="separator fr-my-3w" />
         <p className="fr-text--sm fr-text-mention--grey fr-mb-1v">Structure porteuse du label</p>
         <p className="fr-text--bold fr-mb-0">{viewModel.structure.nom}</p>
