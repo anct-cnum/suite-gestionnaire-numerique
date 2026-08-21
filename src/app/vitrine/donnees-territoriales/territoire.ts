@@ -1,0 +1,60 @@
+import { cache } from 'react'
+
+import { PrismaScopeTerritorialLoader } from '@/gateways/PrismaScopeTerritorialLoader'
+import { BoundingBoxReadModel } from '@/use-cases/queries/RecupererScopeTerritorial'
+import { FiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'
+
+export type TerritoireVitrine =
+  | Readonly<{
+      bbox: BoundingBoxReadModel
+      code: string
+      codesDepartement: ReadonlyArray<string>
+      nom: string
+      type: 'region'
+    }>
+  | Readonly<{
+      bbox: BoundingBoxReadModel
+      code: string
+      codesInsee: ReadonlyArray<string>
+      nom: string
+      type: 'epci'
+    }>
+  | Readonly<{ code: string; type: 'departement' }>
+  | Readonly<{ type: 'national' }>
+
+// cache() déduplique la résolution entre generateMetadata et la page au sein d'une même requête.
+export const recupererTerritoireVitrine = cache(
+  async (niveau: string, code: string | undefined): Promise<null | TerritoireVitrine> => {
+    if (niveau === 'national') {
+      return { type: 'national' }
+    }
+    if (code === undefined || code === '') {
+      return null
+    }
+    if (niveau === 'departement') {
+      return { code, type: 'departement' }
+    }
+    if (niveau === 'region') {
+      const scope = await new PrismaScopeTerritorialLoader().getRegion(code)
+      return scope === null ? null : { ...scope, type: 'region' }
+    }
+    if (niveau === 'epci') {
+      const scope = await new PrismaScopeTerritorialLoader().getEpci(code)
+      return scope === null ? null : { ...scope, type: 'epci' }
+    }
+    return null
+  }
+)
+
+export function filtreDuTerritoire(territoire: TerritoireVitrine): FiltreTerritorial {
+  switch (territoire.type) {
+    case 'departement':
+      return { code: territoire.code, type: 'departement' }
+    case 'epci':
+      return { codesInsee: territoire.codesInsee, type: 'communes' }
+    case 'national':
+      return { type: 'national' }
+    case 'region':
+      return { codes: territoire.codesDepartement, type: 'departements' }
+  }
+}

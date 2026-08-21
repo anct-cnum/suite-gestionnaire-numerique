@@ -1,4 +1,5 @@
 import departements from '../../ressources/departements.json'
+import epci from '../../ressources/epci.json'
 import regions from '../../ressources/regions.json'
 import { EtatPoste } from '@/use-cases/queries/RecupererLesPostesConseillerNumerique'
 
@@ -6,6 +7,7 @@ import { EtatPoste } from '@/use-cases/queries/RecupererLesPostesConseillerNumer
 export interface FiltresPostesConseillerNumeriqueInternes {
   bonification: boolean
   codeDepartement: null | string
+  codeEpci: null | string
   codeRegion: null | string
   conventions: Array<string>
   statut: string
@@ -22,6 +24,7 @@ export function parseURLParamsToFiltresPostesConseillerNumeriqueInternes(
   return {
     bonification: params.get('bonification') === 'true',
     codeDepartement: params.get('codeDepartement'),
+    codeEpci: params.get('codeEpci'),
     codeRegion: params.get('codeRegion'),
     conventions: params.get('conventions')?.split(',').filter(Boolean) ?? [],
     statut: params.get('statut') ?? '',
@@ -37,11 +40,13 @@ export function buildFiltresPostesConseillerNumerique(
   params: FiltresPostesConseillerNumeriqueURLParams,
   limite = 10
 ): BuildFiltresResult {
-  const { bonification, codeDepartement, codeRegion, conventions, page, statut, typesEmployeur, typesPoste } = params
+  const { bonification, codeDepartement, codeEpci, codeRegion, conventions, page, statut, typesEmployeur, typesPoste } =
+    params
 
   return {
     bonification: bonification === 'true' ? true : undefined,
     codeDepartement,
+    codeEpci,
     codeRegion,
     conventions: conventions !== undefined && conventions !== '' ? conventions.split(',') : undefined,
     limite,
@@ -61,12 +66,16 @@ export function buildURLSearchParamsFromPostesConseillerNumeriqueFilters(params:
   // Filtre géographique - les clés peuvent être soit 'region'/'departement' soit 'codeRegion'/'codeDepartement'
   const region = params.get('region') ?? params.get('codeRegion')
   const departement = params.get('departement') ?? params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
 
   if (region !== null && region !== '') {
     convertedParams.set('codeRegion', region)
   }
   if (departement !== null && departement !== '') {
     convertedParams.set('codeDepartement', departement)
+  }
+  if (codeEpci !== null && codeEpci !== '') {
+    convertedParams.set('codeEpci', codeEpci)
   }
 
   // Autres filtres - copie directe
@@ -91,9 +100,10 @@ export function removePostesConseillerNumeriqueFilterFromParams(
 ): URLSearchParams {
   const newParams = new URLSearchParams(params)
 
-  if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
+  if (paramKey === 'codeRegion' || paramKey === 'codeDepartement' || paramKey === 'codeEpci') {
     newParams.delete('codeRegion')
     newParams.delete('codeDepartement')
+    newParams.delete('codeEpci')
   } else if (['conventions', 'typesEmployeur', 'typesPoste'].includes(paramKey)) {
     const currentValue = newParams.get(paramKey)
     if (currentValue !== null && currentValue !== '') {
@@ -121,6 +131,7 @@ export function getActivePostesConseillerNumeriqueFilters(
 
   const codeRegion = params.get('codeRegion')
   const codeDepartement = params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const statut = params.get('statut')
   const bonification = params.get('bonification')
   const typesPoste = params.get('typesPoste')
@@ -128,20 +139,9 @@ export function getActivePostesConseillerNumeriqueFilters(
   const typesEmployeur = params.get('typesEmployeur')
 
   // Filtre géographique
-  if (codeDepartement !== null && codeDepartement !== '') {
-    const dept = (departements as ReadonlyArray<DepartementJson>).find((item) => item.code === codeDepartement)
-    filtres.push({
-      label: dept === undefined ? codeDepartement : `${dept.nom} (${dept.code})`,
-      paramKey: 'codeDepartement',
-      paramValue: codeDepartement,
-    })
-  } else if (codeRegion !== null && codeRegion !== '') {
-    const reg = (regions as ReadonlyArray<RegionJson>).find((item) => item.code === codeRegion)
-    filtres.push({
-      label: reg?.nom ?? codeRegion,
-      paramKey: 'codeRegion',
-      paramValue: codeRegion,
-    })
+  const filtreGeographique = filtreGeographiqueActif(codeEpci, codeDepartement, codeRegion)
+  if (filtreGeographique !== null) {
+    filtres.push(filtreGeographique)
   }
 
   // Statut
@@ -186,10 +186,43 @@ export function getActivePostesConseillerNumeriqueFilters(
   return filtres
 }
 
+function filtreGeographiqueActif(
+  codeEpci: null | string,
+  codeDepartement: null | string,
+  codeRegion: null | string
+): { label: string; paramKey: string; paramValue: string } | null {
+  if (codeEpci !== null && codeEpci !== '') {
+    const unEpci = epci.find((candidat) => candidat.code === codeEpci)
+    return {
+      label: unEpci?.nom ?? codeEpci,
+      paramKey: 'codeEpci',
+      paramValue: codeEpci,
+    }
+  }
+  if (codeDepartement !== null && codeDepartement !== '') {
+    const dept = (departements as ReadonlyArray<DepartementJson>).find((item) => item.code === codeDepartement)
+    return {
+      label: dept === undefined ? codeDepartement : `${dept.nom} (${dept.code})`,
+      paramKey: 'codeDepartement',
+      paramValue: codeDepartement,
+    }
+  }
+  if (codeRegion !== null && codeRegion !== '') {
+    const reg = (regions as ReadonlyArray<RegionJson>).find((item) => item.code === codeRegion)
+    return {
+      label: reg?.nom ?? codeRegion,
+      paramKey: 'codeRegion',
+      paramValue: codeRegion,
+    }
+  }
+  return null
+}
+
 // Types pour les paramètres d'URL des postes conseiller numérique
 interface FiltresPostesConseillerNumeriqueURLParams {
   bonification?: string
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   conventions?: string
   page?: string
@@ -201,6 +234,7 @@ interface FiltresPostesConseillerNumeriqueURLParams {
 interface BuildFiltresResult {
   bonification?: boolean
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   conventions?: Array<string>
   limite: number

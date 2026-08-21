@@ -29,6 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const { searchParams } = new URL(request.url)
 
     const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
+    const codeEpciDemande = searchParams.get('codeEpci') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
 
     // Validation défensive : un gestionnaire département ne peut exporter que son périmètre
@@ -39,14 +40,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           { status: 403 }
         )
       }
-      if (codeRegionDemande !== undefined) {
-        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
+      if (codeRegionDemande !== undefined || codeEpciDemande !== undefined) {
+        return NextResponse.json(
+          { error: 'Accès refusé : vous ne pouvez pas filtrer par région ou EPCI' },
+          { status: 403 }
+        )
       }
     }
 
     const filtres = buildFiltresLieuxInclusion(
       {
         codeDepartement: codeDepartementDemande,
+        codeEpci: codeEpciDemande,
         codeRegion: codeRegionDemande,
         fraicheur: searchParams.get('fraicheur') ?? undefined,
         frr: searchParams.get('frr') ?? undefined,

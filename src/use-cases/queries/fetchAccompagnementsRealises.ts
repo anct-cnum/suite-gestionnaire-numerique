@@ -1,3 +1,5 @@
+import { StatistiquesFilters } from './RecupererStatistiquesCoop'
+import { FiltreTerritorial, libelleFiltreTerritorial } from './shared/FiltreTerritorial'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { reportLoaderError } from '@/gateways/shared/sentryErrorReporter'
@@ -17,16 +19,16 @@ export type AccompagnementsRealisesResult = Readonly<{
 
 /**
  * Récupère le nombre d'accompagnements réalisés en combinant AC (base de données) et Coop (API)
- * @param territoire - Code département ou 'France' pour les stats nationales
+ * @param filtre - Périmètre territorial (national, département(s) ou communes)
  * @returns Promise avec le nombre total et la répartition mensuelle
  */
 export async function fetchAccompagnementsRealises(
-  territoire: string
+  filtre: FiltreTerritorial
 ): Promise<AccompagnementsRealisesResult | ErrorViewModel> {
   try {
     // Récupérer les accompagnements AC depuis la base de données
     const accompagnementsACLoader = new PrismaAccompagnementsRealisesParACLoader()
-    const accompagnementsAC = await accompagnementsACLoader.get(territoire)
+    const accompagnementsAC = await accompagnementsACLoader.get(filtre)
 
     if (isErrorViewModel(accompagnementsAC)) {
       return accompagnementsAC
@@ -34,7 +36,7 @@ export async function fetchAccompagnementsRealises(
 
     // Récupérer les statistiques Coop depuis l'API
     const statistiquesCoopLoader = createApiCoopStatistiquesLoader()
-    const filters = territoire === 'France' ? undefined : { departements: [territoire] }
+    const filters = filtresCoop(filtre)
 
     const statistiquesCoop = await statistiquesCoopLoader.recupererStatistiques(filters)
 
@@ -52,11 +54,24 @@ export async function fetchAccompagnementsRealises(
       repartitionMensuelle,
     }
   } catch (error) {
-    reportLoaderError(error, 'fetchAccompagnementsRealises', { territoire })
+    reportLoaderError(error, 'fetchAccompagnementsRealises', { territoire: libelleFiltreTerritorial(filtre) })
     return {
       message: error instanceof Error ? error.message : 'Erreur inconnue lors de la récupération des accompagnements',
       type: 'error',
     } as ErrorViewModel
+  }
+}
+
+export function filtresCoop(filtre: FiltreTerritorial): StatistiquesFilters | undefined {
+  switch (filtre.type) {
+    case 'communes':
+      return { communes: filtre.codesInsee }
+    case 'departement':
+      return { departements: [filtre.code] }
+    case 'departements':
+      return { departements: filtre.codes }
+    case 'national':
+      return undefined
   }
 }
 

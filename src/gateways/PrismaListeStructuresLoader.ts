@@ -65,6 +65,21 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
     const { geographique, scopeFiltre } = filtres
 
     if (geographique) {
+      if (geographique.type === 'epci') {
+        return Prisma.sql`structures_dans_scope AS (
+          SELECT sa.id
+          FROM main.structure_administrative sa
+          LEFT JOIN main.adresse a ON a.id = sa.adresse_id
+          WHERE sa.deleted_at IS NULL
+            AND a.code_insee IN (
+              SELECT c.code_insee
+              FROM admin.commune c
+              JOIN admin.commune_epci ce ON ce.commune_id = c.id
+              JOIN admin.epci e ON e.id = ce.epci_id
+              WHERE e.code = ${geographique.code}
+            )
+        )`
+      }
       const codesDepartements =
         geographique.type === 'region'
           ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)

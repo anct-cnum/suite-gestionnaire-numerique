@@ -80,6 +80,23 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     const filtreActif = this.buildFiltreActif(anciens)
 
     if (geographique) {
+      if (geographique.type === 'epci') {
+        return Prisma.sql`personnes_dans_scope AS (
+          SELECT pe.id
+          FROM min.personne_enrichie pe
+          LEFT JOIN main.structure_administrative s ON s.id = pe.structure_employeuse_id
+          LEFT JOIN main.adresse a ON a.id = s.adresse_id
+          WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+            AND a.code_insee IN (
+              SELECT c.code_insee
+              FROM admin.commune c
+              JOIN admin.commune_epci ce ON ce.commune_id = c.id
+              JOIN admin.epci e ON e.id = ce.epci_id
+              WHERE e.code = ${geographique.code}
+            )
+            ${filtreActif}
+        )`
+      }
       const codesDepartements =
         geographique.type === 'region'
           ? departements.filter((dept) => dept.regionCode === geographique.code).map((dept) => dept.code)

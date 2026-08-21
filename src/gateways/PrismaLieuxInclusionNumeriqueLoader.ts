@@ -31,17 +31,24 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     return this.getStats({})
   }
 
+  async getParCommunes(codesInsee: ReadonlyArray<string>): Promise<LieuxInclusionNumeriqueReadModel> {
+    return this.getStats({ codesInsee })
+  }
+
   async getStats(params: {
     codeDepartement?: string
     codesDepartements?: ReadonlyArray<string>
+    codesInsee?: ReadonlyArray<string>
   }): Promise<LieuxInclusionNumeriqueReadModel> {
-    const { codeDepartement, codesDepartements } = params
+    const { codeDepartement, codesDepartements, codesInsee } = params
 
     let deptFilter: Prisma.Sql
     if (codeDepartement !== undefined) {
       deptFilter = Prisma.sql`AND a.departement = ${codeDepartement}`
     } else if (codesDepartements !== undefined && codesDepartements.length > 0) {
       deptFilter = Prisma.sql`AND a.departement = ANY(${[...codesDepartements]})`
+    } else if (codesInsee !== undefined && codesInsee.length > 0) {
+      deptFilter = Prisma.sql`AND a.code_insee = ANY(${[...codesInsee]})`
     } else {
       deptFilter = Prisma.sql`AND a.departement != 'zzz'`
     }

@@ -24,6 +24,7 @@ export default async function PostesConseillerNumeriqueController({
   readonly searchParams: Promise<{
     bonification?: string
     codeDepartement?: string
+    codeEpci?: string
     codeRegion?: string
     conventions?: string
     page?: string
@@ -53,11 +54,13 @@ export default async function PostesConseillerNumeriqueController({
 
   const estAdmin = scopeFiltre.type === 'national'
   const codeDepartementEffectif = estAdmin && filtres.codeRegion === undefined ? filtres.codeDepartement : undefined
+  const codeEpciEffectif = estAdmin ? filtres.codeEpci : undefined
 
   const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
   const postesReadModel = await postesLoader.get({
     bonification: filtres.bonification,
     codeDepartement: codeDepartementEffectif,
+    codeEpci: codeEpciEffectif,
     codeRegion: filtres.codeRegion,
     conventions: filtres.conventions,
     pagination: {
@@ -96,6 +99,7 @@ export default async function PostesConseillerNumeriqueController({
     const paramKeys = [
       'bonification',
       'codeDepartement',
+      'codeEpci',
       'codeRegion',
       'conventions',
       'page',

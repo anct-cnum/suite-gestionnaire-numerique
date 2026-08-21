@@ -1,4 +1,5 @@
 import departements from '../../ressources/departements.json'
+import epci from '../../ressources/epci.json'
 import regions from '../../ressources/regions.json'
 import {
   FiltreGeographiqueStructures,
@@ -16,11 +17,13 @@ export function buildFiltresListeStructures(
   scopeFiltre: ScopeFiltre,
   limite = 10
 ): FiltresListeStructures {
-  const { codeDepartement, codeRegion, labellisation, page, recherche } = params
+  const { codeDepartement, codeEpci, codeRegion, labellisation, page, recherche } = params
 
   let geographique: FiltreGeographiqueStructures | undefined
   if (scopeFiltre.type === 'national') {
-    if (codeRegion !== undefined && codeRegion !== '') {
+    if (codeEpci !== undefined && codeEpci !== '') {
+      geographique = { code: codeEpci, type: 'epci' }
+    } else if (codeRegion !== undefined && codeRegion !== '') {
       geographique = { code: codeRegion, type: 'region' }
     } else if (codeDepartement !== undefined && codeDepartement !== '') {
       geographique = { code: codeDepartement, type: 'departement' }
@@ -56,8 +59,9 @@ export function buildFiltresListeStructuresForExport(
 export function buildURLSearchParamsFromStructuresFilters(params: URLSearchParams): URLSearchParams {
   const convertedParams = new URLSearchParams()
 
-  const region = params.get('region')
-  const departement = params.get('departement')
+  const region = params.get('region') ?? params.get('codeRegion')
+  const departement = params.get('departement') ?? params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const labellisation = parseLabellisation(params.get('labellisation') ?? undefined)
 
   if (region !== null && region !== '') {
@@ -65,6 +69,9 @@ export function buildURLSearchParamsFromStructuresFilters(params: URLSearchParam
   }
   if (departement !== null && departement !== '') {
     convertedParams.set('codeDepartement', departement)
+  }
+  if (codeEpci !== null && codeEpci !== '') {
+    convertedParams.set('codeEpci', codeEpci)
   }
   if (labellisation !== undefined) {
     convertedParams.set('labellisation', labellisation)
@@ -84,10 +91,18 @@ export function getActiveStructuresFilters(params: URLSearchParams): Array<{
   const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
 
   const codeDepartement = params.get('codeDepartement')
+  const codeEpci = params.get('codeEpci')
   const codeRegion = params.get('codeRegion')
   const labellisation = parseLabellisation(params.get('labellisation') ?? undefined)
 
-  if (codeDepartement !== null && codeDepartement !== '') {
+  if (codeEpci !== null && codeEpci !== '') {
+    const unEpci = epci.find((candidat) => candidat.code === codeEpci)
+    filtres.push({
+      label: unEpci?.nom ?? `EPCI ${codeEpci}`,
+      paramKey: 'codeEpci',
+      paramValue: codeEpci,
+    })
+  } else if (codeDepartement !== null && codeDepartement !== '') {
     const departement = departements.find((dept) => dept.code === codeDepartement)
     filtres.push({
       label: departement ? `${departement.nom} (${departement.code})` : `Département ${codeDepartement}`,
@@ -119,9 +134,10 @@ export function getActiveStructuresFilters(params: URLSearchParams): Array<{
  */
 export function removeStructuresFilterFromParams(params: URLSearchParams, paramKey: string): URLSearchParams {
   const newParams = new URLSearchParams(params)
-  if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
+  if (paramKey === 'codeRegion' || paramKey === 'codeDepartement' || paramKey === 'codeEpci') {
     newParams.delete('codeRegion')
     newParams.delete('codeDepartement')
+    newParams.delete('codeEpci')
   } else {
     newParams.delete(paramKey)
   }
@@ -131,6 +147,7 @@ export function removeStructuresFilterFromParams(params: URLSearchParams, paramK
 // Types pour les paramètres d'URL de la liste des structures
 export interface FiltresListeStructuresURLParams {
   codeDepartement?: string
+  codeEpci?: string
   codeRegion?: string
   labellisation?: string
   page?: string

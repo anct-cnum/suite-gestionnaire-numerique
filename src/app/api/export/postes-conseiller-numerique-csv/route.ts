@@ -31,6 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       {
         bonification: searchParams.get('bonification') ?? undefined,
         codeDepartement: searchParams.get('codeDepartement') ?? undefined,
+        codeEpci: searchParams.get('codeEpci') ?? undefined,
         codeRegion: searchParams.get('codeRegion') ?? undefined,
         conventions: searchParams.get('conventions') ?? undefined,
         statut: searchParams.get('statut') ?? undefined,
@@ -55,11 +56,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const codeDepartementEffectif = estAdmin && filtres.codeRegion === undefined ? filtres.codeDepartement : undefined
+    const codeEpciEffectif = estAdmin ? filtres.codeEpci : undefined
 
     const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
     const postesReadModel = await postesLoader.get({
       bonification: filtres.bonification,
       codeDepartement: codeDepartementEffectif,
+      codeEpci: codeEpciEffectif,
       codeRegion: filtres.codeRegion,
       conventions: filtres.conventions,
       pagination: {

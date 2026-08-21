@@ -7,24 +7,23 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeBordGouvernanceLoader {
   async get(territoire: string): Promise<ErrorReadModel | GouvernanceReadModel> {
+    return this.#compter(territoire === 'France' ? { not: 'zzz' } : territoire)
+  }
+
+  // Agrégat régional : cumul des gouvernances des départements de la région (liens de détail masqués côté bloc).
+  async getPourDepartements(codes: ReadonlyArray<string>): Promise<ErrorReadModel | GouvernanceReadModel> {
+    return this.#compter({ in: [...codes] })
+  }
+
+  async #compter(gouvernanceDepartementCode: FiltreDepartementCode): Promise<GouvernanceReadModel> {
     // Compter les membres de la gouvernance (non supprimés)
     const membresGouvernance = await prisma.membreRecord.findMany({
-      where:
-        territoire === 'France'
-          ? {
-              gouvernanceDepartementCode: {
-                not: 'zzz',
-              },
-              statut: {
-                not: 'supprime', // Exclure les membres supprimés
-              },
-            }
-          : {
-              gouvernanceDepartementCode: territoire,
-              statut: {
-                not: 'supprime', // Exclure les membres supprimés
-              },
-            },
+      where: {
+        gouvernanceDepartementCode,
+        statut: {
+          not: 'supprime', // Exclure les membres supprimés
+        },
+      },
     })
 
     const totalMembres = membresGouvernance.length
@@ -35,16 +34,9 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
       include: {
         action: true,
       },
-      where:
-        territoire === 'France'
-          ? {
-              gouvernanceDepartementCode: {
-                not: 'zzz',
-              },
-            }
-          : {
-              gouvernanceDepartementCode: territoire,
-            },
+      where: {
+        gouvernanceDepartementCode,
+      },
     })
 
     const totalFeuillesDeRoute = feuillesDeRoute.length
@@ -62,3 +54,6 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
     }
   }
 }
+
+// Filtre commun aux where Prisma de MembreRecord et FeuilleDeRouteRecord (les StringFilter générés sont par modèle).
+type FiltreDepartementCode = Readonly<{ in: Array<string> }> | Readonly<{ not: string }> | string

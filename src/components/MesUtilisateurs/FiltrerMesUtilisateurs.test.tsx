@@ -1,5 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { clearFirst, select } from 'react-select-event'
+import userEvent from '@testing-library/user-event'
+import { select } from 'react-select-event'
 import { describe, expect, it } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
@@ -96,8 +97,9 @@ describe('filtrer mes utilisateurs', () => {
     expect(formulaire).toHaveFormValues({
       roles: ['gestionnaire_groupement'],
       utilisateursActives: true,
-      zoneGeographique: '00_978',
     })
+    const zoneGeographique = within(formulaire).getByText('Saint-Martin · 978')
+    expect(zoneGeographique).toBeInTheDocument()
   })
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
@@ -189,6 +191,7 @@ describe('filtrer mes utilisateurs', () => {
 
     it('[URL] sur un département alors je n’affiche qu’eux', async () => {
       // GIVEN
+      vi.stubGlobal('fetch', vi.fn(territoiresEtStructuresFetch))
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
@@ -203,7 +206,7 @@ describe('filtrer mes utilisateurs', () => {
 
       // WHEN
       jOuvreLeFormulairePourFiltrer()
-      await jeSelectionneUneZoneGeographique('Saint-Martin')
+      await jeSelectionneUneZoneGeographique('Saint-Martin · 978')
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -212,6 +215,7 @@ describe('filtrer mes utilisateurs', () => {
 
     it('[URL] sur une région alors je n’affiche qu’eux', async () => {
       // GIVEN
+      vi.stubGlobal('fetch', vi.fn(territoiresEtStructuresFetch))
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
@@ -271,19 +275,19 @@ describe('filtrer mes utilisateurs', () => {
           desc: 'sur un département et une structure de ce département',
           expectedFetchInput: '/api/structures?search=tet&departement=06',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?codeDepartement=06&structure=14',
-          zoneGeographique: 'Alpes-Maritimes',
+          zoneGeographique: 'Alpes-Maritimes · 06',
         },
         {
-          desc: 'sur toutes les zones géographiques et une structure',
+          desc: 'sans zone géographique et une structure',
           expectedFetchInput: '/api/structures?search=tet',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?structure=14',
-          zoneGeographique: 'Toutes les régions',
+          zoneGeographique: null,
         },
       ])(
         '$desc, alors je n’affiche que les utilisateurs liés à cette structure',
         async ({ expectedFetchInput, expectedRouterPush, zoneGeographique }) => {
           // GIVEN
-          vi.stubGlobal('fetch', vi.fn(structuresFetch))
+          vi.stubGlobal('fetch', vi.fn(territoiresEtStructuresFetch))
           const spiedRouterPush = vi.fn<() => void>()
           afficherMesUtilisateurs({
             router: {
@@ -298,7 +302,7 @@ describe('filtrer mes utilisateurs', () => {
 
           // WHEN
           jOuvreLeFormulairePourFiltrer()
-          await jeSelectionneUneZoneGeographique(zoneGeographique)
+          await jeSelectionneEventuellementUneZoneGeographique(zoneGeographique)
           const structure = jeTapeUneStructure('tet')
           await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
           jeFiltreLesUtilisateurs()
@@ -311,7 +315,7 @@ describe('filtrer mes utilisateurs', () => {
 
       it('après avoir effacé la zone géographique précédemment sélectionnée, alors je n’affiche que les utilisateurs liés à cette structure', async () => {
         // GIVEN
-        vi.stubGlobal('fetch', structuresFetch)
+        vi.stubGlobal('fetch', territoiresEtStructuresFetch)
         const spiedRouterPush = vi.fn<() => void>()
         afficherMesUtilisateurs({
           router: {
@@ -326,10 +330,10 @@ describe('filtrer mes utilisateurs', () => {
 
         // WHEN
         jOuvreLeFormulairePourFiltrer()
-        await jeSelectionneUneZoneGeographique('Alpes-Maritimes')
+        await jeSelectionneUneZoneGeographique('Alpes-Maritimes · 06')
         const structure = jeTapeUneStructure('tet')
         await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
-        await clearFirst(screen.getByRole('combobox', { name: 'Par zone géographique' }))
+        await userEvent.click(screen.getByRole('button', { name: 'Effacer la recherche' }))
         jeFiltreLesUtilisateurs()
 
         // THEN
@@ -338,7 +342,7 @@ describe('filtrer mes utilisateurs', () => {
 
       it('après avoir sélectionné une zone géographique différente, alors je ne filtre plus les utilisateurs liés à cette structure', async () => {
         // GIVEN
-        vi.stubGlobal('fetch', structuresFetch)
+        vi.stubGlobal('fetch', territoiresEtStructuresFetch)
         const spiedRouterPush = vi.fn<() => void>()
         afficherMesUtilisateurs({
           router: {
@@ -353,7 +357,7 @@ describe('filtrer mes utilisateurs', () => {
 
         // WHEN
         jOuvreLeFormulairePourFiltrer()
-        await jeSelectionneUneZoneGeographique('Alpes-Maritimes')
+        await jeSelectionneUneZoneGeographique('Alpes-Maritimes · 06')
         const structure = jeTapeUneStructure('tet')
         await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
         await jeSelectionneUneZoneGeographique('Bourgogne-Franche-Comté')
@@ -374,7 +378,34 @@ describe('filtrer mes utilisateurs', () => {
   }
 
   async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
-    await select(screen.getByRole('combobox', { name: 'Par zone géographique' }), zoneGeographique)
+    await userEvent.type(screen.getByRole('combobox', { name: 'Par zone géographique' }), zoneGeographique.slice(0, 3))
+    await userEvent.click(await screen.findByRole('option', { name: zoneGeographique }))
+  }
+
+  async function jeSelectionneEventuellementUneZoneGeographique(zoneGeographique: null | string): Promise<void> {
+    if (zoneGeographique !== null) {
+      await jeSelectionneUneZoneGeographique(zoneGeographique)
+    }
+  }
+
+  async function territoiresEtStructuresFetch(input: string): Promise<Response> {
+    if (input.startsWith('/api/territoires')) {
+      return Promise.resolve({
+        async json() {
+          return Promise.resolve({
+            territoires: [
+              { code: '27', nom: 'Bourgogne-Franche-Comté', numeroDepartement: null, type: 'region' },
+              { code: '93', nom: "Provence-Alpes-Côte d'Azur", numeroDepartement: null, type: 'region' },
+              { code: '06', nom: 'Alpes-Maritimes', numeroDepartement: '06', type: 'departement' },
+              { code: '978', nom: 'Saint-Martin', numeroDepartement: '978', type: 'departement' },
+            ],
+            total: 4,
+          })
+        },
+        ok: true,
+      } as Response)
+    }
+    return structuresFetch()
   }
 
   function jeTapeUneStructure(value: string): HTMLElement {

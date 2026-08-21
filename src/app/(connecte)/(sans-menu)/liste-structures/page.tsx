@@ -22,6 +22,7 @@ export default async function ListeStructuresController({
 }: {
   readonly searchParams: Promise<{
     codeDepartement?: string
+    codeEpci?: string
     codeRegion?: string
     labellisation?: string
     page?: string

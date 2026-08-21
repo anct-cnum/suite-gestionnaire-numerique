@@ -1,19 +1,23 @@
 'use client'
 
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
 import styles from './Header.module.css'
+import { rechercherTerritoires } from './rechercherTerritoires'
 import departements from '../../../../ressources/departements.json'
 import regions from '../../../../ressources/regions.json'
 import FilAriane from '../FilAriane/FilAriane'
-import SelecteurZoneGeographique from '../SelecteurZoneGeographique/SelecteurZoneGeographique'
-import { regionsEtDepartements, ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
+import RechercheTerritoire from '@/components/shared/Select/RechercheTerritoire'
+import { TerritoireViewModel } from '@/presenters/rechercheTerritoiresPresenter'
+
+const sectionsDepartementales = ['gouvernances', 'feuille-de-route']
 
 export default function Header({ titre }: Props): ReactElement {
   const router = useRouter()
   const params = useParams()
   const pathname = usePathname()
+  const [epci, setEpci] = useState<null | TerritoireViewModel>(null)
 
   const pathParts = pathname.split('/').filter(Boolean)
   const currentSection = pathParts[2] || 'synthese-et-indicateurs'
@@ -27,33 +31,47 @@ export default function Header({ titre }: Props): ReactElement {
   const codeArray = params.code as ReadonlyArray<string> | undefined
   const code = codeArray?.[0]
 
-  const territoireActuel = getTerritoireLabel(niveau, code)
-  const selectedZone = getSelectedZone(niveau, code)
-
-  function handleTerritoireChange(zone: ZoneGeographique): void {
-    // Si la valeur est "all", naviguer vers /national
-    if (zone.value === 'all') {
-      // Gouvernances et Feuille de route n'existent qu'au niveau département
-      // Rediriger vers synthèse au niveau national
-      if (currentSection === 'gouvernances' || currentSection === 'feuille-de-route') {
-        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
-      } else {
-        router.push(`/vitrine/donnees-territoriales/${currentSection}/national`)
-      }
+  // Le nom des EPCI n'est pas embarqué côté client : on le récupère via la recherche par code.
+  useEffect(() => {
+    if (niveau !== 'epci' || code === undefined) {
+      setEpci(null)
       return
     }
-
-    if (zone.value.includes('_')) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars,sonarjs/no-unused-vars
-      const [_, codeDepartement] = zone.value.split('_')
-
-      if (zone.type === 'departement' && codeDepartement !== '00') {
-        router.push(`/vitrine/donnees-territoriales/${currentSection}/departement/${codeDepartement}`)
+    let annule = false
+    void rechercherTerritoires(code).then((readModel) => {
+      const territoire = readModel.territoires.find(
+        (leTerritoire) => leTerritoire.type === 'epci' && leTerritoire.code === code
+      )
+      if (!annule && territoire !== undefined) {
+        setEpci({
+          code: territoire.code,
+          label: territoire.nom,
+          type: 'epci',
+          value: `epci-${territoire.code}`,
+        })
       }
+    })
+    return (): void => {
+      annule = true
     }
+  }, [niveau, code])
+
+  const territoireActuel = getTerritoireLabel(niveau, code, epci)
+  const territoireInitial = getTerritoireInitial(niveau, code, epci)
+
+  function handleTerritoireChange(territoire: null | TerritoireViewModel): void {
+    if (territoire === null) {
+      return
+    }
+    // Gouvernances et feuille de route n'existent qu'au niveau département : repli sur la synthèse
+    const section =
+      territoire.type === 'departement' || !sectionsDepartementales.includes(currentSection)
+        ? currentSection
+        : 'synthese-et-indicateurs'
+    router.push(`/vitrine/donnees-territoriales/${section}/${territoire.type}/${territoire.code}`)
   }
 
-  const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection)
+  const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection, epci)
 
   return (
     <div className={styles.header} data-donnees-territoriales-header>
@@ -68,14 +86,20 @@ export default function Header({ titre }: Props): ReactElement {
           </h1>
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <SelecteurZoneGeographique defaultValue={selectedZone} onChange={handleTerritoireChange} />
+          <RechercheTerritoire
+            id="rechercheTerritoireHeader"
+            key={`${niveau ?? ''}-${code ?? ''}-${territoireInitial === null ? 'sans-valeur' : 'avec-valeur'}`}
+            onSelectionner={handleTerritoireChange}
+            rechercher={rechercherTerritoires}
+            valeurInitiale={territoireInitial}
+          />
         </div>
       </div>
     </div>
   )
 }
 
-function getTerritoireLabel(niveau?: string, code?: string): string {
+function getTerritoireLabel(niveau?: string, code?: string, epci?: null | TerritoireViewModel): string {
   if (niveau === undefined || niveau === '' || code === undefined) {
     return 'France'
   }
@@ -90,37 +114,60 @@ function getTerritoireLabel(niveau?: string, code?: string): string {
     return departement ? `${departement.nom} · ${code}` : `Département ${code}`
   }
 
+  if (niveau === 'epci') {
+    return epci?.label ?? `Intercommunalité ${code}`
+  }
+
   return 'France'
 }
 
-function getSelectedZone(niveau?: string, code?: string): undefined | ZoneGeographique {
-  // Si on est sur la page nationale, retourner "Toutes les régions"
-  if (niveau === 'national' || niveau === undefined || niveau === '' || code === undefined) {
-    return regionsEtDepartements().find((zone) => zone.value === 'all')
+function getTerritoireInitial(
+  niveau?: string,
+  code?: string,
+  epci?: null | TerritoireViewModel
+): null | TerritoireViewModel {
+  if (code === undefined) {
+    return null
   }
 
-  const departement = departements.find((departement) => departement.code === code)
-
-  if (niveau === 'departement' && departement !== undefined) {
-    const region = regions.find((regrion) => regrion.code === departement.regionCode)
-    if (region !== undefined) {
-      const regionDepartementValue = `${region.code}_${code}`
-      return regionsEtDepartements().find((zone) => zone.value === regionDepartementValue)
+  if (niveau === 'departement') {
+    const departement = departements.find((departement) => departement.code === code)
+    if (departement === undefined) {
+      return null
+    }
+    return {
+      code,
+      label: `${departement.nom} · ${code}`,
+      type: 'departement',
+      value: `departement-${code}`,
     }
   }
 
   if (niveau === 'region') {
-    const regionDepartementValue = `${code}_00`
-    return regionsEtDepartements().find((zone) => zone.value === regionDepartementValue)
+    const region = regions.find((region) => region.code === code)
+    if (region === undefined) {
+      return null
+    }
+    return {
+      code,
+      label: region.nom,
+      type: 'region',
+      value: `region-${code}`,
+    }
   }
 
-  return undefined
+  if (niveau === 'epci') {
+    return epci ?? null
+  }
+
+  return null
 }
 
 function getBreadcrumbItems(
   niveau?: string,
   code?: string,
-  currentSection?: string
+  currentSection?: string,
+  epci?: null | TerritoireViewModel
 ): Array<{ href?: string; label: string }> {
   const section = currentSection ?? 'synthese-et-indicateurs'
 
@@ -137,8 +184,10 @@ function getBreadcrumbItems(
   if (niveau === 'region') {
     const region = regions.find((region) => region.code === code)
     if (region !== undefined) {
-      // Pas de lien cliquable pour les régions pour le moment
-      items.push({ label: region.nom })
+      items.push({
+        href: `/vitrine/donnees-territoriales/${section}/region/${code}`,
+        label: region.nom,
+      })
     }
   }
 
@@ -147,13 +196,20 @@ function getBreadcrumbItems(
     if (departementCourant !== undefined) {
       const regionCourante = regions.find((region) => region.code === departementCourant.regionCode)
       if (regionCourante !== undefined) {
-        items.push({ label: regionCourante.nom })
+        items.push({
+          href: `/vitrine/donnees-territoriales/synthese-et-indicateurs/region/${regionCourante.code}`,
+          label: regionCourante.nom,
+        })
       }
       items.push({
         href: `/vitrine/donnees-territoriales/${section}/departement/${code}`,
         label: `${departementCourant.nom} · ${code}`,
       })
     }
+  }
+
+  if (niveau === 'epci') {
+    items.push({ label: epci?.label ?? `Intercommunalité ${code}` })
   }
 
   return items

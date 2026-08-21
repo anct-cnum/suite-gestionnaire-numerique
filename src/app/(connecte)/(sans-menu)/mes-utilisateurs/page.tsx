@@ -25,6 +25,8 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   const codeDepartement = isNullishOrEmpty(searchParamsAwaited.codeDepartement)
     ? {}
     : { codeDepartement: searchParamsAwaited.codeDepartement }
+  const codeEpciAwaited = searchParamsAwaited.codeEpci
+  const codeEpci = isNullishOrEmpty(codeEpciAwaited) ? {} : { codeEpci: codeEpciAwaited }
   const codeRegionAwaited = searchParamsAwaited.codeRegion
   const codeRegion = isNullishOrEmpty(codeRegionAwaited) ? {} : { codeRegion: codeRegionAwaited }
   const rolesAwaited = searchParamsAwaited.roles
@@ -41,6 +43,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
     uid: utilisateurId,
     utilisateursActives,
     ...codeDepartement,
+    ...codeEpci,
     ...codeRegion,
     ...pageCourante,
     ...roles,
@@ -92,6 +95,7 @@ type Props = Readonly<{
     Partial<
       Readonly<{
         codeDepartement: string
+        codeEpci: string
         codeRegion: string
         page: string
         prenomOuNomOuEmail: string

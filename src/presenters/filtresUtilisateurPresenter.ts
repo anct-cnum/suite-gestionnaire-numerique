@@ -2,13 +2,10 @@ import departements from '../../ressources/departements.json'
 import regions from '../../ressources/regions.json'
 import { isNullishOrEmpty } from '@/shared/lang'
 
-export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
+export function urlDeFiltrage(form: FormData, totalDesRoles: number, territoire: null | TerritoireFiltre): URL {
   const utilisateursActives = form.get('utilisateursActives')
   const isUtilisateursActivesChecked = utilisateursActives === 'on'
-  const zoneGeographique = form.get('zoneGeographique') as string
   const selectedStructure = form.get('organisation') as string
-  // Stryker disable next-line ConditionalExpression
-  const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== valeurParDefautDeToutesLesRegions
   const roles = form.getAll('roles') as Array<string>
   const shouldFilterByRoles = roles.length < totalDesRoles
 
@@ -18,14 +15,8 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
     url.searchParams.append('utilisateursActives', utilisateursActives)
   }
 
-  if (isZoneGeographiqueSelected) {
-    const [codeRegion, codeDepartement] = laRegionOuLeDepartementSelectionne(zoneGeographique)
-
-    if (isRegion(zoneGeographique)) {
-      url.searchParams.append('codeRegion', codeRegion)
-    } else {
-      url.searchParams.append('codeDepartement', codeDepartement)
-    }
+  if (territoire !== null) {
+    url.searchParams.append(cleGeographiqueParType[territoire.type], territoire.code)
   }
 
   if (shouldFilterByRoles) {
@@ -66,51 +57,30 @@ export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
   return regionsEtDepartements
 }
 
-export function zoneGeographiqueParDefaut(codeRegion: null | string, codeDepartement: null | string): ZoneGeographique {
-  return (
-    regionsEtDepartements().find((regionEtDepartement) => {
-      const [codeRegionSelectionnee, codeDepartementSelectionne] = laRegionOuLeDepartementSelectionne(
-        regionEtDepartement.value
-      )
-
-      return codeRegionSelectionnee === codeRegion || codeDepartementSelectionne === codeDepartement
-    }) ?? toutesLesRegions
-  )
-}
-
-export function zoneGeographiqueToURLSearchParams(zoneGeographique: ZoneGeographique): URLSearchParams {
-  const searchParams: Array<Array<string>> = []
-  if (!isZoneParDefaut(zoneGeographique)) {
-    const isDepartement = zoneGeographique.type === 'departement'
-    const codesZone = laRegionOuLeDepartementSelectionne(zoneGeographique.value)
-    searchParams.push([zoneGeographique.type, codesZone[Number(isDepartement)]])
-  }
-  return new URLSearchParams(searchParams)
-}
-
-function laRegionOuLeDepartementSelectionne(zoneGeographique: string): ReadonlyArray<string> {
-  return zoneGeographique.split(regionDepartementSeparator)
-}
-
-function isRegion(zoneGeographique: string): boolean {
-  return zoneGeographique.endsWith(codeDepartementParDefautDuneRegion)
-}
-
-function isZoneParDefaut(zoneGeographique: ZoneGeographique): boolean {
-  return zoneGeographique.value === valeurParDefautDeToutesLesRegions
-}
-
-const valeurParDefautDeToutesLesRegions = 'all'
-export const toutesLesRegions: ZoneGeographique = {
+const toutesLesRegions: ZoneGeographique = {
   label: 'Toutes les régions',
   type: 'region',
-  value: valeurParDefautDeToutesLesRegions,
+  value: 'all',
 }
 const codeDepartementParDefautDuneRegion = '00'
 const regionDepartementSeparator = '_'
 
-export type ZoneGeographique = Readonly<{
+// Duplication assumée de cleGeographiqueParType (presenters/rechercheTerritoiresPresenter) :
+// un presenter ne peut pas importer un autre presenter (import/no-restricted-paths).
+const cleGeographiqueParType = {
+  departement: 'codeDepartement',
+  epci: 'codeEpci',
+  region: 'codeRegion',
+} as const
+
+type ZoneGeographique = Readonly<{
   label: string
   type: 'departement' | 'region'
   value: string
+}>
+
+// Forme structurelle minimale de TerritoireViewModel, pour la même raison.
+type TerritoireFiltre = Readonly<{
+  code: string
+  type: 'departement' | 'epci' | 'region'
 }>

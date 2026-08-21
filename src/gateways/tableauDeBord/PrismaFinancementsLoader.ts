@@ -10,6 +10,23 @@ export class PrismaFinancementsLoader implements FinancementLoader {
   readonly #feuilleDeRouteDao = prisma.feuilleDeRouteRecord
 
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
+    return this.#charger(
+      territoire === 'France' ? { not: 'zzz' } : territoire,
+      territoire === 'France' ? Prisma.empty : Prisma.sql`WHERE a.departement = ${territoire}`,
+      territoire
+    )
+  }
+
+  // Agrégat régional : cumul des financements des départements de la région (liens de détail masqués côté bloc).
+  async getPourDepartements(codes: ReadonlyArray<string>): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
+    return this.#charger({ in: [...codes] }, Prisma.sql`WHERE a.departement = ANY(${[...codes]})`, codes.join(','))
+  }
+
+  async #charger(
+    gouvernanceDepartementCode: Prisma.FeuilleDeRouteRecordWhereInput['gouvernanceDepartementCode'],
+    filtreTerritoireSql: Prisma.Sql,
+    territoire: string
+  ): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
     try {
       const [feuillesDeRoute, conseillerNumerique] = await Promise.all([
         this.#feuilleDeRouteDao.findMany({
@@ -24,18 +41,11 @@ export class PrismaFinancementsLoader implements FinancementLoader {
               },
             },
           },
-          where:
-            territoire === 'France'
-              ? {
-                  gouvernanceDepartementCode: {
-                    not: 'zzz',
-                  },
-                }
-              : {
-                  gouvernanceDepartementCode: territoire,
-                },
+          where: {
+            gouvernanceDepartementCode,
+          },
         }),
-        this.#chargerConseillerNumerique(territoire),
+        this.#chargerConseillerNumerique(filtreTerritoireSql),
       ])
 
       const totalBudget = feuillesDeRoute.reduce((acc, feuille) => {
@@ -92,9 +102,7 @@ export class PrismaFinancementsLoader implements FinancementLoader {
   // Source canonique : vue min.postes_conseiller_numerique_synthese (dédoublonnage de
   // l'historique des postes et cumul V1/V2 déjà gérés par la vue). Filtre territoire
   // identique à la liste des postes conum (structure -> adresse.departement).
-  async #chargerConseillerNumerique(territoire: string): Promise<{ conventionne: string; verse: string }> {
-    const filtreTerritoire = territoire === 'France' ? Prisma.empty : Prisma.sql`WHERE a.departement = ${territoire}`
-
+  async #chargerConseillerNumerique(filtreTerritoire: Prisma.Sql): Promise<{ conventionne: string; verse: string }> {
     const rows = await prisma.$queryRaw<Array<{ conventionne: bigint; verse: bigint }>>`
       SELECT
         COALESCE(SUM(v.montant_subvention_cumule), 0)::bigint AS conventionne,

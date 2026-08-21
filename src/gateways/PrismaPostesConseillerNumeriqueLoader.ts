@@ -88,7 +88,15 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       conditions.push(Prisma.sql`v.structure_id = ${filtres.scopeFiltre.id}`)
       return
     }
-    if (filtres.codeDepartement !== undefined) {
+    if (filtres.codeEpci !== undefined) {
+      conditions.push(Prisma.sql`a.code_insee IN (
+        SELECT c.code_insee
+        FROM admin.commune c
+        JOIN admin.commune_epci ce ON ce.commune_id = c.id
+        JOIN admin.epci e ON e.id = ce.epci_id
+        WHERE e.code = ${filtres.codeEpci}
+      )`)
+    } else if (filtres.codeDepartement !== undefined) {
       conditions.push(Prisma.sql`a.departement = ${filtres.codeDepartement}`)
     } else if (
       filtres.codeRegion === undefined &&

@@ -1,16 +1,12 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Checkbox from '../shared/Checkbox/Checkbox'
-import Select, { SelectInstance } from '../shared/Select/Select'
+import Select from '../shared/Select/Select'
 import { TypologieRole } from '@/domain/Role'
-import {
-  toutesLesRegions,
-  ZoneGeographique,
-  zoneGeographiqueToURLSearchParams,
-} from '@/presenters/filtresUtilisateurPresenter'
+import { cleGeographiqueParType, territoireDepuisCodes } from '@/presenters/rechercheTerritoiresPresenter'
 import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUtils'
 import { libellesFraicheur, SlugFraicheur, slugParCouleurFraicheur, temporalitesFraicheur } from '@/shared/fraicheur'
 
@@ -29,8 +25,8 @@ export default function ListeLieuxInclusionFiltre({
   onResetAction,
   utilisateurRole,
 }: Props): ReactElement {
-  const ref = useRef<SelectInstance<ZoneGeographique>>(null)
-  const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
+  const [selectedZone, setSelectedZone] = useState(territoireDepuisCodes(currentFilters))
+  const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [isQpvSelected, setIsQpvSelected] = useState(currentFilters.qpv)
   const [isFrrSelected, setIsFrrSelected] = useState(currentFilters.frr)
   const [isHorsZonePrioritaireSelected, setIsHorsZonePrioritaireSelected] = useState(currentFilters.horsZonePrioritaire)
@@ -67,30 +63,19 @@ export default function ListeLieuxInclusionFiltre({
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
+    setSelectedZone(territoireDepuisCodes(currentFilters))
     setIsQpvSelected(currentFilters.qpv)
     setIsFrrSelected(currentFilters.frr)
     setIsHorsZonePrioritaireSelected(currentFilters.horsZonePrioritaire)
     setSelectedFraicheur(currentFilters.fraicheur ?? '')
   }, [currentFilters])
 
-  function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
-    setSelectedZone(zoneGeographique)
-  }
-
   function handleApplyFilters(): void {
     const params = new URLSearchParams()
 
     // Filtre géographique - seulement pour les administrateur_dispositif
     if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
-      const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
-      geoParams.forEach((value, key) => {
-        // Adapter les clés pour correspondre à notre système
-        if (key === 'region') {
-          params.set('codeRegion', value)
-        } else if (key === 'departement') {
-          params.set('codeDepartement', value)
-        }
-      })
+      params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
     if (isQpvSelected) {
@@ -111,7 +96,7 @@ export default function ListeLieuxInclusionFiltre({
   }
 
   function handleReset(): void {
-    ref.current?.setValue(toutesLesRegions, 'select-option')
+    setCleReinitialisation((cle) => cle + 1)
     setSelectedZone(null)
     setIsQpvSelected(false)
     setIsFrrSelected(false)
@@ -125,7 +110,11 @@ export default function ListeLieuxInclusionFiltre({
     <div>
       {utilisateurRole === 'Administrateur dispositif' && (
         <>
-          <FiltrerParZonesGeographiques ref={ref} setZoneGeographique={handleZoneGeographiqueChange} />
+          <FiltrerParZonesGeographiques
+            key={cleReinitialisation}
+            onSelectionner={setSelectedZone}
+            valeurInitiale={selectedZone}
+          />
           <hr className="fr-hr" />
         </>
       )}

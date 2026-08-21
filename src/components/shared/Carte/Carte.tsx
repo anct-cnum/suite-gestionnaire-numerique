@@ -5,12 +5,12 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 
 import Legend from './Legend'
 import styles from './Map.module.css'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
+import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
 const COULEUR_FOND_CLAIR = '#f5f5fe'
 const COULEUR_FOND_SOMBRE = '#1b1b35'
 
-export default function Carte({ communesFragilite, departement }: Props): ReactElement {
+export default function Carte({ fragilite, territoire }: Props): ReactElement {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
   const popup = useRef<null | Popup>(null)
@@ -130,17 +130,25 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       988: [165.5, -20.9], // Nouvelle-Calédonie
     }
 
-    const center = centresDepartements[departement]
+    let bounds: LngLatBounds
+    if (territoire.type === 'departement') {
+      const center = centresDepartements[territoire.code]
 
-    // Calculer les bounds approximatifs
-    // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
-    const latDelta = 0.55 // ~61 km au nord et au sud
-    const lngDelta = 0.55 / Math.cos((center[1] * Math.PI) / 180) // Ajuster pour la longitude
+      // Calculer les bounds approximatifs
+      // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
+      const latDelta = 0.55 // ~61 km au nord et au sud
+      const lngDelta = 0.55 / Math.cos((center[1] * Math.PI) / 180) // Ajuster pour la longitude
 
-    const bounds = new LngLatBounds(
-      [center[0] - lngDelta, center[1] - latDelta],
-      [center[0] + lngDelta, center[1] + latDelta]
-    )
+      bounds = new LngLatBounds(
+        [center[0] - lngDelta, center[1] - latDelta],
+        [center[0] + lngDelta, center[1] + latDelta]
+      )
+    } else {
+      bounds = new LngLatBounds(
+        [territoire.bbox.longitudeMin, territoire.bbox.latitudeMin],
+        [territoire.bbox.longitudeMax, territoire.bbox.latitudeMax]
+      )
+    }
     // Centrer la carte sur les bounds sans animation
     map.current.fitBounds(bounds, {
       duration: 0,
@@ -169,18 +177,19 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       return
     }
 
+    if (territoire.type === 'region') {
+      // Pour une région, on colore les départements avec l'indice de fragilité départemental
+      searchFeatures()
+      return
+    }
+
     // Ajouter une couche pour les communes avec l'indice de fragilité
     map.current.addLayer({
-      filter: ['==', 'departement', departement],
+      filter: filtreCommunes(territoire),
       id: 'communes-layer',
       minzoom: 8,
       paint: {
-        'fill-color': [
-          'match',
-          ['get', 'code'],
-          ...communesFragilite.flatMap((commune) => [commune.codeInsee, commune.couleur]),
-          '#ffffff',
-        ] as unknown as DataDrivenPropertyValueSpecification<string>,
+        'fill-color': couleursParCode(fragilite),
         'fill-opacity': 0.7,
         'fill-outline-color': '#000000',
       },
@@ -227,7 +236,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       container: mapContainer.current,
       maplibreLogo: false,
       maxZoom: 11,
-      minZoom: 6,
+      minZoom: territoire.type === 'region' ? 5 : 6,
       scrollZoom: false,
       style: creerStyleVide(couleurFond),
     })
@@ -251,17 +260,17 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         type: 'vector',
       })
 
-      // Ajouter une couche pour le département
+      // Ajouter une couche de fond pour le territoire (département(s) ou EPCI)
       map.current.addLayer({
-        filter: ['==', 'code', departement],
+        filter: filtreFond(territoire),
         id: 'departement-layer',
         paint: {
-          'fill-color': '#f0f0f0',
-          'fill-opacity': 1,
+          'fill-color': territoire.type === 'region' ? couleursParCode(fragilite) : '#f0f0f0',
+          'fill-opacity': territoire.type === 'region' ? 0.7 : 1,
           'fill-outline-color': '#000000',
         },
         source: 'decoupage',
-        'source-layer': 'departements',
+        'source-layer': territoire.type === 'epci' ? 'epcis' : 'departements',
         type: 'fill',
       })
 
@@ -269,14 +278,16 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       checkSourceLoaded()
     })
 
-    map.current.on('mousemove', 'communes-layer', (event) => {
+    const layerSurvol = territoire.type === 'region' ? 'departement-layer' : 'communes-layer'
+
+    map.current.on('mousemove', layerSurvol, (event) => {
       if (event.features && event.features.length > 0 && map.current) {
         const canvas = map.current.getCanvas()
         canvas.style.cursor = 'pointer'
 
         const feature = event.features[0]
         const coordinates = event.lngLat
-        const commune = communesFragilite.find((commune) => commune.codeInsee === feature.properties.code)
+        const zone = fragilite.find((zone) => codeDeZone(zone) === feature.properties.code)
 
         if (popup.current) {
           popup.current
@@ -285,7 +296,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
               `
               <div class="fr-text--lg">
                 <div class="fr-text--bold fr-mb-1w">${feature.properties.nom}</div>
-                ${commune ? `<div class="color-blue-france">Indice : ${commune.indice}/10</div>` : ''}
+                ${zone ? `<div class="color-blue-france">Indice : ${indiceDeZone(zone)}/10</div>` : ''}
               </div>
             `
             )
@@ -294,7 +305,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       }
     })
 
-    map.current.on('mouseleave', 'communes-layer', () => {
+    map.current.on('mouseleave', layerSurvol, () => {
       if (map.current) {
         const canvas = map.current.getCanvas()
         canvas.style.cursor = ''
@@ -320,7 +331,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         map.current.remove()
       }
     }
-  }, [departement, communesFragilite])
+  }, [territoire, fragilite])
 
   return (
     <div className={styles.mapWrapper} data-testid="carte-wrapper">
@@ -332,10 +343,63 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   )
 }
 
-type Props = Readonly<{
-  communesFragilite: Array<CommuneFragilite>
-  departement: string
+export type BboxCarte = Readonly<{
+  latitudeMax: number
+  latitudeMin: number
+  longitudeMax: number
+  longitudeMin: number
 }>
+
+export type TerritoireCarte =
+  | Readonly<{ bbox: BboxCarte; code: string; codesInsee: ReadonlyArray<string>; type: 'epci' }>
+  | Readonly<{ bbox: BboxCarte; codesDepartement: ReadonlyArray<string>; type: 'region' }>
+  | Readonly<{ code: string; type: 'departement' }>
+
+type Props = Readonly<{
+  fragilite: ReadonlyArray<CommuneFragilite | DepartementFragilite>
+  territoire: TerritoireCarte
+}>
+
+function codeDeZone(zone: CommuneFragilite | DepartementFragilite): string {
+  return 'codeInsee' in zone ? zone.codeInsee : zone.codeDepartement
+}
+
+function indiceDeZone(zone: CommuneFragilite | DepartementFragilite): number {
+  return 'indice' in zone ? zone.indice : zone.score
+}
+
+function couleursParCode(
+  fragilite: ReadonlyArray<CommuneFragilite | DepartementFragilite>
+): DataDrivenPropertyValueSpecification<string> {
+  return [
+    'match',
+    ['get', 'code'],
+    ...fragilite.flatMap((zone) => [codeDeZone(zone), zone.couleur]),
+    '#ffffff',
+  ] as unknown as DataDrivenPropertyValueSpecification<string>
+}
+
+function filtreCommunes(
+  territoire: Exclude<TerritoireCarte, Readonly<{ type: 'region' }>>
+): ['==', string, string] | ['in', string, ...Array<string>] {
+  switch (territoire.type) {
+    case 'departement':
+      return ['==', 'departement', territoire.code]
+    case 'epci':
+      return ['in', 'code', ...territoire.codesInsee]
+  }
+}
+
+function filtreFond(territoire: TerritoireCarte): ['==', string, string] | ['in', string, ...Array<string>] {
+  switch (territoire.type) {
+    case 'departement':
+      return ['==', 'code', territoire.code]
+    case 'epci':
+      return ['==', 'code', territoire.code]
+    case 'region':
+      return ['in', 'code', ...territoire.codesDepartement]
+  }
+}
 
 function creerStyleVide(couleurFond: string) {
   return {

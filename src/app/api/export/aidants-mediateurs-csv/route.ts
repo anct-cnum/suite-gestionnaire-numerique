@@ -26,6 +26,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Récupération des paramètres de filtre
     const searchParams = request.nextUrl.searchParams
     const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
+    const codeEpciDemande = searchParams.get('codeEpci') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
 
     if (scopeFiltre.type === 'departemental') {
@@ -47,6 +48,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const params: FiltresURLParams = {
       anciens: searchParams.get('anciens') ?? undefined,
       codeDepartement: estAdmin ? codeDepartementDemande : undefined,
+      codeEpci: estAdmin ? codeEpciDemande : undefined,
       codeRegion: estAdmin ? codeRegionDemande : undefined,
       formations: searchParams.get('formations') ?? undefined,
       habilitations: searchParams.get('habilitations') ?? undefined,
