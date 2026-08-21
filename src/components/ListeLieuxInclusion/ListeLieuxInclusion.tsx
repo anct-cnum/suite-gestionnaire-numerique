@@ -267,29 +267,31 @@ export default function ListeLieuxInclusion({
         </div>
       </div>
 
-      <div className="fr-tabs fr-tabs__list fr-pb-0 fr-mb-3w">
-        <ul className="fr-nav__list">
-          <li className="fr-nav__item">
+      <div className="fr-tabs fr-mb-3w">
+        <ul aria-label="Lieux actuels ou archivés" className="fr-tabs__list" role="tablist">
+          <li role="presentation">
             <button
-              aria-current={!estOngletArchives}
-              className="fr-nav__link"
+              aria-selected={!estOngletArchives}
+              className="fr-tabs__tab"
               onClick={() => {
                 changerOnglet(false)
               }}
               role="tab"
+              tabIndex={estOngletArchives ? -1 : 0}
               type="button"
             >
               Lieux actuels ({viewModel.totalActifs})
             </button>
           </li>
-          <li className="fr-nav__item">
+          <li role="presentation">
             <button
-              aria-current={estOngletArchives}
-              className="fr-nav__link"
+              aria-selected={estOngletArchives}
+              className="fr-tabs__tab"
               onClick={() => {
                 changerOnglet(true)
               }}
               role="tab"
+              tabIndex={estOngletArchives ? 0 : -1}
               type="button"
             >
               Lieux archivés ({viewModel.totalArchives})
