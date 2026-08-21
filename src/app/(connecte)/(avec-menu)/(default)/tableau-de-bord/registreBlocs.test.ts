@@ -22,7 +22,7 @@ describe('blocs par contexte', () => {
     expect(blocs).not.toContain('rejoindreGouvernance')
   })
 
-  it('un gestionnaire de structure béta testeur voit le bandeau du label conseiller numérique', () => {
+  it('un gestionnaire de structure béta testeur voit le bandeau du label conseiller numérique sous l’accueil, avant les points de vigilance', () => {
     // GIVEN
     const contexte = new Contexte('gestionnaire_structure', [{ code: '42', type: 'structure' }], true)
 
@@ -31,6 +31,8 @@ describe('blocs par contexte', () => {
 
     // THEN
     expect(blocs).toContain('labelConum')
+    expect(blocs.indexOf('labelConum')).toBeGreaterThan(blocs.indexOf('accueil'))
+    expect(blocs.indexOf('labelConum')).toBeLessThan(blocs.indexOf('vigilanceLieux'))
   })
 
   it('un gestionnaire de structure non béta testeur ne voit pas le bandeau du label conseiller numérique', () => {

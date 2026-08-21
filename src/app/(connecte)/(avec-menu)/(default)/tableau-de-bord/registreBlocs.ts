@@ -29,12 +29,15 @@ export function blocsParContexte(
 }
 
 function blocsDuContexte(contexte: Contexte): ReadonlyArray<IdentifiantBloc> {
-  // Points de vigilance des lieux : visible pour tous les rôles, dans le périmètre de chacun (#1488).
-  const blocs: Array<IdentifiantBloc> = ['accueil', 'vigilanceLieux']
+  const blocs: Array<IdentifiantBloc> = ['accueil']
 
+  // Le bandeau du label conum s'affiche juste sous l'accueil, avant les points de vigilance (#1820).
   if (contexte.aCesRoles('gestionnaire_structure') && contexte.isBetaTesteur) {
     blocs.push('labelConum')
   }
+
+  // Points de vigilance des lieux : visible pour tous les rôles, dans le périmètre de chacun (#1488).
+  blocs.push('vigilanceLieux')
 
   if (contexte.estGestionnaireStructureSansCoportage()) {
     blocs.push('donneesStructure')
