@@ -8,6 +8,7 @@ import { Notification } from '../shared/Notification/Notification'
 import Search from '../shared/Search/Search'
 import { mettreAJourStructureLabelAction } from '@/app/api/actions/mettreAJourStructureLabelAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import { LabellisationEtape1ViewModel } from '@/presenters/labellisationPresenter'
 
 export default function BlocMaStructure({ identite, onModeEditionChange, structureId }: Props): ReactElement {
@@ -99,21 +100,16 @@ export default function BlocMaStructure({ identite, onModeEditionChange, structu
   return (
     <section aria-labelledby="ma-structure" className="grey-border border-radius fr-mb-2w fr-p-4w">
       <header>
-        <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+        <div className="fr-mb-2w" style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
           <h2 className="fr-h6 fr-mb-0" id="ma-structure">
             Ma structure
           </h2>
           {enEdition ? null : (
-            <button
-              className="fr-btn fr-btn--secondary fr-btn--sm fr-icon-edit-line fr-btn--icon-right"
-              onClick={ouvrirEdition}
-              type="button"
-            >
+            <button className="fr-btn fr-btn--tertiary fr-btn--sm" onClick={ouvrirEdition} type="button">
               Modifier
             </button>
           )}
         </div>
-        <p className="fr-text--sm fr-text-mention--grey fr-mb-2w">Informations officielles de votre structure</p>
         <div className="separator fr-mb-3w" />
       </header>
       {enEdition ? (
@@ -170,26 +166,29 @@ export default function BlocMaStructure({ identite, onModeEditionChange, structu
           </div>
         </div>
       ) : (
-        <dl className="fr-mb-0">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <InfoStructure libelle="Raison sociale" valeur={identite.nom} />
-          <InfoStructure
-            libelle="SIRET"
-            valeur={
-              <a
-                href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${identite.siret}`}
-                rel="external noopener noreferrer"
-                target="_blank"
-                title={`SIRET ${identite.siret} - nouvelle fenêtre`}
-              >
-                {identite.siret}
-              </a>
-            }
-          />
-          <InfoStructure libelle="Typologie" valeur={identite.typologie} />
-          <InfoStructure libelle="Adresse" valeur={identite.adresse} />
-          <InfoStructure libelle="Région" valeur={identite.region} />
-          <InfoStructure libelle="Département" valeur={identite.departement} />
-        </dl>
+          <div style={{ display: 'flex', gap: '24px' }}>
+            <InfoStructure
+              libelle="Numéro de SIRET"
+              valeur={
+                <ExternalLink
+                  className="color-blue-france"
+                  href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${identite.siret}`}
+                  title={`SIRET ${identite.siret}`}
+                >
+                  {identite.siret}
+                </ExternalLink>
+              }
+            />
+            <InfoStructure libelle="Typologie" valeur={identite.typologie} />
+          </div>
+          <InfoStructure libelle="Adresse de l’établissement" valeur={identite.adresse} />
+          <div style={{ display: 'flex', gap: '24px' }}>
+            <InfoStructure libelle="Région" valeur={identite.region} />
+            <InfoStructure libelle="Département" valeur={identite.departement} />
+          </div>
+        </div>
       )}
     </section>
   )
@@ -197,11 +196,9 @@ export default function BlocMaStructure({ identite, onModeEditionChange, structu
 
 function InfoStructure({ libelle, valeur }: InfoStructureProps): ReactElement {
   return (
-    <div className="fr-grid-row fr-mb-1w">
-      <dt className="fr-col-12 fr-col-md-4 fr-text-mention--grey">{libelle}</dt>
-      <dd className="fr-col-12 fr-col-md-8 fr-mb-0" style={{ marginInlineStart: 0 }}>
-        {valeur}
-      </dd>
+    <div style={{ flex: '1 0 0' }}>
+      <div className="color-grey">{libelle}</div>
+      <div className="font-weight-500">{valeur}</div>
     </div>
   )
 }
