@@ -3,7 +3,7 @@
   box-shadow: none;
   left: max(1.5rem, calc((100vw - 78rem) / 2 + 1.5rem));
   position: fixed;
-  width: 16rem;
+  width: 15rem;
 }
 
 .navigationFixed :global(.fr-sidemenu__inner) {
