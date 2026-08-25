@@ -291,6 +291,8 @@ describe('menu lateral', () => {
     expect(structuresAdministratives).toHaveAttribute('href', '/liste-structures-administratives')
     const doublons = within(nav).getByRole('link', { name: 'Doublons de structures' })
     expect(doublons).toHaveAttribute('href', '/structures-doublons')
+    const appariements = within(nav).getByRole('link', { name: 'Appariements de lieux' })
+    expect(appariements).toHaveAttribute('href', '/appariements-lieux')
   })
 
   it("étant un utilisateur non bêta-testeur, quand j'affiche le menu latéral, alors la section BÊTA TESTEUR n'est pas visible", () => {
@@ -302,6 +304,7 @@ describe('menu lateral', () => {
     expect(within(nav).queryByText('DÉVELOPPEUR', { selector: 'p' })).not.toBeInTheDocument()
     expect(within(nav).queryByRole('link', { name: 'Structures administratives' })).not.toBeInTheDocument()
     expect(within(nav).queryByRole('link', { name: 'Doublons de structures' })).not.toBeInTheDocument()
+    expect(within(nav).queryByRole('link', { name: 'Appariements de lieux' })).not.toBeInTheDocument()
   })
 
   it("étant un utilisateur autre que gestionnaire de département, quand j'affiche le menu latéral, alors il ne s'affiche pas avec le lien de la gouvernance", () => {

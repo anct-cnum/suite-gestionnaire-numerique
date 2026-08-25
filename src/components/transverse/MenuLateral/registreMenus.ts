@@ -84,6 +84,11 @@ const sectionBetaTesteur: Section = {
       label: 'Doublons de structures',
       url: () => '/structures-doublons',
     },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Appariements de lieux',
+      url: () => '/appariements-lieux',
+    },
   ],
   titre: 'DÉVELOPPEUR',
 }

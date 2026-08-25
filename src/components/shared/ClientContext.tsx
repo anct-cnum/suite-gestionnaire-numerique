@@ -17,6 +17,7 @@ import { canoniserStructureAction } from '@/app/api/actions/canoniserStructureAc
 import { changerMaStructureAction } from '@/app/api/actions/changerMaStructureAction'
 import { changerMonDepartementAction } from '@/app/api/actions/changerMonDepartementAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
+import { deciderAppariementLieuAction } from '@/app/api/actions/deciderAppariementLieuAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { fusionnerStructuresAction } from '@/app/api/actions/fusionnerStructuresAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
@@ -79,6 +80,7 @@ export default function ClientContext({
       changerMaStructureAction,
       changerMonDepartementAction,
       changerMonRoleAction,
+      deciderAppariementLieuAction,
       definirUnCoPorteurAction,
       fusionnerStructuresAction,
       inviterUnUtilisateurAction,
@@ -143,6 +145,7 @@ export type ClientContextProviderValue = Readonly<{
   changerMaStructureAction: typeof changerMaStructureAction
   changerMonDepartementAction: typeof changerMonDepartementAction
   changerMonRoleAction: typeof changerMonRoleAction
+  deciderAppariementLieuAction: typeof deciderAppariementLieuAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   fusionnerStructuresAction: typeof fusionnerStructuresAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
