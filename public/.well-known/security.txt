@@ -1,0 +1,7 @@
+# Politique de divulgation responsable — Mon Inclusion Numérique (ANCT)
+# https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:moninclusionnumerique@anct.gouv.fr
+Expires: 2027-08-25T00:00:00.000Z
+Preferred-Languages: fr, en
+Canonical: https://mon.inclusion-numerique.anct.gouv.fr/.well-known/security.txt

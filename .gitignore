@@ -53,3 +53,7 @@ dbs/
 
 *storybook.log
 storybook-static
+
+# fichiers de travail (sauvegardes d'env, exports de données)
+*.bak
+/*.csv

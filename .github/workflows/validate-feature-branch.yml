@@ -35,6 +35,7 @@ jobs:
       - run: pnpm deadcode
       - run: pnpm prisma format --check
       - run: pnpm check:shai-hulud
+      - run: pnpm lint:secrets
 
   build:
     runs-on: ubuntu-latest
