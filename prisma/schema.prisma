@@ -762,6 +762,41 @@ model main_conum_labellisation {
   @@schema("main")
 }
 
+/// Mémoire du rapprochement lieux coop ↔ records du fichier national mednum
+/// (SEPT #1724 / #1845). Une ligne par segment d'id carto × lieu, alimentée
+/// par le DAG dataspace lieu-appariement. statut : auto / a_valider / valide /
+/// rejete — MIN ne touche qu'à statut, decide_par, decide_le (revue humaine),
+/// jamais écrasés par les runs. lieu_id sans FK (la table survit à la bascule
+/// de lieu_inclusion en vue). Table du schéma main gérée par Flyway (V152).
+model main_lieu_appariement {
+  id                 Int       @id @default(autoincrement())
+  carto_segment      String
+  lieu_id            Int
+  carto_record_id    String
+  source             String?
+  methode            String    @db.VarChar(20)
+  statut             String    @default("a_valider") @db.VarChar(20)
+  score_nom          Int?      @db.SmallInt
+  score_adresse      Int?      @db.SmallInt
+  score_distance     Int?      @db.SmallInt
+  score_global       Int?      @db.SmallInt
+  distance_m         Int?
+  carto_nom          String?
+  carto_adresse      String?
+  carto_commune      String?
+  premiere_detection DateTime  @default(now()) @db.Timestamp(6)
+  derniere_detection DateTime  @default(now()) @db.Timestamp(6)
+  decide_par         String?   @db.VarChar(255)
+  decide_le          DateTime? @db.Timestamp(6)
+
+  // L'index partiel lieu_appariement_a_valider_idx (WHERE statut = 'a_valider')
+  // existe en base mais n'est pas representable en Prisma : omis ici.
+  @@unique([carto_segment, lieu_id], map: "lieu_appariement_ukey")
+  @@index([lieu_id], map: "lieu_appariement_lieu_idx")
+  @@map("lieu_appariement")
+  @@schema("main")
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ac_accompagnements_mensuels {

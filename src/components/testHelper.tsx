@@ -35,6 +35,7 @@ export function renderComponent(
     changerMaStructureAction: vi.fn(),
     changerMonDepartementAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
+    deciderAppariementLieuAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
     fusionnerStructuresAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
