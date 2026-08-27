@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { Prisma } from '../../../../../prisma/generated/client'
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'

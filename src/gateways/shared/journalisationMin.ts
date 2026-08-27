@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { contexteJournalisationMin, EvenementMin } from './contexteJournalisationMin'
+import { Prisma } from '../../../prisma/generated/client'
 import { ClientExecuteur, insererEvenementsMin, resoudreActeurMin } from '../../../prisma/journalisationMinExtension'
 
 // Ouvre une transaction Prisma en différant l'écriture des événements interceptés

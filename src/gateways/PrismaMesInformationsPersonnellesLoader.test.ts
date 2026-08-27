@@ -1,8 +1,8 @@
-import { Prisma, Role } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMesInformationsPersonnellesLoader } from './PrismaMesInformationsPersonnellesLoader'
 import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnUtilisateur } from './testHelper'
+import { Prisma, Role } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 

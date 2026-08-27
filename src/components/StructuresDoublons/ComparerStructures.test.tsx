@@ -44,6 +44,7 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
       pathname: '/structures-doublons/comparer',
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push,

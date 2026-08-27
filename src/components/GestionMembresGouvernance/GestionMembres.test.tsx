@@ -14,6 +14,7 @@ const mockSearchParams = vi.hoisted(() => ({ current: new URLSearchParams() }))
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
+    bfcacheId: '',
     prefetch: vi.fn<() => void>(),
     push: mockPush,
     refresh: vi.fn<() => void>(),

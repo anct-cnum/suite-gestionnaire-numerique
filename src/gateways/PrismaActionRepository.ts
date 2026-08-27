@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { journaliserTransaction } from './shared/journalisationMin'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { Action, ActionUid } from '@/domain/Action'
 import { DemandeDeSubventionUid } from '@/domain/DemandeDeSubvention'

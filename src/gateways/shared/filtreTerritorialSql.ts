@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../prisma/generated/client'
 import { FiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'
 
 // Condition booléenne sur la table adresse (aliasée), composable dans un WHERE existant.

@@ -15,6 +15,22 @@ ignoredBuiltDependencies:
 # (@gouvfr/dsfr-token, @gouvfr/dsfr-weave) qui font échouer l'installation
 overrides:
   "@gouvfr/dsfr-nexus": "npm:empty-npm-package@1.0.0"
+  # Correctifs de sécurité sur transitives verrouillées par leurs parents (même majeure uniquement)
+  "@babel/core": ">=7.29.6 <8"
+  "brace-expansion@1": ">=1.1.18 <2"
+  "brace-expansion@2": ">=2.1.4 <3"
+  "brace-expansion@5": ">=5.0.9 <6"
+  # deepmerge-ts : le correctif (prototype pollution) n'existe qu'en 8.x ; usage limité au CLI
+  # Prisma (@prisma/config), vérifié fonctionnel (generate, migrate status) avec 8.0.2
+  "deepmerge-ts": ">=8.0.2 <9"
+  "defu": ">=6.1.5 <7"
+  "docx>nanoid": ">=5.1.16 <6"
+  "effect": ">=3.20.0 <4"
+  "fast-uri": ">=3.1.5 <4"
+  "js-cookie": ">=3.0.7 <4"
+  "postcss": ">=8.5.23 <9"
+  "protocol-buffers-schema": ">=3.6.1 <4"
+  "ws@7": ">=7.5.11 <8"
 
 minimumReleaseAge: 14400
 minimumReleaseAgeExclude:

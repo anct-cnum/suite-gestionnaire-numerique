@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMembreRepository } from './PrismaMembreRepository'
@@ -10,6 +9,7 @@ import {
   creerUneStructure,
   creerUnMembre,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { MembreUid } from '@/domain/Membre'
 import { membreConfirmeFactory } from '@/domain/testHelper'

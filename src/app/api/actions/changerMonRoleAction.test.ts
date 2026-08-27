@@ -12,7 +12,7 @@ describe('changer mon rôle action', () => {
     const path = '/'
     const nouveauRole = 'Gestionnaire structure'
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(ChangerMonRole.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

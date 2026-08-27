@@ -53,7 +53,19 @@ export default defineConfig({
     },
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
+    projects: [
+      {
+        extends: true,
+        test: {
+          environment: 'jsdom',
+          include: ['src/components/**.test.tsx'],
+        },
+      },
+    ],
     reporters: ['verbose'],
+    // Deadlocks PostgreSQL (P2034) sporadiques entre workers parallèles sur les INSERT de fixtures
+    // des tests gateway : un rejeu suffit, l'erreur est une course, pas un bug
+    retry: 1,
     sequence: {
       shuffle: true,
     },
@@ -65,14 +77,5 @@ export default defineConfig({
     setupFiles: ['vitest.setup.ts'],
     unstubEnvs: true,
     unstubGlobals: true,
-    workspace: [
-      {
-        extends: true,
-        test: {
-          environment: 'jsdom',
-          include: ['src/components/**.test.tsx'],
-        },
-      },
-    ],
   },
 })

@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc, capitaliserMots } from '@/shared/lang'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'

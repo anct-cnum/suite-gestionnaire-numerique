@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { RecordId } from './Repository'
+import { Prisma } from '../../../../prisma/generated/client'
 import { Action, ActionUid } from '@/domain/Action'
 import { DemandeDeSubventionUid } from '@/domain/DemandeDeSubvention'
 

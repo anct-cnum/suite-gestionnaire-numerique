@@ -1,7 +1,6 @@
-import { Prisma } from '@prisma/client'
-
 import { deplacerNotionsDansTransaction, soumettreSoftDelete, TOUTES_NOTIONS } from './shared/deplacerNotions'
 import { journaliserDeleteBrut, journaliserUpdateBrut } from './shared/journalisationMin'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { Fusion, FusionFailure, StructureFusionRepository } from '@/use-cases/commands/FusionnerStructures'

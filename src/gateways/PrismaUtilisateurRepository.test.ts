@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
@@ -10,6 +9,7 @@ import {
   creerUnUtilisateur,
   utilisateurRecordFactory,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'

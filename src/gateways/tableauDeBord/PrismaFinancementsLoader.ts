@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../prisma/generated/client'
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'

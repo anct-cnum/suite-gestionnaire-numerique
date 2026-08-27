@@ -68,14 +68,16 @@ export class NodemailerEmailConfirmationLabellisationGateway implements EmailCon
         structure.contact_structures.map(async ({ contact }) =>
           mailSender.sendMail({
             from: smtpFrom,
-            html: mjml2html(
-              makeConfirmationLabellisationMjml({
-                dateRenouvellement: confirmation.dateRenouvellement,
-                link: this.#link,
-                nom: contact.nom,
-                nomStructure,
-                prenom: contact.prenom,
-              })
+            html: (
+              await mjml2html(
+                makeConfirmationLabellisationMjml({
+                  dateRenouvellement: confirmation.dateRenouvellement,
+                  link: this.#link,
+                  nom: contact.nom,
+                  nomStructure,
+                  prenom: contact.prenom,
+                })
+              )
             ).html,
             replyTo: smtpReplyTo,
             subject: confirmationLabellisationEmailSubject,

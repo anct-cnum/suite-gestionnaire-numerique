@@ -12,7 +12,7 @@ describe('changer ma structure action', () => {
     const path = '/'
     const idStructure = 42
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(ChangerMaStructure.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
@@ -30,7 +30,7 @@ describe('changer ma structure action', () => {
   it('étant donné un identifiant de structure invalide (zéro ou négatif), quand ma structure est changée, alors cela renvoie une erreur de validation', async () => {
     // GIVEN
     const idStructureInvalide = 0
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
 
     // WHEN
     const messages = await changerMaStructureAction({ idStructure: idStructureInvalide, path: '/' })
@@ -46,7 +46,7 @@ describe('changer ma structure action', () => {
     const path = '/'
     const idStructure = 42
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(ChangerMaStructure.prototype, 'handle').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSaStructure')
 
     // WHEN

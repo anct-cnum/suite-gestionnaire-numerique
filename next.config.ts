@@ -68,10 +68,6 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-  // @ts-expect-error
   headers() {
     return process.env.NODE_ENV === 'development'
       ? []

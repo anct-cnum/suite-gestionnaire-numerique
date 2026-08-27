@@ -35,7 +35,7 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
     const connexionUrl = `${this.#link}/connexion`
     await mailSender.sendMail({
       from: smtpFrom,
-      html: mjml2html(makeMjml(connexionUrl, destinataire)).html,
+      html: (await mjml2html(makeMjml(connexionUrl, destinataire))).html,
       replyTo: smtpReplyTo,
       subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
       to: destinataire.email,

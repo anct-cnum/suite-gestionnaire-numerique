@@ -5,8 +5,7 @@ import {
   main_structure_administrative,
   RegionRecord,
   UtilisateurRecord,
-} from '@prisma/client'
-
+} from '../../../prisma/generated/client'
 import { TypologieRole } from '@/domain/Role'
 
 export type UtilisateurEtSesRelationsRecord = Readonly<{

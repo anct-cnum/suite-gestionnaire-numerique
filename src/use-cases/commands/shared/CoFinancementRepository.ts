@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../../prisma/generated/client'
 import { CoFinancement } from '@/domain/CoFinancement'
 
 export interface AddCoFinancementRepository {

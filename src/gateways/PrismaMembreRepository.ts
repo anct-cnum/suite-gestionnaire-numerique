@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { membreInclude, toMembre } from './shared/MembresGouvernance'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'

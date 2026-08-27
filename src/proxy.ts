@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const hostname = request.headers.get('host') ?? ''
 
   // Déterminer si on est sur le site vitrine
@@ -34,7 +34,7 @@ export function middleware(request: NextRequest): NextResponse {
   return NextResponse.next()
 }
 
-// Configuration pour spécifier sur quelles routes le middleware s'applique
+// Configuration pour spécifier sur quelles routes le proxy s'applique
 export const config = {
   matcher: [
     /*

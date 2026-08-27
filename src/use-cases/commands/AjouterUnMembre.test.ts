@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/require-await */
-import { Prisma } from '@prisma/client'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUnMembre } from './AjouterUnMembre'
@@ -8,6 +7,7 @@ import { ContactData, CreateMembreRepository, EntrepriseData, GetMembreRepositor
 import { CreateStructureRepository, GetStructureBySiretRepository, StructureData } from './shared/StructureRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import { Prisma } from '../../../prisma/generated/client'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre, MembreUid, Statut } from '@/domain/Membre'
 import { MembreCandidat } from '@/domain/MembreCandidat'

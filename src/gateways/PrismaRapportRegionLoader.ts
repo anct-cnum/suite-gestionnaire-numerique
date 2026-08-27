@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { reportLoaderError } from './shared/sentryErrorReporter'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 
 export type RapportPerimetre =

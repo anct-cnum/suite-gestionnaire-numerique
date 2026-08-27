@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStatistiquesCoopLoader } from './PrismaStatistiquesCoopLoader'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 
 describe('statistiques coop loader', () => {

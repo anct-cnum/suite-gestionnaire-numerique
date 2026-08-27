@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { journaliserDeleteBrut, journaliserUpdateBrut, selectionLigne } from './journalisationMin'
+import { Prisma } from '../../../prisma/generated/client'
 import { NotionCle } from '@/use-cases/commands/TransfererNotionsStructure'
 
 // Les 5 notions transférables — une fusion = déplacer la totalité.

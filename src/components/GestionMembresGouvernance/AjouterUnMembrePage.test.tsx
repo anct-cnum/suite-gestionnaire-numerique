@@ -12,6 +12,7 @@ const mockPush = vi.hoisted(() => vi.fn<(url: string) => void>())
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
+    bfcacheId: '',
     forward: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
     push: mockPush,

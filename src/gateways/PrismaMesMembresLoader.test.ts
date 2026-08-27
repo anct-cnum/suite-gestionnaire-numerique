@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'
@@ -16,6 +15,7 @@ import {
   creerUneRegion,
   creerUnUtilisateur,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 

@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaUneFeuilleDeRouteLoader } from './PrismaUneFeuilleDeRouteLoader'
@@ -19,6 +18,7 @@ import {
   creerUnPorteurAction,
   creerUnUtilisateur,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'

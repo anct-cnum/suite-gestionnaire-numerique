@@ -10,7 +10,7 @@
  *   demande_subvention_id;statut;action_id;nom_action;feuille_route_id;nom_feuille_route;code_departement;montant_subvention;
  */
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../prisma/generated/client'
 import { readFileSync } from 'fs'
 
 // Types pour les données CSV

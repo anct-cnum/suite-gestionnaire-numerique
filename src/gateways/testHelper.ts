@@ -1,6 +1,5 @@
 // Stryker disable all
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'

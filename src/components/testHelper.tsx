@@ -64,6 +64,7 @@ export function renderComponent(
     roles: Roles,
     router: {
       back: vi.fn(),
+      bfcacheId: '',
       forward: vi.fn(),
       prefetch: vi.fn(),
       push: vi.fn(),

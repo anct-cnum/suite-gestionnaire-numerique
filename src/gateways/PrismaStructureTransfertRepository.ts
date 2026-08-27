@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { deplacerNotionsDansTransaction, soumettreSoftDelete, sourceEstVide } from './shared/deplacerNotions'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {

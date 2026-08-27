@@ -1,4 +1,4 @@
-import { FeuilleDeRouteDocumentRecord } from '@prisma/client'
+import { FeuilleDeRouteDocumentRecord } from '../../../prisma/generated/client'
 
 // La table feuille_de_route_document est la seule source du document d'une feuille de
 // route (étape 4 de la refonte : piece_jointe est décommissionnée).

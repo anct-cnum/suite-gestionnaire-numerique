@@ -1,8 +1,8 @@
-import { main_structure_administrative } from '@prisma/client'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { PrismaStructureCanonisationRepository } from './PrismaStructureCanonisationRepository'
 import { creerUneStructure } from './testHelper'
+import { main_structure_administrative } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { AdresseGeocodeReadModel } from '@/gateways/apiBan/BanGeocodingGateway'
 import { Canonisation } from '@/use-cases/commands/CanoniserStructure'

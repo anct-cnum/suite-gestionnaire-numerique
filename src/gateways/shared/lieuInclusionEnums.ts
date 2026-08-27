@@ -7,7 +7,7 @@ import {
   main_public_specifiquement_adresse,
   main_service,
   main_typologie,
-} from '@prisma/client'
+} from '../../../prisma/generated/client'
 
 // Intégration coop 2026 (#1700, dataspace V122) : les colonnes métier de
 // main.lieu_inclusion sont typées enum en base ; le client Prisma manipule les

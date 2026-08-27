@@ -1,8 +1,7 @@
-import { Prisma } from '@prisma/client'
-
 import { isEnveloppeDeFormation } from './shared/Action'
 import { documentDeFeuilleDeRoute } from './shared/FeuilleDeRouteDocument'
 import { Membre, membreInclude, toMembre } from './shared/MembresGouvernance'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { UneFeuilleDeRouteLoader, UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'

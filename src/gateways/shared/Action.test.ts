@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client'
 import { describe, expect, it } from 'vitest'
 
 import { isEnveloppeDeFormation } from './Action'
+import { Prisma } from '../../../prisma/generated/client'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('isEnveloppeDeFormation : caractérisation sur les libellés réels en base', () => {

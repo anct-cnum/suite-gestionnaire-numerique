@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement, useId } from 'react'
+import { PropsWithChildren, ReactElement, useId } from 'react'
 
 import styles from './Toggle.module.css'
 

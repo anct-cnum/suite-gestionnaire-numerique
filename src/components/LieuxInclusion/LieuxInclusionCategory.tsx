@@ -1,5 +1,5 @@
 'use client'
-import React, { ReactElement, useRef } from 'react'
+import { ReactElement, useRef } from 'react'
 
 import Information from '../shared/Information/Information'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'

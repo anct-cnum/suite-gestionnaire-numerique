@@ -72,7 +72,7 @@ describe('envoi de mail d’invitation', () => {
     expect(spiedCreateTransport).toHaveBeenCalledWith(transport)
     expect(mockSendMail).toHaveBeenCalledWith({
       from: 'communication@email.conseiller-numerique.gouv.fr',
-      html: mjml2html(invitationEmail).html,
+      html: (await mjml2html(invitationEmail)).html,
       replyTo: 'moninclusionnumerique@anct.gouv.fr',
       subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
       to: 'martin.tartempion@example.com',

@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { membreInclude, toMembre } from './shared/MembresGouvernance'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 // eslint-disable-next-line import/no-restricted-paths

@@ -23,6 +23,7 @@ describe('membres à consolider', () => {
       pathname: '/membres-a-consolider',
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push: vi.fn<() => void>(),

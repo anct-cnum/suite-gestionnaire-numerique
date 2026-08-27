@@ -1,7 +1,6 @@
-import { Prisma } from '@prisma/client'
-
 import { documentDeFeuilleDeRoute } from './shared/FeuilleDeRouteDocument'
 import { journaliserTransaction } from './shared/journalisationMin'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'

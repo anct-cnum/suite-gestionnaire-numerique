@@ -108,6 +108,7 @@ describe('filtrer mes utilisateurs', () => {
     afficherMesUtilisateurs({
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push: spiedRouterPush,
@@ -144,6 +145,7 @@ describe('filtrer mes utilisateurs', () => {
       afficherMesUtilisateurs({
         router: {
           back: vi.fn<() => void>(),
+          bfcacheId: '',
           forward: vi.fn<() => void>(),
           prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
@@ -169,6 +171,7 @@ describe('filtrer mes utilisateurs', () => {
       afficherMesUtilisateurs({
         router: {
           back: vi.fn<() => void>(),
+          bfcacheId: '',
           forward: vi.fn<() => void>(),
           prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
@@ -196,6 +199,7 @@ describe('filtrer mes utilisateurs', () => {
       afficherMesUtilisateurs({
         router: {
           back: vi.fn<() => void>(),
+          bfcacheId: '',
           forward: vi.fn<() => void>(),
           prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
@@ -220,6 +224,7 @@ describe('filtrer mes utilisateurs', () => {
       afficherMesUtilisateurs({
         router: {
           back: vi.fn<() => void>(),
+          bfcacheId: '',
           forward: vi.fn<() => void>(),
           prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
@@ -244,6 +249,7 @@ describe('filtrer mes utilisateurs', () => {
       afficherMesUtilisateurs({
         router: {
           back: vi.fn<() => void>(),
+          bfcacheId: '',
           forward: vi.fn<() => void>(),
           prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
@@ -292,6 +298,7 @@ describe('filtrer mes utilisateurs', () => {
           afficherMesUtilisateurs({
             router: {
               back: vi.fn<() => void>(),
+              bfcacheId: '',
               forward: vi.fn<() => void>(),
               prefetch: vi.fn<() => void>(),
               push: spiedRouterPush,
@@ -320,6 +327,7 @@ describe('filtrer mes utilisateurs', () => {
         afficherMesUtilisateurs({
           router: {
             back: vi.fn<() => void>(),
+            bfcacheId: '',
             forward: vi.fn<() => void>(),
             prefetch: vi.fn<() => void>(),
             push: spiedRouterPush,
@@ -347,6 +355,7 @@ describe('filtrer mes utilisateurs', () => {
         afficherMesUtilisateurs({
           router: {
             back: vi.fn<() => void>(),
+            bfcacheId: '',
             forward: vi.fn<() => void>(),
             prefetch: vi.fn<() => void>(),
             push: spiedRouterPush,
