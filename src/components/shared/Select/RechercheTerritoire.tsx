@@ -314,6 +314,9 @@ function stylesRechercheTerritoire(
       color: 'var(--text-mention-grey)',
       fontStyle: 'italic',
       margin: 0,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     }),
     singleValue: (styles) => ({
       ...styles,
