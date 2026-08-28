@@ -6,7 +6,7 @@
     "bash:production": "scalingo -a mon-inclusion-numerique run --size XL bash",
     "build": "./build.sh",
     "build:dev": "next build",
-    "postbuild": "pnpm prune --prod",
+    "postbuild": "pnpm prune --prod --ignore-scripts",
     "check": "pnpm dedupe --check && pnpm deadcode && pnpm typecheck && pnpm prisma format --check && pnpm format:check && pnpm lint:css && pnpm lint:ts && pnpm lint:secrets && pnpm test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
     "lint:secrets": "secretlint \"**/*\"",

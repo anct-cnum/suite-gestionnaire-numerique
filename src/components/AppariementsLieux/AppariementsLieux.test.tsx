@@ -54,6 +54,7 @@ describe('revue des appariements de lieux', () => {
       pathname: '/appariements-lieux',
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push: vi.fn<() => void>(),
@@ -87,6 +88,7 @@ describe('revue des appariements de lieux', () => {
       deciderAppariementLieuAction,
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push: vi.fn<() => void>(),
@@ -114,6 +116,7 @@ describe('revue des appariements de lieux', () => {
     renderComponent(<AppariementsLieux viewModel={viewModelFactory({})} />, {
       router: {
         back: vi.fn<() => void>(),
+        bfcacheId: '',
         forward: vi.fn<() => void>(),
         prefetch: vi.fn<() => void>(),
         push,

@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { PrismaAppariementsLieuxLoader } from './PrismaAppariementsLieuxLoader'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
