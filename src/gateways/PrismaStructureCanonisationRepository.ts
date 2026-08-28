@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { journaliserCreateBrut, journaliserUpdateBrut, selectionLigne } from './shared/journalisationMin'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { ETAT_ADMINISTRATIF_CANONIQUE } from '@/shared/etatAdministratif'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -187,7 +186,7 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
 }
 
 // Violation d'une contrainte d'unicité : P2002 (mutation typée) ou P2010 portant le code PostgreSQL
-// 23505 (unique_violation) pour une requête SQL brute.
+// 23505 (unique_violation) pour une requête SQL brute (exposé via driverAdapterError depuis Prisma 7).
 function estViolationUnicite(erreur: unknown): boolean {
   if (!(erreur instanceof Prisma.PrismaClientKnownRequestError)) {
     return false
@@ -195,8 +194,11 @@ function estViolationUnicite(erreur: unknown): boolean {
   if (erreur.code === 'P2002') {
     return true
   }
+  const meta = erreur.meta as
+    | Readonly<{ driverAdapterError?: Readonly<{ cause?: Readonly<{ originalCode?: string }> }> }>
+    | undefined
 
-  return erreur.code === 'P2010' && (erreur.meta as { code?: string } | undefined)?.code === '23505'
+  return erreur.code === 'P2010' && meta?.driverAdapterError?.cause?.originalCode === '23505'
 }
 
 // Résumé de l'image INSEE appliquée, tracé dans moved_identifiers du journal d'audit.

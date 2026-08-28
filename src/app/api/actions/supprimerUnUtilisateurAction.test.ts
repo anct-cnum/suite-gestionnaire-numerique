@@ -12,7 +12,7 @@ describe('supprimer un utilisateur action', () => {
     const path = '/mes-utilisateurs'
     const uidUtilisateurASupprimer = 2
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

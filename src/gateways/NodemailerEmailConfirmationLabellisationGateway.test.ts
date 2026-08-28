@@ -46,14 +46,16 @@ describe('envoi de l’email de confirmation de labellisation', () => {
     expect(mockSendMail).toHaveBeenCalledTimes(2)
     expect(mockSendMail).toHaveBeenCalledWith({
       from: 'communication@email.conseiller-numerique.gouv.fr',
-      html: mjml2html(
-        makeConfirmationLabellisationMjml({
-          dateRenouvellement: epochTime,
-          link,
-          nom: 'Tartempion',
-          nomStructure: 'Solidarnum',
-          prenom: 'Martin',
-        })
+      html: (
+        await mjml2html(
+          makeConfirmationLabellisationMjml({
+            dateRenouvellement: epochTime,
+            link,
+            nom: 'Tartempion',
+            nomStructure: 'Solidarnum',
+            prenom: 'Martin',
+          })
+        )
       ).html,
       replyTo: 'moninclusionnumerique@anct.gouv.fr',
       subject: 'Votre structure est labellisée Conseiller Numérique',

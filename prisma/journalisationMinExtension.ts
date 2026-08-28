@@ -1,4 +1,7 @@
-import { Prisma } from '@prisma/client'
+import { Prisma } from './generated/client'
+// Prisma 7 n'expose plus Prisma.dmmf : la méta est précalculée par genererMetaJournalisation.mjs
+// lors de `pnpm prisma:generate`.
+import metaJournalisation from './generated/journalisationMeta.json'
 
 import {
   ContexteJournalisationMin,
@@ -208,21 +211,7 @@ type MetaModele = Readonly<{
   sourceKey: string
 }>
 
-const metaParModele: ReadonlyMap<string, MetaModele> = new Map(
-  Prisma.dmmf.datamodel.models.map((modele) => [
-    modele.name,
-    {
-      champsCles: modele.primaryKey?.fields ?? modele.fields.filter((champ) => champ.isId).map((champ) => champ.name),
-      colonneParChamp: Object.fromEntries(
-        modele.fields
-          .filter((champ) => champ.kind !== 'object')
-          .map((champ) => [champ.name, champ.dbName ?? champ.name])
-      ),
-      delegue: modele.name.charAt(0).toLowerCase() + modele.name.slice(1),
-      sourceKey: `${modele.schema ?? 'public'}.${modele.dbName ?? modele.name}`,
-    },
-  ])
-)
+const metaParModele: ReadonlyMap<string, MetaModele> = new Map(Object.entries(metaJournalisation))
 
 function metaSiJournalisable(model: string): MetaModele | undefined {
   if (contexteJournalisationMin.getStore() === undefined || modelesExclus.has(model)) {

@@ -35,6 +35,7 @@ SET row_security = off;
 
 -- Name: staging; Type: SCHEMA; Schema: -; Owner: dataspace
 
+DROP SCHEMA IF EXISTS staging CASCADE;
 CREATE SCHEMA staging;
 
 

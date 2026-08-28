@@ -57,3 +57,6 @@ storybook-static
 # fichiers de travail (sauvegardes d'env, exports de données)
 *.bak
 /*.csv
+
+# prisma (client généré par pnpm prisma:generate)
+/prisma/generated/

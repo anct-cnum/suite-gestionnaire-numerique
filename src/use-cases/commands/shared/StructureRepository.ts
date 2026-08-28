@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../../prisma/generated/client'
 import { Structure } from '@/domain/Structure'
 
 export interface GetStructureBySiretRepository {

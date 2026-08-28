@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
@@ -16,6 +15,7 @@ import {
   creerUneRegion,
   creerUnUtilisateur,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'

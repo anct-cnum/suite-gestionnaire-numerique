@@ -1,6 +1,5 @@
 'use client'
 
-import { Link } from '@tiptap/extension-link'
 import { EditorContent, useEditor } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import { ReactElement } from 'react'
@@ -20,11 +19,12 @@ export default function TextEditor({ ariaLabel, contenu, height, onChange, readO
       },
     },
     extensions: [
-      StarterKit,
-      Link.configure({
-        defaultProtocol: 'https',
-        openOnClick: true,
-        protocols: ['https'],
+      StarterKit.configure({
+        link: {
+          defaultProtocol: 'https',
+          openOnClick: true,
+          protocols: ['https'],
+        },
       }),
     ],
     immediatelyRender: false,
@@ -36,6 +36,8 @@ export default function TextEditor({ ariaLabel, contenu, height, onChange, readO
       const isEmptyContent = content === '<p></p>'
       onChange(isEmptyContent ? '' : content)
     },
+    // La barre de menu dépend du re-render à chaque transaction pour ses états actifs (défaut à false en v3)
+    shouldRerenderOnTransaction: true,
   })
 
   return (

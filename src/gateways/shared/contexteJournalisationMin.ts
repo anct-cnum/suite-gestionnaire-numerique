@@ -1,5 +1,6 @@
-import { Prisma } from '@prisma/client'
 import { AsyncLocalStorage } from 'node:async_hooks'
+
+import { Prisma } from '../../../prisma/generated/client'
 
 // Contexte de journalisation des événements MIN (source.min__evenements), porté
 // par AsyncLocalStorage le temps d'une server action :

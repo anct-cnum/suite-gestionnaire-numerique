@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../../prisma/generated/client'
 import { Membre, MembreState } from '@/domain/Membre'
 
 export interface GetMembreRepository {

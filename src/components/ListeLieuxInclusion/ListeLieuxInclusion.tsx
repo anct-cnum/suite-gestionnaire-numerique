@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState } from 'react'
+import { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
 import styles from './ListeLieuxInclusion.module.css'
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'

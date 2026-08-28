@@ -187,6 +187,7 @@ function antenne(overrides: Partial<StructureComparaisonViewModel> = {}): Struct
 
 function routerStub(spies: Readonly<{ push?(): void; refresh?(): void }> = {}): Readonly<{
   back(): void
+  bfcacheId: string
   forward(): void
   prefetch(): void
   push(): void
@@ -195,6 +196,7 @@ function routerStub(spies: Readonly<{ push?(): void; refresh?(): void }> = {}): 
 }> {
   return {
     back: vi.fn<() => void>(),
+    bfcacheId: '',
     forward: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
     push: spies.push ?? vi.fn<() => void>(),

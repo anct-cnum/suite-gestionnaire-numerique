@@ -1,8 +1,7 @@
-import { Prisma } from '@prisma/client'
-
 import { isEnveloppeDeFormation } from './shared/Action'
 import { documentDeFeuilleDeRoute } from './shared/FeuilleDeRouteDocument'
 import { isCoporteur, Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'

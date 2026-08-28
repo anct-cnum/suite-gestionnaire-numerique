@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Prisma } from '@prisma/client'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUneAction } from './AjouterUneAction'
@@ -10,6 +9,7 @@ import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './s
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import { Prisma } from '../../../prisma/generated/client'
 import { Action } from '@/domain/Action'
 import { CoFinancement } from '@/domain/CoFinancement'
 import { DemandeDeSubvention, StatutSubvention } from '@/domain/DemandeDeSubvention'

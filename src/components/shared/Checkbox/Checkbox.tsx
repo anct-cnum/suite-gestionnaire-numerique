@@ -1,4 +1,4 @@
-import React, { ChangeEvent, PropsWithChildren, ReactElement } from 'react'
+import { ChangeEvent, PropsWithChildren, ReactElement } from 'react'
 
 import { LabelValue } from '@/presenters/shared/labels'
 

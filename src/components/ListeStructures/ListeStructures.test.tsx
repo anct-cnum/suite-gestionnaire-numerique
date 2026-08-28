@@ -13,6 +13,7 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn<() => string>().mockReturnValue('/liste-structures'),
   useRouter: vi.fn<() => object>().mockReturnValue({
     back: vi.fn<() => void>(),
+    bfcacheId: '',
     forward: vi.fn<() => void>(),
     prefetch: vi.fn<() => void>(),
     push: mockPush,

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable vitest/require-mock-type-parameters */
-import { Prisma } from '@prisma/client'
 import * as Sentry from '@sentry/nextjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -19,6 +18,7 @@ import {
   FindUtilisateurByEmailRepository,
   GetUtilisateurRepository,
 } from './shared/UtilisateurRepository'
+import { Prisma } from '../../../prisma/generated/client'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre, MembreState } from '@/domain/Membre'
 import {

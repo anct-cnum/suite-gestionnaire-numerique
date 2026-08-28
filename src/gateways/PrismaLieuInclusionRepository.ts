@@ -1,15 +1,3 @@
-import {
-  main_frais_a_charge,
-  main_itinerance,
-  main_modalite_acces,
-  main_modalite_accompagnement,
-  main_prise_en_charge_specifique,
-  main_public_specifiquement_adresse,
-  main_service,
-  main_typologie,
-  Prisma,
-} from '@prisma/client'
-
 import { journaliserCreateBrut, journaliserTransaction } from './shared/journalisationMin'
 import {
   fraisAChargeVersEnum,
@@ -22,6 +10,17 @@ import {
   typologiesVersEnum,
   versEnumsLieuInclusion,
 } from './shared/lieuInclusionEnums'
+import {
+  main_frais_a_charge,
+  main_itinerance,
+  main_modalite_acces,
+  main_modalite_accompagnement,
+  main_prise_en_charge_specifique,
+  main_public_specifiquement_adresse,
+  main_service,
+  main_typologie,
+  Prisma,
+} from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import {
   AdresseLieuEnrichie,

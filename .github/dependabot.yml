@@ -9,6 +9,13 @@ updates:
       - dependency-name: "*eslint*"
     groups:
       minor-and-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
         update-types:
           - "patch"
           - "minor"
+      security:
+        applies-to: security-updates
+        patterns:
+          - "*"

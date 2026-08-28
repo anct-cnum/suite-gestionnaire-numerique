@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement, useId } from 'react'
+import { PropsWithChildren, ReactElement, useId } from 'react'
 
 export default function Datepicker({ children, defaultValue = '', disable, min, name }: Props): ReactElement {
   const id = useId()

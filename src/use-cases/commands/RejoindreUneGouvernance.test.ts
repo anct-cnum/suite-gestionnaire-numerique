@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Prisma } from '@prisma/client'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import {
@@ -12,6 +11,7 @@ import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { ContactData, CreateMembreRepository, EntrepriseData } from './shared/MembreRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import { Prisma } from '../../../prisma/generated/client'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre } from '@/domain/Membre'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'

@@ -11,7 +11,7 @@ describe('modifier mes informations personnelles action', () => {
     const path = '/mes-informations-personnelles'
     const sub = 1
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
@@ -76,7 +76,7 @@ describe('modifier mes informations personnelles action', () => {
     const sub = 1
     const telephoneVide = ''
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(sub)
-    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce(undefined)
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN

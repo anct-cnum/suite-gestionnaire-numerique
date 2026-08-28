@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
@@ -13,6 +12,7 @@ import {
   creerUnUtilisateur,
   feuilleDeRouteRecordFactory,
 } from './testHelper'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { feuilleDeRouteFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'

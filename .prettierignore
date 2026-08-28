@@ -11,3 +11,5 @@ CLAUDE.md
 .claude/
 dbs/
 .next/
+# Régénéré par Next 16 à chaque dev/build avec son propre style (quotes doubles, semicolons)
+next-env.d.ts

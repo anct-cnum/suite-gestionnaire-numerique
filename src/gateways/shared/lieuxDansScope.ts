@@ -1,5 +1,4 @@
-import { Prisma } from '@prisma/client'
-
+import { Prisma } from '../../../prisma/generated/client'
 import departements from '../../../ressources/departements.json'
 import { FiltreGeographiqueLieux, StatutLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'

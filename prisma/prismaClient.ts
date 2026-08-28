@@ -1,5 +1,6 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 
+import { PrismaClient } from './generated/client'
 import { extensionJournalisationMin } from './journalisationMinExtension'
 
 declare const globalThis: {
@@ -15,17 +16,23 @@ if (process.env.NODE_ENV !== 'production') {
   globalThis.prismaGlobal = prisma
 }
 
-function prismaClientSingleton(): PrismaClient<Prisma.PrismaClientOptions, never> {
+function prismaClientSingleton(): PrismaClient {
   // Le client étendu est re-typé en PrismaClient pour ne pas propager le type étendu
   // dans toute la base de code ($on mis à part, l'API est identique).
-  return prismaClientDeBase().$extends(extensionJournalisationMin) as unknown as PrismaClient<
-    Prisma.PrismaClientOptions,
-    never
-  >
+  return prismaClientDeBase().$extends(extensionJournalisationMin) as unknown as PrismaClient
 }
 
-function prismaClientDeBase(): PrismaClient<Prisma.PrismaClientOptions, never> {
+function tailleDuPool(url: string | undefined): number | undefined {
+  // Le moteur Prisma 6 honorait le paramètre connection_limit de l'URL (les tests s'appuient sur
+  // connection_limit=1 pour leur isolation par START TRANSACTION/ROLLBACK) ; l'adapter pg ne le lit
+  // pas, on le transpose sur la taille du pool.
+  const connectionLimit = url === undefined ? null : new URL(url).searchParams.get('connection_limit')
+  return connectionLimit === null ? undefined : Number(connectionLimit)
+}
+
+function prismaClientDeBase(): PrismaClient {
   const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL, max: tailleDuPool(process.env.DATABASE_URL) }),
     log: [
       {
         emit: 'event',

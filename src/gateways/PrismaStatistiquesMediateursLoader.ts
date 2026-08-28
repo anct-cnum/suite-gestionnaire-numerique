@@ -1,7 +1,6 @@
-import { Prisma } from '@prisma/client'
-
 import { conditionTerritoriale } from './shared/filtreTerritorialSql'
 import { reportLoaderError } from './shared/sentryErrorReporter'
+import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 import { FiltreTerritorial, libelleFiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'

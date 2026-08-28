@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.postgres
+    # 64 Mo (défaut Docker) sature avec les requêtes parallèles (erreur 53100 « could not resize
+    # shared memory segment ») sur les grosses agrégations stats
+    shm_size: 256mb
     environment:
       POSTGRES_DB: min
       POSTGRES_USER: min

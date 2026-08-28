@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { fromTypologieRole, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { Prisma } from '../../prisma/generated/client'
 import { DepartementState } from '@/domain/Departement'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'

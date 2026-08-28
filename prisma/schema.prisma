@@ -1,6 +1,8 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema", "views"]
+  provider        = "prisma-client"
+  output          = "generated"
+  moduleFormat    = "cjs"
+  previewFeatures = ["views"]
 }
 
 generator json {
@@ -9,7 +11,6 @@ generator json {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
   schemas  = ["admin", "main", "min", "reference"]
 }
 
