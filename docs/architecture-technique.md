@@ -18,7 +18,7 @@
 | **Produit data associé**      | Data Space Société Numérique — GitLab `incubateur-territoires/startups/data-space-societe-numerique` ([DAT](https://gitlab.com/incubateur-territoires/startups/data-space-societe-numerique/scripts/-/blob/main/docs/architecture-technique.md)) |
 | **Hébergeur applicatif**      | Scalingo — région `osc-fr1` (France), app `mon-inclusion-numerique`, stack `scalingo-26` (bascule le 31/08/2026)                                                                                                                                 |
 | **Hébergeur base de données** | Scaleway (via le dataspace) — la base n'est **pas** hébergée chez Scalingo                                                                                                                                                                       |
-| **SecNumCloud**               | Scalingo : oui (offre qualifiée) ; base de données Scaleway : non                                                                                                                                                                                |
+| **SecNumCloud**               | Non — MIN n'est pas sur l'offre qualifiée de Scalingo (voir dette) ; base de données Scaleway : non                                                                                                                                              |
 | **Décision d'homologation**   | _À compléter_                                                                                                                                                                                                                                    |
 | **Suivi des tickets**         | GitHub Project « SEPT - Board » (`anct-cnum`, produit _Mon Inclusion Numérique_)                                                                                                                                                                 |
 | **Dernière mise à jour**      | 31 août 2026                                                                                                                                                                                                                                     |
@@ -117,15 +117,15 @@ français.
 | **DSFR** + react-dsfr               | design système de l'État                                                                                 | 1.15 / 1.32                          |
 | **Sentry** (`@sentry/nextjs`)       | suivi des erreurs client/serveur/edge                                                                    | 10.71                                |
 | **nodemailer + MJML**               | e-mails transactionnels (invitations, labellisation) via SMTP                                            | 9.0 / 5.4                            |
-| **AWS SDK S3**                      | stockage objet des documents de feuilles de route                                                        | 3.x                                  |
+| **AWS SDK S3** (client)             | stockage objet des documents de feuilles de route — bucket **Scaleway Object Storage** (API S3)          | 3.x                                  |
 | **maplibre-gl**, chart.js, recharts | cartes et graphiques de la vitrine et des statistiques                                                   | —                                    |
 | **Scalingo**                        | PaaS : buildpacks `ssh-private-key` + `nodejs`, stack `scalingo-26`                                      | —                                    |
 
 Choix structurants :
 
 - **Application sans état** : aucune base de données ni cache chez Scalingo (pas d'addon).
-  Toute la persistance est dans la base partagée du dataspace, plus un bucket S3 pour les
-  documents. Les conteneurs sont jetables.
+  Toute la persistance est dans la base partagée du dataspace, plus un bucket Scaleway
+  Object Storage (API S3) pour les documents. Les conteneurs sont jetables.
 - **Tunnel SSH intégré au cycle de vie** : le process `web` (Procfile) et le build
   (`build.sh`) commencent par ouvrir un tunnel SSH vers le bastion du dataspace avant de
   lancer Next.js — la base n'est jamais exposée sur Internet.
@@ -158,7 +158,7 @@ flowchart TB
         sentry["Sentry"]
         matomo["Matomo<br/>matomo.incubateur.anct.gouv.fr"]
         smtp["SMTP<br/>(e-mails transactionnels)"]
-        s3["Object Storage S3<br/>(documents feuilles de route)"]
+        s3["Scaleway Object Storage (S3)<br/>(documents feuilles de route)"]
         sirene["API INSEE Sirene · API BAN ·<br/>RIDET NC · API Coop"]
     end
 
@@ -203,7 +203,7 @@ flowchart LR
 | `auth.agentconnect.gouv.fr` (ProConnect)                | HTTPS                                     | client id/secret OIDC                                                   | authentification des gestionnaires                                                                                        |
 | Sentry (DSN)                                            | HTTPS                                     | DSN                                                                     | remontée d'erreurs et traces                                                                                              |
 | Serveur SMTP (deux comptes : standard et super-admin)   | SMTP                                      | login/mot de passe                                                      | invitations, confirmations de labellisation                                                                               |
-| Object Storage S3 (`S3_ENDPOINT`)                       | HTTPS S3                                  | clés d'accès                                                            | documents des feuilles de route (upload/download)                                                                         |
+| Scaleway Object Storage (`S3_ENDPOINT`, API S3)         | HTTPS S3                                  | clés d'accès                                                            | documents des feuilles de route (upload/download)                                                                         |
 | `api.insee.fr/api-sirene/3.11`                          | HTTPS                                     | clé `INSEE_API_KEY`                                                     | fiche établissement à la saisie d'un SIRET                                                                                |
 | `data.geopf.fr/geocodage`                               | HTTPS                                     | —                                                                       | géocodage BAN des adresses saisies                                                                                        |
 | `data.gouv.nc` (RIDET)                                  | HTTPS                                     | —                                                                       | établissements de Nouvelle-Calédonie                                                                                      |
@@ -374,7 +374,7 @@ SAMEORIGIN`, `Referrer-Policy`, `Permissions-Policy` restrictive posés par `nex
 | Donnée                                                                 | Où                               | Sauvegarde                                                                                                |
 | ---------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | Toutes les données applicatives (schéma `min` + écritures dans `main`) | base `dataspace_prod` (Scaleway) | snapshots horaires + dumps quotidiens + dump chiffré S3 — voir DAT dataspace « Intégrité et sauvegardes » |
-| Documents des feuilles de route                                        | bucket S3                        | _à confirmer : pas de politique de sauvegarde/versioning documentée_                                      |
+| Documents des feuilles de route                                        | bucket Scaleway Object Storage   | _à confirmer : pas de politique de sauvegarde/versioning documentée_                                      |
 | Code, configuration déclarative                                        | GitHub                           | continu                                                                                                   |
 
 - **Intégrité** : contraintes PostgreSQL (schéma Prisma + Flyway), validation Zod des
@@ -442,6 +442,7 @@ Suivi dans les tickets SEPT (produit _Mon Inclusion Numérique_).
 | Sujet                                                                                                                          | État                                                      | Référence                  |
 | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- | -------------------------- |
 | **Pas de CSP en production** : l'en-tête `Content-Security-Policy` est entièrement commenté dans `next.config.ts`              | à réactiver (nonce/hash à mettre au point avec Next)      | ce document                |
+| Hébergement hors SecNumCloud : MIN n'est pas sur l'offre qualifiée de Scalingo (ni la base côté Scaleway)                      | à arbitrer (migration vers l'offre SecNumCloud ?)         | ce document                |
 | Pas de rate-limiting applicatif (connexion, exports, `/api/health`)                                                            | à évaluer (protection PaaS seule aujourd'hui)             | ce document                |
 | Cache des statistiques Coop en mémoire de conteneur (1 h), non partagé entre conteneurs                                        | assumé ; à revoir si montée en charge (pas de Redis)      | #1793                      |
 | `src/proxy.ts` teste le préfixe `min.` alors que le domaine réel est `mon.` (code mort, sans effet)                            | nettoyer                                                  | ce document                |
@@ -452,5 +453,5 @@ Suivi dans les tickets SEPT (produit _Mon Inclusion Numérique_).
 | Dépendances et variables vestiges : `mongodb` (non utilisé), `CO_NUM_DATABASE_URL`, `FNE_DATABASE_URL`, `DEBUG`                | supprimer                                                 | ce document                |
 | Deux instances Matomo référencées (siteId 27 sur `matomo.incubateur.anct.gouv.fr`, idSite 200 sur `stats.beta.gouv.fr`)        | clarifier laquelle fait foi                               | `CONTRIBUTING.md`          |
 | Pas de sonde de disponibilité externe sur `/api/health`                                                                        | commun avec le dataspace (monitoring à remettre en place) | DAT dataspace              |
-| Politique de sauvegarde / versioning du bucket S3 des documents non documentée                                                 | à vérifier et documenter                                  | ce document                |
+| Politique de sauvegarde / versioning du bucket Scaleway Object Storage des documents non documentée                            | à vérifier et documenter                                  | ce document                |
 | Extractions locales de données de production (CSV, dumps) sur les postes : couvertes par `.gitignore` mais sans règle de purge | formaliser (durée, chiffrement des postes)                | ce document                |
