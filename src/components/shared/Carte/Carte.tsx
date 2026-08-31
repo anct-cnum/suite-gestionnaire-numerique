@@ -136,8 +136,8 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
 
       // Calculer les bounds approximatifs
       // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
-      const latDelta = 0.55 // ~61 km au nord et au sud
-      const lngDelta = 0.55 / Math.cos((center[1] * Math.PI) / 180) // Ajuster pour la longitude
+      const latDelta = 0.35 // ~50 km au nord et au sud
+      const lngDelta = 0.35 / Math.cos((center[1] * Math.PI) / 180) // Ajuster pour la longitude
 
       bounds = new LngLatBounds(
         [center[0] - lngDelta, center[1] - latDelta],
@@ -154,7 +154,6 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
       duration: 0,
       maxZoom: 10,
       padding: 50,
-      zoom: 8,
     })
 
     // Ajouter un padding de 120% aux bounds pour plus d'espace de navigation
