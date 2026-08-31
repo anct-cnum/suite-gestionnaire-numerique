@@ -7,12 +7,13 @@ import {
   LabelList,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
+  TooltipContentProps,
+  TooltipValueType,
   XAxis,
   YAxis,
 } from 'recharts'
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) =>
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps<TooltipValueType, number | string>) =>
   active &&
   payload &&
   payload.length > 0 && (
@@ -23,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
       <div className="fr-text--bold">{label}</div>
       <div>
         <span className="fr-text--xs">Accompagnements&nbsp;:</span>{' '}
-        <span className="fr-text--bold">{payload[0].value?.toLocaleString('fr-FR')}</span>
+        <span className="fr-text--bold">{Number(payload[0].value).toLocaleString('fr-FR')}</span>
       </div>
     </div>
   )
@@ -61,7 +62,7 @@ export const AccompagnementBarChart = ({ data }: { data: { label: string; count:
           className="fr-text--xxs"
           tickFormatter={(value) => (isEmpty ? '' : value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toString())}
         />
-        {!isEmpty && <Tooltip content={<CustomTooltip />} />}
+        {!isEmpty && <Tooltip content={CustomTooltip} />}
         <Bar dataKey="count" fill={isEmpty ? 'var(--blue-france-975-75)' : '#6a6af4'} radius={[4, 4, 0, 0]}>
           {!isEmpty && (
             <LabelList
@@ -71,7 +72,8 @@ export const AccompagnementBarChart = ({ data }: { data: { label: string; count:
                 fontSize: displayData.length > 12 ? 10 : 12,
                 fontWeight: 'bold',
               }}
-              formatter={(count: number) => {
+              formatter={(label) => {
+                const count = Number(label)
                 if (count === 0) return ''
                 if (count >= 1000) {
                   return `${(count / 1000).toFixed(1)}k`
