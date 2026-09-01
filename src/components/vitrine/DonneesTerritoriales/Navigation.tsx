@@ -15,14 +15,8 @@ export default function Navigation(): ReactElement {
   const pathname = usePathname()
   const params = useParams()
 
-  const pathParts = pathname.split('/').filter(Boolean)
-  const currentSection = pathParts[2] || 'synthese-et-indicateurs'
-
   // Extraire niveau et code depuis params
-  const niveau =
-    currentSection === 'gouvernances'
-      ? pathParts[3] // 'departement' pour gouvernances
-      : (params.niveau as string | undefined)
+  const niveau = params.niveau as string | undefined
 
   const codeArray = params.code as ReadonlyArray<string> | undefined
   const code = codeArray?.[0]
@@ -45,21 +39,21 @@ export default function Navigation(): ReactElement {
     {
       href: `/vitrine/donnees-territoriales/gouvernances${territoirePath}`,
       label: 'Gouvernances',
-      onlyDepartement: true,
+      niveaux: ['departement', 'epci'],
     },
     {
       href: `/vitrine/donnees-territoriales/feuille-de-route${territoirePath}`,
       label: 'Feuille de route',
-      onlyDepartement: true,
+      niveaux: ['departement'],
     },
   ]
 
-  // Filtrer les sections : afficher "Feuille de route" uniquement au niveau département
+  // Filtrer les sections : certaines ne sont disponibles qu'à certains niveaux territoriaux
   const sections = allSections.filter((section) => {
-    if ('onlyDepartement' in section && section.onlyDepartement === true) {
-      return niveau === 'departement'
+    if (section.niveaux === undefined) {
+      return true
     }
-    return true
+    return niveau !== undefined && section.niveaux.includes(niveau)
   })
 
   return (
