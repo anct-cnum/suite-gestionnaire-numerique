@@ -1,18 +1,20 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function TableauVide({ children }: Props): ReactElement {
+export default function TableauVide({ children, variante = 'caramel' }: Props): ReactElement {
   return (
-    <div
-      style={{
-        backgroundColor: 'var(--brown-caramel-975-75)',
-        borderRadius: '1rem',
-        padding: '2rem',
-        textAlign: 'center',
-      }}
-    >
+    <div className={`${varianteClasses[variante]} border-radius fr-p-4w center`}>
       <p className="fr-text--md fr-mb-0">{children}</p>
     </div>
   )
 }
 
-type Props = Readonly<PropsWithChildren>
+const varianteClasses = {
+  bleuFrance: 'fr-background-alt--blue-france',
+  caramel: 'fr-background-alt--brown-caramel',
+}
+
+type Props = PropsWithChildren<
+  Readonly<{
+    variante?: keyof typeof varianteClasses
+  }>
+>

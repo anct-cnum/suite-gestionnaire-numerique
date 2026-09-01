@@ -7,11 +7,10 @@ import BlocCard from './BlocCard'
 import styles from './TableauDeBord.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
+import TableauVide from '../shared/TableauVide/TableauVide'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { FinancementsStructureViewModel } from '@/presenters/tableauDeBord/financementsStructurePresenter'
-
-const COULEUR_VIDE = '#DDDDDD'
 
 export default function FinancementsStructure({ lienFinancements, viewModel }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
@@ -44,11 +43,6 @@ export default function FinancementsStructure({ lienFinancements, viewModel }: P
   }
 
   const aDesFinancements = viewModel.ventilationSubventionsParEnveloppe.length > 0
-  const backgroundColor = aDesFinancements
-    ? viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.couleurGraphique)
-    : [COULEUR_VIDE]
-  const data = aDesFinancements ? viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.montant) : [1]
-  const labels = viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.label)
 
   return (
     <BlocCard labelledBy="financements-structure">
@@ -68,36 +62,48 @@ export default function FinancementsStructure({ lienFinancements, viewModel }: P
           Les demandes en cours
         </Link>
       </div>
-      <div className="fr-grid-row">
-        <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-          <div>
-            <Doughnut backgroundColor={backgroundColor} data={data} isFull={false} labels={labels} />
+      {aDesFinancements ? (
+        <div className="fr-grid-row">
+          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
+            <div className={styles['demi-doughnut']}>
+              <Doughnut
+                backgroundColor={viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.couleurGraphique)}
+                data={viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.montant)}
+                isFull={false}
+                labels={viewModel.ventilationSubventionsParEnveloppe.map((detail) => detail.label)}
+              />
+            </div>
+            <div className={`fr-h3 fr-mb-1w color-blue-france ${styles['remonter-donnee']}`}>
+              {viewModel.totalFinancements}
+            </div>
+            <div className="fr-text--sm fr-mb-0" style={{ fontWeight: 500 }}>
+              Financements engagés par l&apos;État
+            </div>
           </div>
-          <div className={`fr-h3 fr-mb-1w color-blue-france ${styles['remonter-donnee']}`}>
-            {viewModel.totalFinancements}
-          </div>
-          <div className="fr-text--sm fr-mb-0" style={{ fontWeight: 500 }}>
-            Financements engagés par l&apos;État
+          <div className="fr-col">
+            <div style={{ fontWeight: 500 }}>Dont</div>
+            <ul>
+              {viewModel.ventilationSubventionsParEnveloppe.map((detail) => (
+                <li
+                  className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
+                  key={detail.label}
+                  style={{ listStyle: 'none' }}
+                >
+                  <div>
+                    <Dot color={detail.color} /> {detail.label}
+                  </div>
+                  <div style={{ fontWeight: 700 }}>{detail.total}</div>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-        <div className="fr-col">
-          <div style={{ fontWeight: 500 }}>Dont</div>
-          <ul>
-            {viewModel.ventilationSubventionsParEnveloppe.map((detail) => (
-              <li
-                className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                key={detail.label}
-                style={{ listStyle: 'none' }}
-              >
-                <div>
-                  <Dot color={detail.color} /> {detail.label}
-                </div>
-                <div style={{ fontWeight: 700 }}>{detail.total}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      ) : (
+        <TableauVide variante="bleuFrance">
+          <span className="fr-text--bold">👻 Aucun financement trouvé</span>
+          {' pour la structure'}
+        </TableauVide>
+      )}
     </BlocCard>
   )
 }
