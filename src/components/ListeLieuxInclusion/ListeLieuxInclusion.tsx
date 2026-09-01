@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChangeEvent, ReactElement, useEffect, useId, useMemo, useState } from 'react'
+import { ChangeEvent, ReactElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 
 import styles from './ListeLieuxInclusion.module.css'
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'
@@ -48,6 +48,8 @@ export default function ListeLieuxInclusion({
   const drawerInfoId = 'drawerInfoFraicheur'
   const labelId = useId()
   const labelInfoId = useId()
+  const panelActuelsRef = useRef<HTMLDivElement>(null)
+  const panelArchivesRef = useRef<HTMLDivElement>(null)
 
   // Normaliser searchParams une fois pour toute l'utilisation
   const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
@@ -57,6 +59,25 @@ export default function ListeLieuxInclusion({
   useEffect(() => {
     setIsFilterLoading(false)
   }, [listeLieuxInclusionViewModel])
+
+  // Navigation clavier des onglets (flèches) : le JS du DSFR change d'onglet sans émettre de clic,
+  // mais émet « dsfr.disclose » sur le panel cible ; on s'y raccroche pour déclencher la navigation
+  useEffect(() => {
+    const panelActuels = panelActuelsRef.current
+    const panelArchives = panelArchivesRef.current
+    function surDiscloseActuels(): void {
+      changerOnglet(false)
+    }
+    function surDiscloseArchives(): void {
+      changerOnglet(true)
+    }
+    panelActuels?.addEventListener('dsfr.disclose', surDiscloseActuels)
+    panelArchives?.addEventListener('dsfr.disclose', surDiscloseArchives)
+    return (): void => {
+      panelActuels?.removeEventListener('dsfr.disclose', surDiscloseActuels)
+      panelArchives?.removeEventListener('dsfr.disclose', surDiscloseArchives)
+    }
+  })
 
   // Fonction de filtrage
   function onFilter(params: URLSearchParams): void {
@@ -232,74 +253,8 @@ export default function ListeLieuxInclusion({
 
   const viewModel = listeLieuxInclusionViewModel
 
-  return (
+  const contenuOnglet = (
     <>
-      <div className="fr-grid-row fr-grid-row--middle">
-        <div className="fr-col">
-          <PageTitle>
-            <TitleIcon icon="map-pin-2-line" />
-            Suivi des lieux d&apos;inclusion numérique
-          </PageTitle>
-        </div>
-        <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-          <div className="fr-col-auto">
-            <button
-              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
-              onClick={handleExportCSV}
-              type="button"
-            >
-              Export
-            </button>
-          </div>
-          <div className="fr-col-auto">
-            <button
-              aria-controls={drawerId}
-              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
-              data-fr-opened={isDrawerOpen}
-              onClick={() => {
-                setIsDrawerOpen(true)
-              }}
-              type="button"
-            >
-              Filtres
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="fr-tabs fr-mb-3w">
-        <ul aria-label="Lieux actuels ou archivés" className="fr-tabs__list" role="tablist">
-          <li role="presentation">
-            <button
-              aria-selected={!estOngletArchives}
-              className="fr-tabs__tab"
-              onClick={() => {
-                changerOnglet(false)
-              }}
-              role="tab"
-              tabIndex={estOngletArchives ? -1 : 0}
-              type="button"
-            >
-              Lieux actuels ({viewModel.totalActifs})
-            </button>
-          </li>
-          <li role="presentation">
-            <button
-              aria-selected={estOngletArchives}
-              className="fr-tabs__tab"
-              onClick={() => {
-                changerOnglet(true)
-              }}
-              role="tab"
-              tabIndex={estOngletArchives ? 0 : -1}
-              type="button"
-            >
-              Lieux archivés ({viewModel.totalArchives})
-            </button>
-          </li>
-        </ul>
-      </div>
-
       {/* Indicateur de filtres actifs */}
       {getFiltresActifs().length > 0 ? (
         <div className="fr-mb-2w">
@@ -319,26 +274,6 @@ export default function ListeLieuxInclusion({
               </div>
             ))}
           </div>
-        </div>
-      ) : null}
-
-      {/* Overlay de loading pendant la navigation */}
-      {isPageLoading || isFilterLoading ? (
-        <div
-          style={{
-            alignItems: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            bottom: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            left: 0,
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            zIndex: 9999,
-          }}
-        >
-          <SpinnerSimple size="large" text="Chargement..." />
         </div>
       ) : null}
 
@@ -406,6 +341,120 @@ export default function ListeLieuxInclusion({
           ) : null}
         </>
       )}
+    </>
+  )
+
+  return (
+    <>
+      <div className="fr-grid-row fr-grid-row--middle">
+        <div className="fr-col">
+          <PageTitle>
+            <TitleIcon icon="map-pin-2-line" />
+            Suivi des lieux d&apos;inclusion numérique
+          </PageTitle>
+        </div>
+        <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+          <div className="fr-col-auto">
+            <button
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
+              onClick={handleExportCSV}
+              type="button"
+            >
+              Export
+            </button>
+          </div>
+          <div className="fr-col-auto">
+            <button
+              aria-controls={drawerId}
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
+              data-fr-opened={isDrawerOpen}
+              onClick={() => {
+                setIsDrawerOpen(true)
+              }}
+              type="button"
+            >
+              Filtres
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="fr-tabs fr-mb-3w">
+        <ul aria-label="Lieux actuels ou archivés" className="fr-tabs__list" role="tablist">
+          <li role="presentation">
+            <button
+              aria-controls="panelLieuxActuels"
+              aria-selected={!estOngletArchives}
+              className="fr-tabs__tab"
+              id="ongletLieuxActuels"
+              onClick={() => {
+                changerOnglet(false)
+              }}
+              role="tab"
+              tabIndex={estOngletArchives ? -1 : 0}
+              type="button"
+            >
+              Lieux actuels ({viewModel.totalActifs})
+            </button>
+          </li>
+          <li role="presentation">
+            <button
+              aria-controls="panelLieuxArchives"
+              aria-selected={estOngletArchives}
+              className="fr-tabs__tab"
+              id="ongletLieuxArchives"
+              onClick={() => {
+                changerOnglet(true)
+              }}
+              role="tab"
+              tabIndex={estOngletArchives ? 0 : -1}
+              type="button"
+            >
+              Lieux archivés ({viewModel.totalArchives})
+            </button>
+          </li>
+        </ul>
+        <div
+          aria-labelledby="ongletLieuxActuels"
+          className={classePanel(!estOngletArchives)}
+          id="panelLieuxActuels"
+          ref={panelActuelsRef}
+          role="tabpanel"
+          tabIndex={0}
+        >
+          {estOngletArchives ? null : contenuOnglet}
+        </div>
+        <div
+          aria-labelledby="ongletLieuxArchives"
+          className={classePanel(estOngletArchives)}
+          id="panelLieuxArchives"
+          ref={panelArchivesRef}
+          role="tabpanel"
+          tabIndex={0}
+        >
+          {estOngletArchives ? contenuOnglet : null}
+        </div>
+      </div>
+
+      {/* Overlay de loading pendant la navigation */}
+      {isPageLoading || isFilterLoading ? (
+        <div
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            left: 0,
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            zIndex: 9999,
+          }}
+        >
+          <SpinnerSimple size="large" text="Chargement..." />
+        </div>
+      ) : null}
 
       <Drawer
         boutonFermeture="Fermer les filtres"
@@ -503,6 +552,10 @@ export default function ListeLieuxInclusion({
       />
     </>
   )
+}
+
+function classePanel(estSelectionne: boolean): string {
+  return `fr-tabs__panel${estSelectionne ? ' fr-tabs__panel--selected' : ''}`
 }
 
 function formaterAdresseSurUneLigne(adresse: LieuInclusionViewModel['adresse']): string {
