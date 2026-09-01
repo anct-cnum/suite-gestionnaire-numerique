@@ -16,6 +16,7 @@ export type ScopeEpciReadModel = Readonly<{
   codeDepartement: null | string
   codesInsee: ReadonlyArray<string>
   nom: string
+  nombreDepartements: number
 }>
 
 export type ScopeRegionReadModel = Readonly<{

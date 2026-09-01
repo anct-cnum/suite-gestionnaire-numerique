@@ -22,8 +22,8 @@ export class PrismaScopeTerritorialLoader implements ScopeTerritorialLoader {
     if (rows.length === 0) {
       return null
     }
-    const communes = await prisma.$queryRaw<ReadonlyArray<Readonly<{ code_insee: string }>>>`
-      SELECT commune.code_insee
+    const communes = await prisma.$queryRaw<ReadonlyArray<Readonly<{ code_insee: string; departement_id: number }>>>`
+      SELECT commune.code_insee, commune.departement_id
       FROM admin.commune commune
       INNER JOIN admin.commune_epci ON commune_epci.commune_id = commune.id
       INNER JOIN admin.epci ON epci.id = commune_epci.epci_id
@@ -36,6 +36,7 @@ export class PrismaScopeTerritorialLoader implements ScopeTerritorialLoader {
       codeDepartement: rows[0].code_departement,
       codesInsee: communes.map((commune) => commune.code_insee),
       nom: rows[0].nom,
+      nombreDepartements: new Set(communes.map((commune) => commune.departement_id)).size,
     }
   }
 

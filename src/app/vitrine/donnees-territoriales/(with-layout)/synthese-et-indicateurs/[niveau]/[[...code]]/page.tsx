@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import { filtreDuTerritoire, recupererTerritoireVitrine, TerritoireVitrine } from '../../../../territoire'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
+import NoticeEpciMultiDepartements from '@/components/vitrine/DonneesTerritoriales/NoticeEpciMultiDepartements'
 import CarteIndicesFragilite from '@/components/vitrine/SyntheseEtIndicateurs/CarteIndicesFragilite'
 import SectionCartographie from '@/components/vitrine/SyntheseEtIndicateurs/SectionCartographie'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
@@ -17,6 +18,7 @@ import {
 } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
+import { noticeEpciMultiDepartementsPresenter } from '@/presenters/vitrine/noticeEpciMultiDepartementsPresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
 import { fetchAccompagnementsRealises } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
@@ -86,8 +88,11 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
     indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
   }
 
+  const noticeMultiDepartements = territoire.type === 'epci' ? noticeEpciMultiDepartementsPresenter(territoire) : null
+
   return (
     <div className="fr-pr-lg-10w" style={{ display: 'flex', flexDirection: 'column' }}>
+      {noticeMultiDepartements === null ? null : <NoticeEpciMultiDepartements viewModel={noticeMultiDepartements} />}
       <EtatDesLieux
         accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         afficherLienLieux={false}

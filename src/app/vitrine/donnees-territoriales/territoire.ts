@@ -8,16 +8,18 @@ export type TerritoireVitrine =
   | Readonly<{
       bbox: BoundingBoxReadModel
       code: string
-      codesDepartement: ReadonlyArray<string>
+      codeDepartement: null | string
+      codesInsee: ReadonlyArray<string>
       nom: string
-      type: 'region'
+      nombreDepartements: number
+      type: 'epci'
     }>
   | Readonly<{
       bbox: BoundingBoxReadModel
       code: string
-      codesInsee: ReadonlyArray<string>
+      codesDepartement: ReadonlyArray<string>
       nom: string
-      type: 'epci'
+      type: 'region'
     }>
   | Readonly<{ code: string; type: 'departement' }>
   | Readonly<{ type: 'national' }>
