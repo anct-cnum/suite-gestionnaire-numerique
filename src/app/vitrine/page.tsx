@@ -41,15 +41,7 @@ export default function VitrineHomePage(): ReactElement {
         <div className="fr-container">
           {/* Titre principal */}
           <div className="fr-mb-8w" style={{ margin: '0 auto', maxWidth: '960px' }}>
-            <h2
-              style={{
-                color: '#000091',
-                fontSize: '48px',
-                fontWeight: 700,
-                lineHeight: '56px',
-                textAlign: 'center',
-              }}
-            >
+            <h2 className={`fr-display--xs color-blue-france ${styles.titreSection}`}>
               Quel enjeu pour l&apos;inclusion numérique aujourd&apos;hui en France ?
             </h2>
           </div>
@@ -169,15 +161,7 @@ export default function VitrineHomePage(): ReactElement {
             />
           </div>
           <div className="fr-mb-8w" style={{ margin: '0 auto', maxWidth: '960px' }}>
-            <h2
-              style={{
-                color: '#000091',
-                fontSize: '48px',
-                fontWeight: 700,
-                lineHeight: '56px',
-                textAlign: 'center',
-              }}
-            >
+            <h2 className={`fr-display--xs color-blue-france ${styles.titreSection}`}>
               Comprendre et découvrir l&apos;inclusion numérique de proximité
             </h2>
           </div>
@@ -332,16 +316,7 @@ export default function VitrineHomePage(): ReactElement {
               />
             </div>
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
-              <h2
-                style={{
-                  color: '#000091',
-                  fontSize: '40px',
-                  fontWeight: 700,
-                  lineHeight: '48px',
-                }}
-              >
-                Comment participer à une gouvernance territoriale ?
-              </h2>
+              <h2 className="fr-h1 color-blue-france">Comment participer à une gouvernance territoriale ?</h2>
               <p className="fr-text--md">
                 <strong>En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique,</strong> vous êtes invités
                 à rejoindre la dynamique de votre territoire en rejoignant la gouvernance France Numérique Ensemble de

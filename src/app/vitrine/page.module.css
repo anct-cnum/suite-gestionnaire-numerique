@@ -1,3 +1,7 @@
+.titreSection {
+  text-align: center;
+}
+
 /* Bloc avec image à gauche, texte à droite - En mobile : texte d'abord, image ensuite */
 .imageLeft {
   order: 1;
