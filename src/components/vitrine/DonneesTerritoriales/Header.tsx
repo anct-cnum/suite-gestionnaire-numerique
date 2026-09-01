@@ -11,22 +11,26 @@ import FilAriane from '../FilAriane/FilAriane'
 import RechercheTerritoire from '@/components/shared/Select/RechercheTerritoire'
 import { TerritoireViewModel } from '@/presenters/rechercheTerritoiresPresenter'
 
-const sectionsDepartementales = ['gouvernances', 'feuille-de-route']
+// Niveaux territoriaux autorisés pour les sections qui ne couvrent pas tous les niveaux
+const niveauxParSection: Readonly<Record<string, ReadonlyArray<string> | undefined>> = {
+  'feuille-de-route': ['departement'],
+  gouvernances: ['departement', 'epci'],
+}
 
 export default function Header({ titre }: Props): ReactElement {
   const router = useRouter()
   const params = useParams()
   const pathname = usePathname()
   const [epci, setEpci] = useState<null | TerritoireViewModel>(null)
+  const [departementEpci, setDepartementEpci] = useState<null | string>(null)
 
+  // L'URL publique du site vitrine peut omettre le préfixe /vitrine (réécriture du proxy) : la section
+  // est le segment qui suit toujours « donnees-territoriales »
   const pathParts = pathname.split('/').filter(Boolean)
-  const currentSection = pathParts[2] || 'synthese-et-indicateurs'
+  const currentSection = pathParts[pathParts.indexOf('donnees-territoriales') + 1] || 'synthese-et-indicateurs'
 
   // Extraire niveau et code depuis params
-  const niveau =
-    currentSection === 'gouvernances'
-      ? pathParts[3] // 'departement' pour gouvernances
-      : (params.niveau as string | undefined)
+  const niveau = params.niveau as string | undefined
 
   const codeArray = params.code as ReadonlyArray<string> | undefined
   const code = codeArray?.[0]
@@ -35,6 +39,7 @@ export default function Header({ titre }: Props): ReactElement {
   useEffect(() => {
     if (niveau !== 'epci' || code === undefined) {
       setEpci(null)
+      setDepartementEpci(null)
       return
     }
     let annule = false
@@ -49,6 +54,7 @@ export default function Header({ titre }: Props): ReactElement {
           type: 'epci',
           value: `epci-${territoire.code}`,
         })
+        setDepartementEpci(territoire.numeroDepartement)
       }
     })
     return (): void => {
@@ -63,15 +69,16 @@ export default function Header({ titre }: Props): ReactElement {
     if (territoire === null) {
       return
     }
-    // Gouvernances et feuille de route n'existent qu'au niveau département : repli sur la synthèse
+    // Certaines sections n'existent pas à tous les niveaux territoriaux : repli sur la synthèse
+    const niveauxAutorises = niveauxParSection[currentSection]
     const section =
-      territoire.type === 'departement' || !sectionsDepartementales.includes(currentSection)
+      niveauxAutorises === undefined || niveauxAutorises.includes(territoire.type)
         ? currentSection
         : 'synthese-et-indicateurs'
     router.push(`/vitrine/donnees-territoriales/${section}/${territoire.type}/${territoire.code}`)
   }
 
-  const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection, epci)
+  const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection, epci, departementEpci)
 
   return (
     <div className={styles.header} data-donnees-territoriales-header>
@@ -167,7 +174,8 @@ function getBreadcrumbItems(
   niveau?: string,
   code?: string,
   currentSection?: string,
-  epci?: null | TerritoireViewModel
+  epci?: null | TerritoireViewModel,
+  departementEpci?: null | string
 ): Array<{ href?: string; label: string }> {
   const section = currentSection ?? 'synthese-et-indicateurs'
 
@@ -209,9 +217,35 @@ function getBreadcrumbItems(
   }
 
   if (niveau === 'epci') {
-    items.push({ label: epci?.label ?? `Intercommunalité ${code}` })
+    items.push(...getBreadcrumbItemsEpci(section, code, epci, departementEpci))
   }
 
+  return items
+}
+
+// Région et département de rattachement de l'EPCI (connus après la recherche par code)
+function getBreadcrumbItemsEpci(
+  section: string,
+  code?: string,
+  epci?: null | TerritoireViewModel,
+  departementEpci?: null | string
+): Array<{ href?: string; label: string }> {
+  const items: Array<{ href?: string; label: string }> = []
+  const departementRattachement = departements.find((departement) => departement.code === departementEpci)
+  if (departementRattachement !== undefined) {
+    const regionRattachement = regions.find((region) => region.code === departementRattachement.regionCode)
+    if (regionRattachement !== undefined) {
+      items.push({
+        href: `/vitrine/donnees-territoriales/synthese-et-indicateurs/region/${regionRattachement.code}`,
+        label: regionRattachement.nom,
+      })
+    }
+    items.push({
+      href: `/vitrine/donnees-territoriales/${section}/departement/${departementRattachement.code}`,
+      label: `${departementRattachement.nom} · ${departementRattachement.code}`,
+    })
+  }
+  items.push({ label: epci?.label ?? `Intercommunalité ${code}` })
   return items
 }
 

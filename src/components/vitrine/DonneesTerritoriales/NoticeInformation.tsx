@@ -2,9 +2,7 @@
 
 import { ReactElement } from 'react'
 
-import { NoticeEpciMultiDepartementsViewModel } from '@/presenters/vitrine/noticeEpciMultiDepartementsPresenter'
-
-export default function NoticeEpciMultiDepartements({ viewModel }: Props): ReactElement {
+export default function NoticeInformation({ viewModel }: Props): ReactElement {
   return (
     <div className="fr-notice fr-notice--info fr-mb-4w">
       <div className="fr-container">
@@ -20,5 +18,8 @@ export default function NoticeEpciMultiDepartements({ viewModel }: Props): React
 }
 
 type Props = Readonly<{
-  viewModel: NoticeEpciMultiDepartementsViewModel
+  viewModel: Readonly<{
+    description: string
+    titre: string
+  }>
 }>

@@ -1,14 +1,14 @@
 import { screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import NoticeEpciMultiDepartements from './NoticeEpciMultiDepartements'
+import NoticeInformation from './NoticeInformation'
 import { renderComponent } from '../../testHelper'
 
-describe('notice epci multi-départements', () => {
+describe('notice information', () => {
   it('affiche le bandeau d’information avec le titre et le texte explicatif', () => {
     // WHEN
     renderComponent(
-      <NoticeEpciMultiDepartements
+      <NoticeInformation
         viewModel={{
           description:
             'Les données présentées couvrent l’ensemble de ses communes, y compris celles situées hors du Rhône.',

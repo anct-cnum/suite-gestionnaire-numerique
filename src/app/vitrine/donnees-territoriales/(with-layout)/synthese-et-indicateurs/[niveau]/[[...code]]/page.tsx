@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import { filtreDuTerritoire, recupererTerritoireVitrine, TerritoireVitrine } from '../../../../territoire'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
-import NoticeEpciMultiDepartements from '@/components/vitrine/DonneesTerritoriales/NoticeEpciMultiDepartements'
+import NoticeInformation from '@/components/vitrine/DonneesTerritoriales/NoticeInformation'
 import CarteIndicesFragilite from '@/components/vitrine/SyntheseEtIndicateurs/CarteIndicesFragilite'
 import SectionCartographie from '@/components/vitrine/SyntheseEtIndicateurs/SectionCartographie'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
@@ -92,7 +92,7 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
 
   return (
     <div className="fr-pr-lg-10w" style={{ display: 'flex', flexDirection: 'column' }}>
-      {noticeMultiDepartements === null ? null : <NoticeEpciMultiDepartements viewModel={noticeMultiDepartements} />}
+      {noticeMultiDepartements === null ? null : <NoticeInformation viewModel={noticeMultiDepartements} />}
       <EtatDesLieux
         accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         afficherLienLieux={false}
