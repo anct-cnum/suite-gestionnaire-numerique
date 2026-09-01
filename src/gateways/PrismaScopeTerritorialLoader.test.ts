@@ -59,7 +59,34 @@ describe('scope territorial loader', () => {
       codeDepartement: '69',
       codesInsee: ['69123', '69456'],
       nom: 'CC Saône-Beaujolais',
+      nombreDepartements: 1,
     })
+  })
+
+  it('quand les communes d’un EPCI appartiennent à plusieurs départements alors leur nombre distinct est retourné', async () => {
+    // GIVEN
+    await creerLesTerritoires()
+    await prisma.$executeRaw`INSERT INTO admin.commune (geom, departement_id, code_insee, nom)
+      VALUES
+        (
+          public.ST_GeomFromText('MULTIPOLYGON(((4.5 46.2,4.5 46.3,4.6 46.3,4.5 46.2)))', 4326),
+          (SELECT id FROM admin.departement WHERE code = '71'),
+          '71100',
+          'La Chapelle-de-Guinchay'
+        )`
+    await prisma.$executeRaw`INSERT INTO admin.commune_epci (commune_id, epci_id)
+      VALUES
+        (
+          (SELECT id FROM admin.commune WHERE code_insee = '71100'),
+          (SELECT id FROM admin.epci WHERE code = '246900682')
+        )`
+
+    // WHEN
+    const readModel = await new PrismaScopeTerritorialLoader().getEpci('246900682')
+
+    // THEN
+    expect(readModel?.codesInsee).toStrictEqual(['69123', '69456', '71100'])
+    expect(readModel?.nombreDepartements).toBe(2)
   })
 
   it('quand un EPCI n’existe pas alors rien n’est retourné', async () => {
