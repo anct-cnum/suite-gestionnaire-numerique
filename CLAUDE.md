@@ -141,6 +141,7 @@ Pattern strict dans `src/app/api/actions/` :
 ### Design system — DSFR OBLIGATOIRE
 - **Le DSFR (Système de Design de l'État, `@gouvfr/dsfr`) est IMPÉRATIF pour TOUT aspect visuel, sans exception.** Toute UI qui ne respecte pas le DSFR est un bug (cf. retour de recette #1251).
 - Avant de créer ou styler un composant, chercher d'abord le composant ou la classe DSFR existante : https://www.systeme-de-design.gouv.fr/composants-et-modeles
+- **RESPECTER LE DSFR EN ENTIER, DANS TOUS LES CAS — pas juste ses classes.** Chaque composant s'utilise avec sa structure HTML canonique COMPLÈTE telle que documentée (markup, ids, attributs aria, panels, JS DSFR). Un rendu incorrect = structure incomplète : la compléter. Ne JAMAIS corriger, ajuster ou « améliorer » un rendu par du CSS custom, quel que soit le cas (cf. #1835)
 - Classes DSFR uniquement : composants (`fr-btn`, `fr-select`, `fr-input`, `fr-card`, `fr-badge`, `fr-table`, `fr-modal`…) et utilitaires (`fr-grid-row`, `fr-col-*`, `fr-mb-2w`, `fr-text--sm`…)
 - Couleurs, espacements, typographie : exclusivement via les variables CSS DSFR (`var(--background-contrast-grey)`, `var(--text-default-grey)`, `var(--border-plain-grey)`…) — **jamais de valeurs en dur** (hex, px arbitraires, couleurs nommées)
 - CSS custom (modules `*.module.css`) : uniquement en dernier recours pour ce que le DSFR ne couvre pas (ex. animation du Drawer), et toujours construit sur les variables DSFR
