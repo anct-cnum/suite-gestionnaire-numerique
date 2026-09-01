@@ -1,3 +1,7 @@
+.titre {
+  text-align: center;
+}
+
 .colonneGauche {
   align-items: center;
   display: flex;

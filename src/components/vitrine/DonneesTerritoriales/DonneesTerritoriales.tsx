@@ -55,15 +55,7 @@ export default function DonneesTerritoriales(): ReactElement {
                   </div>
 
                   {/* Titre */}
-                  <h1
-                    className="fr-h2 fr-mb-6w"
-                    style={{
-                      fontSize: '2rem',
-                      fontWeight: 700,
-                      lineHeight: '2.5rem',
-                      textAlign: 'center',
-                    }}
-                  >
+                  <h1 className={`fr-h2 fr-mb-6w ${styles.titre}`}>
                     Découvrir les données publiques d&apos;Inclusion Numérique sur un territoire
                   </h1>
 
