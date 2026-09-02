@@ -1,15 +1,59 @@
 import { Metadata } from 'next'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
+import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
+import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
+import EnTeteVitrine from '@/components/vitrine/EnTeteVitrine/EnTeteVitrine'
 
 export const metadata: Metadata = {
   title: 'Page non trouvée',
 }
 
-export default function NotFound(): ReactElement {
+export default async function NotFound(): Promise<ReactElement> {
+  const hostname = (await headers()).get('host') ?? ''
+  const isVitrineDomain =
+    hostname.startsWith('inclusion-numerique.anct.gouv.fr') &&
+    !hostname.startsWith('min.inclusion-numerique.anct.gouv.fr')
+  const isVitrineMode = process.env.SITE_MODE === 'vitrine'
+
+  if (isVitrineDomain || isVitrineMode) {
+    return <NotFoundVitrine />
+  }
+  return <NotFoundMin />
+}
+
+function NotFoundVitrine(): ReactElement {
+  return (
+    <>
+      <LienEvitement />
+      <EnTeteVitrine />
+      <main className="fr-container--fluid" id="content">
+        <div className="fr-container fr-pt-8w fr-pb-10w center">
+          <div className="fr-grid-row fr-grid-row--center">
+            <div className="fr-col-8 fr-col-md-4">
+              <img alt="" className="fr-responsive-img" src="/vitrine/illustration-404.png" />
+            </div>
+          </div>
+          <h1 className="color-blue-france fr-mt-4w fr-mb-2w">Désolé, cette page n’est plus disponible</h1>
+          <p className="color-grey fr-text--lg fr-mb-2w">Elle a peut-être été déplacée ou supprimée.</p>
+          <Link
+            className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-btn--icon-left fr-icon-arrow-left-s-line"
+            href="/"
+          >
+            Retour à l’accueil
+          </Link>
+        </div>
+      </main>
+      <PiedDePage />
+    </>
+  )
+}
+
+function NotFoundMin(): ReactElement {
   return (
     <div className="fr-container">
       <div className="fr-my-7w fr-mt-md-12w fr-mb-md-10w fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
