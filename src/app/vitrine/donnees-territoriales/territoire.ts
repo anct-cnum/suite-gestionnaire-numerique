@@ -1,5 +1,6 @@
 import { cache } from 'react'
 
+import departements from '../../../../ressources/departements.json'
 import { PrismaScopeTerritorialLoader } from '@/gateways/PrismaScopeTerritorialLoader'
 import { BoundingBoxReadModel } from '@/use-cases/queries/RecupererScopeTerritorial'
 import { FiltreTerritorial } from '@/use-cases/queries/shared/FiltreTerritorial'
@@ -34,7 +35,10 @@ export const recupererTerritoireVitrine = cache(
       return null
     }
     if (niveau === 'departement') {
-      return { code, type: 'departement' }
+      const departementConnu = (departements as ReadonlyArray<Readonly<{ code: string }>>).some(
+        (departement) => departement.code === code
+      )
+      return departementConnu ? { code, type: 'departement' } : null
     }
     if (niveau === 'region') {
       const scope = await new PrismaScopeTerritorialLoader().getRegion(code)
