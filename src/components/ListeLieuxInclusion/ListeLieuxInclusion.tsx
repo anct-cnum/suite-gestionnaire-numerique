@@ -61,15 +61,22 @@ export default function ListeLieuxInclusion({
   }, [listeLieuxInclusionViewModel])
 
   // Navigation clavier des onglets (flèches) : le JS du DSFR change d'onglet sans émettre de clic,
-  // mais émet « dsfr.disclose » sur le panel cible ; on s'y raccroche pour déclencher la navigation
+  // mais émet « dsfr.disclose » sur le panel cible ; on s'y raccroche pour déclencher la navigation.
+  // Au démontage de la page (clic vers une fiche lieu), le DSFR émet un « dsfr.disclose » parasite
+  // sur le panel archives déjà détaché du DOM : l'ignorer, sinon le router.push différé écrase la
+  // navigation en cours et renvoie sur ?statut=archives (#1881).
   useEffect(() => {
     const panelActuels = panelActuelsRef.current
     const panelArchives = panelArchivesRef.current
     function surDiscloseActuels(): void {
-      changerOnglet(false)
+      if (panelActuels?.isConnected === true) {
+        changerOnglet(false)
+      }
     }
     function surDiscloseArchives(): void {
-      changerOnglet(true)
+      if (panelArchives?.isConnected === true) {
+        changerOnglet(true)
+      }
     }
     panelActuels?.addEventListener('dsfr.disclose', surDiscloseActuels)
     panelArchives?.addEventListener('dsfr.disclose', surDiscloseArchives)
