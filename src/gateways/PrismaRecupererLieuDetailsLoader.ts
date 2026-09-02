@@ -370,6 +370,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
   > {
     // Refonte 2026 : recupere les champs "lieu" depuis main.lieu_inclusion
     // (typologies, presentation_*, horaires, services, contact JSON…).
+    // Les colonnes array d'enums Postgres custom doivent etre castees en ::text[] :
+    // $queryRaw ne les deserialise pas et renverrait la string litterale '{...}' (#1881).
     // Le SIRET et l'id de la SA "principale" sont resolus via la table d'asso
     // (LATERAL ordonne par sa.id ASC pour la stabilite, cf N8).
     return prisma.$queryRaw`
@@ -377,20 +379,20 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.id::text,
         l.nom,
         sa_first.structure_administrative_id,
-        l.dispositif_programmes_nationaux,
+        l.dispositif_programmes_nationaux::text[] AS dispositif_programmes_nationaux,
         l.horaires,
-        l.itinerance,
-        l.modalites_acces,
-        l.modalites_accompagnement,
+        l.itinerance::text[] AS itinerance,
+        l.modalites_acces::text[] AS modalites_acces,
+        l.modalites_accompagnement::text[] AS modalites_accompagnement,
         l.contact,
-        l.typologies,
+        l.typologies::text[] AS typologies,
         l.presentation_resume,
         l.presentation_detail,
-        l.prise_en_charge_specifique,
+        l.prise_en_charge_specifique::text[] AS prise_en_charge_specifique,
         l.prise_rdv,
-        l.publics_specifiquement_adresses,
-        l.frais_a_charge,
-        l.services,
+        l.publics_specifiquement_adresses::text[] AS publics_specifiquement_adresses,
+        l.frais_a_charge::text[] AS frais_a_charge,
+        l.services::text[] AS services,
         l.updated_at,
         l.deleted_at,
         l.edited_by,
