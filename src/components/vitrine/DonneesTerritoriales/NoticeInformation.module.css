@@ -1,0 +1,13 @@
+.notice {
+  align-items: flex-start;
+  background-color: var(--background-contrast-info);
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.icone {
+  color: var(--background-flat-info);
+  flex-shrink: 0;
+}

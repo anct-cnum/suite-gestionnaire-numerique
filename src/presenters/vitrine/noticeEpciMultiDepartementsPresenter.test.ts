@@ -34,8 +34,8 @@ describe('notice epci multi-départements presenter', () => {
     // THEN
     expect(viewModel).toStrictEqual({
       description:
-        'Les données présentées couvrent l’ensemble de ses communes, y compris celles situées hors du Rhône.',
-      titre: 'Cette intercommunalité s’étend sur 2 départements.',
+        'Cette intercommunalité s’étend sur 2 départements. Les données présentées couvrent l’ensemble' +
+        ' de ses communes, y compris celles situées hors du Rhône.',
     })
   })
 
@@ -54,7 +54,8 @@ describe('notice epci multi-départements presenter', () => {
 
       // THEN
       expect(viewModel?.description).toBe(
-        `Les données présentées couvrent l’ensemble de ses communes, y compris celles situées ${horsDu}.`
+        'Cette intercommunalité s’étend sur 3 départements. Les données présentées couvrent l’ensemble' +
+          ` de ses communes, y compris celles situées ${horsDu}.`
       )
     }
   )
