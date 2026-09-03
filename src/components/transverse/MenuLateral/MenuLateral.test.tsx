@@ -114,8 +114,9 @@ describe('menu lateral', () => {
     { itemIndex: 1, listIndex: 3, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
     { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
     { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/liste-lieux-inclusion' },
-    { itemIndex: 0, listIndex: 4, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 4, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+    { itemIndex: 0, listIndex: 4, name: 'Statistiques', pathname: '/statistiques' },
+    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])(
     "étant un utilisateur, quand j'accède à l'URL $pathname, alors l'item $name du menu a le focus",
     ({ itemIndex, listIndex, name, pathname }) => {
@@ -151,19 +152,32 @@ describe('menu lateral', () => {
     expect(within(nav).getByRole('link', { name: 'Statistiques' })).toHaveAttribute('href', '/statistiques')
   })
 
-  it("étant un utilisateur non super admin, quand j'affiche le menu latéral, alors la section RAPPORTS ET STATISTIQUES n'est pas visible", () => {
-    // WHEN
-    afficherMenuLateral()
+  it.each([
+    { contexte: contexteParDefaut, intention: 'gestionnaire de région' },
+    { contexte: contexteGouvernance, intention: 'gestionnaire de structure coporteur' },
+    { contexte: contexteMembreFne, intention: 'gestionnaire de structure membre simple FNE' },
+    {
+      contexte: new Contexte('gestionnaire_departement', [{ code: '93', type: 'departement' }]),
+      intention: 'gestionnaire de département',
+    },
+    { contexte: new Contexte('gestionnaire_groupement', []), intention: 'gestionnaire de groupement' },
+  ])(
+    "étant un $intention, quand j'affiche le menu latéral, alors Statistiques s'affiche mais pas Rapports",
+    ({ contexte }) => {
+      // WHEN
+      render(
+        <menuActifContext.Provider value="/">
+          <MenuLateral contexte={contexte} />
+        </menuActifContext.Provider>
+      )
 
-    // THEN
-    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const rapportsEtStatistiques = within(nav).queryByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })
-    expect(rapportsEtStatistiques).not.toBeInTheDocument()
-    const lienStatistiques = within(nav).queryByRole('link', { name: 'Statistiques' })
-    expect(lienStatistiques).not.toBeInTheDocument()
-    const lienRapports = within(nav).queryByRole('link', { name: 'Rapports' })
-    expect(lienRapports).not.toBeInTheDocument()
-  })
+      // THEN
+      const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+      expect(within(nav).getByText('RAPPORTS ET STATISTIQUES', { selector: 'p' })).toBeInTheDocument()
+      expect(within(nav).getByRole('link', { name: 'Statistiques' })).toHaveAttribute('href', '/statistiques')
+      expect(within(nav).queryByRole('link', { name: 'Rapports' })).not.toBeInTheDocument()
+    }
+  )
 
   it("étant administrateur dispositif, quand j'affiche le menu latéral, alors Rapports et Statistiques s'affichent", () => {
     // WHEN
