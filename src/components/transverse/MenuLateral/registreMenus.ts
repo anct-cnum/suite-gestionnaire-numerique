@@ -115,9 +115,7 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
 
   sections.push(sectionPilotageParContexte(contexte))
 
-  if (contexte.aCesRoles('administrateur_dispositif')) {
-    sections.push(sectionRapportsEtStatistiques)
-  }
+  sections.push(sectionRapportsEtStatistiques)
 
   if (contexte.isBetaTesteur) {
     sections.push(sectionBetaTesteur)
