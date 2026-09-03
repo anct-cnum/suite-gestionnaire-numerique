@@ -36,6 +36,8 @@ export default function ListeLieuxInclusionFiltre({
   const frrCheckboxId = useId()
   const horsZonePrioritaireCheckboxId = useId()
   const fraicheurSelectId = useId()
+  const peutFiltrerGeographiquement =
+    utilisateurRole === 'Administrateur dispositif' || utilisateurRole === 'Gestionnaire région'
 
   const typologiesTerritoire = [
     {
@@ -73,8 +75,8 @@ export default function ListeLieuxInclusionFiltre({
   function handleApplyFilters(): void {
     const params = new URLSearchParams()
 
-    // Filtre géographique - seulement pour les administrateur_dispositif
-    if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
+    // Filtre géographique - administrateurs (France entière) et gestionnaires région (leur région)
+    if (peutFiltrerGeographiquement && selectedZone) {
       params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
@@ -108,11 +110,12 @@ export default function ListeLieuxInclusionFiltre({
 
   return (
     <div>
-      {utilisateurRole === 'Administrateur dispositif' && (
+      {peutFiltrerGeographiquement && (
         <>
           <FiltrerParZonesGeographiques
             key={cleReinitialisation}
             onSelectionner={setSelectedZone}
+            source={utilisateurRole === 'Administrateur dispositif' ? 'complet' : 'perimetre'}
             valeurInitiale={selectedZone}
           />
           <hr className="fr-hr" />

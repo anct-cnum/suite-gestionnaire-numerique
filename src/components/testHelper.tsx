@@ -32,6 +32,7 @@ export function renderComponent(
     ajouterUneNotePriveeAction: vi.fn(),
     ajouterUnMembreAction: vi.fn(),
     canoniserStructureAction: vi.fn(),
+    changerMaRegionAction: vi.fn(),
     changerMaStructureAction: vi.fn(),
     changerMonDepartementAction: vi.fn(),
     changerMonRoleAction: vi.fn(),

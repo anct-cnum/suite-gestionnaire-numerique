@@ -51,6 +51,7 @@ export function sessionUtilisateurViewModelFactory(
 ): SessionUtilisateurViewModel {
   return {
     codeDepartement: '93',
+    codeRegion: null,
     displayLiensGouvernance: false,
     email: 'martin.tartempion@example.net',
     nom: 'Tartempion',

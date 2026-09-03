@@ -27,15 +27,81 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.scopes).toStrictEqual([{ code: '69', type: 'departement' }])
   })
 
-  it('un gestionnaire région a le scope région', async () => {
+  it('un gestionnaire région sans structure a le scope région et un scope membre par département de sa région', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84' })
+    const loader = loaderStub({ departementsDeLaRegion: ['01', '69'] })
 
     // WHEN
-    const contexte = await resoudreContexte(utilisateur, loaderStub())
+    const contexte = await resoudreContexte(utilisateur, loader)
 
     // THEN
-    expect(contexte.scopes).toStrictEqual([{ code: '84', type: 'region' }])
+    expect(contexte.scopes).toStrictEqual([
+      { code: '84', type: 'region' },
+      { code: '01', type: 'membre' },
+      { code: '69', type: 'membre' },
+    ])
+    expect(contexte.codesDepartements()).toStrictEqual(['01', '69'])
+    expect(contexte.scopeFiltre()).toStrictEqual({ codes: ['01', '69'], type: 'departemental' })
+    expect(contexte.nbGouvernances()).toBe(2)
+  })
+
+  it('un gestionnaire région dont la structure est coporteur a un scope coporteur sur ce département, membre ailleurs', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84', structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [
+        { codeDepartement: '69', estCoporteur: true },
+        { codeDepartement: '01', estCoporteur: false },
+      ],
+      departementsDeLaRegion: ['01', '38', '69'],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopes).toStrictEqual([
+      { code: '84', type: 'region' },
+      { code: '01', type: 'membre' },
+      { code: '38', type: 'membre' },
+      { code: '69', type: 'coporteur' },
+      { code: '42', type: 'structure' },
+    ])
+    expect(contexte.nbGouvernances()).toBe(3)
+    expect(contexte.estCoporteur()).toBe(true)
+  })
+
+  it('un gestionnaire région ignore les appartenances de sa structure hors de sa région', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84', structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [{ codeDepartement: '75', estCoporteur: true }],
+      departementsDeLaRegion: ['01', '69'],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopes).toStrictEqual([
+      { code: '84', type: 'region' },
+      { code: '01', type: 'membre' },
+      { code: '69', type: 'membre' },
+      { code: '42', type: 'structure' },
+    ])
+  })
+
+  it('un gestionnaire région avec structure de rattachement reçoit un scope structure (menu « Ma structure »)', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84', structureId: 42 })
+    const loader = loaderStub({ departementsDeLaRegion: ['01'] })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.idStructure()).toBe(42)
   })
 
   it('un gestionnaire groupement a un scope vide', async () => {
@@ -268,13 +334,27 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.peutGererGouvernance('15')).toBe(false)
   })
 
-  it('peutGererGouvernance — gestionnaire région ne peut pas gérer', async () => {
+  it('peutGererGouvernance — gestionnaire région non coporteur ne peut pas gérer', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84' })
-    const contexte = await resoudreContexte(utilisateur, loaderStub())
+    const contexte = await resoudreContexte(utilisateur, loaderStub({ departementsDeLaRegion: ['15'] }))
 
     // WHEN / THEN
     expect(contexte.peutGererGouvernance('15')).toBe(false)
+  })
+
+  it('peutGererGouvernance — gestionnaire région dont la structure est coporteur du département peut gérer', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_region', { regionCode: '84', structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [{ codeDepartement: '15', estCoporteur: true }],
+      departementsDeLaRegion: ['15', '43'],
+    })
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // WHEN / THEN
+    expect(contexte.peutGererGouvernance('15')).toBe(true)
+    expect(contexte.peutGererGouvernance('43')).toBe(false)
   })
 
   it('scopeFiltre — administrateur dispositif retourne national', async () => {
@@ -426,12 +506,16 @@ function loaderStub(
   options: Readonly<{
     appartenances?: ReadonlyArray<AppartenanceStub>
     departementCode?: string
+    departementsDeLaRegion?: ReadonlyArray<string>
   }> = {}
 ): ScopeLoader {
   return {
     getDepartementCodeByStructureId: vi
       .fn<() => Promise<null | string>>()
       .mockResolvedValue(options.departementCode ?? null),
+    getDepartementsByRegionCode: vi
+      .fn<() => Promise<ReadonlyArray<string>>>()
+      .mockResolvedValue(options.departementsDeLaRegion ?? []),
     getToutesAppartenancesParStructureId: vi
       .fn<() => Promise<ReadonlyArray<AppartenanceStub>>>()
       .mockResolvedValue(options.appartenances ?? []),

@@ -2,6 +2,7 @@ import { RoleUtilisateur, UnUtilisateurReadModel } from './shared/UnUtilisateurR
 
 export interface ScopeLoader {
   getDepartementCodeByStructureId(structureId: number): Promise<null | string>
+  getDepartementsByRegionCode(codeRegion: string): Promise<ReadonlyArray<string>>
   getToutesAppartenancesParStructureId(structureId: number): Promise<
     ReadonlyArray<
       Readonly<{
@@ -169,6 +170,12 @@ async function construireScopes(
 
   if (utilisateur.role.type === 'gestionnaire_region' && utilisateur.regionCode !== null) {
     scopes.push({ code: utilisateur.regionCode, type: 'region' })
+    scopes.push(...(await scopesDepartementsDeLaRegion(utilisateur.regionCode, utilisateur.structureId, scopeLoader)))
+    // Scope structure seul (menu « Ma structure ») : les appartenances aux gouvernances sont déjà
+    // fusionnées par département dans scopesDepartementsDeLaRegion.
+    if (utilisateur.structureId !== null) {
+      scopes.push({ code: String(utilisateur.structureId), type: 'structure' })
+    }
   }
 
   if (utilisateur.role.type === 'gestionnaire_departement' && utilisateur.departementCode !== null) {
@@ -187,6 +194,29 @@ async function construireScopes(
   }
 
   return scopes
+}
+
+// Le gestionnaire région voit toutes les gouvernances de sa région avec les droits d'un membre ;
+// il n'a les droits de gestion (scope coporteur) que sur les départements où sa structure de
+// rattachement est membre coporteur de la gouvernance. Les appartenances hors région sont ignorées.
+async function scopesDepartementsDeLaRegion(
+  codeRegion: string,
+  structureId: null | number,
+  scopeLoader: ScopeLoader
+): Promise<ReadonlyArray<Scope>> {
+  const departements = await scopeLoader.getDepartementsByRegionCode(codeRegion)
+  const typeParDepartement = new Map<string, 'coporteur' | 'membre'>(departements.map((code) => [code, 'membre']))
+
+  if (structureId !== null) {
+    const appartenances = await scopeLoader.getToutesAppartenancesParStructureId(structureId)
+    for (const appartenance of appartenances) {
+      if (appartenance.estCoporteur && typeParDepartement.has(appartenance.codeDepartement)) {
+        typeParDepartement.set(appartenance.codeDepartement, 'coporteur')
+      }
+    }
+  }
+
+  return Array.from(typeParDepartement, ([code, type]) => ({ code, type }))
 }
 
 async function scopesAppartenancesGouvernance(

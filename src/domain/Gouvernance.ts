@@ -1,5 +1,6 @@
 import { Departement, DepartementState } from './Departement'
 import { GestionnaireDepartement } from './GestionnaireDepartement'
+import { GestionnaireRegion } from './GestionnaireRegion'
 import { GestionnaireStructure } from './GestionnaireStructure'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid } from './Utilisateur'
@@ -87,6 +88,15 @@ export class Gouvernance extends Entity<State> {
       const membreCoporteur = membresCoporteurs.find((membre) => membre.structureUid === structureUid)
       // isCoporteur doit être explicitement true (undefined = false par défaut)
       if (membreCoporteur?.isCoporteur === true) {
+        return true
+      }
+    }
+
+    // Gestionnaire région dont la structure de rattachement est co-porteur peut gérer (décision PO #1279)
+    if (utilisateur instanceof GestionnaireRegion) {
+      const structureUid = utilisateur.state.structureUid?.value
+      const membreCoporteur = membresCoporteurs.find((membre) => membre.structureUid === structureUid)
+      if (structureUid !== undefined && membreCoporteur?.isCoporteur === true) {
         return true
       }
     }

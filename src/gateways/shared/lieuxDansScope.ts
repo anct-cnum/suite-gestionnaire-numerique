@@ -10,7 +10,8 @@ export type FiltreLieuxDansScope = Readonly<{ codesInsee: ReadonlyArray<string>;
 // Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
 // Source unique pour la liste des lieux et les compteurs du tableau de bord (#1488) afin
 // que les volumes affichés soient strictement identiques.
-// Le filtre géographique explicite (UI, admin seulement) prend le pas sur le scope departemental.
+// Le filtre géographique explicite (UI) prend le pas sur le scope, mais reste intersecté
+// avec le scope departemental (défense en profondeur — décision PO #1279).
 export function buildLieuxDansScopeCte(
   scopeFiltre: FiltreLieuxDansScope,
   statut: StatutLieux,
@@ -19,6 +20,10 @@ export function buildLieuxDansScopeCte(
   const filtreStatut = buildFiltreStatut(statut)
 
   if (geographique) {
+    const intersectionScope =
+      scopeFiltre.type === 'departemental'
+        ? Prisma.sql`AND a.departement = ANY(${[...scopeFiltre.codes]})`
+        : Prisma.empty
     if (geographique.type === 'epci') {
       return Prisma.sql`lieux_dans_scope AS (
         SELECT l.id
@@ -31,6 +36,7 @@ export function buildLieuxDansScopeCte(
             JOIN admin.epci e ON e.id = ce.epci_id
             WHERE e.code = ${geographique.code}
           )
+          ${intersectionScope}
           ${filtreStatut}
       )`
     }
@@ -43,6 +49,7 @@ export function buildLieuxDansScopeCte(
       FROM main.lieu_inclusion l
       LEFT JOIN main.adresse a ON a.id = l.adresse_id
       WHERE a.departement = ANY(${codesDepartements})
+        ${intersectionScope}
         ${filtreStatut}
     )`
   }

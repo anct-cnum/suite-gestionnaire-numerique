@@ -30,8 +30,9 @@ export default async function TableauDeBordRegionController({ params }: Props): 
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
-  // Maille région réservée à l'administrateur (décision produit : pas de rôle gestionnaire de région ici).
-  if (!contexte.aCesRoles('administrateur_dispositif')) {
+  // Maille région : administrateur, ou gestionnaire région sur sa propre région (validation PO #1279).
+  const estSaRegion = contexte.aCesRoles('gestionnaire_region') && contexte.codeRegion() === code
+  if (!contexte.aCesRoles('administrateur_dispositif') && !estSaRegion) {
     redirect('/tableau-de-bord')
   }
 

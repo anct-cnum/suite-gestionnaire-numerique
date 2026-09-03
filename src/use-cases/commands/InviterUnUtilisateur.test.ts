@@ -255,6 +255,32 @@ describe('inviter un utilisateur', () => {
     })
   })
 
+  it('étant donné un gestionnaire région rattaché à une structure qui invite un pair, quand il l’invite, alors celui-ci est créé sans structure', async () => {
+    // GIVEN
+    const repository = new RepositorySpy(
+      utilisateurFactory({ codeOrganisation: '53', role: 'Gestionnaire région', structureUid: 163 })
+    )
+    const inviterUnUtilisateur = new InviterUnUtilisateur(
+      repository,
+      emailGatewayFactorySpy,
+      epochTime,
+      structurePrefectureLoaderSpy
+    )
+
+    // WHEN
+    const result = await inviterUnUtilisateur.handle({
+      email: 'martine.dugenoux@example.com',
+      nom: 'Dugenoux',
+      prenom: 'Martine',
+      uidUtilisateurCourant: 2,
+    })
+
+    // THEN
+    expect(result).toBe('OK')
+    expect(spiedCodeDepartementPrefecture).toBe('')
+    expect(spiedUtilisateurToAdd?.state.structureUid).toBeUndefined()
+  })
+
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy(utilisateurFactory({ role: 'Gestionnaire structure' }))

@@ -8,6 +8,7 @@ export function createSessionUtilisateurPresenter(
   const role = utilisateurReadModel.role
   return {
     codeDepartement: territoire.codes[0] ?? null,
+    codeRegion: utilisateurReadModel.regionCode,
     displayLiensGouvernance: utilisateurReadModel.displayMenusPilotage,
     email: utilisateurReadModel.email,
     nom: utilisateurReadModel.nom,
@@ -30,6 +31,7 @@ export function createSessionUtilisateurPresenter(
 
 export type SessionUtilisateurViewModel = Readonly<{
   codeDepartement: null | string
+  codeRegion: null | string
   displayLiensGouvernance: boolean
   email: string
   nom: string

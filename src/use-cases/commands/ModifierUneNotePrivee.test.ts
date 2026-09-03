@@ -66,6 +66,22 @@ describe('modifier une note privée', () => {
     expect(result).toBe('editeurNePeutPasModifierNotePrivee')
   })
 
+  it('étant donné une gouvernance, quand une note privée est modifiée par un gestionnaire structure co-porteur, alors une erreur est renvoyée car la note privée est réservée au gestionnaire département', async () => {
+    // GIVEN
+    const modifierNotePrivee = new ModifierUneNotePrivee(
+      new GouvernanceAvecCoporteurRepositorySpy(),
+      new GestionnaireStructureCoporteurRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await modifierNotePrivee.handle({ contenu, uidEditeur: 2, uidGouvernance })
+
+    // THEN
+    expect(spiedGouvernanceToUpdate).toBeNull()
+    expect(result).toBe('editeurNePeutPasModifierNotePrivee')
+  })
+
   it('étant donné une gouvernance, quand un note privée est modifiée par un gestionnaire département mais qu’une note privée n’existe pas, alors une erreur est renvoyée', async () => {
     // GIVEN
     const modifierNotePrivee = new ModifierUneNotePrivee(
@@ -147,5 +163,31 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class GouvernanceAvecCoporteurRepositorySpy extends GouvernanceRepositorySpy {
+  override async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    spiedGouvernanceUidToFind = uid
+    return Promise.resolve(
+      gouvernanceFactory({
+        membresCoporteurs: [{ isCoporteur: true, structureUid: 42 }],
+        notePrivee: {
+          contenu: 'un contenu',
+          dateDeModification: epochTime,
+          uidEditeur: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
+          ),
+        },
+        uid: uidGouvernance,
+      })
+    )
+  }
+}
+
+class GestionnaireStructureCoporteurRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '42', role: 'Gestionnaire structure' }))
   }
 }

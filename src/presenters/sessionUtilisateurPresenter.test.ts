@@ -31,6 +31,7 @@ describe('session utilisateur presenter', () => {
     // THEN
     expect(sessionUtilisateurViewModel).toStrictEqual<SessionUtilisateurViewModel>({
       codeDepartement: '75',
+      codeRegion: null,
       displayLiensGouvernance: false,
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
@@ -79,6 +80,7 @@ describe('session utilisateur presenter', () => {
     // THEN
     expect(sessionUtilisateurViewModel).toStrictEqual<SessionUtilisateurViewModel>({
       codeDepartement: null,
+      codeRegion: null,
       displayLiensGouvernance: false,
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',

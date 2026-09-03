@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -32,7 +33,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const codeEpciDemande = searchParams.get('codeEpci') ?? undefined
     const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
 
-    // Validation défensive : un gestionnaire département ne peut exporter que son périmètre
+    // Validation défensive : un gestionnaire ne peut exporter que son périmètre
+    const utilisateurRole = utilisateur.role.nom as TypologieRole
     if (scopeFiltre.type === 'departemental') {
       if (codeDepartementDemande !== undefined && !scopeFiltre.codes.includes(codeDepartementDemande)) {
         return NextResponse.json(
@@ -40,11 +42,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           { status: 403 }
         )
       }
-      if (codeRegionDemande !== undefined || codeEpciDemande !== undefined) {
-        return NextResponse.json(
-          { error: 'Accès refusé : vous ne pouvez pas filtrer par région ou EPCI' },
-          { status: 403 }
-        )
+      if (codeRegionDemande !== undefined) {
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
+      }
+      // L'EPCI est autorisé pour le gestionnaire région (intersecté avec le scope en SQL — décision PO #1279)
+      if (codeEpciDemande !== undefined && utilisateurRole !== 'Gestionnaire région') {
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par EPCI' }, { status: 403 })
       }
     }
 
@@ -61,6 +64,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         statut: searchParams.get('statut') ?? undefined,
       },
       scopeFiltre,
+      utilisateurRole,
       new Date(),
       100_000
     )

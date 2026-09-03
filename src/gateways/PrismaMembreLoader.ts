@@ -30,6 +30,22 @@ export class PrismaMembreLoader implements MembreExistantLoader, StructurePrefec
     return membre?.gouvernanceDepartementCode ?? null
   }
 
+  async getDepartementsByRegionCode(codeRegion: string): Promise<ReadonlyArray<string>> {
+    const departements = await prisma.departementRecord.findMany({
+      orderBy: {
+        code: 'asc',
+      },
+      select: {
+        code: true,
+      },
+      where: {
+        regionCode: codeRegion,
+      },
+    })
+
+    return departements.map((departement) => departement.code)
+  }
+
   async getToutesAppartenancesParStructureId(
     structureId: number
   ): Promise<ReadonlyArray<Readonly<{ codeDepartement: string; estCoporteur: boolean }>>> {

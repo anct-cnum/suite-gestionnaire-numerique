@@ -101,6 +101,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(admin).toBeInTheDocument()
     const gestionnaireDepartement = within(drawer).getByRole('option', { name: 'Gestionnaire département' })
     expect(gestionnaireDepartement).toBeInTheDocument()
+    const gestionnaireRegion = within(drawer).getByRole('option', { name: 'Gestionnaire région' })
+    expect(gestionnaireRegion).toBeInTheDocument()
     const gestionnaireStructure = within(drawer).getByRole('option', { name: 'Gestionnaire structure' })
     expect(gestionnaireStructure).toBeInTheDocument()
     await userEvent.keyboard('{Escape}')
@@ -224,6 +226,60 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       }
     )
 
+    it('si le rôle est gestionnaire_region et que je suis superadmin, alors le sélecteur de région s’affiche mais pas celui de structure', () => {
+      // GIVEN
+      afficherLEnTeteGestionnaireRegion(true)
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.getByLabelText('Région')).toBeInTheDocument()
+      expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
+    })
+
+    it('si le rôle est gestionnaire_region mais que je ne suis pas superadmin, alors le sélecteur de région ne s’affiche pas', () => {
+      // GIVEN
+      afficherLEnTeteGestionnaireRegion(false)
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.queryByLabelText('Région')).not.toBeInTheDocument()
+      expect(screen.queryByLabelText('Structure')).not.toBeInTheDocument()
+    })
+
+    it('quand je change de région dans le sélecteur de région alors ma région change et la page courante est rafraîchie', async () => {
+      // GIVEN
+      const changerMaRegionAction = stubbedServerAction(['OK'])
+      renderComponent(<EnTete />, {
+        changerMaRegionAction,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          codeRegion: '84',
+          peutChangerDeRole: true,
+          role: {
+            doesItBelongToGroupeAdmin: false,
+            libelle: 'Auvergne-Rhône-Alpes',
+            nom: 'Gestionnaire région',
+            pictogramme: 'maille',
+            rolesGerables: [],
+            type: 'gestionnaire_region',
+          },
+        }),
+      })
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+      await userEvent.click(screen.getByRole('combobox', { name: 'Région' }))
+      await userEvent.click(await screen.findByRole('option', { name: "(93) Provence-Alpes-Côte d'Azur" }))
+
+      // THEN
+      await waitFor(() => {
+        expect(changerMaRegionAction).toHaveBeenCalledWith({ nouveauCodeRegion: '93', path: '/' })
+      })
+    })
+
     it('si le rôle est gestionnaire_structure mais que je ne suis pas superadmin, alors le sélecteur de structure ne s’affiche pas', () => {
       // GIVEN
       renderComponent(<EnTete />, {
@@ -283,6 +339,23 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       changerMonRoleAction: spiedChangerMonRoleAction,
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         peutChangerDeRole: true,
+      }),
+    })
+  }
+
+  function afficherLEnTeteGestionnaireRegion(peutChangerDeRole: boolean): void {
+    renderComponent(<EnTete />, {
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        codeRegion: '84',
+        peutChangerDeRole,
+        role: {
+          doesItBelongToGroupeAdmin: false,
+          libelle: 'Auvergne-Rhône-Alpes',
+          nom: 'Gestionnaire région',
+          pictogramme: 'maille',
+          rolesGerables: [],
+          type: 'gestionnaire_region',
+        },
       }),
     })
   }

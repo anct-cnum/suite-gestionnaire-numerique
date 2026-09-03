@@ -55,6 +55,21 @@ describe('supprimer une note privée d’une gouvernance', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurNePeutPasSupprimerNotePrivee')
   })
+
+  it('étant donné une gouvernance, quand une note privée est supprimée par un gestionnaire structure co-porteur, alors une erreur est renvoyée car la note privée est réservée au gestionnaire département', async () => {
+    // GIVEN
+    const supprimerNotePrivee = new SupprimerUneNotePrivee(
+      new GouvernanceAvecCoporteurRepositorySpy(),
+      new GestionnaireStructureCoporteurRepositorySpy()
+    )
+
+    // WHEN
+    const result = await supprimerNotePrivee.handle({ uidEditeur: 2, uidGouvernance })
+
+    // THEN
+    expect(spiedGouvernanceToUpdate).toBeNull()
+    expect(result).toBe('editeurNePeutPasSupprimerNotePrivee')
+  })
 })
 
 const uidGouvernance = 'gouvernanceFooId'
@@ -109,5 +124,31 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class GouvernanceAvecCoporteurRepositorySpy extends GouvernanceRepositorySpy {
+  override async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    spiedGouvernanceUidToFind = uid
+    return Promise.resolve(
+      gouvernanceFactory({
+        membresCoporteurs: [{ isCoporteur: true, structureUid: 42 }],
+        notePrivee: {
+          contenu: 'un contenu',
+          dateDeModification: epochTime,
+          uidEditeur: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
+          ),
+        },
+        uid: uidGouvernance,
+      })
+    )
+  }
+}
+
+class GestionnaireStructureCoporteurRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '42', role: 'Gestionnaire structure' }))
   }
 }

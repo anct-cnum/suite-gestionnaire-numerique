@@ -13,7 +13,7 @@ describe('filtres liste structures', () => {
   describe(buildFiltresListeStructures, () => {
     it('sans paramètre, retourne les filtres par défaut avec pagination page 1', () => {
       // WHEN
-      const filtres = buildFiltresListeStructures({}, scopeNational)
+      const filtres = buildFiltresListeStructures({}, scopeNational, 'Administrateur dispositif')
 
       // THEN
       expect(filtres).toStrictEqual({
@@ -27,7 +27,11 @@ describe('filtres liste structures', () => {
 
     it('en scope national, la région prime sur le département pour le filtre géographique', () => {
       // WHEN
-      const filtres = buildFiltresListeStructures({ codeDepartement: '69', codeRegion: '84' }, scopeNational)
+      const filtres = buildFiltresListeStructures(
+        { codeDepartement: '69', codeRegion: '84' },
+        scopeNational,
+        'Administrateur dispositif'
+      )
 
       // THEN
       expect(filtres.geographique).toStrictEqual({ code: '84', type: 'region' })
@@ -35,28 +39,70 @@ describe('filtres liste structures', () => {
 
     it('en scope national, le département est utilisé quand aucune région n’est fournie', () => {
       // WHEN
-      const filtres = buildFiltresListeStructures({ codeDepartement: '69' }, scopeNational)
+      const filtres = buildFiltresListeStructures({ codeDepartement: '69' }, scopeNational, 'Administrateur dispositif')
 
       // THEN
       expect(filtres.geographique).toStrictEqual({ code: '69', type: 'departement' })
     })
 
-    it('hors scope national, le filtre géographique est ignoré', () => {
+    it('hors scope national, le filtre géographique est ignoré pour un gestionnaire département', () => {
       // GIVEN
       const scopeDepartemental: ScopeFiltre = { codes: ['75'], type: 'departemental' }
 
       // WHEN
-      const filtres = buildFiltresListeStructures({ codeDepartement: '69' }, scopeDepartemental)
+      const filtres = buildFiltresListeStructures(
+        { codeDepartement: '69' },
+        scopeDepartemental,
+        'Gestionnaire département'
+      )
 
       // THEN
       expect(filtres.geographique).toBeUndefined()
+    })
+
+    it('pour un gestionnaire région, le département est accepté s’il appartient à son scope', () => {
+      // GIVEN
+      const scopeDepartemental: ScopeFiltre = { codes: ['01', '69'], type: 'departemental' }
+
+      // WHEN
+      const filtres = buildFiltresListeStructures({ codeDepartement: '69' }, scopeDepartemental, 'Gestionnaire région')
+
+      // THEN
+      expect(filtres.geographique).toStrictEqual({ code: '69', type: 'departement' })
+    })
+
+    it('pour un gestionnaire région, le département hors scope est ignoré', () => {
+      // GIVEN
+      const scopeDepartemental: ScopeFiltre = { codes: ['01', '69'], type: 'departemental' }
+
+      // WHEN
+      const filtres = buildFiltresListeStructures({ codeDepartement: '75' }, scopeDepartemental, 'Gestionnaire région')
+
+      // THEN
+      expect(filtres.geographique).toBeUndefined()
+    })
+
+    it('pour un gestionnaire région, l’EPCI est accepté et prime sur le département', () => {
+      // GIVEN
+      const scopeDepartemental: ScopeFiltre = { codes: ['01', '69'], type: 'departemental' }
+
+      // WHEN
+      const filtres = buildFiltresListeStructures(
+        { codeDepartement: '69', codeEpci: '246900575' },
+        scopeDepartemental,
+        'Gestionnaire région'
+      )
+
+      // THEN
+      expect(filtres.geographique).toStrictEqual({ code: '246900575', type: 'epci' })
     })
 
     it('la labellisation invalide est ignorée, la recherche est nettoyée et la page convertie', () => {
       // WHEN
       const filtres = buildFiltresListeStructures(
         { labellisation: 'nimporte-quoi', page: '3', recherche: '  Emmaüs  ' },
-        scopeNational
+        scopeNational,
+        'Administrateur dispositif'
       )
 
       // THEN
@@ -67,7 +113,11 @@ describe('filtres liste structures', () => {
 
     it('la labellisation valide est conservée', () => {
       // WHEN
-      const filtres = buildFiltresListeStructures({ labellisation: 'aidants-connect' }, scopeNational)
+      const filtres = buildFiltresListeStructures(
+        { labellisation: 'aidants-connect' },
+        scopeNational,
+        'Administrateur dispositif'
+      )
 
       // THEN
       expect(filtres.labellisation).toBe('aidants-connect')
@@ -79,7 +129,8 @@ describe('filtres liste structures', () => {
       // WHEN
       const filtres = buildFiltresListeStructuresForExport(
         { labellisation: 'conseiller-numerique', page: '3', recherche: 'connect' },
-        scopeNational
+        scopeNational,
+        'Administrateur dispositif'
       )
 
       // THEN

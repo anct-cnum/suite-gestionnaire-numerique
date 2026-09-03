@@ -59,11 +59,16 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
   }
 
   // Étape 1 — Périmètre d'accès : "quelles structures ai-je le droit de voir ?"
-  // Le filtre géographique explicite (UI, réservé au scope national) prend le pas sur le scope.
+  // Le filtre géographique explicite (UI) prend le pas sur le scope, mais reste intersecté
+  // avec le scope departemental (défense en profondeur — décision PO #1279).
   private buildScopeCte(filtres: FiltresListeStructures): Prisma.Sql {
     const { geographique, scopeFiltre } = filtres
 
     if (geographique) {
+      const intersectionScope =
+        scopeFiltre.type === 'departemental'
+          ? Prisma.sql`AND a.departement = ANY(${[...scopeFiltre.codes]})`
+          : Prisma.empty
       if (geographique.type === 'epci') {
         return Prisma.sql`structures_dans_scope AS (
           SELECT sa.id
@@ -77,6 +82,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
               JOIN admin.epci e ON e.id = ce.epci_id
               WHERE e.code = ${geographique.code}
             )
+            ${intersectionScope}
         )`
       }
       const codesDepartements =
@@ -89,6 +95,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
         LEFT JOIN main.adresse a ON a.id = sa.adresse_id
         WHERE sa.deleted_at IS NULL
           AND a.departement = ANY(${codesDepartements})
+          ${intersectionScope}
       )`
     }
 

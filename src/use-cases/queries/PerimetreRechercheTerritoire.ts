@@ -8,7 +8,7 @@ export function perimetreRechercheDuContexte(contexte: Contexte): null | Perimet
     return { type: 'complet' }
   }
 
-  if (contexte.aCesRoles('gestionnaire_departement') || contexte.estCoporteur()) {
+  if (contexte.aCesRoles('gestionnaire_departement', 'gestionnaire_region') || contexte.estCoporteur()) {
     const codesDepartement = contexte.codesDepartements()
     return codesDepartement.length === 0 ? null : { codesDepartement, type: 'departements' }
   }

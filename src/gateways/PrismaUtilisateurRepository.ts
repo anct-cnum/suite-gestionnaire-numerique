@@ -159,6 +159,17 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     })
   }
 
+  async updateRegion(uid: UtilisateurUidState['value'], codeRegion: string): Promise<void> {
+    await this.#dataResource.update({
+      data: {
+        regionCode: codeRegion,
+      },
+      where: {
+        id: uid,
+      },
+    })
+  }
+
   async updateSsoId(email: string, ssoId: string): Promise<void> {
     await this.#dataResource.update({
       data: {

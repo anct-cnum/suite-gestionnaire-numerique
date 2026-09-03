@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import departements from '../../../../../ressources/departements.json'
 import ListeStructures from '@/components/ListeStructures/ListeStructures'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeStructuresLoader } from '@/gateways/PrismaListeStructuresLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -46,7 +47,8 @@ export default async function ListeStructuresController({
 
   const resolvedSearchParams = await searchParams
 
-  const filtres = buildFiltresListeStructures(resolvedSearchParams, scopeFiltre)
+  const utilisateurRole = utilisateur.role.nom as TypologieRole
+  const filtres = buildFiltresListeStructures(resolvedSearchParams, scopeFiltre, utilisateurRole)
 
   const readModel = await new PrismaListeStructuresLoader().get(filtres)
   const viewModel = listeStructuresPresenter(readModel, new Date())
@@ -65,6 +67,7 @@ export default async function ListeStructuresController({
         estScopeNational={scopeFiltre.type === 'national'}
         libelleTerritoireRestreint={libelleTerritoireRestreint(scopeFiltre)}
         searchParams={currentSearchParams}
+        utilisateurRole={utilisateurRole}
         viewModel={viewModel}
       />
     </>

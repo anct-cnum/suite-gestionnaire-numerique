@@ -46,29 +46,10 @@ export function buildFiltresListeAidants(
   utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeAidants {
-  const { anciens, codeDepartement, codeEpci, codeRegion, formations, habilitations, page, recherche, roles } = params
+  const { anciens, formations, habilitations, page, recherche, roles } = params
 
-  // Construction du filtre géographique - seulement pour les administrateurs
-  let filtreGeographique: FiltreGeographique | undefined
-
-  if (utilisateurRole === 'Administrateur dispositif') {
-    if (codeEpci !== undefined && codeEpci !== '') {
-      filtreGeographique = {
-        code: codeEpci,
-        type: 'epci',
-      }
-    } else if (codeDepartement !== undefined && codeDepartement !== '') {
-      filtreGeographique = {
-        code: codeDepartement,
-        type: 'departement',
-      }
-    } else if (codeRegion !== undefined && codeRegion !== '') {
-      filtreGeographique = {
-        code: codeRegion,
-        type: 'region',
-      }
-    }
-  }
+  // Construction du filtre géographique - administrateurs (France entière) et gestionnaires région (leur région)
+  const filtreGeographique = construireFiltreGeographique(params, scopeFiltre, utilisateurRole)
 
   return {
     anciens: anciens === 'true',
@@ -250,6 +231,43 @@ export function getActiveFilters(params: URLSearchParams): Array<{
   }
 
   return filtres
+}
+
+function construireFiltreGeographique(
+  params: FiltresURLParams,
+  scopeFiltre: ScopeFiltre,
+  utilisateurRole: TypologieRole
+): FiltreGeographique | undefined {
+  const { codeDepartement, codeEpci, codeRegion } = params
+
+  if (utilisateurRole === 'Administrateur dispositif') {
+    if (estRenseigne(codeEpci)) {
+      return { code: codeEpci, type: 'epci' }
+    }
+    if (estRenseigne(codeDepartement)) {
+      return { code: codeDepartement, type: 'departement' }
+    }
+    if (estRenseigne(codeRegion)) {
+      return { code: codeRegion, type: 'region' }
+    }
+    return undefined
+  }
+
+  if (utilisateurRole === 'Gestionnaire région' && scopeFiltre.type === 'departemental') {
+    // Le département est validé contre le scope ; l'EPCI est intersecté avec le scope en SQL (décision PO #1279).
+    if (estRenseigne(codeEpci)) {
+      return { code: codeEpci, type: 'epci' }
+    }
+    if (estRenseigne(codeDepartement) && scopeFiltre.codes.includes(codeDepartement)) {
+      return { code: codeDepartement, type: 'departement' }
+    }
+  }
+
+  return undefined
+}
+
+function estRenseigne(valeur?: string): valeur is string {
+  return valeur !== undefined && valeur !== ''
 }
 
 function nettoyerRecherche(valeur?: string): string | undefined {

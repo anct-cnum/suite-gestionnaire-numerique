@@ -20,6 +20,17 @@ const contexteMembreFne = new Contexte('gestionnaire_structure', [
 
 const contexteAdminDispositif = new Contexte('administrateur_dispositif', [{ type: 'france' }])
 
+const contexteGestionnaireRegion = new Contexte('gestionnaire_region', [
+  { code: '84', type: 'region' },
+  { code: '01', type: 'membre' },
+  { code: '69', type: 'coporteur' },
+])
+
+const contexteGestionnaireRegionMonoDepartement = new Contexte('gestionnaire_region', [
+  { code: '01', type: 'region' },
+  { code: '971', type: 'membre' },
+])
+
 describe('menu lateral', () => {
   it("étant n'importe qui, quand j'affiche le menu latéral, alors il s'affiche avec le lien de mon tableau de bord", () => {
     // WHEN
@@ -306,6 +317,86 @@ describe('menu lateral', () => {
     expect(within(nav).queryByRole('link', { name: 'Doublons de structures' })).not.toBeInTheDocument()
     expect(within(nav).queryByRole('link', { name: 'Appariements de lieux' })).not.toBeInTheDocument()
   })
+
+  it.each([
+    { name: 'Gouvernances', url: '/gouvernances/list' },
+    { name: 'Aidants et médiateurs', url: '/liste-aidants-mediateurs' },
+    { name: "Lieux d'inclusion", url: '/liste-lieux-inclusion' },
+    { name: 'Structures', url: '/liste-structures' },
+    { name: 'Suivi des postes CoNum', url: '/postes-conseiller-numerique' },
+  ])(
+    "étant un gestionnaire région multi-départements, quand j'affiche le menu latéral, alors la section PILOTAGE s'affiche avec le lien du menu $name",
+    ({ name, url }) => {
+      // WHEN
+      render(
+        <menuActifContext.Provider value="/">
+          <MenuLateral contexte={contexteGestionnaireRegion} />
+        </menuActifContext.Provider>
+      )
+
+      // THEN
+      const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+      expect(within(nav).getByText('PILOTAGE', { selector: 'p' })).toBeInTheDocument()
+      const element = screen.getByRole('link', { name })
+      expect(element).toHaveAttribute('href', url)
+    }
+  )
+
+  it("étant un gestionnaire région sans structure de rattachement, quand j'affiche le menu latéral, alors Ma structure n'est pas visible", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={contexteGestionnaireRegion} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const maStructure = screen.queryByRole('link', { name: 'Ma structure' })
+    expect(maStructure).not.toBeInTheDocument()
+  })
+
+  it("étant un gestionnaire région avec une structure de rattachement, quand j'affiche le menu latéral, alors Ma structure pointe vers sa structure", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral
+          contexte={
+            new Contexte('gestionnaire_region', [
+              { code: '84', type: 'region' },
+              { code: '01', type: 'membre' },
+              { code: '42', type: 'structure' },
+            ])
+          }
+        />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const maStructure = screen.getByRole('link', { name: 'Ma structure' })
+    expect(maStructure).toHaveAttribute('href', '/structure/42')
+  })
+
+  it.each([
+    { name: 'Membres', url: '/gouvernance/971/membres' },
+    { name: 'Feuilles de route', url: '/gouvernance/971/feuilles-de-route' },
+  ])(
+    "étant un gestionnaire région mono-département, quand j'affiche le menu latéral, alors le sous-menu $name de Gouvernance s'affiche",
+    ({ name, url }) => {
+      // WHEN
+      render(
+        <menuActifContext.Provider value="/">
+          <MenuLateral contexte={contexteGestionnaireRegionMonoDepartement} />
+        </menuActifContext.Provider>
+      )
+
+      // THEN
+      const gouvernance = screen.getByRole('link', { name: 'Gouvernance' })
+      expect(gouvernance).toHaveAttribute('href', '/gouvernance/971')
+      const elements = screen.getAllByRole('link', { name })
+      expect(elements.length).toBeGreaterThan(0)
+      expect(elements[0]).toHaveAttribute('href', url)
+    }
+  )
 
   it("étant un utilisateur autre que gestionnaire de département, quand j'affiche le menu latéral, alors il ne s'affiche pas avec le lien de la gouvernance", () => {
     // WHEN

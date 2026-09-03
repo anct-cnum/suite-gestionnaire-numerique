@@ -1,4 +1,5 @@
 import epci from '../../ressources/epci.json'
+import { TypologieRole } from '@/domain/Role'
 import { couleurParSlugFraicheur, libellesFraicheur, SlugFraicheur } from '@/shared/fraicheur'
 import { FiltreGeographiqueLieux, FiltresListeLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
@@ -31,26 +32,18 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
 
 /**
  * Construit les filtres pour le loader à partir des paramètres d'URL et du scope utilisateur.
- * Le filtre géographique (département/région) n'est disponible que pour les admins nationaux.
+ * Le filtre géographique est disponible pour les admins nationaux et les gestionnaires région (limité à leur région).
  */
 export function buildFiltresLieuxInclusion(
   params: FiltresLieuxInclusionURLParams,
   scopeFiltre: ScopeFiltre,
+  utilisateurRole: TypologieRole,
   now: Date,
   limite = 10
 ): FiltresListeLieux {
-  const { codeDepartement, codeEpci, codeRegion, fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
+  const { fraicheur, frr, horsZonePrioritaire, nom, page, qpv, statut } = params
 
-  let geographique: FiltreGeographiqueLieux | undefined
-  if (scopeFiltre.type === 'national') {
-    if (codeEpci) {
-      geographique = { code: codeEpci, type: 'epci' }
-    } else if (codeRegion) {
-      geographique = { code: codeRegion, type: 'region' }
-    } else if (codeDepartement) {
-      geographique = { code: codeDepartement, type: 'departement' }
-    }
-  }
+  const geographique = construireFiltreGeographiqueLieux(params, scopeFiltre, utilisateurRole)
 
   const slugFraicheur = parseSlugFraicheur(fraicheur)
 
@@ -195,6 +188,39 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
   }
 
   return filtres
+}
+
+function construireFiltreGeographiqueLieux(
+  params: FiltresLieuxInclusionURLParams,
+  scopeFiltre: ScopeFiltre,
+  utilisateurRole: TypologieRole
+): FiltreGeographiqueLieux | undefined {
+  const { codeDepartement, codeEpci, codeRegion } = params
+
+  if (scopeFiltre.type === 'national') {
+    if (codeEpci) {
+      return { code: codeEpci, type: 'epci' }
+    }
+    if (codeRegion) {
+      return { code: codeRegion, type: 'region' }
+    }
+    if (codeDepartement) {
+      return { code: codeDepartement, type: 'departement' }
+    }
+    return undefined
+  }
+
+  if (utilisateurRole === 'Gestionnaire région' && scopeFiltre.type === 'departemental') {
+    // Le département est validé contre le scope ; l'EPCI est intersecté avec le scope en SQL (décision PO #1279).
+    if (codeEpci) {
+      return { code: codeEpci, type: 'epci' }
+    }
+    if (codeDepartement !== undefined && codeDepartement !== '' && scopeFiltre.codes.includes(codeDepartement)) {
+      return { code: codeDepartement, type: 'departement' }
+    }
+  }
+
+  return undefined
 }
 
 function parseSlugFraicheur(valeur: null | string | undefined): null | SlugFraicheur {

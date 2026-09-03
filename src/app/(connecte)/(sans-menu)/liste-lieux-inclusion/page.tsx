@@ -52,7 +52,12 @@ export default async function ListeLieuxInclusionController({
   const resolvedSearchParams = await searchParams
 
   const now = new Date()
-  const filtres = buildFiltresLieuxInclusion(resolvedSearchParams, scopeFiltre, now)
+  const filtres = buildFiltresLieuxInclusion(
+    resolvedSearchParams,
+    scopeFiltre,
+    utilisateur.role.nom as TypologieRole,
+    now
+  )
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
   const listeLieuxInclusionReadModel = await listeLieuxInclusionLoader.getLieux(filtres)

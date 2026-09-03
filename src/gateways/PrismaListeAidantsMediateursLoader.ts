@@ -73,12 +73,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   // Étape 1 — Périmètre d'accès : "qui ai-je le droit de voir ?"
-  // Le filtre géographique explicite (UI) prend le pas sur le scope departemental/structure.
+  // Le filtre géographique explicite (UI) prend le pas sur le scope, mais reste intersecté
+  // avec le scope departemental (défense en profondeur — décision PO #1279).
   private buildScopeCte(filtres: FiltresListeAidants): Prisma.Sql {
     const { anciens, geographique, scopeFiltre } = filtres
     const filtreActif = this.buildFiltreActif(anciens)
 
     if (geographique) {
+      const intersectionScope =
+        scopeFiltre.type === 'departemental'
+          ? Prisma.sql`AND a.departement = ANY(${[...scopeFiltre.codes]})`
+          : Prisma.empty
       if (geographique.type === 'epci') {
         return Prisma.sql`personnes_dans_scope AS (
           SELECT pe.id
@@ -93,6 +98,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
               JOIN admin.epci e ON e.id = ce.epci_id
               WHERE e.code = ${geographique.code}
             )
+            ${intersectionScope}
             ${filtreActif}
         )`
       }
@@ -107,6 +113,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
         WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           AND a.departement = ANY(${codesDepartements})
+          ${intersectionScope}
           ${filtreActif}
       )`
     }

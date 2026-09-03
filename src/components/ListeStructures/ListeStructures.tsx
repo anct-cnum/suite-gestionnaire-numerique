@@ -15,6 +15,7 @@ import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeStructuresViewModel, StructureListeViewModel } from '@/presenters/listeStructuresPresenter'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
@@ -28,6 +29,7 @@ export default function ListeStructures({
   estScopeNational,
   libelleTerritoireRestreint,
   searchParams,
+  utilisateurRole,
   viewModel,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading()
@@ -271,6 +273,7 @@ export default function ListeStructures({
           libelleTerritoireRestreint={libelleTerritoireRestreint}
           onFilterAction={onFilter}
           onResetAction={onReset}
+          utilisateurRole={utilisateurRole}
         />
       </Drawer>
     </>
@@ -389,5 +392,6 @@ type Props = Readonly<{
   estScopeNational: boolean
   libelleTerritoireRestreint: string
   searchParams: Array<[string, string]> | URLSearchParams
+  utilisateurRole: TypologieRole
   viewModel: ErrorViewModel | ListeStructuresViewModel
 }>

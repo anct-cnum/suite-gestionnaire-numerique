@@ -20,7 +20,7 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
 
-    if (!gouvernance.peutEtreGereePar(editeur)) {
+    if (!gouvernance.laNotePriveePeutEtreGereePar(editeur)) {
       return 'editeurNePeutPasModifierNotePrivee'
     }
 

@@ -69,11 +69,16 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
   // Un gestionnaire département invité est rattaché à une structure : celle de son invitant
   // s'il est lui-même gestionnaire du département, sinon la préfecture du département
   // (structure du membre 'prefecture-<dept>' de la gouvernance).
+  // Un gestionnaire région invité n'est rattaché à aucune structure (décision PO #1279).
   async #structureUidPourInvitation(
     roleACreer: TypologieRole,
     command: Command,
     utilisateurCourantState: UtilisateurState
   ): Promise<number | undefined> {
+    if (roleACreer === 'Gestionnaire région') {
+      return undefined
+    }
+
     if (roleACreer !== 'Gestionnaire département') {
       return utilisateurCourantState.structureUid?.value
     }

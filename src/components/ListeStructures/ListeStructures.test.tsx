@@ -31,6 +31,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel()}
       />
     )
@@ -67,6 +68,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel()}
       />
     )
@@ -85,6 +87,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel({ structures: [] })}
       />
     )
@@ -101,6 +104,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams('codeDepartement=69&labellisation=aidants-connect')}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel()}
       />
     )
@@ -120,6 +124,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams('page=3')}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel()}
       />
     )
@@ -139,6 +144,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
         viewModel={viewModel()}
       />
     )
@@ -161,6 +167,7 @@ describe('liste structures', () => {
         estScopeNational={false}
         libelleTerritoireRestreint="Rhône (69)"
         searchParams={new URLSearchParams()}
+        utilisateurRole="Gestionnaire département"
         viewModel={viewModel()}
       />
     )
@@ -173,6 +180,26 @@ describe('liste structures', () => {
     expect(screen.queryByText('Par zone géographique')).toBeNull()
   })
 
+  it('pour un gestionnaire région, le drawer propose le filtre géographique malgré le scope restreint', async () => {
+    // GIVEN
+    renderComponent(
+      <ListeStructures
+        estScopeNational={false}
+        libelleTerritoireRestreint="Rhône (69)"
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Gestionnaire région"
+        viewModel={viewModel()}
+      />
+    )
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Filtrer' }))
+
+    // THEN
+    expect(screen.getByText('Par zone géographique')).toBeDefined()
+    expect(screen.queryByText('Recherche limitée à votre département : Rhône (69)')).toBeNull()
+  })
+
   it('affiche le message d’erreur quand le view model est en erreur', () => {
     // WHEN
     renderComponent(
@@ -180,6 +207,7 @@ describe('liste structures', () => {
         estScopeNational={true}
         libelleTerritoireRestreint=""
         searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
         viewModel={{ message: 'Impossible de récupérer la liste des structures', type: 'error' }}
       />
     )
