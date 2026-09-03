@@ -87,6 +87,11 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       conditions.push(Prisma.sql`v.structure_id = ${filtres.scopeFiltre.id}`)
       return
     }
+    // Défense en profondeur : le scope departemental s'applique toujours, les filtres
+    // géographiques explicites s'y intersectent (décision PO #1279)
+    if (filtres.scopeFiltre.type === 'departemental' && filtres.scopeFiltre.codes.length > 0) {
+      conditions.push(Prisma.sql`a.departement = ANY(${[...filtres.scopeFiltre.codes]})`)
+    }
     if (filtres.codeEpci !== undefined) {
       conditions.push(Prisma.sql`a.code_insee IN (
         SELECT c.code_insee
@@ -97,12 +102,6 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
       )`)
     } else if (filtres.codeDepartement !== undefined) {
       conditions.push(Prisma.sql`a.departement = ${filtres.codeDepartement}`)
-    } else if (
-      filtres.codeRegion === undefined &&
-      filtres.scopeFiltre.type === 'departemental' &&
-      filtres.scopeFiltre.codes.length > 0
-    ) {
-      conditions.push(Prisma.sql`a.departement = ANY(${[...filtres.scopeFiltre.codes]})`)
     }
   }
 

@@ -28,6 +28,12 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
 
+  // Le gestionnaire région atterrit sur le tableau de bord de sa région (validation PO #1279).
+  const codeRegion = contexte.codeRegion()
+  if (contexte.aCesRoles('gestionnaire_region') && codeRegion !== null) {
+    redirect(`/tableau-de-bord/region/${codeRegion}`)
+  }
+
   const options = gouvernancesSelecteurPresenteur(contexte)
   if (options.length >= 2 && options[0].value !== 'France') {
     redirect(`/tableau-de-bord/departement/${options[0].value}`)

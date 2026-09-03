@@ -22,7 +22,7 @@ export default function SelecteurRole({ ariaControlsId, startRoleTransition }: P
         }
       }}
       options={roles
-        .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')
+        .filter((role) => role !== 'Gestionnaire groupement')
         .map((role) => ({
           id: role,
           isSelected: role === sessionUtilisateurViewModel.role.nom,

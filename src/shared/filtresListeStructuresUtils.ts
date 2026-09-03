@@ -1,6 +1,7 @@
 import departements from '../../ressources/departements.json'
 import epci from '../../ressources/epci.json'
 import regions from '../../ressources/regions.json'
+import { TypologieRole } from '@/domain/Role'
 import {
   FiltreGeographiqueStructures,
   FiltreLabellisationStructures,
@@ -10,11 +11,12 @@ import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
 /**
  * Construit les filtres pour le loader à partir des paramètres d'URL et du scope utilisateur.
- * Le filtre géographique (département/région) n'est disponible qu'en scope national.
+ * Le filtre géographique est disponible en scope national et pour les gestionnaires région (limité à leur région).
  */
 export function buildFiltresListeStructures(
   params: FiltresListeStructuresURLParams,
   scopeFiltre: ScopeFiltre,
+  utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeStructures {
   const { codeDepartement, codeEpci, codeRegion, labellisation, page, recherche } = params
@@ -26,6 +28,13 @@ export function buildFiltresListeStructures(
     } else if (codeRegion !== undefined && codeRegion !== '') {
       geographique = { code: codeRegion, type: 'region' }
     } else if (codeDepartement !== undefined && codeDepartement !== '') {
+      geographique = { code: codeDepartement, type: 'departement' }
+    }
+  } else if (utilisateurRole === 'Gestionnaire région' && scopeFiltre.type === 'departemental') {
+    // Le département est validé contre le scope ; l'EPCI est intersecté avec le scope en SQL (décision PO #1279).
+    if (codeEpci !== undefined && codeEpci !== '') {
+      geographique = { code: codeEpci, type: 'epci' }
+    } else if (codeDepartement !== undefined && codeDepartement !== '' && scopeFiltre.codes.includes(codeDepartement)) {
       geographique = { code: codeDepartement, type: 'departement' }
     }
   }
@@ -44,10 +53,11 @@ export function buildFiltresListeStructures(
  */
 export function buildFiltresListeStructuresForExport(
   params: FiltresListeStructuresURLParams,
-  scopeFiltre: ScopeFiltre
+  scopeFiltre: ScopeFiltre,
+  utilisateurRole: TypologieRole
 ): FiltresListeStructures {
   return {
-    ...buildFiltresListeStructures(params, scopeFiltre),
+    ...buildFiltresListeStructures(params, scopeFiltre, utilisateurRole),
     pagination: { limite: 999999, page: 1 },
   }
 }

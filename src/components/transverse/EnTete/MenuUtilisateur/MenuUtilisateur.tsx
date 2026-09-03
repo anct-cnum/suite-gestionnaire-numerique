@@ -9,6 +9,7 @@ import styles from './MenuUtilisateur.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import SelecteurDepartement from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurDepartement/SelecteurDepartement'
+import SelecteurRegion from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRegion/SelecteurRegion'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 import SelecteurStructure from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurStructure/SelecteurStructure'
 
@@ -71,6 +72,10 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           <>
             {sessionUtilisateurViewModel.role.type === 'gestionnaire_departement' ? (
               <SelecteurDepartement ariaControlsId={ariaControlsId} />
+            ) : null}
+            {sessionUtilisateurViewModel.role.type === 'gestionnaire_region' &&
+            sessionUtilisateurViewModel.peutChangerDeRole ? (
+              <SelecteurRegion ariaControlsId={ariaControlsId} />
             ) : null}
             {sessionUtilisateurViewModel.role.type === 'gestionnaire_structure' &&
             sessionUtilisateurViewModel.peutChangerDeRole ? (

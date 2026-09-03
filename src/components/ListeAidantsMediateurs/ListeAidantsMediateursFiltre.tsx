@@ -22,6 +22,8 @@ export default function ListeAidantsMediateursFiltre({
   const [selectedRoles, setSelectedRoles] = useState<Array<string>>([])
   const [selectedHabilitations, setSelectedHabilitations] = useState<Array<string>>([])
   const [selectedFormations, setSelectedFormations] = useState<Array<string>>([])
+  const peutFiltrerGeographiquement =
+    utilisateurRole === 'Administrateur dispositif' || utilisateurRole === 'Gestionnaire région'
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
@@ -51,8 +53,8 @@ export default function ListeAidantsMediateursFiltre({
       params.set('anciens', 'true')
     }
 
-    // Filtre géographique - seulement pour les administrateur_dispositif
-    if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
+    // Filtre géographique - administrateurs (France entière) et gestionnaires région (leur région)
+    if (peutFiltrerGeographiquement && selectedZone) {
       params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
@@ -93,11 +95,12 @@ export default function ListeAidantsMediateursFiltre({
         </label>
       </div>
 
-      {utilisateurRole === 'Administrateur dispositif' && (
+      {peutFiltrerGeographiquement && (
         <>
           <FiltrerParZonesGeographiques
             key={cleReinitialisation}
             onSelectionner={setSelectedZone}
+            source={utilisateurRole === 'Administrateur dispositif' ? 'complet' : 'perimetre'}
             valeurInitiale={selectedZone}
           />
 

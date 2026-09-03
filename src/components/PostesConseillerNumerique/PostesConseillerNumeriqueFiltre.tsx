@@ -27,6 +27,8 @@ export default function PostesConseillerNumeriqueFiltre({
 
   const statutSelectId = useId()
   const bonificationToggleId = useId()
+  const peutFiltrerGeographiquement =
+    utilisateurRole === 'Administrateur dispositif' || utilisateurRole === 'Gestionnaire région'
 
   function createCheckboxHandler(
     currentValues: Array<string>,
@@ -43,8 +45,8 @@ export default function PostesConseillerNumeriqueFiltre({
   function handleApplyFilters(): void {
     const params = new URLSearchParams()
 
-    // Filtre géographique - seulement pour les administrateur_dispositif
-    if (utilisateurRole === 'Administrateur dispositif') {
+    // Filtre géographique - administrateurs (France entière) et gestionnaires région (leur région)
+    if (peutFiltrerGeographiquement) {
       applyGeographicFilter(params)
     }
 
@@ -111,11 +113,12 @@ export default function PostesConseillerNumeriqueFiltre({
 
   return (
     <div>
-      {utilisateurRole === 'Administrateur dispositif' ? (
+      {peutFiltrerGeographiquement ? (
         <>
           <FiltrerParZonesGeographiques
             key={cleReinitialisation}
             onSelectionner={setSelectedZone}
+            source={utilisateurRole === 'Administrateur dispositif' ? 'complet' : 'perimetre'}
             valeurInitiale={selectedZone}
           />
           <hr className="fr-hr" />

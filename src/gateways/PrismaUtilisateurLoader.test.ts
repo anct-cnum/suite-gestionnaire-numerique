@@ -65,7 +65,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
-        displayMenusPilotage: false,
+        displayMenusPilotage: true,
         isGestionnaireDepartement: false,
         role: 'gestionnaire_region',
         roleReadModel: {

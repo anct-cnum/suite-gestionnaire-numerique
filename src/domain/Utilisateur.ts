@@ -108,6 +108,13 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     })
   }
 
+  changerRegion(): Result<UtilisateurFailure> {
+    if (this.#isSuperAdmin) {
+      return 'OK'
+    }
+    return 'utilisateurNonAutoriseAChangerSaRegion'
+  }
+
   changerRole(nouveauRole: TypologieRole): Result<UtilisateurFailure> {
     if (this.#isSuperAdmin) {
       this.#role = new Role(nouveauRole)
@@ -164,6 +171,7 @@ export type UtilisateurFailure =
   | 'nomAbsent'
   | 'prenomAbsent'
   | 'telephoneInvalide'
+  | 'utilisateurNonAutoriseAChangerSaRegion'
   | 'utilisateurNonAutoriseAChangerSaStructure'
   | 'utilisateurNonAutoriseAChangerSonDepartement'
   | 'utilisateurNonAutoriseAChangerSonRole'

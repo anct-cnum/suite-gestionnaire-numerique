@@ -20,6 +20,10 @@ export interface UpdateDepartementUtilisateurRepository {
   updateDepartement(uid: UtilisateurUidState['value'], codeDepartement: string): Promise<void>
 }
 
+export interface UpdateRegionUtilisateurRepository {
+  updateRegion(uid: UtilisateurUidState['value'], codeRegion: string): Promise<void>
+}
+
 export interface UpdateStructureUtilisateurRepository {
   updateStructure(uid: UtilisateurUidState['value'], idStructure: null | number): Promise<void>
 }
@@ -39,5 +43,6 @@ export interface UtilisateurRepository
     FindUtilisateurByEmailRepository,
     GetUtilisateurRepository,
     UpdateDepartementUtilisateurRepository,
+    UpdateRegionUtilisateurRepository,
     UpdateStructureUtilisateurRepository,
     UpdateUtilisateurRepository {}

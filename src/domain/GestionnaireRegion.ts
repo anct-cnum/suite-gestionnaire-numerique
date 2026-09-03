@@ -1,5 +1,6 @@
 import { Region, RegionState } from './Region'
 import { Role } from './Role'
+import { StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, UtilisateurUid } from './Utilisateur'
 
 export class GestionnaireRegion extends Utilisateur {
@@ -7,10 +8,12 @@ export class GestionnaireRegion extends Utilisateur {
     return {
       ...super.state,
       region: this.#region.state,
+      ...(this.#structureUid === undefined ? {} : { structureUid: this.#structureUid.state }),
     }
   }
 
   readonly #region: Region
+  readonly #structureUid?: StructureUid
 
   constructor(
     uid: UtilisateurUid,
@@ -22,7 +25,8 @@ export class GestionnaireRegion extends Utilisateur {
     inviteLe: Date,
     telephone: Telephone,
     region: Region,
-    derniereConnexion?: Date
+    derniereConnexion?: Date,
+    structureUid?: StructureUid
   ) {
     super(
       uid,
@@ -37,6 +41,7 @@ export class GestionnaireRegion extends Utilisateur {
       derniereConnexion
     )
     this.#region = region
+    this.#structureUid = structureUid
   }
 
   override peutGerer(autre: Utilisateur): boolean {

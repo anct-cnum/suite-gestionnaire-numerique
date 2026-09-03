@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeStructuresLoader } from '@/gateways/PrismaListeStructuresLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -47,16 +48,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    const estAdmin = scopeFiltre.type === 'national'
+    // Le builder valide les filtres géographiques selon le rôle et le scope (décision PO #1279)
     const params: FiltresListeStructuresURLParams = {
-      codeDepartement: estAdmin ? codeDepartementDemande : undefined,
-      codeEpci: estAdmin ? codeEpciDemande : undefined,
-      codeRegion: estAdmin ? codeRegionDemande : undefined,
+      codeDepartement: codeDepartementDemande,
+      codeEpci: codeEpciDemande,
+      codeRegion: codeRegionDemande,
       labellisation: searchParams.get('labellisation') ?? undefined,
       recherche: searchParams.get('recherche') ?? undefined,
     }
 
-    const filtres = buildFiltresListeStructuresForExport(params, scopeFiltre)
+    const filtres = buildFiltresListeStructuresForExport(params, scopeFiltre, utilisateur.role.nom as TypologieRole)
 
     const structures = await new PrismaListeStructuresLoader().getForExport(filtres)
 

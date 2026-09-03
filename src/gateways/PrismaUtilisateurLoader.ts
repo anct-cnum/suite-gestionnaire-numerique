@@ -386,7 +386,10 @@ function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisate
   return {
     departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
-    displayMenusPilotage: role.nom === 'Gestionnaire département' || role.nom === 'Gestionnaire structure',
+    displayMenusPilotage:
+      role.nom === 'Gestionnaire département' ||
+      role.nom === 'Gestionnaire région' ||
+      role.nom === 'Gestionnaire structure',
     email: utilisateurRecord.emailDeContact,
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,

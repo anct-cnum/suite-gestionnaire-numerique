@@ -110,6 +110,7 @@ export class UtilisateurFactory {
 
   #createGestionnaireRegion(code: string): Utilisateur {
     const region = new Region(this.#region ?? { code, nom: '' })
+    const structureUid = this.#structureUid === undefined ? undefined : new StructureUid(this.#structureUid)
     return new GestionnaireRegion(
       this.#uid,
       this.#nom,
@@ -120,7 +121,8 @@ export class UtilisateurFactory {
       this.#inviteLe,
       this.#telephone,
       region,
-      this.#derniereConnexion
+      this.#derniereConnexion,
+      structureUid
     )
   }
 

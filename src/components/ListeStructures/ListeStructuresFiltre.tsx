@@ -4,6 +4,7 @@ import { ReactElement, useEffect, useId, useState } from 'react'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Select from '../shared/Select/Select'
+import { TypologieRole } from '@/domain/Role'
 import { cleGeographiqueParType, territoireDepuisCodes } from '@/presenters/rechercheTerritoiresPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
@@ -15,8 +16,10 @@ export default function ListeStructuresFiltre({
   libelleTerritoireRestreint,
   onFilterAction,
   onResetAction,
+  utilisateurRole,
 }: Props): ReactElement {
   const selectLabellisationId = useId()
+  const peutFiltrerGeographiquement = estScopeNational || utilisateurRole === 'Gestionnaire région'
   const [selectedZone, setSelectedZone] = useState(territoireDepuisCodes(currentFilters))
   const [cleReinitialisation, setCleReinitialisation] = useState(0)
   const [selectedLabellisation, setSelectedLabellisation] = useState('')
@@ -38,8 +41,8 @@ export default function ListeStructuresFiltre({
   function appliquerFiltre(): void {
     const params = new URLSearchParams()
 
-    // Filtre géographique - réservé au scope national
-    if (estScopeNational && selectedZone) {
+    // Filtre géographique - scope national (admin) et gestionnaires région (leur région)
+    if (peutFiltrerGeographiquement && selectedZone) {
       params.set(cleGeographiqueParType[selectedZone.type], selectedZone.code)
     }
 
@@ -53,17 +56,18 @@ export default function ListeStructuresFiltre({
 
   return (
     <div className="sidepanel__content">
-      {estScopeNational ? (
+      {peutFiltrerGeographiquement ? (
         <>
           <FiltrerParZonesGeographiques
             key={cleReinitialisation}
             onSelectionner={setSelectedZone}
+            source={estScopeNational ? 'complet' : 'perimetre'}
             valeurInitiale={selectedZone}
           />
           <hr className="fr-hr" />
         </>
       ) : null}
-      {!estScopeNational && libelleTerritoireRestreint !== '' ? (
+      {!peutFiltrerGeographiquement && libelleTerritoireRestreint !== '' ? (
         <p className="fr-text--sm fr-mb-3w">Recherche limitée à votre département : {libelleTerritoireRestreint}</p>
       ) : null}
 
@@ -110,4 +114,5 @@ type Props = Readonly<{
   libelleTerritoireRestreint: string
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
+  utilisateurRole: TypologieRole
 }>

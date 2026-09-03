@@ -58,7 +58,17 @@ describe('périmètre de recherche territoriale du contexte', () => {
       scopes: [{ code: '10', type: 'structure' }],
     },
     {
-      intention: 'un gestionnaire de région n’a pas de périmètre',
+      intention: 'un gestionnaire de région est limité aux départements de sa région',
+      perimetreAttendu: { codesDepartement: ['01', '69'], type: 'departements' },
+      role: 'gestionnaire_region',
+      scopes: [
+        { code: '84', type: 'region' },
+        { code: '01', type: 'membre' },
+        { code: '69', type: 'coporteur' },
+      ],
+    },
+    {
+      intention: 'un gestionnaire de région sans départements résolus n’a pas de périmètre',
       perimetreAttendu: null,
       role: 'gestionnaire_region',
       scopes: [{ code: '84', type: 'region' }],

@@ -20,6 +20,12 @@ describe('gouvernance', () => {
       membresCoporteurs: [{ isCoporteur: true, structureUid: 79227291600034 }],
       utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
     },
+    {
+      intention:
+        'un gestionnaire région dont la structure de rattachement est membre co-porteur de la gouvernance peut la gérer',
+      membresCoporteurs: [{ isCoporteur: true, structureUid: 42 }],
+      utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région', structureUid: 42 }),
+    },
   ])('$intention', ({ membresCoporteurs, utilisateur }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({
@@ -64,9 +70,14 @@ describe('gouvernance', () => {
       utilisateur: utilisateurFactory({ codeOrganisation: '', role: 'Gestionnaire groupement' }),
     },
     {
-      intention:
-        'un gestionnaire région dont le département de la gouvernance appartient à celle-ci ne peut pas la gérer',
+      intention: 'un gestionnaire région sans structure de rattachement ne peut pas gérer une gouvernance de sa région',
       utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
+    },
+    {
+      intention:
+        'un gestionnaire région dont la structure de rattachement est membre mais pas co-porteur ne peut pas la gérer',
+      membresCoporteurs: [{ isCoporteur: false, structureUid: 42 }],
+      utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région', structureUid: 42 }),
     },
   ])('$intention', ({ membresCoporteurs, utilisateur }) => {
     // GIVEN

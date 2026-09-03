@@ -73,6 +73,54 @@ describe('ajouter un document à une feuille de route', () => {
     expect(result).toBe('OK')
   })
 
+  it('quand un document est ajouté par un gestionnaire région dont la structure est co-porteur de la gouvernance, alors il est téléversé puis enregistré', async () => {
+    // GIVEN
+    const ajouterDocument = new AjouterDocument(
+      new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceAvecCoporteurRepositorySpy(),
+      new StockageDocumentGatewaySpy(),
+      new GestionnaireRegionRepositorySpy()
+    )
+
+    // WHEN
+    const result = await ajouterDocument.handle({
+      chemin,
+      contenu,
+      date: epochTime.toISOString(),
+      nom,
+      uidEditeur: 4,
+      uidFeuilleDeRoute,
+    })
+
+    // THEN
+    expect(spiedDocumentTeleverse).toStrictEqual({ chemin, contenu })
+    expect(result).toBe('OK')
+  })
+
+  it('quand un document est ajouté par un gestionnaire région dont la structure n’est pas co-porteur, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterDocument = new AjouterDocument(
+      new FeuilleDeRouteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new StockageDocumentGatewaySpy(),
+      new GestionnaireRegionRepositorySpy()
+    )
+
+    // WHEN
+    const result = await ajouterDocument.handle({
+      chemin,
+      contenu,
+      date: epochTime.toISOString(),
+      nom,
+      uidEditeur: 4,
+      uidFeuilleDeRoute,
+    })
+
+    // THEN
+    expect(spiedDocumentTeleverse).toBeNull()
+    expect(result).toBe('editeurNePeutPasAjouterDocument')
+  })
+
   it("quand un document est ajouté par un gestionnaire qui n'a pas ce droit, alors une erreur est renvoyée et rien n'est téléversé", async () => {
     // GIVEN
     const ajouterDocument = new AjouterDocument(
@@ -172,8 +220,25 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
+class GestionnaireRegionRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(
+      utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région', structureUid: 42 })
+    )
+  }
+}
+
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
     return Promise.resolve(gouvernanceFactory({ uid: uid.state.value }))
+  }
+}
+
+class GouvernanceAvecCoporteurRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
+    return Promise.resolve(
+      gouvernanceFactory({ membresCoporteurs: [{ isCoporteur: true, structureUid: 42 }], uid: uid.state.value })
+    )
   }
 }

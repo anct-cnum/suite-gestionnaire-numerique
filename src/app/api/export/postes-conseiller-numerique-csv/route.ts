@@ -55,15 +55,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    const codeDepartementEffectif = estAdmin && filtres.codeRegion === undefined ? filtres.codeDepartement : undefined
-    const codeEpciEffectif = estAdmin ? filtres.codeEpci : undefined
+    const estGestionnaireRegion = utilisateur.role.nom === 'Gestionnaire région' && scopeFiltre.type === 'departemental'
+    // Le département est validé contre le scope ; l'EPCI est intersecté avec le scope en SQL (décision PO #1279)
+    const filtreDepartementAutorise =
+      (estAdmin && filtres.codeRegion === undefined) ||
+      (estGestionnaireRegion &&
+        filtres.codeDepartement !== undefined &&
+        scopeFiltre.codes.includes(filtres.codeDepartement))
+    const codeDepartementEffectif = filtreDepartementAutorise ? filtres.codeDepartement : undefined
+    const codeEpciEffectif = estAdmin || estGestionnaireRegion ? filtres.codeEpci : undefined
+    const codeRegionEffectif = estAdmin ? filtres.codeRegion : undefined
 
     const postesLoader = new PrismaPostesConseillerNumeriqueLoader()
     const postesReadModel = await postesLoader.get({
       bonification: filtres.bonification,
       codeDepartement: codeDepartementEffectif,
       codeEpci: codeEpciEffectif,
-      codeRegion: filtres.codeRegion,
+      codeRegion: codeRegionEffectif,
       conventions: filtres.conventions,
       pagination: {
         limite: filtres.limite,
