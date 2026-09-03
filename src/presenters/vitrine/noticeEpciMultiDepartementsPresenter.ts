@@ -13,13 +13,12 @@ export function noticeEpciMultiDepartementsPresenter(
   }
   return {
     description:
-      'Les données présentées couvrent l’ensemble de ses communes,' +
+      `Cette intercommunalité s’étend sur ${epci.nombreDepartements} départements.` +
+      ' Les données présentées couvrent l’ensemble de ses communes,' +
       ` y compris celles situées hors ${duDepartement(departement)}.`,
-    titre: `Cette intercommunalité s’étend sur ${epci.nombreDepartements} départements.`,
   }
 }
 
 type NoticeEpciMultiDepartementsViewModel = Readonly<{
   description: string
-  titre: string
 }>

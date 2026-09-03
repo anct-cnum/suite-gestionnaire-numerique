@@ -5,26 +5,49 @@ import NoticeInformation from './NoticeInformation'
 import { renderComponent } from '../../testHelper'
 
 describe('notice information', () => {
-  it('affiche le bandeau d’information avec le titre et le texte explicatif', () => {
+  it('avec un titre, affiche le titre en gras sur sa propre ligne puis le texte explicatif', () => {
     // WHEN
     renderComponent(
       <NoticeInformation
         viewModel={{
           description:
-            'Les données présentées couvrent l’ensemble de ses communes, y compris celles situées hors du Rhône.',
-          titre: 'Cette intercommunalité s’étend sur 2 départements.',
+            'Il n’existe pas de gouvernance propre à une intercommunalité. Cette page présente la place' +
+            ' de la CC Saône-Beaujolais au sein de la gouvernance du Rhône.',
+          titre: 'La gouvernance est pilotée à l’échelle départementale',
         }}
       />
     )
 
     // THEN
-    const titre = screen.getByText('Cette intercommunalité s’étend sur 2 départements.')
-    expect(titre.textContent).toBe('Cette intercommunalité s’étend sur 2 départements.')
-    const description = screen.getByText(
-      'Les données présentées couvrent l’ensemble de ses communes, y compris celles situées hors du Rhône.'
-    )
+    const titre = screen.getByText('La gouvernance est pilotée à l’échelle départementale')
+    expect(titre.textContent).toBe('La gouvernance est pilotée à l’échelle départementale')
+    const description = screen.getByText('Il n’existe pas de gouvernance propre à une intercommunalité.', {
+      exact: false,
+    })
     expect(description.textContent).toBe(
-      'Les données présentées couvrent l’ensemble de ses communes, y compris celles situées hors du Rhône.'
+      'Il n’existe pas de gouvernance propre à une intercommunalité. Cette page présente la place' +
+        ' de la CC Saône-Beaujolais au sein de la gouvernance du Rhône.'
+    )
+    expect(titre).not.toBe(description)
+  })
+
+  it('sans titre, affiche uniquement le texte explicatif', () => {
+    // WHEN
+    renderComponent(
+      <NoticeInformation
+        viewModel={{
+          description:
+            'Cette intercommunalité s’étend sur 2 départements. Les données présentées couvrent l’ensemble' +
+            ' de ses communes, y compris celles situées hors du Rhône.',
+        }}
+      />
+    )
+
+    // THEN
+    const description = screen.getByText('Cette intercommunalité s’étend sur 2 départements.', { exact: false })
+    expect(description.textContent).toBe(
+      'Cette intercommunalité s’étend sur 2 départements. Les données présentées couvrent l’ensemble' +
+        ' de ses communes, y compris celles situées hors du Rhône.'
     )
   })
 })
