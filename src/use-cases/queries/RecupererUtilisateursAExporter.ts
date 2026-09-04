@@ -22,6 +22,7 @@ export type UnUtilisateurAExporterReadModel = Readonly<{
   departements: ReadonlyArray<string>
   derniereConnexion: Date | null
   email: string
+  isActive: boolean
   nom: string
   prenom: string
   role: 'coporteur' | 'gestionnaire département' | 'membre'

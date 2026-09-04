@@ -35,6 +35,8 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
       departements: record.relationDepartement === null ? [] : [record.relationDepartement.nom],
       derniereConnexion: record.derniereConnexion,
       email: record.emailDeContact,
+      // Même règle métier que la vue « Mon équipe » : un utilisateur est activé s’il s’est déjà connecté
+      isActive: record.derniereConnexion !== null,
       nom: record.nom,
       prenom: record.prenom,
       role: 'gestionnaire département' as const,
@@ -91,6 +93,7 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
         departements: [...new Set(membres.map((membre) => membre.relationGouvernance.relationDepartement.nom))],
         derniereConnexion: record.derniereConnexion,
         email: record.emailDeContact,
+        isActive: record.derniereConnexion !== null,
         nom: record.nom,
         prenom: record.prenom,
         role: membres.some((membre) => membre.isCoporteur) ? ('coporteur' as const) : ('membre' as const),

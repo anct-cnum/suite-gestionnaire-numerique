@@ -53,6 +53,7 @@ describe('prisma utilisateurs à exporter loader', () => {
       structureId: 1,
     })
     await creerUnUtilisateur({
+      derniereConnexion: null,
       emailDeContact: 'marie.chollet@example.net',
       nom: 'Chollet',
       prenom: 'Marie',
@@ -88,6 +89,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'harpagon.avare@example.net',
+        isActive: true,
         nom: 'Avare',
         prenom: 'Harpagon',
         role: 'gestionnaire département',
@@ -99,6 +101,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'paul.bernard@example.net',
+        isActive: true,
         nom: 'Bernard',
         prenom: 'Paul',
         role: 'coporteur',
@@ -108,8 +111,9 @@ describe('prisma utilisateurs à exporter loader', () => {
       },
       {
         departements: ['Paris'],
-        derniereConnexion: epochTime,
+        derniereConnexion: null,
         email: 'marie.chollet@example.net',
+        isActive: false,
         nom: 'Chollet',
         prenom: 'Marie',
         role: 'membre',

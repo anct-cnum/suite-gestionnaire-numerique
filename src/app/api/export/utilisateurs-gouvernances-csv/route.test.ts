@@ -54,7 +54,8 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
       {
         departements: ['Rhône'],
         derniereConnexion: epochTime,
-        email: 'paul@example.net',
+        email: 'p@ex.net',
+        isActive: true,
         nom: 'Bernard, le sage',
         prenom: 'Paul',
         role: 'coporteur',
@@ -66,6 +67,7 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
         departements: ['Rhône'],
         derniereConnexion: null,
         email: 'anne@example.net',
+        isActive: false,
         nom: 'Avare',
         prenom: 'Harpagon',
         role: 'gestionnaire département',
@@ -90,9 +92,9 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
     const csv = new TextDecoder().decode(octets.slice(3))
     expect(csv).toBe(
       [
-        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Départements,Dernière connexion',
-        '"Bernard, le sage",Paul,paul@example.net,0102030405,coporteur,Coporteuse,11111111111111,Rhône,01/01/1970',
-        'Avare,Harpagon,anne@example.net,0102030406,gestionnaire département,,,Rhône,',
+        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Départements,Statut,Dernière connexion',
+        '"Bernard, le sage",Paul,p@ex.net,0102030405,coporteur,Coporteuse,11111111111111,Rhône,Activé,01/01/1970',
+        'Avare,Harpagon,anne@example.net,0102030406,gestionnaire département,,,Rhône,En attente,',
       ].join('\n')
     )
   })

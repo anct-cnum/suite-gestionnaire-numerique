@@ -53,6 +53,7 @@ function generateCSV(utilisateurs: UtilisateursAExporterReadModel): string {
     'Structure',
     'SIRET',
     'Départements',
+    'Statut',
     'Dernière connexion',
   ]
 
@@ -72,6 +73,7 @@ function generateCSV(utilisateurs: UtilisateursAExporterReadModel): string {
     escapeCSV(utilisateur.structure),
     escapeCSV(utilisateur.siret),
     escapeCSV(utilisateur.departements.join(' / ')),
+    utilisateur.isActive ? 'Activé' : 'En attente',
     utilisateur.derniereConnexion === null ? '' : formaterEnDateFrancaise(utilisateur.derniereConnexion),
   ])
 
