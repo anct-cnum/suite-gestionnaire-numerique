@@ -4,18 +4,24 @@ import Dot from '../shared/Dot/Dot'
 import Information from '@/components/shared/Information/Information'
 
 export default function VentilationFinancements({
-  jauges,
+  contexte,
   nombreDeFinancementsEngagesParLEtat,
-  noteMethodologique,
   ventilationSubventionsParEnveloppe,
 }: Props): ReactElement {
   return (
     <>
       <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w" style={{ fontWeight: 500 }}>
         {nombreDeFinancementsEngagesParLEtat} financement(s) engagé(s) par l&apos;État
-        {noteMethodologique !== undefined && (
+        {contexte === 'departement' && (
           <Information>
-            <p className="fr-mb-0">{noteMethodologique}</p>
+            <p className="fr-mb-0">
+              Nombre de demandes de subventions validées des feuilles de route de votre gouvernance.
+            </p>
+          </Information>
+        )}
+        {contexte === 'admin' && (
+          <Information>
+            <p className="fr-mb-0">Nombre de demandes de subventions validées des feuilles de route.</p>
           </Information>
         )}
       </div>
@@ -38,7 +44,7 @@ export default function VentilationFinancements({
               >
                 {detail.total}
               </div>
-              {jauges && (
+              {contexte === 'admin' && (
                 <div style={{ width: '6.25rem' }} title={`${detail.pourcentageConsomme}% de l'enveloppe consommée`}>
                   <div
                     className="fr-text--sm fr-mb-1w"
@@ -69,10 +75,11 @@ export default function VentilationFinancements({
   )
 }
 
+type ContexteFinancement = 'admin' | 'departement'
+
 type Props = Readonly<{
-  jauges: boolean
+  contexte: ContexteFinancement
   nombreDeFinancementsEngagesParLEtat: number
-  noteMethodologique?: string
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     color: string
     couleurGraphique: string
