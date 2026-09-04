@@ -18,15 +18,16 @@ describe('récupérer les utilisateurs à exporter', () => {
     // THEN
     expect(utilisateurs).toStrictEqual([
       {
-        departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'martin.tartempion@example.net',
+        isActive: true,
         nom: 'Tartempion',
         prenom: 'Martin',
         role: 'membre',
         siret: '11111111111111',
         structure: 'La structure',
         telephone: '0102030405',
+        territoires: ['Rhône'],
       },
     ])
   })
@@ -36,15 +37,16 @@ class UtilisateursAExporterLoaderStub implements UtilisateursAExporterLoader {
   async get(): Promise<UtilisateursAExporterReadModel> {
     return Promise.resolve([
       {
-        departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'martin.tartempion@example.net',
+        isActive: true,
         nom: 'Tartempion',
         prenom: 'Martin',
         role: 'membre',
         siret: '11111111111111',
         structure: 'La structure',
         telephone: '0102030405',
+        territoires: ['Rhône'],
       },
     ])
   }

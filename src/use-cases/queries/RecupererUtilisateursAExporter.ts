@@ -19,15 +19,23 @@ export interface UtilisateursAExporterLoader {
 export type UtilisateursAExporterReadModel = ReadonlyArray<UnUtilisateurAExporterReadModel>
 
 export type UnUtilisateurAExporterReadModel = Readonly<{
-  departements: ReadonlyArray<string>
   derniereConnexion: Date | null
   email: string
+  isActive: boolean
   nom: string
   prenom: string
-  role: 'coporteur' | 'gestionnaire département' | 'membre'
+  role: RoleAExporter
   siret: string
   structure: string
   telephone: string
+  territoires: ReadonlyArray<string>
 }>
+
+export type RoleAExporter =
+  | 'administrateur dispositif'
+  | 'coporteur'
+  | 'gestionnaire département'
+  | 'gestionnaire région'
+  | 'membre'
 
 type Query = Readonly<Record<string, never>>
