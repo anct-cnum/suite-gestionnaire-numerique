@@ -17,7 +17,7 @@ describe('prisma utilisateurs à exporter loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('je récupère les gestionnaires de département et les utilisateurs des structures membres validées, triés par nom', async () => {
+  it('je récupère les administrateurs, les gestionnaires de territoire et les utilisateurs des structures membres validées, triés par nom', async () => {
     // GIVEN
     await creerUneRegion({ code: '84', nom: 'Auvergne-Rhône-Alpes' })
     await creerUnDepartement({ code: '69', nom: 'Rhône', regionCode: '84' })
@@ -75,6 +75,23 @@ describe('prisma utilisateurs à exporter loader', () => {
       structureId: 1,
     })
     await creerUnUtilisateur({
+      emailDeContact: 'alice.dujardin@example.net',
+      nom: 'Dujardin',
+      prenom: 'Alice',
+      role: 'administrateur_dispositif',
+      ssoEmail: 'alice.dujardin@example.net',
+      ssoId: 'admin1',
+    })
+    await creerUnUtilisateur({
+      emailDeContact: 'remi.eluard@example.net',
+      nom: 'Eluard',
+      prenom: 'Rémi',
+      regionCode: '84',
+      role: 'gestionnaire_region',
+      ssoEmail: 'remi.eluard@example.net',
+      ssoId: 'region84',
+    })
+    await creerUnUtilisateur({
       nom: 'SansStructure',
       ssoEmail: 'sans.structure@example.net',
       ssoId: 'sansStructure',
@@ -86,7 +103,6 @@ describe('prisma utilisateurs à exporter loader', () => {
     // THEN
     expect(utilisateurs).toStrictEqual([
       {
-        departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'harpagon.avare@example.net',
         isActive: true,
@@ -96,9 +112,9 @@ describe('prisma utilisateurs à exporter loader', () => {
         siret: '',
         structure: '',
         telephone: '0102030405',
+        territoires: ['Rhône'],
       },
       {
-        departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'paul.bernard@example.net',
         isActive: true,
@@ -108,9 +124,9 @@ describe('prisma utilisateurs à exporter loader', () => {
         siret: '11111111111111',
         structure: 'Structure Coporteuse',
         telephone: '0102030405',
+        territoires: ['Rhône'],
       },
       {
-        departements: ['Paris'],
         derniereConnexion: null,
         email: 'marie.chollet@example.net',
         isActive: false,
@@ -120,6 +136,31 @@ describe('prisma utilisateurs à exporter loader', () => {
         siret: '22222222222222',
         structure: 'Antenne Lyon',
         telephone: '0102030405',
+        territoires: ['Paris'],
+      },
+      {
+        derniereConnexion: epochTime,
+        email: 'alice.dujardin@example.net',
+        isActive: true,
+        nom: 'Dujardin',
+        prenom: 'Alice',
+        role: 'administrateur dispositif',
+        siret: '',
+        structure: '',
+        telephone: '0102030405',
+        territoires: [],
+      },
+      {
+        derniereConnexion: epochTime,
+        email: 'remi.eluard@example.net',
+        isActive: true,
+        nom: 'Eluard',
+        prenom: 'Rémi',
+        role: 'gestionnaire région',
+        siret: '',
+        structure: '',
+        telephone: '0102030405',
+        territoires: ['Auvergne-Rhône-Alpes'],
       },
     ])
   })

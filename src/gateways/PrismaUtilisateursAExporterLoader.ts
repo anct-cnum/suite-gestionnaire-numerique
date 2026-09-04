@@ -9,40 +9,43 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
   readonly #dataResource = prisma.utilisateurRecord
 
   async get(): Promise<UtilisateursAExporterReadModel> {
-    const [gestionnairesDepartement, utilisateursDeStructuresMembres] = await Promise.all([
-      this.#gestionnairesDepartement(),
+    const [administrateursEtGestionnaires, utilisateursDeStructuresMembres] = await Promise.all([
+      this.#administrateursEtGestionnairesDeTerritoire(),
       this.#utilisateursDeStructuresMembres(),
     ])
 
-    return [...gestionnairesDepartement, ...utilisateursDeStructuresMembres].sort(
+    return [...administrateursEtGestionnaires, ...utilisateursDeStructuresMembres].sort(
       (utilisateurA, utilisateurB) =>
         utilisateurA.nom.localeCompare(utilisateurB.nom) || utilisateurA.prenom.localeCompare(utilisateurB.prenom)
     )
   }
 
-  async #gestionnairesDepartement(): Promise<Array<UnUtilisateurAExporterReadModel>> {
+  async #administrateursEtGestionnairesDeTerritoire(): Promise<Array<UnUtilisateurAExporterReadModel>> {
     const records = await this.#dataResource.findMany({
       include: {
         relationDepartement: true,
+        relationRegion: true,
       },
       where: {
         isSupprime: false,
-        role: 'gestionnaire_departement',
+        role: {
+          in: rolesHorsStructure,
+        },
       },
     })
 
     return records.map((record) => ({
-      departements: record.relationDepartement === null ? [] : [record.relationDepartement.nom],
       derniereConnexion: record.derniereConnexion,
       email: record.emailDeContact,
       // Même règle métier que la vue « Mon équipe » : un utilisateur est activé s’il s’est déjà connecté
       isActive: record.derniereConnexion !== null,
       nom: record.nom,
       prenom: record.prenom,
-      role: 'gestionnaire département' as const,
+      role: libelleParRole[record.role as RoleHorsStructure],
       siret: '',
       structure: '',
       telephone: record.telephone,
+      territoires: territoireGere(record),
     }))
   }
 
@@ -81,7 +84,7 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
           },
         },
         role: {
-          not: 'gestionnaire_departement',
+          notIn: rolesHorsStructure,
         },
       },
     })
@@ -90,7 +93,6 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
       const structure = record.relationStructureAdministrative
       const membres = structure?.membres ?? []
       return {
-        departements: [...new Set(membres.map((membre) => membre.relationGouvernance.relationDepartement.nom))],
         derniereConnexion: record.derniereConnexion,
         email: record.emailDeContact,
         isActive: record.derniereConnexion !== null,
@@ -100,7 +102,38 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
         siret: structure?.siret ?? '',
         structure: structure?.denomination_antenne ?? structure?.denomination_sirene ?? '',
         telephone: record.telephone,
+        territoires: [...new Set(membres.map((membre) => membre.relationGouvernance.relationDepartement.nom))],
       }
     })
   }
+}
+
+const libelleParRole = {
+  administrateur_dispositif: 'administrateur dispositif',
+  gestionnaire_departement: 'gestionnaire département',
+  gestionnaire_region: 'gestionnaire région',
+} as const
+
+type RoleHorsStructure = keyof typeof libelleParRole
+
+const rolesHorsStructure: Array<RoleHorsStructure> = [
+  'administrateur_dispositif',
+  'gestionnaire_departement',
+  'gestionnaire_region',
+]
+
+function territoireGere(
+  record: Readonly<{
+    relationDepartement: null | Readonly<{ nom: string }>
+    relationRegion: null | Readonly<{ nom: string }>
+    role: string
+  }>
+): ReadonlyArray<string> {
+  if (record.role === 'gestionnaire_departement' && record.relationDepartement !== null) {
+    return [record.relationDepartement.nom]
+  }
+  if (record.role === 'gestionnaire_region' && record.relationRegion !== null) {
+    return [record.relationRegion.nom]
+  }
+  return []
 }

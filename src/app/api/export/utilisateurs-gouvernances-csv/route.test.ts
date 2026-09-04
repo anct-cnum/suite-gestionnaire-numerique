@@ -52,7 +52,6 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(utilisateurReadModelFactory())
     vi.spyOn(RecupererUtilisateursAExporter.prototype, 'handle').mockResolvedValueOnce([
       {
-        departements: ['Rhône'],
         derniereConnexion: epochTime,
         email: 'p@ex.net',
         isActive: true,
@@ -62,9 +61,9 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
         siret: '11111111111111',
         structure: 'Coporteuse',
         telephone: '0102030405',
+        territoires: ['Rhône'],
       },
       {
-        departements: ['Rhône'],
         derniereConnexion: null,
         email: 'anne@example.net',
         isActive: false,
@@ -74,6 +73,7 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
         siret: '',
         structure: '',
         telephone: '0102030406',
+        territoires: ['Rhône'],
       },
     ])
 
@@ -92,7 +92,7 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
     const csv = new TextDecoder().decode(octets.slice(3))
     expect(csv).toBe(
       [
-        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Départements,Statut,Dernière connexion',
+        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Territoires,Statut,Dernière connexion',
         '"Bernard, le sage",Paul,p@ex.net,0102030405,coporteur,Coporteuse,11111111111111,Rhône,Activé,01/01/1970',
         'Avare,Harpagon,anne@example.net,0102030406,gestionnaire département,,,Rhône,En attente,',
       ].join('\n')
