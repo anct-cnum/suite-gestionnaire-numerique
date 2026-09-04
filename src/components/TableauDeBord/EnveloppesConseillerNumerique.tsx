@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 import Dot from '../shared/Dot/Dot'
 import { EnveloppeConseillerNumeriqueViewModel } from '@/presenters/tableauDeBord/enveloppesConseillerNumeriquePresenter'
 
-export default function EnveloppesConseillerNumerique({ enveloppes, jauges }: Props): ReactElement {
+export default function EnveloppesConseillerNumerique({ contexte, enveloppes }: Props): ReactElement {
   return (
     <ul>
       {enveloppes.map((enveloppe) => (
@@ -26,7 +26,7 @@ export default function EnveloppesConseillerNumerique({ enveloppes, jauges }: Pr
             >
               {enveloppe.total}
             </div>
-            {jauges && (
+            {contexte === 'admin' && (
               <div style={{ width: '6.25rem' }} title={`${enveloppe.pourcentageConsomme}% de l'enveloppe consommée`}>
                 <div
                   className="fr-text--sm fr-mb-1w"
@@ -57,6 +57,6 @@ export default function EnveloppesConseillerNumerique({ enveloppes, jauges }: Pr
 }
 
 type Props = Readonly<{
+  contexte: 'admin' | 'departement'
   enveloppes: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
-  jauges: boolean
 }>

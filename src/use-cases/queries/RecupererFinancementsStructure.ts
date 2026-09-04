@@ -5,12 +5,8 @@ export interface FinancementsStructureLoader {
 }
 
 export type FinancementsStructureReadModel = Readonly<{
-  conseillerNumerique: Readonly<{
-    conventionne: string
-    verse: string
-  }>
-  fneEngage: string
   nombreDeFinancementsEngagesParLEtat: number
+  totalFinancements: string
   ventilationSubventionsParEnveloppe: ReadonlyArray<
     Readonly<{
       enveloppeTotale: string
