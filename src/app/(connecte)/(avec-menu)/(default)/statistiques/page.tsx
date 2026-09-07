@@ -96,16 +96,18 @@ export default async function StatistiquesController({ searchParams }: Props): P
         <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-mb-4v fr-flex-wrap">
           <div className="fr-flex fr-align-items-center fr-flex-gap-2v fr-flex-grow-1 fr-flex-wrap">
             <SelecteurRangeDates dateDebut={dateDebut} dateFin={dateFin} />
-            <FiltreRecherche
-              libelle="Département"
-              libelleBouton="Départements"
-              libellePluriel="départements sélectionnés"
-              libelleSingulier="département sélectionné"
-              options={departementsOptions}
-              param="departements"
-              placeholder="Chercher un département"
-              selection={departementsSelectionnes}
-            />
+            {departementsOptions.length > 1 ? (
+              <FiltreRecherche
+                libelle="Département"
+                libelleBouton="Départements"
+                libellePluriel="départements sélectionnés"
+                libelleSingulier="département sélectionné"
+                options={departementsOptions}
+                param="departements"
+                placeholder="Chercher un département"
+                selection={departementsSelectionnes}
+              />
+            ) : null}
             <FiltreRecherche
               libelle="Commune"
               libelleBouton="Communes"
@@ -116,16 +118,18 @@ export default async function StatistiquesController({ searchParams }: Props): P
               selection={communesSelectionnees}
               urlRecherche="/api/statistiques/communes"
             />
-            <FiltreRecherche
-              libelle="Structure"
-              libelleBouton="Structures employeuses"
-              libellePluriel="structures sélectionnées"
-              libelleSingulier="structure sélectionnée"
-              param="structuresEmployeuses"
-              placeholder="Chercher une structure employeuse"
-              selection={structuresEmployeusesSelectionnees}
-              urlRecherche="/api/statistiques/structures-employeuses"
-            />
+            {scopeFiltre.type === 'structure' ? null : (
+              <FiltreRecherche
+                libelle="Structure"
+                libelleBouton="Structures employeuses"
+                libellePluriel="structures sélectionnées"
+                libelleSingulier="structure sélectionnée"
+                param="structuresEmployeuses"
+                placeholder="Chercher une structure employeuse"
+                selection={structuresEmployeusesSelectionnees}
+                urlRecherche="/api/statistiques/structures-employeuses"
+              />
+            )}
             <FiltreRecherche
               libelle="Lieu"
               libelleBouton="Lieux"
