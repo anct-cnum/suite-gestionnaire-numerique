@@ -122,7 +122,7 @@
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.15.0",
     "@vitejs/plugin-react": "^4.4.1",
-    "@vitest/browser": "3.2.4",
+    "@vitest/browser": "3.2.7",
     "@vitest/coverage-istanbul": "^3.1.2",
     "@vitest/eslint-plugin": "^1.1.36",
     "dotenv": "^17.4.2",
@@ -159,7 +159,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.26.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.2",
+    "vitest": "^3.2.6",
     "vitest-dom": "^0.1.1"
   },
   "engines": {
