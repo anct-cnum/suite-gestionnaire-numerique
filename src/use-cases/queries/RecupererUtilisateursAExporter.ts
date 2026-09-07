@@ -33,10 +33,6 @@ export type UnUtilisateurAExporterReadModel = Readonly<{
 }>
 
 export type RoleAExporter =
-  | 'administrateur dispositif'
-  | 'coporteur'
-  | 'gestionnaire département'
-  | 'gestionnaire région'
-  | 'membre'
+  'administrateur dispositif' | 'coporteur' | 'gestionnaire département' | 'gestionnaire région' | 'membre'
 
 type Query = Readonly<Record<string, never>>

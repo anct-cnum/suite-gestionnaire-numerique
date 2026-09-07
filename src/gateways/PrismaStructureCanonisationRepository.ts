@@ -195,8 +195,7 @@ function estViolationUnicite(erreur: unknown): boolean {
     return true
   }
   const meta = erreur.meta as
-    | Readonly<{ driverAdapterError?: Readonly<{ cause?: Readonly<{ originalCode?: string }> }> }>
-    | undefined
+    Readonly<{ driverAdapterError?: Readonly<{ cause?: Readonly<{ originalCode?: string }> }> }> | undefined
 
   return erreur.code === 'P2010' && meta?.driverAdapterError?.cause?.originalCode === '23505'
 }

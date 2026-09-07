@@ -23,8 +23,7 @@ export interface RechercheTerritoiresLoader {
 }
 
 export type PerimetreRechercheTerritoires =
-  | Readonly<{ codesDepartement: ReadonlyArray<string>; type: 'departements' }>
-  | Readonly<{ type: 'complet' }>
+  Readonly<{ codesDepartement: ReadonlyArray<string>; type: 'departements' }> | Readonly<{ type: 'complet' }>
 
 export type TerritoiresTrouvesReadModel = Readonly<{
   territoires: ReadonlyArray<UnTerritoireTrouveReadModel>

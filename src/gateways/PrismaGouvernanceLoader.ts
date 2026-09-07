@@ -114,8 +114,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
         actions: feuilleDeRoute.action.map((action) => {
           const demandeDeSubvention = action.demandesDeSubvention[0] as
-            | (typeof action.demandesDeSubvention)[number]
-            | undefined
+            (typeof action.demandesDeSubvention)[number] | undefined
           return {
             beneficiaires: beneficiairesSubvention([action], (enveloppe) => !isEnveloppeDeFormation(enveloppe)),
             budgetGlobal: action.budgetGlobal,

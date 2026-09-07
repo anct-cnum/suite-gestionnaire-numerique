@@ -3,8 +3,7 @@ import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 
 export type RapportPerimetre =
-  | Readonly<{ code: string; type: 'departement' | 'region' }>
-  | Readonly<{ type: 'national' }>
+  Readonly<{ code: string; type: 'departement' | 'region' }> | Readonly<{ type: 'national' }>
 
 export type AidantsDepartement = Readonly<{
   code: string

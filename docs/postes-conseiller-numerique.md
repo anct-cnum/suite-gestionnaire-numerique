@@ -28,11 +28,12 @@ Un même `poste_conum_id` peut avoir **plusieurs lignes** dans la table `poste`.
 Chaque ligne représente une personne différente ayant été associée à ce poste.
 
 Exemple pour `poste_conum_id=4` :
-| poste.id | personne | etat | subventions |
-|----------|----------|--------|-------------|
-| 4 | P1 | occupe | 3 |
-| 2891 | P2 | vacant | 0 |
-| 3965 | P3 | vacant | 0 |
+
+| poste.id | personne | etat   | subventions |
+| -------- | -------- | ------ | ----------- |
+| 4        | P1       | occupe | 3           |
+| 2891     | P2       | vacant | 0           |
+| 3965     | P3       | vacant | 0           |
 
 ### Particularité de la table `subvention`
 
@@ -48,11 +49,12 @@ Ces lignes correspondent à l'historique partiel des évolutions du poste (chang
 | DITP   | **V2**    | Renouvellement - Conseiller Numérique - État                |
 
 Exemple pour `poste_id=1853` :
-| source | enveloppe | montant | bonification | total |
-|--------|-----------|---------|--------------|-------|
-| DGCL | V1 | 50 000 € | 7 500 € | 57 500 € |
-| DGE | V2 | 50 000 € | 7 500 € | 57 500 € |
-| **TOTAL** | V1 + V2 | | | **115 000 €** |
+
+| source    | enveloppe | montant  | bonification | total         |
+| --------- | --------- | -------- | ------------ | ------------- |
+| DGCL      | V1        | 50 000 € | 7 500 €      | 57 500 €      |
+| DGE       | V2        | 50 000 € | 7 500 €      | 57 500 €      |
+| **TOTAL** | V1 + V2   |          |              | **115 000 €** |
 
 Pour simplifier la manipulation de ces données, pour centraliser les règles métiers sous-jacentes et pour éviter des régressions liées aux changement de structure de données de l'entrepôt, nous avons centralisé la totalité de ces règles dans une une vue SQL postes_conseiller_numerique_synthese.
 

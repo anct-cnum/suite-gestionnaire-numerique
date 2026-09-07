@@ -13,15 +13,13 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
         codeDepartement === 'france' ? await this.#queryFrance() : await this.#queryDepartement(codeDepartement)
 
       return {
-        enveloppes: rows.map(
-          (row): EnveloppeConseillerNumeriqueReadModel => ({
-            consommation: row.consommation,
-            dateDeDebut: row.dateDeDebut,
-            dateDeFin: row.dateDeFin,
-            libelle: row.libelle,
-            plafond: row.plafond,
-          })
-        ),
+        enveloppes: rows.map((row): EnveloppeConseillerNumeriqueReadModel => ({
+          consommation: row.consommation,
+          dateDeDebut: row.dateDeDebut,
+          dateDeFin: row.dateDeFin,
+          libelle: row.libelle,
+          plafond: row.plafond,
+        })),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaEnveloppesConseillerNumeriqueLoader', {
@@ -61,15 +59,13 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
       `
 
       return {
-        enveloppes: rows.map(
-          (row): EnveloppeConseillerNumeriqueReadModel => ({
-            consommation: row.consommation,
-            dateDeDebut: row.dateDeDebut,
-            dateDeFin: row.dateDeFin,
-            libelle: row.libelle,
-            plafond: row.plafond,
-          })
-        ),
+        enveloppes: rows.map((row): EnveloppeConseillerNumeriqueReadModel => ({
+          consommation: row.consommation,
+          dateDeDebut: row.dateDeDebut,
+          dateDeFin: row.dateDeFin,
+          libelle: row.libelle,
+          plafond: row.plafond,
+        })),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaEnveloppesConseillerNumeriqueLoader', {
@@ -119,15 +115,13 @@ export class PrismaEnveloppesConseillerNumeriqueLoader implements EnveloppesCons
       `
 
       return {
-        enveloppes: rows.map(
-          (row): EnveloppeConseillerNumeriqueReadModel => ({
-            consommation: row.consommation,
-            dateDeDebut: row.dateDeDebut,
-            dateDeFin: row.dateDeFin,
-            libelle: row.libelle,
-            plafond: row.plafond,
-          })
-        ),
+        enveloppes: rows.map((row): EnveloppeConseillerNumeriqueReadModel => ({
+          consommation: row.consommation,
+          dateDeDebut: row.dateDeDebut,
+          dateDeFin: row.dateDeFin,
+          libelle: row.libelle,
+          plafond: row.plafond,
+        })),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaEnveloppesConseillerNumeriqueLoader', {
