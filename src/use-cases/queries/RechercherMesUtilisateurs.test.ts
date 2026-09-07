@@ -40,8 +40,7 @@ const dummyUtilisateur = utilisateurReadModelFactory()
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
   spiedFindByIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findById> | undefined
   spiedFindMesUtilisateursEtLeTotalArgs:
-    | Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal>
-    | undefined
+    Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal> | undefined
 
   async findById(id: number): Promise<UnUtilisateurReadModel> {
     this.spiedFindByIdArgs = [id]

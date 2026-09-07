@@ -49,8 +49,7 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     .then(
       (readModel) =>
         handleReadModelOrError(readModel, accompagnementsEtMediateursPresenter) as
-          | AccompagnementsEtMediateursViewModel
-          | ErrorViewModel
+          AccompagnementsEtMediateursViewModel | ErrorViewModel
     )
 
   const niveauDeFormationPromise = new PrismaNiveauDeFormationLoader()

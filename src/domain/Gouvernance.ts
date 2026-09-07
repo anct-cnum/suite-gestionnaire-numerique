@@ -186,10 +186,7 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 export type GouvernanceUidState = Readonly<{ value: string }>
 
 export type GouvernanceFailure =
-  | 'noteDeContexteDejaExistante'
-  | 'noteDeContexteInexistante'
-  | 'notePriveeDejaExistante'
-  | 'notePriveeInexistante'
+  'noteDeContexteDejaExistante' | 'noteDeContexteInexistante' | 'notePriveeDejaExistante' | 'notePriveeInexistante'
 
 type MembreCoporteur = Readonly<{
   isCoporteur?: boolean

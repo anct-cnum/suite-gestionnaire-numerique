@@ -47,9 +47,7 @@ export class AccepterUnMembre implements CommandHandler<Command> {
 }
 
 type Failure =
-  | 'gestionnaireNePeutPasAccepterLeMembrePotentiel'
-  | 'membrePotentielNonAssocieALaGouvernance'
-  | MembreFailure
+  'gestionnaireNePeutPasAccepterLeMembrePotentiel' | 'membrePotentielNonAssocieALaGouvernance' | MembreFailure
 
 type Command = Readonly<{
   uidGestionnaire: number

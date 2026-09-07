@@ -35,8 +35,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
         {
           actions: feuilleDeRouteRecord.action.map((action) => {
             const demandeDeSubvention = action.demandesDeSubvention[0] as
-              | (typeof action)['demandesDeSubvention'][number]
-              | undefined
+              (typeof action)['demandesDeSubvention'][number] | undefined
             return {
               beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
               budgetGlobal: action.budgetGlobal,
@@ -65,8 +64,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
     return {
       actions: feuilleDeRouteRecord.action.map((action, index) => {
         const demandeDeSubvention = action.demandesDeSubvention[0] as
-          | (typeof action)['demandesDeSubvention'][number]
-          | undefined
+          (typeof action)['demandesDeSubvention'][number] | undefined
         const statut = (demandeDeSubvention && (demandeDeSubvention.statut as StatutSubvention)) ?? 'nonSubventionnee'
         const isEditableEtModifiable = statut === StatutSubvention.DEPOSEE || statut === 'nonSubventionnee'
         return {
