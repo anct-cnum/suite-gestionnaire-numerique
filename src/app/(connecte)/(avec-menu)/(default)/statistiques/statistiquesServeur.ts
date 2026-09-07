@@ -16,9 +16,10 @@ export function construireFiltres(
   const { au: dateFin, du: dateDebut } = clamperPeriode(params.du, params.au, aujourdhui)
 
   const communesActives = params.communes?.split(',').filter(Boolean) ?? []
-  const departementsActifs = params.departements?.split(',').filter(Boolean) ?? []
+  const departementsActifs = departementsAutorises(params.departements?.split(',').filter(Boolean) ?? [], scopeFiltre)
   const lieuxActifs = params.lieux?.split(',').filter(Boolean) ?? []
-  const structuresEmployeusesActives = params.structuresEmployeuses?.split(',').filter(Boolean) ?? []
+  const structuresEmployeusesActives =
+    scopeFiltre.type === 'structure' ? [] : (params.structuresEmployeuses?.split(',').filter(Boolean) ?? [])
   const typesActifs = params.types?.split(',').filter(Boolean) ?? []
   const thematiqueNonAdminActifs = params.thematiqueNonAdministratives?.split(',').filter(Boolean) ?? []
   const thematiqueAdminActifs = params.thematiqueAdministratives?.split(',').filter(Boolean) ?? []
@@ -95,3 +96,15 @@ export type StatistiquesSearchParams = Readonly<{
   thematiqueNonAdministratives?: string
   types?: string
 }>
+
+// Un utilisateur ne peut pas filtrer au-delà de son scope via les search params de l'URL.
+function departementsAutorises(departements: ReadonlyArray<string>, scopeFiltre: ScopeFiltre): ReadonlyArray<string> {
+  if (scopeFiltre.type === 'national') {
+    return departements
+  }
+  if (scopeFiltre.type === 'departemental') {
+    const codesAutorises = new Set(scopeFiltre.codes)
+    return departements.filter((code) => codesAutorises.has(code))
+  }
+  return []
+}
