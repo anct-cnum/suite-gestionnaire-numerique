@@ -26,6 +26,7 @@ export type UnUtilisateurAExporterReadModel = Readonly<{
   prenom: string
   role: RoleAExporter
   siret: string
+  statutStructure: '' | 'candidate' | 'validée'
   structure: string
   telephone: string
   territoires: ReadonlyArray<string>
