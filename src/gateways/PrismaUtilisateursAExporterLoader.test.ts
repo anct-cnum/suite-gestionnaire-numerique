@@ -35,6 +35,7 @@ describe('prisma utilisateurs à exporter loader', () => {
     await creerUnMembre({ gouvernanceDepartementCode: '69', id: 'membre-coporteur', isCoporteur: true, structureId: 1 })
     await creerUnMembre({ gouvernanceDepartementCode: '75', id: 'membre-simple', structureId: 2 })
     await creerUnMembre({ gouvernanceDepartementCode: '69', id: 'membre-candidat', statut: 'candidat', structureId: 3 })
+    await creerUnMembre({ gouvernanceDepartementCode: '75', id: 'membre-mixte', statut: 'candidat', structureId: 1 })
     await creerUnUtilisateur({
       departementCode: '69',
       emailDeContact: 'harpagon.avare@example.net',
@@ -62,8 +63,10 @@ describe('prisma utilisateurs à exporter loader', () => {
       structureId: 2,
     })
     await creerUnUtilisateur({
-      nom: 'Candidat',
-      ssoEmail: 'candidat@example.net',
+      emailDeContact: 'zoe.fabre@example.net',
+      nom: 'Fabre',
+      prenom: 'Zoé',
+      ssoEmail: 'zoe.fabre@example.net',
       ssoId: 'candidat3',
       structureId: 3,
     })
@@ -110,6 +113,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         prenom: 'Harpagon',
         role: 'gestionnaire département',
         siret: '',
+        statutStructure: '',
         structure: '',
         telephone: '0102030405',
         territoires: ['Rhône'],
@@ -122,6 +126,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         prenom: 'Paul',
         role: 'coporteur',
         siret: '11111111111111',
+        statutStructure: 'validée',
         structure: 'Structure Coporteuse',
         telephone: '0102030405',
         territoires: ['Rhône'],
@@ -134,6 +139,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         prenom: 'Marie',
         role: 'membre',
         siret: '22222222222222',
+        statutStructure: 'validée',
         structure: 'Antenne Lyon',
         telephone: '0102030405',
         territoires: ['Paris'],
@@ -146,6 +152,7 @@ describe('prisma utilisateurs à exporter loader', () => {
         prenom: 'Alice',
         role: 'administrateur dispositif',
         siret: '',
+        statutStructure: '',
         structure: '',
         telephone: '0102030405',
         territoires: [],
@@ -158,9 +165,23 @@ describe('prisma utilisateurs à exporter loader', () => {
         prenom: 'Rémi',
         role: 'gestionnaire région',
         siret: '',
+        statutStructure: '',
         structure: '',
         telephone: '0102030405',
         territoires: ['Auvergne-Rhône-Alpes'],
+      },
+      {
+        derniereConnexion: epochTime,
+        email: 'zoe.fabre@example.net',
+        isActive: true,
+        nom: 'Fabre',
+        prenom: 'Zoé',
+        role: 'membre',
+        siret: '33333333333333',
+        statutStructure: 'candidate',
+        structure: 'Structure Candidate',
+        telephone: '0102030405',
+        territoires: ['Rhône'],
       },
     ])
   })

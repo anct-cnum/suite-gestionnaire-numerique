@@ -43,6 +43,7 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
       prenom: record.prenom,
       role: libelleParRole[record.role as RoleHorsStructure],
       siret: '',
+      statutStructure: '' as const,
       structure: '',
       telephone: record.telephone,
       territoires: territoireGere(record),
@@ -66,9 +67,12 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
                     },
                   },
                 },
+                statut: true,
               },
               where: {
-                statut: 'confirme',
+                statut: {
+                  in: statutsMembreExportes,
+                },
               },
             },
           },
@@ -79,7 +83,9 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
         relationStructureAdministrative: {
           membres: {
             some: {
-              statut: 'confirme',
+              statut: {
+                in: statutsMembreExportes,
+              },
             },
           },
         },
@@ -91,7 +97,9 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
 
     return records.map((record) => {
       const structure = record.relationStructureAdministrative
-      const membres = structure?.membres ?? []
+      const membresConfirmes = structure?.membres.filter((membre) => membre.statut === 'confirme') ?? []
+      // Une structure à la fois validée et candidate (plusieurs gouvernances) compte comme validée
+      const membres = membresConfirmes.length > 0 ? membresConfirmes : (structure?.membres ?? [])
       return {
         derniereConnexion: record.derniereConnexion,
         email: record.emailDeContact,
@@ -100,6 +108,7 @@ export class PrismaUtilisateursAExporterLoader implements UtilisateursAExporterL
         prenom: record.prenom,
         role: membres.some((membre) => membre.isCoporteur) ? ('coporteur' as const) : ('membre' as const),
         siret: structure?.siret ?? '',
+        statutStructure: membresConfirmes.length > 0 ? ('validée' as const) : ('candidate' as const),
         structure: structure?.denomination_antenne ?? structure?.denomination_sirene ?? '',
         telephone: record.telephone,
         territoires: [...new Set(membres.map((membre) => membre.relationGouvernance.relationDepartement.nom))],
@@ -121,6 +130,8 @@ const rolesHorsStructure: Array<RoleHorsStructure> = [
   'gestionnaire_departement',
   'gestionnaire_region',
 ]
+
+const statutsMembreExportes = ['candidat', 'confirme']
 
 function territoireGere(
   record: Readonly<{

@@ -59,7 +59,8 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
         prenom: 'Paul',
         role: 'coporteur',
         siret: '11111111111111',
-        structure: 'Coporteuse',
+        statutStructure: 'validée',
+        structure: 'Copo',
         telephone: '0102030405',
         territoires: ['Rhône'],
       },
@@ -71,6 +72,7 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
         prenom: 'Harpagon',
         role: 'gestionnaire département',
         siret: '',
+        statutStructure: '',
         structure: '',
         telephone: '0102030406',
         territoires: ['Rhône'],
@@ -92,9 +94,9 @@ describe('route export CSV des utilisateurs des gouvernances', () => {
     const csv = new TextDecoder().decode(octets.slice(3))
     expect(csv).toBe(
       [
-        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Territoires,Statut,Dernière connexion',
-        '"Bernard, le sage",Paul,p@ex.net,0102030405,coporteur,Coporteuse,11111111111111,Rhône,Activé,01/01/1970',
-        'Avare,Harpagon,anne@example.net,0102030406,gestionnaire département,,,Rhône,En attente,',
+        'Nom,Prénom,Adresse électronique,Téléphone,Rôle,Structure,SIRET,Statut de la structure,Territoires,Statut,Dernière connexion',
+        '"Bernard, le sage",Paul,p@ex.net,0102030405,coporteur,Copo,11111111111111,validée,Rhône,Activé,01/01/1970',
+        'Avare,Harpagon,anne@example.net,0102030406,gestionnaire département,,,,Rhône,En attente,',
       ].join('\n')
     )
   })
