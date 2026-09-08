@@ -5,7 +5,7 @@ import Dsfr from '@/app/Dsfr'
 export default function Layout({ children }: Readonly<PropsWithChildren>): ReactElement {
   return (
     <>
-      <main>{children}</main>
+      {children}
       <Dsfr />
     </>
   )

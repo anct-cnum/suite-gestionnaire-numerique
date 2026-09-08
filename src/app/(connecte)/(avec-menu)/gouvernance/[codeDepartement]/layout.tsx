@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
+import Dsfr from '@/app/Dsfr'
 import GouvernanceProvider from '@/components/shared/GouvernanceContext'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
@@ -29,7 +30,12 @@ export default async function Layout({ children, params }: Props): Promise<React
   })
   const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
-  return <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>{children}</GouvernanceProvider>
+  return (
+    <>
+      <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>{children}</GouvernanceProvider>
+      <Dsfr />
+    </>
+  )
 }
 
 type Props = PropsWithChildren<

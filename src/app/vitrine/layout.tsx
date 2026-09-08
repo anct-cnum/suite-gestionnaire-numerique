@@ -1,5 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
+import Dsfr from '@/app/Dsfr'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import EnTeteVitrine from '@/components/vitrine/EnTeteVitrine/EnTeteVitrine'
@@ -13,6 +14,7 @@ export default function VitrineLayout({ children }: Readonly<PropsWithChildren>)
         {children}
       </main>
       <PiedDePage />
+      <Dsfr />
     </>
   )
 }

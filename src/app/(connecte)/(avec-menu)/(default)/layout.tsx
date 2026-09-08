@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement, Suspense } from 'react'
 
+import Dsfr from '@/app/Dsfr'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import { MenuActifProvider } from '@/components/transverse/MenuLateral/MenuActifContext'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
@@ -27,7 +28,10 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
         </MenuActifProvider>
       </div>
       <div className="fr-col-12 fr-col-md-9 fr-col-xl-9 fr-pl-md-7w menu-border" style={{ flex: 1, minWidth: 0 }}>
-        <Suspense fallback={<SpinnerSimple text="Chargement..." />}>{children}</Suspense>
+        <Suspense fallback={<SpinnerSimple text="Chargement..." />}>
+          {children}
+          <Dsfr />
+        </Suspense>
       </div>
     </div>
   )
