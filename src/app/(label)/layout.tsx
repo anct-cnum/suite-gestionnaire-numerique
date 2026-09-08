@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement, Suspense } from 'react'
 import { ToastContainer } from 'react-toastify'
 
+import Dsfr from '@/app/Dsfr'
 import EnTeteLabel from '@/components/Label/EnTeteLabel'
 import DateProvider from '@/components/shared/DateProvider'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
@@ -43,7 +44,10 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
       <ToastContainer aria-label="Notifications" style={{ width: '30rem' }} />
       <EnTeteLabel />
       <main className="fr-container--fluid fr-mx-5w" id="content">
-        <Suspense fallback={<SpinnerSimple text="Chargement..." />}>{children}</Suspense>
+        <Suspense fallback={<SpinnerSimple text="Chargement..." />}>
+          {children}
+          <Dsfr />
+        </Suspense>
       </main>
       <PiedDePage />
     </DateProvider>
