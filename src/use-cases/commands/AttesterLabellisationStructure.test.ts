@@ -28,12 +28,12 @@ describe('attester la labellisation d’une structure', () => {
     })
   })
 
-  it('envoie l’email de confirmation avec la date de renouvellement (un an) après l’enregistrement de l’attestation', async () => {
+  it('envoie l’email de confirmation avec la date de renouvellement (trois mois) après l’enregistrement de l’attestation', async () => {
     // GIVEN
     const repository = repositoryStub(null)
     const emailGateway = emailGatewayStub()
-    const unAnApres = new Date(epochTime)
-    unAnApres.setFullYear(unAnApres.getFullYear() + 1)
+    const troisMoisApres = new Date(epochTime)
+    troisMoisApres.setMonth(troisMoisApres.getMonth() + 3)
 
     // WHEN
     const result = await new AttesterLabellisationStructure(repository, emailGateway, epochTime).handle({
@@ -44,12 +44,12 @@ describe('attester la labellisation d’une structure', () => {
     // THEN
     expect(result).toBe('OK')
     expect(emailGateway.envoyer).toHaveBeenCalledWith({
-      dateRenouvellement: unAnApres,
+      dateRenouvellement: troisMoisApres,
       structureId: 978,
     })
   })
 
-  it('refuse une nouvelle attestation sans envoyer d’email quand le label est encore actif (moins d’un an)', async () => {
+  it('refuse une nouvelle attestation sans envoyer d’email quand le label est encore actif (moins de trois mois)', async () => {
     // GIVEN
     const repository = repositoryStub(epochTime)
     const emailGateway = emailGatewayStub()
@@ -66,15 +66,15 @@ describe('attester la labellisation d’une structure', () => {
     expect(emailGateway.envoyer).not.toHaveBeenCalled()
   })
 
-  it('accepte le renouvellement quand le label a expiré (un an ou plus)', async () => {
+  it('accepte le renouvellement quand le label a expiré (trois mois ou plus)', async () => {
     // GIVEN
     const repository = repositoryStub(epochTime)
     const emailGateway = emailGatewayStub()
-    const unAnApres = new Date(epochTime)
-    unAnApres.setFullYear(unAnApres.getFullYear() + 1)
+    const troisMoisApres = new Date(epochTime)
+    troisMoisApres.setMonth(troisMoisApres.getMonth() + 3)
 
     // WHEN
-    const result = await new AttesterLabellisationStructure(repository, emailGateway, unAnApres).handle({
+    const result = await new AttesterLabellisationStructure(repository, emailGateway, troisMoisApres).handle({
       structureId: 978,
       utilisateurId: 7,
     })
@@ -82,7 +82,7 @@ describe('attester la labellisation d’une structure', () => {
     // THEN
     expect(result).toBe('OK')
     expect(repository.attester).toHaveBeenCalledWith({
-      dateAttestation: unAnApres,
+      dateAttestation: troisMoisApres,
       structureId: 978,
       utilisateurId: 7,
     })

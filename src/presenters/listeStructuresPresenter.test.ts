@@ -53,14 +53,14 @@ describe('liste structures presenter', () => {
     {
       derniereAttestationLabelConum: epochTime,
       estLabelliseeConseillerNumerique: true,
-      intention: 'un label attesté il y a moins d’un an est actif',
+      intention: 'un label attesté il y a moins de trois mois est actif',
       now: epochTimePlusOneDay,
       possedePosteConumActif: false,
     },
     {
       derniereAttestationLabelConum: epochTime,
       estLabelliseeConseillerNumerique: false,
-      intention: 'un label attesté il y a plus d’un an sans poste actif n’est plus actif',
+      intention: 'un label attesté il y a plus de trois mois sans poste actif n’est plus actif',
       now: new Date('1971-01-02'),
       possedePosteConumActif: false,
     },

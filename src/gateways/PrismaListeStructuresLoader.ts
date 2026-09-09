@@ -143,12 +143,12 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
       )`)
     }
 
-    // Label conseiller numérique actif (durée 1 an, cf. estLabelConumActif) OU poste conum actif (non rendu)
+    // Label conseiller numérique actif (durée 3 mois, cf. estLabelConumActif) OU poste conum actif (non rendu)
     if (labellisation === 'conseiller-numerique') {
       conditions.push(Prisma.sql`(
         EXISTS (
           SELECT 1 FROM main.conum_labellisation cl
-          WHERE cl.structure_id = sa.id AND cl.date_attestation > now() - interval '1 year'
+          WHERE cl.structure_id = sa.id AND cl.date_attestation > now() - interval '3 months'
         )
         OR EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu')
       )`)
@@ -179,7 +179,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
         COUNT(*) FILTER (WHERE
           EXISTS (
             SELECT 1 FROM main.conum_labellisation cl
-            WHERE cl.structure_id = sa.id AND cl.date_attestation > now() - interval '1 year'
+            WHERE cl.structure_id = sa.id AND cl.date_attestation > now() - interval '3 months'
           )
           OR EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu')
         ) AS conum

@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
-// Durée de vie du label : 1 an (décision non ferme — calculée ici, jamais stockée en base).
+// Durée de vie du label : 3 mois (décision non ferme — calculée ici, jamais stockée en base).
 export function estLabelConumActif(derniereAttestation: Date | null, now: Date): boolean {
   if (derniereAttestation === null) {
     return false
@@ -75,7 +75,7 @@ export type Failure = 'dejaLabellisee'
 
 export function dateRenouvellementLabelConum(attestation: Date): Date {
   const renouvellement = new Date(attestation)
-  renouvellement.setFullYear(renouvellement.getFullYear() + 1)
+  renouvellement.setMonth(renouvellement.getMonth() + 3)
   return renouvellement
 }
 
