@@ -181,7 +181,7 @@ export type StructureViewModel = Readonly<{
   structureId: number
 }>
 
-// Statut du label : « Jusqu'au JJ/MM/AAAA » (attestation + 1 an) tant que le label est actif,
+// Statut du label : « Jusqu'au JJ/MM/AAAA » (attestation + 3 mois) tant que le label est actif,
 // « Suspendu » quand la dernière attestation est expirée, pas de ligne sans attestation.
 function toLabelConumViewModel(derniereAttestation: Date | null, now: Date): LabelConumViewModel | undefined {
   if (derniereAttestation === null) {

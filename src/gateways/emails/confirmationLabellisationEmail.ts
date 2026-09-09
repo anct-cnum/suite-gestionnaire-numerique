@@ -86,7 +86,7 @@ export const confirmationLabellisationEmailTemplate = `<mjml background-color="#
           Et ensuite ?
         </mj-text>
         <mj-text font-size="16px" line-height="24px" color="#3A3A3A" align="left" padding="24px 40px 0 40px">
-          Votre label est actif dès aujourd’hui et valable 1 an. Le
+          Votre label est actif dès aujourd’hui et valable 3 mois. Le
           <strong><%= dateRenouvellement %></strong>, vous recevrez un mail pour confirmer que votre
           structure poursuit son activité de médiation numérique et renouveler le label en un clic.
         </mj-text>

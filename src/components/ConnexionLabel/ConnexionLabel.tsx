@@ -107,7 +107,7 @@ const etapes: ReadonlyArray<Readonly<{ description: ReactNode; titre: string }>>
   },
   {
     description:
-      'Je retrouve mon statut dans mon tableau de bord. Je confirme mon activité tous les 6 mois par un simple clic dans un mail.',
+      'Je retrouve mon statut dans mon tableau de bord. Je confirme mon activité tous les 3 mois par un simple clic dans un mail.',
     titre: 'Mon label est actif',
   },
 ]

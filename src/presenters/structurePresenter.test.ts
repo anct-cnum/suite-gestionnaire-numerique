@@ -78,9 +78,9 @@ describe('structure presenter : statut du label conseiller numérique', () => {
     expect(viewModel.labellisations.labelConum).toBeUndefined()
   })
 
-  it('avec une attestation de moins d’un an, le label est actif jusqu’à la date de renouvellement (attestation + 1 an)', () => {
+  it('avec une attestation de moins de trois mois, le label est actif jusqu’à la date de renouvellement (attestation + 3 mois)', () => {
     // GIVEN
-    const readModel = structureReadModel([], new Date('2025-12-12'))
+    const readModel = structureReadModel([], new Date('2026-06-12'))
 
     // WHEN
     const viewModel = structurePresenter(readModel, new Date('2026-08-12'))
@@ -88,11 +88,11 @@ describe('structure presenter : statut du label conseiller numérique', () => {
     // THEN
     expect(viewModel.labellisations.labelConum).toStrictEqual({
       estActif: true,
-      statut: "Jusqu'au 12/12/2026",
+      statut: "Jusqu'au 12/09/2026",
     })
   })
 
-  it('avec une attestation de plus d’un an, le label est suspendu', () => {
+  it('avec une attestation de plus de trois mois, le label est suspendu', () => {
     // GIVEN
     const readModel = structureReadModel([], new Date('2024-06-01'))
 
