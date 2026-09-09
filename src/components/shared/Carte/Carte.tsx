@@ -14,6 +14,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<Map | null>(null)
   const popup = useRef<null | Popup>(null)
+  const annule = useRef(false)
 
   function searchFeatures(): void {
     if (!map.current) {
@@ -200,7 +201,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
   }
 
   function checkSourceLoaded(): void {
-    if (!map.current) {
+    if (annule.current || !map.current) {
       return
     }
 
@@ -215,6 +216,8 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
     if (!mapContainer.current) {
       return undefined
     }
+
+    annule.current = false
 
     // Vérifier le support WebGL avant d'initialiser la carte
     const canvas = document.createElement('canvas')
@@ -325,6 +328,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
     observer.observe(document.documentElement, { attributeFilter: ['data-fr-theme'] })
 
     return (): void => {
+      annule.current = true
       observer.disconnect()
       if (map.current) {
         map.current.remove()

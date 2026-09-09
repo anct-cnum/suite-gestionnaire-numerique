@@ -5,7 +5,7 @@ import type { LieuCoopOption } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(request: NextRequest): Promise<NextResponse<null | ReadonlyArray<LieuCoopOption>>> {
   const session = await getSession()
@@ -16,10 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<null | Rea
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const scopeFiltre: ScopeFiltre =
-    contexte.role === 'gestionnaire_structure'
-      ? { id: contexte.idStructure(), type: 'structure' }
-      : contexte.scopeFiltre()
+  const scopeFiltre = contexte.scopeFiltre()
 
   const options = await new PrismaLieuxCoopLoader().rechercher(recherche, scopeFiltre)
   return NextResponse.json(options)

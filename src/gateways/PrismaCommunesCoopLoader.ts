@@ -18,8 +18,14 @@ export class PrismaCommunesCoopLoader {
         LEFT JOIN main.adresse ad ON ad.code_insee = a.lieu_code_insee
         WHERE a.lieu_code_insee IS NOT NULL
           AND ad.nom_commune IS NOT NULL
-          AND a.structure_id = ${scopeFiltre.id}
           AND ad.nom_commune ILIKE '%' || ${recherche} || '%'
+          AND a.personne_id IN (
+              SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+              WHERE pae.structure_administrative_id = ${scopeFiltre.id} AND pae.est_active = true
+              UNION
+              SELECT pe.id FROM min.personne_enrichie pe
+              WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
+            )
         ORDER BY a.lieu_code_insee, ad.nom_commune, ad.code_postal
         LIMIT 20
       `

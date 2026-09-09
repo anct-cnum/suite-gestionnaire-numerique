@@ -5,7 +5,7 @@ import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import type { StructureEmployeuseOption } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function GET(
   request: NextRequest
@@ -18,10 +18,7 @@ export async function GET(
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const scopeFiltre: ScopeFiltre =
-    contexte.role === 'gestionnaire_structure'
-      ? { id: contexte.idStructure(), type: 'structure' }
-      : contexte.scopeFiltre()
+  const scopeFiltre = contexte.scopeFiltre()
 
   const options = await new PrismaStructuresEmployeusesCoopLoader().rechercher(recherche, scopeFiltre)
   return NextResponse.json(options)

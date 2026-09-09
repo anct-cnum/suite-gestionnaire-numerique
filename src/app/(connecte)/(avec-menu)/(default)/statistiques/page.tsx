@@ -36,10 +36,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const scopeFiltre: ScopeFiltre =
-    contexte.role === 'gestionnaire_structure'
-      ? { id: contexte.idStructure(), type: 'structure' }
-      : contexte.scopeFiltre()
+  const scopeFiltre: ScopeFiltre = contexte.scopeFiltre()
 
   const params = await searchParams
   const aujourdhui = new Date().toISOString().slice(0, 10)
