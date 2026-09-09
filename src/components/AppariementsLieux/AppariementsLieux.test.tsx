@@ -104,9 +104,8 @@ describe('revue des appariements de lieux', () => {
     expect(deciderAppariementLieuAction).toHaveBeenCalledWith(
       expect.objectContaining({ cartoRecordId: 'France-Services_2277', decision: 'rejete', lieuId: 6895 })
     )
-    await expect(
-      screen.findByText('Appariement introuvable ou déjà décidé', { exact: false })
-    ).resolves.toBeInTheDocument()
+    const messageErreur = await screen.findByText('Appariement introuvable ou déjà décidé', { exact: false })
+    expect(messageErreur).toBeInTheDocument()
     expect(refresh).not.toHaveBeenCalled()
   })
 

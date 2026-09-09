@@ -41,7 +41,7 @@ export default defineConfig({
         'src/**/*.test.tsx',
         'src/**/*.test.ts',
       ],
-      include: ['src/**/*'],
+      include: ['src/**/*.{ts,tsx}'],
       provider: 'istanbul',
       skipFull: true,
       watermarks: {
