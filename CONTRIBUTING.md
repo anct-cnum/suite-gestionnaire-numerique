@@ -424,6 +424,14 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 
 ### Matomo
 
+Deux sites Matomo sont configures, via le meme fichier `/public/matomo-vX.js` parametre par `?siteId=` (voir `matomoSiteId` dans `src/app/layout.tsx`) :
+
+- Outil gestionnaire : id 27
+- Site vitrine : id 10
+
 Changer la version du fichier `/public/matomo-vX.js` s'il est modifie.
 
-Statistiques : https://stats.beta.gouv.fr/index.php?module=CoreHome&action=index&idSite=200&period=day&date=today
+Statistiques :
+
+- Outil gestionnaire : https://matomo.incubateur.anct.gouv.fr/index.php?module=CoreHome&action=index&idSite=27&period=day&date=today
+- Site vitrine : https://matomo.incubateur.anct.gouv.fr/index.php?module=CoreHome&action=index&idSite=10&period=day&date=today
