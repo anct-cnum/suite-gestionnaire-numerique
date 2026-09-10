@@ -1,5 +1,12 @@
 'use client'
-import { DataDrivenPropertyValueSpecification, LngLatBounds, Map, NavigationControl, Popup } from 'maplibre-gl'
+import {
+  DataDrivenPropertyValueSpecification,
+  LngLatBounds,
+  Map,
+  NavigationControl,
+  Popup,
+  setWorkerUrl,
+} from 'maplibre-gl'
 import { ReactElement, useEffect, useRef } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
@@ -9,6 +16,10 @@ import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBo
 
 const COULEUR_FOND_CLAIR = '#f5f5fe'
 const COULEUR_FOND_SOMBRE = '#1b1b35'
+
+// Worker MapLibre servi depuis public/ (copié par setup-maplibre.sh) : Turbopack ne sait pas l'émettre
+// depuis node_modules et, sans worker, la carte ne charge aucune tuile.
+setWorkerUrl('/maplibre/maplibre-gl-worker.mjs')
 
 export default function Carte({ fragilite, territoire }: Props): ReactElement {
   const mapContainer = useRef<HTMLDivElement>(null)
@@ -219,14 +230,14 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
 
     annule.current = false
 
-    // Vérifier le support WebGL avant d'initialiser la carte
+    // Vérifier le support WebGL2 (requis par maplibre-gl 6) avant d'initialiser la carte
     const canvas = document.createElement('canvas')
-    const gl = canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl')
+    const gl = canvas.getContext('webgl2')
 
     if (!gl) {
       // Afficher un message d'erreur dans le conteneur de la carte
       mapContainer.current.innerHTML =
-        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte. Veuillez activer WebGL ou utiliser un navigateur compatible.</p></div>'
+        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL2, nécessaire pour afficher la carte. Veuillez activer WebGL2 ou utiliser un navigateur compatible.</p></div>'
       return undefined
     }
 

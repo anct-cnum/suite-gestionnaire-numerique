@@ -8,6 +8,7 @@ import {
   MapGeoJSONFeature,
   MapMouseEvent,
   Popup,
+  setWorkerUrl,
 } from 'maplibre-gl'
 import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -17,6 +18,10 @@ import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
 const COULEUR_FOND_CLAIR = '#f5f5fe'
 const COULEUR_FOND_SOMBRE = '#1b1b35'
+
+// Worker MapLibre servi depuis public/ (copié par setup-maplibre.sh) : Turbopack ne sait pas l'émettre
+// depuis node_modules et, sans worker, la carte ne charge aucune tuile.
+setWorkerUrl('/maplibre/maplibre-gl-worker.mjs')
 
 // Configuration des DOM-TOM avec leurs bounds réels
 const DOM_TOM_CONFIG = {
@@ -179,13 +184,13 @@ export default function CarteFranceAvecInsets({
       return undefined
     }
 
-    // Vérifier le support WebGL
+    // Vérifier le support WebGL2 (requis par maplibre-gl 6)
     const canvas = document.createElement('canvas')
-    const gl = canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl')
+    const gl = canvas.getContext('webgl2')
 
     if (!gl) {
       mainMapContainer.current.innerHTML =
-        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte.</p></div>'
+        '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL2, nécessaire pour afficher la carte.</p></div>'
       return undefined
     }
 
