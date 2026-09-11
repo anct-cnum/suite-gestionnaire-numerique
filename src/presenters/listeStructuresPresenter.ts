@@ -7,10 +7,12 @@ export type StructureListeViewModel = Readonly<{
   codePostalCommune: string
   estHabiliteeAidantsConnect: boolean
   estLabelliseeConseillerNumerique: boolean
+  estMembreFne: boolean
   id: number
   lienAnnuaireEntreprises: string
   lienFiche: string
   nom: string
+  nombreRessourcesHumaines: number
   siret: string
   typologie: string
 }>
@@ -46,11 +48,13 @@ export function listeStructuresPresenter(
       // Label conseiller numérique actif OU poste conum actif (non rendu)
       estLabelliseeConseillerNumerique:
         estLabelConumActif(structure.derniereAttestationLabelConum, now) || structure.possedePosteConumActif,
+      estMembreFne: structure.estMembreFne,
       id: structure.id,
       lienAnnuaireEntreprises:
         structure.siret === '' ? '' : `https://annuaire-entreprises.data.gouv.fr/etablissement/${structure.siret}`,
       lienFiche: `/structure/${structure.id}`,
       nom: structure.nom,
+      nombreRessourcesHumaines: structure.nombreRessourcesHumaines,
       siret: structure.siret,
       typologie: structure.typologie,
     })),

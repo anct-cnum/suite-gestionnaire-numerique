@@ -203,8 +203,10 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
       commune: structure.commune ?? '',
       derniereAttestationLabelConum: structure.derniere_attestation,
       estHabiliteeAidantsConnect: structure.aidants_connect,
+      estMembreFne: structure.est_membre_fne,
       id: structure.id,
       nom: structure.nom ?? '',
+      nombreRessourcesHumaines: Number(structure.nombre_ressources_humaines),
       possedePosteConumActif: structure.possede_poste_actif,
       siret: structure.siret ?? '',
       typologie: structure.typologie ?? '',
@@ -233,7 +235,14 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
           SELECT MAX(cl.date_attestation) FROM main.conum_labellisation cl
           WHERE cl.structure_id = sa.id
         ) AS derniere_attestation,
-        EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu') AS possede_poste_actif
+        EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu') AS possede_poste_actif,
+        EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'confirme') AS est_membre_fne,
+        (
+          SELECT COUNT(DISTINCT pe.id) FROM min.personne_enrichie pe
+          LEFT JOIN main.personne_affectations_emploi pae ON pae.personne_id = pe.id AND pae.est_active = true
+          WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+            AND (pe.structure_employeuse_id = sa.id OR pae.structure_administrative_id = sa.id)
+        ) AS nombre_ressources_humaines
       FROM main.structure_administrative sa
       JOIN structures_dans_scope sds ON sds.id = sa.id
       LEFT JOIN main.adresse a ON a.id = sa.adresse_id
@@ -274,8 +283,10 @@ interface StructureQueryResult {
   code_postal: null | string
   commune: null | string
   derniere_attestation: Date | null
+  est_membre_fne: boolean
   id: number
   nom: null | string
+  nombre_ressources_humaines: bigint
   possede_poste_actif: boolean
   siret: null | string
   typologie: null | string

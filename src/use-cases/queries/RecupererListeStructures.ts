@@ -30,8 +30,10 @@ export type StructureListeReadModel = Readonly<{
   commune: string
   derniereAttestationLabelConum: Date | null
   estHabiliteeAidantsConnect: boolean
+  estMembreFne: boolean
   id: number
   nom: string
+  nombreRessourcesHumaines: number
   possedePosteConumActif: boolean
   siret: string
   typologie: string
