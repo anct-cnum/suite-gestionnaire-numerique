@@ -420,16 +420,56 @@ describe('utilisateur repository', () => {
 
     it('qui existe déjà par son ssoEmail : il est réactivé', async () => {
       // GIVEN
+      await creerUneStructure({ id: structureId })
       await creerUnUtilisateur({ isSupprime: true, ssoEmail: 'martin.tartempion@example.net' })
       const utilisateur = utilisateurFactory({
+        structureUid: structureId,
         uid: { email: 'martin.tartempion@example.net', value: uidUtilisateurValue },
       })
 
       // WHEN
-      const resultatCreation = await repository.add(utilisateur)
+      const resultatReactivation = await repository.add(utilisateur)
 
       // THEN
-      expect(resultatCreation).toBe(true)
+      expect(resultatReactivation).toBe(true)
+    })
+
+    it('qui existe déjà par son ssoEmail mais avec une nouvelle structure : la nouvelle structure est prise en compte', async () => {
+      // GIVEN
+      const ancienneStructureId = 10
+      const nouvelleStructureId = 20
+      await creerUneStructure({ id: ancienneStructureId })
+      await creerUneStructure({ id: nouvelleStructureId })
+      await creerUnUtilisateur({
+        isSupprime: true,
+        nom: 'AncienNom',
+        prenom: 'AncienPrenom',
+        ssoEmail: 'martin.tartempion@example.net',
+        structureId: ancienneStructureId,
+      })
+      const utilisateur = utilisateurFactory({
+        nom: 'NouveauNom',
+        prenom: 'NouveauPrenom',
+        structureUid: nouvelleStructureId,
+        uid: { email: 'martin.tartempion@example.net', value: uidUtilisateurValue },
+      })
+
+      // WHEN
+      const resultatReactivation = await repository.add(utilisateur)
+
+      // THEN
+      const record = await prisma.utilisateurRecord.findUnique({
+        where: { ssoEmail: 'martin.tartempion@example.net' },
+      })
+      expect(resultatReactivation).toBe(true)
+      expect(record).toMatchObject(
+        utilisateurRecordFactory({
+          nom: 'NouveauNom',
+          prenom: 'NouveauPrenom',
+          ssoId: 'userFooId',
+          structureId: nouvelleStructureId,
+        })
+      )
     })
   })
 })
