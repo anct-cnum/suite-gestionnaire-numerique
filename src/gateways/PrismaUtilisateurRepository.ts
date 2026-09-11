@@ -1,7 +1,7 @@
 import { fromTypologieRole, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { Prisma } from '../../prisma/generated/client'
 import { DepartementState } from '@/domain/Departement'
-import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurState, UtilisateurUidState } from '@/domain/Utilisateur'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
@@ -22,27 +22,17 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         },
       })
       if (utilisateurExistant?.isSupprime ?? false) {
-        return await this.#undrop(utilisateurState.uid.email.toLowerCase())
+        return await this.#undrop(utilisateurState)
       }
 
       await this.#dataResource.create({
         data: {
+          ...this.#donneesUtilisateur(utilisateurState),
           dateDeCreation: utilisateurState.inviteLe,
-          departementCode: utilisateurState.departement?.code,
-          emailDeContact: utilisateurState.emailDeContact,
-          groupementId: utilisateurState.groupementUid?.value,
-          inviteLe: utilisateurState.inviteLe,
-          isBetaTesteur: utilisateurState.isBetaTesteur,
-          isSuperAdmin: utilisateurState.isSuperAdmin,
           isSupprime: false,
-          nom: utilisateurState.nom,
-          prenom: utilisateurState.prenom,
-          regionCode: utilisateurState.region?.code,
-          role: fromTypologieRole(utilisateurState.role.nom),
           ssoEmail: utilisateurState.uid.email.toLowerCase(),
           // Placeholder jusqu'à la première connexion : le vrai sub ProConnect remplacera l'email
           ssoId: utilisateurState.uid.email.toLowerCase(),
-          structureId: utilisateurState.structureUid?.value,
           telephone: '',
         },
       })
@@ -192,6 +182,22 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     })
   }
 
+  #donneesUtilisateur(utilisateurState: UtilisateurState) {
+    return {
+      departementCode: utilisateurState.departement?.code,
+      emailDeContact: utilisateurState.emailDeContact,
+      groupementId: utilisateurState.groupementUid?.value,
+      inviteLe: utilisateurState.inviteLe,
+      isBetaTesteur: utilisateurState.isBetaTesteur,
+      isSuperAdmin: utilisateurState.isSuperAdmin,
+      nom: utilisateurState.nom,
+      prenom: utilisateurState.prenom,
+      regionCode: utilisateurState.region?.code,
+      role: fromTypologieRole(utilisateurState.role.nom),
+      structureId: utilisateurState.structureUid?.value,
+    }
+  }
+
   async #drop(id: number): Promise<boolean> {
     return this.#dataResource
       .update({
@@ -216,14 +222,15 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       })
   }
 
-  async #undrop(ssoEmail: string): Promise<boolean> {
+  async #undrop(utilisateurState: UtilisateurState): Promise<boolean> {
     try {
       await this.#dataResource.update({
         data: {
+          ...this.#donneesUtilisateur(utilisateurState),
           isSupprime: false,
         },
         where: {
-          ssoEmail,
+          ssoEmail: utilisateurState.uid.email.toLowerCase(),
         },
       })
       return true
