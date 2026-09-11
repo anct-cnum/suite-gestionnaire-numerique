@@ -227,7 +227,7 @@ export default function ListeStructures({
         </div>
       ) : (
         <Table
-          enTetes={['Structure', 'Adresse', 'N° de SIRET', 'Labellisation / habilitation', '']}
+          enTetes={['Lieu', 'Adresse', 'N° de SIRET', 'Ressource humaine', 'Labellisation / habilitation', '']}
           multiline={true}
           titre="Structures"
         >
@@ -312,8 +312,22 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
     <tr style={{ height: '4rem' }}>
       <td>
         <div className="fr-text--bold">{structure.nom}</div>
-        <div className="fr-text--sm fr-text-mention--grey fr-mb-0">
-          {structure.typologie === '' ? '-' : structure.typologie}
+        <div
+          className="fr-text--sm fr-text-mention--grey fr-mb-0 fr-grid-row fr-grid-row--middle"
+          style={{ gap: '0.5rem' }}
+        >
+          <span>{structure.typologie === '' ? '-' : structure.typologie}</span>
+          {structure.estMembreFne ? (
+            <span
+              className="fr-badge fr-badge--no-icon fr-badge--sm"
+              style={{
+                backgroundColor: 'var(--background-contrast-info)',
+                color: 'var(--text-action-high-blue-france)',
+              }}
+            >
+              FNE
+            </span>
+          ) : null}
         </div>
       </td>
       <td>
@@ -352,6 +366,15 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
           >
             {structure.siret}
           </a>
+        )}
+      </td>
+      <td className="fr-cell--center">
+        {structure.nombreRessourcesHumaines > 0 ? (
+          <Link className="fr-link fr-text--md" href={`${structure.lienFiche}#aidants`}>
+            {structure.nombreRessourcesHumaines}
+          </Link>
+        ) : (
+          <span className="fr-text-mention--grey">0</span>
         )}
       </td>
       <td>

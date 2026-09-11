@@ -84,7 +84,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 }
 
 function generateCSV(structures: Array<StructureListeReadModel>, now: Date): string {
-  const headers = ['Nom', 'Typologie', 'Code postal', 'Commune', 'Adresse', 'SIRET', 'Labellisation / habilitation']
+  const headers = [
+    'Nom',
+    'Typologie',
+    'Code postal',
+    'Commune',
+    'Adresse',
+    'SIRET',
+    'Membre FNE',
+    'Ressource humaine',
+    'Labellisation / habilitation',
+  ]
 
   // Fonction pour échapper les valeurs CSV
   function escapeCSV(value: string): string {
@@ -112,6 +122,8 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     escapeCSV(structure.commune),
     escapeCSV(structure.adresse),
     escapeCSV(structure.siret),
+    structure.estMembreFne ? 'Oui' : 'Non',
+    String(structure.nombreRessourcesHumaines),
     escapeCSV(labellisations(structure)),
   ])
 

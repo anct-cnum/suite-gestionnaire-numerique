@@ -55,8 +55,9 @@ describe('liste structures', () => {
       'https://annuaire-entreprises.data.gouv.fr/etablissement/41816609600069'
     )
     expect(lienSiret.getAttribute('target')).toBe('_blank')
-    expect(cellules[3].textContent).toBe('Conseiller numériqueAidants Connect')
-    const lienFiche = within(cellules[4]).getByRole('link', { name: 'Voir la structure Emmaüs Connect' })
+    expect(cellules[3].textContent).toBe('2')
+    expect(cellules[4].textContent).toBe('Conseiller numériqueAidants Connect')
+    const lienFiche = within(cellules[5]).getByRole('link', { name: 'Voir la structure Emmaüs Connect' })
     expect(lienFiche.getAttribute('href')).toBe('/structure/12')
   })
 
@@ -223,10 +224,12 @@ function structure(override?: Partial<StructureListeViewModel>): StructureListeV
     codePostalCommune: '69002 LYON',
     estHabiliteeAidantsConnect: true,
     estLabelliseeConseillerNumerique: true,
+    estMembreFne: false,
     id: 12,
     lienAnnuaireEntreprises: 'https://annuaire-entreprises.data.gouv.fr/etablissement/41816609600069',
     lienFiche: '/structure/12',
     nom: 'Emmaüs Connect',
+    nombreRessourcesHumaines: 2,
     siret: '41816609600069',
     typologie: 'Association loi 1901',
     ...override,
