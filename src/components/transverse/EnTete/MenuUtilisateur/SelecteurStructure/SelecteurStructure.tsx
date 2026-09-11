@@ -54,7 +54,7 @@ async function chargerLesStructures(search: string): Promise<Array<StructureOpti
 
 function formatOptionLabel(option: StructureOption): ReactElement {
   return (
-    <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
+    <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem', minWidth: 0 }}>
       {option.isFne ? (
         <span className="fr-badge fr-badge--blue-cumulus fr-badge--no-icon fr-badge--sm fr-mb-0">FNE</span>
       ) : (
@@ -66,7 +66,12 @@ function formatOptionLabel(option: StructureOption): ReactElement {
           title="Structure"
         />
       )}
-      <span>{option.label}</span>
+      <span
+        style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        title={option.label}
+      >
+        {option.label}
+      </span>
     </span>
   )
 }

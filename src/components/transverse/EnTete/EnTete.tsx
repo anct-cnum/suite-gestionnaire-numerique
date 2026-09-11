@@ -101,8 +101,7 @@ export default function EnTete(): ReactElement {
       <Drawer
         boutonFermeture="Fermer le menu"
         id={drawerId}
-        // Stryker disable next-line BooleanLiteral
-        isFixedWidth={true}
+        isFixedWidth={!sessionUtilisateurViewModel.peutChangerDeRole}
         labelId={labelId}
         popover="auto"
       >

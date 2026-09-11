@@ -47,7 +47,9 @@ export function dsfrSelectStyles<Option, IsMulti extends boolean = false>(): Sty
     }),
     menu: (base) => ({
       ...base,
-      minWidth: 'max-content',
+      maxWidth: '24rem',
+      minWidth: '100%',
+      width: 'max-content',
       zIndex: 1000,
     }),
     option: (base, { isFocused }) => ({
@@ -56,6 +58,9 @@ export function dsfrSelectStyles<Option, IsMulti extends boolean = false>(): Sty
       borderBottom: '1px solid var(--border-default-grey)',
       color: 'var(--text-default-grey)',
       cursor: 'pointer',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     }),
   }
 }
