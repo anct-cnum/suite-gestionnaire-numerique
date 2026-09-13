@@ -48,7 +48,8 @@ public/dsfr/
 .cursor/
 .idea
 .vscode/
-.claude/
+.claude/*
+!.claude/skills/
 dbs/
 
 *storybook.log

@@ -44,34 +44,11 @@ async function Controller({ params }) {
 }
 ```
 
-### Server actions
+### Server actions, gateways, journalisation
 
-Pattern strict dans `src/app/api/actions/` :
-- `'use server'` en haut du fichier
-- **Corps entier enveloppé dans `avecJournalisationMin(async () => { ... })`** (`./shared/journalisation`) — voir « Journalisation des mutations »
-- Validation Zod avant toute logique
-- Appel au gateway/repository (jamais Prisma directement)
-- `revalidatePath(path)` après mutation
-- Retour : `Promise<ReadonlyArray<string>>` (messages d'erreur Zod ou `['OK']`)
-- Pour les commands complexes : `ResultAsync<ReadonlyArray<string>>`
-- `type ActionParams = Readonly<{...}>` et `const validator = z.object({...})` en bas du fichier
-
-### Journalisation des mutations (audit trail `source.min__evenements`)
-
-**Toute mutation de données doit être journalisée — c'est implicite pour chaque nouvelle feature, sans qu'on ait à le demander.**
-
-- Chaque écriture (create/update/delete) effectuée pendant une server action est tracée dans `source.min__evenements` (table hors Prisma, schéma `source`) : `run_id` (corrélation par action), `source_key` (`schema.table`), `donnee` = `{action, entity_id, user_id, value}` — create/delete : snapshot complet ; update : `{old, new}` limités aux colonnes modifiées.
-- **Nouvelle server action ou route mutante** : envelopper le corps entier dans `avecJournalisationMin(async () => { ... })` (`src/app/api/actions/shared/journalisation.ts`). Les mutations Prisma sont alors interceptées automatiquement par l'extension (`prisma/journalisationMinExtension.ts`) — rien d'autre à faire.
-- **Transaction contenant des mutations Prisma** : ne pas appeler `prisma.$transaction` directement — utiliser `journaliserTransaction(prisma, async (tx) => { ... })` (`src/gateways/shared/journalisationMin.ts`) qui ouvre la transaction lui-même : les événements sont écrits après commit, jetés si rollback, et les lectures auxiliaires de l'extension passent par le client de transaction (une seule connexion du pool).
-- **Écritures en SQL brut (`$executeRaw` / `$queryRaw` INSERT…)** : non interceptables — utiliser les helpers de `src/gateways/shared/journalisationMin.ts` dans la transaction : `journaliserCreateBrut(tx, sourceKey, id)`, `journaliserUpdateBrut(tx, sourceKey, selectionAvant, mutation)`, `journaliserDeleteBrut(tx, sourceKey, selectionAvant, mutation)`, `selectionLigne(sourceKey, id)` pour les mono-lignes.
-- Exclusions : les tables qui sont déjà des journaux (`audit.structure_merge_log`, `min.membre_transfert_log`) ; pas d'événement si seule `derniere_connexion` change sur `min.utilisateur`.
-- Le `user_id` est l'id `min.utilisateur` résolu paresseusement depuis la session : sans session ni utilisateur connu, rien n'est journalisé (pas d'erreur).
-
-### Gateways
-
-- `readonly #dataResource = prisma.model_name` pour le client Prisma
-- Les méthodes de transformation internes sont privées (`#`)
-- `camelcase: off` automatique pour les fichiers `**/gateways/**/Prisma*.ts`
+- Pattern détaillé des server actions et **journalisation obligatoire de toute mutation** (`source.min__evenements`) : skill `server-action` (`.claude/skills/server-action/`).
+- Conventions Prisma et gateways : skill `prisma-min`.
+- Les appels Prisma se font dans les gateways (`src/gateways/Prisma*.ts`), jamais directement dans les server actions.
 
 ### Error handling
 
@@ -107,77 +84,24 @@ Pattern strict dans `src/app/api/actions/` :
 
 ### Interdictions ESLint notables
 - `window` / `document` interdit — utiliser l'API React
-- `vi.mock()` interdit — utiliser `vi.spyOn()` avec `mockResolvedValueOnce()`
-- `toHaveTextContent` interdit — utiliser `expect(el.textContent).toBe('...')`
-- `act()` interdit — utiliser `waitFor()` ou `findByXXX()`
 - `new Date()` sans argument interdit hors `src/app/`
+- En test : `vi.mock()`, `toHaveTextContent`, `act()` interdits — voir skill `tests-min`
 
 ### Langue
 - Français dans la logique métier, commentaires, messages d'erreur Zod
 
 ## Tests
 
-- Vitest + Testing Library, environnement jsdom pour les composants
-- Couverture : 90% minimum (branches, functions, lines, statements)
-- Exécution shuffled pour vérifier l'isolation
-- Pattern AAA : commentaires `// GIVEN`, `// WHEN`, `// THEN`
-- `vi.spyOn(module, 'method').mockResolvedValueOnce(...)` pour le mocking
-- `it.each([...])` avec `$intention` pour les tests paramétrés
-- Factories de test data : `createDefaultXxxViewModel()` dans `src/stories/`
-- Constantes de date : `epochTime`, `epochTimePlusOneDay` (jamais `new Date()`)
-- Pre-push hook (`husky`) : exécute `pnpm check` complet
-
-## Base de données
-
-- PostgreSQL, multi-schéma : `admin`, `main`, `min`, `reference`
-- Prisma ORM avec `multiSchema`, `views`, `prisma-json-types-generator`
-- Nommage modèles Prisma : `XxxRecord` mappé en snake_case (`@@map("xxx")`, `@@schema("xxx")`)
-- Champs JSON typés via commentaires JSDoc : `/// [TypeName]`
-- Relations avec `@relation(fields: [...], references: [...])`
-- `@db.Citext` pour le texte case-insensitive
+Vitest + Testing Library, couverture 90 % minimum, pre-push hook `husky` exécutant `pnpm check`. Conventions détaillées (mocking, GIVEN/WHEN/THEN, factories, dates) : skill `tests-min`.
 
 ## Composants et UI
 
-### Design system — DSFR OBLIGATOIRE
-- **Le DSFR (Système de Design de l'État, `@gouvfr/dsfr`) est IMPÉRATIF pour TOUT aspect visuel, sans exception.** Toute UI qui ne respecte pas le DSFR est un bug (cf. retour de recette #1251).
-- Avant de créer ou styler un composant, chercher d'abord le composant ou la classe DSFR existante : https://www.systeme-de-design.gouv.fr/composants-et-modeles
-- **RESPECTER LE DSFR EN ENTIER, DANS TOUS LES CAS — pas juste ses classes.** Chaque composant s'utilise avec sa structure HTML canonique COMPLÈTE telle que documentée (markup, ids, attributs aria, panels, JS DSFR). Un rendu incorrect = structure incomplète : la compléter. Ne JAMAIS corriger, ajuster ou « améliorer » un rendu par du CSS custom, quel que soit le cas (cf. #1835)
-- Classes DSFR uniquement : composants (`fr-btn`, `fr-select`, `fr-input`, `fr-card`, `fr-badge`, `fr-table`, `fr-modal`…) et utilitaires (`fr-grid-row`, `fr-col-*`, `fr-mb-2w`, `fr-text--sm`…)
-- Couleurs, espacements, typographie : exclusivement via les variables CSS DSFR (`var(--background-contrast-grey)`, `var(--text-default-grey)`, `var(--border-plain-grey)`…) — **jamais de valeurs en dur** (hex, px arbitraires, couleurs nommées)
-- CSS custom (modules `*.module.css`) : uniquement en dernier recours pour ce que le DSFR ne couvre pas (ex. animation du Drawer), et toujours construit sur les variables DSFR
-- Si un composant externe est indispensable (ex. react-select pour les selects avec recherche), le surcharger avec les variables CSS DSFR pour un rendu strictement identique au DSFR — voir `src/components/shared/Select/styles.tsx` comme référence
-- Dark mode : respecté automatiquement si et seulement si les variables CSS DSFR sont utilisées — une couleur en dur casse le dark mode
+- **Le DSFR (`@gouvfr/dsfr`) est IMPÉRATIF pour TOUT aspect visuel, sans exception, avec sa structure HTML canonique complète. Jamais de valeurs en dur, jamais de CSS custom pour corriger un rendu.** Règles détaillées (DSFR, forms, `Select`/`SelectAsync`, Drawer/Modal, notifications, Storybook) : skill `dsfr-ui`.
 - Exception : `src/components/coop/**` (code importé, hors périmètre DSFR)
 
-### Forms
-- Formulaires non contrôlés avec `FormEvent` et `FormData`
-- `useId()` pour les associations label/input
-- Patterns de validation : `pattern={emailPattern.source}` depuis `src/shared/patterns.ts`
-- Validation serveur via Zod dans les server actions
+## Skills projet
 
-### Selects
-- Standard unique : `Select` et `SelectAsync` (`src/components/shared/Select/`), wrappers react-select stylés DSFR (décision PO #1251)
-- Interdit par ESLint : `<select>` natif et import direct de `react-select` / `react-select/async` (exception : `src/components/coop/**`)
-- Label passé en children (utiliser `fr-sr-only` si le label doit être invisible)
-- `name` pour la soumission FormData (react-select rend un input caché), `required` supporté
-- Non contrôlé : marquer l'option par défaut avec `isSelected` ; contrôlé : prop `value` scalaire (`option.value`)
-- En test : `await userEvent.click(screen.getByRole('combobox', { name: 'X' }))` puis `await userEvent.click(await screen.findByRole('option', { name: 'Y' }))` ; un select désactivé perd le rôle combobox (utiliser `getByLabelText`)
-
-### Drawer / Modal
-- `Modal` (`src/components/shared/Modal/`) et `Drawer` (`src/components/shared/Drawer/`) basés sur `<dialog>` et classes DSFR (`fr-modal`)
-- Attributs aria obligatoires : `aria-labelledby={labelId}` sur le `<dialog>`, `aria-controls={id}` sur le bouton fermer, `aria-modal="true"` sur Modal
-- Props `id` et `labelId` pour lier le dialog à son titre
-- État ouvert/fermé géré par `useState` dans le parent
-- Animation CSS slide-in/out pour le Drawer
-
-### Notifications
-- react-toastify stylé avec les variables CSS DSFR
-
-### Storybook
-- Meta avec `title: 'Components/Feature/NomComposant'`
-- Import depuis `@storybook/nextjs-vite`
-- Args depuis les factories de test data
-- Variantes nommées en PascalCase : `Default`, `SansInformations`, `PlusieursContacts`
+Règles ciblées dans `.claude/skills/`, chargées automatiquement selon les fichiers touchés : `server-action`, `dsfr-ui`, `tests-min`, `prisma-min`. Toute règle propre à un type de fichier va dans un skill, pas ici.
 
 ## Règles impératives
 
