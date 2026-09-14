@@ -159,7 +159,7 @@
     "tsx": "^4.23.13",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.26.0",
-    "vite-tsconfig-paths": "^5.1.4",
+    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^5.0.0",
     "vitest-dom": "^0.1.1"
   },
