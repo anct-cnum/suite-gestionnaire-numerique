@@ -89,7 +89,7 @@ type Props = Readonly<{
 
 function formatOptionLabel(option: OrganisationOption): ReactElement {
   return (
-    <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem' }}>
+    <span style={{ alignItems: 'center', display: 'flex', gap: '0.5rem', minWidth: 0 }}>
       {option.isMembre === true ? (
         <span
           aria-label="Membre de la gouvernance"
@@ -107,7 +107,12 @@ function formatOptionLabel(option: OrganisationOption): ReactElement {
           title="Structure"
         />
       )}
-      <span>{option.label}</span>
+      <span
+        style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        title={option.label}
+      >
+        {option.label}
+      </span>
     </span>
   )
 }
