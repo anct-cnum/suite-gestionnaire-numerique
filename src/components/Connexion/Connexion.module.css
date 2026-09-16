@@ -1,6 +1,6 @@
 .center {
   align-items: center;
-  height: 100vh;
+  flex: 1;
   text-align: center;
 }
 
