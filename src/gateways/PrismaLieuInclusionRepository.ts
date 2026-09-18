@@ -41,6 +41,11 @@ import {
   UpdateLieuInclusionVisibiliteCartographieRepository,
 } from '@/use-cases/commands/shared/LieuInclusionRepository'
 
+// Provenance des DONNÉES posée par MIN sur ses écritures métier (jamais sur une
+// suppression ni un changement de visibilité : ce sont des états). Même règle
+// que la signature coop ('Coop numérique'), cf. docs cycle-de-vie §2.3.
+const SOURCE_MIN = 'Mon Inclusion Numérique'
+
 export class PrismaLieuInclusionRepository
   implements
     SupprimerLieuInclusionRepository,
@@ -95,6 +100,7 @@ export class PrismaLieuInclusionRepository
         itinerance?: Array<main_itinerance>
         nom: string
         siret_a_l_enrichissement: null | string
+        source: string
         typologies?: Array<main_typologie>
         updated_at_min: Date
       } = {
@@ -103,6 +109,7 @@ export class PrismaLieuInclusionRepository
         edited_by: 'min',
         nom: data.nom,
         siret_a_l_enrichissement: data.siret,
+        source: SOURCE_MIN,
         updated_at_min: data.date,
       }
 
@@ -154,8 +161,9 @@ export class PrismaLieuInclusionRepository
       edited_by: string
       frais_a_charge?: Array<main_frais_a_charge>
       modalites_acces?: Array<main_modalite_acces>
+      source: string
       updated_at_min: Date
-    } = { edited_by: 'min', updated_at_min: data.date }
+    } = { edited_by: 'min', source: SOURCE_MIN, updated_at_min: data.date }
 
     // Mettre à jour les modalités d'accès
     updateData.modalites_acces = versEnumsLieuInclusion(data.modalitesAcces, modalitesAccesVersEnum, 'modalites_acces')
@@ -185,8 +193,9 @@ export class PrismaLieuInclusionRepository
       modalites_acces?: Array<main_modalite_acces>
       modalites_accompagnement?: Array<main_modalite_accompagnement>
       services?: Array<main_service>
+      source: string
       updated_at_min: Date
-    } = { edited_by: 'min', updated_at_min: data.date }
+    } = { edited_by: 'min', source: SOURCE_MIN, updated_at_min: data.date }
 
     // Mettre à jour les services (thématiques)
     updateData.services = versEnumsLieuInclusion(data.thematiques, servicesVersEnum, 'services')
@@ -217,8 +226,9 @@ export class PrismaLieuInclusionRepository
       edited_by: string
       prise_en_charge_specifique?: Array<main_prise_en_charge_specifique>
       publics_specifiquement_adresses?: Array<main_public_specifiquement_adresse>
+      source: string
       updated_at_min: Date
-    } = { edited_by: 'min', updated_at_min: data.date }
+    } = { edited_by: 'min', source: SOURCE_MIN, updated_at_min: data.date }
 
     // Mettre à jour les publics spécifiquement adressés
     updateData.publics_specifiquement_adresses = versEnumsLieuInclusion(
@@ -280,6 +290,7 @@ export class PrismaLieuInclusionRepository
     presentation_detail?: null | string
     presentation_resume?: null | string
     prise_rdv?: null | string
+    source: string
     typologies?: Array<main_typologie>
     updated_at_min: Date
   } {
@@ -291,9 +302,10 @@ export class PrismaLieuInclusionRepository
       presentation_detail?: null | string
       presentation_resume?: null | string
       prise_rdv?: null | string
+      source: string
       typologies?: Array<main_typologie>
       updated_at_min: Date
-    } = { edited_by: 'min', updated_at_min: data.date }
+    } = { edited_by: 'min', source: SOURCE_MIN, updated_at_min: data.date }
 
     if (data.presentationDetail !== undefined) {
       updateData.presentation_detail = data.presentationDetail === '' ? null : data.presentationDetail
