@@ -24,15 +24,19 @@ export type InformationsPersonnellesData = Readonly<{
 
 export type StructureEmployeuseData = Readonly<{
   adresse: string
+  contacts: ReadonlyArray<
+    Readonly<{
+      email: string
+      estReferentFNE: boolean
+      fonction: string
+      id: number
+      nom: string
+      prenom: string
+      telephone: string
+    }>
+  >
   departement?: string
   nom: string
-  referent?: Readonly<{
-    email: string
-    nom: string
-    post: string
-    prenom: string
-    telephone: string
-  }>
   region?: string
   siret?: string
   type: string

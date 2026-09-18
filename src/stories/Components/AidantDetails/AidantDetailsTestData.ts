@@ -57,15 +57,19 @@ export function createDefaultAidantDetailsData(): AidantDetailsData {
 function createDefaultStructureEmployeuseData(): StructureEmployeuseData {
   return {
     adresse: '123 Rue de la République, 75001 Paris',
+    contacts: [
+      {
+        email: 'marie.dupont@paris.fr',
+        estReferentFNE: true,
+        fonction: 'Responsable numérique',
+        id: 1,
+        nom: 'Dupont',
+        prenom: 'Marie',
+        telephone: '01 42 76 40 40',
+      },
+    ],
     departement: 'Paris',
     nom: 'Mairie de Paris 1er',
-    referent: {
-      email: 'marie.dupont@paris.fr',
-      nom: 'Dupont',
-      post: 'Responsable numérique',
-      prenom: 'Marie',
-      telephone: '01 42 76 40 40',
-    },
     region: 'Île-de-France',
     siret: '12345678901234',
     type: 'Collectivité territoriale',

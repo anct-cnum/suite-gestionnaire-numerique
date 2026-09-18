@@ -4,7 +4,7 @@ import {
   AidantDetailsErrorReadModel,
   AidantDetailsLoader,
   AidantDetailsReadModel,
-  ContactReferentReadModel,
+  ContactReadModel,
 } from '@/use-cases/queries/RecupererAidantDetails'
 
 export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
@@ -14,6 +14,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     try {
       const personneResult = await prisma.$queryRaw<Array<PersonneEnrichieResult>>`
         SELECT
+          min.personne_enrichie.structure_employeuse_id,
           min.personne_enrichie.id as aidant_id,
           min.personne_enrichie.coop_id as aidant_coop_uid,
           min.personne_enrichie.prenom as aidant_prenom,
@@ -30,7 +31,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           COALESCE(main.structure_administrative.denomination_antenne, main.structure_administrative.denomination_sirene) as employeur_raison_social,
           reference.categories_juridiques.nom as employeur_categorie_juridique,
           main.structure_administrative.siret as employeur_siret,
-          main.structure_administrative.contact as employeur_contact_referent,
           main.adresse.code_postal as employeur_code_postal,
           main.adresse.nom_commune as employeur_nom_commune,
           main.adresse.nom_voie as employeur_nom_voie,
@@ -94,7 +94,9 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         ORDER BY nom;
       `
 
-      return this.mapToReadModel(personne, lieuxActiviteResult)
+      const contacts = await this.buildContacts(personne.structure_employeuse_id)
+
+      return this.mapToReadModel(personne, lieuxActiviteResult, contacts)
     } catch (error) {
       reportLoaderError(error, 'PrismaAidantDetailsLoader', {
         id,
@@ -105,6 +107,32 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         type: 'error',
       }
     }
+  }
+
+  private async buildContacts(structureEmployeuseId: null | number): Promise<ReadonlyArray<ContactReadModel>> {
+    if (structureEmployeuseId === null) {
+      return []
+    }
+
+    const contactStructures = await prisma.contact_structure_administrative.findMany({
+      include: {
+        contact: true,
+      },
+      orderBy: [{ contact: { est_referent_fne: 'desc' } }, { contact: { nom: 'asc' } }, { contact: { prenom: 'asc' } }],
+      where: {
+        structure_administrative_id: structureEmployeuseId,
+      },
+    })
+
+    return contactStructures.map((cs) => ({
+      email: cs.contact.email,
+      estReferentFNE: cs.contact.est_referent_fne,
+      fonction: cs.contact.fonction,
+      id: cs.contact.id,
+      nom: cs.contact.nom,
+      prenom: cs.contact.prenom,
+      telephone: cs.contact.telephone,
+    }))
   }
 
   private formatAdresse(adresse: {
@@ -156,7 +184,8 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
 
   private mapToReadModel(
     personne: PersonneEnrichieResult,
-    lieuxActiviteData: ReadonlyArray<LieuActiviteResult>
+    lieuxActiviteData: ReadonlyArray<LieuActiviteResult>,
+    contacts: ReadonlyArray<ContactReadModel>
   ): AidantDetailsReadModel {
     // Extraire les informations de contact depuis le JSON
     const contact = (personne.aidant_contact as null | Record<string, unknown>) ?? {}
@@ -193,7 +222,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           nomVoie: personne.employeur_nom_voie,
           numeroVoie: personne.employeur_numero_voie,
         }),
-        contactReferent: this.parseContactReferent(personne.employeur_contact_referent),
+        contacts,
         departement: personne.employeur_departement ?? '',
         nom: personne.employeur_raison_social ?? '',
         region: personne.employeur_region ?? '',
@@ -202,28 +231,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       },
       tags: this.generateTags(personne),
       telephone: (coop.telephone as string) || '',
-    }
-  }
-
-  private parseContactReferent(contactReferentJson: unknown): ContactReferentReadModel {
-    try {
-      const contact = (contactReferentJson as null | Record<string, unknown>) ?? {}
-      const courriels = (contact.courriels as Array<string> | null) ?? []
-      return {
-        email: courriels[0] || '',
-        nom: (contact.nom as string) || '',
-        post: (contact.poste as string) || (contact.fonction as string) || '',
-        prenom: (contact.prenom as string) || '',
-        telephone: (contact.telephone as string) || '',
-      }
-    } catch {
-      return {
-        email: '',
-        nom: '',
-        post: '',
-        prenom: '',
-        telephone: '',
-      }
     }
   }
 }
@@ -246,7 +253,6 @@ type PersonneEnrichieResult = Readonly<{
   aidant_prenom: null | string
   employeur_categorie_juridique: null | string
   employeur_code_postal: null | string
-  employeur_contact_referent: unknown
   employeur_departement: null | string
   employeur_nom_commune: null | string
   employeur_nom_voie: null | string
@@ -259,4 +265,5 @@ type PersonneEnrichieResult = Readonly<{
   est_actuellement_coordo_actif: boolean | null
   est_actuellement_mediateur_en_poste: boolean | null
   labellisation_aidant_connect: boolean | null
+  structure_employeuse_id: null | number
 }>

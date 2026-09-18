@@ -13,10 +13,12 @@ export type AidantDetailsReadModel = Readonly<{
   telephone: string
 }>
 
-export type ContactReferentReadModel = Readonly<{
+export type ContactReadModel = Readonly<{
   email: string
+  estReferentFNE: boolean
+  fonction: string
+  id: number
   nom: string
-  post: string
   prenom: string
   telephone: string
 }>
@@ -34,7 +36,7 @@ type LieuActiviteReadModel = Readonly<{
 
 type StructureEmployeuseReadModel = Readonly<{
   adresse: string
-  contactReferent: ContactReferentReadModel
+  contacts: ReadonlyArray<ContactReadModel>
   departement: string
   nom: string
   region: string
