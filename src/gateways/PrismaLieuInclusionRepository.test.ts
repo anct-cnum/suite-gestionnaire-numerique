@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaLieuInclusionRepository } from './PrismaLieuInclusionRepository'
 import { contexteJournalisationMin } from './shared/contexteJournalisationMin'
@@ -79,6 +79,19 @@ describe('repository Prisma des lieux d’inclusion', () => {
 // Création d'un lieu (#1495). Données namespacées : commune fictive « Testville 1495 »,
 // nettoyée après chaque test (lieux puis adresses, FK oblige).
 describe('repository Prisma des lieux d’inclusion — création (#1495)', () => {
+  beforeAll(async () => {
+    // Le schéma source est hors Prisma (migration externe) : provisionné pour la base de
+    // test, comme dans journalisationMin.test (l'ordre des fichiers est aléatoire).
+    await prisma.$executeRaw`CREATE SCHEMA IF NOT EXISTS source`
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS source.min__evenements (
+      id BIGSERIAL PRIMARY KEY,
+      run_id TEXT NOT NULL,
+      ingested_at TIMESTAMPTZ DEFAULT now(),
+      source_key TEXT NOT NULL,
+      donnee JSONB NOT NULL
+    )`
+  })
+
   afterEach(async () => {
     await prisma.main_lieu_inclusion.deleteMany({ where: { nom: { startsWith: 'Lieu test 1495' } } })
     await prisma.adresse.deleteMany({ where: { nom_commune: COMMUNE_TEST } })
