@@ -47,11 +47,32 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     expect(PrismaUtilisateurLoader.prototype.findById).not.toHaveBeenCalled()
   })
 
-  it('refuse un utilisateur non bêta-testeur quand l’action y est réservée, sans charger le lieu', async () => {
+  it('laisse passer un administrateur dispositif hors bêta quand l’action est en ouverture progressive (#1951)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false })
+    )
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ role: 'Administrateur dispositif' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory()
+    )
+    vi.spyOn(prisma.membreRecord, 'findMany').mockResolvedValueOnce([])
+
+    // WHEN
+    const verification = await verifierDroitsLieu('42', { action: 'supprimer', reserveAuxBetaTesteurs: true })
+
+    // THEN
+    expect(verification.statut).toBe('ok')
+  })
+
+  it('refuse un gestionnaire hors bêta quand l’action est en ouverture progressive, sans charger le lieu', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: false, role: roleGestionnaireDepartement })
     )
     vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer')
 
@@ -127,3 +148,9 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     }
   )
 })
+
+const roleGestionnaireDepartement = {
+  ...utilisateurReadModelFactory().role,
+  nom: 'Gestionnaire département',
+  type: 'gestionnaire_departement' as const,
+}

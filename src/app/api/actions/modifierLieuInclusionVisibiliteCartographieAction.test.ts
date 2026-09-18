@@ -57,11 +57,18 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     expect(messages).toStrictEqual(["L'identifiant du lieu doit être renseigné"])
   })
 
-  it('refuse l’action à un utilisateur non bêta-testeur (#1951)', async () => {
+  it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951) (#1951)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-      utilisateurReadModelFactory({ isBetaTesteur: false })
+      utilisateurReadModelFactory({
+        isBetaTesteur: false,
+        role: {
+          ...utilisateurReadModelFactory().role,
+          nom: 'Gestionnaire département',
+          type: 'gestionnaire_departement',
+        },
+      })
     )
     vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle')
 
