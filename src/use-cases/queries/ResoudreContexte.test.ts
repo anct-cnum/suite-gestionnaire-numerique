@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { resoudreContexte, ScopeLoader } from './ResoudreContexte'
+import { Contexte, resoudreContexte, ScopeLoader } from './ResoudreContexte'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import { epochTime } from '@/shared/testHelper'
 
@@ -521,3 +521,41 @@ function loaderStub(
       .mockResolvedValue(options.appartenances ?? []),
   }
 }
+
+describe('contexte - gestion des lieux d’inclusion (#1951)', () => {
+  it.each([
+    {
+      attendu: true,
+      intention: 'un administrateur dispositif, même hors bêta',
+      isBetaTesteur: false,
+      role: 'administrateur_dispositif' as const,
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire département bêta-testeur',
+      isBetaTesteur: true,
+      role: 'gestionnaire_departement' as const,
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire département hors bêta',
+      isBetaTesteur: false,
+      role: 'gestionnaire_departement' as const,
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire structure hors bêta',
+      isBetaTesteur: false,
+      role: 'gestionnaire_structure' as const,
+    },
+  ])('$intention peut gérer les lieux : $attendu', ({ attendu, isBetaTesteur, role }) => {
+    // GIVEN
+    const contexte = new Contexte(role, [], isBetaTesteur)
+
+    // WHEN
+    const peutGerer = contexte.peutGererLesLieux()
+
+    // THEN
+    expect(peutGerer).toBe(attendu)
+  })
+})

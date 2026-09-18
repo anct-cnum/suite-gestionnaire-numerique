@@ -124,6 +124,13 @@ export class Contexte {
     )
   }
 
+  // Gestion des lieux d'inclusion (édition, suppression, visibilité carto) : ouverte
+  // aux administrateurs dispositif, encore réservée aux bêta-testeurs pour les
+  // gestionnaires (périmètre de création et de visibilité à préciser, #1495, #1951).
+  peutGererLesLieux(): boolean {
+    return this.aCesRoles('administrateur_dispositif') || this.isBetaTesteur
+  }
+
   peutGererStructure(structureId: number, codesDepartements: ReadonlyArray<string>): boolean {
     return this.scopes.some(
       (scope) =>

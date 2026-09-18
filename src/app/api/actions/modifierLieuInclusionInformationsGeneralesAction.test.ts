@@ -23,11 +23,18 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     expect(messages).toStrictEqual(['Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'])
   })
 
-  it('refuse l’action à un utilisateur non bêta-testeur', async () => {
+  it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-      utilisateurReadModelFactory({ isBetaTesteur: false })
+      utilisateurReadModelFactory({
+        isBetaTesteur: false,
+        role: {
+          ...utilisateurReadModelFactory().role,
+          nom: 'Gestionnaire département',
+          type: 'gestionnaire_departement',
+        },
+      })
     )
 
     // WHEN

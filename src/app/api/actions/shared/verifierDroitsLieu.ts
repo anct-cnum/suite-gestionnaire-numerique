@@ -24,7 +24,7 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
       await new PrismaUtilisateurLoader().findById(utilisateurId),
       new PrismaMembreLoader()
     )
-    if (!contexte.isBetaTesteur) {
+    if (!contexte.peutGererLesLieux()) {
       return refus('Action réservée aux bêta-testeurs')
     }
   }

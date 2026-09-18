@@ -58,12 +58,12 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
       departementsGouvernances
     )
 
-  // Édition des informations générales réservée aux bêta-testeurs.
+  // Gestion des lieux : administrateurs, ou bêta-testeurs pour les autres rôles (#1951).
   const contexte = await resoudreContexte(
     await new PrismaUtilisateurLoader().findById(utilisateurId),
     new PrismaMembreLoader()
   )
-  const peutModifierInformationsGenerales = peutModifier && contexte.isBetaTesteur
+  const peutModifierInformationsGenerales = peutModifier && contexte.peutGererLesLieux()
 
   const presentedData = lieuDetailsPresenter(
     lieuDetailsReadModel,
@@ -84,7 +84,7 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
       <LieuxInclusionDetails
         data={presentedData}
         lieuId={id}
-        peutSupprimer={peutModifier && contexte.isBetaTesteur && !lieuDetailsReadModel.estArchive}
+        peutSupprimer={peutModifier && contexte.peutGererLesLieux() && !lieuDetailsReadModel.estArchive}
       />
     </>
   )
