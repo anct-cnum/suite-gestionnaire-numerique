@@ -39,7 +39,7 @@ describe('liste structures', () => {
     // THEN
     const indicateurs = screen.getByRole('region', { name: 'Indicateurs des structures' })
     expect(indicateurs.textContent).toContain('Structures habilitées Aidants Connect')
-    expect(indicateurs.textContent).toContain('Structures labellisées conseiller numérique')
+    expect(indicateurs.textContent).toContain('Structures avec convention conseiller numérique')
     expect(indicateurs.textContent).toContain('Sur 25 structures')
 
     expect(screen.getByRole('searchbox', { name: 'Rechercher une structure' })).toBeDefined()
@@ -56,12 +56,12 @@ describe('liste structures', () => {
     )
     expect(lienSiret.getAttribute('target')).toBe('_blank')
     expect(cellules[3].textContent).toBe('2')
-    expect(cellules[4].textContent).toBe('Conseiller numériqueAidants Connect')
+    expect(cellules[4].textContent).toContain('Habilitée')
     const lienFiche = within(cellules[5]).getByRole('link', { name: 'Voir la structure Emmaüs Connect' })
     expect(lienFiche.getAttribute('href')).toBe('/structure/12')
   })
 
-  it('copie l’adresse dans le presse-papiers via le bouton copier', async () => {
+  it("copie l'adresse dans le presse-papiers via le bouton copier", async () => {
     // GIVEN
     const user = userEvent.setup()
     renderComponent(
@@ -75,7 +75,7 @@ describe('liste structures', () => {
     )
 
     // WHEN
-    await user.click(screen.getByRole('button', { name: 'Copier l’adresse 3 BIS AVENUE CHARLES DE GAULLE 69002 LYON' }))
+    await user.click(screen.getByRole('button', { name: "Copier l'adresse 3 BIS AVENUE CHARLES DE GAULLE 69002 LYON" }))
 
     // THEN
     await expect(navigator.clipboard.readText()).resolves.toBe('3 BIS AVENUE CHARLES DE GAULLE 69002 LYON')
@@ -201,7 +201,7 @@ describe('liste structures', () => {
     expect(screen.queryByText('Recherche limitée à votre département : Rhône (69)')).toBeNull()
   })
 
-  it('affiche le message d’erreur quand le view model est en erreur', () => {
+  it("affiche le message d'erreur quand le view model est en erreur", () => {
     // WHEN
     renderComponent(
       <ListeStructures
@@ -243,6 +243,7 @@ function viewModel(override?: Partial<ListeStructuresViewModel>): ListeStructure
     page: 1,
     structures: [structure()],
     total: 1,
+    totalAvecConventionConseillerNumerique: 3,
     totalHabiliteesAidantsConnect: 8,
     totalLabelliseesConseillerNumerique: 5,
     totalPages: 1,

@@ -31,6 +31,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
         page: pagination.page,
         structures: structures.map((structure) => this.mapToStructure(structure)),
         total,
+        totalAvecConventionConseillerNumerique: stats.totalAvecConventionConseillerNumerique,
         totalHabiliteesAidantsConnect: stats.totalHabiliteesAidantsConnect,
         totalLabelliseesConseillerNumerique: stats.totalLabelliseesConseillerNumerique,
         totalPages: Math.ceil(total / pagination.limite),
@@ -163,6 +164,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
 
   // Statistiques des blocs résumé : tous les filtres s'appliquent, recherche libre comprise.
   private async getStatistiques(filtres: FiltresListeStructures): Promise<{
+    totalAvecConventionConseillerNumerique: number
     totalHabiliteesAidantsConnect: number
     totalLabelliseesConseillerNumerique: number
     totalStructures: number
@@ -171,7 +173,9 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
     const whereConditions = this.buildWhereConditions(filtres.labellisation, filtres.recherche)
 
     // Même règle que le tag et le filtre : label actif (cf. estLabelConumActif) OU poste conum actif (non rendu)
-    const result = await prisma.$queryRaw<Array<{ aidants_connect: bigint; conum: bigint; total: bigint }>>`
+    const result = await prisma.$queryRaw<
+      Array<{ aidants_connect: bigint; conum: bigint; convention_conum: bigint; total: bigint }>
+    >`
       WITH ${scopeCte}
       SELECT
         COUNT(*) AS total,
@@ -182,7 +186,10 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
             WHERE cl.structure_id = sa.id AND cl.date_attestation > now() - interval '3 months'
           )
           OR EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu')
-        ) AS conum
+        ) AS conum,
+        COUNT(*) FILTER (WHERE
+          EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu')
+        ) AS convention_conum
       FROM main.structure_administrative sa
       JOIN structures_dans_scope sds ON sds.id = sa.id
       WHERE true
@@ -190,6 +197,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
     `
 
     return {
+      totalAvecConventionConseillerNumerique: Number(result[0]?.convention_conum ?? 0),
       totalHabiliteesAidantsConnect: Number(result[0]?.aidants_connect ?? 0),
       totalLabelliseesConseillerNumerique: Number(result[0]?.conum ?? 0),
       totalStructures: Number(result[0]?.total ?? 0),

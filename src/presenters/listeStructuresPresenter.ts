@@ -23,6 +23,7 @@ export type ListeStructuresViewModel = Readonly<{
   page: number
   structures: Array<StructureListeViewModel>
   total: number
+  totalAvecConventionConseillerNumerique: number
   totalHabiliteesAidantsConnect: number
   totalLabelliseesConseillerNumerique: number
   totalPages: number
@@ -59,6 +60,7 @@ export function listeStructuresPresenter(
       typologie: structure.typologie,
     })),
     total: readModel.total,
+    totalAvecConventionConseillerNumerique: readModel.totalAvecConventionConseillerNumerique,
     totalHabiliteesAidantsConnect: readModel.totalHabiliteesAidantsConnect,
     totalLabelliseesConseillerNumerique: readModel.totalLabelliseesConseillerNumerique,
     totalPages: readModel.totalPages,
