@@ -14,10 +14,6 @@ import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 export const MESSAGE_LIEU_GERE_PAR_LA_COOP =
   'Ce lieu est géré dans la Coop numérique : il ne peut pas être modifié depuis Mon Inclusion Numérique.'
 
-export type VerificationDroitsLieu =
-  | Readonly<{ lieu: LieuDetailsReadModel; statut: 'ok' }>
-  | Readonly<{ message: string; statut: 'refus' }>
-
 // Vérification partagée par toutes les actions sur un lieu d'inclusion :
 // session → [flag bêta] → lieu chargé → lieu coop refusé → droits du rôle.
 export async function verifierDroitsLieu(lieuId: string, options: Options): Promise<VerificationDroitsLieu> {
@@ -69,6 +65,10 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
 
   return { lieu, statut: 'ok' }
 }
+
+type VerificationDroitsLieu =
+  | Readonly<{ lieu: LieuDetailsReadModel; statut: 'ok' }>
+  | Readonly<{ message: string; statut: 'refus' }>
 
 type Options = Readonly<{
   action: 'modifier' | 'supprimer'
