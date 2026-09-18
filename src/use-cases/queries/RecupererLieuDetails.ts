@@ -3,6 +3,9 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 export interface LieuDetailsReadModel {
   codeDepartement?: string
   estArchive: boolean
+  // Lieu porté par la Coop numérique (structure_coop_id) : la Coop garde sa vérité,
+  // MIN le présente en lecture seule (#1951).
+  estLieuCoop: boolean
   header: {
     editeur?: string
     miseAJourLe?: Date

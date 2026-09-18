@@ -47,6 +47,8 @@ export interface LieuInclusionNumeriqueItem {
   nom_voie: null | string
   numero_voie: null | string
   structure_cartographie_nationale_id: null | string
+  // Lieu porté par la Coop numérique : lecture seule dans MIN (#1951).
+  structure_coop_id: null | string
   typologies: Array<string>
   updated_at: Date | null
   visible_pour_cartographie_nationale: boolean | null

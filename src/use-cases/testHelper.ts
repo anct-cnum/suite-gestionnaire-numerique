@@ -1,6 +1,7 @@
 /* eslint-disable import/no-restricted-paths */
 // Stryker disable all
 import { FeuillesDeRouteReadModel } from './queries/RecupererLesFeuillesDeRoute'
+import { LieuDetailsReadModel } from './queries/RecupererLieuDetails'
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
@@ -675,6 +676,27 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       'Association',
     ],
     uidGouvernance: '69',
+    ...override,
+  }
+}
+
+export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadModel>): LieuDetailsReadModel {
+  return {
+    codeDepartement: '75',
+    estArchive: false,
+    estLieuCoop: false,
+    header: {
+      nom: 'Mon lieu',
+      tags: [],
+    },
+    informationsGenerales: {
+      adresse: '1 rue de la Paix, 75001 Paris',
+      nomStructure: 'Ma Structure',
+    },
+    lieuAccueilPublic: {},
+    personnesTravaillant: [],
+    servicesInclusionNumerique: [],
+    structureId: 42,
     ...override,
   }
 }

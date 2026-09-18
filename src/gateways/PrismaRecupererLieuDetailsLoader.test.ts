@@ -39,4 +39,33 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect(details.lieuAccueilPublic.itinerance).toStrictEqual(['Fixe'])
     expect(details.lieuAccueilPublic.conseillerNumeriqueLabellePhase2).toBe(true)
   })
+
+  it.each([
+    {
+      estLieuCoop: true,
+      intention: 'géré dans la Coop quand structure_coop_id est renseigné',
+      structureCoopId: '00000000-0000-4000-8000-000000000001',
+    },
+    {
+      estLieuCoop: false,
+      intention: 'géré hors Coop quand structure_coop_id est vide',
+      structureCoopId: null,
+    },
+  ])('indique que le lieu est $intention (#1951)', async ({ estLieuCoop, structureCoopId }) => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({
+      data: {
+        id: LIEU_ID,
+        nom: 'Lieu test coop',
+        structure_coop_id: structureCoopId,
+      },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect(readModel).not.toHaveProperty('type')
+    expect((readModel as LieuDetailsReadModel).estLieuCoop).toBe(estLieuCoop)
+  })
 })

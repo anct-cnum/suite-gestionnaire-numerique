@@ -4,23 +4,16 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
-import prisma from '../../../../prisma/prismaClient'
-import { LieuInclusion } from '@/domain/LieuInclusion'
+import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { createApiEntrepriseLoader } from '@/gateways/factories/apiEntrepriseLoaderFactory'
-import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
-import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   Failure,
   ModifierLieuInclusionInformationsGenerales,
 } from '@/use-cases/commands/ModifierLieuInclusionInformationsGenerales'
 import { RechercherUneEntreprise } from '@/use-cases/queries/RechercherUneEntreprise'
-import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
   adresseIntrouvable: 'Adresse introuvable — vérifiez la saisie',
@@ -36,9 +29,13 @@ export async function modifierLieuInclusionInformationsGeneralesAction(
     }
 
     try {
-      const droits = await verifierDroits(validationResult.data.structureId)
-      if (droits !== 'OK') {
-        return [droits]
+      // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+      const droits = await verifierDroitsLieu(validationResult.data.structureId, {
+        action: 'modifier',
+        reserveAuxBetaTesteurs: true,
+      })
+      if (droits.statut === 'refus') {
+        return [droits.message]
       }
 
       const modification = await construireModification(validationResult.data)
@@ -121,56 +118,6 @@ async function construireModification(params: ParamsValides): Promise<Modificati
       typologies: params.typologies,
     },
   }
-}
-
-async function verifierDroits(structureId: string): Promise<string> {
-  const utilisateurId = await getSessionUtilisateurId()
-
-  // Garde : édition réservée aux bêta-testeurs.
-  const contexte = await resoudreContexte(
-    await new PrismaUtilisateurLoader().findById(utilisateurId),
-    new PrismaMembreLoader()
-  )
-  if (!contexte.isBetaTesteur) {
-    return 'Action réservée aux bêta-testeurs'
-  }
-
-  const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurRepository.get(utilisateurId)
-
-  const loader = new PrismaRecupererLieuDetailsLoader()
-  const lieuDetailsReadModel = await loader.recuperer(structureId)
-
-  if ('type' in lieuDetailsReadModel) {
-    return 'Lieu non trouvé'
-  }
-
-  // Récupérer les départements des gouvernances dont la structure est membre
-  const gouvernancesDepartements = await prisma.membreRecord.findMany({
-    select: {
-      gouvernanceDepartementCode: true,
-    },
-    where: {
-      dateSuppression: null,
-      structureId: lieuDetailsReadModel.structureId,
-    },
-  })
-
-  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
-  const peutModifier = LieuInclusion.peutEtreModifiePar(
-    utilisateur,
-    lieuDetailsReadModel.codeDepartement,
-    lieuDetailsReadModel.structureId,
-    lieuDetailsReadModel.personnesTravaillant.length,
-    departementsGouvernances
-  )
-
-  if (!peutModifier) {
-    return "Vous n'avez pas les droits pour modifier ce lieu"
-  }
-
-  return 'OK'
 }
 
 type Modification = Parameters<ModifierLieuInclusionInformationsGenerales['handle']>[0]['modification']

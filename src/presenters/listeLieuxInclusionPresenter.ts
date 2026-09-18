@@ -11,6 +11,7 @@ export function listeLieuxInclusionPresenter(
     adresse: formatAdresse(lieu),
     dateArchivage: lieu.deleted_at === null ? null : formaterEnDateFrancaise(lieu.deleted_at),
     derniereMiseAJour: getDerniereMiseAJour(lieu.updated_at, now),
+    estLieuCoop: lieu.structure_coop_id !== null,
     id: lieu.id,
     idCartographieNationale: lieu.structure_cartographie_nationale_id,
     nbAccompagnements: lieu.nb_accompagnements_coop + lieu.nb_accompagnements_ac,
@@ -53,6 +54,7 @@ export interface LieuInclusionViewModel {
   adresse: AdresseViewModel
   dateArchivage: null | string
   derniereMiseAJour: DerniereMiseAJourViewModel
+  estLieuCoop: boolean
   id: string
   idCartographieNationale: null | string
   nbAccompagnements: number

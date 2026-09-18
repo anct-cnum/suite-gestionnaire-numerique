@@ -103,6 +103,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
       siret_a_l_enrichissement: null | string
+      structure_coop_id: null | string
       typologies: Array<string> | null
       updated_at: Date | null
     },
@@ -128,6 +129,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     return {
       codeDepartement,
       estArchive: structure.deleted_at !== null,
+      estLieuCoop: structure.structure_coop_id !== null,
       header: {
         editeur: structure.edited_by ?? undefined,
         miseAJourLe: structure.updated_at ?? undefined,
@@ -364,6 +366,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       siret: null | string
       siret_a_l_enrichissement: null | string
       structure_administrative_id: null | number
+      structure_coop_id: null | string
       typologies: Array<string> | null
       updated_at: Date | null
     }>
@@ -396,6 +399,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.updated_at,
         l.deleted_at,
         l.edited_by,
+        l.structure_coop_id::text AS structure_coop_id,
         l.siret_a_l_enrichissement,
         l.complement_adresse,
         a.numero_voie,

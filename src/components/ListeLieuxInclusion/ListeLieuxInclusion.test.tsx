@@ -21,6 +21,7 @@ describe('onglets de la liste des lieux d’inclusion', () => {
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel()}
+        peutModifierVisibilite={false}
         peutSupprimer={false}
         searchParams={new URLSearchParams()}
         utilisateurRole="Administrateur dispositif"
@@ -43,6 +44,7 @@ describe('onglets de la liste des lieux d’inclusion', () => {
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel()}
+        peutModifierVisibilite={false}
         peutSupprimer={false}
         searchParams={new URLSearchParams()}
         utilisateurRole="Administrateur dispositif"
@@ -68,7 +70,49 @@ describe('onglets de la liste des lieux d’inclusion', () => {
   })
 })
 
-function viewModel(): ListeLieuxInclusionViewModel {
+describe('visibilité cartographique et suppression depuis la liste (#1951)', () => {
+  it.each([
+    {
+      estLieuCoop: false,
+      intention: 'un bêta-testeur peut changer la visibilité et supprimer un lieu hors Coop',
+      peutModifierVisibilite: true,
+      suppressionAttendue: true,
+      toggleActif: true,
+    },
+    {
+      estLieuCoop: true,
+      intention: 'un lieu géré dans la Coop est en lecture seule : toggle désactivé, pas de suppression',
+      peutModifierVisibilite: true,
+      suppressionAttendue: false,
+      toggleActif: false,
+    },
+    {
+      estLieuCoop: false,
+      intention: 'hors flag bêta, le toggle reste désactivé',
+      peutModifierVisibilite: false,
+      suppressionAttendue: false,
+      toggleActif: false,
+    },
+  ])('$intention', ({ estLieuCoop, peutModifierVisibilite, suppressionAttendue, toggleActif }) => {
+    // GIVEN
+    render(
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={viewModel({ estLieuCoop })}
+        peutModifierVisibilite={peutModifierVisibilite}
+        peutSupprimer={peutModifierVisibilite}
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
+      />
+    )
+
+    // THEN
+    const toggle = screen.getByRole('checkbox')
+    expect(toggle.hasAttribute('disabled')).toBe(!toggleActif)
+    expect(screen.queryByRole('button', { name: 'Supprimer Lieu test' }) !== null).toBe(suppressionAttendue)
+  })
+})
+
+function viewModel(lieu: Partial<ListeLieuxInclusionViewModel['lieux'][number]> = {}): ListeLieuxInclusionViewModel {
   return {
     displayPagination: false,
     lieux: [
@@ -76,6 +120,7 @@ function viewModel(): ListeLieuxInclusionViewModel {
         adresse: { ligne1: '75001 Paris', ligne2: '1 rue de la Paix' },
         dateArchivage: null,
         derniereMiseAJour: { couleur: 'blue', date: '01/01/2026' },
+        estLieuCoop: false,
         id: '5353',
         idCartographieNationale: null,
         nbAccompagnements: 0,
@@ -83,6 +128,7 @@ function viewModel(): ListeLieuxInclusionViewModel {
         tags: [],
         typeStructure: 'Commune',
         visiblePourCartographie: false,
+        ...lieu,
       },
     ],
     limite: 10,

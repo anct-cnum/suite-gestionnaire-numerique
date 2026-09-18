@@ -34,6 +34,7 @@ import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
+  peutModifierVisibilite,
   peutSupprimer,
   searchParams,
   utilisateurRole,
@@ -337,6 +338,7 @@ export default function ListeLieuxInclusion({
                   setLieuASupprimer(lieu)
                 }}
                 onToggleVisibleCarto={handleToggleVisibleCarto}
+                peutModifierVisibilite={peutModifierVisibilite}
               />
             ))}
           </Table>
@@ -617,6 +619,7 @@ function LigneLieu({
   onOpenInfoDrawer,
   onSupprimer,
   onToggleVisibleCarto,
+  peutModifierVisibilite,
 }: Readonly<{
   afficherColonneMajInfos: boolean
   afficherSuppression: boolean
@@ -626,6 +629,7 @@ function LigneLieu({
   onOpenInfoDrawer(): void
   onSupprimer(): void
   onToggleVisibleCarto(event: ChangeEvent<HTMLInputElement>, lieuId: string): Promise<void>
+  peutModifierVisibilite: boolean
 }>): ReactElement {
   return (
     <tr>
@@ -710,8 +714,11 @@ function LigneLieu({
               <input
                 className="fr-toggle__input"
                 defaultChecked={lieu.visiblePourCartographie}
-                disabled
+                disabled={!peutModifierVisibilite || lieu.estLieuCoop}
                 id={`visible-carto-${lieu.id}`}
+                title={
+                  lieu.estLieuCoop ? 'Lieu géré dans la Coop numérique : visibilité pilotée depuis la Coop' : undefined
+                }
                 onChange={async (event) => onToggleVisibleCarto(event, lieu.id)}
                 type="checkbox"
               />
@@ -732,7 +739,7 @@ function LigneLieu({
           >
             {`Voir le détail de ${lieu.nom}`}
           </Link>
-          {afficherSuppression ? (
+          {afficherSuppression && !lieu.estLieuCoop ? (
             <button
               className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-line color-red fr-mb-0"
               onClick={onSupprimer}
@@ -827,6 +834,8 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 
 type Props = Readonly<{
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
+  // Toggle de visibilité carto réservé aux bêta-testeurs, comme la suppression (#1951).
+  peutModifierVisibilite: boolean
   peutSupprimer: boolean
   searchParams: SerializedSearchParams
   utilisateurRole: TypologieRole

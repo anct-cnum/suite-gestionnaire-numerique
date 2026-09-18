@@ -140,6 +140,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         l.updated_at,
         l.deleted_at,
         l.visible_pour_cartographie_nationale,
+        l.structure_coop_id::text AS structure_coop_id,
         l.typologies,
         l.numero_voie,
         l.nom_voie,
@@ -161,7 +162,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         ${filtreEmployeuseActivites}
       LEFT JOIN accompagnements_ac acc ON acc.lieu_id = l.id
       GROUP BY l.id, l.nom, l.structure_cartographie_nationale_id, l.updated_at, l.deleted_at,
-               l.visible_pour_cartographie_nationale,
+               l.visible_pour_cartographie_nationale, l.structure_coop_id,
                l.typologies, l.numero_voie, l.nom_voie, l.code_postal, l.nom_commune, l.code_insee,
                l.geom, acc.nbr
       ORDER BY l.nom ASC
