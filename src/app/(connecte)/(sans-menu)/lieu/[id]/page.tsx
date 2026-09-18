@@ -46,14 +46,17 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
 
   const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
 
-  // Calculer si l'utilisateur peut modifier ce lieu
-  const peutModifier = LieuInclusion.peutEtreModifiePar(
-    utilisateur,
-    lieuDetailsReadModel.codeDepartement,
-    lieuDetailsReadModel.structureId,
-    lieuDetailsReadModel.personnesTravaillant.length,
-    departementsGouvernances
-  )
+  // Calculer si l'utilisateur peut modifier ce lieu. Un lieu géré dans la Coop
+  // est en lecture seule dans MIN, quel que soit le rôle (#1951).
+  const peutModifier =
+    !lieuDetailsReadModel.estLieuCoop &&
+    LieuInclusion.peutEtreModifiePar(
+      utilisateur,
+      lieuDetailsReadModel.codeDepartement,
+      lieuDetailsReadModel.structureId,
+      lieuDetailsReadModel.personnesTravaillant.length,
+      departementsGouvernances
+    )
 
   // Édition des informations générales réservée aux bêta-testeurs.
   const contexte = await resoudreContexte(

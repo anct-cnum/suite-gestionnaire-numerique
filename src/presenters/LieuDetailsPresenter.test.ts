@@ -81,6 +81,20 @@ describe('lieu details presenter', () => {
     // THEN
     expect(viewModel.header.fraicheur).toBeUndefined()
   })
+
+  it.each([{ estLieuCoop: true }, { estLieuCoop: false }])(
+    'transmet estLieuCoop=$estLieuCoop à la fiche (#1951)',
+    ({ estLieuCoop }) => {
+      // GIVEN
+      const readModel = { ...createReadModel({}), estLieuCoop }
+
+      // WHEN
+      const viewModel = lieuDetailsPresenter(readModel, false, false, now)
+
+      // THEN
+      expect(viewModel.estLieuCoop).toBe(estLieuCoop)
+    }
+  )
 })
 
 function createReadModel(header: Partial<LieuDetailsReadModel['header']>): LieuDetailsReadModel {

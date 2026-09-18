@@ -9,6 +9,7 @@ export function lieuDetailsPresenter(
   now: Date
 ): LieuInclusionDetailsData {
   return {
+    estLieuCoop: lieuDetailsReadModel.estLieuCoop,
     header: {
       fraicheur: getFraicheur(lieuDetailsReadModel.header, now),
       nom: lieuDetailsReadModel.header.nom,
@@ -77,6 +78,7 @@ const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
 }
 
 interface LieuInclusionDetailsData {
+  estLieuCoop: boolean
   header: {
     fraicheur?: {
       couleur: CouleurFraicheur

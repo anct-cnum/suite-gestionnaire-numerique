@@ -5,6 +5,7 @@ import LieuInclusionDetailsHeader from '@/components/LieuInclusionDetails/LieuIn
 import LieuInclusionDetailsInformationsGenerales from '@/components/LieuInclusionDetails/LieuInclusionDetailsInformationsGenerales'
 import LieuInclusionDetailsPersonnes from '@/components/LieuInclusionDetails/LieuInclusionDetailsPersonnes'
 import LieuInclusionDetailsServices from '@/components/LieuInclusionDetails/LieuInclusionDetailsServices'
+import Alerte from '@/components/shared/Alerte/Alerte'
 import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export type LieuInclusionDetailsHeaderData = Readonly<{
@@ -64,6 +65,8 @@ export type ServiceInclusionNumeriqueData = Readonly<{
 }>
 
 export type LieuInclusionDetailsData = Readonly<{
+  // Lieu porté par la Coop numérique : présenté en lecture seule (#1951).
+  estLieuCoop: boolean
   header: LieuInclusionDetailsHeaderData
   informationsGenerales: InformationsGeneralesData
   lieuAccueilPublic: LieuAccueilPublicData
@@ -86,6 +89,13 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
           }
         />
       </div>
+
+      {data.estLieuCoop ? (
+        <Alerte titre="Lieu géré dans la Coop numérique">
+          Les informations de ce lieu sont renseignées par les médiateurs dans la Coop numérique et reprises ici
+          automatiquement. Pour les modifier, masquer ce lieu sur la carte ou le supprimer, passez par la Coop.
+        </Alerte>
+      ) : null}
 
       <div id="informations-generales">
         <LieuInclusionDetailsInformationsGenerales
