@@ -86,6 +86,7 @@ describe('lieu details presenter', () => {
 function createReadModel(header: Partial<LieuDetailsReadModel['header']>): LieuDetailsReadModel {
   return {
     estArchive: false,
+    estLieuCoop: false,
     header: {
       nom: 'Association Connect 69',
       tags: ['FRR'],
