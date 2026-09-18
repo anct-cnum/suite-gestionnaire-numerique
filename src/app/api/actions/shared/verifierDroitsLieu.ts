@@ -67,8 +67,7 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
 }
 
 type VerificationDroitsLieu =
-  | Readonly<{ lieu: LieuDetailsReadModel; statut: 'ok' }>
-  | Readonly<{ message: string; statut: 'refus' }>
+  Readonly<{ lieu: LieuDetailsReadModel; statut: 'ok' }> | Readonly<{ message: string; statut: 'refus' }>
 
 type Options = Readonly<{
   action: 'modifier' | 'supprimer'
