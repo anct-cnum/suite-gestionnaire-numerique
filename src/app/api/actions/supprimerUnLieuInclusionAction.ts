@@ -4,17 +4,10 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
-import prisma from '../../../../prisma/prismaClient'
-import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
-import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUnLieuInclusion } from '@/use-cases/commands/SupprimerUnLieuInclusion'
-import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export async function supprimerUnLieuInclusionAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   return avecJournalisationMin(async () => {
@@ -23,51 +16,13 @@ export async function supprimerUnLieuInclusionAction(actionParams: ActionParams)
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    const utilisateurId = await getSessionUtilisateurId()
-
-    // Garde : suppression réservée aux bêta-testeurs.
-    const contexte = await resoudreContexte(
-      await new PrismaUtilisateurLoader().findById(utilisateurId),
-      new PrismaMembreLoader()
-    )
-    if (!contexte.isBetaTesteur) {
-      return ['Action réservée aux bêta-testeurs']
-    }
-
-    const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const utilisateur = await utilisateurRepository.get(utilisateurId)
-
-    const loader = new PrismaRecupererLieuDetailsLoader()
-    const lieuDetailsReadModel = await loader.recuperer(validationResult.data.lieuId)
-
-    if ('type' in lieuDetailsReadModel) {
-      return ['Lieu non trouvé']
-    }
-
-    // Récupérer les départements des gouvernances dont la structure est membre
-    const gouvernancesDepartements = await prisma.membreRecord.findMany({
-      select: {
-        gouvernanceDepartementCode: true,
-      },
-      where: {
-        dateSuppression: null,
-        structureId: lieuDetailsReadModel.structureId,
-      },
+    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    const droits = await verifierDroitsLieu(validationResult.data.lieuId, {
+      action: 'supprimer',
+      reserveAuxBetaTesteurs: true,
     })
-
-    const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
-    // Même règle de droits que la modification du lieu.
-    const peutSupprimer = LieuInclusion.peutEtreModifiePar(
-      utilisateur,
-      lieuDetailsReadModel.codeDepartement,
-      lieuDetailsReadModel.structureId,
-      lieuDetailsReadModel.personnesTravaillant.length,
-      departementsGouvernances
-    )
-
-    if (!peutSupprimer) {
-      return ["Vous n'avez pas les droits pour supprimer ce lieu"]
+    if (droits.statut === 'refus') {
+      return [droits.message]
     }
 
     const result = await new SupprimerUnLieuInclusion(new PrismaLieuInclusionRepository(), new Date()).handle({

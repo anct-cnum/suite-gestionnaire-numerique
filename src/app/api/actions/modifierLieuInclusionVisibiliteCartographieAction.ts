@@ -4,12 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
-import prisma from '../../../../prisma/prismaClient'
-import { LieuInclusion } from '@/domain/LieuInclusion'
-import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
-import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModifierLieuInclusionVisibiliteCartographie } from '@/use-cases/commands/ModifierLieuInclusionVisibiliteCartographie'
 
@@ -23,41 +19,10 @@ export async function modifierLieuInclusionVisibiliteCartographieAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Vérification des droits
-    const utilisateurId = await getSessionUtilisateurId()
-    const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const utilisateur = await utilisateurRepository.get(utilisateurId)
-
-    const loader = new PrismaRecupererLieuDetailsLoader()
-    const lieuDetailsReadModel = await loader.recuperer(actionParams.lieuId)
-
-    if ('type' in lieuDetailsReadModel) {
-      return ['Lieu non trouvé']
-    }
-
-    // Récupérer les départements des gouvernances dont la structure est membre
-    const gouvernancesDepartements = await prisma.membreRecord.findMany({
-      select: {
-        gouvernanceDepartementCode: true,
-      },
-      where: {
-        dateSuppression: null,
-        structureId: lieuDetailsReadModel.structureId,
-      },
-    })
-
-    const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
-    const peutModifier = LieuInclusion.peutEtreModifiePar(
-      utilisateur,
-      lieuDetailsReadModel.codeDepartement,
-      lieuDetailsReadModel.structureId,
-      lieuDetailsReadModel.personnesTravaillant.length,
-      departementsGouvernances
-    )
-
-    if (!peutModifier) {
-      return ["Vous n'avez pas les droits pour modifier ce lieu"]
+    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    const droits = await verifierDroitsLieu(actionParams.lieuId, { action: 'modifier', reserveAuxBetaTesteurs: true })
+    if (droits.statut === 'refus') {
+      return [droits.message]
     }
 
     // Appel du Use Case
