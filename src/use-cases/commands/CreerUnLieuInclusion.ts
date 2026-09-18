@@ -82,7 +82,7 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
 
 export type Failure = 'adresseIntrouvable'
 
-export type Succes = Readonly<{ lieuId: number }>
+type Succes = Readonly<{ lieuId: number }>
 
 // Repli sans géométrie sur les composants SIRENE, seulement s'ils suffisent à
 // localiser le lieu (code INSEE, code postal, commune).

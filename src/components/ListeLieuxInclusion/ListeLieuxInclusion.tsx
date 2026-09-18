@@ -34,6 +34,7 @@ import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
+  peutCreer,
   peutModifierVisibilite,
   peutSupprimer,
   searchParams,
@@ -363,6 +364,13 @@ export default function ListeLieuxInclusion({
           </PageTitle>
         </div>
         <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+          {peutCreer ? (
+            <div className="fr-col-auto">
+              <Link className="fr-btn fr-btn--icon-left fr-icon-add-line" href="/lieu/creer">
+                Ajouter un lieu
+              </Link>
+            </div>
+          ) : null}
           <div className="fr-col-auto">
             <button
               className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
@@ -834,6 +842,8 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 
 type Props = Readonly<{
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
+  // Création réservée aux administrateurs (#1495).
+  peutCreer: boolean
   // Toggle de visibilité carto réservé aux bêta-testeurs, comme la suppression (#1951).
   peutModifierVisibilite: boolean
   peutSupprimer: boolean

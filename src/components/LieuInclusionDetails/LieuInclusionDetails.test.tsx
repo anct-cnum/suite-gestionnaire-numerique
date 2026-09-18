@@ -49,4 +49,26 @@ describe('fiche d’un lieu d’inclusion', () => {
     expect(screen.getAllByRole('button', { name: 'Modifier' }).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Supprimer ce lieu' })).toBeInTheDocument()
   })
+
+  it.each([{ estEnAttenteDeReferencement: true }, { estEnAttenteDeReferencement: false }])(
+    'signale un lieu visible mais pas encore référencé sur la carte : $estEnAttenteDeReferencement (#1495)',
+    ({ estEnAttenteDeReferencement }) => {
+      // GIVEN
+      const data = { ...createDefaultLieuInclusionDetailsData(), estEnAttenteDeReferencement }
+
+      // WHEN
+      renderComponent(<LieuxInclusionDetails data={data} lieuId="42" peutSupprimer={false} />)
+
+      // THEN
+      const alerte = screen.queryByRole('heading', {
+        level: 3,
+        name: 'En attente de référencement sur la cartographie',
+      })
+      if (estEnAttenteDeReferencement) {
+        expect(alerte).toBeInTheDocument()
+      } else {
+        expect(alerte).not.toBeInTheDocument()
+      }
+    }
+  )
 })

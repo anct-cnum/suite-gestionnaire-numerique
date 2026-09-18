@@ -65,6 +65,8 @@ export type ServiceInclusionNumeriqueData = Readonly<{
 }>
 
 export type LieuInclusionDetailsData = Readonly<{
+  // Visible mais pas encore référencé sur la carte nationale (#1495).
+  estEnAttenteDeReferencement: boolean
   // Lieu porté par la Coop numérique : présenté en lecture seule (#1951).
   estLieuCoop: boolean
   header: LieuInclusionDetailsHeaderData
@@ -94,6 +96,13 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
         <Alerte titre="Lieu géré dans la Coop numérique">
           Les informations de ce lieu sont renseignées par les médiateurs dans la Coop numérique et reprises ici
           automatiquement. Pour les modifier, masquer ce lieu sur la carte ou le supprimer, passez par la Coop.
+        </Alerte>
+      ) : null}
+
+      {data.estEnAttenteDeReferencement ? (
+        <Alerte titre="En attente de référencement sur la cartographie">
+          Ce lieu est marqué visible mais n’est pas encore référencé sur la cartographie nationale : il y apparaîtra
+          après le prochain référencement, sous quelques jours.
         </Alerte>
       ) : null}
 
