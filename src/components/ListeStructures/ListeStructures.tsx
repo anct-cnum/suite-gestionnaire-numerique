@@ -196,9 +196,10 @@ export default function ListeStructures({
               `Sur ${formaterEnNombreFrancais(viewModel.totalStructures)} structures`
             )}
             {carteIndicateur(
-              formaterEnNombreFrancais(viewModel.totalLabelliseesConseillerNumerique),
-              'Structures labellisées conseiller numérique',
-              `Sur ${formaterEnNombreFrancais(viewModel.totalStructures)} structures`
+              formaterEnNombreFrancais(viewModel.totalAvecConventionConseillerNumerique),
+              'Structures avec convention conseiller numérique',
+              `Sur ${formaterEnNombreFrancais(viewModel.totalStructures)} structures`,
+              'fr-ml-auto'
             )}
           </div>
         </div>
@@ -227,7 +228,7 @@ export default function ListeStructures({
         </div>
       ) : (
         <Table
-          enTetes={['Lieu', 'Adresse', 'N° de SIRET', 'Ressource humaine', 'Labellisation / habilitation', '']}
+          enTetes={['Lieu', 'Adresse', 'N° de SIRET', 'Ressource humaine', 'Aidants Connect', '']}
           multiline={true}
           titre="Structures"
         >
@@ -284,9 +285,16 @@ function adressePostale(structure: StructureListeViewModel): string {
   return [structure.adresseComplete, structure.codePostalCommune].filter(Boolean).join(' ').trim()
 }
 
-function carteIndicateur(indicateur: string, description: string, legende: string): ReactElement {
+function carteIndicateur(
+  indicateur: string,
+  description: string,
+  legende: string,
+  extraClassName?: string
+): ReactElement {
+  const className = extraClassName ? `fr-col-12 fr-col-md-4 ${extraClassName}` : 'fr-col-12 fr-col-md-4'
+
   return (
-    <div className="fr-col-12 fr-col-md-4" style={{ height: '7rem' }}>
+    <div className={className} style={{ height: '7rem' }}>
       <div
         className="fr-background-alt--blue-france fr-p-2w"
         style={{ borderRadius: '1rem', gap: '1rem', height: '7rem' }}
@@ -300,14 +308,6 @@ function carteIndicateur(indicateur: string, description: string, legende: strin
 }
 
 function StructureRow({ structure }: Readonly<{ structure: StructureListeViewModel }>): ReactElement {
-  const labellisations: Array<string> = []
-  if (structure.estLabelliseeConseillerNumerique) {
-    labellisations.push('Conseiller numérique')
-  }
-  if (structure.estHabiliteeAidantsConnect) {
-    labellisations.push('Aidants Connect')
-  }
-
   return (
     <tr style={{ height: '4rem' }}>
       <td>
@@ -346,10 +346,13 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
                   Notification('success', { description: adressePostale(structure), title: 'Copié : ' })
                 })
               }}
-              title={`Copier l’adresse ${adressePostale(structure)}`}
+              title={`Copier l'adresse ${adressePostale(structure)}`}
               type="button"
             >
-              <span className="fr-sr-only">Copier l’adresse {adressePostale(structure)}</span>
+              <span className="fr-sr-only">
+                {"Copier l'adresse "}
+                {adressePostale(structure)}
+              </span>
             </button>
           )}
         </div>
@@ -362,7 +365,7 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
             href={structure.lienAnnuaireEntreprises}
             rel="external noopener noreferrer"
             target="_blank"
-            title={`SIRET de ${structure.nom} sur l’Annuaire des Entreprises - nouvelle fenêtre`}
+            title={`SIRET de ${structure.nom} sur l'Annuaire des Entreprises - nouvelle fenêtre`}
           >
             {structure.siret}
           </a>
@@ -378,25 +381,9 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
         )}
       </td>
       <td>
-        {labellisations.length > 0 ? (
-          <div className="fr-grid-row fr-grid-row--gutters">
-            {labellisations.map((labellisation) => (
-              <div
-                className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
-                key={`${structure.id}-${labellisation}`}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: '1px solid var(--border-default-grey)',
-                  color: 'var(--text-default-grey)',
-                }}
-              >
-                {labellisation}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <span>-</span>
-        )}
+        {structure.estHabiliteeAidantsConnect ? (
+          <span className="fr-badge fr-badge--success fr-badge--no-icon fr-badge--sm">Habilitée</span>
+        ) : null}
       </td>
       <td className="fr-cell--center">
         <Link

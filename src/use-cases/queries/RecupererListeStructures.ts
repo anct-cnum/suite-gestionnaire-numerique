@@ -45,6 +45,7 @@ export type ListeStructuresReadModel = Readonly<{
   page: number
   structures: Array<StructureListeReadModel>
   total: number
+  totalAvecConventionConseillerNumerique: number
   totalHabiliteesAidantsConnect: number
   totalLabelliseesConseillerNumerique: number
   totalPages: number
