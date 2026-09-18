@@ -60,7 +60,11 @@ describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', (
       .fn<() => Promise<ReadonlyArray<string>>>()
       .mockResolvedValueOnce(['Aucune entreprise trouvée avec cet identifiant'])
     renderComponent(
-      <LieuInclusionFormulaire idPrefixe="test" onChangement={vi.fn()} valeursInitiales={valeursVides} />,
+      <LieuInclusionFormulaire
+        idPrefixe="test"
+        onChangement={vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()}
+        valeursInitiales={valeursVides}
+      />,
       { rechercherUneEntrepriseAction }
     )
 

@@ -116,15 +116,12 @@ describe('visibilité cartographique et suppression depuis la liste (#1951)', ()
 })
 
 describe('ajout d’un lieu depuis la liste (#1495)', () => {
-  it.each([
-    { intention: 'un administrateur voit le lien « Ajouter un lieu » vers la page de création', peutCreer: true },
-    { intention: 'sans droit de création, le lien est absent', peutCreer: false },
-  ])('$intention', ({ peutCreer }) => {
+  it('un administrateur voit le lien « Ajouter un lieu » vers la page de création', () => {
     // WHEN
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel()}
-        peutCreer={peutCreer}
+        peutCreer={true}
         peutModifierVisibilite={false}
         peutSupprimer={false}
         searchParams={new URLSearchParams()}
@@ -133,12 +130,24 @@ describe('ajout d’un lieu depuis la liste (#1495)', () => {
     )
 
     // THEN
-    const lien = screen.queryByRole('link', { name: 'Ajouter un lieu' })
-    if (peutCreer) {
-      expect(lien).toHaveAttribute('href', '/lieu/creer')
-    } else {
-      expect(lien).not.toBeInTheDocument()
-    }
+    expect(screen.getByRole('link', { name: 'Ajouter un lieu' })).toHaveAttribute('href', '/lieu/creer')
+  })
+
+  it('sans droit de création, le lien « Ajouter un lieu » est absent', () => {
+    // WHEN
+    render(
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={viewModel()}
+        peutCreer={false}
+        peutModifierVisibilite={false}
+        peutSupprimer={false}
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
+      />
+    )
+
+    // THEN
+    expect(screen.queryByRole('link', { name: 'Ajouter un lieu' })).not.toBeInTheDocument()
   })
 })
 
