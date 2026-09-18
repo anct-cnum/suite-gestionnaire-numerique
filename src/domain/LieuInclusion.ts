@@ -5,6 +5,16 @@ import { Utilisateur } from './Utilisateur'
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class LieuInclusion {
   /**
+   * Création réservée aux administrateurs (#1495). Depuis le retrait du lien
+   * lieu ↔ structure (#1711), rien ne rattache un lieu au champ de visibilité
+   * d'un gestionnaire : un lieu créé n'a personne dedans et sortirait de sa
+   * liste. À élargir quand le périmètre sera tranché.
+   */
+  static peutEtreCreePar(utilisateur: Utilisateur): boolean {
+    return utilisateur.isAdmin
+  }
+
+  /**
    * Détermine si un utilisateur peut modifier un lieu d'inclusion selon les règles métier :
    * - Les administrateurs peuvent modifier tous les lieux
    * - Les gestionnaires de département peuvent modifier les lieux de leur département

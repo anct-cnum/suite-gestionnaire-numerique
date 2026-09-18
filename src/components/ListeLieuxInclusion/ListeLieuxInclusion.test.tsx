@@ -21,6 +21,7 @@ describe('onglets de la liste des lieux d’inclusion', () => {
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel()}
+        peutCreer={false}
         peutModifierVisibilite={false}
         peutSupprimer={false}
         searchParams={new URLSearchParams()}
@@ -44,6 +45,7 @@ describe('onglets de la liste des lieux d’inclusion', () => {
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel()}
+        peutCreer={false}
         peutModifierVisibilite={false}
         peutSupprimer={false}
         searchParams={new URLSearchParams()}
@@ -98,6 +100,7 @@ describe('visibilité cartographique et suppression depuis la liste (#1951)', ()
     render(
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={viewModel({ estLieuCoop })}
+        peutCreer={false}
         peutModifierVisibilite={peutModifierVisibilite}
         peutSupprimer={peutModifierVisibilite}
         searchParams={new URLSearchParams()}
@@ -109,6 +112,42 @@ describe('visibilité cartographique et suppression depuis la liste (#1951)', ()
     const toggle = screen.getByRole('checkbox')
     expect(toggle.hasAttribute('disabled')).toBe(!toggleActif)
     expect(screen.queryByRole('button', { name: 'Supprimer Lieu test' }) !== null).toBe(suppressionAttendue)
+  })
+})
+
+describe('ajout d’un lieu depuis la liste (#1495)', () => {
+  it('un administrateur voit le lien « Ajouter un lieu » vers la page de création', () => {
+    // WHEN
+    render(
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={viewModel()}
+        peutCreer={true}
+        peutModifierVisibilite={false}
+        peutSupprimer={false}
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
+      />
+    )
+
+    // THEN
+    expect(screen.getByRole('link', { name: 'Ajouter un lieu' })).toHaveAttribute('href', '/lieu/creer')
+  })
+
+  it('sans droit de création, le lien « Ajouter un lieu » est absent', () => {
+    // WHEN
+    render(
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={viewModel()}
+        peutCreer={false}
+        peutModifierVisibilite={false}
+        peutSupprimer={false}
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
+      />
+    )
+
+    // THEN
+    expect(screen.queryByRole('link', { name: 'Ajouter un lieu' })).not.toBeInTheDocument()
   })
 })
 

@@ -685,6 +685,7 @@ export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadMo
     codeDepartement: '75',
     estArchive: false,
     estLieuCoop: false,
+    estReferenceSurLaCarte: true,
     header: {
       nom: 'Mon lieu',
       tags: [],
@@ -697,6 +698,7 @@ export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadMo
     personnesTravaillant: [],
     servicesInclusionNumerique: [],
     structureId: 42,
+    visiblePourCartographie: true,
     ...override,
   }
 }

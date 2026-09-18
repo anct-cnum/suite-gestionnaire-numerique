@@ -55,6 +55,23 @@ export type UpdateLieuInclusionInformationsGeneralesData = Readonly<{
   typologies?: ReadonlyArray<string>
 }>
 
+export interface CreerLieuInclusionRepository {
+  // Renvoie l'identifiant main.lieu_inclusion créé.
+  creer(data: CreerLieuInclusionData): Promise<number>
+}
+
+export type CreerLieuInclusionData = Readonly<{
+  adresseEnrichie: AdresseLieuEnrichie | null
+  adresseSirene: AdresseLieuSirene | null
+  complementAdresse: null | string
+  date: Date
+  itinerance: ReadonlyArray<string>
+  nom: string
+  siret: null | string
+  typologies: ReadonlyArray<string>
+  visiblePourCartographie: boolean
+}>
+
 export interface UpdateLieuInclusionServicesTypeAccompagnementRepository {
   updateServicesTypeAccompagnement(data: UpdateLieuInclusionServicesTypeAccompagnementData): Promise<void>
 }

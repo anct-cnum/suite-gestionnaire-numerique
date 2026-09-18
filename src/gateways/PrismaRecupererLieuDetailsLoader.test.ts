@@ -68,4 +68,24 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect(readModel).not.toHaveProperty('type')
     expect((readModel as LieuDetailsReadModel).estLieuCoop).toBe(estLieuCoop)
   })
+
+  it('expose le référencement carto et le drapeau de visibilité pour signaler un lieu en attente (#1495)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({
+      data: {
+        id: LIEU_ID,
+        nom: 'Lieu test référencement',
+        structure_cartographie_nationale_id: null,
+        visible_pour_cartographie_nationale: true,
+      },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect(readModel).not.toHaveProperty('type')
+    expect((readModel as LieuDetailsReadModel).estReferenceSurLaCarte).toBe(false)
+    expect((readModel as LieuDetailsReadModel).visiblePourCartographie).toBe(true)
+  })
 })
