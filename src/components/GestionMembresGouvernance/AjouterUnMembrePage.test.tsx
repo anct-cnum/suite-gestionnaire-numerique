@@ -66,6 +66,9 @@ describe('rejoindre une gouvernance en tant que structure non membre', () => {
     remplirContact()
     await userEvent.click(screen.getByRole('combobox', { name: 'Département' }))
     await userEvent.click(await screen.findByRole('option', { name: '42 - Loire' }))
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeEnabled()
+    })
     fireEvent.click(screen.getByRole('button', { name: 'Étape suivante' }))
 
     // WHEN
