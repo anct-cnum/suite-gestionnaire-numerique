@@ -3,12 +3,15 @@ export interface AidantDetailsLoader {
 }
 
 export type AidantDetailsReadModel = Readonly<{
+  codeDepartementEmployeur: null | string
   coopId: string
   emails: ReadonlyArray<string>
+  id: number
   lieuxActivite: ReadonlyArray<LieuActiviteReadModel>
   nom: string
   prenom: string
   structureEmployeuse: StructureEmployeuseReadModel
+  structureEmployeuseId: null | number
   tags: ReadonlyArray<string>
   telephone: string
 }>
