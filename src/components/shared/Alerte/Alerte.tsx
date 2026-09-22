@@ -10,7 +10,7 @@ export default function Alerte({ children, titre, type = 'info' }: Props): React
       role={type === 'info' || type === 'success' ? 'status' : 'alert'}
     >
       <h3 className="fr-alert__title">{titre}</h3>
-      <p>{children}</p>
+      {typeof children === 'string' ? <p>{children}</p> : children}
     </div>
   )
 }

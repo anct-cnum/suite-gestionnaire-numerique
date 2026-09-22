@@ -95,12 +95,32 @@ describe('lieu details presenter', () => {
       expect(viewModel.estLieuCoop).toBe(estLieuCoop)
     }
   )
+
+  it.each([
+    { attendu: true, estLieuCoop: false, estReferenceSurLaCarte: false, visiblePourCartographie: true },
+    { attendu: false, estLieuCoop: false, estReferenceSurLaCarte: true, visiblePourCartographie: true },
+    { attendu: false, estLieuCoop: false, estReferenceSurLaCarte: false, visiblePourCartographie: false },
+    { attendu: false, estLieuCoop: true, estReferenceSurLaCarte: false, visiblePourCartographie: true },
+  ])(
+    'en attente de référencement = visible, non référencé, hors Coop : $attendu (#1495)',
+    ({ attendu, estLieuCoop, estReferenceSurLaCarte, visiblePourCartographie }) => {
+      // GIVEN
+      const readModel = { ...createReadModel({}), estLieuCoop, estReferenceSurLaCarte, visiblePourCartographie }
+
+      // WHEN
+      const viewModel = lieuDetailsPresenter(readModel, false, false, now)
+
+      // THEN
+      expect(viewModel.estEnAttenteDeReferencement).toBe(attendu)
+    }
+  )
 })
 
 function createReadModel(header: Partial<LieuDetailsReadModel['header']>): LieuDetailsReadModel {
   return {
     estArchive: false,
     estLieuCoop: false,
+    estReferenceSurLaCarte: true,
     header: {
       nom: 'Association Connect 69',
       tags: ['FRR'],
@@ -114,5 +134,6 @@ function createReadModel(header: Partial<LieuDetailsReadModel['header']>): LieuD
     personnesTravaillant: [],
     servicesInclusionNumerique: [],
     structureId: 1,
+    visiblePourCartographie: true,
   }
 }
