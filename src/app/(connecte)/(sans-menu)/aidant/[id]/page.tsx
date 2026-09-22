@@ -5,7 +5,11 @@ import AidantDetails from '@/components/AidantDetails/AidantDetails'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import PrismaAidantDetailsLoader from '@/gateways/AidantDetailsLoader'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { presentAidantDetails } from '@/presenters/AidantDetailsPresenter'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 export const metadata: Metadata = {
   title: 'Détails aidants et médiateurs numériques',
@@ -19,10 +23,8 @@ async function AidantPage({ params }: Props): Promise<ReactElement> {
     return data !== null && typeof data === 'object' && 'message' in data && 'type' in data
   }
 
-  const aidantLoader = new PrismaAidantDetailsLoader()
+  const aidantResult = await new PrismaAidantDetailsLoader().findById(id)
 
-  const aidantResult = await aidantLoader.findById(id)
-  // Si aidantResult est une erreur, pas besoin de récupérer les stats
   function buildFilAriane(dernierLabel: string): ReactElement {
     return (
       <FilAriane
@@ -48,8 +50,18 @@ async function AidantPage({ params }: Props): Promise<ReactElement> {
     )
   }
 
-  // Transformer les données via le presenteur
-  const presentedData = presentAidantDetails(aidantResult)
+  const session = await getSession()
+  let peutModifierInfosPerso = false
+
+  if (session && aidantResult.structureEmployeuseId !== null) {
+    const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    const codesDepartements =
+      aidantResult.codeDepartementEmployeur !== null ? [aidantResult.codeDepartementEmployeur] : []
+    peutModifierInfosPerso = contexte.peutGererStructure(aidantResult.structureEmployeuseId, codesDepartements)
+  }
+
+  const presentedData = presentAidantDetails(aidantResult, peutModifierInfosPerso)
   return (
     <>
       {buildFilAriane(`${presentedData.header.prenom} ${presentedData.header.nom}`.trim())}

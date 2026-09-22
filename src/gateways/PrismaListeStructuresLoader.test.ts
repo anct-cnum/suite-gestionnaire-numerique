@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaListeStructuresLoader } from './PrismaListeStructuresLoader'
 import { creerUneStructure, creerUnUtilisateur } from './testHelper'
@@ -11,6 +11,10 @@ import {
 } from '@/use-cases/queries/RecupererListeStructures'
 
 describe('liste structures loader', () => {
+  beforeAll(async () => {
+    await prisma.main_structure_administrative.deleteMany()
+  })
+
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
