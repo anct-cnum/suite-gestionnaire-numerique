@@ -191,14 +191,17 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     const contact = (personne.aidant_contact as null | Record<string, unknown>) ?? {}
 
     // Nouvelle structure: {"coop": {"email": "..."}, "idposte": {"mail_pro": "...", "mail_perso": "..."}}
+    // Seules les adresses professionnelles sont affichées : mail_perso est une adresse privée.
     const coop = (contact.coop as null | Record<string, unknown>) ?? {}
     const idposte = (contact.idposte as null | Record<string, unknown>) ?? {}
 
-    const emails = [
-      coop.email as null | string,
-      idposte.mail_pro as null | string,
-      idposte.mail_perso as null | string,
-    ].filter((email): email is string => Boolean(email))
+    const emails = Array.from(
+      new Set(
+        [coop.email as null | string, idposte.mail_pro as null | string].filter((email): email is string =>
+          Boolean(email)
+        )
+      )
+    )
 
     return {
       coopId: personne.aidant_coop_uid ?? '',
