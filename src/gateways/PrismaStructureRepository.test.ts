@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaStructureRepository } from './PrismaStructureRepository'
-import { creerUneStructure } from './testHelper'
+import { creerUnContact, creerUneStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { AdresseARattacher } from '@/use-cases/commands/shared/StructureRepository'
 
@@ -121,6 +121,67 @@ describe('prisma structure repository', () => {
       await expect(prisma.adresse.count({ where: { clef_interop: '94017_aaaa' } })).resolves.toBe(1)
     })
   })
+
+  describe('contacts d’une structure (écritures bornées par le rattachement contact ↔ structure)', () => {
+    it('modifie un contact rattaché à la structure indiquée', async () => {
+      // GIVEN
+      const contactId = await creerUnContactRattache(978)
+
+      // WHEN
+      const estModifie = await new PrismaStructureRepository().modifierContact(978, contactId, {
+        ...donneesContact,
+        nom: 'Dupont',
+      })
+
+      // THEN
+      expect(estModifie).toBe(true)
+      const contact = await prisma.main_contact.findUniqueOrThrow({ where: { id: contactId } })
+      expect(contact.nom).toBe('Dupont')
+    })
+
+    it('ne modifie pas un contact rattaché à une autre structure', async () => {
+      // GIVEN
+      const contactId = await creerUnContactRattache(978)
+      await creerUneStructure({ id: 979 })
+
+      // WHEN
+      const estModifie = await new PrismaStructureRepository().modifierContact(979, contactId, {
+        ...donneesContact,
+        nom: 'Dupont',
+      })
+
+      // THEN
+      expect(estModifie).toBe(false)
+      const contact = await prisma.main_contact.findUniqueOrThrow({ where: { id: contactId } })
+      expect(contact.nom).toBe('Tartempion')
+    })
+
+    it('supprime un contact rattaché à la structure indiquée, avec son rattachement', async () => {
+      // GIVEN
+      const contactId = await creerUnContactRattache(978)
+
+      // WHEN
+      const estSupprime = await new PrismaStructureRepository().supprimerContact(978, contactId)
+
+      // THEN
+      expect(estSupprime).toBe(true)
+      await expect(prisma.main_contact.findUnique({ where: { id: contactId } })).resolves.toBeNull()
+      await expect(prisma.contact_structure_administrative.count({ where: { contact_id: contactId } })).resolves.toBe(0)
+    })
+
+    it('ne supprime pas un contact rattaché à une autre structure', async () => {
+      // GIVEN
+      const contactId = await creerUnContactRattache(978)
+      await creerUneStructure({ id: 979 })
+
+      // WHEN
+      const estSupprime = await new PrismaStructureRepository().supprimerContact(979, contactId)
+
+      // THEN
+      expect(estSupprime).toBe(false)
+      await expect(prisma.main_contact.findUnique({ where: { id: contactId } })).resolves.not.toBeNull()
+    })
+  })
 })
 
 function adresseARattacher(): AdresseARattacher {
@@ -136,4 +197,21 @@ function adresseARattacher(): AdresseARattacher {
     numeroVoie: 14,
     repetition: null,
   }
+}
+
+const donneesContact = {
+  email: 'michel.tartempion@example.net',
+  estReferentFNE: false,
+  fonction: 'Directeur',
+  prenom: 'Michel',
+  telephone: '',
+}
+
+async function creerUnContactRattache(structureId: number): Promise<number> {
+  await creerUneStructure({ id: structureId })
+  const contactId = await creerUnContact({ nom: 'Tartempion' })
+  await prisma.contact_structure_administrative.create({
+    data: { contact_id: contactId, structure_administrative_id: structureId },
+  })
+  return contactId
 }
