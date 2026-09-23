@@ -118,11 +118,16 @@ export default function StructureContactReferent({
     if (contactASupprimer === null) {
       return
     }
-    await supprimerContactStructureAction({
+    const messages = await supprimerContactStructureAction({
       contactId: contactASupprimer.id,
       path: pathname,
       structureId,
     })
+    if (!messages.includes('OK')) {
+      messages.forEach((message) => {
+        Notification('error', { description: message, title: 'Erreur ' })
+      })
+    }
     closeModal()
   }
 

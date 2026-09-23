@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import { MESSAGE_CONTACT_HORS_STRUCTURE, verifierDroitsStructure } from './shared/verifierDroitsStructure'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 
 export async function supprimerContactStructureAction(actionParams: ActionParams): Promise<ReadonlyArray<string>> {
@@ -14,7 +15,18 @@ export async function supprimerContactStructureAction(actionParams: ActionParams
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    await new PrismaStructureRepository().supprimerContact(actionParams.structureId, actionParams.contactId)
+    const verification = await verifierDroitsStructure(actionParams.structureId)
+    if (verification.statut === 'refus') {
+      return [verification.message]
+    }
+
+    const estSupprime = await new PrismaStructureRepository().supprimerContact(
+      actionParams.structureId,
+      actionParams.contactId
+    )
+    if (!estSupprime) {
+      return [MESSAGE_CONTACT_HORS_STRUCTURE]
+    }
 
     revalidatePath(actionParams.path)
 

@@ -136,8 +136,10 @@ export class PrismaStructureRepository
     })
   }
 
-  async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
-    await prisma.main_contact.update({
+  // L'écriture est bornée par la relation contact ↔ structure : un contact d'une autre
+  // structure n'est jamais modifié, même si son identifiant est connu. Renvoie false dans ce cas.
+  async modifierContact(structureId: number, contactId: number, data: ContactStructureData): Promise<boolean> {
+    const { count } = await prisma.main_contact.updateMany({
       data: {
         email: data.email,
         est_referent_fne: data.estReferentFNE,
@@ -147,9 +149,16 @@ export class PrismaStructureRepository
         telephone: data.telephone,
       },
       where: {
+        contact_structures: {
+          some: {
+            structure_administrative_id: structureId,
+          },
+        },
         id: contactId,
       },
     })
+
+    return count > 0
   }
 
   async modifierNom(data: ModifierNomStructureData): Promise<boolean> {
@@ -182,19 +191,21 @@ export class PrismaStructureRepository
     return nombre > 0
   }
 
-  async supprimerContact(structureId: number, contactId: number): Promise<void> {
-    await prisma.contact_structure_administrative.deleteMany({
+  // Même bornage que modifierContact : le contact n'est supprimé (et ses rattachements avec lui,
+  // par cascade) que s'il appartient bien à la structure indiquée. Renvoie false sinon.
+  async supprimerContact(structureId: number, contactId: number): Promise<boolean> {
+    const { count } = await prisma.main_contact.deleteMany({
       where: {
-        contact_id: contactId,
-        structure_administrative_id: structureId,
-      },
-    })
-
-    await prisma.main_contact.delete({
-      where: {
+        contact_structures: {
+          some: {
+            structure_administrative_id: structureId,
+          },
+        },
         id: contactId,
       },
     })
+
+    return count > 0
   }
 
   async updateContactReferent(

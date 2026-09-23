@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import { verifierDroitsStructure } from './shared/verifierDroitsStructure'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
@@ -13,6 +14,11 @@ export async function ajouterContactStructureAction(actionParams: ActionParams):
 
     if (validationResult.error) {
       return validationResult.error.issues.map(({ message }) => message)
+    }
+
+    const verification = await verifierDroitsStructure(actionParams.structureId)
+    if (verification.statut === 'refus') {
+      return [verification.message]
     }
 
     await new PrismaStructureRepository().ajouterContact(actionParams.structureId, {
