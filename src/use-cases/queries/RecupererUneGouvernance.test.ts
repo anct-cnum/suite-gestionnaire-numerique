@@ -174,7 +174,7 @@ describe('recupérer une gouvernance', () => {
     expect(spiedCodeDepartement).toBe('69')
   })
 
-  it('quand une gouvernance est consultée par un utilisateur qui n‘est pas gestionnaire département alors il ne peut pas voir la note privée', async () => {
+  it('quand une gouvernance est consultée par un utilisateur qui n‘est pas gestionnaire département alors il ne peut pas voir la note privée et elle est retirée du modèle', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -219,14 +219,16 @@ describe('recupérer une gouvernance', () => {
     })
 
     // THEN
+    expect(uneGouvernance.notePrivee).toBeDefined()
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
+      notePrivee: undefined,
       peutGererGouvernance: false,
       peutVoirNotePrivee: false,
     })
   })
 
-  it('quand une gouvernance est consultée par un utilisateur qui est gestionnaire département sur un département autre que celui de la gouvernance alors il ne peut pas voir la note privée et ne peut pas la gérer', async () => {
+  it('quand une gouvernance est consultée par un utilisateur qui est gestionnaire département sur un département autre que celui de la gouvernance alors il ne peut pas voir la note privée, elle est retirée du modèle et il ne peut pas la gérer', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -268,8 +270,10 @@ describe('recupérer une gouvernance', () => {
     })
 
     // THEN
+    expect(uneGouvernance.notePrivee).toBeDefined()
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
+      notePrivee: undefined,
       peutGererGouvernance: false,
       peutVoirNotePrivee: false,
     })
@@ -317,6 +321,7 @@ describe('recupérer une gouvernance', () => {
     })
 
     // THEN
+    expect(gouvernance.notePrivee).toStrictEqual(uneGouvernance.notePrivee)
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
       peutVoirNotePrivee: true,
