@@ -4,6 +4,7 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateursAExporterLoader } from '@/gateways/PrismaUtilisateursAExporterLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { escapeCSV } from '@/shared/csv'
 import {
   RecupererUtilisateursAExporter,
   UtilisateursAExporterReadModel,
@@ -57,13 +58,6 @@ function generateCSV(utilisateurs: UtilisateursAExporterReadModel): string {
     'Statut',
     'Dernière connexion',
   ]
-
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
 
   const rows = utilisateurs.map((utilisateur) => [
     escapeCSV(utilisateur.nom),

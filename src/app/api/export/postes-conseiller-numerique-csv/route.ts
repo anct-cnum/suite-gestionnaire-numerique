@@ -5,6 +5,7 @@ import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaPostesConseillerNumeriqueLoader } from '@/gateways/PrismaPostesConseillerNumeriqueLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { escapeCSV } from '@/shared/csv'
 import { buildFiltresPostesConseillerNumerique } from '@/shared/filtresPostesConseillerNumeriqueUtils'
 import { PosteConseillerNumeriqueReadModel } from '@/use-cases/queries/RecupererLesPostesConseillerNumerique'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -119,16 +120,6 @@ function generateCSV(postes: ReadonlyArray<PosteConseillerNumeriqueReadModel>): 
     'Total conventionné',
     'Total versé',
   ]
-
-  function escapeCSV(value: null | string | undefined): string {
-    if (value === null || value === undefined) {
-      return ''
-    }
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
 
   function formaterConvention(enveloppes: null | string): string {
     if (enveloppes === null) {

@@ -4,6 +4,7 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaTerritoireLoader } from '@/gateways/PrismaTerritoireLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { formaterEnDateFrancaise } from '@/presenters/shared/date'
+import { escapeCSV } from '@/shared/csv'
 import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { TerritoiresReadModel } from '@/use-cases/queries/shared/TerritoireReadModel'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
@@ -130,13 +131,6 @@ function generateCSV(utilisateurs: ReadonlyArray<UnUtilisateurReadModel>, territ
     'Statut',
     'Dernière connexion',
   ]
-
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
 
   const rows = utilisateurs.map((utilisateur) => {
     const { departement, region } = getDepartementEtRegion(utilisateur, territoires)

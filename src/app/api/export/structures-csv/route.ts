@@ -5,6 +5,7 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaListeStructuresLoader } from '@/gateways/PrismaListeStructuresLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { escapeCSV } from '@/shared/csv'
 import {
   buildFiltresListeStructuresForExport,
   FiltresListeStructuresURLParams,
@@ -97,13 +98,6 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
   ]
 
   // Fonction pour échapper les valeurs CSV
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
-
   function labellisations(structure: StructureListeReadModel): string {
     const labels: Array<string> = []
     if (estLabelConumActif(structure.derniereAttestationLabelConum, now) || structure.possedePosteConumActif) {
