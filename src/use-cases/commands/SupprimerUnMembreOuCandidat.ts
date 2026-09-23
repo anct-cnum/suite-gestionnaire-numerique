@@ -1,19 +1,19 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { MembreFailure } from '@/domain/Membre'
-import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
-import { MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
-import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
+import { GetGouvernanceRepository } from '@/use-cases/commands/shared/GouvernanceRepository'
+import { GetMembreRepository, UpdateMembreRepository } from '@/use-cases/commands/shared/MembreRepository'
+import { GetUtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 export class SupprimerUnMembreOuCandidat implements CommandHandler<Command> {
-  private readonly gouvernanceRepository: GouvernanceRepository
-  private readonly membreRepository: MembreRepository
-  private readonly utilisateurRepository: UtilisateurRepository
+  private readonly gouvernanceRepository: GetGouvernanceRepository
+  private readonly membreRepository: GetMembreRepository & UpdateMembreRepository
+  private readonly utilisateurRepository: GetUtilisateurRepository
 
   constructor(
-    membreRepository: MembreRepository,
-    utilisateurRepository: UtilisateurRepository,
-    gouvernanceRepository: GouvernanceRepository
+    membreRepository: GetMembreRepository & UpdateMembreRepository,
+    utilisateurRepository: GetUtilisateurRepository,
+    gouvernanceRepository: GetGouvernanceRepository
   ) {
     this.membreRepository = membreRepository
     this.utilisateurRepository = utilisateurRepository
@@ -27,6 +27,9 @@ export class SupprimerUnMembreOuCandidat implements CommandHandler<Command> {
       return 'UtilisateurNonAutorise'
     }
     const membre = await this.membreRepository.get(command.uidMembre)
+    if (!membre.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'MembreNonAssocieALaGouvernance'
+    }
 
     const membreSupprimer = membre.supprimer(command.date)
 
@@ -35,7 +38,12 @@ export class SupprimerUnMembreOuCandidat implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'MembreDéjàNonCoPorteur' | 'MembreDoitEtreConfirmer' | 'UtilisateurNonAutorise' | MembreFailure
+type Failure =
+  | 'MembreDéjàNonCoPorteur'
+  | 'MembreDoitEtreConfirmer'
+  | 'MembreNonAssocieALaGouvernance'
+  | 'UtilisateurNonAutorise'
+  | MembreFailure
 
 type Command = Readonly<{
   date: Date

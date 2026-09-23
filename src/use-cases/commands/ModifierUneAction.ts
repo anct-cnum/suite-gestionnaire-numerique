@@ -74,10 +74,16 @@ export class ModifierUneAction implements CommandHandler<Command> {
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       return 'modifierActionErreurFeuilleDeRouteInconnue'
     }
+    if (!feuilleDeRoute.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'feuilleDeRouteNonAssocieeALaGouvernance'
+    }
 
     const actionAModifier = await this.#actionRepository.get(command.uid)
     if (!(actionAModifier instanceof Action)) {
       return 'modifierActionErreurInconnue'
+    }
+    if (actionAModifier.state.uidFeuilleDeRoute !== feuilleDeRoute.state.uid.value) {
+      return 'actionNonAssocieeALaFeuilleDeRoute'
     }
     // eslint-disable-next-line sonarjs/cognitive-complexity
     const result = await this.#transactionRepository.transaction(async (tx) => {
@@ -227,6 +233,8 @@ type Command = Readonly<{
 }>
 
 type Failure =
+  | 'actionNonAssocieeALaFeuilleDeRoute'
+  | 'feuilleDeRouteNonAssocieeALaGouvernance'
   | 'modifierActionErreurDemandeDeSubventionInconnue'
   | 'modifierActionErreurDemandeDeSubventionStatutInvalide'
   | 'modifierActionErreurEditeurInconnue'
