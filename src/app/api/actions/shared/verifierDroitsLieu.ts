@@ -1,4 +1,5 @@
 import prisma from '../../../../../prisma/prismaClient'
+import { GestionnaireStructure } from '@/domain/GestionnaireStructure'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -40,17 +41,14 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
     return refus(MESSAGE_LIEU_GERE_PAR_LA_COOP)
   }
 
-  // Départements des gouvernances dont la structure du lieu est membre.
-  const gouvernancesDepartements = await prisma.membreRecord.findMany({
-    select: {
-      gouvernanceDepartementCode: true,
-    },
-    where: {
-      dateSuppression: null,
-      structureId: lieu.structureId,
-    },
-  })
-  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
+  // Départements des gouvernances dont la structure du DEMANDEUR est membre confirmé : c'est son
+  // périmètre qui est comparé au lieu, jamais celui de la structure du lieu (#1979).
+  const departementsGouvernances =
+    utilisateur instanceof GestionnaireStructure
+      ? (await new PrismaMembreLoader().getToutesAppartenancesParStructureId(utilisateur.state.structureUid.value)).map(
+          (appartenance) => appartenance.codeDepartement
+        )
+      : []
 
   const peutModifier = LieuInclusion.peutEtreModifiePar(
     utilisateur,
