@@ -30,6 +30,9 @@ export class ModifierUneFeuilleDeRoute implements CommandHandler<Command> {
       return 'editeurNePeutPasModifierFeuilleDeRoute'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
+    if (!feuilleDeRoute.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'feuilleDeRouteNonAssocieeALaGouvernance'
+    }
 
     const feuilleDeRouteModifiee = FeuilleDeRoute.create({
       dateDeCreation: new Date(feuilleDeRoute.state.dateDeCreation),
@@ -53,7 +56,8 @@ export class ModifierUneFeuilleDeRoute implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'editeurNePeutPasModifierFeuilleDeRoute' | FeuilleDeRouteFailure
+type Failure =
+  'editeurNePeutPasModifierFeuilleDeRoute' | 'feuilleDeRouteNonAssocieeALaGouvernance' | FeuilleDeRouteFailure
 
 type Command = Readonly<{
   nom: string

@@ -74,6 +74,38 @@ describe('définir un coporteur', () => {
       expect(spiedUtilisateurToAdd).toHaveLength(0)
     })
 
+    it('membre rattaché à une autre gouvernance', async () => {
+      // GIVEN
+      const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })
+      const utilisateur = utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+      const membre = membreConfirmeFactory({
+        uid: { value: 'membreUid' },
+        uidGouvernance: { value: 'autreGouvernanceId' },
+      })
+
+      const membreRepository = new MembreRepositorySpy(membre)
+      const utilisateurRepository = new UtilisateurRepositorySpy(utilisateur)
+      const gouvernanceRepository = new GouvernanceRepositorySpy(gouvernance)
+
+      // WHEN
+      const result = await new DefinirUnCoPorteur(
+        membreRepository,
+        utilisateurRepository,
+        gouvernanceRepository,
+        emailGatewayFactorySpy,
+        epochTime
+      ).handle({
+        uidGouvernance: 'gouvernanceFooId',
+        uidMembre: 'membreUid',
+        uidUtilisateurConnecte: 1,
+      })
+
+      // THEN
+      expect(result).toBe('MembreNonAssocieALaGouvernance')
+      expect(spiedMembreToUpdate).toBeNull()
+      expect(spiedUtilisateurToAdd).toHaveLength(0)
+    })
+
     it('membre doit être confirmé', async () => {
       // GIVEN
       const gouvernance = gouvernanceFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' } })

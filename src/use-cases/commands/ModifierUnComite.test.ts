@@ -167,6 +167,31 @@ describe('modifier un comité', () => {
     expect(spiedComiteToModify).toBeNull()
     expect(result).toBe('editeurNePeutPasModifierComite')
   })
+
+  it('étant donné une gouvernance, quand son gestionnaire modifie un comité rattaché à une autre gouvernance, alors une erreur est renvoyée et rien n’est modifié', async () => {
+    // GIVEN
+    const modifierUnComite = new ModifierUnComite(
+      new GouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      new ComiteAutreGouvernanceRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await modifierUnComite.handle({
+      commentaire,
+      date,
+      frequence: frequenceValide,
+      type: typeValide,
+      uid: uidComite,
+      uidEditeur,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(spiedComiteToModify).toBeNull()
+    expect(result).toBe('comiteNonAssocieALaGouvernance')
+  })
 })
 
 const commentaire = 'un commentaire'
@@ -216,6 +241,20 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class ComiteAutreGouvernanceRepositorySpy implements GetComiteRepository, UpdateComiteRepository {
+  async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
+    spiedComiteUidToFind = uid
+    return Promise.resolve(
+      comiteFactory({ uid: { value: uidComite }, uidGouvernance: { value: 'autreGouvernanceId' } })
+    )
+  }
+
+  async update(comite: Comite): Promise<void> {
+    spiedComiteToModify = comite
+    return Promise.resolve()
   }
 }
 

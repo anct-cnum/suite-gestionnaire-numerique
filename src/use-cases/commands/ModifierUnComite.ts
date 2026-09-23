@@ -27,6 +27,9 @@ export class ModifierUnComite implements CommandHandler<Command> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     const comite = await this.#comiteRepository.get(command.uid)
+    if (!comite.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'comiteNonAssocieALaGouvernance'
+    }
     const dateDeModification = this.#date
     const comiteModifie = Comite.create({
       commentaire: command.commentaire,
@@ -53,7 +56,7 @@ export class ModifierUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'editeurNePeutPasModifierComite' | ComiteFailure
+type Failure = 'comiteNonAssocieALaGouvernance' | 'editeurNePeutPasModifierComite' | ComiteFailure
 
 type Command = Readonly<{
   commentaire?: string
