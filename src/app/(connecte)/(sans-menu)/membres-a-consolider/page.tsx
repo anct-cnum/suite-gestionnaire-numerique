@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { forbidden, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import MembresAConsolider from '@/components/MembresAConsolider/MembresAConsolider'
@@ -29,7 +29,7 @@ export default async function MembresAConsoliderController({ searchParams }: Pro
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
-    redirect('/tableau-de-bord')
+    forbidden()
   }
 
   const { regle: regleParam } = await searchParams

@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { forbidden, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import AppariementsLieux from '@/components/AppariementsLieux/AppariementsLieux'
@@ -27,7 +27,7 @@ export default async function AppariementsLieuxController({ searchParams }: Prop
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   // Revue réservée aux administrateurs (ANCT).
   if (!contexte.aCesRoles('administrateur_dispositif')) {
-    redirect('/tableau-de-bord')
+    forbidden()
   }
 
   const { page, statut } = await searchParams

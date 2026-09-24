@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { forbidden, notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import LieuInclusionHistorique from '@/components/LieuInclusionHistorique/LieuInclusionHistorique'
@@ -24,7 +24,7 @@ async function LieuHistoriquePage({ params }: Props): Promise<ReactElement> {
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.aCesRoles('administrateur_dispositif') || !contexte.isBetaTesteur) {
-    redirect('/tableau-de-bord')
+    forbidden()
   }
 
   const { id } = await params
