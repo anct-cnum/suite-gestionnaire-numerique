@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUnMembre } from './AjouterUnMembre'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { ContactData, CreateMembreRepository, EntrepriseData, GetMembreRepository } from './shared/MembreRepository'
+import {
+  ChoixContactData,
+  CreateMembreRepository,
+  EntrepriseData,
+  GetMembreRepository,
+} from './shared/MembreRepository'
 import { CreateStructureRepository, GetStructureBySiretRepository, StructureData } from './shared/StructureRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -41,10 +46,13 @@ describe('ajouter un membre', () => {
     // WHEN
     const result = await ajouterUnMembre.handle({
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Dupont',
-        prenom: 'Jean',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Jean',
+        },
+        type: 'nouveau',
       },
       entreprise: {
         adresse: '123 rue de la Paix',
@@ -86,10 +94,13 @@ describe('ajouter un membre', () => {
     // WHEN
     const result = await ajouterUnMembre.handle({
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Martin',
-        prenom: 'Pierre',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Martin',
+          prenom: 'Pierre',
+        },
+        type: 'nouveau',
       },
       entreprise: {
         adresse: '123 rue de la Paix',
@@ -132,10 +143,13 @@ describe('ajouter un membre', () => {
     // WHEN
     const result = await ajouterUnMembre.handle({
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Test',
-        prenom: 'Test',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Test',
+          prenom: 'Test',
+        },
+        type: 'nouveau',
       },
       entreprise: {
         adresse: '123 rue de la Paix',
@@ -205,8 +219,8 @@ class MembreRepositorySpy implements CreateMembreRepository, GetMembreRepository
   async create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    _?: ContactData,
-    __?: ContactData,
+    _?: ChoixContactData,
+    __?: ChoixContactData,
     ___?: Prisma.TransactionClient
   ): Promise<void> {
     spiedMembreCreated = membre
@@ -231,8 +245,8 @@ class MembreAvecStructureRepositorySpy extends MembreRepositorySpy {
   override async create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    _?: ContactData,
-    __?: ContactData,
+    _?: ChoixContactData,
+    __?: ChoixContactData,
     ___?: Prisma.TransactionClient
   ): Promise<void> {
     spiedMembreCreated = membre
@@ -252,8 +266,8 @@ class MembreAvecNouvelleStructureRepositorySpy extends MembreRepositorySpy {
   override async create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    __?: ContactData,
-    _?: ContactData,
+    __?: ChoixContactData,
+    _?: ChoixContactData,
     ___?: Prisma.TransactionClient
   ): Promise<void> {
     spiedMembreCreated = membre

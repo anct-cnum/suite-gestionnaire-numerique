@@ -14,6 +14,7 @@ import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionReposit
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUnMembre } from '@/use-cases/commands/AjouterUnMembre'
+import { ChoixContactData } from '@/use-cases/commands/shared/MembreRepository'
 
 export async function ajouterUnMembreAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   return avecJournalisationMin(async () => {
@@ -38,11 +39,11 @@ export async function ajouterUnMembreAction(actionParams: ActionParams): ResultA
       new PrismaTransactionRepository(),
       new ApiBanGeocodingGateway()
     ).handle({
-      contact: actionParams.contact,
-      contactTechnique: actionParams.contactTechnique,
+      contact: versChoixContactData(actionParams.contact),
+      contactTechnique: actionParams.contactTechnique ? versChoixContactData(actionParams.contactTechnique) : undefined,
       entreprise: actionParams.entreprise,
       uidGestionnaire: await getSessionUtilisateurId(),
-      uidGouvernance: actionParams.codeDepartement, // Pour l'instant, on utilise le code département
+      uidGouvernance: actionParams.codeDepartement,
     })
 
     revalidatePath(validationResult.data.path)
@@ -51,20 +52,24 @@ export async function ajouterUnMembreAction(actionParams: ActionParams): ResultA
   })
 }
 
+function versChoixContactData(choix: ChoixContactAction): ChoixContactData {
+  if (choix.type === 'existant') {
+    return { contactExistantId: choix.contactExistantId, type: 'existant' }
+  }
+  return {
+    donnees: { email: choix.email, fonction: choix.fonction, nom: choix.nom, prenom: choix.prenom },
+    type: 'nouveau',
+  }
+}
+
+type ChoixContactAction =
+  | Readonly<{ contactExistantId: number; type: 'existant' }>
+  | Readonly<{ email: string; fonction: string; nom: string; prenom: string; type: 'nouveau' }>
+
 type ActionParams = Readonly<{
   codeDepartement: string
-  contact: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique?: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contact: ChoixContactAction
+  contactTechnique?: ChoixContactAction
   entreprise: Readonly<{
     adresse: string
     categorieJuridiqueCode: string
@@ -80,22 +85,24 @@ type ActionParams = Readonly<{
   path: string
 }>
 
-const validator = z.object({
-  codeDepartement: z.string().min(1, { message: 'Le code département doit être renseigné' }),
-  contact: z.object({
+const choixContactSchema = z.discriminatedUnion('type', [
+  z.object({
+    contactExistantId: z.number({ message: "L'identifiant du contact doit être un nombre" }),
+    type: z.literal('existant'),
+  }),
+  z.object({
     email: z.string().email({ message: "L'email doit être valide" }),
     fonction: z.string().min(1, { message: 'La fonction du contact doit être renseignée' }),
     nom: z.string().min(1, { message: 'Le nom du contact doit être renseigné' }),
     prenom: z.string().min(1, { message: 'Le prénom du contact doit être renseigné' }),
+    type: z.literal('nouveau'),
   }),
-  contactTechnique: z
-    .object({
-      email: z.string().email({ message: "L'email du contact technique doit être valide" }),
-      fonction: z.string().min(1, { message: 'La fonction du contact technique doit être renseignée' }),
-      nom: z.string().min(1, { message: 'Le nom du contact technique doit être renseigné' }),
-      prenom: z.string().min(1, { message: 'Le prénom du contact technique doit être renseigné' }),
-    })
-    .optional(),
+])
+
+const validator = z.object({
+  codeDepartement: z.string().min(1, { message: 'Le code département doit être renseigné' }),
+  contact: choixContactSchema,
+  contactTechnique: choixContactSchema.optional(),
   entreprise: z.object({
     adresse: z.string().min(1, { message: "L'adresse doit être renseignée" }),
     categorieJuridiqueCode: z.string().optional(),

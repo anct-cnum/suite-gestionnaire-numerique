@@ -7,9 +7,12 @@ export type ContactPrincipal = Readonly<{
   prenom: string
 }>
 
+export type ChoixContact =
+  Readonly<{ contactExistantId: number; type: 'existant' }> | Readonly<{ donnees: ContactPrincipal; type: 'nouveau' }>
+
 export type NouveauMembreData = Readonly<{
-  contact: ContactPrincipal | null
-  contactSecondaire: ContactPrincipal | null
+  contact: ChoixContact | null
+  contactSecondaire: ChoixContact | null
   departement?: null | Readonly<{
     code: string
     label: string
