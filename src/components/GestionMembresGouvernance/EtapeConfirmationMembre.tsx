@@ -2,7 +2,8 @@
 
 import { ReactElement, useState } from 'react'
 
-import { NouveauMembreData } from './types'
+import { ChoixContact, NouveauMembreData } from './types'
+import { ContactExistant } from '../shared/Membre/EntrepriseType'
 
 export default function EtapeConfirmationMembre({
   data,
@@ -60,54 +61,10 @@ export default function EtapeConfirmationMembre({
             ) : null}
 
             {/* Contact référent */}
-            <div className="fr-mb-4w">
-              <h3 className="fr-h5 fr-mb-3w">Contact référent</h3>
-              {data.contact ? (
-                <dl aria-label="Contact référent" className="fr-grid-row fr-grid-row--gutters" role="list">
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Nom</dt>
-                    <dd className="font-weight-500">{data.contact.nom}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Prénom</dt>
-                    <dd className="font-weight-500">{data.contact.prenom}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Adresse électronique</dt>
-                    <dd className="font-weight-500">{data.contact.email}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Fonction</dt>
-                    <dd className="font-weight-500">{data.contact.fonction}</dd>
-                  </div>
-                </dl>
-              ) : null}
-            </div>
+            {data.contact ? afficherContact('Contact référent', data.contact) : null}
 
             {/* Contact secondaire */}
-            {data.contactSecondaire !== null ? (
-              <div className="fr-mb-4w">
-                <h3 className="fr-h5 fr-mb-3w">Contact secondaire</h3>
-                <dl aria-label="Contact secondaire" className="fr-grid-row fr-grid-row--gutters" role="list">
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Nom</dt>
-                    <dd className="font-weight-500">{data.contactSecondaire.nom}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Prénom</dt>
-                    <dd className="font-weight-500">{data.contactSecondaire.prenom}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Adresse électronique</dt>
-                    <dd className="font-weight-500">{data.contactSecondaire.email}</dd>
-                  </div>
-                  <div className="fr-col-6">
-                    <dt className="color-grey">Fonction</dt>
-                    <dd className="font-weight-500">{data.contactSecondaire.fonction}</dd>
-                  </div>
-                </dl>
-              </div>
-            ) : null}
+            {data.contactSecondaire !== null ? afficherContact('Contact secondaire', data.contactSecondaire) : null}
           </div>
         </div>
       </div>
@@ -133,6 +90,46 @@ export default function EtapeConfirmationMembre({
       </div>
     </div>
   )
+
+  function resoudreContact(
+    choix: ChoixContact
+  ): Readonly<{ email: string; fonction: string; nom: string; prenom: string }> | undefined {
+    if (choix.type === 'nouveau') {
+      return choix.donnees
+    }
+    const contactsExistants = data.entreprise?.contactsExistants ?? []
+    return contactsExistants.find((ce: ContactExistant) => ce.id === choix.contactExistantId)
+  }
+
+  function afficherContact(titre: string, choix: ChoixContact): null | ReactElement {
+    const contactResolu = resoudreContact(choix)
+    if (!contactResolu) {
+      return null
+    }
+    return (
+      <div className="fr-mb-4w">
+        <h3 className="fr-h5 fr-mb-3w">{titre}</h3>
+        <dl aria-label={titre} className="fr-grid-row fr-grid-row--gutters" role="list">
+          <div className="fr-col-6">
+            <dt className="color-grey">Nom</dt>
+            <dd className="font-weight-500">{contactResolu.nom}</dd>
+          </div>
+          <div className="fr-col-6">
+            <dt className="color-grey">Prénom</dt>
+            <dd className="font-weight-500">{contactResolu.prenom}</dd>
+          </div>
+          <div className="fr-col-6">
+            <dt className="color-grey">Adresse électronique</dt>
+            <dd className="font-weight-500">{contactResolu.email}</dd>
+          </div>
+          <div className="fr-col-6">
+            <dt className="color-grey">Fonction</dt>
+            <dd className="font-weight-500">{contactResolu.fonction}</dd>
+          </div>
+        </dl>
+      </div>
+    )
+  }
 
   async function confirmerAjout(): Promise<void> {
     setIsAjoutEnCours(true)

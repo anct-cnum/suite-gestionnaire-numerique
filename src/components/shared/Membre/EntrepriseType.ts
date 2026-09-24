@@ -1,3 +1,11 @@
+export type ContactExistant = Readonly<{
+  email: string
+  fonction: string
+  id: number
+  nom: string
+  prenom: string
+}>
+
 export type EntrepriseViewModel = Readonly<{
   activitePrincipale: string
   activitePrincipaleLibelle: string
@@ -7,6 +15,7 @@ export type EntrepriseViewModel = Readonly<{
   codeInsee: string
   codePostal: string
   commune: string
+  contactsExistants?: ReadonlyArray<ContactExistant>
   denomination: string
   identifiant: string
   nomVoie: string

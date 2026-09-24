@@ -8,7 +8,7 @@ import {
   StructureCandidatureLoader,
 } from './RejoindreUneGouvernance'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { ContactData, CreateMembreRepository, EntrepriseData } from './shared/MembreRepository'
+import { ChoixContactData, CreateMembreRepository, EntrepriseData } from './shared/MembreRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Prisma } from '../../../prisma/generated/client'
@@ -41,16 +41,22 @@ describe('rejoindre une gouvernance', () => {
     const result = await rejoindreUneGouvernance.handle({
       codeDepartement: '75',
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Dupont',
-        prenom: 'Jean',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Jean',
+        },
+        type: 'nouveau',
       },
       contactTechnique: {
-        email: 'technique@example.com',
-        fonction: 'DSI',
-        nom: 'Martin',
-        prenom: 'Pierre',
+        donnees: {
+          email: 'technique@example.com',
+          fonction: 'DSI',
+          nom: 'Martin',
+          prenom: 'Pierre',
+        },
+        type: 'nouveau',
       },
       uidUtilisateur,
     })
@@ -67,16 +73,22 @@ describe('rejoindre une gouvernance', () => {
       siret: '12345678901234',
     })
     expect(spiedContact).toStrictEqual({
-      email: 'contact@example.com',
-      fonction: 'Directeur',
-      nom: 'Dupont',
-      prenom: 'Jean',
+      donnees: {
+        email: 'contact@example.com',
+        fonction: 'Directeur',
+        nom: 'Dupont',
+        prenom: 'Jean',
+      },
+      type: 'nouveau',
     })
     expect(spiedContactTechnique).toStrictEqual({
-      email: 'technique@example.com',
-      fonction: 'DSI',
-      nom: 'Martin',
-      prenom: 'Pierre',
+      donnees: {
+        email: 'technique@example.com',
+        fonction: 'DSI',
+        nom: 'Martin',
+        prenom: 'Pierre',
+      },
+      type: 'nouveau',
     })
   })
 
@@ -95,10 +107,13 @@ describe('rejoindre une gouvernance', () => {
     const result = await rejoindreUneGouvernance.handle({
       codeDepartement: '75',
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Dupont',
-        prenom: 'Jean',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Jean',
+        },
+        type: 'nouveau',
       },
       uidUtilisateur,
     })
@@ -123,10 +138,13 @@ describe('rejoindre une gouvernance', () => {
     const result = await rejoindreUneGouvernance.handle({
       codeDepartement: '75',
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Dupont',
-        prenom: 'Jean',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Jean',
+        },
+        type: 'nouveau',
       },
       uidUtilisateur,
     })
@@ -151,10 +169,13 @@ describe('rejoindre une gouvernance', () => {
     const result = await rejoindreUneGouvernance.handle({
       codeDepartement: '75',
       contact: {
-        email: 'contact@example.com',
-        fonction: 'Directeur',
-        nom: 'Dupont',
-        prenom: 'Jean',
+        donnees: {
+          email: 'contact@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Jean',
+        },
+        type: 'nouveau',
       },
       uidUtilisateur,
     })
@@ -170,8 +191,8 @@ const uidUtilisateur = 1
 const structureId = 123
 let spiedMembreCreated: Membre | null
 let spiedEntrepriseData: EntrepriseData | undefined
-let spiedContact: ContactData | undefined
-let spiedContactTechnique: ContactData | undefined
+let spiedContact: ChoixContactData | undefined
+let spiedContactTechnique: ChoixContactData | undefined
 let spiedStructureIdVerifie: null | number
 
 class UtilisateurAvecStructureRepositorySpy implements GetUtilisateurRepository {
@@ -238,8 +259,8 @@ class MembreRepositorySpy implements CreateMembreRepository {
   async create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    contact?: ContactData,
-    contactTechnique?: ContactData,
+    contact?: ChoixContactData,
+    contactTechnique?: ChoixContactData,
     _?: Prisma.TransactionClient
   ): Promise<void> {
     spiedMembreCreated = membre

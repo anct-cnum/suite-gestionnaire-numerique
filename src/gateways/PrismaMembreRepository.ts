@@ -3,73 +3,30 @@ import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
-import { ContactData, EntrepriseData, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
+import {
+  ChoixContactData,
+  ContactData,
+  EntrepriseData,
+  MembreRepository,
+} from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
   async create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    contactData?: ContactData,
-    contactTechniqueData?: ContactData,
+    contactData?: ChoixContactData,
+    contactTechniqueData?: ChoixContactData,
     tx?: Prisma.TransactionClient
   ): Promise<void> {
     const client = tx ?? prisma
 
     const structureId = membre.state.uidStructure.value
 
-    if (contactData) {
-      const contact = await client.main_contact.create({
-        data: {
-          email: contactData.email,
-          est_referent_fne: true,
-          fonction: contactData.fonction,
-          nom: contactData.nom,
-          prenom: contactData.prenom,
-        },
-      })
-
-      await client.contact_structure_administrative.create({
-        data: {
-          contact_id: contact.id,
-          structure_administrative_id: structureId,
-        },
-      })
-    } else {
-      const contact = await client.main_contact.create({
-        data: {
-          email: `temp-${membre.state.uid.value}@example.com`,
-          est_referent_fne: true,
-          fonction: '',
-          nom: '',
-          prenom: '',
-        },
-      })
-
-      await client.contact_structure_administrative.create({
-        data: {
-          contact_id: contact.id,
-          structure_administrative_id: structureId,
-        },
-      })
+    if (contactData?.type === 'nouveau') {
+      await this.creerNouveauContact(client, structureId, contactData.donnees)
     }
-
-    if (contactTechniqueData) {
-      const contactTechnique = await client.main_contact.create({
-        data: {
-          email: contactTechniqueData.email,
-          est_referent_fne: true,
-          fonction: contactTechniqueData.fonction,
-          nom: contactTechniqueData.nom,
-          prenom: contactTechniqueData.prenom,
-        },
-      })
-
-      await client.contact_structure_administrative.create({
-        data: {
-          contact_id: contactTechnique.id,
-          structure_administrative_id: structureId,
-        },
-      })
+    if (contactTechniqueData?.type === 'nouveau') {
+      await this.creerNouveauContact(client, structureId, contactTechniqueData.donnees)
     }
 
     await client.membreRecord.create({
@@ -166,6 +123,29 @@ export class PrismaMembreRepository implements MembreRepository {
       },
       where: {
         id: membre.state.uid.value,
+      },
+    })
+  }
+
+  private async creerNouveauContact(
+    client: Prisma.TransactionClient,
+    structureId: number,
+    donnees: ContactData
+  ): Promise<void> {
+    const contact = await client.main_contact.create({
+      data: {
+        email: donnees.email,
+        est_referent_fne: true,
+        fonction: donnees.fonction,
+        nom: donnees.nom,
+        prenom: donnees.prenom,
+      },
+    })
+
+    await client.contact_structure_administrative.create({
+      data: {
+        contact_id: contact.id,
+        structure_administrative_id: structureId,
       },
     })
   }
