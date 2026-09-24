@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { forbidden, notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import AjouterUnMembrePage from '@/components/GestionMembresGouvernance/AjouterUnMembrePage'
@@ -29,7 +29,7 @@ export default async function Page({ params }: Props): Promise<ReactElement> {
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.peutGererGouvernance(codeDepartement)) {
-    notFound()
+    forbidden()
   }
 
   return (

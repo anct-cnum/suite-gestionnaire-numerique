@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation'
+import { forbidden, notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import styles from '@/components/Action/Action.module.css'
@@ -28,7 +28,7 @@ export default async function ActionAjouterController({ params }: Props): Promis
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   if (!contexte.peutGererGouvernance(codeDepartement)) {
-    notFound()
+    forbidden()
   }
 
   const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
