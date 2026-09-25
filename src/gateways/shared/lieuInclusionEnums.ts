@@ -43,7 +43,7 @@ export const itineranceVersEnum: Readonly<Record<string, main_itinerance>> = {
 }
 
 export const modalitesAccesVersEnum: Readonly<Record<string, main_modalite_acces>> = {
-  'Ce lieu n’accueille pas de public': main_modalite_acces.PasDePublic,
+  "Ce lieu n'accueille pas de public": main_modalite_acces.PasDePublic,
   'Contacter par mail': main_modalite_acces.ContacterParMail,
   'Envoyer un mail avec une fiche de prescription': main_modalite_acces.FicheDePrescription,
   'Prendre un RDV en ligne': main_modalite_acces.PrendreRdvEnLigne,
