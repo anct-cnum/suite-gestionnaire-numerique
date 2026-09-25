@@ -301,6 +301,29 @@ describe('menu lateral', () => {
     expect(gouvernance).toHaveAttribute('href', '/gouvernance/93')
   })
 
+  it("étant un gestionnaire de structure non co-porteuse, quand j'affiche le menu latéral, alors le menu Structures n'est pas visible", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral contexte={contexteMembreFne} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).queryByRole('link', { name: 'Structures' })).not.toBeInTheDocument()
+  })
+
+  it("étant un gestionnaire de structure co-porteuse, quand j'affiche le menu latéral, alors le menu Structures est visible", () => {
+    // WHEN
+    afficherMenuLateralGouvernance()
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const structures = within(nav).getByRole('link', { name: 'Structures' })
+    expect(structures).toHaveAttribute('href', '/liste-structures')
+  })
+
   it("étant un bêta-testeur, quand j'affiche le menu latéral, alors la section BÊTA TESTEUR s'affiche avec les liens des structures administratives et des doublons", () => {
     // WHEN
     render(
