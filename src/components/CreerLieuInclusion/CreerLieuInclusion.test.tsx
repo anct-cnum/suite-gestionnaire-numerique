@@ -35,7 +35,7 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     vi.spyOn(notification, 'Notification').mockImplementationOnce(() => undefined)
     const creerUnLieuInclusionAction = vi
       .fn<() => Promise<ResultatCreationLieu>>()
-      .mockResolvedValueOnce({ lieuId: '4242', statut: 'cree' })
+      .mockResolvedValueOnce({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
     const rechercherLieuxInclusionSimilairesAction = vi
       .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
       .mockResolvedValue([])
@@ -78,6 +78,50 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     expect(notification.Notification).toHaveBeenCalledWith('success', {
       description: 'a bien été créé.',
       title: 'Le lieu d’inclusion numérique ',
+    })
+    expect(push).toHaveBeenCalledWith('/lieu/4242')
+  })
+
+  it('quand la visibilité cartographie a été forcée à false (adresse absente de la BAN), le notifie à l’utilisateur', async () => {
+    // GIVEN
+    vi.spyOn(notification, 'Notification').mockImplementationOnce(() => undefined)
+    const creerUnLieuInclusionAction = vi
+      .fn<() => Promise<ResultatCreationLieu>>()
+      .mockResolvedValueOnce({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: true })
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockResolvedValue([])
+    const rechercherAdressesAction = vi
+      .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+      .mockResolvedValue([{ label: '1 Rue de la Paix, 75001 Paris' }])
+    const push = vi.fn<(href: string) => void>()
+    const { container } = renderComponent(<CreerLieuInclusion />, {
+      creerUnLieuInclusionAction,
+      rechercherAdressesAction,
+      rechercherLieuxInclusionSimilairesAction,
+      router: routerAvec(push),
+    })
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
+    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' }), 'Mon lieu')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
+    await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
+    await userEvent.click(
+      screen.getByRole('checkbox', { name: 'Rendre mon lieu d’activité visible sur la cartographie' })
+    )
+
+    // WHEN
+    await userEvent.click(within(container).getByRole('button', { name: 'Créer le lieu d’activité' }))
+
+    // THEN
+    await waitFor(() => {
+      expect(notification.Notification).toHaveBeenCalledWith('success', {
+        description:
+          'a bien été créé, mais n’est pas proposé à la cartographie nationale : son adresse n’a pas été trouvée ' +
+          'dans la Base Adresse Nationale.',
+        title: 'Le lieu d’inclusion numérique ',
+      })
     })
     expect(push).toHaveBeenCalledWith('/lieu/4242')
   })

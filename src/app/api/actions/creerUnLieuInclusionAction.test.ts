@@ -77,7 +77,10 @@ describe('créer un lieu d’inclusion action', () => {
   it('sans SIRET, crée le lieu, purge la liste et renvoie l’identifiant créé', async () => {
     // GIVEN
     connecte('Administrateur dispositif')
-    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({ lieuId: 4242 })
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
+      lieuId: 4242,
+      visibilitePourCartographieForcee: false,
+    })
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
@@ -97,7 +100,31 @@ describe('créer un lieu d’inclusion action', () => {
       visiblePourCartographie: true,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/liste-lieux-inclusion')
-    expect(resultat).toStrictEqual({ lieuId: '4242', statut: 'cree' })
+    expect(resultat).toStrictEqual({
+      lieuId: '4242',
+      statut: 'cree',
+      visibilitePourCartographieForcee: false,
+    })
+  })
+
+  it('remonte l’information quand le use case a forcé la visibilité cartographie à false', async () => {
+    // GIVEN
+    connecte('Administrateur dispositif')
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
+      lieuId: 4242,
+      visibilitePourCartographieForcee: true,
+    })
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
+
+    // WHEN
+    const resultat = await creerUnLieuInclusionAction(creationSansSiret)
+
+    // THEN
+    expect(resultat).toStrictEqual({
+      lieuId: '4242',
+      statut: 'cree',
+      visibilitePourCartographieForcee: true,
+    })
   })
 
   it('sans SIRET, exige le nom, l’adresse et une typologie', async () => {

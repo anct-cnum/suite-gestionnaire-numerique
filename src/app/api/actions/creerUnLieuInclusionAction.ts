@@ -47,7 +47,11 @@ export async function creerUnLieuInclusionAction(actionParams: ActionParams): Pr
 
       revalidatePath('/liste-lieux-inclusion')
 
-      return { lieuId: String(result.lieuId), statut: 'cree' }
+      return {
+        lieuId: String(result.lieuId),
+        statut: 'cree',
+        visibilitePourCartographieForcee: result.visibilitePourCartographieForcee,
+      }
     } catch (error) {
       return erreur([error instanceof Error ? error.message : 'Une erreur est survenue lors de la création'])
     }
@@ -55,7 +59,8 @@ export async function creerUnLieuInclusionAction(actionParams: ActionParams): Pr
 }
 
 export type ResultatCreationLieu =
-  Readonly<{ lieuId: string; statut: 'cree' }> | Readonly<{ messages: ReadonlyArray<string>; statut: 'erreur' }>
+  | Readonly<{ lieuId: string; statut: 'cree'; visibilitePourCartographieForcee: boolean }>
+  | Readonly<{ messages: ReadonlyArray<string>; statut: 'erreur' }>
 
 // Règle de gestion #1498 : avec SIRET, les données proviennent de l'API Entreprise —
 // re-résolues ici côté serveur, jamais reprises du client — à l'exception des typologies,

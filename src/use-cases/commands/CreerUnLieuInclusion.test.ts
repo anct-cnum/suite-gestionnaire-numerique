@@ -32,10 +32,10 @@ describe('créer un lieu d’inclusion', () => {
       typologies: ['ASSO'],
       visiblePourCartographie: true,
     })
-    expect(result).toStrictEqual({ lieuId: 4242 })
+    expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: false })
   })
 
-  it('avec SIRET et adresse absente de la BAN, se replie sur les composants SIRENE complets', async () => {
+  it('avec SIRET et adresse absente de la BAN, se replie sur les composants SIRENE complets, la visibilité choisie est respectée', async () => {
     // GIVEN
     geocodeResultat = null
 
@@ -56,7 +56,25 @@ describe('créer un lieu d’inclusion', () => {
       nomVoie: 'rue de la Paix',
       numeroVoie: null,
     })
-    expect(result).toStrictEqual({ lieuId: 4242 })
+    expect(spiedCreerData?.visiblePourCartographie).toBe(false)
+    expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: false })
+  })
+
+  it('avec SIRET, adresse absente de la BAN et visibilité demandée, force la visibilité à false et le signale', async () => {
+    // GIVEN
+    geocodeResultat = null
+
+    // WHEN
+    const result = await creerUnLieuInclusion().handle({
+      creation: {
+        avecSiret: { entreprise: { ...entreprise, numeroVoie: '' }, siret: '12345678901234', typologies: ['ASSO'] },
+      },
+      visiblePourCartographie: true,
+    })
+
+    // THEN
+    expect(spiedCreerData?.visiblePourCartographie).toBe(false)
+    expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: true })
   })
 
   it('avec SIRET, adresse absente de la BAN et composants SIRENE incomplets, refuse : un lieu sans adresse n’est ni cartographiable ni dédoublonnable', async () => {
@@ -104,7 +122,7 @@ describe('créer un lieu d’inclusion', () => {
       typologies: ['BIB'],
       visiblePourCartographie: false,
     })
-    expect(result).toStrictEqual({ lieuId: 4242 })
+    expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: false })
   })
 
   it('sans SIRET, un lieu non itinérant est fixe et son complément d’adresse est conservé', async () => {

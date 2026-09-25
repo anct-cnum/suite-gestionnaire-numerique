@@ -43,6 +43,10 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
       return 'adresseIntrouvable'
     }
 
+    // Règle Coop : sans identifiant BAN, un lieu n'est plus partageable avec la
+    // cartographie nationale, quel que soit le choix saisi dans le formulaire.
+    const visibilitePourCartographieForcee = geocode === null && visiblePourCartographie
+
     const lieuId = await this.#lieuInclusionRepository.creer({
       adresseEnrichie: geocode,
       adresseSirene,
@@ -52,10 +56,10 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
       nom: entreprise.denomination,
       siret: creation.siret,
       typologies: creation.typologies,
-      visiblePourCartographie,
+      visiblePourCartographie: geocode === null ? false : visiblePourCartographie,
     })
 
-    return { lieuId }
+    return { lieuId, visibilitePourCartographieForcee }
   }
 
   async #creerSansSiret(creation: CreationSansSiret, visiblePourCartographie: boolean): ResultAsync<Failure, Succes> {
@@ -76,13 +80,13 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
       visiblePourCartographie,
     })
 
-    return { lieuId }
+    return { lieuId, visibilitePourCartographieForcee: false }
   }
 }
 
 export type Failure = 'adresseIntrouvable'
 
-type Succes = Readonly<{ lieuId: number }>
+type Succes = Readonly<{ lieuId: number; visibilitePourCartographieForcee: boolean }>
 
 // Repli sans géométrie sur les composants SIRENE, seulement s'ils suffisent à
 // localiser le lieu (code INSEE, code postal, commune).

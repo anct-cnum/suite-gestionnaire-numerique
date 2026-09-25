@@ -77,7 +77,13 @@ export default function CreerLieuInclusion(): ReactElement {
     )
 
     if (resultat.statut === 'cree') {
-      Notification('success', { description: 'a bien été créé.', title: 'Le lieu d’inclusion numérique ' })
+      Notification('success', {
+        description: resultat.visibilitePourCartographieForcee
+          ? 'a bien été créé, mais n’est pas proposé à la cartographie nationale : son adresse n’a pas été trouvée ' +
+            'dans la Base Adresse Nationale.'
+          : 'a bien été créé.',
+        title: 'Le lieu d’inclusion numérique ',
+      })
       router.push(`/lieu/${resultat.lieuId}`)
       return
     }
