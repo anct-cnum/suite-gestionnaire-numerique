@@ -989,7 +989,7 @@ enum main_modalite_acces {
   Telephoner          @map("Téléphoner")
   ContacterParMail    @map("Contacter par mail")
   PrendreRdvEnLigne   @map("Prendre un RDV en ligne")
-  PasDePublic         @map("Ce lieu n’accueille pas de public")
+  PasDePublic         @map("Ce lieu n'accueille pas de public")
   FicheDePrescription @map("Envoyer un mail avec une fiche de prescription")
 
   @@map("modalite_acces")
