@@ -14,6 +14,7 @@ import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionReposit
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { RejoindreUneGouvernance } from '@/use-cases/commands/RejoindreUneGouvernance'
+import { ChoixContactData } from '@/use-cases/commands/shared/MembreRepository'
 
 export async function rejoindreUneGouvernanceAction(actionParams: ActionParams): ResultAsync<ReadonlyArray<string>> {
   return avecJournalisationMin(async () => {
@@ -32,8 +33,8 @@ export async function rejoindreUneGouvernanceAction(actionParams: ActionParams):
       new PrismaTransactionRepository()
     ).handle({
       codeDepartement: actionParams.codeDepartement,
-      contact: actionParams.contact,
-      contactTechnique: actionParams.contactTechnique,
+      contact: versChoixContactData(actionParams.contact),
+      contactTechnique: actionParams.contactTechnique ? versChoixContactData(actionParams.contactTechnique) : undefined,
       uidUtilisateur: await getSessionUtilisateurId(),
     })
 
@@ -43,38 +44,44 @@ export async function rejoindreUneGouvernanceAction(actionParams: ActionParams):
   })
 }
 
+type ChoixContactAction =
+  | Readonly<{ contactExistantId: number; type: 'existant' }>
+  | Readonly<{ email: string; fonction: string; nom: string; prenom: string; type: 'nouveau' }>
+
+function versChoixContactData(choix: ChoixContactAction): ChoixContactData {
+  if (choix.type === 'existant') {
+    return { contactExistantId: choix.contactExistantId, type: 'existant' }
+  }
+  return {
+    donnees: { email: choix.email, fonction: choix.fonction, nom: choix.nom, prenom: choix.prenom },
+    type: 'nouveau',
+  }
+}
+
 type ActionParams = Readonly<{
   codeDepartement: string
-  contact: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique?: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contact: ChoixContactAction
+  contactTechnique?: ChoixContactAction
   path: string
 }>
 
-const validator = z.object({
-  codeDepartement: z.string().min(1, { message: 'Le département doit être renseigné' }),
-  contact: z.object({
+const choixContactSchema = z.discriminatedUnion('type', [
+  z.object({
+    contactExistantId: z.number({ message: "L'identifiant du contact doit être un nombre" }),
+    type: z.literal('existant'),
+  }),
+  z.object({
     email: z.string().email({ message: "L'email doit être valide" }),
     fonction: z.string().min(1, { message: 'La fonction du contact doit être renseignée' }),
     nom: z.string().min(1, { message: 'Le nom du contact doit être renseigné' }),
     prenom: z.string().min(1, { message: 'Le prénom du contact doit être renseigné' }),
+    type: z.literal('nouveau'),
   }),
-  contactTechnique: z
-    .object({
-      email: z.string().email({ message: "L'email du contact secondaire doit être valide" }),
-      fonction: z.string().min(1, { message: 'La fonction du contact secondaire doit être renseignée' }),
-      nom: z.string().min(1, { message: 'Le nom du contact secondaire doit être renseigné' }),
-      prenom: z.string().min(1, { message: 'Le prénom du contact secondaire doit être renseigné' }),
-    })
-    .optional(),
+])
+
+const validator = z.object({
+  codeDepartement: z.string().min(1, { message: 'Le département doit être renseigné' }),
+  contact: choixContactSchema,
+  contactTechnique: choixContactSchema.optional(),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })

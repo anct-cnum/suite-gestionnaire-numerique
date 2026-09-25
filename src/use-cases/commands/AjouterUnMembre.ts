@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { CreateMembreRepository, GetMembreRepository } from './shared/MembreRepository'
+import { ChoixContactData, CreateMembreRepository, GetMembreRepository } from './shared/MembreRepository'
 import { CreateStructureRepository, GetStructureBySiretRepository } from './shared/StructureRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -109,18 +109,8 @@ export class AjouterUnMembre implements CommandHandler<Command> {
 type Failure = 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
 
 type Command = Readonly<{
-  contact: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique?: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contact: ChoixContactData
+  contactTechnique?: ChoixContactData
   entreprise: Readonly<{
     adresse: string
     categorieJuridiqueCode: string

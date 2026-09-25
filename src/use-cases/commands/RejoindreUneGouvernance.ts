@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { CreateMembreRepository } from './shared/MembreRepository'
+import { ChoixContactData, CreateMembreRepository } from './shared/MembreRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
@@ -103,18 +103,8 @@ type Failure = 'structureDejaMembreDeLaGouvernance' | 'utilisateurNonGestionnair
 
 type Command = Readonly<{
   codeDepartement: string
-  contact: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique?: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contact: ChoixContactData
+  contactTechnique?: ChoixContactData
   uidUtilisateur: number
 }>
 
