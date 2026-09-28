@@ -3,7 +3,7 @@
 import { ChangeEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
 import SelectionContact from './SelectionContact'
-import { ChoixContact, NouveauMembreData } from './types'
+import { NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
 import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
@@ -22,10 +22,6 @@ export default function EtapeSelectionMembre({
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
 
   // Contact principal
-  const [modeContact, setModeContact] = useState(donneesMembre?.contact?.type ?? 'nouveau')
-  const [contactExistantId, setContactExistantId] = useState(
-    donneesMembre?.contact?.type === 'existant' ? donneesMembre.contact.contactExistantId : null
-  )
   const [nouveauContact, setNouveauContact] = useState(
     donneesMembre?.contact?.type === 'nouveau'
       ? donneesMembre.contact.donnees
@@ -33,12 +29,6 @@ export default function EtapeSelectionMembre({
   )
 
   // Contact secondaire
-  const [modeContactSecondaire, setModeContactSecondaire] = useState(
-    donneesMembre?.contactSecondaire?.type ?? 'nouveau'
-  )
-  const [contactSecondaireExistantId, setContactSecondaireExistantId] = useState(
-    donneesMembre?.contactSecondaire?.type === 'existant' ? donneesMembre.contactSecondaire.contactExistantId : null
-  )
   const [nouveauContactSecondaire, setNouveauContactSecondaire] = useState(
     donneesMembre?.contactSecondaire?.type === 'nouveau'
       ? donneesMembre.contactSecondaire.donnees
@@ -50,13 +40,12 @@ export default function EtapeSelectionMembre({
 
   const contactsExistants = entreprise?.contactsExistants ?? []
 
-  const isContactValide = modeContact === 'existant' ? contactExistantId !== null : estContactRenseigne(nouveauContact)
+  const aDesContactsExistants = contactsExistants.length > 0
+  const formulaireContactCommence = estContactCommence(nouveauContact)
+  const formulaireContactValide = estContactValide(nouveauContact)
+  const isContactValide = formulaireContactCommence ? formulaireContactValide : aDesContactsExistants
 
-  const isContactSecondaireValide =
-    !showContactSecondaire ||
-    (modeContactSecondaire === 'existant'
-      ? contactSecondaireExistantId !== null
-      : estContactRenseigne(nouveauContactSecondaire))
+  const isContactSecondaireValide = !showContactSecondaire || estContactValide(nouveauContactSecondaire)
 
   const isFormulairePret =
     entreprise !== null && (!modeCandidature || codeDepartement !== '') && isContactValide && isContactSecondaireValide
@@ -155,17 +144,13 @@ export default function EtapeSelectionMembre({
     return (
       <>
         <SelectionContact
-          contactExistantId={contactExistantId}
           contactsExistants={contactsExistants}
           idPrefix="contact"
-          mode={modeContact}
           nouveauContact={nouveauContact}
           onChangerEmail={changerChampContact('email')}
           onChangerFonction={changerChampContact('fonction')}
           onChangerNom={changerChampContact('nom')}
           onChangerPrenom={changerChampContact('prenom')}
-          onChoisirExistant={choisirContactExistant}
-          onChoisirNouveau={choisirNouveauContact}
           titre={modeCandidature ? 'Contact référent de la structure' : 'Contact référent'}
         />
 
@@ -184,17 +169,13 @@ export default function EtapeSelectionMembre({
               </div>
             </div>
             <SelectionContact
-              contactExistantId={contactSecondaireExistantId}
               contactsExistants={contactsExistants}
               idPrefix="contact-secondaire"
-              mode={modeContactSecondaire}
               nouveauContact={nouveauContactSecondaire}
               onChangerEmail={changerChampContactSecondaire('email')}
               onChangerFonction={changerChampContactSecondaire('fonction')}
               onChangerNom={changerChampContactSecondaire('nom')}
               onChangerPrenom={changerChampContactSecondaire('prenom')}
-              onChoisirExistant={choisirContactSecondaireExistant}
-              onChoisirNouveau={choisirNouveauContactSecondaire}
               titre="Contact secondaire"
             />
           </>
@@ -237,11 +218,7 @@ export default function EtapeSelectionMembre({
   }
 
   function reinitialiserChoixContacts(): void {
-    setModeContact('nouveau')
-    setContactExistantId(null)
     setNouveauContact({ email: '', fonction: '', nom: '', prenom: '' })
-    setModeContactSecondaire('nouveau')
-    setContactSecondaireExistantId(null)
     setNouveauContactSecondaire({ email: '', fonction: '', nom: '', prenom: '' })
     setShowContactSecondaire(false)
   }
@@ -263,32 +240,10 @@ export default function EtapeSelectionMembre({
     setCodeDepartement(option?.value ?? '')
   }
 
-  // Contact principal
-  function choisirContactExistant(id: number): void {
-    setModeContact('existant')
-    setContactExistantId(id)
-  }
-
-  function choisirNouveauContact(): void {
-    setModeContact('nouveau')
-    setContactExistantId(null)
-  }
-
   function changerChampContact(champ: string): (event: ChangeEvent<HTMLInputElement>) => void {
     return (event: ChangeEvent<HTMLInputElement>) => {
       setNouveauContact((contactActuel) => ({ ...contactActuel, [champ]: event.target.value }))
     }
-  }
-
-  // Contact secondaire
-  function choisirContactSecondaireExistant(id: number): void {
-    setModeContactSecondaire('existant')
-    setContactSecondaireExistantId(id)
-  }
-
-  function choisirNouveauContactSecondaire(): void {
-    setModeContactSecondaire('nouveau')
-    setContactSecondaireExistantId(null)
   }
 
   function changerChampContactSecondaire(champ: string): (event: ChangeEvent<HTMLInputElement>) => void {
@@ -299,8 +254,6 @@ export default function EtapeSelectionMembre({
 
   function supprimerContactSecondaire(): void {
     setShowContactSecondaire(false)
-    setModeContactSecondaire('nouveau')
-    setContactSecondaireExistantId(null)
     setNouveauContactSecondaire({ email: '', fonction: '', nom: '', prenom: '' })
   }
 
@@ -340,34 +293,39 @@ export default function EtapeSelectionMembre({
 
     const departement = departements?.find((dep) => dep.value === codeDepartement)
     onContinuer({
-      contact: construireChoixContact(modeContact, contactExistantId, nouveauContact),
-      contactSecondaire: showContactSecondaire
-        ? construireChoixContact(modeContactSecondaire, contactSecondaireExistantId, nouveauContactSecondaire)
-        : null,
+      contact: formulaireContactValide ? { donnees: nouveauContact, type: 'nouveau' } : null,
+      contactSecondaire: showContactSecondaire ? { donnees: nouveauContactSecondaire, type: 'nouveau' } : null,
       departement: departement ? { code: departement.value, label: departement.label } : null,
       entreprise,
     })
   }
 }
 
-function construireChoixContact(
-  mode: 'existant' | 'nouveau',
-  existantId: null | number,
-  nouveau: Readonly<{ email: string; fonction: string; nom: string; prenom: string }>
-): ChoixContact {
-  if (mode === 'existant' && existantId !== null) {
-    return { contactExistantId: existantId, type: 'existant' }
-  }
-  return { donnees: nouveau, type: 'nouveau' }
+function estContactCommence(
+  contact: Readonly<{ email: string; fonction: string; nom: string; prenom: string }>
+): boolean {
+  return (
+    contact.nom.trim() !== '' ||
+    contact.prenom.trim() !== '' ||
+    contact.email.trim() !== '' ||
+    contact.fonction.trim() !== ''
+  )
 }
 
-function estContactRenseigne(
+function estEmailValide(email: string): boolean {
+  const trimmed = email.trim()
+  const atIndex = trimmed.indexOf('@')
+  const dotIndex = trimmed.lastIndexOf('.')
+  return atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < trimmed.length - 1 && !trimmed.includes(' ')
+}
+
+function estContactValide(
   contact: Readonly<{ email: string; fonction: string; nom: string; prenom: string }>
 ): boolean {
   return (
     contact.nom.trim() !== '' &&
     contact.prenom.trim() !== '' &&
-    contact.email.trim() !== '' &&
+    estEmailValide(contact.email) &&
     contact.fonction.trim() !== ''
   )
 }

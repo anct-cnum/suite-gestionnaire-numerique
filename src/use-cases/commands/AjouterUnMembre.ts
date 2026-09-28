@@ -109,7 +109,7 @@ export class AjouterUnMembre implements CommandHandler<Command> {
 type Failure = 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
 
 type Command = Readonly<{
-  contact: ChoixContactData
+  contact?: ChoixContactData
   contactTechnique?: ChoixContactData
   entreprise: Readonly<{
     adresse: string

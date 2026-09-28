@@ -39,7 +39,7 @@ export async function ajouterUnMembreAction(actionParams: ActionParams): ResultA
       new PrismaTransactionRepository(),
       new ApiBanGeocodingGateway()
     ).handle({
-      contact: versChoixContactData(actionParams.contact),
+      contact: actionParams.contact ? versChoixContactData(actionParams.contact) : undefined,
       contactTechnique: actionParams.contactTechnique ? versChoixContactData(actionParams.contactTechnique) : undefined,
       entreprise: actionParams.entreprise,
       uidGestionnaire: await getSessionUtilisateurId(),
@@ -68,7 +68,7 @@ type ChoixContactAction =
 
 type ActionParams = Readonly<{
   codeDepartement: string
-  contact: ChoixContactAction
+  contact?: ChoixContactAction
   contactTechnique?: ChoixContactAction
   entreprise: Readonly<{
     adresse: string
@@ -101,7 +101,7 @@ const choixContactSchema = z.discriminatedUnion('type', [
 
 const validator = z.object({
   codeDepartement: z.string().min(1, { message: 'Le code département doit être renseigné' }),
-  contact: choixContactSchema,
+  contact: choixContactSchema.optional(),
   contactTechnique: choixContactSchema.optional(),
   entreprise: z.object({
     adresse: z.string().min(1, { message: "L'adresse doit être renseignée" }),
