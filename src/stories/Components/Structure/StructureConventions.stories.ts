@@ -1,5 +1,6 @@
 import { createDefaultStructureViewModel, createStructureViewModelWithMinimalData } from './StructureTestData'
 import StructureConventions from '@/components/Structure/StructureConventions'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '@/presenters/shared/enveloppe'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 const meta: Meta<typeof StructureConventions> = {
@@ -48,8 +49,11 @@ export const AvecPlusieursEnveloppes: Story = {
       enveloppes: [
         ...defaultViewModel.conventionsEtFinancements.enveloppes,
         {
-          color: 'france',
-          libelle: 'Aide exceptionnelle',
+          color: obtenirCouleurEnveloppe('Formation Aidant Numérique/Aidants Connect - 2024 - État'),
+          couleurGraphique: obtenirCouleurGraphique(
+            obtenirCouleurEnveloppe('Formation Aidant Numérique/Aidants Connect - 2024 - État')
+          ),
+          libelle: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
           montant: 50000,
           montantFormate: '50 000 €',
         },
