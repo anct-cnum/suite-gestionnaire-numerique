@@ -3,7 +3,6 @@
 import { ReactElement, useState } from 'react'
 
 import { ChoixContact, NouveauMembreData } from './types'
-import { ContactExistant } from '../shared/Membre/EntrepriseType'
 
 export default function EtapeConfirmationMembre({
   data,
@@ -91,21 +90,11 @@ export default function EtapeConfirmationMembre({
     </div>
   )
 
-  function resoudreContact(
-    choix: ChoixContact
-  ): Readonly<{ email: string; fonction: string; nom: string; prenom: string }> | undefined {
-    if (choix.type === 'nouveau') {
-      return choix.donnees
-    }
-    const contactsExistants = data.entreprise?.contactsExistants ?? []
-    return contactsExistants.find((ce: ContactExistant) => ce.id === choix.contactExistantId)
-  }
-
   function afficherContact(titre: string, choix: ChoixContact): null | ReactElement {
-    const contactResolu = resoudreContact(choix)
-    if (!contactResolu) {
+    if (choix.type !== 'nouveau') {
       return null
     }
+    const contactResolu = choix.donnees
     return (
       <div className="fr-mb-4w">
         <h3 className="fr-h5 fr-mb-3w">{titre}</h3>

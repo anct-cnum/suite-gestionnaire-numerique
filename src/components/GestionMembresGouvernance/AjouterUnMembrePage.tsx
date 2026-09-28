@@ -65,11 +65,11 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
   }
 
   async function confirmerAjoutMembre(): Promise<void> {
-    if (!donneesMembre.entreprise || !donneesMembre.contact) {
+    if (!donneesMembre.entreprise) {
       return
     }
 
-    if (candidature) {
+    if (candidature && donneesMembre.contact) {
       await confirmerCandidature(donneesMembre.entreprise.denomination, donneesMembre.contact)
       return
     }
@@ -77,7 +77,7 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
     try {
       const messages = await ajouterUnMembreAction({
         codeDepartement: codeDepartement ?? '',
-        contact: choixContactVersAction(donneesMembre.contact),
+        contact: donneesMembre.contact ? choixContactVersAction(donneesMembre.contact) : undefined,
         contactTechnique: donneesMembre.contactSecondaire
           ? choixContactVersAction(donneesMembre.contactSecondaire)
           : undefined,

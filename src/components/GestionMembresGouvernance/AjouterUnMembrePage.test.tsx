@@ -86,6 +86,7 @@ describe('rejoindre une gouvernance en tant que structure non membre', () => {
           fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Jean',
+          type: 'nouveau',
         },
         contactTechnique: undefined,
         path: '/',
