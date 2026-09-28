@@ -11,6 +11,7 @@ export type StatistiquesPageFilters = Readonly<{
   lieux?: ReadonlyArray<string> // IDs SGN main.lieu_inclusion (stringifiés depuis URL, post-refonte 2026)
   scopeFiltre: ScopeFiltre // scope de l'utilisateur connecté
   structuresEmployeuses?: ReadonlyArray<string> // IDs SGN main.structure_administrative (stringifiés depuis URL, post-refonte 2026)
+  tags?: ReadonlyArray<string> // UUIDs coop.tags
   thematiqueAdministratives?: ReadonlyArray<string> // clés PascalCase
   thematiqueNonAdministratives?: ReadonlyArray<string> // clés PascalCase
   types?: ReadonlyArray<'Collectif' | 'Demarche' | 'Individuel'>

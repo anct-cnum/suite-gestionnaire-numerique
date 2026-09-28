@@ -21,6 +21,7 @@ import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
+import { PrismaTagsCoopLoader } from '@/gateways/PrismaTagsCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
@@ -46,6 +47,10 @@ export default async function StatistiquesController({ searchParams }: Props): P
   const communesActives = filtres.communes ?? []
   const lieuxActifs = filtres.lieux ?? []
   const structuresEmployeusesActives = filtres.structuresEmployeuses ?? []
+  const tagsActifs = filtres.tags ?? []
+  // Filtre tags réservé aux gestionnaires département, région et structure.
+  // L'administrateur (vue France) n'y a pas accès : la section « Tags spécifiques » n'y est pas affichée non plus.
+  const filtreTagsDisponible = scopeFiltre.type !== 'national'
   const typesActifs = filtres.types ?? []
   const thematiqueNonAdminActifs = filtres.thematiqueNonAdministratives ?? []
   const thematiqueAdminActifs = filtres.thematiqueAdministratives ?? []
@@ -54,19 +59,27 @@ export default async function StatistiquesController({ searchParams }: Props): P
   const statistiquesPromise = recupererStatistiques(filtres)
 
   // Charger uniquement les labels des items sélectionnés (fast : 0-5 rows par PK)
-  const [lieuxSelectionnes, communesSelectionnees, structuresEmployeusesSelectionnees, structureDuScope] =
-    await Promise.all([
-      lieuxActifs.length > 0 ? new PrismaLieuxCoopLoader().recupererParIds(lieuxActifs) : Promise.resolve([]),
-      communesActives.length > 0
-        ? new PrismaCommunesCoopLoader().recupererParCodes(communesActives)
-        : Promise.resolve([]),
-      structuresEmployeusesActives.length > 0
-        ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds(structuresEmployeusesActives)
-        : Promise.resolve([]),
-      scopeFiltre.type === 'structure'
-        ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds([String(scopeFiltre.id)])
-        : Promise.resolve([]),
-    ])
+  // + la liste des tags visibles, chargée une fois indépendamment des autres filtres
+  const [
+    lieuxSelectionnes,
+    communesSelectionnees,
+    structuresEmployeusesSelectionnees,
+    structureDuScope,
+    tagsDisponibles,
+  ] = await Promise.all([
+    lieuxActifs.length > 0 ? new PrismaLieuxCoopLoader().recupererParIds(lieuxActifs) : Promise.resolve([]),
+    communesActives.length > 0
+      ? new PrismaCommunesCoopLoader().recupererParCodes(communesActives)
+      : Promise.resolve([]),
+    structuresEmployeusesActives.length > 0
+      ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds(structuresEmployeusesActives)
+      : Promise.resolve([]),
+    scopeFiltre.type === 'structure'
+      ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds([String(scopeFiltre.id)])
+      : Promise.resolve([]),
+    filtreTagsDisponible ? new PrismaTagsCoopLoader().recupererVisibles(scopeFiltre) : Promise.resolve([]),
+  ])
+  const tagsSelectionnes = tagsDisponibles.filter((tag) => tagsActifs.includes(tag.value))
   const departementsOptions = departementsParScope(scopeFiltre)
   const departementsSelectionnes = departementsOptions.filter((opt) => (filtres.departements ?? []).includes(opt.value))
   const nomStructure = structureDuScope.at(0)?.label
@@ -80,6 +93,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
     departementsSelectionnes,
     lieuxSelectionnes,
     structuresEmployeusesSelectionnees,
+    tagsSelectionnes,
     thematiqueAdministratives: thematiqueAdminActifs,
     thematiqueNonAdministratives: thematiqueNonAdminActifs,
     types: typesActifs,
@@ -138,6 +152,8 @@ export default async function StatistiquesController({ searchParams }: Props): P
               urlRecherche="/api/statistiques/lieux"
             />
             <PlusDesFiltres
+              tags={tagsActifs}
+              tagsDisponibles={tagsDisponibles}
               thematiqueAdministratives={thematiqueAdminActifs}
               thematiqueNonAdministratives={thematiqueNonAdminActifs}
               types={typesActifs}
@@ -155,6 +171,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
           departementsOptions={departementsOptions}
           lieuxSelectionnes={lieuxSelectionnes}
           structuresEmployeusesSelectionnees={structuresEmployeusesSelectionnees}
+          tagsOptions={tagsDisponibles}
           thematiqueAdminOptions={THEMATIQUE_ADMIN_OPTIONS}
           thematiqueNonAdminOptions={THEMATIQUE_NON_ADMIN_OPTIONS}
           typesOptions={TYPES_OPTIONS}
@@ -172,7 +189,7 @@ export default async function StatistiquesController({ searchParams }: Props): P
       >
         <Suspense
           fallback={<SpinnerSimple text="Récupération des statistiques..." />}
-          key={`${dateDebut}-${dateFin}-${params.communes ?? ''}-${params.departements ?? ''}-${params.lieux ?? ''}-${params.structuresEmployeuses ?? ''}-${params.types ?? ''}-${params.thematiqueNonAdministratives ?? ''}-${params.thematiqueAdministratives ?? ''}`}
+          key={`${dateDebut}-${dateFin}-${params.communes ?? ''}-${params.departements ?? ''}-${params.lieux ?? ''}-${params.structuresEmployeuses ?? ''}-${params.tags ?? ''}-${params.types ?? ''}-${params.thematiqueNonAdministratives ?? ''}-${params.thematiqueAdministratives ?? ''}`}
         >
           <StatistiquesPageContent
             libellesFiltres={libellesFiltres}

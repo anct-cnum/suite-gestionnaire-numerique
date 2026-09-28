@@ -18,6 +18,7 @@ import { PrismaCommunesCoopLoader } from '@/gateways/PrismaCommunesCoopLoader'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaStructuresEmployeusesCoopLoader } from '@/gateways/PrismaStructuresEmployeusesCoopLoader'
+import { PrismaTagsCoopLoader } from '@/gateways/PrismaTagsCoopLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { resoudreContexte, ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
 
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       du: searchParams.get('du') ?? undefined,
       lieux: searchParams.get('lieux') ?? undefined,
       structuresEmployeuses: searchParams.get('structuresEmployeuses') ?? undefined,
+      tags: searchParams.get('tags') ?? undefined,
       thematiqueAdministratives: searchParams.get('thematiqueAdministratives') ?? undefined,
       thematiqueNonAdministratives: searchParams.get('thematiqueNonAdministratives') ?? undefined,
       types: searchParams.get('types') ?? undefined,
@@ -61,15 +63,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const communesActives = filtres.communes ?? []
     const lieuxActifs = filtres.lieux ?? []
     const structuresEmployeusesActives = filtres.structuresEmployeuses ?? []
-    const [lieuxSelectionnes, communesSelectionnees, structuresEmployeusesSelectionnees] = await Promise.all([
-      lieuxActifs.length > 0 ? new PrismaLieuxCoopLoader().recupererParIds(lieuxActifs) : Promise.resolve([]),
-      communesActives.length > 0
-        ? new PrismaCommunesCoopLoader().recupererParCodes(communesActives)
-        : Promise.resolve([]),
-      structuresEmployeusesActives.length > 0
-        ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds(structuresEmployeusesActives)
-        : Promise.resolve([]),
-    ])
+    const tagsActifs = filtres.tags ?? []
+    const [lieuxSelectionnes, communesSelectionnees, structuresEmployeusesSelectionnees, tagsVisibles] =
+      await Promise.all([
+        lieuxActifs.length > 0 ? new PrismaLieuxCoopLoader().recupererParIds(lieuxActifs) : Promise.resolve([]),
+        communesActives.length > 0
+          ? new PrismaCommunesCoopLoader().recupererParCodes(communesActives)
+          : Promise.resolve([]),
+        structuresEmployeusesActives.length > 0
+          ? new PrismaStructuresEmployeusesCoopLoader().recupererParIds(structuresEmployeusesActives)
+          : Promise.resolve([]),
+        tagsActifs.length > 0 ? new PrismaTagsCoopLoader().recupererVisibles(scopeFiltre) : Promise.resolve([]),
+      ])
+    const tagsSelectionnes = tagsVisibles.filter((tag) => tagsActifs.includes(tag.value))
     const departementsSelectionnes = departementsJson
       .filter((dep) => (filtres.departements ?? []).includes(dep.code))
       .map((dep) => ({ label: `${dep.nom} - ${dep.code}`, value: dep.code }))
@@ -82,13 +88,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       departementsSelectionnes,
       lieuxSelectionnes,
       structuresEmployeusesSelectionnees,
+      tagsSelectionnes,
       thematiqueAdministratives: filtres.thematiqueAdministratives ?? [],
       thematiqueNonAdministratives: filtres.thematiqueNonAdministratives ?? [],
       types: filtres.types ?? [],
     })
 
+    // Filtre tags réservé aux gestionnaires (département, région, structure) : pas de ligne dans l'export administrateur
+    const filtreTagsDisponible = scopeFiltre.type !== 'national'
+
     const workbook = construireWorkbook({
       date: maintenant,
+      filtreTagsDisponible,
       libellesFiltres,
       statistiques,
       utilisateur: { nom: utilisateur.nom, prenom: utilisateur.prenom, role: utilisateur.role.nom },
@@ -109,7 +120,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-function ajouterFiltres(worksheet: Excel.Worksheet, libellesFiltres: ReadonlyArray<LibelleFiltre>): void {
+function ajouterFiltres(
+  worksheet: Excel.Worksheet,
+  libellesFiltres: ReadonlyArray<LibelleFiltre>,
+  filtreTagsDisponible: boolean
+): void {
   ajouterTitre(worksheet, 'Filtres')
   worksheet.addRows([
     ['Période', libelleParCategorie(libellesFiltres, 'periode')],
@@ -120,6 +135,7 @@ function ajouterFiltres(worksheet: Excel.Worksheet, libellesFiltres: ReadonlyArr
     ['Type d’accompagnement', libelleParCategorie(libellesFiltres, 'types')],
     ['Thématiques non administratives', libelleParCategorie(libellesFiltres, 'thematiqueNonAdministratives')],
     ['Thématiques administratives', libelleParCategorie(libellesFiltres, 'thematiqueAdministratives')],
+    ...(filtreTagsDisponible ? [['Tags spécifiques', libelleParCategorie(libellesFiltres, 'tags')]] : []),
     [],
   ])
 }
@@ -203,12 +219,13 @@ function ajusterLargeurColonnes(worksheet: Excel.Worksheet): void {
 function construireWorkbook(
   args: Readonly<{
     date: Date
+    filtreTagsDisponible: boolean
     libellesFiltres: ReadonlyArray<LibelleFiltre>
     statistiques: StatistiquesMediateursData
     utilisateur: Readonly<{ nom: string; prenom: string; role: string }>
   }>
 ): Excel.Workbook {
-  const { date, libellesFiltres, statistiques, utilisateur } = args
+  const { date, filtreTagsDisponible, libellesFiltres, statistiques, utilisateur } = args
   const workbook = new Excel.Workbook()
   workbook.creator = 'Mon Inclusion Numérique'
   workbook.lastModifiedBy = 'Mon Inclusion Numérique'
@@ -218,7 +235,7 @@ function construireWorkbook(
   const worksheet = workbook.addWorksheet('Statistiques')
 
   ajouterInformationsExport(worksheet, utilisateur, date)
-  ajouterFiltres(worksheet, libellesFiltres)
+  ajouterFiltres(worksheet, libellesFiltres, filtreTagsDisponible)
   ajouterStatistiquesGenerales(worksheet, statistiques)
   ajouterStatistiquesAccompagnements(worksheet, statistiques)
   ajouterSection(worksheet, 'Thématiques Médiation numérique', statistiques.activites.thematiques)
