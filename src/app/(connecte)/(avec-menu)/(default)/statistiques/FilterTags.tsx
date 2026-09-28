@@ -13,6 +13,7 @@ export default function FilterTags({
   departementsOptions,
   lieuxSelectionnes,
   structuresEmployeusesSelectionnees,
+  tagsOptions,
   thematiqueAdminOptions,
   thematiqueNonAdminOptions,
   typesOptions,
@@ -57,6 +58,7 @@ export default function FilterTags({
       'thd',
       thematiqueAdminOptions
     ),
+    ...tagsDepuisParam(searchParams.get('tags'), 'tags', 'tag', tagsOptions),
   ]
 
   function retirerFiltre(tag: ActiveTag): void {
@@ -86,6 +88,7 @@ export default function FilterTags({
     params.delete('du')
     params.delete('lieux')
     params.delete('structuresEmployeuses')
+    params.delete('tags')
     params.delete('thematiqueAdministratives')
     params.delete('thematiqueNonAdministratives')
     params.delete('types')
@@ -161,6 +164,7 @@ type Props = Readonly<{
   departementsOptions: ReadonlyArray<FiltreOption>
   lieuxSelectionnes: ReadonlyArray<FiltreOption>
   structuresEmployeusesSelectionnees: ReadonlyArray<FiltreOption>
+  tagsOptions: ReadonlyArray<FiltreOption>
   thematiqueAdminOptions: ReadonlyArray<FiltreOption>
   thematiqueNonAdminOptions: ReadonlyArray<FiltreOption>
   typesOptions: ReadonlyArray<FiltreOption>

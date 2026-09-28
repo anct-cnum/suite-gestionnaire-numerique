@@ -146,6 +146,15 @@ function conditionsActivite(filtres: StatistiquesFilters): Array<Prisma.Sql> {
   if (thematiques.length > 0) {
     conditions.push(Prisma.raw(`act.thematiques && ARRAY[${enListeSql(thematiques)}]::coop.thematique[]`))
   }
+  if (filtres.tags !== undefined && filtres.tags.length > 0) {
+    // OU : l'activité est gardée si elle porte au moins un des tags cochés
+    conditions.push(Prisma.sql`EXISTS (
+      SELECT 1
+      FROM coop.activite_tags filtre_tag
+      WHERE filtre_tag.activite_id = act.id
+        AND filtre_tag.tag_id = ANY(ARRAY[${Prisma.join([...filtres.tags])}]::uuid[])
+    )`)
+  }
   return conditions
 }
 

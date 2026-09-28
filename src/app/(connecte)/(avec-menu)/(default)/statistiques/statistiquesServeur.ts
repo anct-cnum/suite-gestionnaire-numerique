@@ -4,6 +4,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { clamperPeriode } from '@/shared/dispositif'
+import { uuidPattern } from '@/shared/patterns'
 import type { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 import { StatistiquesPageFilters } from '@/use-cases/queries/RecupererStatistiquesPage'
 import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
@@ -20,6 +21,11 @@ export function construireFiltres(
   const lieuxActifs = params.lieux?.split(',').filter(Boolean) ?? []
   const structuresEmployeusesActives =
     scopeFiltre.type === 'structure' ? [] : (params.structuresEmployeuses?.split(',').filter(Boolean) ?? [])
+  // Filtre tags réservé aux gestionnaires (département, région, structure) :
+  // pour l'administrateur, un ?tags= présent dans l'URL n'est pas pris en compte.
+  // Un id de tag malformé ferait échouer le cast ::uuid[] de la requête statistiques : il est écarté.
+  const tagsActifs =
+    scopeFiltre.type === 'national' ? [] : (params.tags?.split(',').filter((tag) => uuidPattern.test(tag)) ?? [])
   const typesActifs = params.types?.split(',').filter(Boolean) ?? []
   const thematiqueNonAdminActifs = params.thematiqueNonAdministratives?.split(',').filter(Boolean) ?? []
   const thematiqueAdminActifs = params.thematiqueAdministratives?.split(',').filter(Boolean) ?? []
@@ -33,6 +39,7 @@ export function construireFiltres(
     lieux: lieuxActifs.length > 0 ? lieuxActifs : undefined,
     scopeFiltre,
     structuresEmployeuses: structuresEmployeusesActives.length > 0 ? structuresEmployeusesActives : undefined,
+    tags: tagsActifs.length > 0 ? tagsActifs : undefined,
     thematiqueAdministratives: thematiqueAdminActifs.length > 0 ? thematiqueAdminActifs : undefined,
     thematiqueNonAdministratives: thematiqueNonAdminActifs.length > 0 ? thematiqueNonAdminActifs : undefined,
     types: typesActifs.length > 0 ? (typesActifs as ReadonlyArray<'Collectif' | 'Demarche' | 'Individuel'>) : undefined,
@@ -65,6 +72,7 @@ export async function recupererStatistiques(
       du: filtres.du,
       lieux: lieuxCoopIds.length > 0 ? lieuxCoopIds : undefined,
       structuresEmployeuses: structuresEmployeusesFiltre,
+      tags: filtres.tags,
       thematiqueAdministratives: filtres.thematiqueAdministratives,
       thematiqueNonAdministratives: filtres.thematiqueNonAdministratives,
       types: filtres.types,
@@ -92,6 +100,7 @@ export type StatistiquesSearchParams = Readonly<{
   du?: string
   lieux?: string
   structuresEmployeuses?: string
+  tags?: string
   thematiqueAdministratives?: string
   thematiqueNonAdministratives?: string
   types?: string
