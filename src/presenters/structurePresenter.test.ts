@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from './shared/enveloppe'
 import { formatMontant } from './shared/number'
 import { structurePresenter } from './structurePresenter'
 import { epochTime, epochTimePlusOneDay } from './testHelper'
 import { UneStructureReadModel } from '@/use-cases/queries/RecupererUneStructure'
 
 describe('structure presenter : caractérisation des enveloppes (Conum ET FNE, aucun filtrage)', () => {
-  it('cas mixte : les 4 enveloppes Conum + FNE sont toutes restituées avec couleurs cycliques', () => {
+  it('cas mixte : les 4 enveloppes Conum + FNE sont toutes restituées avec la même couleur que le tableau de bord (par libellé)', () => {
     // GIVEN
     const readModel = structureReadModel([
       { libelle: 'Conseiller Numérique - initiale - État', montant: 1_200_009, type: 'conseiller_numerique' },
@@ -19,32 +20,43 @@ describe('structure presenter : caractérisation des enveloppes (Conum ET FNE, a
     const viewModel = structurePresenter(readModel, epochTimePlusOneDay)
 
     // THEN
+    const couleur = (libelle: string) => obtenirCouleurEnveloppe(libelle)
+
     expect(viewModel.conventionsEtFinancements.enveloppes).toStrictEqual([
       {
-        color: 'france',
+        color: couleur('Conseiller Numérique - initiale - État'),
+        couleurGraphique: obtenirCouleurGraphique(couleur('Conseiller Numérique - initiale - État')),
         libelle: 'Conseiller Numérique - initiale - État',
         montant: 1_200_009,
         montantFormate: formatMontant(1_200_009),
       },
       {
-        color: 'menthe',
+        color: couleur('Conseiller Numérique - Renouvellement - État'),
+        couleurGraphique: obtenirCouleurGraphique(couleur('Conseiller Numérique - Renouvellement - État')),
         libelle: 'Conseiller Numérique - Renouvellement - État',
         montant: 665_000,
         montantFormate: formatMontant(665_000),
       },
       {
-        color: 'tilleul',
+        color: couleur('Ingénierie France Numérique Ensemble - 2024 - État'),
+        couleurGraphique: obtenirCouleurGraphique(couleur('Ingénierie France Numérique Ensemble - 2024 - État')),
         libelle: 'Ingénierie France Numérique Ensemble - 2024 - État',
         montant: 49_100,
         montantFormate: formatMontant(49_100),
       },
       {
-        color: 'france',
+        color: couleur('Formation Aidant Numérique/Aidants Connect - 2024 - État'),
+        couleurGraphique: obtenirCouleurGraphique(couleur('Formation Aidant Numérique/Aidants Connect - 2024 - État')),
         libelle: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
         montant: 20_000,
         montantFormate: formatMontant(20_000),
       },
     ])
+
+    // Même libellé côté "ma structure" et côté tableau de bord ⇒ même couleur (source de vérité partagée)
+    expect(couleur('Conseiller Numérique - initiale - État')).toBe(
+      couleur('Conseiller Numérique - Plan France Relance - État')
+    )
   })
 
   it('cas FNE pur : seules les enveloppes FNE sont restituées (aucune exclusion par type)', () => {

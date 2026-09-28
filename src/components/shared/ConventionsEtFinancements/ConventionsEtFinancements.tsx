@@ -53,7 +53,7 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
                       className="fr-text--sm"
                       style={{ alignItems: 'center', display: 'flex', flex: 1, gap: '0.5rem', lineHeight: '1.25rem' }}
                     >
-                      <Dot color={colors[enveloppe.color].dot} />
+                      <Dot color={enveloppe.color} />
                       {enveloppe.libelle}
                       <span aria-label="Information" style={{ color: '#000091' }} />
                     </div>
@@ -68,7 +68,7 @@ export default function ConventionsEtFinancements({ data }: Props): ReactElement
               style={{ alignItems: 'center', display: 'flex', height: '8.5rem', padding: '0.5625rem', width: '8.5rem' }}
             >
               <Doughnut
-                backgroundColor={data.enveloppes.map((enveloppe) => colors[enveloppe.color].color)}
+                backgroundColor={data.enveloppes.map((enveloppe) => enveloppe.couleurGraphique)}
                 data={data.enveloppes.map((enveloppe) => enveloppe.montant)}
                 labels={data.enveloppes.map((enveloppe) => enveloppe.libelle)}
               />
@@ -143,7 +143,8 @@ type ConventionViewModel = Readonly<{
 }>
 
 type EnveloppeViewModel = Readonly<{
-  color: 'france' | 'menthe' | 'tilleul'
+  color: string
+  couleurGraphique: string
   libelle: string
   montant: number
   montantFormate: string
@@ -152,18 +153,3 @@ type EnveloppeViewModel = Readonly<{
 type Props = Readonly<{
   data: ConventionsEtFinancementsViewModel
 }>
-
-const colors = {
-  france: {
-    color: '#6a6af4',
-    dot: 'dot-blue-france-main-525',
-  },
-  menthe: {
-    color: '#21ab8d',
-    dot: 'dot-green-menthe-main-548',
-  },
-  tilleul: {
-    color: '#fbe769',
-    dot: 'dot-green-tilleul-verveine-925',
-  },
-}

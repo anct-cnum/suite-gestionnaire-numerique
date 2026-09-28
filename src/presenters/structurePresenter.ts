@@ -1,5 +1,6 @@
 import { StatutContratViewModel, toStatutContratViewModel } from './shared/contrat'
 import { formaterEnDateFrancaise } from './shared/date'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from './shared/enveloppe'
 import { formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { dateRenouvellementLabelConum, estLabelConumActif } from '@/use-cases/commands/AttesterLabellisationStructure'
@@ -48,13 +49,12 @@ export function structurePresenter(uneStructureReadModel: UneStructureReadModel,
         }
       }),
       creditsEngagesParLEtat: formatMontant(uneStructureReadModel.conventionsEtFinancements.creditsEngagesParLEtat),
-      enveloppes: uneStructureReadModel.conventionsEtFinancements.enveloppes.map((enveloppe, index) => {
-        // Assigner les couleurs de manière cyclique
-        const colors: Array<'france' | 'menthe' | 'tilleul'> = ['france', 'menthe', 'tilleul']
-        const color = colors[index % colors.length]
+      enveloppes: uneStructureReadModel.conventionsEtFinancements.enveloppes.map((enveloppe) => {
+        const couleur = obtenirCouleurEnveloppe(enveloppe.libelle)
 
         return {
-          color,
+          color: couleur,
+          couleurGraphique: obtenirCouleurGraphique(couleur),
           libelle: enveloppe.libelle,
           montant: enveloppe.montant,
           montantFormate: formatMontant(enveloppe.montant),
@@ -142,7 +142,8 @@ export type StructureViewModel = Readonly<{
     }>
     creditsEngagesParLEtat: string
     enveloppes: ReadonlyArray<{
-      color: 'france' | 'menthe' | 'tilleul'
+      color: string
+      couleurGraphique: string
       libelle: string
       montant: number
       montantFormate: string
