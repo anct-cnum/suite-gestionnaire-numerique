@@ -212,7 +212,6 @@ describe('utilisateur repository', () => {
         isSuperAdmin: false,
         isSupprime: true,
         nom: 'Tartempion',
-        oldStructureId: null,
         prenom: 'Martin',
         regionCode: null,
         role: 'gestionnaire_structure',
