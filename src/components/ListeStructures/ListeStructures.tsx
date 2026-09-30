@@ -17,7 +17,11 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-import { ListeStructuresViewModel, StructureListeViewModel } from '@/presenters/listeStructuresPresenter'
+import {
+  ConventionConseillerNumerique,
+  ListeStructuresViewModel,
+  StructureListeViewModel,
+} from '@/presenters/listeStructuresPresenter'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 import {
   buildURLSearchParamsFromStructuresFilters,
@@ -198,8 +202,7 @@ export default function ListeStructures({
             {carteIndicateur(
               formaterEnNombreFrancais(viewModel.totalAvecConventionConseillerNumerique),
               'Structures avec convention conseiller numérique',
-              `Sur ${formaterEnNombreFrancais(viewModel.totalStructures)} structures`,
-              'fr-ml-auto'
+              `Sur ${formaterEnNombreFrancais(viewModel.totalStructures)} structures`
             )}
           </div>
         </div>
@@ -228,7 +231,15 @@ export default function ListeStructures({
         </div>
       ) : (
         <Table
-          enTetes={['Lieu', 'Adresse', 'N° de SIRET', 'Ressource humaine', 'Aidants Connect', '']}
+          enTetes={[
+            'Lieu',
+            'Adresse',
+            'N° de SIRET',
+            'Ressource humaine',
+            'Conseiller numérique',
+            'Aidants Connect',
+            '',
+          ]}
           multiline={true}
           titre="Structures"
         >
@@ -307,6 +318,16 @@ function carteIndicateur(
   )
 }
 
+function tagConventionConseillerNumerique(convention: ConventionConseillerNumerique | null): null | ReactElement {
+  if (convention === 'en-cours') {
+    return <span className="fr-badge fr-badge--success fr-badge--no-icon fr-badge--sm">Convention en cours</span>
+  }
+  if (convention === 'expiree') {
+    return <span className="fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm">Convention expirée</span>
+  }
+  return null
+}
+
 function StructureRow({ structure }: Readonly<{ structure: StructureListeViewModel }>): ReactElement {
   return (
     <tr style={{ height: '4rem' }}>
@@ -380,6 +401,7 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
           <span className="fr-text-mention--grey">0</span>
         )}
       </td>
+      <td>{tagConventionConseillerNumerique(structure.conventionConseillerNumerique)}</td>
       <td>
         {structure.estHabiliteeAidantsConnect ? (
           <span className="fr-badge fr-badge--success fr-badge--no-icon fr-badge--sm">Habilitée</span>

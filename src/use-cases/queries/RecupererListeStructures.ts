@@ -34,6 +34,7 @@ export type StructureListeReadModel = Readonly<{
   id: number
   nom: string
   nombreRessourcesHumaines: number
+  possedePosteConum: boolean
   possedePosteConumActif: boolean
   siret: string
   typologie: string

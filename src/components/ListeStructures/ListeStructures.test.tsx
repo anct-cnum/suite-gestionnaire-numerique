@@ -56,8 +56,9 @@ describe('liste structures', () => {
     )
     expect(lienSiret.getAttribute('target')).toBe('_blank')
     expect(cellules[3].textContent).toBe('2')
-    expect(cellules[4].textContent).toContain('Habilitée')
-    const lienFiche = within(cellules[5]).getByRole('link', { name: 'Voir la structure Emmaüs Connect' })
+    expect(cellules[4].textContent).toContain('Convention en cours')
+    expect(cellules[5].textContent).toContain('Habilitée')
+    const lienFiche = within(cellules[6]).getByRole('link', { name: 'Voir la structure Emmaüs Connect' })
     expect(lienFiche.getAttribute('href')).toBe('/structure/12')
   })
 
@@ -222,6 +223,7 @@ function structure(override?: Partial<StructureListeViewModel>): StructureListeV
   return {
     adresseComplete: '3 BIS AVENUE CHARLES DE GAULLE',
     codePostalCommune: '69002 LYON',
+    conventionConseillerNumerique: 'en-cours',
     estHabiliteeAidantsConnect: true,
     estLabelliseeConseillerNumerique: true,
     estMembreFne: false,
