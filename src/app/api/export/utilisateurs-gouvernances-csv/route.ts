@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server'
 
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaGouvernanceStructureLoader } from '@/gateways/PrismaGouvernanceStructureLoader'
+import { PrismaTerritoireLoader } from '@/gateways/PrismaTerritoireLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { PrismaUtilisateursAExporterLoader } from '@/gateways/PrismaUtilisateursAExporterLoader'
-import { formaterEnDateFrancaise } from '@/presenters/shared/date'
-import { escapeCSV } from '@/shared/csv'
 import {
-  RecupererUtilisateursAExporter,
-  UtilisateursAExporterReadModel,
-} from '@/use-cases/queries/RecupererUtilisateursAExporter'
+  ENTETES_UTILISATEURS_GOUVERNANCES,
+  genererLigneUtilisateurGouvernance,
+} from '@/presenters/exportUtilisateursPresenter'
+import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import { GouvernanceStructureReadModel } from '@/use-cases/queries/shared/GouvernanceStructureReadModel'
+import { TerritoiresReadModel } from '@/use-cases/queries/shared/TerritoireReadModel'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -18,16 +21,28 @@ export async function GET(): Promise<NextResponse> {
     }
 
     const uid = await getSessionUtilisateurId()
-    const utilisateurCourant = await new PrismaUtilisateurLoader().findById(uid)
+    const utilisateurLoader = new PrismaUtilisateurLoader()
+    const utilisateurCourant = await utilisateurLoader.findById(uid)
 
     if (!utilisateurCourant.role.doesItBelongToGroupeAdmin) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
-    const recupererUtilisateursAExporter = new RecupererUtilisateursAExporter(new PrismaUtilisateursAExporterLoader())
-    const utilisateurs = await recupererUtilisateursAExporter.handle()
+    const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
+    const result = await rechercherMesUtilisateurs.handle({ pageCourante: 0, uid, utilisateursParPage: 100000 })
 
-    const csvContent = generateCSV(utilisateurs)
+    const structureIds = result.utilisateursCourants
+      .map((utilisateur) => utilisateur.structureId)
+      .filter((id): id is number => id !== null)
+
+    const territoireLoader = new PrismaTerritoireLoader()
+    const gouvernanceStructureLoader = new PrismaGouvernanceStructureLoader()
+    const [territoires, gouvernanceParStructure] = await Promise.all([
+      territoireLoader.recupererTerritoires(structureIds),
+      gouvernanceStructureLoader.recupererGouvernanceDesStructures(structureIds),
+    ])
+
+    const csvContent = generateCSV(result.utilisateursCourants, territoires, gouvernanceParStructure)
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
     const filename = `utilisateurs-gouvernances-${timestamp}.csv`
@@ -44,35 +59,14 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-function generateCSV(utilisateurs: UtilisateursAExporterReadModel): string {
-  const headers = [
-    'Nom',
-    'Prénom',
-    'Adresse électronique',
-    'Téléphone',
-    'Rôle',
-    'Structure',
-    'SIRET',
-    'Statut de la structure',
-    'Territoires',
-    'Statut',
-    'Dernière connexion',
-  ]
-
-  const rows = utilisateurs.map((utilisateur) => [
-    escapeCSV(utilisateur.nom),
-    escapeCSV(utilisateur.prenom),
-    escapeCSV(utilisateur.email),
-    escapeCSV(utilisateur.telephone),
-    escapeCSV(utilisateur.role),
-    escapeCSV(utilisateur.structure),
-    escapeCSV(utilisateur.siret),
-    escapeCSV(utilisateur.statutStructure),
-    escapeCSV(utilisateur.territoires.join(' / ')),
-    utilisateur.isActive ? 'Activé' : 'En attente',
-    utilisateur.derniereConnexion === null ? '' : formaterEnDateFrancaise(utilisateur.derniereConnexion),
-  ])
-
-  const csvLines = [headers.join(','), ...rows.map((row) => row.join(','))]
+function generateCSV(
+  utilisateurs: ReadonlyArray<UnUtilisateurReadModel>,
+  territoires: TerritoiresReadModel,
+  gouvernanceParStructure: GouvernanceStructureReadModel
+): string {
+  const rows = utilisateurs.map((utilisateur) =>
+    genererLigneUtilisateurGouvernance(utilisateur, territoires, gouvernanceParStructure)
+  )
+  const csvLines = [ENTETES_UTILISATEURS_GOUVERNANCES.join(','), ...rows.map((row) => row.join(','))]
   return `\uFEFF${csvLines.join('\n')}`
 }
