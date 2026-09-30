@@ -28,38 +28,6 @@ export const ENTETES_UTILISATEURS_GOUVERNANCES = [
   'Rôle gouvernance',
 ] as const
 
-export function resoudreDepartementEtRegion(
-  utilisateur: UnUtilisateurReadModel,
-  territoires: TerritoiresReadModel
-): Readonly<{ departement: string; region: string }> {
-  const { departements, structureDepartements } = territoires
-  const departementParCode = new Map(departements.map((departement) => [departement.code, departement]))
-  const regionParCode = new Map(departements.map((departement) => [departement.regionCode, departement.regionNom]))
-
-  if (utilisateur.regionCode !== null) {
-    return { departement: '', region: regionParCode.get(utilisateur.regionCode) ?? '' }
-  }
-
-  if (utilisateur.departementCode !== null) {
-    const departementInfo = departementParCode.get(utilisateur.departementCode)
-    if (departementInfo !== undefined) {
-      return { departement: departementInfo.nom, region: departementInfo.regionNom }
-    }
-  }
-
-  if (utilisateur.structureId !== null) {
-    const codeDepartement = structureDepartements.get(utilisateur.structureId)
-    if (codeDepartement !== undefined) {
-      const departementInfo = departementParCode.get(codeDepartement)
-      if (departementInfo !== undefined) {
-        return { departement: departementInfo.nom, region: departementInfo.regionNom }
-      }
-    }
-  }
-
-  return { departement: '', region: '' }
-}
-
 export function genererLigneUtilisateur(
   utilisateur: UnUtilisateurReadModel,
   territoires: TerritoiresReadModel
@@ -92,6 +60,38 @@ export function genererLigneUtilisateurGouvernance(
     escapeCSV(gouvernance.territoires.join(' / ')),
     escapeCSV(gouvernance.roleGouvernance),
   ]
+}
+
+function resoudreDepartementEtRegion(
+  utilisateur: UnUtilisateurReadModel,
+  territoires: TerritoiresReadModel
+): Readonly<{ departement: string; region: string }> {
+  const { departements, structureDepartements } = territoires
+  const departementParCode = new Map(departements.map((departement) => [departement.code, departement]))
+  const regionParCode = new Map(departements.map((departement) => [departement.regionCode, departement.regionNom]))
+
+  if (utilisateur.regionCode !== null) {
+    return { departement: '', region: regionParCode.get(utilisateur.regionCode) ?? '' }
+  }
+
+  if (utilisateur.departementCode !== null) {
+    const departementInfo = departementParCode.get(utilisateur.departementCode)
+    if (departementInfo !== undefined) {
+      return { departement: departementInfo.nom, region: departementInfo.regionNom }
+    }
+  }
+
+  if (utilisateur.structureId !== null) {
+    const codeDepartement = structureDepartements.get(utilisateur.structureId)
+    if (codeDepartement !== undefined) {
+      const departementInfo = departementParCode.get(codeDepartement)
+      if (departementInfo !== undefined) {
+        return { departement: departementInfo.nom, region: departementInfo.regionNom }
+      }
+    }
+  }
+
+  return { departement: '', region: '' }
 }
 
 const gouvernanceVide: Readonly<{

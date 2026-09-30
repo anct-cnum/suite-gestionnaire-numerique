@@ -9,7 +9,7 @@ import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtil
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 function creerRequete(params: ReadonlyArray<[string, string]> = []): NextRequest {
-  return { nextUrl: { searchParams: new URLSearchParams(params) } } as unknown as NextRequest
+  return { nextUrl: { searchParams: new URLSearchParams([...params]) } } as unknown as NextRequest
 }
 
 describe('route export CSV des utilisateurs', () => {
