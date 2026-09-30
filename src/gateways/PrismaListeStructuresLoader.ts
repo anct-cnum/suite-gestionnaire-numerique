@@ -215,6 +215,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
       id: structure.id,
       nom: structure.nom ?? '',
       nombreRessourcesHumaines: Number(structure.nombre_ressources_humaines),
+      possedePosteConum: structure.possede_poste,
       possedePosteConumActif: structure.possede_poste_actif,
       siret: structure.siret ?? '',
       typologie: structure.typologie ?? '',
@@ -244,6 +245,7 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
           WHERE cl.structure_id = sa.id
         ) AS derniere_attestation,
         EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu') AS possede_poste_actif,
+        EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id) AS possede_poste,
         EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'confirme') AS est_membre_fne,
         (
           SELECT COUNT(DISTINCT pe.id) FROM min.personne_enrichie pe
@@ -295,6 +297,7 @@ interface StructureQueryResult {
   id: number
   nom: null | string
   nombre_ressources_humaines: bigint
+  possede_poste: boolean
   possede_poste_actif: boolean
   siret: null | string
   typologie: null | string

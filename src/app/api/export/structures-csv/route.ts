@@ -94,6 +94,7 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     'SIRET',
     'Membre FNE',
     'Ressource humaine',
+    'Conseiller numérique',
     'Labellisation / habilitation',
   ]
 
@@ -109,6 +110,16 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     return labels.join(', ')
   }
 
+  function conventionConum(structure: StructureListeReadModel): string {
+    if (structure.possedePosteConumActif) {
+      return 'Convention en cours'
+    }
+    if (structure.possedePosteConum) {
+      return 'Convention expirée'
+    }
+    return ''
+  }
+
   const rows = structures.map((structure) => [
     escapeCSV(structure.nom),
     escapeCSV(structure.typologie),
@@ -118,6 +129,7 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     escapeCSV(structure.siret),
     structure.estMembreFne ? 'Oui' : 'Non',
     String(structure.nombreRessourcesHumaines),
+    escapeCSV(conventionConum(structure)),
     escapeCSV(labellisations(structure)),
   ])
 

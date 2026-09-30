@@ -2,9 +2,12 @@ import { estLabelConumActif } from '@/use-cases/commands/AttesterLabellisationSt
 import { ListeStructuresReadModel } from '@/use-cases/queries/RecupererListeStructures'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
+export type ConventionConseillerNumerique = 'en-cours' | 'expiree'
+
 export type StructureListeViewModel = Readonly<{
   adresseComplete: string
   codePostalCommune: string
+  conventionConseillerNumerique: ConventionConseillerNumerique | null
   estHabiliteeAidantsConnect: boolean
   estLabelliseeConseillerNumerique: boolean
   estMembreFne: boolean
@@ -45,6 +48,7 @@ export function listeStructuresPresenter(
     structures: readModel.structures.map((structure) => ({
       adresseComplete: structure.adresse,
       codePostalCommune: [structure.codePostal, structure.commune].filter(Boolean).join(' '),
+      conventionConseillerNumerique: conventionConum(structure.possedePosteConumActif, structure.possedePosteConum),
       estHabiliteeAidantsConnect: structure.estHabiliteeAidantsConnect,
       // Label conseiller numérique actif OU poste conum actif (non rendu)
       estLabelliseeConseillerNumerique:
@@ -66,4 +70,17 @@ export function listeStructuresPresenter(
     totalPages: readModel.totalPages,
     totalStructures: readModel.totalStructures,
   }
+}
+
+function conventionConum(
+  possedePosteConumActif: boolean,
+  possedePosteConum: boolean
+): ConventionConseillerNumerique | null {
+  if (possedePosteConumActif) {
+    return 'en-cours'
+  }
+  if (possedePosteConum) {
+    return 'expiree'
+  }
+  return null
 }
