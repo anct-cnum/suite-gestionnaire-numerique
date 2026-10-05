@@ -7,7 +7,7 @@ import { QueryHandler } from '../QueryHandler'
 // (poste / contrat / affectation / lieu), alors qu'une autre SA du MÊME SIREN — l'établissement
 // réel — concentre cet opérationnel. C'est un angle mort de la détection des doublons de
 // structures (même SIRET, antennes toutes nommées → jamais signalé). Cf
-// dataspace/docs/constat-membres-gouvernance-mal-raccroches.md (Problème 3, motif systémique).
+// docs/constat-membres-gouvernance-mal-raccroches.md (Problème 3, motif systémique).
 //
 // GARDE ENTITÉ : on exclut les membres dont l'identifiant métier (structure-<siret> / epci-<siren>
 // / departement-<dep> / commune-<insee>) désigne une entité différente du SIREN de la SA actuelle
