@@ -103,6 +103,10 @@ Vitest + Testing Library, couverture 90 % minimum, pre-push hook `husky` exécut
 
 Règles ciblées dans `.claude/skills/`, chargées automatiquement selon les fichiers touchés : `server-action`, `dsfr-ui`, `tests-min`, `prisma-min`. Toute règle propre à un type de fichier va dans un skill, pas ici.
 
+## Documentation
+
+Index et conventions : `docs/README.md` (même organisation que le dépôt dataspace). Décision actée → `docs/adr/NNN-titre.md` (modèle `docs/adr/000-modele.md`) ; document de travail → `docs/chantiers/<ticket>-<sujet>/` ; un sujet = un document de référence, mis à jour dans la PR. Aucune donnée personnelle ni information d'accès dans la doc. Sujet sur les données partagées : documenté côté dataspace, lien depuis MIN.
+
 ## Règles impératives
 
 - **Ne JAMAIS modifier les fichiers de configuration** (eslint.config.js, tsconfig.json, prettier, stylelint, vitest.config.ts, next.config.ts, knip.json, etc.) sans demande explicite.
