@@ -33,7 +33,7 @@ Pour en savoir plus : [Fiche beta.gouv.fr](https://beta.gouv.fr/startups/france-
 
 ## Base de donnees
 
-MIN partage sa base PostgreSQL avec [dataspace](https://gitlab.com/incubateur-territoires/startups/data-inclusion-numerique/dataspace) : MIN possede le schema `min`, dataspace possede `admin`, `main`, `reference`, `audit` (gestion via Flyway). Voir [docs/integration-dataspace.md](docs/integration-dataspace.md) pour le detail du partage et le workflow de resynchronisation des schemas dataspace en local.
+MIN partage sa base PostgreSQL avec [dataspace](https://gitlab.com/incubateur-territoires/startups/data-inclusion-numerique/dataspace) : MIN possede le schema `min`, dataspace possede `admin`, `main`, `reference`, `audit` (gestion via Flyway). Voir [docs/guides/integration-dataspace.md](docs/guides/integration-dataspace.md) pour le detail du partage et le workflow de resynchronisation des schemas dataspace en local.
 
 Commande utile :
 
