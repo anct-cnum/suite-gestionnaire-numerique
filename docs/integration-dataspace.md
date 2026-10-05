@@ -119,4 +119,4 @@ Le script résout le problème opérationnel mais ne corrige pas la cause archit
 - `scripts/sync-dataspace-migration.sh` — le script de régénération
 - `prisma/migrations/20250619151605_1_dataspace_integration_create_roles_and_schema/migration.sql` — rôles + schémas (écrite à la main, stable)
 - `prisma/migrations/20250619151605_2_dataspace_integration/migration.sql` — structure dataspace (régénérée par le script)
-- `~/Dev/dataspace/db_pseudonym_export.py` — DAG dont le script s'inspire pour la pseudonymisation distante
+- `db_pseudonym_export.py` (dataspace) — DAG dont le script s'inspirait ; supprimé en V177 avec l'abandon de la pseudonymisation
