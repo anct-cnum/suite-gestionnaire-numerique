@@ -163,11 +163,12 @@ async function creerUnePresenceCoop({
   structureId: number
 }>): Promise<void> {
   const userId = '0a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c6d'
+  const mediateurId = '3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f'
   await prisma.$executeRaw`INSERT INTO coop.employes_structures (user_id, structure_main_id, debut_emploi, fin_emploi)
     VALUES (${userId}::uuid, ${structureId}, ${debutEmploi}, ${finEmploi})`
-  await prisma.$executeRaw`WITH mediateur AS (
-      INSERT INTO coop.mediateurs (user_id) VALUES (${userId}::uuid) RETURNING id
-    )
-    INSERT INTO coop.mediateurs_en_activite (mediateur_id, structure_id, debut_activite, fin_activite)
-    SELECT id, ${lieuCoopId}::uuid, ${debutActivite}, ${finActivite} FROM mediateur`
+  // Ids explicites : d'autres fichiers de test créent ces tables sans valeur par défaut sur id.
+  await prisma.$executeRaw`INSERT INTO coop.mediateurs (id, user_id) VALUES (${mediateurId}::uuid, ${userId}::uuid)`
+  await prisma.$executeRaw`INSERT INTO coop.mediateurs_en_activite
+    (id, mediateur_id, structure_id, debut_activite, fin_activite)
+    VALUES (gen_random_uuid(), ${mediateurId}::uuid, ${lieuCoopId}::uuid, ${debutActivite}, ${finActivite})`
 }
