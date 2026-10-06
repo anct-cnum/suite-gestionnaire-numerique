@@ -77,28 +77,12 @@ export function buildLieuxDansScopeCte(
   }
 
   if (scopeFiltre.type === 'structure') {
-    // scopeFiltre.id refere a une structure_administrative.id. Depuis le
-    // retrait de l'asso lieu ↔ SA (#1711), un gestionnaire de SA voit les
-    // lieux ou travaillent des personnes employees par sa SA (paf_lieu ×
-    // paf_emploi croises, plus min.personne_enrichie pour les mediateurs Coop
-    // sans paf_emploi). Pour les lieux archivés, le périmètre est calculé sans
-    // exiger d'affectations actives, puis le statut est appliqué.
-    const filtreEmploiActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
-    const filtreLieuActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
+    // scopeFiltre.id refere a une structure_administrative.id : seul le statut
+    // du lieu distingue actifs et archives.
     return Prisma.sql`lieux_dans_scope AS (
       SELECT l.id
       FROM main.lieu_inclusion l
-      WHERE EXISTS (
-          SELECT 1 FROM main.personne_affectations_lieu pal
-          WHERE pal.lieu_id = l.id ${filtreLieuActif}
-            AND pal.personne_id IN (
-              SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-              WHERE pae.structure_administrative_id = ${scopeFiltre.id} ${filtreEmploiActif}
-              UNION
-              SELECT pe.id FROM min.personne_enrichie pe
-              WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
-            )
-        )
+      WHERE ${conditionLieuDeLaStructure(scopeFiltre.id)}
         ${filtreStatut}
     )`
   }
@@ -108,6 +92,43 @@ export function buildLieuxDansScopeCte(
     SELECT l.id FROM main.lieu_inclusion l
     WHERE true
       ${filtreStatut}
+  )`
+}
+
+// Lieu d'une structure administrative (alias `l` = main.lieu_inclusion). Depuis le retrait
+// de l'asso lieu ↔ SA (#1711), le rattachement passe par les personnes :
+// - un médiateur employé par la SA y est affecté aujourd'hui, toutes sources d'emploi
+//   (plus min.personne_enrichie pour les médiateurs Coop sans paf_emploi) ;
+// - ou un médiateur Coop y a été présent pendant son emploi dans la SA (chevauchement des
+//   périodes Coop) : un lieu quitté reste à la structure, sans rattacher les lieux qu'il
+//   a fréquentés pour un autre employeur.
+// Source unique pour la liste des lieux, le filtre lieux des statistiques et le compteur
+// du tableau de bord structure.
+export function conditionLieuDeLaStructure(structureId: number): Prisma.Sql {
+  return Prisma.sql`(
+    EXISTS (
+      SELECT 1 FROM main.personne_affectations_lieu pal
+      WHERE pal.lieu_id = l.id AND pal.est_active = true
+        AND pal.personne_id IN (
+          SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+          WHERE pae.structure_administrative_id = ${structureId} AND pae.est_active = true
+          UNION
+          SELECT pe.id FROM min.personne_enrichie pe
+          WHERE pe.structure_employeuse_id = ${structureId}
+        )
+    )
+    OR EXISTS (
+      SELECT 1
+      FROM coop.mediateurs_en_activite mea
+        INNER JOIN coop.mediateurs m ON m.id = mea.mediateur_id
+        INNER JOIN coop.employes_structures es ON es.user_id = m.user_id
+      WHERE mea.structure_id = l.structure_coop_id
+        AND es.structure_main_id = ${structureId}
+        AND mea.suppression IS NULL
+        AND es.suppression IS NULL
+        AND COALESCE(mea.debut_activite, '-infinity'::timestamp) <= COALESCE(es.fin_emploi, 'infinity'::timestamp)
+        AND COALESCE(es.debut_emploi, '-infinity'::timestamp) <= COALESCE(mea.fin_activite, 'infinity'::timestamp)
+    )
   )`
 }
 
