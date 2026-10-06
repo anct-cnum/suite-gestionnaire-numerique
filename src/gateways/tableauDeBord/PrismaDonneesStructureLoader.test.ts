@@ -3,7 +3,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { PrismaDonneesStructureLoader } from './PrismaDonneesStructureLoader'
 import prisma from '../../../prisma/prismaClient'
 import { creerUnePersonne, creerUnePersonneAffectation, creerUneStructure } from '../testHelper'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('données structure loader', () => {
   // Le schéma coop (répliqué depuis dataspace en prod) n'est pas couvert par les
@@ -25,6 +25,29 @@ describe('données structure loader', () => {
     // colonne (ordre non garanti entre fichiers, notamment en mode --coverage) : on la complète.
     await prisma.$executeRaw`ALTER TABLE coop.activites
       ADD COLUMN IF NOT EXISTS structure_employeuse_main_id integer`
+    // Périodes Coop lues par le rattachement lieu ↔ structure (présence sur un lieu pendant l'emploi).
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.mediateurs (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id uuid
+    )`
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.mediateurs_en_activite (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      mediateur_id uuid,
+      structure_id uuid,
+      debut_activite timestamp,
+      fin_activite timestamp,
+      suppression timestamp
+    )`
+    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS coop.employes_structures (
+      id serial PRIMARY KEY,
+      structure_main_id integer
+    )`
+    // Le test de repointage des fusions crée cette table avec ses seules colonnes : on la complète.
+    await prisma.$executeRaw`ALTER TABLE coop.employes_structures
+      ADD COLUMN IF NOT EXISTS user_id uuid,
+      ADD COLUMN IF NOT EXISTS debut_emploi timestamp,
+      ADD COLUMN IF NOT EXISTS fin_emploi timestamp,
+      ADD COLUMN IF NOT EXISTS suppression timestamp`
   })
 
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -53,16 +76,22 @@ describe('données structure loader', () => {
     expect(donneesStructure).toMatchObject({ nombreLieux: 2 })
   })
 
-  it('compte un lieu dont l’affectation de la personne employée n’est plus active', async () => {
+  it('compte un lieu quitté par un médiateur qui y était présent pendant son emploi dans la structure', async () => {
     // GIVEN
     await creerUneStructure({ id: 4901 })
     const personneId = await creerUnePersonne()
     await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'structure_emploi' })
     await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'lieu_activite' })
-    // lieu quitté : la seule affectation de la personne employée y est terminée
-    await prisma.main_lieu_inclusion.create({ data: { id: 7114, nom: 'Espace France Services' } })
-    await prisma.main_personne_affectations_lieu.create({
-      data: { est_active: false, lieu_id: 7114, personne_id: personneId, source: 'coop' },
+    await prisma.main_lieu_inclusion.create({
+      data: { id: 7114, nom: 'Espace France Services', structure_coop_id: lieuCoopId },
+    })
+    // présence terminée sur le lieu, pendant un emploi toujours en cours dans la structure
+    await creerUnePresenceCoop({
+      debutActivite: epochTime,
+      debutEmploi: epochTime,
+      finActivite: epochTimePlusOneDay,
+      finEmploi: null,
+      structureId: 4901,
     })
 
     // WHEN
@@ -70,6 +99,31 @@ describe('données structure loader', () => {
 
     // THEN
     expect(donneesStructure).toMatchObject({ nombreLieux: 2 })
+  })
+
+  it('ne compte pas un lieu fréquenté par un ancien médiateur après son départ de la structure', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 4901 })
+    const personneId = await creerUnePersonne()
+    await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'structure_emploi' })
+    await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'lieu_activite' })
+    await prisma.main_lieu_inclusion.create({
+      data: { id: 7114, nom: 'Espace France Services', structure_coop_id: lieuCoopId },
+    })
+    // emploi dans la structure terminé avant l'arrivée sur le lieu (lieu d'un autre employeur)
+    await creerUnePresenceCoop({
+      debutActivite: epochTimePlusOneDay,
+      debutEmploi: epochTime,
+      finActivite: null,
+      finEmploi: epochTime,
+      structureId: 4901,
+    })
+
+    // WHEN
+    const donneesStructure = await new PrismaDonneesStructureLoader().get(4901, epochTime)
+
+    // THEN
+    expect(donneesStructure).toMatchObject({ nombreLieux: 1 })
   })
 
   it('ne compte pas un lieu supprimé', async () => {
@@ -92,3 +146,28 @@ describe('données structure loader', () => {
     expect(donneesStructure).toMatchObject({ nombreLieux: 1 })
   })
 })
+
+const lieuCoopId = '6f1b3c2a-8d4e-4f5a-9b7c-1e2d3f4a5b6c'
+
+async function creerUnePresenceCoop({
+  debutActivite,
+  debutEmploi,
+  finActivite,
+  finEmploi,
+  structureId,
+}: Readonly<{
+  debutActivite: Date
+  debutEmploi: Date
+  finActivite: Date | null
+  finEmploi: Date | null
+  structureId: number
+}>): Promise<void> {
+  const userId = '0a9b8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c6d'
+  await prisma.$executeRaw`INSERT INTO coop.employes_structures (user_id, structure_main_id, debut_emploi, fin_emploi)
+    VALUES (${userId}::uuid, ${structureId}, ${debutEmploi}, ${finEmploi})`
+  await prisma.$executeRaw`WITH mediateur AS (
+      INSERT INTO coop.mediateurs (user_id) VALUES (${userId}::uuid) RETURNING id
+    )
+    INSERT INTO coop.mediateurs_en_activite (mediateur_id, structure_id, debut_activite, fin_activite)
+    SELECT id, ${lieuCoopId}::uuid, ${debutActivite}, ${finActivite} FROM mediateur`
+}
