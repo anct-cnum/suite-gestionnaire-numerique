@@ -79,21 +79,20 @@ export function buildLieuxDansScopeCte(
   if (scopeFiltre.type === 'structure') {
     // scopeFiltre.id refere a une structure_administrative.id. Depuis le
     // retrait de l'asso lieu ↔ SA (#1711), un gestionnaire de SA voit les
-    // lieux ou travaillent des personnes employees par sa SA (paf_lieu ×
-    // paf_emploi croises, plus min.personne_enrichie pour les mediateurs Coop
-    // sans paf_emploi). Pour les lieux archivés, le périmètre est calculé sans
-    // exiger d'affectations actives, puis le statut est appliqué.
-    const filtreEmploiActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pae.est_active = true`
-    const filtreLieuActif = statut === 'archive' ? Prisma.empty : Prisma.sql`AND pal.est_active = true`
+    // lieux ou travaillent ou ont travaille des personnes employees par sa SA
+    // (paf_lieu × paf_emploi croises, plus min.personne_enrichie pour les
+    // mediateurs Coop sans paf_emploi). Affectations actives ou passees : un lieu
+    // quitte par la structure reste dans son perimetre, seul le statut du lieu
+    // distingue actifs et archives.
     return Prisma.sql`lieux_dans_scope AS (
       SELECT l.id
       FROM main.lieu_inclusion l
       WHERE EXISTS (
           SELECT 1 FROM main.personne_affectations_lieu pal
-          WHERE pal.lieu_id = l.id ${filtreLieuActif}
+          WHERE pal.lieu_id = l.id
             AND pal.personne_id IN (
               SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-              WHERE pae.structure_administrative_id = ${scopeFiltre.id} ${filtreEmploiActif}
+              WHERE pae.structure_administrative_id = ${scopeFiltre.id}
               UNION
               SELECT pe.id FROM min.personne_enrichie pe
               WHERE pe.structure_employeuse_id = ${scopeFiltre.id}

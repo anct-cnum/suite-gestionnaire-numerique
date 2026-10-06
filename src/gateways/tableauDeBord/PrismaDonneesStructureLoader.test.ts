@@ -53,16 +53,36 @@ describe('données structure loader', () => {
     expect(donneesStructure).toMatchObject({ nombreLieux: 2 })
   })
 
-  it('ne compte pas un lieu dont l’affectation de la personne employée n’est plus active', async () => {
+  it('compte un lieu dont l’affectation de la personne employée n’est plus active', async () => {
     // GIVEN
     await creerUneStructure({ id: 4901 })
     const personneId = await creerUnePersonne()
     await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'structure_emploi' })
     await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'lieu_activite' })
-    // lieu fantôme : la seule affectation de la personne employée y est inactive
+    // lieu quitté : la seule affectation de la personne employée y est terminée
     await prisma.main_lieu_inclusion.create({ data: { id: 7114, nom: 'Espace France Services' } })
     await prisma.main_personne_affectations_lieu.create({
       data: { est_active: false, lieu_id: 7114, personne_id: personneId, source: 'coop' },
+    })
+
+    // WHEN
+    const donneesStructure = await new PrismaDonneesStructureLoader().get(4901, epochTime)
+
+    // THEN
+    expect(donneesStructure).toMatchObject({ nombreLieux: 2 })
+  })
+
+  it('ne compte pas un lieu supprimé', async () => {
+    // GIVEN
+    await creerUneStructure({ id: 4901 })
+    const personneId = await creerUnePersonne()
+    await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'structure_emploi' })
+    await creerUnePersonneAffectation({ personne_id: personneId, structure_id: 4901, type: 'lieu_activite' })
+    await prisma.main_lieu_inclusion.create({
+      data: { deleted_at: epochTime, id: 7114, nom: 'Espace France Services' },
+    })
+    await prisma.main_personne_affectations_lieu.create({
+      data: { est_active: true, lieu_id: 7114, personne_id: personneId, source: 'coop' },
     })
 
     // WHEN

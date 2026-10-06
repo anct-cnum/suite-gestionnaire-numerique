@@ -12,8 +12,9 @@ export type LieuCoopOption = Readonly<{
 // legacy). activites_coop a ete repointe sur lieu_id (V084 dataspace).
 // Pour le scope "structure", scopeFiltre.id refere a une SA.id : depuis le
 // retrait de l'asso lieu ↔ SA (#1711), on selectionne les lieux ou une personne
-// employee par cette SA est affectee (paf_lieu × paf_emploi, plus
-// min.personne_enrichie pour les mediateurs Coop sans paf_emploi).
+// employee par cette SA est ou a ete affectee (paf_lieu × paf_emploi, plus
+// min.personne_enrichie pour les mediateurs Coop sans paf_emploi) : meme
+// perimetre que la liste des lieux, un lieu quitte reste filtrable.
 export class PrismaLieuxCoopLoader {
   async rechercher(recherche: string, scopeFiltre: ScopeFiltre): Promise<ReadonlyArray<LieuCoopOption>> {
     let rows: ReadonlyArray<LieuRow>
@@ -25,10 +26,10 @@ export class PrismaLieuxCoopLoader {
         LEFT JOIN main.adresse ad ON ad.id = l.adresse_id
         WHERE EXISTS (
             SELECT 1 FROM main.personne_affectations_lieu pal
-            WHERE pal.lieu_id = l.id AND pal.est_active = true
+            WHERE pal.lieu_id = l.id
               AND pal.personne_id IN (
                 SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-                WHERE pae.structure_administrative_id = ${scopeFiltre.id} AND pae.est_active = true
+                WHERE pae.structure_administrative_id = ${scopeFiltre.id}
                 UNION
                 SELECT pe.id FROM min.personne_enrichie pe
                 WHERE pe.structure_employeuse_id = ${scopeFiltre.id}
