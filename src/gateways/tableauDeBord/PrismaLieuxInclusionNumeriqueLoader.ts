@@ -12,13 +12,15 @@ import { FiltreTerritorial, libelleFiltreTerritorial } from '@/use-cases/queries
 export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeriqueLoader {
   async get(filtre: FiltreTerritorial): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel> {
     try {
-      // le inner join pour garder la cohérence avec les chiffres de la page Lieux Inclusion Numerique
+      // le inner join pour garder la cohérence avec les chiffres de la page Lieux Inclusion Numerique ;
+      // les lieux supprimés (soft delete #1497) sont exclus, comme dans l'onglet « Actifs » de la liste des lieux
       const result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>(Prisma.sql`
         SELECT
           COUNT(*) AS nb_lieux
         FROM main.lieu_inclusion
         INNER JOIN main.adresse ON lieu_inclusion.adresse_id = adresse.id
-        WHERE ${conditionTerritoriale(filtre, 'adresse')}
+        WHERE lieu_inclusion.deleted_at IS NULL
+          AND ${conditionTerritoriale(filtre, 'adresse')}
       `)
 
       return {
