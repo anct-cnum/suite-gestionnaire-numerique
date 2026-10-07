@@ -18,8 +18,10 @@ describe('bandeau sondage', () => {
     render(<Sondage />)
 
     // THEN
-    const lien = screen.getByRole('link', { name: 'Cliquez-ici' })
-    expect(lien).toHaveAttribute('href', 'https://tally.so/r/pbLzdV')
+    const lien = screen.getByRole('link', {
+      name: 'Cliquez-ici pour consulter le document présentant les nouveautés',
+    })
+    expect(lien).toHaveAttribute('href', 'https://docs.numerique.gouv.fr/docs/0943e42c-a300-4d90-95f2-4cbb4382b8fb')
   })
 
   it('quand je suis sur le tableau de bord d’un territoire, alors le bandeau du sondage s’affiche', () => {
@@ -30,8 +32,10 @@ describe('bandeau sondage', () => {
     render(<Sondage />)
 
     // THEN
-    const lien = screen.getByRole('link', { name: 'Cliquez-ici' })
-    expect(lien).toHaveAttribute('href', 'https://tally.so/r/pbLzdV')
+    const lien = screen.getByRole('link', {
+      name: 'Cliquez-ici pour consulter le document présentant les nouveautés',
+    })
+    expect(lien).toHaveAttribute('href', 'https://docs.numerique.gouv.fr/docs/0943e42c-a300-4d90-95f2-4cbb4382b8fb')
   })
 
   it('quand je ne suis pas sur le tableau de bord, alors le bandeau du sondage ne s’affiche pas', () => {
@@ -42,6 +46,8 @@ describe('bandeau sondage', () => {
     render(<Sondage />)
 
     // THEN
-    expect(screen.queryByRole('link', { name: 'Cliquez-ici' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Cliquez-ici pour consulter le document présentant les nouveautés' })
+    ).not.toBeInTheDocument()
   })
 })
