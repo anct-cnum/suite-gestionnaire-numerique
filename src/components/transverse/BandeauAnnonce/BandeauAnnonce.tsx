@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 
 import styles from './BandeauAnnonce.module.css'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
+import Icon from '@/components/shared/Icon/Icon'
 
 export default function BandeauAnnonce(): null | ReactElement {
   const pathname = usePathname()
@@ -16,8 +17,8 @@ export default function BandeauAnnonce(): null | ReactElement {
   return (
     <div className={`fr-notice border-radius ${styles.background}`}>
       <p className="center">
-        <span aria-hidden="true">🆕</span> <strong>Découvrez les nouveautés</strong> : statistiques, espace structures
-        et lieux d&apos;inclusion.{' '}
+        <Icon classname="fr-text--lead" icon="sparkling-2-fill" /> <strong>Découvrez les nouveautés</strong> :
+        statistiques, espace structures et lieux d&apos;inclusion.{' '}
         <ExternalLink
           className="fr-link"
           href="https://docs.numerique.gouv.fr/docs/0943e42c-a300-4d90-95f2-4cbb4382b8fb"
