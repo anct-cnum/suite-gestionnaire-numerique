@@ -17,7 +17,7 @@ export default function BandeauAnnonce(): null | ReactElement {
     <div className={`fr-notice border-radius ${styles.background}`}>
       <p className="center">
         <span aria-hidden="true">🆕</span> <strong>Découvrez les nouveautés</strong> : statistiques, espace structures
-        et lieux d’inclusion.{' '}
+        et lieux d&apos;inclusion.{' '}
         <ExternalLink
           className="fr-link"
           href="https://docs.numerique.gouv.fr/docs/0943e42c-a300-4d90-95f2-4cbb4382b8fb"
