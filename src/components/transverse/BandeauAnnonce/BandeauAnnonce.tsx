@@ -3,10 +3,10 @@
 import { usePathname } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import styles from './Sondage.module.css'
+import styles from './BandeauAnnonce.module.css'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
-export default function Sondage(): null | ReactElement {
+export default function BandeauAnnonce(): null | ReactElement {
   const pathname = usePathname()
 
   if (!pathname.startsWith('/tableau-de-bord')) {
