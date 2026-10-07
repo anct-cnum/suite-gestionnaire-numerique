@@ -2,7 +2,7 @@
 
 Point d'entrée unique de la documentation de MIN. Tout document versionné doit y figurer.
 
-> Réorganisation en cours (#2058) : les documents sont listés selon leur **rubrique cible** ; ceux qui ne sont pas encore déplacés gardent leur chemin actuel. ⚠️ signale un document connu comme dépassé.
+> Réorganisation en cours (#2058) : les documents sont rangés ; restent la fusion des doublons avec le dataspace et la réécriture des documents dépassés. ⚠️ signale un document connu comme dépassé.
 
 ## Organisation
 
@@ -45,20 +45,20 @@ docs/
 
 ## Guides
 
-| Document                                             | Pour quoi                                                                               |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [../CONTRIBUTING.md](../CONTRIBUTING.md)             | Installation, commandes, outils, ProConnect                                             |
-| [integration-dataspace.md](integration-dataspace.md) | Partage de la base avec le dataspace, migration Prisma miroir, `pnpm db:sync-dataspace` |
-| [../scripts/README.md](../scripts/README.md)         | Scripts utilitaires                                                                     |
+| Document                                                    | Pour quoi                                                                               |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [../CONTRIBUTING.md](../CONTRIBUTING.md)                    | Installation, commandes, outils, ProConnect                                             |
+| [integration-dataspace.md](guides/integration-dataspace.md) | Partage de la base avec le dataspace, migration Prisma miroir, `pnpm db:sync-dataspace` |
+| [../scripts/README.md](../scripts/README.md)                | Scripts utilitaires                                                                     |
 
 ## Référence
 
-| Document                                                                                         | Pour quoi                                                                                                       |
-| ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| [postes-conseiller-numerique.md](postes-conseiller-numerique.md) ⚠️                              | Écran des postes CN et vue `min.postes_conseiller_numerique_synthese` (le SQL cité ne correspond plus à la vue) |
-| [couche-anticorruption-statistiques.md](couche-anticorruption-statistiques.md) ⚠️                | Couche d'anticorruption des statistiques coop (cite des tables supprimées)                                      |
-| [../src/gateways/apiCoop/exemple-utilisation.md](../src/gateways/apiCoop/exemple-utilisation.md) | Gateway de l'API coop pour les statistiques                                                                     |
-| [SEO-VITRINE.md](SEO-VITRINE.md)                                                                 | Métadonnées SEO du site vitrine                                                                                 |
+| Document                                                                                    | Pour quoi                                                                                                       |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [postes-conseiller-numerique.md](reference/postes-conseiller-numerique.md) ⚠️               | Écran des postes CN et vue `min.postes_conseiller_numerique_synthese` (le SQL cité ne correspond plus à la vue) |
+| [couche-anticorruption-statistiques.md](reference/couche-anticorruption-statistiques.md) ⚠️ | Couche d'anticorruption des statistiques coop (cite des tables supprimées)                                      |
+| [api-coop-statistiques.md](reference/api-coop-statistiques.md)                              | Gateway de l'API coop pour les statistiques                                                                     |
+| [seo-vitrine.md](reference/vitrine/seo-vitrine.md)                                          | Métadonnées SEO du site vitrine                                                                                 |
 
 ## Décisions
 
@@ -66,9 +66,9 @@ docs/
 
 ## Chantiers en cours
 
-| Chantier                             | Documents                                                                                      |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| Membres de gouvernance mal rattachés | [constat-membres-gouvernance-mal-raccroches.md](constat-membres-gouvernance-mal-raccroches.md) |
+| Chantier                             | Documents                                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Membres de gouvernance mal rattachés | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
 
 ## Documentation dans les autres dépôts
 
