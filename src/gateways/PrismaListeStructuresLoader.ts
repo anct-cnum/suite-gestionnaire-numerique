@@ -230,7 +230,17 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
     const whereConditions = this.buildWhereConditions(filtres.labellisation, filtres.recherche)
 
     return prisma.$queryRaw<Array<StructureQueryResult>>`
-      WITH ${scopeCte}
+      WITH ${scopeCte},
+      -- Calculé une seule fois puis joint : une sous-requête par structure réévaluait toute la vue personne_enrichie.
+      -- structure_employeuse_id étant une affectation active, l'affectation active suffit à couvrir les deux cas.
+      ressources_humaines AS (
+        SELECT pae.structure_administrative_id AS structure_id, COUNT(DISTINCT pe.id) AS nombre
+        FROM main.personne_affectations_emploi pae
+        JOIN min.personne_enrichie pe ON pe.id = pae.personne_id
+        WHERE pae.est_active = true
+          AND (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+        GROUP BY pae.structure_administrative_id
+      )
       SELECT
         sa.id,
         COALESCE(sa.denomination_antenne, sa.denomination_sirene) AS nom,
@@ -247,16 +257,12 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
         EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id AND p.etat <> 'rendu') AS possede_poste_actif,
         EXISTS (SELECT 1 FROM main.poste p WHERE p.structure_id = sa.id) AS possede_poste,
         EXISTS (SELECT 1 FROM min.membre m WHERE m.structure_id = sa.id AND m.statut = 'confirme') AS est_membre_fne,
-        (
-          SELECT COUNT(DISTINCT pe.id) FROM min.personne_enrichie pe
-          LEFT JOIN main.personne_affectations_emploi pae ON pae.personne_id = pe.id AND pae.est_active = true
-          WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
-            AND (pe.structure_employeuse_id = sa.id OR pae.structure_administrative_id = sa.id)
-        ) AS nombre_ressources_humaines
+        COALESCE(rh.nombre, 0) AS nombre_ressources_humaines
       FROM main.structure_administrative sa
       JOIN structures_dans_scope sds ON sds.id = sa.id
       LEFT JOIN main.adresse a ON a.id = sa.adresse_id
       LEFT JOIN reference.categories_juridiques cj ON cj.code = sa.categorie_juridique
+      LEFT JOIN ressources_humaines rh ON rh.structure_id = sa.id
       WHERE true
         ${whereConditions}
       ORDER BY nom ASC NULLS LAST, sa.id ASC
