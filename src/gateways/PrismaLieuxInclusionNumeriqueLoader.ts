@@ -49,7 +49,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     } else if (codesInsee !== undefined && codesInsee.length > 0) {
       deptFilter = Prisma.sql`AND a.code_insee = ANY(${[...codesInsee]})`
     } else {
-      deptFilter = Prisma.sql`AND a.departement != 'zzz'`
+      // Lieux localisés seulement : un lieu sans adresse ne compte pas au national
+      deptFilter = Prisma.sql`AND a.departement IS NOT NULL`
     }
 
     const totalLieuxInclusionNumerique = await prisma.$queryRaw<

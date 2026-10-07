@@ -7,7 +7,7 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeBordGouvernanceLoader {
   async get(territoire: string): Promise<ErrorReadModel | GouvernanceReadModel> {
-    return this.#compter(territoire === 'France' ? { not: 'zzz' } : territoire)
+    return this.#compter(territoire === 'France' ? undefined : territoire)
   }
 
   // Agrégat régional : cumul des gouvernances des départements de la région (liens de détail masqués côté bloc).
@@ -15,7 +15,7 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
     return this.#compter({ in: [...codes] })
   }
 
-  async #compter(gouvernanceDepartementCode: FiltreDepartementCode): Promise<GouvernanceReadModel> {
+  async #compter(gouvernanceDepartementCode: FiltreDepartementCode | undefined): Promise<GouvernanceReadModel> {
     // Compter les membres de la gouvernance (non supprimés)
     const membresGouvernance = await prisma.membreRecord.findMany({
       where: {
@@ -56,4 +56,4 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
 }
 
 // Filtre commun aux where Prisma de MembreRecord et FeuilleDeRouteRecord (les StringFilter générés sont par modèle).
-type FiltreDepartementCode = Readonly<{ in: Array<string> }> | Readonly<{ not: string }> | string
+type FiltreDepartementCode = Readonly<{ in: Array<string> }> | string

@@ -13,14 +13,8 @@ export class PrismaGouvernanceAdminLoader implements RecupererTableauDeBordGouve
 
   async get(): Promise<ErrorReadModel | GouvernanceAdminReadModel> {
     try {
-      // Compter toutes les gouvernances (excluant 'zzz')
-      const gouvernances = await this.#gouvernanceDao.findMany({
-        where: {
-          departementCode: {
-            not: 'zzz',
-          },
-        },
-      })
+      // Compter toutes les gouvernances
+      const gouvernances = await this.#gouvernanceDao.findMany()
 
       const nombreGouvernances = gouvernances.length
 
@@ -46,15 +40,10 @@ export class PrismaGouvernanceAdminLoader implements RecupererTableauDeBordGouve
       // Compter les gouvernances qui ont plus de 2 co-porteurs
       const nombreGouvernancesCoPortees = gouvernancesAvecCoPorteurs.filter((gov) => gov.nombreCoPorteurs >= 2).length
 
-      // Compter les feuilles de route et actions (France entière, excluant zzz)
+      // Compter les feuilles de route et actions (France entière)
       const feuillesDeRoute = await this.#feuilleDeRouteDao.findMany({
         include: {
           action: true,
-        },
-        where: {
-          gouvernanceDepartementCode: {
-            not: 'zzz',
-          },
         },
       })
 
