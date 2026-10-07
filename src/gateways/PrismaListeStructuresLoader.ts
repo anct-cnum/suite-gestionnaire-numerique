@@ -120,13 +120,11 @@ export class PrismaListeStructuresLoader implements ListeStructuresLoader {
       )`
     }
 
-    // Scope national : aucune restriction d'accès, hors département fictif zzz
+    // Scope national : aucune restriction d'accès
     return Prisma.sql`structures_dans_scope AS (
       SELECT sa.id
       FROM main.structure_administrative sa
-      LEFT JOIN main.adresse a ON a.id = sa.adresse_id
       WHERE sa.deleted_at IS NULL
-        AND (a.departement IS NULL OR a.departement != 'zzz')
     )`
   }
 
