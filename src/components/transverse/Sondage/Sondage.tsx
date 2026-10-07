@@ -10,7 +10,7 @@ import Icon from '@/components/shared/Icon/Icon'
 export default function Sondage(): null | ReactElement {
   const pathname = usePathname()
 
-  if (pathname !== '/tableau-de-bord') {
+  if (!pathname.startsWith('/tableau-de-bord')) {
     return null
   }
 

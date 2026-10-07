@@ -22,6 +22,18 @@ describe('bandeau sondage', () => {
     expect(lien).toHaveAttribute('href', 'https://tally.so/r/pbLzdV')
   })
 
+  it('quand je suis sur le tableau de bord d’un territoire, alors le bandeau du sondage s’affiche', () => {
+    // GIVEN
+    mockUsePathname.mockReturnValue('/tableau-de-bord/region/84')
+
+    // WHEN
+    render(<Sondage />)
+
+    // THEN
+    const lien = screen.getByRole('link', { name: 'Cliquez-ici' })
+    expect(lien).toHaveAttribute('href', 'https://tally.so/r/pbLzdV')
+  })
+
   it('quand je ne suis pas sur le tableau de bord, alors le bandeau du sondage ne s’affiche pas', () => {
     // GIVEN
     mockUsePathname.mockReturnValue('/autre-page')
