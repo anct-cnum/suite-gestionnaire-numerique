@@ -1,6 +1,7 @@
 import prisma from '../../../../../prisma/prismaClient'
 import { GestionnaireStructure } from '@/domain/GestionnaireStructure'
 import { LieuInclusion } from '@/domain/LieuInclusion'
+import { Utilisateur } from '@/domain/Utilisateur'
 import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -41,27 +42,34 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
     return refus(MESSAGE_LIEU_GERE_PAR_LA_COOP)
   }
 
-  // Départements des gouvernances dont la structure du DEMANDEUR est membre confirmé : c'est son
-  // périmètre qui est comparé au lieu, jamais celui de la structure du lieu (#1979).
-  const departementsGouvernances =
-    utilisateur instanceof GestionnaireStructure
-      ? (await new PrismaMembreLoader().getToutesAppartenancesParStructureId(utilisateur.state.structureUid.value)).map(
-          (appartenance) => appartenance.codeDepartement
-        )
-      : []
-
   const peutModifier = LieuInclusion.peutEtreModifiePar(
     utilisateur,
     lieu.codeDepartement,
     lieu.structureId,
     lieu.personnesTravaillant.length,
-    departementsGouvernances
+    await departementsCoportesParLeDemandeur(utilisateur)
   )
   if (!peutModifier) {
     return refus(`Vous n'avez pas les droits pour ${options.action} ce lieu`)
   }
 
   return { lieu, statut: 'ok' }
+}
+
+// Départements des gouvernances dont la structure du DEMANDEUR est co-porteuse (membre confirmé) :
+// c'est son périmètre qui est comparé au lieu, jamais celui de la structure du lieu (#1979). Un
+// co-porteur a sur les lieux de son département les mêmes droits qu'un gestionnaire département ;
+// un simple membre de gouvernance n'en a aucun (#2081).
+export async function departementsCoportesParLeDemandeur(utilisateur: Utilisateur): Promise<ReadonlyArray<string>> {
+  if (!(utilisateur instanceof GestionnaireStructure)) {
+    return []
+  }
+  const appartenances = await new PrismaMembreLoader().getToutesAppartenancesParStructureId(
+    utilisateur.state.structureUid.value
+  )
+  return appartenances
+    .filter((appartenance) => appartenance.estCoporteur)
+    .map((appartenance) => appartenance.codeDepartement)
 }
 
 type VerificationDroitsLieu =
