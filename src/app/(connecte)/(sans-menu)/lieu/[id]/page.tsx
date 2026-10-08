@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
+import { departementsCoportesParLeDemandeur } from '@/app/api/actions/shared/verifierDroitsLieu'
 import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
@@ -33,19 +34,6 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   const utilisateur = await utilisateurRepository.get(utilisateurId)
 
-  // Récupérer les départements des gouvernances dont la structure est membre
-  const gouvernancesDepartements = await prisma.membreRecord.findMany({
-    select: {
-      gouvernanceDepartementCode: true,
-    },
-    where: {
-      dateSuppression: null,
-      structureId: lieuDetailsReadModel.structureId,
-    },
-  })
-
-  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
   // Calculer si l'utilisateur peut modifier ce lieu. Un lieu géré dans la Coop
   // est en lecture seule dans MIN, quel que soit le rôle (#1951).
   const peutModifier =
@@ -55,7 +43,7 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
       lieuDetailsReadModel.codeDepartement,
       lieuDetailsReadModel.structureId,
       lieuDetailsReadModel.personnesTravaillant.length,
-      departementsGouvernances
+      await departementsCoportesParLeDemandeur(utilisateur)
     )
 
   // Gestion des lieux : administrateurs, ou bêta-testeurs pour les autres rôles (#1951).

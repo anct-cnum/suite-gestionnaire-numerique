@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { MESSAGE_LIEU_GERE_PAR_LA_COOP, verifierDroitsLieu } from './verifierDroitsLieu'
+import {
+  departementsCoportesParLeDemandeur,
+  MESSAGE_LIEU_GERE_PAR_LA_COOP,
+  verifierDroitsLieu,
+} from './verifierDroitsLieu'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
@@ -164,23 +168,27 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).not.toHaveBeenCalledWith(42)
   })
 
-  it('autorise un gestionnaire dont la structure est membre d’une gouvernance du département du lieu', async () => {
+  it.each([
+    { attendu: 'ok', estCoporteur: true, intention: 'autorise un gestionnaire d’une structure co-porteuse' },
+    { attendu: 'refus', estCoporteur: false, intention: 'refuse un gestionnaire d’une structure simple membre' },
+  ])('$intention de la gouvernance du département du lieu (#2081)', async ({ attendu, estCoporteur }) => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
       utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' })
     )
-    const lieu = lieuDetailsReadModelFactory({ codeDepartement: '75', structureId: 42 })
-    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(lieu)
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory({ codeDepartement: '75', structureId: 42 })
+    )
     vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId').mockResolvedValueOnce([
-      { codeDepartement: '75', estCoporteur: false },
+      { codeDepartement: '75', estCoporteur },
     ])
 
     // WHEN
     const verification = await verifierDroitsLieu('42', { action: 'modifier', reserveAuxBetaTesteurs: false })
 
     // THEN
-    expect(verification).toStrictEqual({ lieu, statut: 'ok' })
+    expect(verification.statut).toBe(attendu)
   })
 
   it('ne consulte pas les appartenances de gouvernance pour un gestionnaire département', async () => {
@@ -199,6 +207,40 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
 
     // THEN
     expect(verification.statut).toBe('ok')
+    expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).not.toHaveBeenCalled()
+  })
+})
+
+describe('départements co-portés par le demandeur (droits sur les lieux, partagés par la page et les actions)', () => {
+  it('ne retient que les gouvernances dont la structure du demandeur est co-porteuse (#2081)', async () => {
+    // GIVEN
+    vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId').mockResolvedValueOnce([
+      { codeDepartement: '05', estCoporteur: true },
+      { codeDepartement: '26', estCoporteur: false },
+    ])
+
+    // WHEN
+    const departements = await departementsCoportesParLeDemandeur(
+      utilisateurFactory({ codeOrganisation: '4442', role: 'Gestionnaire structure' })
+    )
+
+    // THEN
+    expect(departements).toStrictEqual(['05'])
+    expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).toHaveBeenCalledWith(4442)
+  })
+
+  it.each([
+    { intention: 'un administrateur', role: 'Administrateur dispositif' as const },
+    { intention: 'un gestionnaire département', role: 'Gestionnaire département' as const },
+  ])('ne consulte pas les gouvernances pour $intention', async ({ role }) => {
+    // GIVEN
+    vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId')
+
+    // WHEN
+    const departements = await departementsCoportesParLeDemandeur(utilisateurFactory({ codeOrganisation: '05', role }))
+
+    // THEN
+    expect(departements).toStrictEqual([])
     expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).not.toHaveBeenCalled()
   })
 })

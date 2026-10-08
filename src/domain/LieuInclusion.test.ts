@@ -34,16 +34,15 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
     },
     {
       attendu: true,
-      departementsGouvernances: ['75'],
-      intention:
-        'un gestionnaire structure membre d’une gouvernance peut modifier un lieu du département de cette gouvernance',
+      departementsCoportes: ['75'],
+      intention: 'un gestionnaire d’une structure co-porteuse peut modifier un lieu du département de sa gouvernance',
       utilisateur: utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' }),
     },
     {
       attendu: false,
-      departementsGouvernances: ['93'],
+      departementsCoportes: ['93'],
       intention:
-        'un gestionnaire structure membre d’une gouvernance d’un autre département ne peut pas modifier un lieu tiers',
+        'un gestionnaire d’une structure co-porteuse d’un autre département ne peut pas modifier un lieu tiers',
       utilisateur: utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' }),
     },
     {
@@ -53,7 +52,7 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
     },
     {
       attendu: false,
-      departementsGouvernances: ['75'],
+      departementsCoportes: ['75'],
       intention: 'un lieu sans département n’est modifiable par aucun gestionnaire',
       lieuSansDepartement: true,
       utilisateur: utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' }),
@@ -67,7 +66,7 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
     '$intention',
     ({
       attendu,
-      departementsGouvernances = [],
+      departementsCoportes = [],
       lieuSansDepartement = false,
       nombrePersonnesAffectees = 0,
       utilisateur,
@@ -78,7 +77,7 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
         lieuSansDepartement ? undefined : '75',
         42,
         nombrePersonnesAffectees,
-        departementsGouvernances
+        departementsCoportes
       )
 
       // THEN

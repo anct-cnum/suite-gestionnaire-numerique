@@ -9,14 +9,15 @@ export class LieuInclusion {
    * - Les administrateurs peuvent modifier tous les lieux
    * - Les gestionnaires de département peuvent modifier les lieux de leur département
    * - Les gestionnaires de structure peuvent modifier les lieux où ils ont une personne affectée
-   * - Les membres de gouvernance peuvent modifier les lieux dans le département de leur gouvernance
+   * - Les gestionnaires d'une structure co-porteuse d'une gouvernance peuvent modifier les lieux
+   *   du département de cette gouvernance, comme un gestionnaire de département
    */
   static peutEtreModifiePar(
     utilisateur: Utilisateur,
     codeDepartementLieu: string | undefined,
     structureId: number,
     nombrePersonnesAffectees: number,
-    departementsGouvernances: ReadonlyArray<string> = []
+    departementsCoportes: ReadonlyArray<string> = []
   ): boolean {
     // Les administrateurs peuvent modifier tous les lieux
     if (utilisateur.isAdmin) {
@@ -41,9 +42,8 @@ export class LieuInclusion {
         return true
       }
 
-      // Les membres (porteur ou co-porteur) d'une gouvernance peuvent modifier
-      // les lieux dans le département de leur gouvernance
-      if (codeDepartementLieu !== undefined && departementsGouvernances.includes(codeDepartementLieu)) {
+      // Une structure co-porteuse d'une gouvernance a les droits d'un gestionnaire de ce département
+      if (codeDepartementLieu !== undefined && departementsCoportes.includes(codeDepartementLieu)) {
         return true
       }
     }
