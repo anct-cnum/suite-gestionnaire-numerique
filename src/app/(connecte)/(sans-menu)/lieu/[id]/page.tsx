@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
-import { departementsCoportesParLeDemandeur } from '@/app/api/actions/shared/verifierDroitsLieu'
+import {
+  departementsCoportesParLeDemandeur,
+  estLieuDeLaStructureDuDemandeur,
+} from '@/app/api/actions/shared/verifierDroitsLieu'
 import LieuxInclusionDetails from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import { LieuInclusion } from '@/domain/LieuInclusion'
@@ -40,9 +43,11 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
     !lieuDetailsReadModel.estLieuCoop &&
     LieuInclusion.peutEtreModifiePar(
       utilisateur,
-      lieuDetailsReadModel.codeDepartement,
-      lieuDetailsReadModel.structureId,
-      lieuDetailsReadModel.personnesTravaillant.length,
+      {
+        codeDepartement: lieuDetailsReadModel.codeDepartement,
+        codeRegion: lieuDetailsReadModel.codeRegion,
+        estDeLaStructureDuDemandeur: await estLieuDeLaStructureDuDemandeur(utilisateur, Number(id)),
+      },
       await departementsCoportesParLeDemandeur(utilisateur)
     )
 

@@ -3,6 +3,7 @@ import { GestionnaireStructure } from '@/domain/GestionnaireStructure'
 import { LieuInclusion } from '@/domain/LieuInclusion'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaLieuxDeLaStructureLoader } from '@/gateways/PrismaLieuxDeLaStructureLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -44,9 +45,11 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
 
   const peutModifier = LieuInclusion.peutEtreModifiePar(
     utilisateur,
-    lieu.codeDepartement,
-    lieu.structureId,
-    lieu.personnesTravaillant.length,
+    {
+      codeDepartement: lieu.codeDepartement,
+      codeRegion: lieu.codeRegion,
+      estDeLaStructureDuDemandeur: await estLieuDeLaStructureDuDemandeur(utilisateur, Number(lieuId)),
+    },
     await departementsCoportesParLeDemandeur(utilisateur)
   )
   if (!peutModifier) {
@@ -70,6 +73,15 @@ export async function departementsCoportesParLeDemandeur(utilisateur: Utilisateu
   return appartenances
     .filter((appartenance) => appartenance.estCoporteur)
     .map((appartenance) => appartenance.codeDepartement)
+}
+
+// Un lieu est à la structure du demandeur selon la même définition que le listing des lieux : tous les
+// employeurs du lieu, lieux quittés compris (#2092). Seul un gestionnaire de structure en tire des droits.
+export async function estLieuDeLaStructureDuDemandeur(utilisateur: Utilisateur, lieuId: number): Promise<boolean> {
+  if (!(utilisateur instanceof GestionnaireStructure)) {
+    return false
+  }
+  return new PrismaLieuxDeLaStructureLoader().estLieuDeLaStructure(lieuId, utilisateur.state.structureUid.value)
 }
 
 type VerificationDroitsLieu =

@@ -1,4 +1,5 @@
 import { GestionnaireDepartement } from './GestionnaireDepartement'
+import { GestionnaireRegion } from './GestionnaireRegion'
 import { GestionnaireStructure } from './GestionnaireStructure'
 import { Utilisateur } from './Utilisateur'
 
@@ -7,16 +8,16 @@ export class LieuInclusion {
   /**
    * Détermine si un utilisateur peut modifier un lieu d'inclusion selon les règles métier :
    * - Les administrateurs peuvent modifier tous les lieux
+   * - Les gestionnaires de région peuvent modifier les lieux de leur région
    * - Les gestionnaires de département peuvent modifier les lieux de leur département
-   * - Les gestionnaires de structure peuvent modifier les lieux où ils ont une personne affectée
+   * - Les gestionnaires de structure peuvent modifier les lieux de leur structure, avec la même
+   *   définition que le listing des lieux (tous les employeurs d'un lieu, lieux quittés compris)
    * - Les gestionnaires d'une structure co-porteuse d'une gouvernance peuvent modifier les lieux
    *   du département de cette gouvernance, comme un gestionnaire de département
    */
   static peutEtreModifiePar(
     utilisateur: Utilisateur,
-    codeDepartementLieu: string | undefined,
-    structureId: number,
-    nombrePersonnesAffectees: number,
+    lieu: LieuAModifier,
     departementsCoportes: ReadonlyArray<string> = []
   ): boolean {
     // Les administrateurs peuvent modifier tous les lieux
@@ -24,26 +25,32 @@ export class LieuInclusion {
       return true
     }
 
-    // Les gestionnaires de département peuvent modifier les lieux de leur département
+    // Les gestionnaires de région peuvent modifier les lieux de leur région
     if (
-      utilisateur instanceof GestionnaireDepartement &&
-      codeDepartementLieu !== undefined &&
-      codeDepartementLieu === utilisateur.state.departement.code
+      utilisateur instanceof GestionnaireRegion &&
+      lieu.codeRegion !== undefined &&
+      lieu.codeRegion === utilisateur.state.region.code
     ) {
       return true
     }
 
-    // Les gestionnaires de structure peuvent modifier les lieux où ils ont une personne affectée
+    // Les gestionnaires de département peuvent modifier les lieux de leur département
+    if (
+      utilisateur instanceof GestionnaireDepartement &&
+      lieu.codeDepartement !== undefined &&
+      lieu.codeDepartement === utilisateur.state.departement.code
+    ) {
+      return true
+    }
+
     if (utilisateur instanceof GestionnaireStructure) {
-      const structureUidValue = utilisateur.state.structureUid.value
-      const gereLeMemeLieu = structureUidValue === structureId
-      const aDesPersonnesAffectees = nombrePersonnesAffectees > 0
-      if (gereLeMemeLieu && aDesPersonnesAffectees) {
+      // Les gestionnaires de structure peuvent modifier les lieux de leur structure
+      if (lieu.estDeLaStructureDuDemandeur) {
         return true
       }
 
       // Une structure co-porteuse d'une gouvernance a les droits d'un gestionnaire de ce département
-      if (codeDepartementLieu !== undefined && departementsCoportes.includes(codeDepartementLieu)) {
+      if (lieu.codeDepartement !== undefined && departementsCoportes.includes(lieu.codeDepartement)) {
         return true
       }
     }
@@ -51,3 +58,11 @@ export class LieuInclusion {
     return false
   }
 }
+
+// Ce que le contrôle des droits connaît du lieu : sa localisation et, pour un gestionnaire de
+// structure, s'il est un lieu de sa structure (calculé en base, cf. PrismaLieuxDeLaStructureLoader).
+type LieuAModifier = Readonly<{
+  codeDepartement?: string
+  codeRegion?: string
+  estDeLaStructureDuDemandeur: boolean
+}>

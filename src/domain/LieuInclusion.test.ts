@@ -22,15 +22,15 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
     },
     {
       attendu: true,
-      intention: 'un gestionnaire structure peut modifier un lieu de sa structure où une personne est affectée',
-      nombrePersonnesAffectees: 1,
+      estDeLaStructureDuDemandeur: true,
+      intention: 'un gestionnaire structure peut modifier un lieu de sa structure',
       utilisateur: utilisateurFactory({ codeOrganisation: '42', role: 'Gestionnaire structure' }),
     },
     {
       attendu: false,
-      intention: 'un gestionnaire structure ne peut pas modifier un lieu de sa structure sans personne affectée',
-      nombrePersonnesAffectees: 0,
-      utilisateur: utilisateurFactory({ codeOrganisation: '42', role: 'Gestionnaire structure' }),
+      estDeLaStructureDuDemandeur: true,
+      intention: 'un gestionnaire département ne tire aucun droit des lieux de sa structure de rattachement',
+      utilisateur: utilisateurFactory({ codeOrganisation: '93', role: 'Gestionnaire département' }),
     },
     {
       attendu: true,
@@ -58,8 +58,19 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
       utilisateur: utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' }),
     },
     {
+      attendu: true,
+      intention: 'un gestionnaire région peut modifier un lieu de sa région',
+      utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
+    },
+    {
       attendu: false,
-      intention: 'un gestionnaire région ne peut pas modifier un lieu',
+      intention: 'un gestionnaire région ne peut pas modifier un lieu d’une autre région',
+      utilisateur: utilisateurFactory({ codeOrganisation: '84', role: 'Gestionnaire région' }),
+    },
+    {
+      attendu: false,
+      intention: 'un lieu sans département n’est modifiable par aucun gestionnaire région',
+      lieuSansDepartement: true,
       utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
     },
   ])(
@@ -67,18 +78,17 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
     ({
       attendu,
       departementsCoportes = [],
+      estDeLaStructureDuDemandeur = false,
       lieuSansDepartement = false,
-      nombrePersonnesAffectees = 0,
       utilisateur,
     }) => {
+      // GIVEN un lieu de Paris (département 75, région 11)
+      const lieu = lieuSansDepartement
+        ? { estDeLaStructureDuDemandeur }
+        : { codeDepartement: '75', codeRegion: '11', estDeLaStructureDuDemandeur }
+
       // WHEN
-      const peutModifier = LieuInclusion.peutEtreModifiePar(
-        utilisateur,
-        lieuSansDepartement ? undefined : '75',
-        42,
-        nombrePersonnesAffectees,
-        departementsCoportes
-      )
+      const peutModifier = LieuInclusion.peutEtreModifiePar(utilisateur, lieu, departementsCoportes)
 
       // THEN
       expect(peutModifier).toBe(attendu)

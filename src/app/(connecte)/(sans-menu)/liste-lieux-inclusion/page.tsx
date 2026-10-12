@@ -43,7 +43,7 @@ export default async function ListeLieuxInclusionController({
   const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  const scopeFiltre = contexte.scopeFiltre()
+  const scopeFiltre = contexte.scopeLieux()
 
   if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
     redirect('/')

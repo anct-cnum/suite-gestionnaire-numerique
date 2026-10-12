@@ -683,6 +683,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
 export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadModel>): LieuDetailsReadModel {
   return {
     codeDepartement: '75',
+    codeRegion: '11',
     estArchive: false,
     estLieuCoop: false,
     header: {
