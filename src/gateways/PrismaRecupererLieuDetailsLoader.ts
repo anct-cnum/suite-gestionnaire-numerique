@@ -1,4 +1,5 @@
 import prisma from '../../prisma/prismaClient'
+import departements from '../../ressources/departements.json'
 import { LieuDetailsReadModel, RecupererLieuDetailsLoader } from '@/use-cases/queries/RecupererLieuDetails'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
@@ -15,11 +16,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       const adresseComplete = this.construireAdresse(structure)
       const personnes = await this.recupererPersonnes(id)
       const tags = this.determinerTags(structure, personnes)
-      // structureId du read model = SA employant une personne affectee au lieu
-      // (utilise par la page pour les lookups min.membre.structureId et les
-      // checks de permission). Depuis le retrait de l'asso lieu ↔ SA (#1711), il
-      // est resolu via les affectations. Fallback sur lieu_inclusion.id si aucune
-      // affectation active (le lieu n'est alors editable que par role dept/admin).
+      // structureId du read model = premiere SA (par id) employant une personne affectee
+      // au lieu, resolue via les affectations depuis le retrait de l'asso lieu ↔ SA (#1711).
+      // Fallback sur lieu_inclusion.id si aucune affectation active. Ne fonde aucun droit :
+      // un lieu peut avoir plusieurs employeurs (cf. PrismaLieuxDeLaStructureLoader, #2092).
       const structureId = structure.structure_administrative_id ?? parseInt(id, 10)
 
       return this.construireReadModel(structure, adresseComplete, personnes, tags, structureId)
@@ -88,6 +88,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       complement_adresse: null | string
       contact: null | Record<string, unknown>
       deleted_at: Date | null
+      departement: null | string
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       frais_a_charge: Array<string> | null
@@ -128,6 +129,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
     return {
       codeDepartement,
+      codeRegion: departements.find((departement) => departement.code === structure.departement)?.regionCode,
       estArchive: structure.deleted_at !== null,
       estLieuCoop: structure.structure_coop_id !== null,
       header: {
@@ -343,6 +345,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       complement_adresse: null | string
       contact: null | Record<string, unknown>
       deleted_at: Date | null
+      departement: null | string
       dispositif_programmes_nationaux: Array<string> | null
       edited_by: null | string
       est_frr: boolean
@@ -407,6 +410,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         a.code_postal,
         a.nom_commune,
         a.code_insee,
+        a.departement,
         CASE
           WHEN EXISTS (
             SELECT 1 FROM admin.zonage z

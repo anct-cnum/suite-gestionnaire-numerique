@@ -22,7 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-    const scopeFiltre = contexte.scopeFiltre()
+    const scopeFiltre = contexte.scopeLieux()
 
     if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })

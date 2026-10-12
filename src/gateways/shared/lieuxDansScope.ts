@@ -1,11 +1,11 @@
 import { Prisma } from '../../../prisma/generated/client'
 import departements from '../../../ressources/departements.json'
 import { FiltreGeographiqueLieux, StatutLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
-import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+import { ScopeLieux } from '@/use-cases/queries/ResoudreContexte'
 
-// Filtre élargi côté loader : ScopeFiltre encode les droits (Contexte.scopeFiltre()),
+// Filtre élargi côté loader : ScopeLieux encode les droits (Contexte.scopeLieux()),
 // la maille communes (EPCI du tableau de bord) est une vue territoriale sans équivalent en droits.
-export type FiltreLieuxDansScope = Readonly<{ codesInsee: ReadonlyArray<string>; type: 'communes' }> | ScopeFiltre
+export type FiltreLieuxDansScope = Readonly<{ codesInsee: ReadonlyArray<string>; type: 'communes' }> | ScopeLieux
 
 // Périmètre d'accès : "quels lieux ai-je le droit de voir ?"
 // Source unique pour la liste des lieux et les compteurs du tableau de bord (#1488) afin
@@ -76,6 +76,17 @@ export function buildLieuxDansScopeCte(
     )`
   }
 
+  if (scopeFiltre.type === 'structure_et_departements') {
+    // Co-porteur (#2092) : les lieux des départements co-portés ∪ les lieux de sa structure.
+    return Prisma.sql`lieux_dans_scope AS (
+      SELECT l.id
+      FROM main.lieu_inclusion l
+      LEFT JOIN main.adresse a ON a.id = l.adresse_id
+      WHERE (a.departement = ANY(${[...scopeFiltre.codesCoportes]}) OR ${conditionLieuDeLaStructure(scopeFiltre.id)})
+        ${filtreStatut}
+    )`
+  }
+
   if (scopeFiltre.type === 'structure') {
     // scopeFiltre.id refere a une structure_administrative.id : seul le statut
     // du lieu distingue actifs et archives.
@@ -102,8 +113,8 @@ export function buildLieuxDansScopeCte(
 // - ou un médiateur Coop y a été présent pendant son emploi dans la SA (chevauchement des
 //   périodes Coop) : un lieu quitté reste à la structure, sans rattacher les lieux qu'il
 //   a fréquentés pour un autre employeur.
-// Source unique pour la liste des lieux, le filtre lieux des statistiques et le compteur
-// du tableau de bord structure.
+// Source unique pour la liste des lieux, le filtre lieux des statistiques, le compteur
+// du tableau de bord structure et les droits de modification d'un lieu (#2092).
 export function conditionLieuDeLaStructure(structureId: number): Prisma.Sql {
   return Prisma.sql`(
     EXISTS (

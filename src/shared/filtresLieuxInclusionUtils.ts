@@ -2,7 +2,7 @@ import epci from '../../ressources/epci.json'
 import { TypologieRole } from '@/domain/Role'
 import { couleurParSlugFraicheur, libellesFraicheur, SlugFraicheur } from '@/shared/fraicheur'
 import { FiltreGeographiqueLieux, FiltresListeLieux } from '@/use-cases/queries/RecupererLieuxInclusion'
-import { ScopeFiltre } from '@/use-cases/queries/ResoudreContexte'
+import { ScopeLieux } from '@/use-cases/queries/ResoudreContexte'
 
 // Types pour les filtres internes utilisés dans les composants
 export interface FiltresLieuxInclusionInternes {
@@ -36,7 +36,7 @@ export function parseURLParamsToFiltresLieuxInclusionInternes(params: URLSearchP
  */
 export function buildFiltresLieuxInclusion(
   params: FiltresLieuxInclusionURLParams,
-  scopeFiltre: ScopeFiltre,
+  scopeFiltre: ScopeLieux,
   utilisateurRole: TypologieRole,
   now: Date,
   limite = 10
@@ -192,7 +192,7 @@ export function getActiveLieuxInclusionFilters(params: URLSearchParams): Array<{
 
 function construireFiltreGeographiqueLieux(
   params: FiltresLieuxInclusionURLParams,
-  scopeFiltre: ScopeFiltre,
+  scopeFiltre: ScopeLieux,
   utilisateurRole: TypologieRole
 ): FiltreGeographiqueLieux | undefined {
   const { codeDepartement, codeEpci, codeRegion } = params

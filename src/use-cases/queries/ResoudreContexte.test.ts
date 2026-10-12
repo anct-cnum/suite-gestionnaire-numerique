@@ -559,3 +559,81 @@ describe('contexte - gestion des lieux d’inclusion (#1951)', () => {
     expect(peutGerer).toBe(attendu)
   })
 })
+
+// Périmètre des écrans lieux (#2092, règle validée par le PO) : un gestionnaire de structure voit les lieux
+// des départements qu'il co-porte ∪ les lieux de sa structure ; être simple membre d'une gouvernance
+// n'ajoute aucun lieu. Les autres écrans (statistiques, aidants, postes, structures) gardent scopeFiltre().
+describe('périmètre des écrans lieux (#2092)', () => {
+  it.each([
+    {
+      appartenances: [],
+      attendu: { id: 42, type: 'structure' },
+      intention: 'hors gouvernance, voit les lieux de sa structure',
+    },
+    {
+      appartenances: [{ codeDepartement: '26', estCoporteur: false }],
+      attendu: { id: 42, type: 'structure' },
+      intention: 'simple membre, voit les lieux de sa structure comme hors gouvernance',
+    },
+  ])('un gestionnaire structure $intention', async ({ appartenances, attendu }) => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub({ appartenances }))
+
+    // THEN
+    expect(contexte.scopeLieux()).toStrictEqual(attendu)
+  })
+
+  it('un gestionnaire département voit les lieux de son département', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_departement', { departementCode: '05', structureId: 42 })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.scopeLieux()).toStrictEqual({ codes: ['05'], type: 'departemental' })
+  })
+
+  it('un administrateur voit tous les lieux', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('administrateur_dispositif')
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loaderStub())
+
+    // THEN
+    expect(contexte.scopeLieux()).toStrictEqual({ type: 'national' })
+  })
+
+  it('un gestionnaire structure co-porteur voit les lieux du département co-porté et ceux de sa structure', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({ appartenances: [{ codeDepartement: '05', estCoporteur: true }] })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopeLieux()).toStrictEqual({ codesCoportes: ['05'], id: 42, type: 'structure_et_departements' })
+  })
+
+  it('un gestionnaire structure co-porteur d’une gouvernance et membre d’une autre ne voit en plus que le département co-porté', async () => {
+    // GIVEN
+    const utilisateur = utilisateurAvecRole('gestionnaire_structure', { structureId: 42 })
+    const loader = loaderStub({
+      appartenances: [
+        { codeDepartement: '05', estCoporteur: true },
+        { codeDepartement: '26', estCoporteur: false },
+      ],
+    })
+
+    // WHEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // THEN
+    expect(contexte.scopeLieux()).toStrictEqual({ codesCoportes: ['05'], id: 42, type: 'structure_et_departements' })
+  })
+})

@@ -7,6 +7,7 @@ import {
 } from './verifierDroitsLieu'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaLieuxDeLaStructureLoader } from '@/gateways/PrismaLieuxDeLaStructureLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -157,6 +158,7 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
       lieuDetailsReadModelFactory({ codeDepartement: '75', structureId: 42 })
     )
+    vi.spyOn(PrismaLieuxDeLaStructureLoader.prototype, 'estLieuDeLaStructure').mockResolvedValueOnce(false)
     vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId').mockResolvedValueOnce([])
 
     // WHEN
@@ -180,6 +182,7 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
       lieuDetailsReadModelFactory({ codeDepartement: '75', structureId: 42 })
     )
+    vi.spyOn(PrismaLieuxDeLaStructureLoader.prototype, 'estLieuDeLaStructure').mockResolvedValueOnce(false)
     vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId').mockResolvedValueOnce([
       { codeDepartement: '75', estCoporteur },
     ])
@@ -191,7 +194,7 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     expect(verification.statut).toBe(attendu)
   })
 
-  it('ne consulte pas les appartenances de gouvernance pour un gestionnaire département', async () => {
+  it('ne consulte ni les gouvernances ni les lieux de la structure pour un gestionnaire département', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
@@ -201,6 +204,7 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
       lieuDetailsReadModelFactory({ codeDepartement: '75' })
     )
     vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId')
+    vi.spyOn(PrismaLieuxDeLaStructureLoader.prototype, 'estLieuDeLaStructure')
 
     // WHEN
     const verification = await verifierDroitsLieu('42', { action: 'modifier', reserveAuxBetaTesteurs: false })
@@ -208,6 +212,53 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     // THEN
     expect(verification.statut).toBe('ok')
     expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).not.toHaveBeenCalled()
+    expect(PrismaLieuxDeLaStructureLoader.prototype.estLieuDeLaStructure).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { attendu: 'ok', estDeLaStructure: true, intention: 'autorise' },
+    { attendu: 'refus', estDeLaStructure: false, intention: 'refuse' },
+  ])(
+    '$intention un gestionnaire structure selon que le lieu est de sa structure, avec la définition du listing (#2092)',
+    async ({ attendu, estDeLaStructure }) => {
+      // GIVEN
+      vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+      vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+        utilisateurFactory({ codeOrganisation: '999', role: 'Gestionnaire structure' })
+      )
+      vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+        lieuDetailsReadModelFactory({ codeDepartement: '75', structureId: 42 })
+      )
+      vi.spyOn(PrismaLieuxDeLaStructureLoader.prototype, 'estLieuDeLaStructure').mockResolvedValueOnce(estDeLaStructure)
+      vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId').mockResolvedValueOnce([])
+
+      // WHEN
+      const verification = await verifierDroitsLieu('1788', { action: 'modifier', reserveAuxBetaTesteurs: false })
+
+      // THEN
+      expect(verification.statut).toBe(attendu)
+      expect(PrismaLieuxDeLaStructureLoader.prototype.estLieuDeLaStructure).toHaveBeenCalledWith(1788, 999)
+    }
+  )
+
+  it.each([
+    { attendu: 'ok', codeRegion: '11', intention: 'autorise un gestionnaire région sur un lieu de sa région' },
+    { attendu: 'refus', codeRegion: '84', intention: 'refuse un gestionnaire région sur un lieu d’une autre région' },
+  ])('$intention (#2092)', async ({ attendu, codeRegion }) => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory({ codeRegion })
+    )
+
+    // WHEN
+    const verification = await verifierDroitsLieu('42', { action: 'modifier', reserveAuxBetaTesteurs: false })
+
+    // THEN
+    expect(verification.statut).toBe(attendu)
   })
 })
 
