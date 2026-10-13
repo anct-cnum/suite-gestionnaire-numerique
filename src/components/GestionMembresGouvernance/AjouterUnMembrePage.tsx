@@ -78,6 +78,7 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
       const messages = await ajouterUnMembreAction({
         codeDepartement: codeDepartement ?? '',
         contact: donneesMembre.contact ? choixContactVersAction(donneesMembre.contact) : undefined,
+        contacts: donneesMembre.contacts ? modificationsContactsVersAction() : undefined,
         contactTechnique: donneesMembre.contactSecondaire
           ? choixContactVersAction(donneesMembre.contactSecondaire)
           : undefined,
@@ -116,6 +117,17 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
         description: "Une erreur est survenue lors de l'ajout du membre",
         title: 'Erreur : ',
       })
+    }
+  }
+
+  function modificationsContactsVersAction(): Parameters<typeof ajouterUnMembreAction>[0]['contacts'] {
+    const contacts = donneesMembre.contacts ?? []
+    return {
+      aAjouter: contacts.filter((contact) => contact.idExistant === null).map((contact) => contact.donnees),
+      aModifier: contacts
+        .filter((contact) => contact.idExistant !== null && contact.estModifie)
+        .map((contact) => ({ ...contact.donnees, id: contact.idExistant as number })),
+      aSupprimer: (donneesMembre.contactsSupprimes ?? []).map((contact) => contact.idExistant as number),
     }
   }
 

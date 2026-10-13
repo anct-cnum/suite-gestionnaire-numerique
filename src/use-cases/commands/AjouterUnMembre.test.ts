@@ -9,7 +9,13 @@ import {
   EntrepriseData,
   GetMembreRepository,
 } from './shared/MembreRepository'
-import { CreateStructureRepository, GetStructureBySiretRepository, StructureData } from './shared/StructureRepository'
+import {
+  CreateStructureRepository,
+  GetStructureBySiretRepository,
+  MettreAJourContactsStructureRepository,
+  ModificationsContactsStructure,
+  StructureData,
+} from './shared/StructureRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Prisma } from '../../../prisma/generated/client'
@@ -26,7 +32,88 @@ describe('ajouter un membre', () => {
     spiedMembreCreated = null
     spiedEntrepriseData = undefined
     spiedStructureIdLinked = null
+    spiedContactsMisAJour = null
     structureExistante = null
+  })
+
+  it('étant donné une structure existante, quand un membre est créé avec des modifications de contacts, alors les contacts de la structure sont mis à jour', async () => {
+    // GIVEN
+    const siret = '12345678901234'
+    structureExistante = { id: 123, identifiantEtablissement: siret }
+    const contacts: ModificationsContactsStructure = {
+      aAjouter: [{ email: 'nouveau@example.com', fonction: 'Chargée de mission', nom: 'Durand', prenom: 'Léa' }],
+      aModifier: [{ email: 'modifie@example.com', fonction: 'Directeur', id: 7, nom: 'Dupont', prenom: 'Jean' }],
+      aSupprimer: [8],
+    }
+
+    const ajouterUnMembre = new AjouterUnMembre(
+      new GestionnaireRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new MembreRepositorySpy(),
+      new StructureExistanteRepositorySpy(),
+      new TransactionRepositorySpy(),
+      new BanGeocodingGatewaySpy()
+    )
+
+    // WHEN
+    const result = await ajouterUnMembre.handle({
+      contacts,
+      entreprise: {
+        adresse: '123 rue de la Paix',
+        categorieJuridiqueCode: '5710',
+        categorieJuridiqueUniteLegale: 'SAS',
+        codeInsee: '75101',
+        codePostal: '75001',
+        commune: 'Paris',
+        nom: 'Entreprise Test',
+        nomVoie: 'RUE DE LA PAIX',
+        numeroVoie: '123',
+        siret,
+      },
+      uidGestionnaire,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(result).toBe('OK')
+    expect(spiedContactsMisAJour).toStrictEqual({ modifications: contacts, structureId: 123 })
+    expect(spiedMembreCreated).not.toBeNull()
+  })
+
+  it('étant donné une structure existante, quand un membre est créé sans modification de contacts, alors les contacts de la structure ne sont pas modifiés', async () => {
+    // GIVEN
+    const siret = '12345678901234'
+    structureExistante = { id: 123, identifiantEtablissement: siret }
+
+    const ajouterUnMembre = new AjouterUnMembre(
+      new GestionnaireRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new MembreRepositorySpy(),
+      new StructureExistanteRepositorySpy(),
+      new TransactionRepositorySpy(),
+      new BanGeocodingGatewaySpy()
+    )
+
+    // WHEN
+    await ajouterUnMembre.handle({
+      entreprise: {
+        adresse: '123 rue de la Paix',
+        categorieJuridiqueCode: '5710',
+        categorieJuridiqueUniteLegale: 'SAS',
+        codeInsee: '75101',
+        codePostal: '75001',
+        commune: 'Paris',
+        nom: 'Entreprise Test',
+        nomVoie: 'RUE DE LA PAIX',
+        numeroVoie: '123',
+        siret,
+      },
+      uidGestionnaire,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(spiedContactsMisAJour).toBeNull()
   })
 
   it('étant donné une gouvernance et une structure existante, quand un membre est créé avec un SIRET correspondant, alors le membre est lié à la structure existante', async () => {
@@ -178,6 +265,7 @@ const uidGestionnaire = 1
 let spiedMembreCreated: Membre | null
 let spiedEntrepriseData: EntrepriseData | undefined
 let spiedStructureIdLinked: null | number
+let spiedContactsMisAJour: { modifications: ModificationsContactsStructure; structureId: number } | null
 let spiedStructureCreated: { departementCode: string; identifiantEtablissement: string; nom: string } | undefined
 let structureExistante: { id: number; identifiantEtablissement: string } | null
 
@@ -288,7 +376,9 @@ class MembreAvecNouvelleStructureRepositorySpy extends MembreRepositorySpy {
 }
 
 // Classes spy pour StructureRepository
-class StructureExistanteRepositorySpy implements CreateStructureRepository, GetStructureBySiretRepository {
+class StructureExistanteRepositorySpy
+  implements CreateStructureRepository, GetStructureBySiretRepository, MettreAJourContactsStructureRepository
+{
   async create(_: StructureData, __?: Prisma.TransactionClient): Promise<Structure> {
     throw new Error('Ne devrait pas cr\u00e9er de structure dans ce cas')
   }
@@ -304,9 +394,20 @@ class StructureExistanteRepositorySpy implements CreateStructureRepository, GetS
     }
     return null
   }
+
+  async mettreAJourContacts(
+    structureId: number,
+    modifications: ModificationsContactsStructure,
+    _: Prisma.TransactionClient
+  ): Promise<void> {
+    spiedContactsMisAJour = { modifications, structureId }
+    return Promise.resolve()
+  }
 }
 
-class StructureNouvelleRepositorySpy implements CreateStructureRepository, GetStructureBySiretRepository {
+class StructureNouvelleRepositorySpy
+  implements CreateStructureRepository, GetStructureBySiretRepository, MettreAJourContactsStructureRepository
+{
   async create(data: StructureData, __?: Prisma.TransactionClient): Promise<Structure> {
     spiedStructureCreated = {
       departementCode: data.departementCode,
@@ -324,15 +425,34 @@ class StructureNouvelleRepositorySpy implements CreateStructureRepository, GetSt
   async getBySiret(_: string, __?: Prisma.TransactionClient): Promise<null | Structure> {
     return null // Aucune structure existante
   }
+
+  async mettreAJourContacts(
+    structureId: number,
+    modifications: ModificationsContactsStructure,
+    _: Prisma.TransactionClient
+  ): Promise<void> {
+    spiedContactsMisAJour = { modifications, structureId }
+    return Promise.resolve()
+  }
 }
 
-class StructureSansResultatRepositorySpy implements CreateStructureRepository, GetStructureBySiretRepository {
+class StructureSansResultatRepositorySpy
+  implements CreateStructureRepository, GetStructureBySiretRepository, MettreAJourContactsStructureRepository
+{
   async create(_data: StructureData, __?: Prisma.TransactionClient): Promise<Structure> {
     throw new Error('Ne devrait pas cr\u00e9er de structure dans ce cas')
   }
 
   async getBySiret(_: string, __?: Prisma.TransactionClient): Promise<null | Structure> {
     return null
+  }
+
+  async mettreAJourContacts(
+    _structureId: number,
+    _modifications: ModificationsContactsStructure,
+    __: Prisma.TransactionClient
+  ): Promise<void> {
+    throw new Error('Ne devrait pas mettre à jour de contacts dans ce cas')
   }
 }
 

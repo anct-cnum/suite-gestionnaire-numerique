@@ -2,7 +2,7 @@
 
 import { ReactElement, useState } from 'react'
 
-import { ChoixContact, NouveauMembreData } from './types'
+import { ChoixContact, ContactPrincipal, NouveauMembreData } from './types'
 
 export default function EtapeConfirmationMembre({
   data,
@@ -59,6 +59,35 @@ export default function EtapeConfirmationMembre({
               </div>
             ) : null}
 
+            {/* Contacts de la structure (ajout par un gestionnaire) */}
+            {data.contacts ? (
+              <div className="fr-mb-4w">
+                <h3 className="fr-h5 fr-mb-3w">Contacts de la structure</h3>
+                {data.contacts.map((contact) => (
+                  <div className="fr-mb-3w" key={contact.cle}>
+                    {afficherDonneesContact(
+                      `Contact ${contact.donnees.prenom} ${contact.donnees.nom}`,
+                      contact.donnees
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {data.contactsSupprimes && data.contactsSupprimes.length > 0 ? (
+              <div className="fr-alert fr-alert--warning fr-mb-4w">
+                <h3 className="fr-alert__title">Contacts supprimés</h3>
+                <p>Ces contacts seront supprimés définitivement :</p>
+                <ul>
+                  {data.contactsSupprimes.map((contact) => (
+                    <li key={contact.cle}>
+                      {contact.donnees.prenom} {contact.donnees.nom} ({contact.donnees.email})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             {/* Contact référent */}
             {data.contact ? afficherContact('Contact référent', data.contact) : null}
 
@@ -94,29 +123,34 @@ export default function EtapeConfirmationMembre({
     if (choix.type !== 'nouveau') {
       return null
     }
-    const contactResolu = choix.donnees
     return (
       <div className="fr-mb-4w">
         <h3 className="fr-h5 fr-mb-3w">{titre}</h3>
-        <dl aria-label={titre} className="fr-grid-row fr-grid-row--gutters" role="list">
-          <div className="fr-col-6">
-            <dt className="color-grey">Nom</dt>
-            <dd className="font-weight-500">{contactResolu.nom}</dd>
-          </div>
-          <div className="fr-col-6">
-            <dt className="color-grey">Prénom</dt>
-            <dd className="font-weight-500">{contactResolu.prenom}</dd>
-          </div>
-          <div className="fr-col-6">
-            <dt className="color-grey">Adresse électronique</dt>
-            <dd className="font-weight-500">{contactResolu.email}</dd>
-          </div>
-          <div className="fr-col-6">
-            <dt className="color-grey">Fonction</dt>
-            <dd className="font-weight-500">{contactResolu.fonction}</dd>
-          </div>
-        </dl>
+        {afficherDonneesContact(titre, choix.donnees)}
       </div>
+    )
+  }
+
+  function afficherDonneesContact(libelle: string, contactResolu: ContactPrincipal): ReactElement {
+    return (
+      <dl aria-label={libelle} className="fr-grid-row fr-grid-row--gutters" role="list">
+        <div className="fr-col-6">
+          <dt className="color-grey">Nom</dt>
+          <dd className="font-weight-500">{contactResolu.nom}</dd>
+        </div>
+        <div className="fr-col-6">
+          <dt className="color-grey">Prénom</dt>
+          <dd className="font-weight-500">{contactResolu.prenom}</dd>
+        </div>
+        <div className="fr-col-6">
+          <dt className="color-grey">Adresse électronique</dt>
+          <dd className="font-weight-500">{contactResolu.email}</dd>
+        </div>
+        <div className="fr-col-6">
+          <dt className="color-grey">Fonction</dt>
+          <dd className="font-weight-500">{contactResolu.fonction}</dd>
+        </div>
+      </dl>
     )
   }
 

@@ -9,6 +9,21 @@ export interface CreateStructureRepository {
   create(structure: StructureData, tx?: Prisma.TransactionClient): Promise<Structure>
 }
 
+export interface MettreAJourContactsStructureRepository {
+  // Les modifications et suppressions ne s'appliquent qu'aux contacts rattachés à la structure.
+  mettreAJourContacts(
+    structureId: number,
+    modifications: ModificationsContactsStructure,
+    tx: Prisma.TransactionClient
+  ): Promise<void>
+}
+
+export type ModificationsContactsStructure = Readonly<{
+  aAjouter: ReadonlyArray<ContactStructure>
+  aModifier: ReadonlyArray<ContactStructure & Readonly<{ id: number }>>
+  aSupprimer: ReadonlyArray<number>
+}>
+
 export type StructureData = Readonly<{
   adresse: string
   adresseEnrichie?: AdresseEnrichie | null
@@ -83,6 +98,13 @@ export type AdresseARattacher = Readonly<{
 
 export interface StructureRepository
   extends CreateStructureRepository, GetStructureBySiretEmployeuseRepository, GetStructureBySiretRepository {}
+
+type ContactStructure = Readonly<{
+  email: string
+  fonction: string
+  nom: string
+  prenom: string
+}>
 
 interface GetStructureBySiretEmployeuseRepository {
   getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure>

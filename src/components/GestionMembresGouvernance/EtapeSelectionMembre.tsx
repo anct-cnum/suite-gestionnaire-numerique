@@ -2,10 +2,11 @@
 
 import { ChangeEvent, ReactElement, SyntheticEvent, useContext, useState } from 'react'
 
+import GestionContactsMembre from './GestionContactsMembre'
 import SelectionContact from './SelectionContact'
-import { NouveauMembreData } from './types'
+import { ContactPrincipal, NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
-import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
+import { ContactExistant, EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
 import Select from '../shared/Select/Select'
 
@@ -20,6 +21,10 @@ export default function EtapeSelectionMembre({
   const [entreprise, setEntreprise] = useState(donneesMembre?.entreprise ?? null)
   const [codeDepartement, setCodeDepartement] = useState(donneesMembre?.departement?.code ?? '')
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
+
+  // Contacts de la structure (ajout d'un membre par un gestionnaire)
+  const [contacts, setContacts] = useState(donneesMembre?.contacts ?? [])
+  const [contactsSupprimes, setContactsSupprimes] = useState(donneesMembre?.contactsSupprimes ?? [])
 
   // Contact principal
   const [nouveauContact, setNouveauContact] = useState(
@@ -47,8 +52,9 @@ export default function EtapeSelectionMembre({
 
   const isContactSecondaireValide = !showContactSecondaire || estContactValide(nouveauContactSecondaire)
 
-  const isFormulairePret =
-    entreprise !== null && (!modeCandidature || codeDepartement !== '') && isContactValide && isContactSecondaireValide
+  const isFormulairePret = modeCandidature
+    ? entreprise !== null && codeDepartement !== '' && isContactValide && isContactSecondaireValide
+    : entreprise !== null && contacts.length > 0
 
   return (
     <div>
@@ -141,6 +147,17 @@ export default function EtapeSelectionMembre({
   )
 
   function renderContacts(): ReactElement {
+    if (!modeCandidature) {
+      return (
+        <GestionContactsMembre
+          contacts={contacts}
+          onAjouter={ajouterContact}
+          onModifier={modifierContact}
+          onSupprimer={supprimerContact}
+        />
+      )
+    }
+
     return (
       <>
         <SelectionContact
@@ -151,7 +168,7 @@ export default function EtapeSelectionMembre({
           onChangerFonction={changerChampContact('fonction')}
           onChangerNom={changerChampContact('nom')}
           onChangerPrenom={changerChampContact('prenom')}
-          titre={modeCandidature ? 'Contact référent de la structure' : 'Contact référent'}
+          titre="Contact référent de la structure"
         />
 
         {showContactSecondaire ? (
@@ -217,10 +234,41 @@ export default function EtapeSelectionMembre({
     reinitialiserChoixContacts()
   }
 
-  function reinitialiserChoixContacts(): void {
+  function reinitialiserChoixContacts(contactsExistantsTrouves: ReadonlyArray<ContactExistant> = []): void {
     setNouveauContact({ email: '', fonction: '', nom: '', prenom: '' })
     setNouveauContactSecondaire({ email: '', fonction: '', nom: '', prenom: '' })
     setShowContactSecondaire(false)
+    setContacts(
+      contactsExistantsTrouves.map((contact) => ({
+        cle: `existant-${contact.id}`,
+        donnees: { email: contact.email, fonction: contact.fonction, nom: contact.nom, prenom: contact.prenom },
+        estModifie: false,
+        idExistant: contact.id,
+      }))
+    )
+    setContactsSupprimes([])
+  }
+
+  function ajouterContact(donnees: ContactPrincipal): void {
+    setContacts((contactsActuels) => [
+      ...contactsActuels,
+      { cle: `nouveau-${crypto.randomUUID()}`, donnees, estModifie: false, idExistant: null },
+    ])
+  }
+
+  function modifierContact(cle: string, donnees: ContactPrincipal): void {
+    setContacts((contactsActuels) =>
+      contactsActuels.map((contact) => (contact.cle === cle ? { ...contact, donnees, estModifie: true } : contact))
+    )
+  }
+
+  function supprimerContact(cle: string): void {
+    const contactSupprime = contacts.find((contact) => contact.cle === cle)
+    setContacts((contactsActuels) => contactsActuels.filter((contact) => contact.cle !== cle))
+    // Seuls les contacts déjà en base doivent être supprimés à la validation
+    if (contactSupprime?.idExistant !== null && contactSupprime !== undefined) {
+      setContactsSupprimes((contactsSupprimesActuels) => [...contactsSupprimesActuels, contactSupprime])
+    }
   }
 
   function soumettreRechercheSiret(event: SyntheticEvent<HTMLFormElement>): void {
@@ -278,8 +326,9 @@ export default function EtapeSelectionMembre({
       if (Array.isArray(result)) {
         setErreurRechercheSiret(result.join(', '))
       } else {
-        setEntreprise(result as EntrepriseViewModel)
-        reinitialiserChoixContacts()
+        const entrepriseTrouvee = result as EntrepriseViewModel
+        setEntreprise(entrepriseTrouvee)
+        reinitialiserChoixContacts(entrepriseTrouvee.contactsExistants)
       }
     } catch {
       setErreurRechercheSiret('Erreur lors de la recherche. Veuillez réessayer.')
@@ -292,6 +341,17 @@ export default function EtapeSelectionMembre({
     }
 
     const departement = departements?.find((dep) => dep.value === codeDepartement)
+    if (!modeCandidature) {
+      onContinuer({
+        contact: null,
+        contacts,
+        contactSecondaire: null,
+        contactsSupprimes,
+        entreprise,
+      })
+      return
+    }
+
     onContinuer({
       contact: formulaireContactValide ? { donnees: nouveauContact, type: 'nouveau' } : null,
       contactSecondaire: showContactSecondaire ? { donnees: nouveauContactSecondaire, type: 'nouveau' } : null,
