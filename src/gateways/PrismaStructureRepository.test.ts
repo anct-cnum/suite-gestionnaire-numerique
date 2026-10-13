@@ -181,6 +181,72 @@ describe('prisma structure repository', () => {
       expect(estSupprime).toBe(false)
       await expect(prisma.main_contact.findUnique({ where: { id: contactId } })).resolves.not.toBeNull()
     })
+
+    it('ajoute, modifie et supprime les contacts d’une structure en une seule mise à jour', async () => {
+      // GIVEN
+      const contactAModifierId = await creerUnContactRattache(978)
+      const contactASupprimerId = await creerUnContact({ nom: 'Martin' })
+      await prisma.contact_structure_administrative.create({
+        data: { contact_id: contactASupprimerId, structure_administrative_id: 978 },
+      })
+
+      // WHEN
+      await new PrismaStructureRepository().mettreAJourContacts(
+        978,
+        {
+          aAjouter: [{ email: 'lea.durand@example.net', fonction: 'Chargée de mission', nom: 'Durand', prenom: 'Léa' }],
+          aModifier: [
+            {
+              email: 'jean.dupont@example.net',
+              fonction: 'Président',
+              id: contactAModifierId,
+              nom: 'Dupont',
+              prenom: 'Jean',
+            },
+          ],
+          aSupprimer: [contactASupprimerId],
+        },
+        prisma
+      )
+
+      // THEN
+      const contactModifie = await prisma.main_contact.findUniqueOrThrow({ where: { id: contactAModifierId } })
+      expect(contactModifie.nom).toBe('Dupont')
+      expect(contactModifie.fonction).toBe('Président')
+      await expect(prisma.main_contact.findUnique({ where: { id: contactASupprimerId } })).resolves.toBeNull()
+      const contactsRattaches = await prisma.contact_structure_administrative.findMany({
+        include: { contact: true },
+        where: { structure_administrative_id: 978 },
+      })
+      expect(
+        contactsRattaches.map(({ contact }) => contact.nom).toSorted((nomA, nomB) => nomA.localeCompare(nomB))
+      ).toStrictEqual(['Dupont', 'Durand'])
+      const contactAjoute = contactsRattaches.find(({ contact }) => contact.nom === 'Durand')
+      expect(contactAjoute?.contact.est_referent_fne).toBe(true)
+    })
+
+    it('ne modifie ni ne supprime les contacts rattachés à une autre structure', async () => {
+      // GIVEN
+      const contactId = await creerUnContactRattache(978)
+      await creerUneStructure({ id: 979 })
+
+      // WHEN
+      await new PrismaStructureRepository().mettreAJourContacts(
+        979,
+        {
+          aAjouter: [],
+          aModifier: [
+            { email: 'jean.dupont@example.net', fonction: 'Président', id: contactId, nom: 'Dupont', prenom: 'Jean' },
+          ],
+          aSupprimer: [contactId],
+        },
+        prisma
+      )
+
+      // THEN
+      const contact = await prisma.main_contact.findUniqueOrThrow({ where: { id: contactId } })
+      expect(contact.nom).toBe('Tartempion')
+    })
   })
 })
 

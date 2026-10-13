@@ -7,7 +7,9 @@ import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactR
 import {
   AdresseARattacher,
   DonneesLegalesEntreprise,
+  MettreAJourContactsStructureRepository,
   MettreAJourStructureDepuisEntrepriseRepository,
+  ModificationsContactsStructure,
   ModifierAdresseStructureRepository,
   ModifierNomStructureData,
   ModifierNomStructureRepository,
@@ -25,6 +27,7 @@ import {
 export class PrismaStructureRepository
   implements
     ContactReferentRepository,
+    MettreAJourContactsStructureRepository,
     MettreAJourStructureDepuisEntrepriseRepository,
     ModifierAdresseStructureRepository,
     ModifierNomStructureRepository,
@@ -112,6 +115,62 @@ export class PrismaStructureRepository
     })
 
     return structure === null ? null : { denominationAntenne: structure.denomination_antenne }
+  }
+
+  async mettreAJourContacts(
+    structureId: number,
+    { aAjouter, aModifier, aSupprimer }: ModificationsContactsStructure,
+    tx: Prisma.TransactionClient
+  ): Promise<void> {
+    const rattacheALaStructure = {
+      contact_structures: {
+        some: {
+          structure_administrative_id: structureId,
+        },
+      },
+    }
+
+    if (aSupprimer.length > 0) {
+      await tx.main_contact.deleteMany({
+        where: {
+          ...rattacheALaStructure,
+          id: { in: [...aSupprimer] },
+        },
+      })
+    }
+
+    for (const contact of aModifier) {
+      await tx.main_contact.updateMany({
+        data: {
+          email: contact.email,
+          fonction: contact.fonction,
+          nom: contact.nom,
+          prenom: contact.prenom,
+        },
+        where: {
+          ...rattacheALaStructure,
+          id: contact.id,
+        },
+      })
+    }
+
+    for (const contact of aAjouter) {
+      const contactCree = await tx.main_contact.create({
+        data: {
+          email: contact.email,
+          est_referent_fne: true,
+          fonction: contact.fonction,
+          nom: contact.nom,
+          prenom: contact.prenom,
+        },
+      })
+      await tx.contact_structure_administrative.create({
+        data: {
+          contact_id: contactCree.id,
+          structure_administrative_id: structureId,
+        },
+      })
+    }
   }
 
   async mettreAJourDepuisEntreprise(

@@ -40,6 +40,7 @@ export async function ajouterUnMembreAction(actionParams: ActionParams): ResultA
       new ApiBanGeocodingGateway()
     ).handle({
       contact: actionParams.contact ? versChoixContactData(actionParams.contact) : undefined,
+      contacts: validationResult.data.contacts,
       contactTechnique: actionParams.contactTechnique ? versChoixContactData(actionParams.contactTechnique) : undefined,
       entreprise: actionParams.entreprise,
       uidGestionnaire: await getSessionUtilisateurId(),
@@ -66,9 +67,21 @@ type ChoixContactAction =
   | Readonly<{ contactExistantId: number; type: 'existant' }>
   | Readonly<{ email: string; fonction: string; nom: string; prenom: string; type: 'nouveau' }>
 
+type ContactAction = Readonly<{
+  email: string
+  fonction: string
+  nom: string
+  prenom: string
+}>
+
 type ActionParams = Readonly<{
   codeDepartement: string
   contact?: ChoixContactAction
+  contacts?: Readonly<{
+    aAjouter: ReadonlyArray<ContactAction>
+    aModifier: ReadonlyArray<ContactAction & Readonly<{ id: number }>>
+    aSupprimer: ReadonlyArray<number>
+  }>
   contactTechnique?: ChoixContactAction
   entreprise: Readonly<{
     adresse: string
@@ -84,6 +97,18 @@ type ActionParams = Readonly<{
   }>
   path: string
 }>
+
+const contactSchema = z.object({
+  email: z.string().email({ message: "L'email doit être valide" }),
+  fonction: z.string().min(1, { message: 'La fonction du contact doit être renseignée' }),
+  nom: z.string().min(1, { message: 'Le nom du contact doit être renseigné' }),
+  prenom: z.string().min(1, { message: 'Le prénom du contact doit être renseigné' }),
+})
+
+const identifiantContactSchema = z
+  .number()
+  .int()
+  .positive({ message: "L'identifiant du contact doit être un entier positif" })
 
 const choixContactSchema = z.discriminatedUnion('type', [
   z.object({
@@ -102,6 +127,13 @@ const choixContactSchema = z.discriminatedUnion('type', [
 const validator = z.object({
   codeDepartement: z.string().min(1, { message: 'Le code département doit être renseigné' }),
   contact: choixContactSchema.optional(),
+  contacts: z
+    .object({
+      aAjouter: z.array(contactSchema),
+      aModifier: z.array(contactSchema.extend({ id: identifiantContactSchema })),
+      aSupprimer: z.array(identifiantContactSchema),
+    })
+    .optional(),
   contactTechnique: choixContactSchema.optional(),
   entreprise: z.object({
     adresse: z.string().min(1, { message: "L'adresse doit être renseignée" }),
