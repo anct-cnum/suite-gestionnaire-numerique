@@ -401,8 +401,8 @@ function StructureRow({ structure }: Readonly<{ structure: StructureListeViewMod
           <span className="fr-text-mention--grey">0</span>
         )}
       </td>
-      <td>{tagConventionConseillerNumerique(structure.conventionConseillerNumerique)}</td>
-      <td>
+      <td className="fr-col--md">{tagConventionConseillerNumerique(structure.conventionConseillerNumerique)}</td>
+      <td className="fr-col--md">
         {structure.estHabiliteeAidantsConnect ? (
           <span className="fr-badge fr-badge--success fr-badge--no-icon fr-badge--sm">Habilitée</span>
         ) : null}
