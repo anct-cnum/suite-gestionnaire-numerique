@@ -5,6 +5,7 @@ import { z } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { ContactExistant, EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { createApiEntrepriseLoader } from '@/gateways/factories/apiEntrepriseLoaderFactory'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { entreprisePresenter } from '@/presenters/entreprisePresenter'
 import {
   EntrepriseNonTrouvee,
@@ -15,6 +16,12 @@ import {
 export async function rechercherUneEntrepriseAction(
   actionParam: ActionParams
 ): Promise<EntrepriseViewModel | ReadonlyArray<string>> {
+  // Une server action est appelable directement : sans ce contrôle, les contacts seraient exposés sans connexion
+  const session = await getSession()
+  if (!session) {
+    return ['Vous devez être connecté pour rechercher une entreprise']
+  }
+
   const validationResult = validator.safeParse(actionParam)
 
   if (validationResult.error) {
