@@ -10,7 +10,7 @@ export class PrismaFinancementsLoader implements FinancementLoader {
 
   async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
     return this.#charger(
-      territoire === 'France' ? { not: 'zzz' } : territoire,
+      territoire === 'France' ? undefined : territoire,
       territoire === 'France' ? Prisma.empty : Prisma.sql`WHERE a.departement = ${territoire}`,
       territoire
     )

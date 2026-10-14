@@ -4,6 +4,7 @@ import { Prisma } from '../../../../../prisma/generated/client'
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'
+import { escapeCSV } from '@/shared/csv'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -86,13 +87,6 @@ type MembreAvecContacts = Readonly<{
 
 function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
   const headers = ['Structure', 'Typologie', 'Nom', 'Prénom', 'Email', 'Téléphone', 'Fonction', 'Referent FNE']
-
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
 
   const rows = membres.flatMap((membre) => {
     if (membre.contacts.length === 0) {

@@ -2,6 +2,8 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface LieuDetailsReadModel {
   codeDepartement?: string
+  // Région du département de l'adresse du lieu (droits du gestionnaire région, #2092).
+  codeRegion?: string
   estArchive: boolean
   // Lieu porté par la Coop numérique (structure_coop_id) : la Coop garde sa vérité,
   // MIN le présente en lecture seule (#1951).

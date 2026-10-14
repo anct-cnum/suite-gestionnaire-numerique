@@ -229,6 +229,40 @@ describe('ajouter une action à une feuille de route', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('utilisateurNePeutPasAjouterAction')
   })
+
+  it('étant donné une gouvernance, quand son gestionnaire crée une action sur une feuille de route rattachée à une autre gouvernance, alors une erreur est renvoyée et rien n’est créé', async () => {
+    // GIVEN
+    const ajouterAction = new AjouterUneAction(
+      new GouvernanceRepositorySpy(),
+      new FeuilleDeRouteAutreGouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      new ActionRepositorySpy(),
+      new DemandeDeSubventionRepositorySpy(),
+      new CoFinancementRepositorySpy(),
+      new TransactionRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await ajouterAction.handle({
+      besoins: ['besoin 1'],
+      budgetGlobal: 10000,
+      contexte: 'Un contexte',
+      dateDeDebut: new Date(epochTime).toISOString(),
+      dateDeFin: new Date(epochTime).toISOString(),
+      description: 'Description valide',
+      destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
+      nom,
+      uidEditeur,
+      uidFeuilleDeRoute,
+      uidGouvernance,
+      uidPorteurs: [uidPorteur],
+    })
+
+    // THEN
+    expect(spiedActionToAdd).toBeNull()
+    expect(result).toBe('feuilleDeRouteNonAssocieeALaGouvernance')
+  })
 })
 
 const uidGouvernance = 'gouvernanceFooId'
@@ -258,6 +292,21 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository {
         uid: uidGouvernance,
       })
     )
+  }
+}
+
+class FeuilleDeRouteAutreGouvernanceRepositorySpy
+  implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository
+{
+  async get(uid: string): Promise<FeuilleDeRoute> {
+    spiedFeuilleDeRouteUidToFind = uid
+    return Promise.resolve(
+      feuilleDeRouteFactory({ uid: { value: uid }, uidGouvernance: { value: 'autreGouvernanceId' } })
+    )
+  }
+
+  async update(_feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    return Promise.resolve()
   }
 }
 

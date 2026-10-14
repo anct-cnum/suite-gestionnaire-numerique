@@ -5,7 +5,7 @@ import { ReactElement, useContext, useState } from 'react'
 
 import EtapeConfirmationMembre from './EtapeConfirmationMembre'
 import EtapeSelectionMembre from './EtapeSelectionMembre'
-import { AjoutMembreEtape, NouveauMembreData } from './types'
+import { AjoutMembreEtape, ChoixContact, NouveauMembreData } from './types'
 import { clientContext } from '../shared/ClientContext'
 import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import { Notification } from '../shared/Notification/Notification'
@@ -65,11 +65,11 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
   }
 
   async function confirmerAjoutMembre(): Promise<void> {
-    if (!donneesMembre.entreprise || !donneesMembre.contact) {
+    if (!donneesMembre.entreprise) {
       return
     }
 
-    if (candidature) {
+    if (candidature && donneesMembre.contact) {
       await confirmerCandidature(donneesMembre.entreprise.denomination, donneesMembre.contact)
       return
     }
@@ -77,8 +77,11 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
     try {
       const messages = await ajouterUnMembreAction({
         codeDepartement: codeDepartement ?? '',
-        contact: donneesMembre.contact,
-        contactTechnique: donneesMembre.contactSecondaire ?? undefined,
+        contact: donneesMembre.contact ? choixContactVersAction(donneesMembre.contact) : undefined,
+        contacts: donneesMembre.contacts ? modificationsContactsVersAction() : undefined,
+        contactTechnique: donneesMembre.contactSecondaire
+          ? choixContactVersAction(donneesMembre.contactSecondaire)
+          : undefined,
         entreprise: {
           adresse: donneesMembre.entreprise.adresse,
           categorieJuridiqueCode: donneesMembre.entreprise.categorieJuridiqueCode,
@@ -117,6 +120,28 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
     }
   }
 
+  function modificationsContactsVersAction(): Parameters<typeof ajouterUnMembreAction>[0]['contacts'] {
+    const contacts = donneesMembre.contacts ?? []
+    return {
+      aAjouter: contacts.filter((contact) => contact.idExistant === null).map((contact) => contact.donnees),
+      aModifier: contacts
+        .filter((contact) => contact.idExistant !== null && contact.estModifie)
+        .map((contact) => ({ ...contact.donnees, id: contact.idExistant as number })),
+      aSupprimer: (donneesMembre.contactsSupprimes ?? []).map((contact) => contact.idExistant as number),
+    }
+  }
+
+  function choixContactVersAction(
+    choix: ChoixContact
+  ):
+    | Readonly<{ contactExistantId: number; type: 'existant' }>
+    | Readonly<{ email: string; fonction: string; nom: string; prenom: string; type: 'nouveau' }> {
+    if (choix.type === 'existant') {
+      return { contactExistantId: choix.contactExistantId, type: 'existant' }
+    }
+    return { ...choix.donnees, type: 'nouveau' }
+  }
+
   async function confirmerCandidature(
     denomination: string,
     contact: NonNullable<NouveauMembreData['contact']>
@@ -128,8 +153,10 @@ export default function AjouterUnMembrePage({ candidature, codeDepartement }: Aj
     try {
       const messages = await rejoindreUneGouvernanceAction({
         codeDepartement: donneesMembre.departement.code,
-        contact,
-        contactTechnique: donneesMembre.contactSecondaire ?? undefined,
+        contact: choixContactVersAction(contact),
+        contactTechnique: donneesMembre.contactSecondaire
+          ? choixContactVersAction(donneesMembre.contactSecondaire)
+          : undefined,
         path: pathname,
       })
 

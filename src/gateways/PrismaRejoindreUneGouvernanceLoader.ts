@@ -44,9 +44,6 @@ export class PrismaRejoindreUneGouvernanceLoader implements RejoindreUneGouverna
         departementCode: 'asc',
       },
       where: {
-        departementCode: {
-          not: 'zzz',
-        },
         membres: {
           none: {
             structureId,

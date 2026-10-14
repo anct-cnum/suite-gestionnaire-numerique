@@ -19,19 +19,19 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
                 <Icon icon={membre.logo} />
               </td>
               <td>
-                <Link
-                  className="primary font-weight-700 fr-px-0 no-hover"
-                  href={membre.plusDetailsHref ?? '/'}
-                  style={{
-                    display: 'block',
-                    maxWidth: '300px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {membre.nom}
-                </Link>
+                {membre.plusDetailsHref === undefined ? (
+                  <span className="primary font-weight-700" style={styleNom}>
+                    {membre.nom}
+                  </span>
+                ) : (
+                  <Link
+                    className="primary font-weight-700 fr-px-0 no-hover"
+                    href={membre.plusDetailsHref}
+                    style={styleNom}
+                  >
+                    {membre.nom}
+                  </Link>
+                )}
               </td>
               <td className="color-grey">{membre.type}</td>
               <td>
@@ -49,6 +49,14 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
     </div>
   )
 }
+
+const styleNom = {
+  display: 'block',
+  maxWidth: '300px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+} as const
 
 type Props = Readonly<{
   coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>

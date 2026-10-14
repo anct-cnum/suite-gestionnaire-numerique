@@ -72,6 +72,26 @@ describe('supprimer un comité', () => {
     expect(spiedComiteToDrop).toBeNull()
     expect(result).toBe('editeurNePeutPasSupprimerComite')
   })
+
+  it('étant donné une gouvernance, quand son gestionnaire supprime un comité rattaché à une autre gouvernance, alors une erreur est renvoyée et rien n’est supprimé', async () => {
+    // GIVEN
+    const supprimerUnComite = new SupprimerUnComite(
+      new GouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      new ComiteAutreGouvernanceRepositorySpy()
+    )
+
+    // WHEN
+    const result = await supprimerUnComite.handle({
+      uid: uidComite,
+      uidEditeur,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(spiedComiteToDrop).toBeNull()
+    expect(result).toBe('comiteNonAssocieALaGouvernance')
+  })
 })
 
 const uidComite = 'comiteFooId'
@@ -117,6 +137,20 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class ComiteAutreGouvernanceRepositorySpy implements DropComiteRepository, GetComiteRepository {
+  async drop(comite: Comite): Promise<void> {
+    spiedComiteToDrop = comite
+    return Promise.resolve()
+  }
+
+  async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
+    spiedComiteUidToFind = uid
+    return Promise.resolve(
+      comiteFactory({ uid: { value: uidComite }, uidGouvernance: { value: 'autreGouvernanceId' } })
+    )
   }
 }
 

@@ -9,18 +9,13 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerritorialesLoader {
   async get(): Promise<ErrorReadModel | GouvernancesTerritorialesReadModel> {
     try {
-      // Récupérer toutes les gouvernances sauf 'zzz'
+      // Récupérer toutes les gouvernances
       const gouvernances = await prisma.gouvernanceRecord.findMany({
         include: {
           membres: {
             where: {
               isCoporteur: true,
             },
-          },
-        },
-        where: {
-          departementCode: {
-            not: 'zzz',
           },
         },
       })

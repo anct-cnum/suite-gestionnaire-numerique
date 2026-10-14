@@ -86,6 +86,10 @@ export class Comite extends Entity<State> {
       return (error as Exception<ComiteFailure>).message as ComiteFailure
     }
   }
+
+  appartientALaGouvernance(uidGouvernance: string): boolean {
+    return uidGouvernance === this.#uidGouvernance.state.value
+  }
 }
 
 export type ComiteFailure =

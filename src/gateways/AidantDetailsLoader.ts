@@ -35,6 +35,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           main.adresse.nom_commune as employeur_nom_commune,
           main.adresse.nom_voie as employeur_nom_voie,
           main.adresse.numero_voie as employeur_numero_voie,
+          admin.departement.code as employeur_departement_code,
           admin.departement.nom  as employeur_departement,
           admin.region.nom as employeur_region
 
@@ -191,18 +192,23 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     const contact = (personne.aidant_contact as null | Record<string, unknown>) ?? {}
 
     // Nouvelle structure: {"coop": {"email": "..."}, "idposte": {"mail_pro": "...", "mail_perso": "..."}}
+    // Seules les adresses professionnelles sont affichées : mail_perso est une adresse privée.
     const coop = (contact.coop as null | Record<string, unknown>) ?? {}
     const idposte = (contact.idposte as null | Record<string, unknown>) ?? {}
 
-    const emails = [
-      coop.email as null | string,
-      idposte.mail_pro as null | string,
-      idposte.mail_perso as null | string,
-    ].filter((email): email is string => Boolean(email))
+    const emails = Array.from(
+      new Set(
+        [coop.email as null | string, idposte.mail_pro as null | string].filter((email): email is string =>
+          Boolean(email)
+        )
+      )
+    )
 
     return {
+      codeDepartementEmployeur: personne.employeur_departement_code,
       coopId: personne.aidant_coop_uid ?? '',
       emails,
+      id: personne.aidant_id,
       lieuxActivite: lieuxActiviteData.map((lieu) => ({
         adresse: this.formatAdresse({
           codePostal: lieu.code_postal,
@@ -229,6 +235,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         siret: personne.employeur_siret ?? '',
         type: personne.employeur_categorie_juridique ?? '',
       },
+      structureEmployeuseId: personne.structure_employeuse_id,
       tags: this.generateTags(personne),
       telephone: (coop.telephone as string) || '',
     }
@@ -254,6 +261,7 @@ type PersonneEnrichieResult = Readonly<{
   employeur_categorie_juridique: null | string
   employeur_code_postal: null | string
   employeur_departement: null | string
+  employeur_departement_code: null | string
   employeur_nom_commune: null | string
   employeur_nom_voie: null | string
   employeur_numero_voie: null | number

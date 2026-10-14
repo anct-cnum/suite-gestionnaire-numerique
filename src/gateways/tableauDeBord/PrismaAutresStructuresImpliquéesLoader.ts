@@ -22,13 +22,7 @@ export class PrismaAutresStructuresLoader implements AutresStructuresLoader {
 
   async get(): Promise<AutresStructuresReadModel | ErrorReadModel> {
     try {
-      const membres = await prisma.membreRecord.findMany({
-        where: {
-          gouvernanceDepartementCode: {
-            not: 'zzz',
-          },
-        },
-      })
+      const membres = await prisma.membreRecord.findMany()
 
       const autresStructures = membres.filter((membre) => membre.type !== null && !this.#estCollectivite(membre.type))
       const nombreCoporteurs = autresStructures.filter((membre) => membre.isCoporteur).length

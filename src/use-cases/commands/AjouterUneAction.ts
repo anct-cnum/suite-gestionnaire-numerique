@@ -55,6 +55,9 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return 'utilisateurNePeutPasAjouterAction'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
+    if (!feuilleDeRoute.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'feuilleDeRouteNonAssocieeALaGouvernance'
+    }
 
     const action = Action.create({
       besoins: command.besoins,
@@ -176,6 +179,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
 
 type Failure =
   | 'erreurInconnue'
+  | 'feuilleDeRouteNonAssocieeALaGouvernance'
   | 'utilisateurNePeutPasAjouterAction'
   | ActionFailure
   | CoFinancementFailure

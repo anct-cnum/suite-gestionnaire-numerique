@@ -126,6 +126,10 @@ export class FeuilleDeRoute extends Entity<State> {
     return 'OK'
   }
 
+  appartientALaGouvernance(uidGouvernance: string): boolean {
+    return uidGouvernance === this.#uidGouvernance.state.value
+  }
+
   mettreAjourLaDateDeModificationEtLEditeur(date: Date, editeur: Utilisateur): this {
     this.#dateDeModification = new ValidDate(date, 'dateDeModificationInvalide')
     this.#uidEditeur = new UtilisateurUid(editeur.state.uid)

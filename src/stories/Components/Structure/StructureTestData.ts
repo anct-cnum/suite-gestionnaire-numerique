@@ -1,3 +1,4 @@
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from '@/presenters/shared/enveloppe'
 import { StructureViewModel } from '@/presenters/structurePresenter'
 
 export function createDefaultStructureViewModel(): StructureViewModel {
@@ -98,24 +99,9 @@ export function createDefaultStructureViewModel(): StructureViewModel {
       ],
       creditsEngagesParLEtat: '350 000 €',
       enveloppes: [
-        {
-          color: 'france',
-          libelle: 'France Services',
-          montant: 150000,
-          montantFormate: '150 000 €',
-        },
-        {
-          color: 'menthe',
-          libelle: 'Inclusion numérique',
-          montant: 120000,
-          montantFormate: '120 000 €',
-        },
-        {
-          color: 'tilleul',
-          libelle: 'Médiation numérique',
-          montant: 80000,
-          montantFormate: '80 000 €',
-        },
+        enveloppeViewModel('Conseiller Numérique - initiale - État', 150000, '150 000 €'),
+        enveloppeViewModel('Conseiller Numérique - Renouvellement - État', 120000, '120 000 €'),
+        enveloppeViewModel('Ingénierie France Numérique Ensemble - 2024 - État', 80000, '80 000 €'),
       ],
       lienConventions: '/conventions',
     },
@@ -225,5 +211,17 @@ export function createStructureViewModelWithMinimalData(): StructureViewModel {
       membreDepuisLe: '-',
     },
     structureId: 2,
+  }
+}
+
+function enveloppeViewModel(libelle: string, montant: number, montantFormate: string) {
+  const color = obtenirCouleurEnveloppe(libelle)
+
+  return {
+    color,
+    couleurGraphique: obtenirCouleurGraphique(color),
+    libelle,
+    montant,
+    montantFormate,
   }
 }

@@ -8,6 +8,7 @@ export type StatistiquesFilters = Readonly<{
   lieux?: ReadonlyArray<string> // UUIDs
   mediateurs?: ReadonlyArray<string> // UUIDs
   structuresEmployeuses?: ReadonlyArray<string> // ids main (SGN) des structures employeuses
+  tags?: ReadonlyArray<string> // UUIDs coop.tags (OU : au moins un des tags)
   thematiqueAdministratives?: ReadonlyArray<string> // clés PascalCase des thématiques démarches administratives
   thematiqueNonAdministratives?: ReadonlyArray<string> // clés PascalCase des thématiques médiation numérique
   types?: ReadonlyArray<'Collectif' | 'Demarche' | 'Individuel'>

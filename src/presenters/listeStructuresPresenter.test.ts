@@ -28,6 +28,7 @@ describe('liste structures presenter', () => {
     expect(viewModel.structures[0]).toStrictEqual({
       adresseComplete: '3 BIS AVENUE CHARLES DE GAULLE',
       codePostalCommune: '69002 LYON',
+      conventionConseillerNumerique: null,
       estHabiliteeAidantsConnect: false,
       estLabelliseeConseillerNumerique: false,
       estMembreFne: false,
@@ -104,6 +105,38 @@ describe('liste structures presenter', () => {
     }
   )
 
+  it.each([
+    {
+      conventionConseillerNumerique: 'en-cours' as const,
+      intention: 'une structure avec un poste conum actif a une convention en cours',
+      possedePosteConum: true,
+      possedePosteConumActif: true,
+    },
+    {
+      conventionConseillerNumerique: 'expiree' as const,
+      intention: 'une structure avec des postes conum tous rendus a une convention expirée',
+      possedePosteConum: true,
+      possedePosteConumActif: false,
+    },
+    {
+      conventionConseillerNumerique: null,
+      intention: "une structure sans aucun poste conum n'a pas de convention",
+      possedePosteConum: false,
+      possedePosteConumActif: false,
+    },
+  ])('$intention', ({ conventionConseillerNumerique, possedePosteConum, possedePosteConumActif }) => {
+    // GIVEN
+    const readModel = listeStructuresReadModel({
+      structures: [structure({ possedePosteConum, possedePosteConumActif })],
+    })
+
+    // WHEN
+    const viewModel = listeStructuresPresenter(readModel, epochTime) as ListeStructuresViewModel
+
+    // THEN
+    expect(viewModel.structures[0].conventionConseillerNumerique).toBe(conventionConseillerNumerique)
+  })
+
   it('sans SIRET, le lien annuaire entreprises est vide', () => {
     // GIVEN
     const readModel = listeStructuresReadModel({ structures: [structure({ siret: '' })] })
@@ -151,6 +184,7 @@ function structure(override: Partial<StructureListeReadModel>): StructureListeRe
     id: 1,
     nom: 'Structure',
     nombreRessourcesHumaines: 0,
+    possedePosteConum: false,
     possedePosteConumActif: false,
     siret: '11111111111111',
     typologie: 'Association',

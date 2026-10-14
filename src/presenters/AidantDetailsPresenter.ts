@@ -2,7 +2,10 @@
 import { AidantDetailsData } from '@/components/AidantDetails/AidantDetails'
 import { AidantDetailsReadModel } from '@/use-cases/queries/RecupererAidantDetails'
 
-export function presentAidantDetails(readModel: AidantDetailsReadModel): AidantDetailsData {
+export function presentAidantDetails(
+  readModel: AidantDetailsReadModel,
+  peutModifierInfosPerso: boolean
+): AidantDetailsData {
   return {
     header: {
       modificationAutheur: '-',
@@ -12,8 +15,10 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel): AidantD
       tags: readModel.tags,
     },
     informationsPersonnelles: {
+      aidantId: readModel.id,
       emails: readModel.emails,
       nom: readModel.nom,
+      peutModifier: peutModifierInfosPerso,
       prenom: readModel.prenom,
       telephone: readModel.telephone || undefined,
     },

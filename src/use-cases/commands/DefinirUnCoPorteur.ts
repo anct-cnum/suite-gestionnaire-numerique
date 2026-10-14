@@ -49,6 +49,9 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
       return 'UtilisateurNonAutorise'
     }
     const membre = await this.membreRepository.get(command.uidMembre)
+    if (!membre.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'MembreNonAssocieALaGouvernance'
+    }
 
     if (membre instanceof MembreCandidat) {
       return 'MembreDoitEtreConfirmer'
@@ -174,7 +177,12 @@ export class DefinirUnCoPorteur implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'MembreDéjàCoPorteur' | 'MembreDoitEtreConfirmer' | 'UtilisateurNonAutorise' | MembreFailure
+type Failure =
+  | 'MembreDéjàCoPorteur'
+  | 'MembreDoitEtreConfirmer'
+  | 'MembreNonAssocieALaGouvernance'
+  | 'UtilisateurNonAutorise'
+  | MembreFailure
 
 type Command = Readonly<{
   uidGouvernance: string

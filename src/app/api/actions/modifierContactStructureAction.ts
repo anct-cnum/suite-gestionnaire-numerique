@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import { MESSAGE_CONTACT_HORS_STRUCTURE, verifierDroitsStructure } from './shared/verifierDroitsStructure'
 import { PrismaStructureRepository } from '@/gateways/PrismaStructureRepository'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
@@ -15,14 +16,26 @@ export async function modifierContactStructureAction(actionParams: ActionParams)
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    await new PrismaStructureRepository().modifierContact(actionParams.contactId, {
-      email: actionParams.email,
-      estReferentFNE: actionParams.estReferentFNE,
-      fonction: actionParams.fonction,
-      nom: actionParams.nom,
-      prenom: actionParams.prenom,
-      telephone: actionParams.telephone,
-    })
+    const verification = await verifierDroitsStructure(actionParams.structureId)
+    if (verification.statut === 'refus') {
+      return [verification.message]
+    }
+
+    const estModifie = await new PrismaStructureRepository().modifierContact(
+      actionParams.structureId,
+      actionParams.contactId,
+      {
+        email: actionParams.email,
+        estReferentFNE: actionParams.estReferentFNE,
+        fonction: actionParams.fonction,
+        nom: actionParams.nom,
+        prenom: actionParams.prenom,
+        telephone: actionParams.telephone,
+      }
+    )
+    if (!estModifie) {
+      return [MESSAGE_CONTACT_HORS_STRUCTURE]
+    }
 
     revalidatePath(actionParams.path)
 

@@ -10,18 +10,12 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
   async get(): Promise<ErrorReadModel | FeuillesDeRouteDeposeesReadModel> {
     try {
       // Récupérer toutes les feuilles de route avec leurs actions et demandes de subvention
-      // en excluant le département 'zzz'
       const feuillesDeRoute = await prisma.feuilleDeRouteRecord.findMany({
         include: {
           action: {
             include: {
               demandesDeSubvention: true,
             },
-          },
-        },
-        where: {
-          gouvernanceDepartementCode: {
-            not: 'zzz',
           },
         },
       })

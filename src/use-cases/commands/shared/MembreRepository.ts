@@ -13,8 +13,8 @@ export interface CreateMembreRepository {
   create(
     membre: Membre,
     entrepriseData: EntrepriseData,
-    contactData?: ContactData,
-    contactTechniqueData?: ContactData,
+    contactData?: ChoixContactData,
+    contactTechniqueData?: ChoixContactData,
     tx?: Prisma.TransactionClient
   ): Promise<void>
 }
@@ -25,6 +25,9 @@ export type ContactData = Readonly<{
   nom: string
   prenom: string
 }>
+
+export type ChoixContactData =
+  Readonly<{ contactExistantId: number; type: 'existant' }> | Readonly<{ donnees: ContactData; type: 'nouveau' }>
 
 export type EntrepriseData = Readonly<{
   categorieJuridiqueCode: string

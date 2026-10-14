@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { forbidden, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ComparerStructures from '@/components/StructuresDoublons/ComparerStructures'
@@ -26,7 +26,7 @@ export default async function ComparerStructuresController({ searchParams }: Pro
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
   // Visibilité ouverte à tous les administrateurs (ANCT) ; la fusion reste réservée aux bêta-testeurs.
   if (!contexte.aCesRoles('administrateur_dispositif')) {
-    redirect('/tableau-de-bord')
+    forbidden()
   }
 
   const { ids } = await searchParams

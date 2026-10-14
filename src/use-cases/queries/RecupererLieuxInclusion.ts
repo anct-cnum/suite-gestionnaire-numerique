@@ -1,4 +1,4 @@
-import { ScopeFiltre } from './ResoudreContexte'
+import { ScopeLieux } from './ResoudreContexte'
 import { CouleurFraicheur } from '@/shared/fraicheur'
 
 export type FiltreGeographiqueLieux = Readonly<{
@@ -17,7 +17,7 @@ export type FiltresListeLieux = Readonly<{
   nom?: string
   pagination: Readonly<{ limite: number; page: number }>
   qpv?: boolean
-  scopeFiltre: ScopeFiltre
+  scopeFiltre: ScopeLieux
   statut: StatutLieux
 }>
 

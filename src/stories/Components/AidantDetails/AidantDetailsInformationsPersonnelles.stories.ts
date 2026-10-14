@@ -7,9 +7,6 @@ const meta: Meta<typeof InformationsPersonnellesCard> = {
     data: {
       description: "Données des informations personnelles de l'aidant",
     },
-    onEdit: {
-      description: 'Callback pour éditer les informations personnelles',
-    },
   },
   component: InformationsPersonnellesCard,
   parameters: {
@@ -25,19 +22,31 @@ type Story = StoryObj
 export const Default: Story = {
   args: {
     data: {
+      aidantId: 1,
       emails: ['sophie.martin@example.com'],
       nom: 'Martin',
+      peutModifier: true,
       prenom: 'Sophie',
       telephone: '01 23 45 67 89',
     },
   },
 }
 
-export const AvecCallbackEdit: Story = {
+export const AvecPlusieursEmails: Story = {
   args: {
     data: createDefaultInformationsPersonnellesData(),
-    onEdit(): void {
-      // Mock callback pour édition
+  },
+}
+
+export const SansDroitDeModification: Story = {
+  args: {
+    data: {
+      aidantId: 2,
+      emails: ['sophie.martin@example.com'],
+      nom: 'Martin',
+      peutModifier: false,
+      prenom: 'Sophie',
+      telephone: '01 23 45 67 89',
     },
   },
 }
@@ -45,8 +54,10 @@ export const AvecCallbackEdit: Story = {
 export const SansEmailNiTelephone: Story = {
   args: {
     data: {
+      aidantId: 3,
       emails: [],
       nom: 'Dupont',
+      peutModifier: true,
       prenom: 'Jean',
     },
   },
@@ -55,8 +66,10 @@ export const SansEmailNiTelephone: Story = {
 export const AvecEmailSeul: Story = {
   args: {
     data: {
+      aidantId: 4,
       emails: ['marie.durand@example.com'],
       nom: 'Durand',
+      peutModifier: true,
       prenom: 'Marie',
     },
   },
@@ -65,8 +78,10 @@ export const AvecEmailSeul: Story = {
 export const AvecTelephoneSeul: Story = {
   args: {
     data: {
+      aidantId: 5,
       emails: [],
       nom: 'Leroy',
+      peutModifier: true,
       prenom: 'Pierre',
       telephone: '06 12 34 56 78',
     },

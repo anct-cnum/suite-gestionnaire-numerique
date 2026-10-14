@@ -23,10 +23,13 @@ export class SupprimerUnComite implements CommandHandler<Command> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
 
-    const comite = await this.#comiteRepository.get(command.uid)
-
     if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'editeurNePeutPasSupprimerComite'
+    }
+
+    const comite = await this.#comiteRepository.get(command.uid)
+    if (!comite.appartientALaGouvernance(command.uidGouvernance)) {
+      return 'comiteNonAssocieALaGouvernance'
     }
 
     await this.#comiteRepository.drop(comite)
@@ -35,7 +38,7 @@ export class SupprimerUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'editeurNePeutPasSupprimerComite'
+type Failure = 'comiteNonAssocieALaGouvernance' | 'editeurNePeutPasSupprimerComite'
 
 type Command = Readonly<{
   uid: string

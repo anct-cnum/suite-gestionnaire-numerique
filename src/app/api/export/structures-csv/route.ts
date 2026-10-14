@@ -5,6 +5,7 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaListeStructuresLoader } from '@/gateways/PrismaListeStructuresLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { escapeCSV } from '@/shared/csv'
 import {
   buildFiltresListeStructuresForExport,
   FiltresListeStructuresURLParams,
@@ -93,17 +94,11 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     'SIRET',
     'Membre FNE',
     'Ressource humaine',
+    'Conseiller numérique',
     'Labellisation / habilitation',
   ]
 
   // Fonction pour échapper les valeurs CSV
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
-
   function labellisations(structure: StructureListeReadModel): string {
     const labels: Array<string> = []
     if (estLabelConumActif(structure.derniereAttestationLabelConum, now) || structure.possedePosteConumActif) {
@@ -115,6 +110,16 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     return labels.join(', ')
   }
 
+  function conventionConum(structure: StructureListeReadModel): string {
+    if (structure.possedePosteConumActif) {
+      return 'Convention en cours'
+    }
+    if (structure.possedePosteConum) {
+      return 'Convention expirée'
+    }
+    return ''
+  }
+
   const rows = structures.map((structure) => [
     escapeCSV(structure.nom),
     escapeCSV(structure.typologie),
@@ -124,6 +129,7 @@ function generateCSV(structures: Array<StructureListeReadModel>, now: Date): str
     escapeCSV(structure.siret),
     structure.estMembreFne ? 'Oui' : 'Non',
     String(structure.nombreRessourcesHumaines),
+    escapeCSV(conventionConum(structure)),
     escapeCSV(labellisations(structure)),
   ])
 

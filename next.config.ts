@@ -68,6 +68,9 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  experimental: {
+    authInterrupts: true,
+  },
   headers() {
     return process.env.NODE_ENV === 'development'
       ? []

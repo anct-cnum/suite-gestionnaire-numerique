@@ -91,12 +91,8 @@ export class PrismaGouvernancesInfosLoader {
       include: {
         relationRegion: true,
       },
-      where: {
-        code:
-          codesDepartements !== undefined && codesDepartements.length > 0
-            ? { in: [...codesDepartements] }
-            : { not: 'zzz' },
-      },
+      where:
+        codesDepartements !== undefined && codesDepartements.length > 0 ? { code: { in: [...codesDepartements] } } : {},
     })
   }
 

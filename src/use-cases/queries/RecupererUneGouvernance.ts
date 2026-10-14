@@ -32,6 +32,9 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 
     return {
       ...readModel,
+      // La note privée est retirée du modèle dès le serveur : une prop d'un composant client est
+      // lisible par son destinataire, le masquage à l'affichage ne protège rien.
+      notePrivee: peutVoirNotePrivee ? readModel.notePrivee : undefined,
       peutGererGouvernance,
       peutVoirNotePrivee,
     }

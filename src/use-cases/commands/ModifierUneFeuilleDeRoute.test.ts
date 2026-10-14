@@ -127,6 +127,30 @@ describe('modifier une feuille de route', () => {
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()
     expect(result).toBe('editeurNePeutPasModifierFeuilleDeRoute')
   })
+
+  it('étant donné une gouvernance, quand son gestionnaire modifie une feuille de route rattachée à une autre gouvernance, alors une erreur est renvoyée et rien n’est modifié', async () => {
+    // GIVEN
+    const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteAutreGouvernanceRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await modifierFeuilleDeRoute.handle({
+      nom,
+      perimetreGeographique,
+      uidEditeur,
+      uidFeuilleDeRoute,
+      uidGouvernance,
+      uidPorteur,
+    })
+
+    // THEN
+    expect(spiedFeuilleDeRouteToUpdate).toBeNull()
+    expect(result).toBe('feuilleDeRouteNonAssocieeALaGouvernance')
+  })
 })
 
 const uidGouvernance = 'gouvernanceFooId'
@@ -167,6 +191,22 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
+  }
+}
+
+class FeuilleDeRouteAutreGouvernanceRepositorySpy
+  implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository
+{
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
+    spiedFeuilleDeRouteUidToFind = uid
+    return Promise.resolve(
+      feuilleDeRouteFactory({ uid: { value: uid }, uidGouvernance: { value: 'autreGouvernanceId' } })
+    )
+  }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteToUpdate = feuilleDeRoute
+    return Promise.resolve()
   }
 }
 

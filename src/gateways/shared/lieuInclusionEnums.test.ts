@@ -18,7 +18,7 @@ describe('conversion des libellés du référentiel vers les enums main', () => 
       attendu: ['SePresenter', 'PasDePublic'],
       champ: 'modalites_acces',
       intention: 'des modalités d’accès, dont le libellé à apostrophe typographique U+2019',
-      libelles: ['Se présenter', 'Ce lieu n’accueille pas de public'],
+      libelles: ['Se présenter', "Ce lieu n'accueille pas de public"],
       mapping: modalitesAccesVersEnum,
     },
     {

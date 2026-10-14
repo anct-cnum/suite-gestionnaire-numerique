@@ -19,13 +19,7 @@ export class PrismaCollectivitesLoader implements CollectivitesLoader {
 
   async get(): Promise<CollectivitesReadModel | ErrorReadModel> {
     try {
-      const membres = await prisma.membreRecord.findMany({
-        where: {
-          gouvernanceDepartementCode: {
-            not: 'zzz',
-          },
-        },
-      })
+      const membres = await prisma.membreRecord.findMany()
 
       const collectivites = membres.filter((membre) => this.#estCollectivite(membre.type ?? ''))
       const nombreCoporteurs = collectivites.filter((membre) => membre.isCoporteur).length

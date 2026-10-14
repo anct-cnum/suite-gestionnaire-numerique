@@ -1,6 +1,9 @@
 import prisma from '../../../../../prisma/prismaClient'
+import { GestionnaireStructure } from '@/domain/GestionnaireStructure'
 import { LieuInclusion } from '@/domain/LieuInclusion'
+import { Utilisateur } from '@/domain/Utilisateur'
 import { getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaLieuxDeLaStructureLoader } from '@/gateways/PrismaLieuxDeLaStructureLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -40,30 +43,45 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
     return refus(MESSAGE_LIEU_GERE_PAR_LA_COOP)
   }
 
-  // Départements des gouvernances dont la structure du lieu est membre.
-  const gouvernancesDepartements = await prisma.membreRecord.findMany({
-    select: {
-      gouvernanceDepartementCode: true,
-    },
-    where: {
-      dateSuppression: null,
-      structureId: lieu.structureId,
-    },
-  })
-  const departementsGouvernances = gouvernancesDepartements.map((membre) => membre.gouvernanceDepartementCode)
-
   const peutModifier = LieuInclusion.peutEtreModifiePar(
     utilisateur,
-    lieu.codeDepartement,
-    lieu.structureId,
-    lieu.personnesTravaillant.length,
-    departementsGouvernances
+    {
+      codeDepartement: lieu.codeDepartement,
+      codeRegion: lieu.codeRegion,
+      estDeLaStructureDuDemandeur: await estLieuDeLaStructureDuDemandeur(utilisateur, Number(lieuId)),
+    },
+    await departementsCoportesParLeDemandeur(utilisateur)
   )
   if (!peutModifier) {
     return refus(`Vous n'avez pas les droits pour ${options.action} ce lieu`)
   }
 
   return { lieu, statut: 'ok' }
+}
+
+// Départements des gouvernances dont la structure du DEMANDEUR est co-porteuse (membre confirmé) :
+// c'est son périmètre qui est comparé au lieu, jamais celui de la structure du lieu (#1979). Un
+// co-porteur a sur les lieux de son département les mêmes droits qu'un gestionnaire département ;
+// un simple membre de gouvernance n'en a aucun (#2081).
+export async function departementsCoportesParLeDemandeur(utilisateur: Utilisateur): Promise<ReadonlyArray<string>> {
+  if (!(utilisateur instanceof GestionnaireStructure)) {
+    return []
+  }
+  const appartenances = await new PrismaMembreLoader().getToutesAppartenancesParStructureId(
+    utilisateur.state.structureUid.value
+  )
+  return appartenances
+    .filter((appartenance) => appartenance.estCoporteur)
+    .map((appartenance) => appartenance.codeDepartement)
+}
+
+// Un lieu est à la structure du demandeur selon la même définition que le listing des lieux : tous les
+// employeurs du lieu, lieux quittés compris (#2092). Seul un gestionnaire de structure en tire des droits.
+export async function estLieuDeLaStructureDuDemandeur(utilisateur: Utilisateur, lieuId: number): Promise<boolean> {
+  if (!(utilisateur instanceof GestionnaireStructure)) {
+    return false
+  }
+  return new PrismaLieuxDeLaStructureLoader().estLieuDeLaStructure(lieuId, utilisateur.state.structureUid.value)
 }
 
 type VerificationDroitsLieu =

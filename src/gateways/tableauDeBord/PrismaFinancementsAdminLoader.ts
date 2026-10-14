@@ -13,19 +13,12 @@ export class PrismaFinancementsAdminLoader implements FinancementAdminLoader {
     try {
       const [enveloppes, demandesAcceptees, conseillerNumerique] = await Promise.all([
         this.#enveloppeDao.findMany(),
-        // Récupérer toutes les demandes de subvention acceptées (en excluant zzz)
+        // Récupérer toutes les demandes de subvention acceptées
         this.#demandeDeSubventionDao.findMany({
           include: {
             enveloppe: true,
           },
           where: {
-            action: {
-              feuilleDeRoute: {
-                gouvernanceDepartementCode: {
-                  not: 'zzz',
-                },
-              },
-            },
             statut: StatutSubvention.ACCEPTEE,
           },
         }),

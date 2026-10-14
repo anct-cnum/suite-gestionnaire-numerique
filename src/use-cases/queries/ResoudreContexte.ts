@@ -18,6 +18,11 @@ export type ScopeFiltre =
   | Readonly<{ id: number; type: 'structure' }>
   | Readonly<{ type: 'national' }>
 
+// Périmètre des écrans lieux (#2092) : un gestionnaire de structure co-porteur voit les lieux des départements
+// qu'il co-porte ∪ les lieux de sa structure ; être simple membre n'ajoute aucun lieu.
+export type ScopeLieux =
+  Readonly<{ codesCoportes: ReadonlyArray<string>; id: number; type: 'structure_et_departements' }> | ScopeFiltre
+
 export class Contexte {
   readonly isBetaTesteur: boolean
   readonly isSuperAdmin: boolean
@@ -48,6 +53,10 @@ export class Contexte {
       }
     }
     return codes
+  }
+
+  codesDepartementsCoportes(): ReadonlyArray<string> {
+    return this.scopes.flatMap((scope) => (scope.type === 'coporteur' && 'code' in scope ? [scope.code] : []))
   }
 
   codeTerritoire(): string {
@@ -150,6 +159,17 @@ export class Contexte {
       return { id: this.idStructure(), type: 'structure' }
     }
     return { codes: this.codesDepartements(), type: 'departemental' }
+  }
+
+  scopeLieux(): ScopeLieux {
+    if (this.role === 'gestionnaire_structure' && this.estCoporteur()) {
+      return {
+        codesCoportes: this.codesDepartementsCoportes(),
+        id: this.idStructure(),
+        type: 'structure_et_departements',
+      }
+    }
+    return this.scopeFiltre()
   }
 }
 

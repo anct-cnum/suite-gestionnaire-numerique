@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { posteConseillerNumeriqueDetailPresenter } from './posteConseillerNumeriqueDetailPresenter'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from './shared/enveloppe'
 import { formatMontant } from './shared/number'
 import { epochTime, epochTimeMinusOneDay } from './testHelper'
 import { PosteConseillerNumeriqueDetailReadModel } from '@/use-cases/queries/RecupererUnPosteConseillerNumerique'
@@ -25,18 +26,8 @@ describe('poste conseiller numérique presenter : caractérisation des enveloppe
     // THEN
     expect(conventionsEtFinancements.creditsEngagesParLEtat).toBe(formatMontant(66_098))
     expect(conventionsEtFinancements.enveloppes).toStrictEqual([
-      {
-        color: 'menthe',
-        libelle: 'Conseiller Numérique - Renouvellement - État',
-        montant: 10_000,
-        montantFormate: formatMontant(10_000),
-      },
-      {
-        color: 'france',
-        libelle: 'Conseiller Numérique - initiale - État',
-        montant: 56_098,
-        montantFormate: formatMontant(56_098),
-      },
+      enveloppeAttendue('Conseiller Numérique - Renouvellement - État', 10_000),
+      enveloppeAttendue('Conseiller Numérique - initiale - État', 56_098),
     ])
     expect(
       conventionsEtFinancements.enveloppes.every((enveloppe) => enveloppe.libelle.startsWith('Conseiller Numérique'))
@@ -55,12 +46,7 @@ describe('poste conseiller numérique presenter : caractérisation des enveloppe
 
     // THEN
     expect(conventionsEtFinancements.enveloppes).toStrictEqual([
-      {
-        color: 'france',
-        libelle: 'Conseiller Numérique - initiale - État',
-        montant: 56_098,
-        montantFormate: formatMontant(56_098),
-      },
+      enveloppeAttendue('Conseiller Numérique - initiale - État', 56_098),
     ])
   })
 
@@ -78,13 +64,34 @@ describe('poste conseiller numérique presenter : caractérisation des enveloppe
 
 function conventionsEtFinancementsDe(readModel: PosteConseillerNumeriqueDetailReadModel): {
   creditsEngagesParLEtat: string
-  enveloppes: ReadonlyArray<{ color: string; libelle: string; montant: number; montantFormate: string }>
+  enveloppes: ReadonlyArray<{
+    color: string
+    couleurGraphique: string
+    libelle: string
+    montant: number
+    montantFormate: string
+  }>
 } {
   const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, epochTime)
   if ('type' in viewModel) {
     throw new Error('viewModel inattendu : ErrorReadModel')
   }
   return viewModel.conventionsEtFinancements
+}
+
+function enveloppeAttendue(
+  libelle: string,
+  montant: number
+): { color: string; couleurGraphique: string; libelle: string; montant: number; montantFormate: string } {
+  const color = obtenirCouleurEnveloppe(libelle)
+
+  return {
+    color,
+    couleurGraphique: obtenirCouleurGraphique(color),
+    libelle,
+    montant,
+    montantFormate: formatMontant(montant),
+  }
 }
 
 function posteReadModel(

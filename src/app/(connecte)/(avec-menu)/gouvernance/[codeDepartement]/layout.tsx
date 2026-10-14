@@ -31,10 +31,10 @@ export default async function Layout({ children, params }: Props): Promise<React
   const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
   return (
-    <>
-      <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>{children}</GouvernanceProvider>
+    <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>
+      {children}
       <Dsfr />
-    </>
+    </GouvernanceProvider>
   )
 }
 

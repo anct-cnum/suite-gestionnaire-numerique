@@ -68,69 +68,9 @@ pnpm dev:vitrine
 
 ### 4. Import des donnees
 
-Vous ne pourrez pas vous connecter sans données en base. Pour cela, vous devez importer un jeu de données complet et pseudonymisé depuis le dataspace.
+Vous ne pourrez pas vous connecter sans données en base.
 
-#### Étape 1 : Déclencher l'export
-
-1. Aller sur [Airflow](https://airflow.inclusion-numerique.anct.gouv.fr/dags/database_pseudonym_export)
-2. Cliquer sur "Déclencher" en haut à droite
-3. Dans la modale, ne rien modifier et cliquer de nouveau sur "Déclencher"
-
-#### Étape 2 : Télécharger l'export
-
-1. Récuperer l'export sur [le drive SoNum](https://drive.societenumerique.gouv.fr/s/9x9TkBD7BQtijEG)
-2. Décompresser `dataspace_pseudonym.tar.gz`
-3. Copier les scripts SQL dans le repertoire `dbs/` du projet
-
-#### Étape 3 : Preparer les scripts
-
-Aller dans `dbs/dataspace-01-structure-pre-data-hors_min.sql` et supprimer la ligne :
-
-```sql
-CREATE SCHEMA min;
-```
-
-#### Étape 4 : Appliquer les scripts
-
-Dans un terminal avec `devbox shell` :
-
-```bash
-docker compose down
-pnpm db:start
-pnpm prisma:reset
-
-docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA main CASCADE;"
-docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA audit CASCADE;"
-docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA admin CASCADE;"
-docker compose exec postgres-dev psql -U min -d min -c "DROP SCHEMA reference CASCADE;"
-
-docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-01-structure-pre-data-hors_min.sql
-docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-02-data-admin-ref.sql
-docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-03-data-main.sql
-docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-04-data-min.sql
-docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-05-structure-post-data-hors_min.sql
-```
-
-#### Étape 5 : Configurer l'utilisateur de test
-
-```bash
-docker compose exec postgres-dev psql -U min -d min -c "UPDATE min.utilisateur
-SET sso_id = 'test@fia1.fr',
-    sso_email = 'test@fia1.fr'
-WHERE departement_code = 'zzz'
-  AND region_code = 'zz'
-  AND role = 'administrateur_dispositif';"
-```
-
-#### Étape 6 : Démarrer l'application
-
-```bash
-pnpm dev
-```
-
-Se connecter avec `test@fia1.fr`.
-
-> En cas de problème de coherence entre le schema Prisma et les scripts générés, verifier les differences et ajuster si necessaire.
+> ⚠️ **Procédure à définir** ([#2059](https://github.com/anct-cnum/suite-gestionnaire-numerique/issues/2059)). L'ancien import d'un jeu pseudonymisé exporté du dataspace n'existe plus : la pseudonymisation a été abandonnée côté dataspace (V177, #2013). En attendant, se rapprocher de l'équipe.
 
 ## Commandes disponibles
 

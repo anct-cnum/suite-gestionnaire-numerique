@@ -5,6 +5,7 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { escapeCSV } from '@/shared/csv'
 import { buildFiltresForExport, FiltresURLParams } from '@/shared/filtresAidantsMediateursUtils'
 import { AidantMediateurAvecAccompagnementReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -101,13 +102,6 @@ function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>)
   ]
 
   // Fonction pour échapper les valeurs CSV
-  function escapeCSV(value: string): string {
-    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-      return `"${value.replace(/"/g, '""')}"`
-    }
-    return value
-  }
-
   // Construction des lignes CSV
   const rows = aidants.map((aidant) => [
     escapeCSV(aidant.id),

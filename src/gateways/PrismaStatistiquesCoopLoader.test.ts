@@ -255,6 +255,15 @@ describe('statistiques coop loader', () => {
       filtres: { thematiqueAdministratives: ['Logement'], thematiqueNonAdministratives: ['Email'] },
       intention: 'par thématiques administratives et non administratives',
     },
+    {
+      // A1 porte les deux tags cochés, A3 un seul, A2 aucun.
+      // Règle OU : A3 est gardée même si elle ne porte qu'un des deux tags.
+      // Sans doublon : A1 porte les deux mais n'est comptée qu'une fois.
+      // Résultat attendu : A1 + A3 = 2 activités.
+      attendu: 2,
+      filtres: { tags: [TAG_PARTAGE, TAG_COORDINATEUR] },
+      intention: 'portant au moins un des tags sélectionnés',
+    },
   ])('filtre les activités $intention', async ({ attendu, filtres }) => {
     // GIVEN
     const loader = new PrismaStatistiquesCoopLoader()

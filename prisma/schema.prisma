@@ -30,7 +30,6 @@ model DepartementRecord {
   regionCode String @map("region_code")
   nom        String
 
-  structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
   relationRegion         RegionRecord                 @relation(fields: [regionCode], references: [code])
@@ -52,30 +51,6 @@ model RegionRecord {
   @@schema("min")
 }
 
-model StructureRecord {
-  id Int @id @default(autoincrement())
-
-  adresse                  String
-  codePostal               String  @map("code_postal")
-  commune                  String
-  /// [Contact]
-  contact                  Json
-  departementCode          String  @map("departement_code")
-  // SIRET ou RIDET
-  identifiantEtablissement String  @map("identifiant_etablissement")
-  // TODO: à supprimer après la migration finale
-  idMongo                  String  @map("id_mongo")
-  nom                      String  @db.Citext
-  statut                   String
-  type                     String
-  categorieJuridique       String? @map("categorie_juridique") @db.VarChar(4)
-
-  relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
-
-  @@map("structure")
-  @@schema("min")
-}
-
 model UtilisateurRecord {
   id Int @id @default(autoincrement())
 
@@ -92,7 +67,6 @@ model UtilisateurRecord {
   prenom            String
   regionCode        String?   @map("region_code")
   role              Role
-  oldStructureId    Int?      @map("old_structure_id")
   structureId       Int?      @map("structure_id")
   ssoId             String    @unique @default("") @map("sso_id")
   ssoEmail          String    @unique @map("sso_email")
@@ -218,7 +192,6 @@ model MembreRecord {
   categorieMembre            String?   @map("categorie_membre")
   siretRidet                 String?   @map("siret_ridet")
   dateSuppression            DateTime? @map("date_suppression")
-  oldStructureId             Int?      @map("old_structure_id")
   structureId                Int       @map("structure_id")
 
   oldUUID String @map("old_uuid") @db.Uuid
@@ -989,7 +962,7 @@ enum main_modalite_acces {
   Telephoner          @map("Téléphoner")
   ContacterParMail    @map("Contacter par mail")
   PrendreRdvEnLigne   @map("Prendre un RDV en ligne")
-  PasDePublic         @map("Ce lieu n’accueille pas de public")
+  PasDePublic         @map("Ce lieu n'accueille pas de public")
   FicheDePrescription @map("Envoyer un mail avec une fiche de prescription")
 
   @@map("modalite_acces")

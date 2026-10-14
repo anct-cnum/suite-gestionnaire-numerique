@@ -3,8 +3,9 @@
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
+import { ContactExistant, EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { createApiEntrepriseLoader } from '@/gateways/factories/apiEntrepriseLoaderFactory'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { entreprisePresenter } from '@/presenters/entreprisePresenter'
 import {
   EntrepriseNonTrouvee,
@@ -15,6 +16,12 @@ import {
 export async function rechercherUneEntrepriseAction(
   actionParam: ActionParams
 ): Promise<EntrepriseViewModel | ReadonlyArray<string>> {
+  // Une server action est appelable directement : sans ce contrôle, les contacts seraient exposés sans connexion
+  const session = await getSession()
+  if (!session) {
+    return ['Vous devez être connecté pour rechercher une entreprise']
+  }
+
   const validationResult = validator.safeParse(actionParam)
 
   if (validationResult.error) {
@@ -31,10 +38,40 @@ export async function rechercherUneEntrepriseAction(
 
     let entrepriseEnrichie = await enrichirEntrepriseAvecCategorieJuridique(entreprise)
     entrepriseEnrichie = await enrichirEntrepriseAvecActivitePrincipale(entrepriseEnrichie)
-    return entreprisePresenter(entrepriseEnrichie)
+    const viewModel = entreprisePresenter(entrepriseEnrichie)
+    const contactsExistants = await rechercherContactsExistants(siretOuRidet)
+
+    if (contactsExistants.length > 0) {
+      return { ...viewModel, contactsExistants }
+    }
+
+    return viewModel
   } catch (error: unknown) {
     return gererErreurRecherche(error)
   }
+}
+
+async function rechercherContactsExistants(siret: string): Promise<ReadonlyArray<ContactExistant>> {
+  const structure = await prisma.main_structure_administrative.findFirst({
+    where: { siret },
+  })
+
+  if (!structure) {
+    return []
+  }
+
+  const contactStructures = await prisma.contact_structure_administrative.findMany({
+    include: { contact: true },
+    where: { structure_administrative_id: structure.id },
+  })
+
+  return contactStructures.map((cs) => ({
+    email: cs.contact.email,
+    fonction: cs.contact.fonction,
+    id: cs.contact.id,
+    nom: cs.contact.nom,
+    prenom: cs.contact.prenom,
+  }))
 }
 
 async function exectuterRechercheEntreprise(siretOuRidet: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {

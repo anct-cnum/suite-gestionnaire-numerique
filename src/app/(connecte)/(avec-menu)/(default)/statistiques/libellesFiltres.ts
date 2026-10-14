@@ -10,6 +10,7 @@ export function construireLibellesFiltres(
     departementsSelectionnes: ReadonlyArray<Option>
     lieuxSelectionnes: ReadonlyArray<Option>
     structuresEmployeusesSelectionnees: ReadonlyArray<Option>
+    tagsSelectionnes: ReadonlyArray<Option>
     thematiqueAdministratives: ReadonlyArray<string>
     thematiqueNonAdministratives: ReadonlyArray<string>
     types: ReadonlyArray<string>
@@ -31,6 +32,7 @@ export function construireLibellesFiltres(
     ...depuisOptions('communes', args.communesSelectionnees),
     ...depuisOptions('structuresEmployeuses', args.structuresEmployeusesSelectionnees),
     ...depuisOptions('lieux', args.lieuxSelectionnes),
+    ...depuisOptions('tags', args.tagsSelectionnes),
     ...depuisValeurs('types', args.types, TYPES_OPTIONS),
     ...depuisValeurs('thematiqueNonAdministratives', args.thematiqueNonAdministratives, THEMATIQUE_NON_ADMIN_OPTIONS),
     ...depuisValeurs('thematiqueAdministratives', args.thematiqueAdministratives, THEMATIQUE_ADMIN_OPTIONS),
@@ -49,6 +51,7 @@ type Categorie =
   | 'lieux'
   | 'periode'
   | 'structuresEmployeuses'
+  | 'tags'
   | 'thematiqueAdministratives'
   | 'thematiqueNonAdministratives'
   | 'types'

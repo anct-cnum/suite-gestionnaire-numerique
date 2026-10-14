@@ -7,7 +7,9 @@ import { ContactReferentRepository } from '@/use-cases/commands/ModifierContactR
 import {
   AdresseARattacher,
   DonneesLegalesEntreprise,
+  MettreAJourContactsStructureRepository,
   MettreAJourStructureDepuisEntrepriseRepository,
+  ModificationsContactsStructure,
   ModifierAdresseStructureRepository,
   ModifierNomStructureData,
   ModifierNomStructureRepository,
@@ -25,6 +27,7 @@ import {
 export class PrismaStructureRepository
   implements
     ContactReferentRepository,
+    MettreAJourContactsStructureRepository,
     MettreAJourStructureDepuisEntrepriseRepository,
     ModifierAdresseStructureRepository,
     ModifierNomStructureRepository,
@@ -114,6 +117,62 @@ export class PrismaStructureRepository
     return structure === null ? null : { denominationAntenne: structure.denomination_antenne }
   }
 
+  async mettreAJourContacts(
+    structureId: number,
+    { aAjouter, aModifier, aSupprimer }: ModificationsContactsStructure,
+    tx: Prisma.TransactionClient
+  ): Promise<void> {
+    const rattacheALaStructure = {
+      contact_structures: {
+        some: {
+          structure_administrative_id: structureId,
+        },
+      },
+    }
+
+    if (aSupprimer.length > 0) {
+      await tx.main_contact.deleteMany({
+        where: {
+          ...rattacheALaStructure,
+          id: { in: [...aSupprimer] },
+        },
+      })
+    }
+
+    for (const contact of aModifier) {
+      await tx.main_contact.updateMany({
+        data: {
+          email: contact.email,
+          fonction: contact.fonction,
+          nom: contact.nom,
+          prenom: contact.prenom,
+        },
+        where: {
+          ...rattacheALaStructure,
+          id: contact.id,
+        },
+      })
+    }
+
+    for (const contact of aAjouter) {
+      const contactCree = await tx.main_contact.create({
+        data: {
+          email: contact.email,
+          est_referent_fne: true,
+          fonction: contact.fonction,
+          nom: contact.nom,
+          prenom: contact.prenom,
+        },
+      })
+      await tx.contact_structure_administrative.create({
+        data: {
+          contact_id: contactCree.id,
+          structure_administrative_id: structureId,
+        },
+      })
+    }
+  }
+
   async mettreAJourDepuisEntreprise(
     structureId: number,
     donneesLegales: DonneesLegalesEntreprise,
@@ -136,8 +195,10 @@ export class PrismaStructureRepository
     })
   }
 
-  async modifierContact(contactId: number, data: ContactStructureData): Promise<void> {
-    await prisma.main_contact.update({
+  // L'écriture est bornée par la relation contact ↔ structure : un contact d'une autre
+  // structure n'est jamais modifié, même si son identifiant est connu. Renvoie false dans ce cas.
+  async modifierContact(structureId: number, contactId: number, data: ContactStructureData): Promise<boolean> {
+    const { count } = await prisma.main_contact.updateMany({
       data: {
         email: data.email,
         est_referent_fne: data.estReferentFNE,
@@ -147,9 +208,16 @@ export class PrismaStructureRepository
         telephone: data.telephone,
       },
       where: {
+        contact_structures: {
+          some: {
+            structure_administrative_id: structureId,
+          },
+        },
         id: contactId,
       },
     })
+
+    return count > 0
   }
 
   async modifierNom(data: ModifierNomStructureData): Promise<boolean> {
@@ -182,19 +250,21 @@ export class PrismaStructureRepository
     return nombre > 0
   }
 
-  async supprimerContact(structureId: number, contactId: number): Promise<void> {
-    await prisma.contact_structure_administrative.deleteMany({
+  // Même bornage que modifierContact : le contact n'est supprimé (et ses rattachements avec lui,
+  // par cascade) que s'il appartient bien à la structure indiquée. Renvoie false sinon.
+  async supprimerContact(structureId: number, contactId: number): Promise<boolean> {
+    const { count } = await prisma.main_contact.deleteMany({
       where: {
-        contact_id: contactId,
-        structure_administrative_id: structureId,
-      },
-    })
-
-    await prisma.main_contact.delete({
-      where: {
+        contact_structures: {
+          some: {
+            structure_administrative_id: structureId,
+          },
+        },
         id: contactId,
       },
     })
+
+    return count > 0
   }
 
   async updateContactReferent(

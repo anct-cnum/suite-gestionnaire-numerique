@@ -6,12 +6,27 @@ import { ReactElement, useCallback, useEffect, useId, useState } from 'react'
 
 import styles from './FiltrePopover.module.css'
 import { THEMATIQUE_ADMIN_OPTIONS, THEMATIQUE_NON_ADMIN_OPTIONS, TYPES_OPTIONS } from './filtresOptions'
+import Badge from '@/components/shared/Badge/Badge'
 import Modal from '@/components/shared/Modal/Modal'
 
 const MODAL_ID = 'plus-de-filtres-modal'
 const MODAL_LABEL_ID = 'plus-de-filtres-modal-titre'
 
+const COULEURS_PORTEE: Readonly<Record<TagOption['portee'], string>> = {
+  departemental: 'green-emeraude',
+  equipe: 'purple-glycine',
+  national: 'blue-ecume',
+}
+
+const LIBELLES_PORTEE: Readonly<Record<TagOption['portee'], string>> = {
+  departemental: 'Tag départemental',
+  equipe: 'Tag d’équipe',
+  national: 'Tag national',
+}
+
 export default function PlusDesFiltres({
+  tags,
+  tagsDisponibles,
   thematiqueAdministratives,
   thematiqueNonAdministratives,
   types,
@@ -25,23 +40,28 @@ export default function PlusDesFiltres({
   const [pendingTypes, setPendingTypes] = useState(types)
   const [pendingNonAdmin, setPendingNonAdmin] = useState(thematiqueNonAdministratives)
   const [pendingAdmin, setPendingAdmin] = useState(thematiqueAdministratives)
+  const [pendingTags, setPendingTags] = useState(tags)
 
-  const pendingKey = `${types.join(',')}|${thematiqueNonAdministratives.join(',')}|${thematiqueAdministratives.join(',')}`
+  const pendingKey = `${types.join(',')}|${thematiqueNonAdministratives.join(',')}|${thematiqueAdministratives.join(',')}|${tags.join(',')}`
   useEffect(() => {
     setPendingTypes(types)
     setPendingNonAdmin(thematiqueNonAdministratives)
     setPendingAdmin(thematiqueAdministratives)
+    setPendingTags(tags)
   }, [pendingKey])
 
-  const activeCount = types.length + thematiqueNonAdministratives.length + thematiqueAdministratives.length
+  const activeCount =
+    types.length + thematiqueNonAdministratives.length + thematiqueAdministratives.length + tags.length
   const isFilled = activeCount > 0
   const labelBouton = isFilled ? `Plus de filtres · ${activeCount}` : 'Plus de filtres'
+  const tousLesTagsCoches = tagsDisponibles.every((tag) => pendingTags.includes(tag.value))
 
   const appliquer = useCallback(
     (
       selectedTypes: ReadonlyArray<string>,
       selectedNonAdmin: ReadonlyArray<string>,
-      selectedAdmin: ReadonlyArray<string>
+      selectedAdmin: ReadonlyArray<string>,
+      selectedTags: ReadonlyArray<string>
     ) => {
       const params = new URLSearchParams(searchParams.toString())
 
@@ -63,6 +83,12 @@ export default function PlusDesFiltres({
         params.delete('thematiqueAdministratives')
       }
 
+      if (selectedTags.length > 0) {
+        params.set('tags', selectedTags.join(','))
+      } else {
+        params.delete('tags')
+      }
+
       const queryString = params.toString().replaceAll('%2C', ',')
       router.push(queryString ? `${pathname}?${queryString}` : pathname)
       setIsOpen(false)
@@ -71,14 +97,15 @@ export default function PlusDesFiltres({
   )
 
   const valider = useCallback(() => {
-    appliquer(pendingTypes, pendingNonAdmin, pendingAdmin)
-  }, [appliquer, pendingAdmin, pendingNonAdmin, pendingTypes])
+    appliquer(pendingTypes, pendingNonAdmin, pendingAdmin, pendingTags)
+  }, [appliquer, pendingAdmin, pendingNonAdmin, pendingTags, pendingTypes])
 
   const effacer = useCallback(() => {
     setPendingTypes([])
     setPendingNonAdmin([])
     setPendingAdmin([])
-    appliquer([], [], [])
+    setPendingTags([])
+    appliquer([], [], [], [])
   }, [appliquer])
 
   function toggleValue(
@@ -109,7 +136,7 @@ export default function PlusDesFiltres({
 
       <Modal
         close={() => {
-          appliquer(pendingTypes, pendingNonAdmin, pendingAdmin)
+          appliquer(pendingTypes, pendingNonAdmin, pendingAdmin, pendingTags)
         }}
         id={MODAL_ID}
         isOpen={isOpen}
@@ -201,6 +228,55 @@ export default function PlusDesFiltres({
                 </div>
               </div>
             </Accordion>
+
+            {tagsDisponibles.length > 0 ? (
+              <Accordion defaultExpanded label={<span className="fr-text--bold">Tags spécifiques</span>} titleAs="h2">
+                <div className="fr-form-group">
+                  {tagsDisponibles.length >= 2 ? (
+                    <div className="fr-fieldset__element">
+                      <div className="fr-checkbox-group fr-checkbox-group--sm">
+                        <input
+                          checked={tousLesTagsCoches}
+                          id="tag-tous"
+                          onChange={() => {
+                            setPendingTags(tousLesTagsCoches ? [] : tagsDisponibles.map((tag) => tag.value))
+                          }}
+                          type="checkbox"
+                        />
+                        <label className="fr-label" htmlFor="tag-tous">
+                          Tous les tags
+                        </label>
+                      </div>
+                    </div>
+                  ) : null}
+                  <div style={{ columnCount: 2, columnGap: '1rem' }}>
+                    {tagsDisponibles.map((opt) => (
+                      <div className="fr-fieldset__element" key={opt.value} style={{ breakInside: 'avoid' }}>
+                        <div className="fr-checkbox-group fr-checkbox-group--sm">
+                          <input
+                            aria-describedby={`tag-${opt.value}-portee`}
+                            checked={pendingTags.includes(opt.value)}
+                            id={`tag-${opt.value}`}
+                            onChange={() => {
+                              toggleValue(pendingTags, setPendingTags, opt.value)
+                            }}
+                            type="checkbox"
+                          />
+                          <label className="fr-label" htmlFor={`tag-${opt.value}`}>
+                            {opt.label}
+                          </label>
+                        </div>
+                        <Badge color={COULEURS_PORTEE[opt.portee]} id={`tag-${opt.value}-portee`} small>
+                          {opt.departement === null
+                            ? LIBELLES_PORTEE[opt.portee]
+                            : `${LIBELLES_PORTEE[opt.portee]} (${opt.departement})`}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Accordion>
+            ) : null}
           </form>
         </div>
 
@@ -220,7 +296,16 @@ export default function PlusDesFiltres({
 }
 
 type Props = Readonly<{
+  tags: ReadonlyArray<string>
+  tagsDisponibles: ReadonlyArray<TagOption>
   thematiqueAdministratives: ReadonlyArray<string>
   thematiqueNonAdministratives: ReadonlyArray<string>
   types: ReadonlyArray<string>
+}>
+
+type TagOption = Readonly<{
+  departement: null | string
+  label: string
+  portee: 'departemental' | 'equipe' | 'national'
+  value: string
 }>

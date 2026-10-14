@@ -6,6 +6,7 @@ import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxIncl
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { libelleTypologie } from '@/presenters/shared/typologie'
+import { escapeCSV } from '@/shared/csv'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const utilisateur = await utilisateurLoader.findById(await getSessionUtilisateurId())
 
     const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-    const scopeFiltre = contexte.scopeFiltre()
+    const scopeFiltre = contexte.scopeLieux()
 
     if (scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 0) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
@@ -100,17 +101,6 @@ function generateCSV(lieux: Array<LieuInclusionNumeriqueItem>): string {
     "Nombre d'accompagnements Coop",
     'Code INSEE',
   ]
-
-  function escapeCSV(value: null | number | string | undefined): string {
-    if (value === null || value === undefined) {
-      return ''
-    }
-    const stringValue = String(value)
-    if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
-      return `"${stringValue.replace(/"/g, '""')}"`
-    }
-    return stringValue
-  }
 
   const rows = lieux.map((lieu) => {
     const adresse = [lieu.numero_voie, lieu.nom_voie, lieu.code_postal, lieu.nom_commune].filter(Boolean).join(' ')

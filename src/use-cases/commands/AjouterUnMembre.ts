@@ -1,7 +1,12 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { CreateMembreRepository, GetMembreRepository } from './shared/MembreRepository'
-import { CreateStructureRepository, GetStructureBySiretRepository } from './shared/StructureRepository'
+import { ChoixContactData, CreateMembreRepository, GetMembreRepository } from './shared/MembreRepository'
+import {
+  CreateStructureRepository,
+  GetStructureBySiretRepository,
+  MettreAJourContactsStructureRepository,
+  ModificationsContactsStructure,
+} from './shared/StructureRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
@@ -80,6 +85,10 @@ export class AjouterUnMembre implements CommandHandler<Command> {
         structureId = nouvelleStructure.state.uid.value
       }
 
+      if (command.contacts) {
+        await this.#structureRepository.mettreAJourContacts(structureId, command.contacts, tx)
+      }
+
       // Génération d'un UID unique pour le nouveau membre
       const nouveauMembreUid = new MembreUid(crypto.randomUUID())
 
@@ -109,18 +118,9 @@ export class AjouterUnMembre implements CommandHandler<Command> {
 type Failure = 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
 
 type Command = Readonly<{
-  contact: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique?: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
+  contact?: ChoixContactData
+  contacts?: ModificationsContactsStructure
+  contactTechnique?: ChoixContactData
   entreprise: Readonly<{
     adresse: string
     categorieJuridiqueCode: string
@@ -143,4 +143,6 @@ type GouvernanceRepository = GetGouvernanceRepository
 
 type MembreRepository = CreateMembreRepository & GetMembreRepository
 
-type StructureRepository = CreateStructureRepository & GetStructureBySiretRepository
+type StructureRepository = CreateStructureRepository &
+  GetStructureBySiretRepository &
+  MettreAJourContactsStructureRepository

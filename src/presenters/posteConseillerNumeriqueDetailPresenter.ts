@@ -1,5 +1,6 @@
 import { toStatutContratViewModel } from './shared/contrat'
 import { formaterEnDateFrancaise } from './shared/date'
+import { obtenirCouleurEnveloppe, obtenirCouleurGraphique } from './shared/enveloppe'
 import { formatMontant } from './shared/number'
 import { PosteConseillerNumeriqueDetailReadModel } from '@/use-cases/queries/RecupererUnPosteConseillerNumerique'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
@@ -90,7 +91,8 @@ type ConventionDetailViewModel = Readonly<{
 }>
 
 type EnveloppeDetailViewModel = Readonly<{
-  color: 'france' | 'menthe' | 'tilleul'
+  color: string
+  couleurGraphique: string
   libelle: string
   montant: number
   montantFormate: string
@@ -200,12 +202,7 @@ function buildConventionV2(
         variant: isEnCours ? 'success' : 'error',
       },
     },
-    enveloppe: {
-      color: 'menthe',
-      libelle: 'Conseiller Numérique - Renouvellement - État',
-      montant: total,
-      montantFormate: formatMontant(total),
-    },
+    enveloppe: enveloppeDetailViewModel('Conseiller Numérique - Renouvellement - État', total),
   }
 }
 
@@ -230,11 +227,18 @@ function buildConventionV1(
         variant: isEnCours ? 'success' : 'error',
       },
     },
-    enveloppe: {
-      color: 'france',
-      libelle: 'Conseiller Numérique - initiale - État',
-      montant: total,
-      montantFormate: formatMontant(total),
-    },
+    enveloppe: enveloppeDetailViewModel('Conseiller Numérique - initiale - État', total),
+  }
+}
+
+function enveloppeDetailViewModel(libelle: string, montant: number): EnveloppeDetailViewModel {
+  const color = obtenirCouleurEnveloppe(libelle)
+
+  return {
+    color,
+    couleurGraphique: obtenirCouleurGraphique(color),
+    libelle,
+    montant,
+    montantFormate: formatMontant(montant),
   }
 }
