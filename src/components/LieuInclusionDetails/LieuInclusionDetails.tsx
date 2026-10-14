@@ -101,8 +101,8 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
 
       {data.estEnAttenteDeReferencement ? (
         <Alerte titre="En attente de référencement sur la cartographie">
-          Ce lieu est marqué visible mais n’est pas encore référencé sur la cartographie nationale : il y apparaîtra
-          après le prochain référencement, sous quelques jours.
+          Ce lieu est marqué visible mais n’est pas référencé sur la cartographie nationale, il n’y apparaît donc pas.
+          Le référencement automatique des lieux créés depuis Mon Inclusion Numérique n’est pas encore en place.
         </Alerte>
       ) : null}
 

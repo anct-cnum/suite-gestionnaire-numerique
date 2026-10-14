@@ -134,8 +134,9 @@ export default function CreerLieuInclusion(): ReactElement {
           <h3 className="fr-callout__title">La cartographie nationale de l’inclusion numérique</h3>
           <p className="fr-callout__text">
             Un lieu visible est proposé à la cartographie nationale, où les usagers trouvent les lieux d’accompagnement
-            près de chez eux. L’apparition sur la carte suit le prochain référencement, sous quelques jours. Cette
-            option pourra être modifiée depuis la fiche du lieu.
+            près de chez eux. Le référencement automatique des lieux créés depuis Mon Inclusion Numérique n’est pas
+            encore en place : votre choix est enregistré et prendra effet dès qu’il le sera. Cette option pourra être
+            modifiée depuis la fiche du lieu.
           </p>
           <Toggle name="visiblePourCartographie">Rendre mon lieu d’activité visible sur la cartographie</Toggle>
         </div>
