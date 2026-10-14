@@ -32,6 +32,7 @@ export type PosteConseillerNumeriqueDetailReadModel = Readonly<{
       versement: number
     }>
   }>
+  dateMiseAJour: Date | null
   estBonifie: boolean
   estCoordinateur: boolean
   posteConumId: number

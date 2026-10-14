@@ -33,6 +33,7 @@ export type PostesConseillerNumeriqueStatistiquesViewModel = Readonly<{
 }>
 
 export type PostesConseillerNumeriqueViewModel = Readonly<{
+  dateMiseAJour: null | string
   displayPagination: boolean
   limite: number
   page: number
@@ -50,6 +51,8 @@ export function postesConseillerNumeriquePresenter(
   }
 
   return {
+    dateMiseAJour:
+      postesReadModel.dateMiseAJour === null ? null : formaterEnDateFrancaise(postesReadModel.dateMiseAJour),
     displayPagination: postesReadModel.displayPagination,
     limite: postesReadModel.limite,
     page: postesReadModel.page,

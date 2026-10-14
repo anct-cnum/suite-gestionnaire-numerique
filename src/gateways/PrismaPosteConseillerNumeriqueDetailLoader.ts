@@ -1,3 +1,4 @@
+import { recupererDateDernierImportIdPoste } from './shared/historiqueSource'
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
 import { calculerStatutContrat } from '@/domain/Contrat'
@@ -91,6 +92,9 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
       // Récupérer les contacts de la structure
       const contacts = await this.recupererContacts(poste.structure_id)
 
+      // Récupérer la date du dernier import ID Poste
+      const dateMiseAJour = await recupererDateDernierImportIdPoste()
+
       return {
         contrats,
         conventions: {
@@ -98,6 +102,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           v1: this.buildConventionV1(poste, datesConventions),
           v2: this.buildConventionV2(poste, datesConventions),
         },
+        dateMiseAJour,
         estBonifie: poste.bonification,
         estCoordinateur: poste.est_coordinateur,
         posteConumId: poste.poste_conum_id,

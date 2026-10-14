@@ -80,6 +80,15 @@ export function rowsToEvenements(
   return evenements
 }
 
+// Date du dernier import ID Poste (tous postes confondus).
+export async function recupererDateDernierImportIdPoste(): Promise<Date | null> {
+  const result = await prisma.$queryRaw<Array<{ date_dernier_import: Date | null }>>`
+    SELECT MAX(ingested_at) AS date_dernier_import
+    FROM source.idposte__conum
+  `
+  return result.at(0)?.date_dernier_import ?? null
+}
+
 export type SourceRow = Readonly<{
   donnee: Record<string, unknown>
   ingested_at: Date

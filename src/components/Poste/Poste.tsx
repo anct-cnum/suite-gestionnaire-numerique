@@ -21,7 +21,7 @@ export default function Poste({ viewModel }: Props): ReactElement {
           <MenuCollant contentId="poste-content" items={items} />
         </div>
         <div className={styles.contentContainer} id="poste-content">
-          <PosteHeader badges={viewModel.badges} posteId={viewModel.posteId} />
+          <PosteHeader badges={viewModel.badges} dateMiseAJour={viewModel.dateMiseAJour} posteId={viewModel.posteId} />
 
           <PosteStructureConventionnee structure={viewModel.structure} />
           <ConventionsEtFinancements data={viewModel.conventionsEtFinancements} />
@@ -42,6 +42,7 @@ type PosteViewModel = Readonly<{
   >
   contrats: ReadonlyArray<ContratRattacheViewModel>
   conventionsEtFinancements: ConventionsEtFinancementsViewModel
+  dateMiseAJour: null | string
   posteId: number
   structure: Readonly<{
     adresse: string

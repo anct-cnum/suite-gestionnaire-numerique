@@ -1,3 +1,4 @@
+import { recupererDateDernierImportIdPoste } from './shared/historiqueSource'
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
@@ -21,10 +22,12 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
 
       const postes = await this.getPostesPagines(filtres, pagination.limite, offset)
       const statistiques = await this.getStatistiques(filtres)
+      const dateMiseAJour = await recupererDateDernierImportIdPoste()
       const totalCount = statistiques.totalPostesPourPagination
       const totalPages = Math.ceil(totalCount / pagination.limite)
 
       return {
+        dateMiseAJour,
         displayPagination: totalCount > pagination.limite,
         limite: pagination.limite,
         page: pagination.page,

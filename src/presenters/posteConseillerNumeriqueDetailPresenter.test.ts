@@ -62,6 +62,30 @@ describe('poste conseiller numérique presenter : caractérisation des enveloppe
   })
 })
 
+describe('poste conseiller numérique presenter : date de mise à jour ID Poste', () => {
+  it("quand la date d'import ID Poste est connue, elle est formatée en français", () => {
+    // GIVEN
+    const readModel = posteReadModel({ v1: null, v2: null }, epochTime)
+
+    // WHEN
+    const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, epochTime)
+
+    // THEN
+    expect('type' in viewModel ? null : viewModel.dateMiseAJour).toBe('01/01/1970')
+  })
+
+  it("quand la date d'import ID Poste est inconnue, elle vaut null", () => {
+    // GIVEN
+    const readModel = posteReadModel({ v1: null, v2: null })
+
+    // WHEN
+    const viewModel = posteConseillerNumeriqueDetailPresenter(readModel, epochTime)
+
+    // THEN
+    expect('type' in viewModel ? undefined : viewModel.dateMiseAJour).toBeNull()
+  })
+})
+
 function conventionsEtFinancementsDe(readModel: PosteConseillerNumeriqueDetailReadModel): {
   creditsEngagesParLEtat: string
   enveloppes: ReadonlyArray<{
@@ -95,7 +119,8 @@ function enveloppeAttendue(
 }
 
 function posteReadModel(
-  conventions: Partial<PosteConseillerNumeriqueDetailReadModel['conventions']>
+  conventions: Partial<PosteConseillerNumeriqueDetailReadModel['conventions']>,
+  dateMiseAJour: Date | null = null
 ): PosteConseillerNumeriqueDetailReadModel {
   const v1 = conventions.v1 ?? null
   const v2 = conventions.v2 ?? null
@@ -108,6 +133,7 @@ function posteReadModel(
       v1,
       v2,
     },
+    dateMiseAJour,
     estBonifie: true,
     estCoordinateur: false,
     posteConumId: 2672,

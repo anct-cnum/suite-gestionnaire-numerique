@@ -265,6 +265,14 @@ export default function ListePostesConseillerNumerique({
         <>
           <PostesConseillerNumeriqueInfos statistiques={viewModel.statistiques} />
 
+          {viewModel.dateMiseAJour === null ? null : (
+            <div className="fr-grid-row fr-grid-row--right fr-mb-1w">
+              <p className="fr-text--sm fr-text-mention--grey fr-mb-0 fr-mt-2w">
+                Mise à jour le {viewModel.dateMiseAJour}
+              </p>
+            </div>
+          )}
+
           <Table
             enTetes={[
               'Structure - ID poste',
