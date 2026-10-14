@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import Script from 'next/script'
 import { PropsWithChildren, ReactElement } from 'react'
 
+import EmotionRegistry from '@/components/shared/Select/EmotionRegistry'
 import { estSiteVitrine } from '@/shared/estSiteVitrine'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -25,7 +26,9 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
           <Script src={`/matomo-v1.js?siteId=${matomoSiteId}`} strategy="lazyOnload" />
         ) : null}
       </head>
-      <body>{children}</body>
+      <body>
+        <EmotionRegistry>{children}</EmotionRegistry>
+      </body>
     </html>
   )
 }
