@@ -14,9 +14,8 @@ describe('modifier les informations générales d’un lieu d’inclusion action
   it('renvoie une erreur de validation quand le SIRET est mal formé', async () => {
     // WHEN
     const messages = await modifierLieuInclusionInformationsGeneralesAction({
-      path: '/lieu/42',
+      ...modification,
       siret: '12AB',
-      structureId: '42',
     })
 
     // THEN
@@ -38,11 +37,7 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     )
 
     // WHEN
-    const messages = await modifierLieuInclusionInformationsGeneralesAction({
-      nom: 'Nouveau nom',
-      path: '/lieu/42',
-      structureId: '42',
-    })
+    const messages = await modifierLieuInclusionInformationsGeneralesAction(modification)
 
     // THEN
     expect(messages).toStrictEqual(['Action réservée aux bêta-testeurs'])
@@ -64,14 +59,43 @@ describe('modifier les informations générales d’un lieu d’inclusion action
 
     // WHEN
     const messages = await modifierLieuInclusionInformationsGeneralesAction({
-      path: '/lieu/42',
+      ...modification,
       siret: '12345678901234',
-      structureId: '42',
-      typologies: ['ASSO'],
     })
 
     // THEN
     expect(messages).toStrictEqual([MESSAGE_LIEU_GERE_PAR_LA_COOP])
     expect(ModifierLieuInclusionInformationsGenerales.prototype.handle).not.toHaveBeenCalled()
   })
+
+  it('exige le nom, l’adresse et une typologie, sans consulter la session', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId')
+
+    // WHEN
+    const messages = await modifierLieuInclusionInformationsGeneralesAction({
+      adresse: '',
+      nom: '',
+      path: '/lieu/42',
+      structureId: '42',
+      typologies: [],
+    })
+
+    // THEN
+    expect(messages).toStrictEqual([
+      'L’adresse du lieu doit être renseignée',
+      'Le nom du lieu d’activité doit être renseigné',
+      'Au moins une typologie doit être renseignée',
+    ])
+    expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
+  })
 })
+
+// Formulaire unique : les champs sont toujours saisis, le SIRET est optionnel.
+const modification = {
+  adresse: '1 rue de la Paix 75001 Paris',
+  nom: 'Nouveau nom',
+  path: '/lieu/42',
+  structureId: '42',
+  typologies: ['ASSO'],
+}

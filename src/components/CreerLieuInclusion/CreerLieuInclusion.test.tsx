@@ -22,15 +22,40 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     expect(screen.getByRole('link', { name: 'Annuler' })).toHaveAttribute('href', '/liste-lieux-inclusion')
   })
 
-  it('avec SIRET, le bouton de création reste désactivé tant qu’aucune entreprise n’est trouvée', () => {
+  it('présente la page telle que les maquettes V6 la décrivent : retour, titre de section et encart cartographie', () => {
     // WHEN
     renderComponent(<CreerLieuInclusion />)
 
     // THEN
-    expect(screen.getByRole('button', { name: 'Créer le lieu d’activité' })).toBeDisabled()
+    expect(screen.getByRole('link', { name: 'Retour' })).toHaveAttribute('href', '/liste-lieux-inclusion')
+    expect(screen.getByRole('heading', { level: 2, name: 'Identification du lieu' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: 'Vous souhaitez rendre visible ce lieu sur la cartographie nationale des lieux d’inclusion numérique ?',
+      })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Renseignez des informations sur le lieu et les services d’inclusion numérique qui y sont proposés'
+      )
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Gagnez en visibilité et orientez les bénéficiaires grâce à la cartographie')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'En savoir plus sur la cartographie' })).toBeInTheDocument()
+    expect(screen.queryByText('Les champs avec * sont obligatoires.')).not.toBeInTheDocument()
   })
 
-  it('sans SIRET, crée le lieu, notifie et redirige vers la fiche créée', async () => {
+  it('le bouton de création est disponible d’emblée : le SIRET est optionnel', () => {
+    // WHEN
+    renderComponent(<CreerLieuInclusion />)
+
+    // THEN
+    expect(screen.getByRole('button', { name: 'Créer le lieu d’activité' })).toBeEnabled()
+  })
+
+  it('crée le lieu avec tous les champs saisis, notifie et redirige vers la fiche créée', async () => {
     // GIVEN
     vi.spyOn(notification, 'Notification').mockImplementationOnce(() => undefined)
     const creerUnLieuInclusionAction = vi
@@ -49,12 +74,11 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
       rechercherLieuxInclusionSimilairesAction,
       router: routerAvec(push),
     })
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
-    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
     await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
     await userEvent.click(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' }))
-    await userEvent.type(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' }), 'Mon lieu')
-    await userEvent.type(screen.getByRole('textbox', { name: 'Complément d’adresse' }), 'Bât. B')
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
+    await userEvent.type(screen.getByRole('textbox', { name: /Complément d’adresse/ }), 'Bât. B')
     await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
     await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
     await userEvent.click(
@@ -71,6 +95,7 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
         complementAdresse: 'Bât. B',
         itinerant: true,
         nom: 'Mon lieu',
+        siret: '',
         typologies: ['ASSO'],
         visiblePourCartographie: true,
       })
@@ -101,10 +126,9 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
       rechercherLieuxInclusionSimilairesAction,
       router: routerAvec(push),
     })
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
-    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
     await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
-    await userEvent.type(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' }), 'Mon lieu')
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
     await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
     await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
     await userEvent.click(
@@ -145,10 +169,9 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
       rechercherLieuxInclusionSimilairesAction,
       router: routerAvec(push),
     })
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
-    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
     await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
-    await userEvent.type(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' }), 'Mon lieu')
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
     await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
     await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
 
@@ -182,11 +205,10 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
       .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
       .mockResolvedValue([{ label: '1 Rue de la Paix, 75001 Paris' }])
     renderComponent(<CreerLieuInclusion />, { rechercherAdressesAction, rechercherLieuxInclusionSimilairesAction })
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
-    await userEvent.type(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' }), 'Médiathèque')
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Médiathèque')
 
     // WHEN
-    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
     await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
 
     // THEN
@@ -194,6 +216,7 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
       expect(rechercherLieuxInclusionSimilairesAction).toHaveBeenCalledWith({
         adresse: '1 Rue de la Paix, 75001 Paris',
         nom: 'Médiathèque',
+        siret: '',
       })
     })
     const titre = await screen.findByRole('heading', { level: 3, name: 'Des lieux existent déjà aux alentours' })

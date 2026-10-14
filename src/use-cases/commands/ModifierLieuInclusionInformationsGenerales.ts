@@ -1,12 +1,12 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { UpdateLieuInclusionInformationsGeneralesRepository } from './shared/LieuInclusionRepository'
+import { AdresseLieuSirene, UpdateLieuInclusionInformationsGeneralesRepository } from './shared/LieuInclusionRepository'
 import { StructureUid } from '@/domain/Structure'
 import { BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 
-// Deux parcours (#1498) : avec SIRET, les informations proviennent de l'API Entreprise
-// (re-résolues côté serveur par la server action), sauf les typologies, saisies depuis
-// le référentiel de la médiation numérique ; sans SIRET, tout est saisi manuellement
-// et l'adresse est validée via la BAN.
+// Modification des informations générales d'un lieu (#1498). Même formulaire que la
+// création (#1495) : tous les champs sont saisis, le SIRET n'étant qu'un accélérateur de
+// remplissage. L'adresse est validée par la BAN ; seule celle reprise telle quelle d'un
+// SIRET peut retomber sur les composants SIRENE quand la BAN ne la reconnaît pas.
 export class ModifierLieuInclusionInformationsGenerales implements CommandHandler<Command> {
   readonly #banGeocodingGateway: BanGeocodingGateway
   readonly #date: Date
@@ -24,60 +24,33 @@ export class ModifierLieuInclusionInformationsGenerales implements CommandHandle
 
   async handle(command: Command): ResultAsync<Failure> {
     // La validation des permissions est effectuée au niveau de la Server Action.
-    if ('avecSiret' in command.modification) {
-      return this.#modifierAvecSiret(command.structureId, command.modification.avecSiret)
-    }
+    const { modification } = command
+    const { repliSirene } = modification
 
-    return this.#modifierSansSiret(command.structureId, command.modification.sansSiret)
-  }
+    // L'adresse n'est reconnue comme venant du SIRET que si l'utilisateur ne l'a pas
+    // retouchée : son code INSEE aide alors le géocodage, et ses composants servent de repli.
+    const repliApplicable = repliSirene !== null && repliSirene.adresse === modification.adresse ? repliSirene : null
 
-  async #modifierAvecSiret(structureId: string, modification: ModificationAvecSiret): ResultAsync<Failure> {
-    // On tente de « banifier » l'adresse INSEE ; sans correspondance BAN, on retombe
-    // sur les composants d'adresse SIRENE (sans géométrie).
-    const geocode = await this.#banGeocodingGateway.geocoder({
-      adresse: modification.entreprise.adresse,
-      codeInsee: modification.entreprise.codeInsee,
-    })
+    const geocode = await this.#banGeocodingGateway.geocoder(
+      repliApplicable === null
+        ? { adresse: modification.adresse }
+        : { adresse: modification.adresse, codeInsee: repliApplicable.codeInsee }
+    )
+    const adresseSirene = geocode === null && repliApplicable !== null ? adresseSireneComplete(repliApplicable) : null
 
-    await this.#lieuInclusionRepository.updateInformationsGenerales({
-      adresseEnrichie: geocode,
-      adresseSirene:
-        geocode === null
-          ? {
-              codeInsee: modification.entreprise.codeInsee,
-              codePostal: modification.entreprise.codePostal,
-              commune: modification.entreprise.commune,
-              nomVoie: modification.entreprise.nomVoie,
-              numeroVoie: modification.entreprise.numeroVoie === '' ? null : Number(modification.entreprise.numeroVoie),
-            }
-          : null,
-      complementAdresse: null,
-      date: this.#date,
-      nom: modification.entreprise.denomination,
-      siret: modification.siret,
-      structureUid: new StructureUid(Number(structureId)),
-      typologies: modification.typologies,
-    })
-
-    return 'OK'
-  }
-
-  async #modifierSansSiret(structureId: string, modification: ModificationSansSiret): ResultAsync<Failure> {
-    // On géocode l'adresse saisie via la BAN ; sans correspondance, on refuse.
-    const geocode = await this.#banGeocodingGateway.geocoder({ adresse: modification.adresse })
-    if (geocode === null) {
+    if (geocode === null && adresseSirene === null) {
       return 'adresseIntrouvable'
     }
 
     await this.#lieuInclusionRepository.updateInformationsGenerales({
       adresseEnrichie: geocode,
-      adresseSirene: null,
+      adresseSirene,
       complementAdresse: modification.complementAdresse === '' ? null : modification.complementAdresse,
       date: this.#date,
       itinerance: [modification.itinerant ? 'Itinérant' : 'Fixe'],
       nom: modification.nom,
-      siret: null,
-      structureUid: new StructureUid(Number(structureId)),
+      siret: modification.siret,
+      structureUid: new StructureUid(Number(command.structureId)),
       typologies: modification.typologies,
     })
 
@@ -87,29 +60,44 @@ export class ModifierLieuInclusionInformationsGenerales implements CommandHandle
 
 export type Failure = 'adresseIntrouvable'
 
-type ModificationAvecSiret = Readonly<{
-  entreprise: Readonly<{
-    adresse: string
-    codeInsee: string
-    codePostal: string
-    commune: string
-    denomination: string
-    nomVoie: string
-    numeroVoie: string
-  }>
-  siret: string
-  typologies: ReadonlyArray<string>
+// Repli sans géométrie sur les composants SIRENE, seulement s'ils suffisent à
+// localiser le lieu (code INSEE, code postal, commune).
+function adresseSireneComplete(repliSirene: RepliSirene): AdresseLieuSirene | null {
+  if (repliSirene.codeInsee === '' || repliSirene.codePostal === '' || repliSirene.commune === '') {
+    return null
+  }
+
+  return {
+    codeInsee: repliSirene.codeInsee,
+    codePostal: repliSirene.codePostal,
+    commune: repliSirene.commune,
+    nomVoie: repliSirene.nomVoie,
+    numeroVoie: repliSirene.numeroVoie === '' ? null : Number(repliSirene.numeroVoie),
+  }
+}
+
+// Informations d'adresse du SIRET résolu côté serveur, conservées pour le seul cas où
+// l'utilisateur soumet l'adresse pré-remplie sans la modifier.
+type RepliSirene = Readonly<{
+  adresse: string
+  codeInsee: string
+  codePostal: string
+  commune: string
+  nomVoie: string
+  numeroVoie: string
 }>
 
-type ModificationSansSiret = Readonly<{
+type Modification = Readonly<{
   adresse: string
   complementAdresse: string
   itinerant: boolean
   nom: string
+  repliSirene: null | RepliSirene
+  siret: null | string
   typologies: ReadonlyArray<string>
 }>
 
 type Command = Readonly<{
-  modification: Readonly<{ avecSiret: ModificationAvecSiret }> | Readonly<{ sansSiret: ModificationSansSiret }>
+  modification: Modification
   structureId: string
 }>

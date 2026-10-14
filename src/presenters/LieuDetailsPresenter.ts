@@ -23,6 +23,9 @@ export function lieuDetailsPresenter(
     informationsGenerales: {
       adresse: lieuDetailsReadModel.informationsGenerales.adresse,
       complementAdresse: lieuDetailsReadModel.informationsGenerales.complementAdresse,
+      // Le formulaire d'édition des informations générales porte la case « itinérant » :
+      // sans cette valeur, rouvrir le formulaire repasserait le lieu en « Fixe ».
+      itinerant: lieuDetailsReadModel.lieuAccueilPublic.itinerance?.includes('Itinérant') ?? false,
       nomStructure: lieuDetailsReadModel.informationsGenerales.nomStructure,
       siret: lieuDetailsReadModel.informationsGenerales.siret,
       typologies: lieuDetailsReadModel.informationsGenerales.typologies,
@@ -98,6 +101,7 @@ interface LieuInclusionDetailsData {
   informationsGenerales: {
     adresse: string
     complementAdresse?: string
+    itinerant: boolean
     nomStructure: string
     siret?: string
     typologies?: ReadonlyArray<string>

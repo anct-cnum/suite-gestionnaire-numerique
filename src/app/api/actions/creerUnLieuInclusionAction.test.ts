@@ -14,15 +14,35 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId')
 
     // WHEN
+    const resultat = await creerUnLieuInclusionAction({ ...creation, siret: '12AB' })
+
+    // THEN
+    expect(resultat).toStrictEqual({
+      messages: ['Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'],
+      statut: 'erreur',
+    })
+    expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
+  })
+
+  it('exige le nom, l’adresse et une typologie, sans consulter la session', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId')
+
+    // WHEN
     const resultat = await creerUnLieuInclusionAction({
-      siret: '12AB',
-      typologies: ['ASSO'],
+      adresse: '',
+      nom: '',
+      typologies: [],
       visiblePourCartographie: false,
     })
 
     // THEN
     expect(resultat).toStrictEqual({
-      messages: ['Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'],
+      messages: [
+        'L’adresse du lieu doit être renseignée',
+        'Le nom du lieu d’activité doit être renseigné',
+        'Au moins une typologie doit être renseignée',
+      ],
       statut: 'erreur',
     })
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
@@ -34,49 +54,29 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(CreerUnLieuInclusion.prototype, 'handle')
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction(creationSansSiret)
+    const resultat = await creerUnLieuInclusionAction(creation)
 
     // THEN
     expect(resultat).toStrictEqual({ messages: ["Vous n'avez pas les droits pour créer un lieu"], statut: 'erreur' })
     expect(CreerUnLieuInclusion.prototype.handle).not.toHaveBeenCalled()
   })
 
-  it('avec SIRET, exige au moins une typologie avant d’interroger l’API Entreprise (règle #1498)', async () => {
-    // GIVEN
-    connecte('Administrateur dispositif')
-    vi.spyOn(ApiSireneLoader.prototype, 'rechercherParIdentifiant')
-
-    // WHEN
-    const resultat = await creerUnLieuInclusionAction({
-      siret: '12345678901234',
-      typologies: [],
-      visiblePourCartographie: false,
-    })
-
-    // THEN
-    expect(resultat).toStrictEqual({ messages: ['Au moins une typologie doit être renseignée'], statut: 'erreur' })
-    expect(ApiSireneLoader.prototype.rechercherParIdentifiant).not.toHaveBeenCalled()
-  })
-
-  it('avec SIRET introuvable, renvoie le message de l’API Entreprise', async () => {
+  it('avec un SIRET introuvable, renvoie le message de l’API Entreprise', async () => {
     // GIVEN
     connecte('Administrateur dispositif')
     vi.spyOn(ApiSireneLoader.prototype, 'rechercherParIdentifiant').mockResolvedValueOnce({ estTrouvee: false })
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction({
-      siret: '12345678901234',
-      typologies: ['ASSO'],
-      visiblePourCartographie: false,
-    })
+    const resultat = await creerUnLieuInclusionAction({ ...creation, siret: '12345678901234' })
 
     // THEN
     expect(resultat).toStrictEqual({ messages: ['Aucune entreprise trouvée avec cet identifiant'], statut: 'erreur' })
   })
 
-  it('sans SIRET, crée le lieu, purge la liste et renvoie l’identifiant créé', async () => {
+  it('avec un SIRET, revérifie l’identifiant côté serveur et transmet l’adresse SIRENE comme repli', async () => {
     // GIVEN
     connecte('Administrateur dispositif')
+    vi.spyOn(ApiSireneLoader.prototype, 'rechercherParIdentifiant').mockResolvedValueOnce(entrepriseTrouvee)
     vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
       lieuId: 4242,
       visibilitePourCartographieForcee: false,
@@ -84,18 +84,54 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction(creationSansSiret)
+    await creerUnLieuInclusionAction({ ...creation, siret: '12345678901234' })
 
     // THEN
     expect(CreerUnLieuInclusion.prototype.handle).toHaveBeenCalledWith({
       creation: {
-        sansSiret: {
+        adresse: '1 rue de la Paix 75001 Paris',
+        complementAdresse: 'Bât. B',
+        itinerant: true,
+        nom: 'Mon lieu',
+        repliSirene: {
           adresse: '1 rue de la Paix 75001 Paris',
-          complementAdresse: 'Bât. B',
-          itinerant: true,
-          nom: 'Mon lieu',
-          typologies: ['BIB'],
+          codeInsee: '75101',
+          codePostal: '75001',
+          commune: 'Paris',
+          nomVoie: 'rue de la Paix',
+          numeroVoie: '1',
         },
+        siret: '12345678901234',
+        typologies: ['BIB'],
+      },
+      visiblePourCartographie: true,
+    })
+  })
+
+  it('sans SIRET, crée le lieu tel que saisi, purge la liste et renvoie l’identifiant créé', async () => {
+    // GIVEN
+    connecte('Administrateur dispositif')
+    vi.spyOn(ApiSireneLoader.prototype, 'rechercherParIdentifiant')
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
+      lieuId: 4242,
+      visibilitePourCartographieForcee: false,
+    })
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
+
+    // WHEN
+    const resultat = await creerUnLieuInclusionAction(creation)
+
+    // THEN
+    expect(ApiSireneLoader.prototype.rechercherParIdentifiant).not.toHaveBeenCalled()
+    expect(CreerUnLieuInclusion.prototype.handle).toHaveBeenCalledWith({
+      creation: {
+        adresse: '1 rue de la Paix 75001 Paris',
+        complementAdresse: 'Bât. B',
+        itinerant: true,
+        nom: 'Mon lieu',
+        repliSirene: null,
+        siret: null,
+        typologies: ['BIB'],
       },
       visiblePourCartographie: true,
     })
@@ -117,7 +153,7 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction(creationSansSiret)
+    const resultat = await creerUnLieuInclusionAction(creation)
 
     // THEN
     expect(resultat).toStrictEqual({
@@ -127,44 +163,40 @@ describe('créer un lieu d’inclusion action', () => {
     })
   })
 
-  it('sans SIRET, exige le nom, l’adresse et une typologie', async () => {
-    // GIVEN
-    connecte('Administrateur dispositif')
-
-    // WHEN
-    const resultat = await creerUnLieuInclusionAction({
-      nom: 'Mon lieu',
-      typologies: ['BIB'],
-      visiblePourCartographie: false,
-    })
-
-    // THEN
-    expect(resultat).toStrictEqual({
-      messages: ['Sans SIRET, le nom, l’adresse et au moins une typologie doivent être renseignés'],
-      statut: 'erreur',
-    })
-  })
-
   it('traduit l’échec du use case en message lisible', async () => {
     // GIVEN
     connecte('Administrateur dispositif')
     vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce('adresseIntrouvable')
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction(creationSansSiret)
+    const resultat = await creerUnLieuInclusionAction(creation)
 
     // THEN
     expect(resultat).toStrictEqual({ messages: ['Adresse introuvable — vérifiez la saisie'], statut: 'erreur' })
   })
 })
 
-const creationSansSiret = {
+// Formulaire unique : les champs sont toujours saisis, le SIRET est optionnel.
+const creation = {
   adresse: '1 rue de la Paix 75001 Paris',
   complementAdresse: 'Bât. B',
   itinerant: true,
   nom: 'Mon lieu',
   typologies: ['BIB'],
   visiblePourCartographie: true,
+}
+
+const entrepriseTrouvee = {
+  activitePrincipale: '94.99Z',
+  adresse: '1 rue de la Paix 75001 Paris',
+  categorieJuridiqueCode: '9220',
+  codeInsee: '75101',
+  codePostal: '75001',
+  commune: 'Paris',
+  denomination: 'Ma Structure',
+  identifiant: '12345678901234',
+  nomVoie: 'rue de la Paix',
+  numeroVoie: '1',
 }
 
 function connecte(role: 'Administrateur dispositif' | 'Gestionnaire département'): void {

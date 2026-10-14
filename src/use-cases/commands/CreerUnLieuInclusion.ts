@@ -2,11 +2,11 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AdresseLieuSirene, CreerLieuInclusionRepository } from './shared/LieuInclusionRepository'
 import { BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 
-// Deux parcours (#1495, mêmes règles que la modification #1498) : avec SIRET, les
-// informations proviennent de l'API Entreprise (re-résolues côté serveur par la server
-// action), sauf les typologies, saisies depuis le référentiel ; sans SIRET, tout est
-// saisi manuellement. Dans les deux cas, un lieu sans adresse est refusé : il ne serait
-// ni cartographiable ni dédoublonnable.
+// Création d'un lieu (#1495, mêmes règles que la modification #1498). Formulaire unique :
+// tous les champs sont saisis, le SIRET n'étant qu'un accélérateur de remplissage. Un lieu
+// sans adresse est refusé : il ne serait ni cartographiable ni dédoublonnable. Seule
+// exception, l'adresse reprise telle quelle d'un SIRET peut retomber sur les composants
+// SIRENE quand la BAN ne la reconnaît pas.
 export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Succes> {
   readonly #banGeocodingGateway: BanGeocodingGateway
   readonly #date: Date
@@ -24,20 +24,19 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
 
   async handle(command: Command): ResultAsync<Failure, Succes> {
     // La validation des permissions est effectuée au niveau de la Server Action.
-    if ('avecSiret' in command.creation) {
-      return this.#creerAvecSiret(command.creation.avecSiret, command.visiblePourCartographie)
-    }
+    const { creation, visiblePourCartographie } = command
+    const { repliSirene } = creation
 
-    return this.#creerSansSiret(command.creation.sansSiret, command.visiblePourCartographie)
-  }
+    // L'adresse n'est reconnue comme venant du SIRET que si l'utilisateur ne l'a pas
+    // retouchée : son code INSEE aide alors le géocodage, et ses composants servent de repli.
+    const repliApplicable = repliSirene !== null && repliSirene.adresse === creation.adresse ? repliSirene : null
 
-  async #creerAvecSiret(creation: CreationAvecSiret, visiblePourCartographie: boolean): ResultAsync<Failure, Succes> {
-    const { entreprise } = creation
-    const geocode = await this.#banGeocodingGateway.geocoder({
-      adresse: entreprise.adresse,
-      codeInsee: entreprise.codeInsee,
-    })
-    const adresseSirene = geocode === null ? adresseSireneComplete(entreprise) : null
+    const geocode = await this.#banGeocodingGateway.geocoder(
+      repliApplicable === null
+        ? { adresse: creation.adresse }
+        : { adresse: creation.adresse, codeInsee: repliApplicable.codeInsee }
+    )
+    const adresseSirene = geocode === null && repliApplicable !== null ? adresseSireneComplete(repliApplicable) : null
 
     if (geocode === null && adresseSirene === null) {
       return 'adresseIntrouvable'
@@ -50,37 +49,16 @@ export class CreerUnLieuInclusion implements CommandHandler<Command, Failure, Su
     const lieuId = await this.#lieuInclusionRepository.creer({
       adresseEnrichie: geocode,
       adresseSirene,
-      complementAdresse: null,
+      complementAdresse: creation.complementAdresse === '' ? null : creation.complementAdresse,
       date: this.#date,
-      itinerance: ['Fixe'],
-      nom: entreprise.denomination,
+      itinerance: [creation.itinerant ? 'Itinérant' : 'Fixe'],
+      nom: creation.nom,
       siret: creation.siret,
       typologies: creation.typologies,
       visiblePourCartographie: geocode === null ? false : visiblePourCartographie,
     })
 
     return { lieuId, visibilitePourCartographieForcee }
-  }
-
-  async #creerSansSiret(creation: CreationSansSiret, visiblePourCartographie: boolean): ResultAsync<Failure, Succes> {
-    const geocode = await this.#banGeocodingGateway.geocoder({ adresse: creation.adresse })
-    if (geocode === null) {
-      return 'adresseIntrouvable'
-    }
-
-    const lieuId = await this.#lieuInclusionRepository.creer({
-      adresseEnrichie: geocode,
-      adresseSirene: null,
-      complementAdresse: creation.complementAdresse === '' ? null : creation.complementAdresse,
-      date: this.#date,
-      itinerance: [creation.itinerant ? 'Itinérant' : 'Fixe'],
-      nom: creation.nom,
-      siret: null,
-      typologies: creation.typologies,
-      visiblePourCartographie,
-    })
-
-    return { lieuId, visibilitePourCartographieForcee: false }
   }
 }
 
@@ -90,43 +68,42 @@ type Succes = Readonly<{ lieuId: number; visibilitePourCartographieForcee: boole
 
 // Repli sans géométrie sur les composants SIRENE, seulement s'ils suffisent à
 // localiser le lieu (code INSEE, code postal, commune).
-function adresseSireneComplete(entreprise: CreationAvecSiret['entreprise']): AdresseLieuSirene | null {
-  if (entreprise.codeInsee === '' || entreprise.codePostal === '' || entreprise.commune === '') {
+function adresseSireneComplete(repliSirene: RepliSirene): AdresseLieuSirene | null {
+  if (repliSirene.codeInsee === '' || repliSirene.codePostal === '' || repliSirene.commune === '') {
     return null
   }
 
   return {
-    codeInsee: entreprise.codeInsee,
-    codePostal: entreprise.codePostal,
-    commune: entreprise.commune,
-    nomVoie: entreprise.nomVoie,
-    numeroVoie: entreprise.numeroVoie === '' ? null : Number(entreprise.numeroVoie),
+    codeInsee: repliSirene.codeInsee,
+    codePostal: repliSirene.codePostal,
+    commune: repliSirene.commune,
+    nomVoie: repliSirene.nomVoie,
+    numeroVoie: repliSirene.numeroVoie === '' ? null : Number(repliSirene.numeroVoie),
   }
 }
 
-type CreationAvecSiret = Readonly<{
-  entreprise: Readonly<{
-    adresse: string
-    codeInsee: string
-    codePostal: string
-    commune: string
-    denomination: string
-    nomVoie: string
-    numeroVoie: string
-  }>
-  siret: string
-  typologies: ReadonlyArray<string>
+// Informations d'adresse du SIRET résolu côté serveur, conservées pour le seul cas où
+// l'utilisateur soumet l'adresse pré-remplie sans la modifier.
+type RepliSirene = Readonly<{
+  adresse: string
+  codeInsee: string
+  codePostal: string
+  commune: string
+  nomVoie: string
+  numeroVoie: string
 }>
 
-type CreationSansSiret = Readonly<{
+type Creation = Readonly<{
   adresse: string
   complementAdresse: string
   itinerant: boolean
   nom: string
+  repliSirene: null | RepliSirene
+  siret: null | string
   typologies: ReadonlyArray<string>
 }>
 
 type Command = Readonly<{
-  creation: Readonly<{ avecSiret: CreationAvecSiret }> | Readonly<{ sansSiret: CreationSansSiret }>
+  creation: Creation
   visiblePourCartographie: boolean
 }>

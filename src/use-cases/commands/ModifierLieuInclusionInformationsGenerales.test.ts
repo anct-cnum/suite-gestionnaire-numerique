@@ -15,46 +15,42 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     geocodeResultat = adresseGeocodee
   })
 
-  it('avec SIRET, quand l’adresse SIRENE est trouvée dans la BAN, alors le lieu est mis à jour avec l’adresse enrichie', async () => {
-    // GIVEN
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
-
+  it('avec un SIRET, quand l’adresse reprise du SIRET est trouvée dans la BAN, alors le lieu est mis à jour tel que saisi', async () => {
     // WHEN
-    const result = await modifier.handle({
-      modification: { avecSiret: { entreprise, siret: '12345678901234', typologies: ['BIB'] } },
+    const result = await modifierLieuInclusion().handle({
+      modification: {
+        ...modificationSaisie,
+        complementAdresse: 'Bâtiment B',
+        itinerant: true,
+        repliSirene,
+        siret: '12345678901234',
+        typologies: ['BIB'],
+      },
       structureId: '42',
     })
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedGeocodageParams).toStrictEqual({ adresse: '1 rue de la Paix 75001 Paris', codeInsee: '75101' })
+    // Le code INSEE du SIRET aide le géocodage tant que l'adresse n'a pas été retouchée.
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret, codeInsee: '75101' })
     expect(spiedUpdateData?.adresseEnrichie).toStrictEqual(adresseGeocodee)
     expect(spiedUpdateData?.adresseSirene).toBeNull()
-    expect(spiedUpdateData?.complementAdresse).toBeNull()
+    expect(spiedUpdateData?.complementAdresse).toBe('Bâtiment B')
     expect(spiedUpdateData?.date).toStrictEqual(epochTime)
-    expect(spiedUpdateData?.itinerance).toBeUndefined()
-    expect(spiedUpdateData?.nom).toBe('Ma Structure')
+    expect(spiedUpdateData?.itinerance).toStrictEqual(['Itinérant'])
+    expect(spiedUpdateData?.nom).toBe('Mon Lieu')
     expect(spiedUpdateData?.siret).toBe('12345678901234')
     expect(spiedUpdateData?.structureUid.state.value).toBe(42)
     expect(spiedUpdateData?.typologies).toStrictEqual(['BIB'])
   })
 
-  it('avec SIRET, quand l’adresse SIRENE est introuvable dans la BAN, alors le lieu est mis à jour avec les composants SIRENE', async () => {
+  it('avec un SIRET, quand l’adresse reprise du SIRET est introuvable dans la BAN, alors le lieu est mis à jour avec les composants SIRENE', async () => {
     // GIVEN
     geocodeResultat = null
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
 
     // WHEN
-    const result = await modifier.handle({
-      modification: { avecSiret: { entreprise, siret: '12345678901234', typologies: ['BIB'] } },
+    const result = await modifierLieuInclusion().handle({
+      modification: { ...modificationSaisie, repliSirene, siret: '12345678901234' },
       structureId: '42',
     })
 
@@ -70,19 +66,16 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     })
   })
 
-  it('avec SIRET, quand le numéro de voie SIRENE est vide, alors il est enregistré comme nul', async () => {
+  it('avec un SIRET, quand le numéro de voie SIRENE est vide, alors il est enregistré comme nul', async () => {
     // GIVEN
     geocodeResultat = null
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
 
     // WHEN
-    await modifier.handle({
+    await modifierLieuInclusion().handle({
       modification: {
-        avecSiret: { entreprise: { ...entreprise, numeroVoie: '' }, siret: '12345678901234', typologies: ['BIB'] },
+        ...modificationSaisie,
+        repliSirene: { ...repliSirene, numeroVoie: '' },
+        siret: '12345678901234',
       },
       structureId: '42',
     })
@@ -91,31 +84,42 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     expect(spiedUpdateData?.adresseSirene?.numeroVoie).toBeNull()
   })
 
-  it('sans SIRET, quand l’adresse saisie est trouvée dans la BAN, alors le lieu est mis à jour avec la saisie manuelle', async () => {
+  it('avec un SIRET dont l’adresse a été retouchée, ne se replie pas sur les composants SIRENE : ils ne décrivent plus le lieu', async () => {
     // GIVEN
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
+    geocodeResultat = null
 
     // WHEN
-    const result = await modifier.handle({
+    const result = await modifierLieuInclusion().handle({
       modification: {
-        sansSiret: {
-          adresse: '1 rue de la Paix, 75001 Paris',
-          complementAdresse: 'Bâtiment B',
-          itinerant: true,
-          nom: 'Mon Lieu',
-          typologies: ['ASSO', 'CCAS'],
-        },
+        ...modificationSaisie,
+        adresse: '2 avenue de l’Opéra 75001 Paris',
+        repliSirene,
+        siret: '12345678901234',
+      },
+      structureId: '42',
+    })
+
+    // THEN
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: '2 avenue de l’Opéra 75001 Paris' })
+    expect(result).toBe('adresseIntrouvable')
+    expect(spiedUpdateData).toBeNull()
+  })
+
+  it('sans SIRET, quand l’adresse saisie est trouvée dans la BAN, alors le lieu est mis à jour avec la saisie manuelle', async () => {
+    // WHEN
+    const result = await modifierLieuInclusion().handle({
+      modification: {
+        ...modificationSaisie,
+        complementAdresse: 'Bâtiment B',
+        itinerant: true,
+        typologies: ['ASSO', 'CCAS'],
       },
       structureId: '42',
     })
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedGeocodageParams).toStrictEqual({ adresse: '1 rue de la Paix, 75001 Paris' })
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret })
     expect(spiedUpdateData?.adresseEnrichie).toStrictEqual(adresseGeocodee)
     expect(spiedUpdateData?.adresseSirene).toBeNull()
     expect(spiedUpdateData?.complementAdresse).toBe('Bâtiment B')
@@ -126,26 +130,8 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
   })
 
   it('sans SIRET, quand le lieu n’est pas itinérant et le complément vide, alors l’itinérance est fixe et le complément nul', async () => {
-    // GIVEN
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
-
     // WHEN
-    await modifier.handle({
-      modification: {
-        sansSiret: {
-          adresse: '1 rue de la Paix, 75001 Paris',
-          complementAdresse: '',
-          itinerant: false,
-          nom: 'Mon Lieu',
-          typologies: ['ASSO'],
-        },
-      },
-      structureId: '42',
-    })
+    await modifierLieuInclusion().handle({ modification: modificationSaisie, structureId: '42' })
 
     // THEN
     expect(spiedUpdateData?.complementAdresse).toBeNull()
@@ -155,23 +141,10 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
   it('sans SIRET, quand l’adresse saisie est introuvable dans la BAN, alors la modification est refusée', async () => {
     // GIVEN
     geocodeResultat = null
-    const modifier = new ModifierLieuInclusionInformationsGenerales(
-      banGeocodingGateway,
-      lieuInclusionRepository,
-      epochTime
-    )
 
     // WHEN
-    const result = await modifier.handle({
-      modification: {
-        sansSiret: {
-          adresse: 'adresse inconnue',
-          complementAdresse: '',
-          itinerant: false,
-          nom: 'Mon Lieu',
-          typologies: ['ASSO'],
-        },
-      },
+    const result = await modifierLieuInclusion().handle({
+      modification: { ...modificationSaisie, adresse: 'adresse inconnue' },
       structureId: '42',
     })
 
@@ -184,6 +157,8 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
 let spiedGeocodageParams: GeocodageParams | null
 let spiedUpdateData: null | UpdateLieuInclusionInformationsGeneralesData
 let geocodeResultat: AdresseGeocodeReadModel | null
+
+const adresseDuSiret = '1 rue de la Paix 75001 Paris'
 
 const adresseGeocodee: AdresseGeocodeReadModel = {
   banClefInterop: '75101_7141_00001',
@@ -200,14 +175,25 @@ const adresseGeocodee: AdresseGeocodeReadModel = {
   type: 'housenumber',
 }
 
-const entreprise = {
-  adresse: '1 rue de la Paix 75001 Paris',
+// Adresse du SIRET résolue côté serveur, conservée pour le cas où elle est soumise telle quelle.
+const repliSirene = {
+  adresse: adresseDuSiret,
   codeInsee: '75101',
   codePostal: '75001',
   commune: 'Paris',
-  denomination: 'Ma Structure',
   nomVoie: 'rue de la Paix',
   numeroVoie: '1',
+}
+
+// Formulaire unique : tous les champs sont saisis, le SIRET n'est qu'un accélérateur.
+const modificationSaisie = {
+  adresse: adresseDuSiret,
+  complementAdresse: '',
+  itinerant: false,
+  nom: 'Mon Lieu',
+  repliSirene: null,
+  siret: null,
+  typologies: ['ASSO'],
 }
 
 const banGeocodingGateway: BanGeocodingGateway = {
@@ -222,4 +208,8 @@ const lieuInclusionRepository: UpdateLieuInclusionInformationsGeneralesRepositor
     spiedUpdateData = data
     return Promise.resolve()
   },
+}
+
+function modifierLieuInclusion(): ModifierLieuInclusionInformationsGenerales {
+  return new ModifierLieuInclusionInformationsGenerales(banGeocodingGateway, lieuInclusionRepository, epochTime)
 }

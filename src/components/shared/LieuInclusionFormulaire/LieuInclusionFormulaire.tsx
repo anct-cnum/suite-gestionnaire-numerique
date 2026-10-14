@@ -4,24 +4,21 @@ import { Typologie } from '@gouvfr-anct/lieux-de-mediation-numerique'
 import { ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
-import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SelectAsync from '@/components/shared/Select/SelectAsync'
 import SelectMulti from '@/components/shared/Select/SelectMulti'
 import { LabelValue } from '@/presenters/shared/labels'
 import { typologieLabels } from '@/presenters/shared/typologie'
 
-// Champs communs à la création (#1495) et à la modification (#1498) d'un lieu : SIRET
-// recherché via l'API Entreprise (nom et adresse en lecture seule, typologies saisies),
-// ou saisie manuelle sans SIRET (adresse validée par la BAN). Les champs sont non
-// contrôlés (FormData côté parent) ; l'état utile à la soumission remonte par onChangement.
+// Champs communs à la création (#1495) et à la modification (#1498) d'un lieu. Formulaire
+// unique (maquettes V6) : le SIRET est optionnel et ne sert qu'à pré-remplir le nom et
+// l'adresse, qui restent saisissables, comme tous les autres champs. L'adresse est validée
+// par la BAN. L'état utile à la soumission remonte au parent par onChangement.
 export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeursInitiales }: Props): ReactElement {
   const { rechercherAdressesAction, rechercherUneEntrepriseAction } = useContext(clientContext)
-  const [etat, setEtat] = useState<EtatLieuInclusionFormulaire>({
+  const [etat, setEtat] = useState({
     adresse: valeursInitiales.adresse,
-    entreprise: null,
     nom: valeursInitiales.nomStructure,
-    sansSiret: false,
     siretSaisi: valeursInitiales.siret ?? '',
   })
   const [rechercheEnCours, setRechercheEnCours] = useState(false)
@@ -39,13 +36,14 @@ export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeu
     onChangement(nouvelEtat)
   }
 
+  // Le SIRET est un accélérateur de saisie : il remplit le nom et l'adresse, que
+  // l'utilisateur reste libre de corriger ensuite.
   async function rechercherEntreprise(): Promise<void> {
     setRechercheEnCours(true)
-    mettreAJour({ entreprise: null })
 
     const resultat = await rechercherUneEntrepriseAction({ siret: etat.siretSaisi })
     if ('identifiant' in resultat) {
-      mettreAJour({ entreprise: resultat, nom: resultat.denomination })
+      mettreAJour({ adresse: resultat.adresse, nom: resultat.denomination })
     } else {
       Notification('error', { description: resultat.join(', '), title: 'Erreur : ' })
     }
@@ -57,17 +55,19 @@ export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeu
     <>
       <div className="fr-input-group fr-mb-2w">
         <label className="fr-label" htmlFor={`${idPrefixe}-siret`}>
-          SIRET du lieu d’activité (ou RNA)
+          N° SIRET du lieu (optionnel)
+          <span className="fr-hint-text">
+            Gagnez du temps : le nom et l’adresse du lieu se remplissent automatiquement.
+          </span>
         </label>
         <div className="fr-grid-row fr-grid-row--bottom">
           <div className="fr-col">
             <input
               className="fr-input"
-              disabled={etat.sansSiret}
               id={`${idPrefixe}-siret`}
               name="siret"
               onChange={(event) => {
-                mettreAJour({ entreprise: null, siretSaisi: event.target.value })
+                mettreAJour({ siretSaisi: event.target.value })
               }}
               type="text"
               value={etat.siretSaisi}
@@ -75,8 +75,8 @@ export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeu
           </div>
           <div className="fr-col-auto fr-pl-2w">
             <button
-              className="fr-btn fr-btn--secondary"
-              disabled={etat.sansSiret || rechercheEnCours || etat.siretSaisi === ''}
+              className="fr-btn fr-icon-search-line fr-btn--icon-left"
+              disabled={rechercheEnCours || etat.siretSaisi === ''}
               onClick={() => {
                 void rechercherEntreprise()
               }}
@@ -88,158 +88,65 @@ export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeu
         </div>
       </div>
 
-      <div className="fr-checkbox-group fr-mb-3w">
+      <div className="fr-input-group fr-mb-2w">
+        <label className="fr-label" htmlFor={`${idPrefixe}-nom`}>
+          Nom du lieu d’activité <span className="color-red">*</span>
+          <span className="fr-hint-text">
+            Nom usuel affiché sur la cartographie, par exemple « Espace numérique de la mairie ».
+          </span>
+        </label>
         <input
-          checked={etat.sansSiret}
-          id={`${idPrefixe}-sans-siret`}
+          className="fr-input"
+          id={`${idPrefixe}-nom`}
+          name="nom"
           onChange={(event) => {
-            mettreAJour({
-              entreprise: null,
-              sansSiret: event.target.checked,
-              siretSaisi: event.target.checked ? '' : etat.siretSaisi,
-            })
+            mettreAJour({ nom: event.target.value })
           }}
-          type="checkbox"
-        />
-        <label className="fr-label" htmlFor={`${idPrefixe}-sans-siret`}>
-          Il n’y a pas de SIRET de structure pour ce lieu
-        </label>
-      </div>
-
-      {etat.sansSiret ? (
-        <FormulaireSansSiret
-          idPrefixe={idPrefixe}
-          onAdresseChoisie={(adresse) => {
-            mettreAJour({ adresse })
-          }}
-          onNomSaisi={(nom) => {
-            mettreAJour({ nom })
-          }}
-          rechercherAdressesAction={rechercherAdressesAction}
-          typologiesOptions={typologiesOptions}
-          valeursInitiales={valeursInitiales}
-        />
-      ) : (
-        <ChampsEntreprise entreprise={etat.entreprise} idPrefixe={idPrefixe} typologiesOptions={typologiesOptions} />
-      )}
-    </>
-  )
-}
-
-export type EtatLieuInclusionFormulaire = Readonly<{
-  // Adresse choisie (sans SIRET) ; l'adresse d'une entreprise est portée par `entreprise`.
-  adresse: string
-  entreprise: EntrepriseViewModel | null
-  nom: string
-  sansSiret: boolean
-  siretSaisi: string
-}>
-
-type ValeursInitialesLieuInclusion = Readonly<{
-  adresse: string
-  complementAdresse?: string
-  nomStructure: string
-  siret?: string
-  typologies?: ReadonlyArray<string>
-}>
-
-// Cas SIRET : les informations proviennent de l'API Entreprise, non modifiables,
-// sauf les typologies, saisies depuis le référentiel de la médiation numérique.
-function ChampsEntreprise({ entreprise, idPrefixe, typologiesOptions }: ChampsEntrepriseProps): null | ReactElement {
-  if (entreprise === null) {
-    return null
-  }
-
-  return (
-    <>
-      <div className="fr-input-group fr-mb-2w">
-        <label className="fr-label" htmlFor={`${idPrefixe}-nom-entreprise`}>
-          Nom du lieu d’activité
-        </label>
-        <input
-          className="fr-input"
-          disabled={true}
-          id={`${idPrefixe}-nom-entreprise`}
+          required={true}
           type="text"
-          value={entreprise.denomination}
+          value={etat.nom}
         />
       </div>
 
-      <div className="fr-input-group fr-mb-2w">
-        <label className="fr-label" htmlFor={`${idPrefixe}-adresse-entreprise`}>
-          Adresse
-        </label>
-        <input
-          className="fr-input"
-          disabled={true}
-          id={`${idPrefixe}-adresse-entreprise`}
-          type="text"
-          value={entreprise.adresse}
-        />
+      <div className="fr-mb-2w">
+        <SelectMulti
+          id={`${idPrefixe}-typologies`}
+          name="typologies"
+          options={typologiesOptions}
+          placeholder="Choisissez une ou plusieurs typologies"
+          required={true}
+        >
+          Typologie(s) du lieu d’activité <span className="color-red">*</span>
+        </SelectMulti>
       </div>
-
-      <SelectMulti
-        id={`${idPrefixe}-typologies`}
-        name="typologies"
-        options={typologiesOptions}
-        placeholder="Choisissez une ou plusieurs typologies"
-        required={true}
-      >
-        Typologie(s) du lieu d’activité *
-      </SelectMulti>
-    </>
-  )
-}
-
-// Cas sans SIRET : saisie manuelle, adresse validée via la BAN.
-function FormulaireSansSiret({
-  idPrefixe,
-  onAdresseChoisie,
-  onNomSaisi,
-  rechercherAdressesAction,
-  typologiesOptions,
-  valeursInitiales,
-}: FormulaireSansSiretProps): ReactElement {
-  return (
-    <>
-      <p className="fr-text--sm fr-text-mention--grey fr-mb-2w">Les champs avec * sont obligatoires.</p>
 
       <div className="fr-mb-2w">
         <SelectAsyncAdresse
-          adresseActuelle={valeursInitiales.adresse}
+          adresse={etat.adresse}
           id={`${idPrefixe}-adresse`}
-          onAdresseChoisie={onAdresseChoisie}
+          onAdresseChoisie={(adresse) => {
+            mettreAJour({ adresse })
+          }}
           rechercherAdressesAction={rechercherAdressesAction}
         />
       </div>
 
       <div className="fr-checkbox-group fr-mb-2w">
-        <input id={`${idPrefixe}-itinerant`} name="itinerant" type="checkbox" />
+        <input
+          defaultChecked={valeursInitiales.itinerant ?? false}
+          id={`${idPrefixe}-itinerant`}
+          name="itinerant"
+          type="checkbox"
+        />
         <label className="fr-label" htmlFor={`${idPrefixe}-itinerant`}>
           Lieu d’activité itinérant (exemple : bus)
         </label>
       </div>
 
       <div className="fr-input-group fr-mb-2w">
-        <label className="fr-label" htmlFor={`${idPrefixe}-nom`}>
-          Nom du lieu d’activité *
-        </label>
-        <input
-          className="fr-input"
-          defaultValue={valeursInitiales.nomStructure}
-          id={`${idPrefixe}-nom`}
-          name="nom"
-          onChange={(event) => {
-            onNomSaisi(event.target.value)
-          }}
-          required={true}
-          type="text"
-        />
-      </div>
-
-      <div className="fr-input-group fr-mb-2w">
         <label className="fr-label" htmlFor={`${idPrefixe}-complement-adresse`}>
           Complément d’adresse
+          <span className="fr-hint-text">Bâtiment, étage, entrée…</span>
         </label>
         <input
           className="fr-input"
@@ -249,104 +156,88 @@ function FormulaireSansSiret({
           type="text"
         />
       </div>
-
-      <SelectMulti
-        id={`${idPrefixe}-typologies`}
-        name="typologies"
-        options={typologiesOptions}
-        placeholder="Choisissez une ou plusieurs typologies"
-        required={true}
-      >
-        Typologie(s) du lieu d’activité *
-      </SelectMulti>
     </>
   )
 }
 
+export type EtatLieuInclusionFormulaire = Readonly<{
+  adresse: string
+  nom: string
+  siretSaisi: string
+}>
+
+type ValeursInitialesLieuInclusion = Readonly<{
+  adresse: string
+  complementAdresse?: string
+  itinerant?: boolean
+  nomStructure: string
+  siret?: string
+  typologies?: ReadonlyArray<string>
+}>
+
 // Adresse validée via la BAN : autocomplétion sur l'action de recherche d'adresses.
-// Pré-remplie avec l'adresse actuelle ; au focus, la saisie repart du texte courant
-// pour permettre de le modifier plutôt que de repartir d'un champ vide.
+// La valeur affichée est pilotée par le parent (`adresse`), pour qu'une recherche par
+// SIRET puisse la pré-remplir ; seul le texte en cours de frappe est local.
+// Au focus, la saisie repart du texte courant pour permettre de le modifier plutôt que
+// de repartir d'un champ vide.
 function SelectAsyncAdresse({
-  adresseActuelle,
+  adresse,
   id,
   onAdresseChoisie,
   rechercherAdressesAction,
 }: SelectAsyncAdresseProps): ReactElement {
-  const [etat, setEtat] = useState<EtatSelectionAdresse>({
-    selection: adresseActuelle === '' ? null : { label: adresseActuelle, value: adresseActuelle },
-    texteSaisi: '',
-  })
+  const [texteSaisi, setTexteSaisi] = useState('')
+  const selection = adresse === '' ? null : { label: adresse, value: adresse }
 
   async function chargerAdresses(recherche: string): Promise<Array<LabelValue>> {
     const adresses = await rechercherAdressesAction(recherche)
-    return adresses.map((adresse) => ({ label: adresse.label, value: adresse.label }))
+    return adresses.map((adresseTrouvee) => ({ label: adresseTrouvee.label, value: adresseTrouvee.label }))
   }
 
   return (
     <SelectAsync<LabelValue>
       id={id}
-      inputValue={etat.texteSaisi}
+      inputValue={texteSaisi}
       loadOptions={chargerAdresses}
       name="adresse"
       noOptionsMessage={(inputValue) => (inputValue.length < 3 ? 'Saisissez au moins 3 caractères' : 'Pas de résultat')}
       onChange={(option) => {
         // À la sélection, on vide le texte : la valeur choisie s'affiche via le rendu standard.
-        setEtat({ selection: option, texteSaisi: '' })
+        setTexteSaisi('')
         onAdresseChoisie(option?.label ?? '')
       }}
       onFocus={() => {
-        setEtat((precedent) => ({ ...precedent, texteSaisi: precedent.selection?.label ?? '' }))
+        setTexteSaisi(adresse)
       }}
       onInputChange={(valeur, actionMeta) => {
         if (actionMeta.action === 'input-change') {
-          setEtat((precedent) => ({ ...precedent, texteSaisi: valeur }))
+          setTexteSaisi(valeur)
         } else if (actionMeta.action === 'input-blur' || actionMeta.action === 'menu-close') {
-          setEtat((precedent) => ({ ...precedent, texteSaisi: '' }))
+          setTexteSaisi('')
         }
       }}
       onMenuOpen={() => {
         // Ré-ouverture du menu sur un champ déjà focus : on repart du libellé sélectionné,
         // sauf si une saisie est déjà en cours.
-        setEtat((precedent) =>
-          precedent.texteSaisi === '' ? { ...precedent, texteSaisi: precedent.selection?.label ?? '' } : precedent
-        )
+        setTexteSaisi((precedent) => (precedent === '' ? adresse : precedent))
       }}
       placeholder="Rechercher l’adresse"
       required={true}
-      value={etat.selection}
+      value={selection}
     >
-      Adresse *
+      Adresse du lieu <span className="color-red">*</span>
+      <span className="fr-hint-text">Commencez à saisir, puis choisissez une adresse dans la liste.</span>
     </SelectAsync>
   )
 }
 
-type EtatSelectionAdresse = Readonly<{
-  selection: LabelValue | null
-  texteSaisi: string
-}>
-
 type RechercherAdresses = (recherche: string) => Promise<ReadonlyArray<Readonly<{ label: string }>>>
 
 type SelectAsyncAdresseProps = Readonly<{
-  adresseActuelle: string
+  adresse: string
   id: string
   onAdresseChoisie(adresse: string): void
   rechercherAdressesAction: RechercherAdresses
-}>
-
-type ChampsEntrepriseProps = Readonly<{
-  entreprise: EntrepriseViewModel | null
-  idPrefixe: string
-  typologiesOptions: ReadonlyArray<LabelValue>
-}>
-
-type FormulaireSansSiretProps = Readonly<{
-  idPrefixe: string
-  onAdresseChoisie(adresse: string): void
-  onNomSaisi(nom: string): void
-  rechercherAdressesAction: RechercherAdresses
-  typologiesOptions: ReadonlyArray<LabelValue>
-  valeursInitiales: ValeursInitialesLieuInclusion
 }>
 
 type Props = Readonly<{

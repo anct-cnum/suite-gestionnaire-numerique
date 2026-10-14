@@ -52,6 +52,7 @@ export type LieuAccueilPublicData = Readonly<{
 export type InformationsGeneralesData = Readonly<{
   adresse: string
   complementAdresse?: string
+  itinerant?: boolean
   nomStructure: string
   siret?: string
   typologies?: ReadonlyArray<string>

@@ -7,28 +7,29 @@ import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import * as notification from '@/components/shared/Notification/Notification'
 import { renderComponent } from '@/components/testHelper'
 
-describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', () => {
-  it('quand je coche « pas de SIRET », alors le champ SIRET est désactivé et la saisie manuelle apparaît', async () => {
-    // GIVEN
-    const onChangement = vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()
+describe('formulaire partagé d’un lieu d’inclusion', () => {
+  it('présente un formulaire unique : le SIRET est optionnel et tous les champs sont saisissables', () => {
+    // WHEN
     renderComponent(
-      <LieuInclusionFormulaire idPrefixe="test" onChangement={onChangement} valeursInitiales={valeursVides} />
+      <LieuInclusionFormulaire
+        idPrefixe="test"
+        onChangement={vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()}
+        valeursInitiales={valeursVides}
+      />
     )
 
-    // WHEN
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
-
     // THEN
-    expect(screen.getByRole('textbox', { name: 'SIRET du lieu d’activité (ou RNA)' })).toBeDisabled()
-    expect(screen.getByRole('combobox', { name: 'Adresse *' })).toBeInTheDocument()
-    expect(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Nom du lieu d’activité *' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Complément d’adresse' })).toBeInTheDocument()
-    expect(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' })).toBeInTheDocument()
-    expect(onChangement).toHaveBeenLastCalledWith(expect.objectContaining({ entreprise: null, sansSiret: true }))
+    expect(screen.getByRole('textbox', { name: /N° SIRET du lieu \(optionnel\)/ })).toBeEnabled()
+    expect(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ })).toBeEnabled()
+    expect(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' })).toBeEnabled()
+    expect(screen.getByRole('combobox', { name: /Adresse du lieu \*/ })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' })).not.toBeChecked()
+    expect(screen.getByRole('textbox', { name: /Complément d’adresse/ })).toBeEnabled()
+    // L'ancienne bascule entre deux parcours a disparu.
+    expect(screen.queryByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' })).toBeNull()
   })
 
-  it('quand je recherche un SIRET trouvé, alors le nom et l’adresse s’affichent en lecture seule et les typologies restent saisissables', async () => {
+  it('quand je recherche un SIRET trouvé, alors le nom et l’adresse sont pré-remplis et restent modifiables', async () => {
     // GIVEN
     const onChangement = vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()
     const rechercherUneEntrepriseAction = vi.fn<() => Promise<EntrepriseViewModel>>().mockResolvedValueOnce(entreprise)
@@ -38,19 +39,18 @@ describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', (
     )
 
     // WHEN
-    await userEvent.type(screen.getByRole('textbox', { name: 'SIRET du lieu d’activité (ou RNA)' }), '12345678901234')
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu \(optionnel\)/ }), '12345678901234')
     await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
 
     // THEN
     expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '12345678901234' })
-    const nom = await screen.findByRole('textbox', { name: 'Nom du lieu d’activité' })
-    expect(nom).toBeDisabled()
-    expect(nom).toHaveValue('Ma Structure')
-    expect(screen.getByRole('textbox', { name: 'Adresse' })).toBeDisabled()
-    expect(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' })).toBeEnabled()
-    expect(onChangement).toHaveBeenLastCalledWith(
-      expect.objectContaining({ entreprise, sansSiret: false, siretSaisi: '12345678901234' })
-    )
+    const nom = await screen.findByDisplayValue('Ma Structure')
+    expect(nom).toBeEnabled()
+    expect(onChangement).toHaveBeenLastCalledWith({
+      adresse: '1 rue de la Paix 75001 Paris',
+      nom: 'Ma Structure',
+      siretSaisi: '12345678901234',
+    })
   })
 
   it('quand le SIRET est introuvable, alors une notification d’erreur est affichée', async () => {
@@ -69,7 +69,7 @@ describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', (
     )
 
     // WHEN
-    await userEvent.type(screen.getByRole('textbox', { name: 'SIRET du lieu d’activité (ou RNA)' }), '12345678901234')
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu \(optionnel\)/ }), '12345678901234')
     await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
 
     // THEN
@@ -81,7 +81,7 @@ describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', (
     })
   })
 
-  it('sans SIRET, l’adresse est proposée par la BAN dès 3 caractères et la sélection est remontée', async () => {
+  it('l’adresse est proposée par la BAN dès 3 caractères et la sélection est remontée', async () => {
     // GIVEN
     const onChangement = vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()
     const rechercherAdressesAction = vi
@@ -91,17 +91,51 @@ describe('formulaire partagé d’un lieu d’inclusion (SIRET / sans SIRET)', (
       <LieuInclusionFormulaire idPrefixe="test" onChangement={onChangement} valeursInitiales={valeursVides} />,
       { rechercherAdressesAction }
     )
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Il n’y a pas de SIRET de structure pour ce lieu' }))
 
     // WHEN
-    await userEvent.type(screen.getByRole('combobox', { name: 'Adresse *' }), 'paix')
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
     await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
 
     // THEN
     expect(rechercherAdressesAction).toHaveBeenCalledWith('paix')
-    expect(onChangement).toHaveBeenLastCalledWith(
-      expect.objectContaining({ adresse: '1 Rue de la Paix, 75001 Paris', sansSiret: true })
+    expect(onChangement).toHaveBeenLastCalledWith(expect.objectContaining({ adresse: '1 Rue de la Paix, 75001 Paris' }))
+  })
+
+  it('le nom saisi à la main est remonté au parent', async () => {
+    // GIVEN
+    const onChangement = vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()
+    renderComponent(
+      <LieuInclusionFormulaire idPrefixe="test" onChangement={onChangement} valeursInitiales={valeursVides} />
     )
+
+    // WHEN
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
+
+    // THEN
+    expect(onChangement).toHaveBeenLastCalledWith(expect.objectContaining({ nom: 'Mon lieu' }))
+  })
+
+  it('en modification, les valeurs du lieu pré-remplissent le formulaire, itinérance comprise', () => {
+    // WHEN
+    renderComponent(
+      <LieuInclusionFormulaire
+        idPrefixe="test"
+        onChangement={vi.fn<(etat: EtatLieuInclusionFormulaire) => void>()}
+        valeursInitiales={{
+          adresse: '1 Rue de la Paix, 75001 Paris',
+          complementAdresse: 'Bât. B',
+          itinerant: true,
+          nomStructure: 'Mon lieu',
+          siret: '12345678901234',
+        }}
+      />
+    )
+
+    // THEN
+    expect(screen.getByRole('textbox', { name: /N° SIRET du lieu \(optionnel\)/ })).toHaveValue('12345678901234')
+    expect(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ })).toHaveValue('Mon lieu')
+    expect(screen.getByRole('textbox', { name: /Complément d’adresse/ })).toHaveValue('Bât. B')
+    expect(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' })).toBeChecked()
   })
 })
 

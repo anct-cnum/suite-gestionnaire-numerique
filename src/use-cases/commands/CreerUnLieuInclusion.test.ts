@@ -12,22 +12,29 @@ describe('créer un lieu d’inclusion', () => {
     geocodeResultat = adresseGeocodee
   })
 
-  it('avec SIRET et adresse trouvée dans la BAN, crée un lieu fixe signé MIN à partir de l’entreprise', async () => {
+  it('avec un SIRET et une adresse trouvée dans la BAN, crée le lieu tel que saisi', async () => {
     // WHEN
     const result = await creerUnLieuInclusion().handle({
-      creation: { avecSiret: { entreprise, siret: '12345678901234', typologies: ['ASSO'] } },
+      creation: {
+        ...creationSaisie,
+        complementAdresse: 'Bât. B',
+        itinerant: true,
+        repliSirene,
+        siret: '12345678901234',
+      },
       visiblePourCartographie: true,
     })
 
     // THEN
-    expect(spiedGeocodageParams).toStrictEqual({ adresse: entreprise.adresse, codeInsee: '75101' })
+    // Le code INSEE du SIRET aide le géocodage tant que l'adresse n'a pas été retouchée.
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret, codeInsee: '75101' })
     expect(spiedCreerData).toStrictEqual({
       adresseEnrichie: adresseGeocodee,
       adresseSirene: null,
-      complementAdresse: null,
+      complementAdresse: 'Bât. B',
       date: epochTime,
-      itinerance: ['Fixe'],
-      nom: 'Ma Structure',
+      itinerance: ['Itinérant'],
+      nom: 'Mon lieu',
       siret: '12345678901234',
       typologies: ['ASSO'],
       visiblePourCartographie: true,
@@ -35,14 +42,16 @@ describe('créer un lieu d’inclusion', () => {
     expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: false })
   })
 
-  it('avec SIRET et adresse absente de la BAN, se replie sur les composants SIRENE complets, la visibilité choisie est respectée', async () => {
+  it('avec un SIRET et une adresse absente de la BAN, se replie sur les composants SIRENE complets, la visibilité choisie est respectée', async () => {
     // GIVEN
     geocodeResultat = null
 
     // WHEN
     const result = await creerUnLieuInclusion().handle({
       creation: {
-        avecSiret: { entreprise: { ...entreprise, numeroVoie: '' }, siret: '12345678901234', typologies: ['ASSO'] },
+        ...creationSaisie,
+        repliSirene: { ...repliSirene, numeroVoie: '' },
+        siret: '12345678901234',
       },
       visiblePourCartographie: false,
     })
@@ -60,15 +69,13 @@ describe('créer un lieu d’inclusion', () => {
     expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: false })
   })
 
-  it('avec SIRET, adresse absente de la BAN et visibilité demandée, force la visibilité à false et le signale', async () => {
+  it('avec un SIRET, une adresse absente de la BAN et la visibilité demandée, force la visibilité à false et le signale', async () => {
     // GIVEN
     geocodeResultat = null
 
     // WHEN
     const result = await creerUnLieuInclusion().handle({
-      creation: {
-        avecSiret: { entreprise: { ...entreprise, numeroVoie: '' }, siret: '12345678901234', typologies: ['ASSO'] },
-      },
+      creation: { ...creationSaisie, repliSirene, siret: '12345678901234' },
       visiblePourCartographie: true,
     })
 
@@ -77,15 +84,13 @@ describe('créer un lieu d’inclusion', () => {
     expect(result).toStrictEqual({ lieuId: 4242, visibilitePourCartographieForcee: true })
   })
 
-  it('avec SIRET, adresse absente de la BAN et composants SIRENE incomplets, refuse : un lieu sans adresse n’est ni cartographiable ni dédoublonnable', async () => {
+  it('avec un SIRET, une adresse absente de la BAN et des composants SIRENE incomplets, refuse : un lieu sans adresse n’est ni cartographiable ni dédoublonnable', async () => {
     // GIVEN
     geocodeResultat = null
 
     // WHEN
     const result = await creerUnLieuInclusion().handle({
-      creation: {
-        avecSiret: { entreprise: { ...entreprise, codeInsee: '' }, siret: '12345678901234', typologies: ['ASSO'] },
-      },
+      creation: { ...creationSaisie, repliSirene: { ...repliSirene, codeInsee: '' }, siret: '12345678901234' },
       visiblePourCartographie: false,
     })
 
@@ -94,23 +99,36 @@ describe('créer un lieu d’inclusion', () => {
     expect(spiedCreerData).toBeNull()
   })
 
-  it('sans SIRET et adresse trouvée, crée le lieu tel que saisi, itinérant, sans complément vide', async () => {
+  it('avec un SIRET dont l’adresse a été retouchée, ne se replie pas sur les composants SIRENE : ils ne décrivent plus le lieu', async () => {
+    // GIVEN
+    geocodeResultat = null
+
     // WHEN
     const result = await creerUnLieuInclusion().handle({
       creation: {
-        sansSiret: {
-          adresse: '1 rue de la Paix 75001 Paris',
-          complementAdresse: '',
-          itinerant: true,
-          nom: 'Mon lieu',
-          typologies: ['BIB'],
-        },
+        ...creationSaisie,
+        adresse: '2 avenue de l’Opéra 75001 Paris',
+        repliSirene,
+        siret: '12345678901234',
       },
       visiblePourCartographie: false,
     })
 
     // THEN
-    expect(spiedGeocodageParams).toStrictEqual({ adresse: '1 rue de la Paix 75001 Paris' })
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: '2 avenue de l’Opéra 75001 Paris' })
+    expect(result).toBe('adresseIntrouvable')
+    expect(spiedCreerData).toBeNull()
+  })
+
+  it('sans SIRET et adresse trouvée, crée le lieu tel que saisi, itinérant, sans complément vide', async () => {
+    // WHEN
+    const result = await creerUnLieuInclusion().handle({
+      creation: { ...creationSaisie, itinerant: true, typologies: ['BIB'] },
+      visiblePourCartographie: false,
+    })
+
+    // THEN
+    expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret })
     expect(spiedCreerData).toStrictEqual({
       adresseEnrichie: adresseGeocodee,
       adresseSirene: null,
@@ -128,15 +146,7 @@ describe('créer un lieu d’inclusion', () => {
   it('sans SIRET, un lieu non itinérant est fixe et son complément d’adresse est conservé', async () => {
     // WHEN
     await creerUnLieuInclusion().handle({
-      creation: {
-        sansSiret: {
-          adresse: '1 rue de la Paix 75001 Paris',
-          complementAdresse: 'Bât. B',
-          itinerant: false,
-          nom: 'Mon lieu',
-          typologies: ['BIB'],
-        },
-      },
+      creation: { ...creationSaisie, complementAdresse: 'Bât. B' },
       visiblePourCartographie: true,
     })
 
@@ -152,15 +162,7 @@ describe('créer un lieu d’inclusion', () => {
 
     // WHEN
     const result = await creerUnLieuInclusion().handle({
-      creation: {
-        sansSiret: {
-          adresse: 'nulle part',
-          complementAdresse: '',
-          itinerant: false,
-          nom: 'Mon lieu',
-          typologies: ['BIB'],
-        },
-      },
+      creation: { ...creationSaisie, adresse: 'nulle part' },
       visiblePourCartographie: true,
     })
 
@@ -173,6 +175,8 @@ describe('créer un lieu d’inclusion', () => {
 let spiedGeocodageParams: GeocodageParams | null
 let spiedCreerData: CreerLieuInclusionData | null
 let geocodeResultat: AdresseGeocodeReadModel | null
+
+const adresseDuSiret = '1 rue de la Paix 75001 Paris'
 
 const adresseGeocodee: AdresseGeocodeReadModel = {
   banClefInterop: '75101_7141_00001',
@@ -189,14 +193,25 @@ const adresseGeocodee: AdresseGeocodeReadModel = {
   type: 'housenumber',
 }
 
-const entreprise = {
-  adresse: '1 rue de la Paix 75001 Paris',
+// Adresse du SIRET résolue côté serveur, conservée pour le cas où elle est soumise telle quelle.
+const repliSirene = {
+  adresse: adresseDuSiret,
   codeInsee: '75101',
   codePostal: '75001',
   commune: 'Paris',
-  denomination: 'Ma Structure',
   nomVoie: 'rue de la Paix',
   numeroVoie: '1',
+}
+
+// Formulaire unique : tous les champs sont saisis, le SIRET n'est qu'un accélérateur.
+const creationSaisie = {
+  adresse: adresseDuSiret,
+  complementAdresse: '',
+  itinerant: false,
+  nom: 'Mon lieu',
+  repliSirene: null,
+  siret: null,
+  typologies: ['ASSO'],
 }
 
 const banGeocodingGateway: BanGeocodingGateway = {

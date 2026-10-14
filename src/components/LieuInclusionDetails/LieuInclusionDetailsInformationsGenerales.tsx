@@ -37,24 +37,16 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     const form = new FormData(event.currentTarget)
     setIsDisabled(true)
 
-    const messages = await modifierLieuInclusionInformationsGeneralesAction(
-      etatFormulaire.sansSiret
-        ? {
-            adresse: form.get('adresse') as string,
-            complementAdresse: form.get('complementAdresse') as string,
-            itinerant: form.get('itinerant') === 'on',
-            nom: form.get('nom') as string,
-            path: pathname,
-            structureId,
-            typologies: form.getAll('typologies').map(String),
-          }
-        : {
-            path: pathname,
-            siret: etatFormulaire.siretSaisi,
-            structureId,
-            typologies: form.getAll('typologies').map(String),
-          }
-    )
+    const messages = await modifierLieuInclusionInformationsGeneralesAction({
+      adresse: form.get('adresse') as string,
+      complementAdresse: form.get('complementAdresse') as string,
+      itinerant: form.get('itinerant') === 'on',
+      nom: form.get('nom') as string,
+      path: pathname,
+      siret: etatFormulaire.siretSaisi,
+      structureId,
+      typologies: form.getAll('typologies').map(String),
+    })
 
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiées', title: 'Informations générales ' })
@@ -105,11 +97,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
             <button className="fr-btn fr-btn--secondary" disabled={isDisabled} onClick={quitterEdition} type="button">
               Annuler
             </button>
-            <button
-              className="fr-btn"
-              disabled={isDisabled || (!etatFormulaire.sansSiret && etatFormulaire.entreprise === null)}
-              type="submit"
-            >
+            <button className="fr-btn" disabled={isDisabled} type="submit">
               {isDisabled ? 'Enregistrement en cours...' : 'Enregistrer'}
             </button>
           </div>
@@ -155,9 +143,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
 function etatInitial(data: InformationsGeneralesData): EtatLieuInclusionFormulaire {
   return {
     adresse: data.adresse,
-    entreprise: null,
     nom: data.nomStructure,
-    sansSiret: false,
     siretSaisi: data.siret ?? '',
   }
 }
