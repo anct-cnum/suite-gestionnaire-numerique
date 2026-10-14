@@ -1,3 +1,4 @@
+import { recupererDateDernierImportIdPoste } from './shared/historiqueSource'
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
@@ -21,7 +22,7 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
 
       const postes = await this.getPostesPagines(filtres, pagination.limite, offset)
       const statistiques = await this.getStatistiques(filtres)
-      const dateMiseAJour = await this.getDateDernierImportIdPoste()
+      const dateMiseAJour = await recupererDateDernierImportIdPoste()
       const totalCount = statistiques.totalPostesPourPagination
       const totalPages = Math.ceil(totalCount / pagination.limite)
 
@@ -155,14 +156,6 @@ export class PrismaPostesConseillerNumeriqueLoader implements PostesConseillerNu
     }
 
     return Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}`
-  }
-
-  private async getDateDernierImportIdPoste(): Promise<Date | null> {
-    const result = await prisma.$queryRaw<Array<{ date_dernier_import: Date | null }>>`
-      SELECT MAX(ingested_at) AS date_dernier_import
-      FROM source.idposte__conum
-    `
-    return result.at(0)?.date_dernier_import ?? null
   }
 
   private async getPostesPagines(
