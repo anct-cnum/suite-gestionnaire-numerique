@@ -17,6 +17,7 @@ export function posteConseillerNumeriqueDetailPresenter(
     badges: buildBadges(readModel),
     contrats: buildContrats(readModel.contrats),
     conventionsEtFinancements: buildConventionsEtFinancements(readModel.conventions, now),
+    dateMiseAJour: readModel.dateMiseAJour === null ? null : formaterEnDateFrancaise(readModel.dateMiseAJour),
     posteId: readModel.posteConumId,
     structure: {
       adresse: readModel.structure.adresse,
@@ -40,6 +41,7 @@ type PosteDetailViewModel = Readonly<{
   >
   contrats: ReadonlyArray<ContratViewModel>
   conventionsEtFinancements: ConventionsViewModel
+  dateMiseAJour: null | string
   posteId: number
   structure: Readonly<{
     adresse: string

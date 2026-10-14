@@ -56,6 +56,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           st.id as structure_id,
           COALESCE(st.denomination_antenne, st.denomination_sirene) as nom_structure,
           st.siret,
+          st.updated_at_idposte,
           cj.nom as categorie_juridique_nom,
           a.numero_voie,
           a.repetition,
@@ -98,6 +99,7 @@ export class PrismaPosteConseillerNumeriqueDetailLoader implements PosteConseill
           v1: this.buildConventionV1(poste, datesConventions),
           v2: this.buildConventionV2(poste, datesConventions),
         },
+        dateMiseAJour: structure.updated_at_idposte,
         estBonifie: poste.bonification,
         estCoordinateur: poste.est_coordinateur,
         posteConumId: poste.poste_conum_id,
@@ -374,6 +376,7 @@ interface StructureResult {
   repetition: null | string
   siret: null | string
   structure_id: number
+  updated_at_idposte: Date | null
 }
 
 interface DatesConventions {
