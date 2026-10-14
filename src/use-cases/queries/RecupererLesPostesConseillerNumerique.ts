@@ -30,6 +30,7 @@ export type PostesConseillerNumeriqueStatistiquesReadModel = Readonly<{
 }>
 
 export type PostesConseillerNumeriqueReadModel = Readonly<{
+  dateMiseAJour: Date | null
   displayPagination: boolean
   limite: number
   page: number
