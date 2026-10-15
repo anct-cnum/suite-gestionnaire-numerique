@@ -153,7 +153,7 @@ Le code d'écriture **ne change pas** : on lève seulement le refus pour les lie
 1. **Retrait du filet.** Il ne détecte plus un chemin d'écriture Coop qui oublierait le registre. La Coop écrit les deux tables dans une même transaction et sa règle opératoire interdit le SQL hors application, donc le risque est faible. La vue `lieu_divergences_coop` reste disponible pour un contrôle ponctuel.
 2. **Écritures concurrentes.** Une écriture Coop d'une section écrase la correction MIN de cette section, après que la modale l'a présentée au médiateur. C'est voulu.
 3. **Suppression par MIN.** Elle est sans effet côté Coop. Si un médiateur met à jour son lieu, la Coop remet `deleted_at` à NULL et le lieu revient au registre. La Coop juge ce retour légitime, mais il faut le dire à l'agent MIN dans la confirmation.
-4. **Visibilité et adresse.** Voir les questions 1 et 2 (§5).
+4. **Visibilité et adresse.** Décision du 15/10 : MIN ouvre les deux pour les lieux Coop, sans attendre la réponse de la Coop (§5, questions 1 et 2). Limites connues : si la Coop lit la visibilité dans sa table, elle peut continuer d'afficher « visible » un lieu masqué par MIN (`api.carto`, qui lit le registre, le masque bien) ; la modale d'écart ne présente pas l'adresse au médiateur.
 5. **Montée de version de la bibliothèque** (2.3 → 4.4) : elle peut modifier des nomenclatures affichées dans MIN.
 
 ## 4. Recommandation
@@ -169,6 +169,8 @@ Le code d'écriture **ne change pas** : on lève seulement le refus pour les lie
 ## 5. Questions encore ouvertes
 
 Réponses de la Coop du 15/10 : voir la [proposition](proposition-coop-double-ecriture-min.md), §8.
+
+Décision du 15/10/2026 sur les questions 1 et 2 : **MIN ouvre la modification de la visibilité et de l'adresse pour les lieux Coop**, sans attendre la réponse. Les questions restent posées à la Coop (#2104) pour mesurer l'effet côté Coop, sans bloquer #2105.
 
 1. **Visibilité cartographique.** La Coop lit-elle la visibilité dans sa table (ADR-003 l.60-67, `lieu.transfer.ts:252-257`) ou dans le registre ? Si c'est dans sa table, un masquage MIN est respecté par `api.carto`, mais la Coop affiche toujours « visible ». La modale d'écart couvre-t-elle ce champ ? À poser à la Coop.
 2. **Adresse.** La modale d'écart exclut l'adresse (`domain/differences.ts`), et la Coop garde sa propre localisation (`ban_id`, coordonnées). Une nouvelle adresse MIN est-elle bien affichée dans la Coop, et le médiateur en est-il prévenu ? À poser à la Coop.
@@ -204,7 +206,7 @@ Créés le 15/10/2026, tous en P1, type Tech, statut Backlog sur le board SEPT.
 - **Dépend de** : T1 en production, T2.
 - **À faire**
   - Retirer le refus `estLieuCoop` de `verifierDroitsLieu` et de `lieu/[id]/page.tsx`.
-  - Réactiver la bascule de visibilité et la suppression dans `ListeLieuxInclusion` et sur la fiche, selon les réponses aux questions 1 et 2.
+  - Réactiver la bascule de visibilité, la modification de l'adresse et la suppression dans `ListeLieuxInclusion` et sur la fiche (décision du 15/10, sans attendre #2104).
   - Remplacer la bannière par une information, par exemple : « Lieu géré dans la Coop numérique : vos modifications seront présentées à ses médiateurs, qui pourront les reprendre. »
   - Dans la confirmation de suppression, prévenir qu'une mise à jour par un médiateur fera revenir le lieu.
   - Garder la signature actuelle (`updated_at_min`, `source`, `edited_by`), et ajouter un test qui garantit que MIN n'écrit jamais `updated_at_coop` ni le schéma `coop`.
@@ -212,7 +214,7 @@ Créés le 15/10/2026, tous en P1, type Tech, statut Backlog sur le board SEPT.
 
 ### T4 (#2104) — Coop (questions, pas de développement demandé) — Visibilité et adresse modifiées par MIN
 
-- Poser à l'équipe Coop les questions 1 et 2 du §5. Leur réponse décide du périmètre de T3 pour la visibilité et l'adresse.
+- Poser à l'équipe Coop les questions 1 et 2 du §5. Elles ne bloquent plus T3 : la visibilité et l'adresse sont ouvertes (décision du 15/10). La réponse dira si la Coop doit adapter son affichage ou sa modale d'écart.
 
 ### T5 (#2106) — MIN — Le courriel d'un lieu est écrit sous une clé que personne ne lit
 
