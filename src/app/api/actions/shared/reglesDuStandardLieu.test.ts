@@ -37,8 +37,6 @@ describe('règles du standard des lieux de médiation numérique', () => {
 
   it.each([
     { intention: 'un SIRET dont la clé de contrôle est juste', valeur: '13002603200016' },
-    { intention: 'un RIDET calédonien de 6 chiffres', valeur: '123456' },
-    { intention: 'un RIDET calédonien de 7 chiffres', valeur: '1234567' },
     { intention: 'une saisie vide (pas de SIRET)', valeur: '' },
     { intention: 'une absence de saisie', valeur: undefined },
   ])('le SIRET accepte $intention', ({ valeur }) => {
@@ -51,6 +49,7 @@ describe('règles du standard des lieux de médiation numérique', () => {
 
   it.each([
     { intention: 'un SIRET dont la clé de contrôle est fausse', valeur: '13002603200017' },
+    { intention: 'un RIDET : réservé aux structures, un lieu n’a qu’un SIRET', valeur: '1234567' },
     { intention: 'un identifiant de 10 chiffres', valeur: '1234567890' },
     { intention: 'des lettres', valeur: 'ABCDEFGHIJKLMN' },
   ])('le SIRET refuse $intention', ({ valeur }) => {
@@ -59,7 +58,7 @@ describe('règles du standard des lieux de médiation numérique', () => {
 
     // THEN
     expect(messages(resultat)).toStrictEqual([
-      'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle',
     ])
   })
 

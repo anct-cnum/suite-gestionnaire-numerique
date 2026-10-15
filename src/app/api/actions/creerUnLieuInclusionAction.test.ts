@@ -18,9 +18,7 @@ describe('créer un lieu d’inclusion action', () => {
 
     // THEN
     expect(resultat).toStrictEqual({
-      messages: [
-        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
-      ],
+      messages: ['Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle'],
       statut: 'erreur',
     })
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
@@ -29,8 +27,7 @@ describe('créer un lieu d’inclusion action', () => {
   it.each([
     {
       intention: 'un SIRET dont la clé de contrôle est fausse',
-      message:
-        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      message: 'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle',
       saisie: { siret: '13002603200017' },
     },
     {
