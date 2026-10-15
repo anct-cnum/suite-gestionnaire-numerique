@@ -20,7 +20,12 @@ export default function LieuInclusionDetailsHeader(props: Props): ReactElement {
         </div>
         {suppression ? (
           <div className="fr-col-auto">
-            <SupprimerLieuBouton adresse={suppression.adresse} lieuId={suppression.lieuId} nom={suppression.nom} />
+            <SupprimerLieuBouton
+              adresse={suppression.adresse}
+              estLieuCoop={suppression.estLieuCoop}
+              lieuId={suppression.lieuId}
+              nom={suppression.nom}
+            />
           </div>
         ) : null}
         <div className="fr-col-auto" style={{ display: 'none' }}>
@@ -91,6 +96,7 @@ type Props = Readonly<{
   data: LieuInclusionDetailsHeaderData
   suppression?: Readonly<{
     adresse: string
+    estLieuCoop: boolean
     lieuId: string
     nom: string
   }>

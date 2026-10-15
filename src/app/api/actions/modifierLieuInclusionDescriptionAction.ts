@@ -4,6 +4,14 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import {
+  horairesDuStandard,
+  presentationDetailDuStandard,
+  presentationResumeDuStandard,
+  sitesWebDuStandard,
+  typologiesDuStandard,
+  urlDuStandard,
+} from './shared/reglesDuStandardLieu'
 import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -19,7 +27,7 @@ export async function modifierLieuInclusionDescriptionAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    // Vérification des droits (session, [bêta], lieu, rôle)
     const droits = await verifierDroitsLieu(actionParams.structureId, {
       action: 'modifier',
       reserveAuxBetaTesteurs: false,
@@ -30,14 +38,14 @@ export async function modifierLieuInclusionDescriptionAction(
 
     // Appel du Use Case
     const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle({
-      horaires: actionParams.horaires,
-      itinerance: actionParams.itinerance,
-      presentationDetail: actionParams.presentationDetail,
-      presentationResume: actionParams.presentationResume,
-      priseRdvUrl: actionParams.priseRdvUrl,
-      structureId: actionParams.structureId,
-      typologie: actionParams.typologie,
-      websiteUrl: actionParams.websiteUrl,
+      horaires: validationResult.data.horaires,
+      itinerance: validationResult.data.itinerance,
+      presentationDetail: validationResult.data.presentationDetail,
+      presentationResume: validationResult.data.presentationResume,
+      priseRdvUrl: validationResult.data.priseRdvUrl,
+      structureId: validationResult.data.structureId,
+      typologie: validationResult.data.typologie,
+      websiteUrl: validationResult.data.websiteUrl,
     })
 
     // Invalider le cache de la page
@@ -60,13 +68,23 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  horaires: z.string().optional(),
+  horaires: horairesDuStandard,
   itinerance: z.string().optional(),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  presentationDetail: z.string().optional(),
-  presentationResume: z.string().optional(),
-  priseRdvUrl: z.string().optional(),
+  presentationDetail: presentationDetailDuStandard,
+  presentationResume: presentationResumeDuStandard,
+  priseRdvUrl: urlDuStandard,
   structureId: z.string().min(1, { message: "L'identifiant de la structure doit être renseigné" }),
-  typologie: z.string().optional(),
-  websiteUrl: z.string().optional(),
+  typologie: z
+    .string()
+    .optional()
+    .superRefine((typologie, contexte) => {
+      const verification = typologiesDuStandard.safeParse(
+        typologie === undefined || typologie === '' ? [] : [typologie]
+      )
+      verification.error?.issues.forEach((issue) => {
+        contexte.addIssue({ code: z.ZodIssueCode.custom, message: issue.message })
+      })
+    }),
+  websiteUrl: sitesWebDuStandard,
 })

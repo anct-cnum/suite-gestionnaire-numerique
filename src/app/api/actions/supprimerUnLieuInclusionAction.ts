@@ -16,7 +16,7 @@ export async function supprimerUnLieuInclusionAction(actionParams: ActionParams)
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    // Vérification des droits (session, [bêta], lieu, rôle)
     const droits = await verifierDroitsLieu(validationResult.data.lieuId, {
       action: 'supprimer',
       reserveAuxBetaTesteurs: true,

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import { horairesDuStandard, sitesWebDuStandard, urlDuStandard } from './shared/reglesDuStandardLieu'
 import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -20,7 +21,7 @@ export async function modifierLieuInclusionInformationsPratiquesAction(
     }
 
     try {
-      // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+      // Vérification des droits (session, [bêta], lieu, rôle)
       const droits = await verifierDroitsLieu(actionParams.structureId, {
         action: 'modifier',
         reserveAuxBetaTesteurs: false,
@@ -32,11 +33,11 @@ export async function modifierLieuInclusionInformationsPratiquesAction(
       // Appel du Use Case
       const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle(
         {
-          horaires: actionParams.horaires,
-          itinerance: actionParams.itinerance,
-          priseRdvUrl: actionParams.priseRdvUrl,
-          structureId: actionParams.structureId,
-          websiteUrl: actionParams.websiteUrl,
+          horaires: validationResult.data.horaires,
+          itinerance: validationResult.data.itinerance,
+          priseRdvUrl: validationResult.data.priseRdvUrl,
+          structureId: validationResult.data.structureId,
+          websiteUrl: validationResult.data.websiteUrl,
         }
       )
 
@@ -61,10 +62,10 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  horaires: z.string().optional(),
+  horaires: horairesDuStandard,
   itinerance: z.string().optional(),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  priseRdvUrl: z.string().optional(),
+  priseRdvUrl: urlDuStandard,
   structureId: z.string().min(1, { message: "L'identifiant de la structure doit être renseigné" }),
-  websiteUrl: z.string().optional(),
+  websiteUrl: sitesWebDuStandard,
 })

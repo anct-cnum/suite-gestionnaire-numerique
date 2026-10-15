@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import { courrielDuStandard, telephoneDuStandard } from './shared/reglesDuStandardLieu'
 import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -19,7 +20,7 @@ export async function modifierLieuInclusionServicesModaliteAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    // Vérification des droits (session, [bêta], lieu, rôle)
     const droits = await verifierDroitsLieu(actionParams.structureId, {
       action: 'modifier',
       reserveAuxBetaTesteurs: false,
@@ -33,11 +34,11 @@ export async function modifierLieuInclusionServicesModaliteAction(
       new PrismaLieuInclusionRepository(),
       new Date()
     ).handle({
-      email: actionParams.email,
-      fraisACharge: actionParams.fraisACharge,
-      modalitesAcces: actionParams.modalitesAcces,
-      structureId: actionParams.structureId,
-      telephone: actionParams.telephone,
+      email: validationResult.data.email,
+      fraisACharge: validationResult.data.fraisACharge,
+      modalitesAcces: validationResult.data.modalitesAcces,
+      structureId: validationResult.data.structureId,
+      telephone: validationResult.data.telephone,
     })
 
     // Invalider le cache de la page
@@ -57,10 +58,10 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  email: z.string().optional(),
+  email: courrielDuStandard,
   fraisACharge: z.array(z.string()),
   modalitesAcces: z.array(z.string()),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   structureId: z.string().min(1, { message: "L'identifiant de la structure doit être renseigné" }),
-  telephone: z.string().optional(),
+  telephone: telephoneDuStandard,
 })

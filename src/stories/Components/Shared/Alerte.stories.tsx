@@ -22,7 +22,7 @@ type Story = StoryObj<typeof Alerte>
 export const Information: Story = {
   args: {
     children:
-      'Les informations de ce lieu sont renseignées par les médiateurs dans la Coop numérique et reprises ici automatiquement. Pour les modifier, masquer ce lieu sur la carte ou le supprimer, passez par la Coop.',
+      'Ce lieu est aussi renseigné par ses médiateurs dans la Coop numérique. Vos modifications leur seront présentées, et ils pourront les reprendre.',
     titre: 'Lieu géré dans la Coop numérique',
     type: 'info',
   },

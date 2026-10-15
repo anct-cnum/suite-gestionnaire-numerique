@@ -71,6 +71,52 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect((readModel as LieuDetailsReadModel).estLieuCoop).toBe(estLieuCoop)
   })
 
+  it('lit le courriel du lieu sous la clé email, celle de la Coop et d’api.carto (#2106)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({
+      data: { contact: { courriels: { email: 'lieu@exemple.fr' } }, id: LIEU_ID, nom: 'Lieu test courriel' },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect((readModel as LieuDetailsReadModel).lieuAccueilPublic.email).toBe('lieu@exemple.fr')
+  })
+
+  it('ne lit plus l’ancienne clé contact_public, dont le stock est repris (#2106)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({
+      data: { contact: { courriels: { contact_public: 'ancien@exemple.fr' } }, id: LIEU_ID, nom: 'Lieu test courriel' },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect((readModel as LieuDetailsReadModel).lieuAccueilPublic.email).toBeUndefined()
+  })
+
+  it('expose le référencement carto et le drapeau de visibilité pour signaler un lieu en attente (#1495)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({
+      data: {
+        id: LIEU_ID,
+        nom: 'Lieu test référencement',
+        structure_cartographie_nationale_id: null,
+        visible_pour_cartographie_nationale: true,
+      },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect(readModel).not.toHaveProperty('type')
+    expect((readModel as LieuDetailsReadModel).estReferenceSurLaCarte).toBe(false)
+    expect((readModel as LieuDetailsReadModel).visiblePourCartographie).toBe(true)
+  })
+
   it.each([
     { codeInsee: '05061', codeRegion: '93', intention: 'd’un département métropolitain' },
     { codeInsee: '2A004', codeRegion: '94', intention: 'de Corse' },
