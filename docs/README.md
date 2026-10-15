@@ -66,9 +66,10 @@ docs/
 
 ## Chantiers en cours
 
-| Chantier                             | Documents                                                                                                                    |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| Membres de gouvernance mal rattachés | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
+| Chantier                                | Documents                                                                                                                    |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Membres de gouvernance mal rattachés    | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
+| Lieux Coop modifiables dans MIN (#2101) | [conception-lieux-coop-modifiables.md](chantiers/2101-lieux-coop-modifiables/conception-lieux-coop-modifiables.md)           |
 
 ## Documentation dans les autres dépôts
 
