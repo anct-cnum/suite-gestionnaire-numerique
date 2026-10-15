@@ -13,23 +13,27 @@ vi.mock(import('next/navigation'), () => ({
 }))
 
 describe('fiche d’un lieu d’inclusion', () => {
-  it('quand le lieu est géré dans la Coop, alors un message le dit et aucune action de modification n’est proposée (#1951)', () => {
+  it('quand le lieu est géré dans la Coop, alors un message dit que ses médiateurs verront les modifications, qui restent possibles (#2105)', () => {
     // GIVEN
     const data = {
       ...createDefaultLieuInclusionDetailsData(),
       estLieuCoop: true,
-      peutModifier: false,
-      peutModifierInformationsGenerales: false,
+      peutModifier: true,
+      peutModifierInformationsGenerales: true,
     }
 
     // WHEN
-    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={true} />)
 
     // THEN
     expect(screen.getByRole('heading', { level: 3, name: 'Lieu géré dans la Coop numérique' })).toBeInTheDocument()
-    expect(screen.getByText(/passez par la Coop/)).toBeInTheDocument()
-    expect(screen.queryAllByRole('button', { name: 'Modifier' })).toHaveLength(0)
-    expect(screen.queryByRole('button', { name: 'Supprimer ce lieu' })).not.toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Ce lieu est aussi renseigné par ses médiateurs dans la Coop numérique. Vos modifications leur seront présentées, et ils pourront les reprendre.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Modifier' }).length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Supprimer ce lieu' })).toBeInTheDocument()
   })
 
   it('quand le lieu n’est pas géré dans la Coop, alors aucun message n’est affiché et les actions restent disponibles', () => {

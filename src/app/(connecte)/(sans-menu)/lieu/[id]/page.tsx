@@ -38,19 +38,16 @@ async function LieuPage({ params, searchParams }: Props): Promise<ReactElement> 
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   const utilisateur = await utilisateurRepository.get(utilisateurId)
 
-  // Calculer si l'utilisateur peut modifier ce lieu. Un lieu géré dans la Coop
-  // est en lecture seule dans MIN, quel que soit le rôle (#1951).
-  const peutModifier =
-    !lieuDetailsReadModel.estLieuCoop &&
-    LieuInclusion.peutEtreModifiePar(
-      utilisateur,
-      {
-        codeDepartement: lieuDetailsReadModel.codeDepartement,
-        codeRegion: lieuDetailsReadModel.codeRegion,
-        estDeLaStructureDuDemandeur: await estLieuDeLaStructureDuDemandeur(utilisateur, Number(id)),
-      },
-      await departementsCoportesParLeDemandeur(utilisateur)
-    )
+  // Calculer si l'utilisateur peut modifier ce lieu, Coop compris (#2105).
+  const peutModifier = LieuInclusion.peutEtreModifiePar(
+    utilisateur,
+    {
+      codeDepartement: lieuDetailsReadModel.codeDepartement,
+      codeRegion: lieuDetailsReadModel.codeRegion,
+      estDeLaStructureDuDemandeur: await estLieuDeLaStructureDuDemandeur(utilisateur, Number(id)),
+    },
+    await departementsCoportesParLeDemandeur(utilisateur)
+  )
 
   // Gestion des lieux : administrateurs, ou bêta-testeurs pour les autres rôles (#1951).
   const contexte = await resoudreContexte(

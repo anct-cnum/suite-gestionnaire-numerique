@@ -559,6 +559,7 @@ export default function ListeLieuxInclusion({
 
       <ModaleSuppressionLieu
         adresse={lieuASupprimer === null ? '' : formaterAdresseSurUneLigne(lieuASupprimer.adresse)}
+        estLieuCoop={lieuASupprimer?.estLieuCoop ?? false}
         id="modaleSuppressionLieu"
         isOpen={lieuASupprimer !== null}
         nom={lieuASupprimer?.nom ?? ''}
@@ -722,11 +723,8 @@ function LigneLieu({
               <input
                 className="fr-toggle__input"
                 defaultChecked={lieu.visiblePourCartographie}
-                disabled={!peutModifierVisibilite || lieu.estLieuCoop}
+                disabled={!peutModifierVisibilite}
                 id={`visible-carto-${lieu.id}`}
-                title={
-                  lieu.estLieuCoop ? 'Lieu géré dans la Coop numérique : visibilité pilotée depuis la Coop' : undefined
-                }
                 onChange={async (event) => onToggleVisibleCarto(event, lieu.id)}
                 type="checkbox"
               />
@@ -747,7 +745,7 @@ function LigneLieu({
           >
             {`Voir le détail de ${lieu.nom}`}
           </Link>
-          {afficherSuppression && !lieu.estLieuCoop ? (
+          {afficherSuppression ? (
             <button
               className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-delete-line color-red fr-mb-0"
               onClick={onSupprimer}

@@ -35,7 +35,7 @@ export async function modifierLieuInclusionInformationsGeneralesAction(
     }
 
     try {
-      // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+      // Vérification des droits (session, [bêta], lieu, rôle)
       const droits = await verifierDroitsLieu(validationResult.data.structureId, {
         action: 'modifier',
         reserveAuxBetaTesteurs: true,

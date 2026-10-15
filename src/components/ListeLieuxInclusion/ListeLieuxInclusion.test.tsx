@@ -83,10 +83,10 @@ describe('visibilité cartographique et suppression depuis la liste (#1951)', ()
     },
     {
       estLieuCoop: true,
-      intention: 'un lieu géré dans la Coop est en lecture seule : toggle désactivé, pas de suppression',
+      intention: 'un lieu géré dans la Coop se gère comme les autres : toggle actif, suppression proposée (#2105)',
       peutModifierVisibilite: true,
-      suppressionAttendue: false,
-      toggleActif: false,
+      suppressionAttendue: true,
+      toggleActif: true,
     },
     {
       estLieuCoop: false,

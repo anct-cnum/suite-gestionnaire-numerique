@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  departementsCoportesParLeDemandeur,
-  MESSAGE_LIEU_GERE_PAR_LA_COOP,
-  verifierDroitsLieu,
-} from './verifierDroitsLieu'
+import { departementsCoportesParLeDemandeur, verifierDroitsLieu } from './verifierDroitsLieu'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaLieuxDeLaStructureLoader } from '@/gateways/PrismaLieuxDeLaStructureLoader'
@@ -104,26 +100,37 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     expect(verification).toStrictEqual({ message: 'Lieu non trouvé', statut: 'refus' })
   })
 
-  it('refuse un lieu géré dans la Coop, même à un administrateur, avant toute vérification de droits (#1951)', async () => {
+  it('autorise un administrateur sur un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
       utilisateurFactory({ role: 'Administrateur dispositif' })
     )
-    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
-      lieuDetailsReadModelFactory({ estLieuCoop: true })
+    const lieu = lieuDetailsReadModelFactory({ estLieuCoop: true })
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(lieu)
+
+    // WHEN
+    const verification = await verifierDroitsLieu('42', { action: 'supprimer', reserveAuxBetaTesteurs: false })
+
+    // THEN
+    expect(verification).toStrictEqual({ lieu, statut: 'ok' })
+  })
+
+  it('applique à un lieu géré dans la Coop les droits du rôle, comme à tout lieu (#2105)', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
     )
-    vi.spyOn(PrismaMembreLoader.prototype, 'getToutesAppartenancesParStructureId')
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory({ codeDepartement: '93', estLieuCoop: true })
+    )
 
     // WHEN
     const verification = await verifierDroitsLieu('42', { action: 'modifier', reserveAuxBetaTesteurs: false })
 
     // THEN
-    expect(verification).toStrictEqual({ message: MESSAGE_LIEU_GERE_PAR_LA_COOP, statut: 'refus' })
-    expect(MESSAGE_LIEU_GERE_PAR_LA_COOP).toBe(
-      'Ce lieu est géré dans la Coop numérique : il ne peut pas être modifié depuis Mon Inclusion Numérique.'
-    )
-    expect(PrismaMembreLoader.prototype.getToutesAppartenancesParStructureId).not.toHaveBeenCalled()
+    expect(verification).toStrictEqual({ message: "Vous n'avez pas les droits pour modifier ce lieu", statut: 'refus' })
   })
 
   it.each([

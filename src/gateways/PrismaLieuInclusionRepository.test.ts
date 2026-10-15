@@ -281,3 +281,121 @@ function donneesCreation(override: Partial<CreerLieuInclusionData>): CreerLieuIn
     ...override,
   }
 }
+
+// Le registre fait foi (#2105) : MIN modifie les lieux gérés dans la Coop au registre seul. Il signe ses
+// écritures (updated_at_min, edited_by, source) et ne touche jamais ce qui appartient à la Coop :
+// updated_at_coop, qui dit quand la Coop a écrit, et structure_coop_id, clé de jointure vers la Coop.
+describe('repository Prisma des lieux d’inclusion — lieu géré dans la Coop (#2105)', () => {
+  const LIEU_COOP_ID = 991883
+  const STRUCTURE_COOP_ID = '00000000-0000-4000-8000-000000002105'
+  const UPDATED_AT_COOP = new Date('2026-10-01T08:00:00.000Z')
+  const COMMUNE_COOP = 'Commune test 2105'
+  const structureUid = new StructureUid(LIEU_COOP_ID)
+
+  beforeEach(async () => {
+    await prisma.main_lieu_inclusion.create({
+      data: {
+        edited_by: 'coop',
+        id: LIEU_COOP_ID,
+        nom: 'Lieu test coop 2105',
+        source: 'Coop numérique',
+        structure_coop_id: STRUCTURE_COOP_ID,
+        updated_at_coop: UPDATED_AT_COOP,
+        visible_pour_cartographie_nationale: true,
+      },
+    })
+  })
+
+  afterEach(async () => {
+    await prisma.main_lieu_inclusion.deleteMany({ where: { id: LIEU_COOP_ID } })
+    await prisma.adresse.deleteMany({ where: { nom_commune: COMMUNE_COOP } })
+  })
+
+  it.each([
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateInformationsGenerales({
+          adresseEnrichie: null,
+          adresseSirene: {
+            codeInsee: '75199',
+            codePostal: '75099',
+            commune: COMMUNE_COOP,
+            nomVoie: 'Rue Coop 2105',
+            numeroVoie: 3,
+          },
+          complementAdresse: null,
+          date: epochTime,
+          nom: 'Nom corrigé par MIN',
+          siret: null,
+          structureUid,
+        }),
+      intention: 'les informations générales, adresse comprise',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateDescription({
+          date: epochTime,
+          horaires: 'Mo-Fr 09:00-12:00',
+          presentationResume: 'Corrigé par MIN',
+          structureUid,
+        }),
+      intention: 'la description',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateServicesModalite({
+          date: epochTime,
+          fraisACharge: ['Gratuit'],
+          modalitesAcces: ['Se présenter'],
+          structureUid,
+          telephone: '+33102030405',
+        }),
+      intention: 'les modalités d’accès et le contact',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateServicesTypeAccompagnement({
+          date: epochTime,
+          modalites: [],
+          structureUid,
+          thematiques: ['Aide aux démarches administratives'],
+          typesAccompagnement: ['Accompagnement individuel'],
+        }),
+      intention: 'les services et types d’accompagnement',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateServicesTypePublic({
+          date: epochTime,
+          priseEnChargeSpecifique: ['Surdité'],
+          publicsSpecifiquementAdresses: ['Seniors'],
+          structureUid,
+        }),
+      intention: 'les publics',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().updateVisibiliteCartographie({
+          date: epochTime,
+          structureUid,
+          visiblePourCartographie: false,
+        }),
+      intention: 'la visibilité cartographique',
+    },
+    {
+      ecrire: async (): Promise<void> =>
+        new PrismaLieuInclusionRepository().supprimer({ date: epochTime, structureUid }),
+      intention: 'la suppression',
+    },
+  ])('quand MIN écrit $intention, il signe la ligne sans toucher à ce qui appartient à la Coop', async ({ ecrire }) => {
+    // WHEN
+    await ecrire()
+
+    // THEN
+    const lieu = await prisma.main_lieu_inclusion.findUniqueOrThrow({ where: { id: LIEU_COOP_ID } })
+    expect(lieu.updated_at_coop).toStrictEqual(UPDATED_AT_COOP)
+    expect(lieu.structure_coop_id).toBe(STRUCTURE_COOP_ID)
+    expect(lieu.edited_by).toBe('min')
+    expect(lieu.updated_at_min).toStrictEqual(epochTime)
+  })
+})
