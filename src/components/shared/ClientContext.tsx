@@ -18,6 +18,7 @@ import { changerMaRegionAction } from '@/app/api/actions/changerMaRegionAction'
 import { changerMaStructureAction } from '@/app/api/actions/changerMaStructureAction'
 import { changerMonDepartementAction } from '@/app/api/actions/changerMonDepartementAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
+import { creerUnLieuInclusionAction } from '@/app/api/actions/creerUnLieuInclusionAction'
 import { deciderAppariementLieuAction } from '@/app/api/actions/deciderAppariementLieuAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { fusionnerStructuresAction } from '@/app/api/actions/fusionnerStructuresAction'
@@ -40,6 +41,7 @@ import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modi
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { previsualiserAdresseAction } from '@/app/api/actions/previsualiserAdresseAction'
 import { rechercherAdressesAction } from '@/app/api/actions/rechercherAdressesAction'
+import { rechercherLieuxInclusionSimilairesAction } from '@/app/api/actions/rechercherLieuxInclusionSimilairesAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { rejoindreUneGouvernanceAction } from '@/app/api/actions/rejoindreUneGouvernanceAction'
@@ -82,6 +84,7 @@ export default function ClientContext({
       changerMaStructureAction,
       changerMonDepartementAction,
       changerMonRoleAction,
+      creerUnLieuInclusionAction,
       deciderAppariementLieuAction,
       definirUnCoPorteurAction,
       fusionnerStructuresAction,
@@ -105,6 +108,7 @@ export default function ClientContext({
       pathname,
       previsualiserAdresseAction,
       rechercherAdressesAction,
+      rechercherLieuxInclusionSimilairesAction,
       rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
       rejoindreUneGouvernanceAction,
@@ -148,6 +152,7 @@ export type ClientContextProviderValue = Readonly<{
   changerMaStructureAction: typeof changerMaStructureAction
   changerMonDepartementAction: typeof changerMonDepartementAction
   changerMonRoleAction: typeof changerMonRoleAction
+  creerUnLieuInclusionAction: typeof creerUnLieuInclusionAction
   deciderAppariementLieuAction: typeof deciderAppariementLieuAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   fusionnerStructuresAction: typeof fusionnerStructuresAction
@@ -171,6 +176,7 @@ export type ClientContextProviderValue = Readonly<{
   pathname: string
   previsualiserAdresseAction: typeof previsualiserAdresseAction
   rechercherAdressesAction: typeof rechercherAdressesAction
+  rechercherLieuxInclusionSimilairesAction: typeof rechercherLieuxInclusionSimilairesAction
   rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   rejoindreUneGouvernanceAction: typeof rejoindreUneGouvernanceAction

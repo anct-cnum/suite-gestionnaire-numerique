@@ -23,7 +23,7 @@ describe('fiche d’un lieu d’inclusion', () => {
     }
 
     // WHEN
-    renderComponent(<LieuxInclusionDetails data={data} lieuId="42" peutSupprimer={false} />)
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
 
     // THEN
     expect(screen.getByRole('heading', { level: 3, name: 'Lieu géré dans la Coop numérique' })).toBeInTheDocument()
@@ -42,11 +42,64 @@ describe('fiche d’un lieu d’inclusion', () => {
     }
 
     // WHEN
-    renderComponent(<LieuxInclusionDetails data={data} lieuId="42" peutSupprimer={true} />)
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={true} />)
 
     // THEN
     expect(screen.queryByRole('heading', { name: 'Lieu géré dans la Coop numérique' })).not.toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Modifier' }).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Supprimer ce lieu' })).toBeInTheDocument()
+  })
+
+  it('signale un lieu visible mais pas encore référencé sur la carte (#1495)', () => {
+    // GIVEN
+    const data = { ...createDefaultLieuInclusionDetailsData(), estEnAttenteDeReferencement: true }
+
+    // WHEN
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
+
+    // THEN
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'En attente de référencement sur la cartographie' })
+    ).toBeInTheDocument()
+  })
+
+  it('quand on arrive depuis « C’est mon lieu », accueille avec un bandeau qui dit que le lieu existe déjà (V6-3)', () => {
+    // GIVEN
+    const data = createDefaultLieuInclusionDetailsData()
+
+    // WHEN
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={true} lieuId="42" peutSupprimer={false} />)
+
+    // THEN
+    expect(screen.getByText('Ce lieu est déjà enregistré')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Vous n’avez pas besoin de le créer. Vérifiez ses informations et modifiez-les si elles ne sont plus à jour.'
+      )
+    ).toBeInTheDocument()
+  })
+
+  it('n’affiche pas ce bandeau quand on arrive sur la fiche par le chemin habituel', () => {
+    // GIVEN
+    const data = createDefaultLieuInclusionDetailsData()
+
+    // WHEN
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
+
+    // THEN
+    expect(screen.queryByText('Ce lieu est déjà enregistré')).not.toBeInTheDocument()
+  })
+
+  it('ne signale rien quand le lieu est référencé sur la carte', () => {
+    // GIVEN
+    const data = { ...createDefaultLieuInclusionDetailsData(), estEnAttenteDeReferencement: false }
+
+    // WHEN
+    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
+
+    // THEN
+    expect(
+      screen.queryByRole('heading', { level: 3, name: 'En attente de référencement sur la cartographie' })
+    ).not.toBeInTheDocument()
   })
 })

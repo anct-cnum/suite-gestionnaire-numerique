@@ -1,10 +1,12 @@
 import { ReactElement } from 'react'
 
 import LieuInclusionDetailsAccueil from '@/components/LieuInclusionDetails/LieuInclusionDetailsAccueil'
+import LieuInclusionDetailsDejaEnregistre from '@/components/LieuInclusionDetails/LieuInclusionDetailsDejaEnregistre'
 import LieuInclusionDetailsHeader from '@/components/LieuInclusionDetails/LieuInclusionDetailsHeader'
 import LieuInclusionDetailsInformationsGenerales from '@/components/LieuInclusionDetails/LieuInclusionDetailsInformationsGenerales'
 import LieuInclusionDetailsPersonnes from '@/components/LieuInclusionDetails/LieuInclusionDetailsPersonnes'
 import LieuInclusionDetailsServices from '@/components/LieuInclusionDetails/LieuInclusionDetailsServices'
+import LieuInclusionDetailsVisibiliteCartographie from '@/components/LieuInclusionDetails/LieuInclusionDetailsVisibiliteCartographie'
 import Alerte from '@/components/shared/Alerte/Alerte'
 import { CouleurFraicheur } from '@/shared/fraicheur'
 
@@ -52,6 +54,7 @@ export type LieuAccueilPublicData = Readonly<{
 export type InformationsGeneralesData = Readonly<{
   adresse: string
   complementAdresse?: string
+  itinerant?: boolean
   nomStructure: string
   siret?: string
   typologies?: ReadonlyArray<string>
@@ -65,6 +68,8 @@ export type ServiceInclusionNumeriqueData = Readonly<{
 }>
 
 export type LieuInclusionDetailsData = Readonly<{
+  // Visible mais pas encore référencé sur la carte nationale (#1495).
+  estEnAttenteDeReferencement: boolean
   // Lieu porté par la Coop numérique : présenté en lecture seule (#1951).
   estLieuCoop: boolean
   header: LieuInclusionDetailsHeaderData
@@ -74,13 +79,16 @@ export type LieuInclusionDetailsData = Readonly<{
   peutModifier: boolean
   peutModifierInformationsGenerales: boolean
   servicesInclusionNumerique: ReadonlyArray<ServiceInclusionNumeriqueData>
+  visiblePourCartographie: boolean
 }>
 
 export default function LieuxInclusionDetails(props: Props): ReactElement {
-  const { data, lieuId, peutSupprimer } = props
+  const { data, dejaEnregistre, lieuId, peutSupprimer } = props
 
   return (
     <>
+      {dejaEnregistre ? <LieuInclusionDetailsDejaEnregistre /> : null}
+
       <div id="header">
         <LieuInclusionDetailsHeader
           data={data.header}
@@ -97,6 +105,13 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
         </Alerte>
       ) : null}
 
+      {data.estEnAttenteDeReferencement ? (
+        <Alerte titre="En attente de référencement sur la cartographie">
+          Ce lieu est marqué visible mais n’est pas référencé sur la cartographie nationale, il n’y apparaît donc pas.
+          Le référencement automatique des lieux créés depuis Mon Inclusion Numérique n’est pas encore en place.
+        </Alerte>
+      ) : null}
+
       <div id="informations-generales">
         <LieuInclusionDetailsInformationsGenerales
           data={data.informationsGenerales}
@@ -107,6 +122,15 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
       <div id="personnes-travaillant">
         <LieuInclusionDetailsPersonnes data={data.personnesTravaillant} />
       </div>
+
+      <div id="visibilite-cartographie">
+        <LieuInclusionDetailsVisibiliteCartographie
+          lieuId={lieuId}
+          peutModifier={data.peutModifierInformationsGenerales}
+          visiblePourCartographie={data.visiblePourCartographie}
+        />
+      </div>
+
       <section className="grey-border border-radius ">
         <div id="lieu-accueil-public">
           <LieuInclusionDetailsAccueil data={data.lieuAccueilPublic} peutModifier={data.peutModifier} />
@@ -126,6 +150,9 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
 
 type Props = Readonly<{
   data: LieuInclusionDetailsData
+  // Arrivée depuis « C'est mon lieu » : la fiche accueille l'utilisateur avec un
+  // bandeau lui disant qu'il n'a pas besoin de créer ce lieu (maquette V6-3).
+  dejaEnregistre: boolean
   lieuId: string
   peutSupprimer: boolean
 }>

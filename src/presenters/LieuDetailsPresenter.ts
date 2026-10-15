@@ -9,6 +9,11 @@ export function lieuDetailsPresenter(
   now: Date
 ): LieuInclusionDetailsData {
   return {
+    // Visible mais pas encore référencé sur la carte : l'apparition attend un référencement (#1495).
+    estEnAttenteDeReferencement:
+      lieuDetailsReadModel.visiblePourCartographie &&
+      !lieuDetailsReadModel.estReferenceSurLaCarte &&
+      !lieuDetailsReadModel.estLieuCoop,
     estLieuCoop: lieuDetailsReadModel.estLieuCoop,
     header: {
       fraicheur: getFraicheur(lieuDetailsReadModel.header, now),
@@ -18,6 +23,9 @@ export function lieuDetailsPresenter(
     informationsGenerales: {
       adresse: lieuDetailsReadModel.informationsGenerales.adresse,
       complementAdresse: lieuDetailsReadModel.informationsGenerales.complementAdresse,
+      // Le formulaire d'édition des informations générales porte la case « itinérant » :
+      // sans cette valeur, rouvrir le formulaire repasserait le lieu en « Fixe ».
+      itinerant: lieuDetailsReadModel.lieuAccueilPublic.itinerance?.includes('Itinérant') ?? false,
       nomStructure: lieuDetailsReadModel.informationsGenerales.nomStructure,
       siret: lieuDetailsReadModel.informationsGenerales.siret,
       typologies: lieuDetailsReadModel.informationsGenerales.typologies,
@@ -45,6 +53,7 @@ export function lieuDetailsPresenter(
     peutModifier,
     peutModifierInformationsGenerales,
     servicesInclusionNumerique: lieuDetailsReadModel.servicesInclusionNumerique,
+    visiblePourCartographie: lieuDetailsReadModel.visiblePourCartographie,
   }
 }
 
@@ -78,6 +87,7 @@ const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
 }
 
 interface LieuInclusionDetailsData {
+  estEnAttenteDeReferencement: boolean
   estLieuCoop: boolean
   header: {
     fraicheur?: {
@@ -92,6 +102,7 @@ interface LieuInclusionDetailsData {
   informationsGenerales: {
     adresse: string
     complementAdresse?: string
+    itinerant: boolean
     nomStructure: string
     siret?: string
     typologies?: ReadonlyArray<string>
@@ -132,4 +143,5 @@ interface LieuInclusionDetailsData {
     nom: string
     thematiques: ReadonlyArray<string>
   }>
+  visiblePourCartographie: boolean
 }

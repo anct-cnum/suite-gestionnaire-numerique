@@ -104,9 +104,11 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       publics_specifiquement_adresses: Array<string> | null
       services: Array<string> | null
       siret_a_l_enrichissement: null | string
+      structure_cartographie_nationale_id: null | string
       structure_coop_id: null | string
       typologies: Array<string> | null
       updated_at: Date | null
+      visible_pour_cartographie_nationale: boolean | null
     },
     adresseComplete: string,
     personnes: Array<{
@@ -132,6 +134,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       codeRegion: departements.find((departement) => departement.code === structure.departement)?.regionCode,
       estArchive: structure.deleted_at !== null,
       estLieuCoop: structure.structure_coop_id !== null,
+      estReferenceSurLaCarte: structure.structure_cartographie_nationale_id !== null,
       header: {
         editeur: structure.edited_by ?? undefined,
         miseAJourLe: structure.updated_at ?? undefined,
@@ -149,6 +152,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       personnesTravaillant,
       servicesInclusionNumerique,
       structureId,
+      visiblePourCartographie: structure.visible_pour_cartographie_nationale === true,
     }
   }
 
@@ -369,9 +373,11 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       siret: null | string
       siret_a_l_enrichissement: null | string
       structure_administrative_id: null | number
+      structure_cartographie_nationale_id: null | string
       structure_coop_id: null | string
       typologies: Array<string> | null
       updated_at: Date | null
+      visible_pour_cartographie_nationale: boolean | null
     }>
   > {
     // Refonte 2026 : recupere les champs "lieu" depuis main.lieu_inclusion
@@ -403,6 +409,8 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.deleted_at,
         l.edited_by,
         l.structure_coop_id::text AS structure_coop_id,
+        l.structure_cartographie_nationale_id,
+        l.visible_pour_cartographie_nationale,
         l.siret_a_l_enrichissement,
         l.complement_adresse,
         a.numero_voie,

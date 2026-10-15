@@ -139,6 +139,7 @@ const lieuDetailsReadModel: LieuDetailsReadModel = {
   codeDepartement: '75',
   estArchive: false,
   estLieuCoop: false,
+  estReferenceSurLaCarte: true,
   header: {
     nom: 'Mon lieu',
     tags: [],
@@ -151,4 +152,5 @@ const lieuDetailsReadModel: LieuDetailsReadModel = {
   personnesTravaillant: [],
   servicesInclusionNumerique: [],
   structureId: 42,
+  visiblePourCartographie: true,
 }

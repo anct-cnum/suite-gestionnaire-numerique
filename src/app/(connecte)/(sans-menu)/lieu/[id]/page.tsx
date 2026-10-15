@@ -22,8 +22,9 @@ export const metadata: Metadata = {
   title: "Détails du lieu d'inclusion ",
 }
 
-async function LieuPage({ params }: Props): Promise<ReactElement> {
+async function LieuPage({ params, searchParams }: Props): Promise<ReactElement> {
   const { id } = await params
+  const { dejaEnregistre } = await searchParams
 
   const loader = new PrismaRecupererLieuDetailsLoader()
   const lieuDetailsReadModel = await loader.recuperer(id)
@@ -76,6 +77,7 @@ async function LieuPage({ params }: Props): Promise<ReactElement> {
       />
       <LieuxInclusionDetails
         data={presentedData}
+        dejaEnregistre={dejaEnregistre === '1'}
         lieuId={id}
         peutSupprimer={peutModifier && contexte.peutGererLesLieux() && !lieuDetailsReadModel.estArchive}
       />
@@ -87,6 +89,11 @@ type Props = Readonly<{
   params: Promise<
     Readonly<{
       id: string
+    }>
+  >
+  searchParams: Promise<
+    Readonly<{
+      dejaEnregistre?: string
     }>
   >
 }>

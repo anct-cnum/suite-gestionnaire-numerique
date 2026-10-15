@@ -25,6 +25,8 @@ import prisma from '../../prisma/prismaClient'
 import {
   AdresseLieuEnrichie,
   AdresseLieuSirene,
+  CreerLieuInclusionData,
+  CreerLieuInclusionRepository,
   SupprimerLieuInclusionData,
   SupprimerLieuInclusionRepository,
   UpdateLieuInclusionDescriptionData,
@@ -48,6 +50,7 @@ const SOURCE_MIN = 'Mon Inclusion Numérique'
 
 export class PrismaLieuInclusionRepository
   implements
+    CreerLieuInclusionRepository,
     SupprimerLieuInclusionRepository,
     UpdateLieuInclusionDescriptionRepository,
     UpdateLieuInclusionInformationsGeneralesRepository,
@@ -56,6 +59,34 @@ export class PrismaLieuInclusionRepository
     UpdateLieuInclusionServicesTypePublicRepository,
     UpdateLieuInclusionVisibiliteCartographieRepository
 {
+  // Création (#1495) : signée MIN (source, edited_by, updated_at_min — cette dernière
+  // sort la ligne du cycle de vie nocturne du carto-dag), drapeau carte = choix du
+  // gestionnaire, aucun identifiant externe. created_at et updated_at (générée) sont
+  // laissés à la base.
+  async creer(data: CreerLieuInclusionData): Promise<number> {
+    return journaliserTransaction(prisma, async (transaction) => {
+      const adresseId = await this.trouverOuCreerAdresseLieu(transaction, data.adresseEnrichie, data.adresseSirene)
+
+      const lieu = await transaction.main_lieu_inclusion.create({
+        data: {
+          adresse_id: adresseId,
+          complement_adresse: data.complementAdresse,
+          edited_by: 'min',
+          itinerance: versEnumsLieuInclusion(data.itinerance, itineranceVersEnum, 'itinerance'),
+          nom: data.nom,
+          siret_a_l_enrichissement: data.siret,
+          source: SOURCE_MIN,
+          typologies: versEnumsLieuInclusion(data.typologies, typologiesVersEnum, 'typologies'),
+          updated_at_min: data.date,
+          visible_pour_cartographie_nationale: data.visiblePourCartographie,
+        },
+        select: { id: true },
+      })
+
+      return lieu.id
+    })
+  }
+
   async supprimer(data: SupprimerLieuInclusionData): Promise<void> {
     await prisma.main_lieu_inclusion.update({
       data: {
@@ -339,20 +370,56 @@ export class PrismaLieuInclusionRepository
     return updateData
   }
 
+  // Clé naturelle de main.adresse (contrainte adresse_ukey) : NULL ≡ 0 pour le numéro,
+  // NULL ≡ '' pour la répétition, comme dans l'index.
+  private async trouverAdresseParCleNaturelle(
+    transaction: Prisma.TransactionClient,
+    cle: CleNaturelleAdresse
+  ): Promise<null | number> {
+    const lignes = await transaction.$queryRaw<Array<{ id: number }>>`
+      SELECT id FROM main.adresse
+      WHERE code_postal = ${cle.codePostal}
+        AND nom_commune = ${cle.nomCommune}
+        AND nom_voie IS NOT DISTINCT FROM ${cle.nomVoie}
+        AND COALESCE(numero_voie, 0) = COALESCE(${cle.numeroVoie}::int, 0)
+        AND COALESCE(repetition, '') = COALESCE(${cle.repetition}::text, '')
+      LIMIT 1
+    `
+
+    return lignes[0]?.id ?? null
+  }
+
   // On ne modifie jamais une ligne main.adresse (partagée entre lieux et structures) :
-  // on réutilise une adresse existante (clef_interop BAN ou composants SIRENE identiques)
-  // ou on en crée une nouvelle, puis lieu_inclusion.adresse_id est re-pointé.
+  // on réutilise une adresse existante ou on en crée une nouvelle, puis
+  // lieu_inclusion.adresse_id est re-pointé. Réutilisation dans l'ordre : clef BAN, puis
+  // clé naturelle (code postal, commune, voie, numéro, répétition — la contrainte unique
+  // adresse_ukey, que porte aussi une ligne carto sans clef BAN) ; l'INSERT tolère la
+  // course (ON CONFLICT DO NOTHING puis relecture), même contrat que
+  // main.trouver_ou_creer_adresse_lieu (dataspace V155).
   private async trouverOuCreerAdresseLieu(
     transaction: Prisma.TransactionClient,
     adresseEnrichie: AdresseLieuEnrichie | null,
     adresseSirene: AdresseLieuSirene | null
   ): Promise<null | number> {
     if (adresseEnrichie !== null) {
-      const existante = await transaction.adresse.findFirst({
+      const parClef = await transaction.adresse.findFirst({
+        select: { id: true },
         where: { clef_interop: adresseEnrichie.banClefInterop },
       })
-      if (existante) {
-        return existante.id
+      if (parClef) {
+        return parClef.id
+      }
+
+      const cleNaturelle: CleNaturelleAdresse = {
+        codePostal: adresseEnrichie.banCodePostal,
+        nomCommune: adresseEnrichie.banNomCommune,
+        nomVoie: adresseEnrichie.banNomVoie,
+        numeroVoie: adresseEnrichie.banNumeroVoie,
+        repetition: adresseEnrichie.banRepetition,
+      }
+      const parCleNaturelle = await this.trouverAdresseParCleNaturelle(transaction, cleNaturelle)
+      if (parCleNaturelle !== null) {
+        return parCleNaturelle
       }
 
       const resultat = await transaction.$queryRaw<Array<{ id: number }>>`
@@ -370,25 +437,28 @@ export class PrismaLieuInclusionRepository
           ${adresseEnrichie.banRepetition},
           public.ST_Point(${adresseEnrichie.banLongitude}::double precision, ${adresseEnrichie.banLatitude}::double precision, 4326)
         )
+        ON CONFLICT (code_postal, nom_commune, nom_voie, COALESCE(numero_voie, 0), COALESCE(repetition, '')) DO NOTHING
         RETURNING id
       `
+      if (resultat.length === 0) {
+        // Course perdue : une transaction concurrente vient d'insérer la même adresse.
+        return this.trouverAdresseParCleNaturelle(transaction, cleNaturelle)
+      }
       await journaliserCreateBrut(transaction, 'main.adresse', resultat[0].id)
 
       return resultat[0].id
     }
 
     if (adresseSirene !== null) {
-      const existante = await transaction.adresse.findFirst({
-        where: {
-          code_insee: adresseSirene.codeInsee,
-          code_postal: adresseSirene.codePostal,
-          nom_commune: adresseSirene.commune,
-          nom_voie: adresseSirene.nomVoie,
-          numero_voie: adresseSirene.numeroVoie,
-        },
+      const existante = await this.trouverAdresseParCleNaturelle(transaction, {
+        codePostal: adresseSirene.codePostal,
+        nomCommune: adresseSirene.commune,
+        nomVoie: adresseSirene.nomVoie,
+        numeroVoie: adresseSirene.numeroVoie,
+        repetition: null,
       })
-      if (existante) {
-        return existante.id
+      if (existante !== null) {
+        return existante
       }
 
       // Les champs BAN restent NULL (clef_interop, code_ban, geom, repetition)
@@ -400,6 +470,7 @@ export class PrismaLieuInclusionRepository
           nom_voie: adresseSirene.nomVoie,
           numero_voie: adresseSirene.numeroVoie,
         },
+        select: { id: true },
       })
 
       return creee.id
@@ -408,3 +479,11 @@ export class PrismaLieuInclusionRepository
     return null
   }
 }
+
+type CleNaturelleAdresse = Readonly<{
+  codePostal: string
+  nomCommune: string
+  nomVoie: string
+  numeroVoie: null | number
+  repetition: null | string
+}>

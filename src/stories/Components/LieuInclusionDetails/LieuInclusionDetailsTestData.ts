@@ -103,6 +103,7 @@ export function createDefaultServicesInclusionNumeriqueData(): ReadonlyArray<Ser
 
 export function createDefaultLieuInclusionDetailsData(): LieuInclusionDetailsData {
   return {
+    estEnAttenteDeReferencement: false,
     estLieuCoop: false,
     header: createDefaultHeaderData(),
     informationsGenerales: createDefaultInformationsGeneralesData(),
@@ -111,5 +112,6 @@ export function createDefaultLieuInclusionDetailsData(): LieuInclusionDetailsDat
     peutModifier: false,
     peutModifierInformationsGenerales: false,
     servicesInclusionNumerique: createDefaultServicesInclusionNumeriqueData(),
+    visiblePourCartographie: false,
   }
 }

@@ -66,85 +66,72 @@ export async function modifierLieuInclusionInformationsGeneralesAction(
   })
 }
 
-// Règle de gestion #1498 : avec SIRET, les données proviennent de l'API Entreprise —
-// elles sont re-résolues ici côté serveur, jamais reprises du client — à l'exception
-// des typologies, saisies par l'utilisateur depuis le référentiel de la médiation numérique.
+// Maquettes V6 : tous les champs sont saisis par l'utilisateur, le SIRET n'étant qu'un
+// accélérateur de remplissage. Il reste revérifié ici côté serveur — on ne stocke pas un
+// identifiant que l'API Entreprise ne reconnaît pas — et son adresse est conservée pour
+// servir de repli au géocodage si l'utilisateur l'a soumise sans la retoucher.
 async function construireModification(params: ParamsValides): Promise<Modification | string> {
-  if (params.siret !== undefined && params.siret !== '') {
-    if (params.typologies === undefined || params.typologies.length === 0) {
-      return 'Au moins une typologie doit être renseignée'
-    }
-
-    const entreprise = await new RechercherUneEntreprise(createApiEntrepriseLoader(params.siret)).handle({
-      siret: params.siret,
-    })
-
-    if ('estTrouvee' in entreprise) {
-      return 'Aucune entreprise trouvée avec cet identifiant'
-    }
-
-    return {
-      avecSiret: {
-        entreprise: {
-          adresse: entreprise.adresse,
-          codeInsee: entreprise.codeInsee,
-          codePostal: entreprise.codePostal,
-          commune: entreprise.commune,
-          denomination: entreprise.denomination,
-          nomVoie: entreprise.nomVoie,
-          numeroVoie: entreprise.numeroVoie,
-        },
-        siret: params.siret,
-        typologies: params.typologies,
-      },
-    }
+  const commun = {
+    adresse: params.adresse,
+    complementAdresse: params.complementAdresse ?? '',
+    itinerant: params.itinerant ?? false,
+    nom: params.nom,
+    typologies: params.typologies,
   }
 
-  if (
-    params.adresse === undefined ||
-    params.nom === undefined ||
-    params.typologies === undefined ||
-    params.typologies.length === 0
-  ) {
-    return 'Sans SIRET, le nom, l’adresse et au moins une typologie doivent être renseignés'
+  if (params.siret === undefined || params.siret === '') {
+    return { ...commun, repliSirene: null, siret: null }
+  }
+
+  const entreprise = await new RechercherUneEntreprise(createApiEntrepriseLoader(params.siret)).handle({
+    siret: params.siret,
+  })
+
+  if ('estTrouvee' in entreprise) {
+    return 'Aucune entreprise trouvée avec cet identifiant'
   }
 
   return {
-    sansSiret: {
-      adresse: params.adresse,
-      complementAdresse: params.complementAdresse ?? '',
-      itinerant: params.itinerant ?? false,
-      nom: params.nom,
-      typologies: params.typologies,
+    ...commun,
+    repliSirene: {
+      adresse: entreprise.adresse,
+      codeInsee: entreprise.codeInsee,
+      codePostal: entreprise.codePostal,
+      commune: entreprise.commune,
+      nomVoie: entreprise.nomVoie,
+      numeroVoie: entreprise.numeroVoie,
     },
+    siret: params.siret,
   }
 }
 
 type Modification = Parameters<ModifierLieuInclusionInformationsGenerales['handle']>[0]['modification']
 
 type ActionParams = Readonly<{
-  adresse?: string
+  adresse: string
   complementAdresse?: string
   itinerant?: boolean
-  nom?: string
+  nom: string
   path: string
   siret?: string
   structureId: string
-  typologies?: ReadonlyArray<string>
+  typologies: ReadonlyArray<string>
 }>
 
 const validator = z.object({
-  adresse: z.string().optional(),
+  adresse: z.string().min(1, { message: 'L’adresse du lieu doit être renseignée' }),
   complementAdresse: z.string().optional(),
   itinerant: z.boolean().optional(),
-  nom: z.string().optional(),
+  nom: z.string().min(1, { message: 'Le nom du lieu d’activité doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   siret: z
     .string()
-    .regex(/^\d{6,7}$|^\d{14}$/, { message: 'Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)' })
+    .regex(/^$|^\d{6,7}$|^\d{14}$/, {
+      message: 'Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)',
+    })
     .optional(),
   structureId: z.string().min(1, { message: "L'identifiant de la structure doit être renseigné" }),
-  typologies: z.array(z.string()).optional(),
+  typologies: z.array(z.string()).min(1, { message: 'Au moins une typologie doit être renseignée' }),
 })
 
 type ParamsValides = z.infer<typeof validator>
