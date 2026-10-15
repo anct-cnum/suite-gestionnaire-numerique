@@ -11,14 +11,10 @@ import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurReposit
 import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
 import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
-// Un lieu porté par la Coop numérique : la Coop garde sa vérité, le filet
-// quotidien du dataspace réaligne le référentiel sur elle par valeurs — toute
-// écriture MIN serait écrasée le lendemain. Lecture seule dans MIN (#1951).
-export const MESSAGE_LIEU_GERE_PAR_LA_COOP =
-  'Ce lieu est géré dans la Coop numérique : il ne peut pas être modifié depuis Mon Inclusion Numérique.'
-
 // Vérification partagée par toutes les actions sur un lieu d'inclusion :
-// session → [flag bêta] → lieu chargé → lieu coop refusé → droits du rôle.
+// session → [flag bêta] → lieu chargé → droits du rôle. Un lieu géré dans la Coop
+// suit les mêmes droits : le registre main.lieu_inclusion fait foi, la Coop y lit les
+// corrections de MIN et les présente à ses médiateurs (#2105, ex-lecture seule #1951).
 export async function verifierDroitsLieu(lieuId: string, options: Options): Promise<VerificationDroitsLieu> {
   const utilisateurId = await getSessionUtilisateurId()
 
@@ -37,10 +33,6 @@ export async function verifierDroitsLieu(lieuId: string, options: Options): Prom
   const lieu = await new PrismaRecupererLieuDetailsLoader().recuperer(lieuId)
   if ('type' in lieu) {
     return refus('Lieu non trouvé')
-  }
-
-  if (lieu.estLieuCoop) {
-    return refus(MESSAGE_LIEU_GERE_PAR_LA_COOP)
   }
 
   const peutModifier = LieuInclusion.peutEtreModifiePar(

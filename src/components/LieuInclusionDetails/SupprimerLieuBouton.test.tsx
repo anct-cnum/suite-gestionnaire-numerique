@@ -15,7 +15,9 @@ vi.mock(import('next/navigation'), () => ({
 describe('bouton supprimer un lieu depuis la fiche détail', () => {
   it('quand je clique sur le bouton, alors la modale de confirmation s’affiche avec le nom, l’adresse et les conséquences', async () => {
     // GIVEN
-    render(<SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" lieuId="42" nom="Mon lieu" />)
+    render(
+      <SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" estLieuCoop={false} lieuId="42" nom="Mon lieu" />
+    )
 
     // WHEN
     await userEvent.click(screen.getByRole('button', { name: 'Supprimer ce lieu' }))
@@ -31,7 +33,9 @@ describe('bouton supprimer un lieu depuis la fiche détail', () => {
   it('quand je confirme la suppression, alors l’action est appelée et je suis redirigé vers la liste des lieux', async () => {
     // GIVEN
     vi.spyOn(actions, 'supprimerUnLieuInclusionAction').mockResolvedValueOnce(['OK'])
-    render(<SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" lieuId="42" nom="Mon lieu" />)
+    render(
+      <SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" estLieuCoop={false} lieuId="42" nom="Mon lieu" />
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Supprimer ce lieu' }))
 
     // WHEN
@@ -51,7 +55,9 @@ describe('bouton supprimer un lieu depuis la fiche détail', () => {
     // GIVEN
     mockPush.mockClear()
     vi.spyOn(actions, 'supprimerUnLieuInclusionAction').mockResolvedValueOnce(['Une erreur est survenue'])
-    render(<SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" lieuId="42" nom="Mon lieu" />)
+    render(
+      <SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" estLieuCoop={false} lieuId="42" nom="Mon lieu" />
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Supprimer ce lieu' }))
 
     // WHEN
@@ -70,7 +76,9 @@ describe('bouton supprimer un lieu depuis la fiche détail', () => {
   it('quand j’annule, alors la modale se ferme sans appeler l’action', async () => {
     // GIVEN
     const spy = vi.spyOn(actions, 'supprimerUnLieuInclusionAction')
-    render(<SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" lieuId="42" nom="Mon lieu" />)
+    render(
+      <SupprimerLieuBouton adresse="1 rue de la Paix, 75001 Paris" estLieuCoop={false} lieuId="42" nom="Mon lieu" />
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Supprimer ce lieu' }))
 
     // WHEN

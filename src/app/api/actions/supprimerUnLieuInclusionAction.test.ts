@@ -1,7 +1,6 @@
 import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
-import { MESSAGE_LIEU_GERE_PAR_LA_COOP } from './shared/verifierDroitsLieu'
 import { supprimerUnLieuInclusionAction } from './supprimerUnLieuInclusionAction'
 import prisma from '../../../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -111,7 +110,7 @@ describe('supprimer un lieu d’inclusion action', () => {
     expect(messages).toStrictEqual(["Vous n'avez pas les droits pour supprimer ce lieu"])
   })
 
-  it('refuse la suppression d’un lieu géré dans la Coop, même à un administrateur bêta-testeur (#1951)', async () => {
+  it('supprime un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -124,14 +123,15 @@ describe('supprimer un lieu d’inclusion action', () => {
       ...lieuDetailsReadModel,
       estLieuCoop: true,
     })
-    vi.spyOn(SupprimerUnLieuInclusion.prototype, 'handle')
+    vi.spyOn(SupprimerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementation(() => undefined)
 
     // WHEN
     const messages = await supprimerUnLieuInclusionAction({ lieuId: '42', path: '/liste-lieux-inclusion' })
 
     // THEN
-    expect(messages).toStrictEqual([MESSAGE_LIEU_GERE_PAR_LA_COOP])
-    expect(SupprimerUnLieuInclusion.prototype.handle).not.toHaveBeenCalled()
+    expect(messages).toStrictEqual(['OK'])
+    expect(SupprimerUnLieuInclusion.prototype.handle).toHaveBeenCalledTimes(1)
   })
 })
 

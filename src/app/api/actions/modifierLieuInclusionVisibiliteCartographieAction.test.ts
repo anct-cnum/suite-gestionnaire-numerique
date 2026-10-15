@@ -2,7 +2,6 @@ import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { modifierLieuInclusionVisibiliteCartographieAction } from './modifierLieuInclusionVisibiliteCartographieAction'
-import { MESSAGE_LIEU_GERE_PAR_LA_COOP } from './shared/verifierDroitsLieu'
 import prisma from '../../../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
@@ -84,7 +83,7 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     expect(ModifierLieuInclusionVisibiliteCartographie.prototype.handle).not.toHaveBeenCalled()
   })
 
-  it('refuse de changer la visibilité d’un lieu géré dans la Coop (#1951)', async () => {
+  it('change la visibilité d’un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -96,17 +95,18 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
       lieuDetailsReadModelFactory({ estLieuCoop: true })
     )
-    vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle')
+    vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const messages = await modifierLieuInclusionVisibiliteCartographieAction({
       lieuId: '42',
       path: '/liste-lieux-inclusion',
-      visiblePourCartographie: true,
+      visiblePourCartographie: false,
     })
 
     // THEN
-    expect(messages).toStrictEqual([MESSAGE_LIEU_GERE_PAR_LA_COOP])
-    expect(ModifierLieuInclusionVisibiliteCartographie.prototype.handle).not.toHaveBeenCalled()
+    expect(messages).toStrictEqual(['OK'])
+    expect(ModifierLieuInclusionVisibiliteCartographie.prototype.handle).toHaveBeenCalledTimes(1)
   })
 })

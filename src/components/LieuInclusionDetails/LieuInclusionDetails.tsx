@@ -93,15 +93,22 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
         <LieuInclusionDetailsHeader
           data={data.header}
           suppression={
-            peutSupprimer ? { adresse: data.informationsGenerales.adresse, lieuId, nom: data.header.nom } : undefined
+            peutSupprimer
+              ? {
+                  adresse: data.informationsGenerales.adresse,
+                  estLieuCoop: data.estLieuCoop,
+                  lieuId,
+                  nom: data.header.nom,
+                }
+              : undefined
           }
         />
       </div>
 
       {data.estLieuCoop ? (
         <Alerte titre="Lieu géré dans la Coop numérique">
-          Les informations de ce lieu sont renseignées par les médiateurs dans la Coop numérique et reprises ici
-          automatiquement. Pour les modifier, masquer ce lieu sur la carte ou le supprimer, passez par la Coop.
+          Ce lieu est aussi renseigné par ses médiateurs dans la Coop numérique. Vos modifications leur seront
+          présentées, et ils pourront les reprendre.
         </Alerte>
       ) : null}
 

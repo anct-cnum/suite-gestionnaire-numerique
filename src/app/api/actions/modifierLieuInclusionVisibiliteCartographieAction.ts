@@ -19,7 +19,7 @@ export async function modifierLieuInclusionVisibiliteCartographieAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    // Vérification des droits (session, [bêta], lieu, lieu coop refusé, rôle)
+    // Vérification des droits (session, [bêta], lieu, rôle)
     const droits = await verifierDroitsLieu(actionParams.lieuId, { action: 'modifier', reserveAuxBetaTesteurs: true })
     if (droits.statut === 'refus') {
       return [droits.message]

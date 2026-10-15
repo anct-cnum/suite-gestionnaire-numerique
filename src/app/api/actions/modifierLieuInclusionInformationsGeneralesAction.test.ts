@@ -1,7 +1,7 @@
+import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { modifierLieuInclusionInformationsGeneralesAction } from './modifierLieuInclusionInformationsGeneralesAction'
-import { MESSAGE_LIEU_GERE_PAR_LA_COOP } from './shared/verifierDroitsLieu'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -72,7 +72,7 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     expect(messages).toStrictEqual(['Action réservée aux bêta-testeurs'])
   })
 
-  it('refuse de modifier un lieu géré dans la Coop, sans consulter l’API Entreprise ni le use case (#1951)', async () => {
+  it('modifie un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -84,17 +84,15 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
       lieuDetailsReadModelFactory({ estLieuCoop: true })
     )
-    vi.spyOn(ModifierLieuInclusionInformationsGenerales.prototype, 'handle')
+    vi.spyOn(ModifierLieuInclusionInformationsGenerales.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
-    const messages = await modifierLieuInclusionInformationsGeneralesAction({
-      ...modification,
-      siret: '13002603200016',
-    })
+    const messages = await modifierLieuInclusionInformationsGeneralesAction(modification)
 
     // THEN
-    expect(messages).toStrictEqual([MESSAGE_LIEU_GERE_PAR_LA_COOP])
-    expect(ModifierLieuInclusionInformationsGenerales.prototype.handle).not.toHaveBeenCalled()
+    expect(messages).toStrictEqual(['OK'])
+    expect(ModifierLieuInclusionInformationsGenerales.prototype.handle).toHaveBeenCalledTimes(1)
   })
 
   it('exige le nom, l’adresse et une typologie, sans consulter la session', async () => {

@@ -7,7 +7,7 @@ import { supprimerUnLieuInclusionAction } from '@/app/api/actions/supprimerUnLie
 import ModaleSuppressionLieu from '@/components/shared/ModaleSuppressionLieu/ModaleSuppressionLieu'
 import { Notification } from '@/components/shared/Notification/Notification'
 
-export default function SupprimerLieuBouton({ adresse, lieuId, nom }: Props): ReactElement {
+export default function SupprimerLieuBouton({ adresse, estLieuCoop, lieuId, nom }: Props): ReactElement {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -42,6 +42,7 @@ export default function SupprimerLieuBouton({ adresse, lieuId, nom }: Props): Re
       </button>
       <ModaleSuppressionLieu
         adresse={adresse}
+        estLieuCoop={estLieuCoop}
         id="modaleSuppressionLieuDetails"
         isOpen={isOpen}
         nom={nom}
@@ -56,6 +57,7 @@ export default function SupprimerLieuBouton({ adresse, lieuId, nom }: Props): Re
 
 type Props = Readonly<{
   adresse: string
+  estLieuCoop: boolean
   lieuId: string
   nom: string
 }>
