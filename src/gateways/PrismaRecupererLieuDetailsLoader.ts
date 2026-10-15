@@ -242,8 +242,9 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     telephone: string | undefined
     websiteUrl: string | undefined
   } {
+    // Le courriel d'un lieu vit sous courriels.email, comme à la Coop et dans api.carto (#2106).
     const courriels = contact?.courriels as Record<string, unknown> | undefined
-    const emailRaw = courriels?.contact_public
+    const emailRaw = courriels?.email
     const email = emailRaw === null ? undefined : (emailRaw as string | undefined)
 
     const siteWeb = contact?.site_web
