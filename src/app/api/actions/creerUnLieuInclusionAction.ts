@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { avecJournalisationMin } from './shared/journalisation'
+import {
+  complementAdresseDuStandard,
+  nomDuStandard,
+  siretDuStandard,
+  typologiesDuStandard,
+} from './shared/reglesDuStandardLieu'
 import { verifierDroitsCreationLieu } from './shared/verifierDroitsCreationLieu'
 import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { createApiEntrepriseLoader } from '@/gateways/factories/apiEntrepriseLoaderFactory'
@@ -119,16 +125,13 @@ type ActionParams = Readonly<{
 
 const validator = z.object({
   adresse: z.string().min(1, { message: 'L’adresse du lieu doit être renseignée' }),
-  complementAdresse: z.string().optional(),
+  complementAdresse: complementAdresseDuStandard,
   itinerant: z.boolean().optional(),
-  nom: z.string().min(1, { message: 'Le nom du lieu d’activité doit être renseigné' }),
-  siret: z
-    .string()
-    .regex(/^$|^\d{6,7}$|^\d{14}$/, {
-      message: 'Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)',
-    })
-    .optional(),
-  typologies: z.array(z.string()).min(1, { message: 'Au moins une typologie doit être renseignée' }),
+  nom: nomDuStandard,
+  siret: siretDuStandard,
+  typologies: typologiesDuStandard.pipe(
+    z.array(z.string()).min(1, { message: 'Au moins une typologie doit être renseignée' })
+  ),
   visiblePourCartographie: z.boolean(),
 })
 

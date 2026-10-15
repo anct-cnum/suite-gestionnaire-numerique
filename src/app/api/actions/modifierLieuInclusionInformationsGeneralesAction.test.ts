@@ -19,7 +19,39 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     })
 
     // THEN
-    expect(messages).toStrictEqual(['Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'])
+    expect(messages).toStrictEqual([
+      'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+    ])
+  })
+
+  it.each([
+    {
+      intention: 'un SIRET dont la clé de contrôle est fausse',
+      message:
+        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      saisie: { siret: '13002603200017' },
+    },
+    {
+      intention: 'un complément d’adresse que le standard refuse',
+      message:
+        'Ce complément contient un caractère que le schéma national n’accepte pas : évitez #, %, les guillemets droits (") et un tiret ou une arobase en tête',
+      saisie: { complementAdresse: '#3' },
+    },
+    {
+      intention: 'une typologie inconnue du standard',
+      message: 'Typologie inconnue du schéma national : MEDIATHEQUE',
+      saisie: { typologies: ['MEDIATHEQUE'] },
+    },
+  ])('refuse $intention, sans consulter la session (#2103)', async ({ message, saisie }) => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId')
+
+    // WHEN
+    const messages = await modifierLieuInclusionInformationsGeneralesAction({ ...modification, ...saisie })
+
+    // THEN
+    expect(messages).toStrictEqual([message])
+    expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
   })
 
   it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951)', async () => {
@@ -60,7 +92,7 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     // WHEN
     const messages = await modifierLieuInclusionInformationsGeneralesAction({
       ...modification,
-      siret: '12345678901234',
+      siret: '13002603200016',
     })
 
     // THEN

@@ -18,9 +18,41 @@ describe('créer un lieu d’inclusion action', () => {
 
     // THEN
     expect(resultat).toStrictEqual({
-      messages: ['Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)'],
+      messages: [
+        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      ],
       statut: 'erreur',
     })
+    expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    {
+      intention: 'un SIRET dont la clé de contrôle est fausse',
+      message:
+        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      saisie: { siret: '13002603200017' },
+    },
+    {
+      intention: 'un complément d’adresse que le standard refuse',
+      message:
+        'Ce complément contient un caractère que le schéma national n’accepte pas : évitez #, %, les guillemets droits (") et un tiret ou une arobase en tête',
+      saisie: { complementAdresse: '#3' },
+    },
+    {
+      intention: 'une typologie inconnue du standard',
+      message: 'Typologie inconnue du schéma national : MEDIATHEQUE',
+      saisie: { typologies: ['MEDIATHEQUE'] },
+    },
+  ])('refuse $intention, sans consulter la session (#2103)', async ({ message, saisie }) => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId')
+
+    // WHEN
+    const resultat = await creerUnLieuInclusionAction({ ...creation, ...saisie })
+
+    // THEN
+    expect(resultat).toStrictEqual({ messages: [message], statut: 'erreur' })
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
   })
 
@@ -67,7 +99,7 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(ApiSireneLoader.prototype, 'rechercherParIdentifiant').mockResolvedValueOnce({ estTrouvee: false })
 
     // WHEN
-    const resultat = await creerUnLieuInclusionAction({ ...creation, siret: '12345678901234' })
+    const resultat = await creerUnLieuInclusionAction({ ...creation, siret: '13002603200016' })
 
     // THEN
     expect(resultat).toStrictEqual({ messages: ['Aucune entreprise trouvée avec cet identifiant'], statut: 'erreur' })
@@ -84,7 +116,7 @@ describe('créer un lieu d’inclusion action', () => {
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
-    await creerUnLieuInclusionAction({ ...creation, siret: '12345678901234' })
+    await creerUnLieuInclusionAction({ ...creation, siret: '13002603200016' })
 
     // THEN
     expect(CreerUnLieuInclusion.prototype.handle).toHaveBeenCalledWith({
@@ -101,7 +133,7 @@ describe('créer un lieu d’inclusion action', () => {
           nomVoie: 'rue de la Paix',
           numeroVoie: '1',
         },
-        siret: '12345678901234',
+        siret: '13002603200016',
         typologies: ['BIB'],
       },
       visiblePourCartographie: true,
@@ -194,7 +226,7 @@ const entrepriseTrouvee = {
   codePostal: '75001',
   commune: 'Paris',
   denomination: 'Ma Structure',
-  identifiant: '12345678901234',
+  identifiant: '13002603200016',
   nomVoie: 'rue de la Paix',
   numeroVoie: '1',
 }
