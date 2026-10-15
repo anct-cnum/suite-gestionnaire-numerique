@@ -47,7 +47,7 @@ describe('repository Prisma des lieux d’inclusion', () => {
   it('écrit le courriel du lieu sous la clé email, celle que lisent la Coop et api.carto (#2106)', async () => {
     // GIVEN
     await prisma.main_lieu_inclusion.update({
-      data: { contact: { courriels: { contact_public: 'ancien@exemple.fr' }, telephone: '+33102030405' } },
+      data: { contact: { courriels: { email: 'ancien@exemple.fr' }, telephone: '+33102030405' } },
       where: { id: LIEU_ID },
     })
 
