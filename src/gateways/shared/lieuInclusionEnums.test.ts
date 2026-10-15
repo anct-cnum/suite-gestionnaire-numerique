@@ -1,3 +1,13 @@
+import {
+  Frais,
+  Itinerance,
+  ModaliteAcces,
+  ModaliteAccompagnement,
+  PriseEnChargeSpecifique,
+  PublicSpecifiquementAdresse,
+  Service,
+  Typologie,
+} from '@gouvfr-anct/lieux-de-mediation-numerique'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -92,3 +102,44 @@ describe('conversion des libellés du référentiel vers les enums main', () => 
     )
   })
 })
+
+// Le registre des lieux est partagé avec la Coop, qui le valide avec la bibliothèque du standard
+// (#2103). Les nomenclatures que MIN sait écrire doivent être exactement celles du standard :
+// ni valeur que le standard refuserait, ni valeur du standard que MIN ne saurait pas écrire.
+describe('nomenclatures des lieux, alignées sur le standard', () => {
+  it.each([
+    { mapping: fraisAChargeVersEnum, nomenclature: 'frais à charge', standard: Frais },
+    { mapping: itineranceVersEnum, nomenclature: 'itinérance', standard: Itinerance },
+    { mapping: modalitesAccesVersEnum, nomenclature: 'modalités d’accès', standard: ModaliteAcces },
+    {
+      mapping: modalitesAccompagnementVersEnum,
+      nomenclature: 'modalités d’accompagnement',
+      standard: ModaliteAccompagnement,
+    },
+    {
+      mapping: priseEnChargeSpecifiqueVersEnum,
+      nomenclature: 'prises en charge spécifiques',
+      standard: PriseEnChargeSpecifique,
+    },
+    {
+      mapping: publicsSpecifiquementAdressesVersEnum,
+      nomenclature: 'publics spécifiquement adressés',
+      standard: PublicSpecifiquementAdresse,
+    },
+    { mapping: servicesVersEnum, nomenclature: 'services', standard: Service },
+    { mapping: typologiesVersEnum, nomenclature: 'typologies', standard: Typologie },
+  ])('les $nomenclature de MIN sont celles du standard', ({ mapping, standard }) => {
+    // GIVEN
+    const valeursDuStandard = Object.values<string>(standard).toSorted(parOrdreAlphabetique)
+
+    // WHEN
+    const valeursDeMin = Object.keys(mapping).toSorted(parOrdreAlphabetique)
+
+    // THEN
+    expect(valeursDeMin).toStrictEqual(valeursDuStandard)
+  })
+})
+
+function parOrdreAlphabetique(gauche: string, droite: string): number {
+  return gauche.localeCompare(droite)
+}
