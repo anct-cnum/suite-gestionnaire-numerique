@@ -1,0 +1,15 @@
+/* Encart aux couleurs « info » des maquettes V6 : le DSFR fournit bien cette
+   géométrie (fr-callout : barre d'accent de 0.25rem et fond contrasté) mais pas en
+   couleurs de statut, d'où ces deux déclarations construites sur ses variables. */
+.encart {
+  background-color: var(--background-contrast-info);
+  background-image: linear-gradient(0deg, var(--border-plain-info), var(--border-plain-info));
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 0.25rem 100%;
+}
+
+.carte {
+  background-color: var(--background-default-grey);
+  box-shadow: var(--overlap-shadow);
+}

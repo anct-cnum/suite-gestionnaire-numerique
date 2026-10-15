@@ -4,9 +4,11 @@ import { Typologie } from '@gouvfr-anct/lieux-de-mediation-numerique'
 import { ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
+import LieuxDejaDeclares from '@/components/shared/LieuxDejaDeclares/LieuxDejaDeclares'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SelectAsync from '@/components/shared/Select/SelectAsync'
 import SelectMulti from '@/components/shared/Select/SelectMulti'
+import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 import { typologieLabels } from '@/presenters/shared/typologie'
 
@@ -14,7 +16,12 @@ import { typologieLabels } from '@/presenters/shared/typologie'
 // unique (maquettes V6) : le SIRET est optionnel et ne sert qu'à pré-remplir le nom et
 // l'adresse, qui restent saisissables, comme tous les autres champs. L'adresse est validée
 // par la BAN. L'état utile à la soumission remonte au parent par onChangement.
-export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeursInitiales }: Props): ReactElement {
+export default function LieuInclusionFormulaire({
+  idPrefixe,
+  lieuxDejaDeclares,
+  onChangement,
+  valeursInitiales,
+}: Props): ReactElement {
   const { rechercherAdressesAction, rechercherUneEntrepriseAction } = useContext(clientContext)
   const [etat, setEtat] = useState({
     adresse: valeursInitiales.adresse,
@@ -131,6 +138,12 @@ export default function LieuInclusionFormulaire({ idPrefixe, onChangement, valeu
         />
       </div>
 
+      {lieuxDejaDeclares !== undefined && lieuxDejaDeclares.lieux.length > 0 ? (
+        <div className="fr-mb-2w">
+          <LieuxDejaDeclares consigne={lieuxDejaDeclares.consigne} lieux={lieuxDejaDeclares.lieux} />
+        </div>
+      ) : null}
+
       <div className="fr-checkbox-group fr-mb-2w">
         <input
           defaultChecked={valeursInitiales.itinerant ?? false}
@@ -242,6 +255,12 @@ type SelectAsyncAdresseProps = Readonly<{
 
 type Props = Readonly<{
   idPrefixe: string
+  // Lieux déjà déclarés à l'adresse saisie : affichés sous le champ adresse, avec
+  // une consigne propre au contexte (création ou modification), maquettes V6.
+  lieuxDejaDeclares?: Readonly<{
+    consigne: string
+    lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
+  }>
   onChangement(etat: EtatLieuInclusionFormulaire): void
   valeursInitiales: ValeursInitialesLieuInclusion
 }>

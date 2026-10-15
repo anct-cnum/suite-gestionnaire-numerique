@@ -6,20 +6,20 @@ import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { RechercherLieuxInclusionSimilaires } from '@/use-cases/queries/RechercherLieuxInclusionSimilaires'
 
-describe('rechercher les lieux d’inclusion similaires action', () => {
-  it('ne cherche rien sans nom, sans adresse ni SIRET', async () => {
+describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, action', () => {
+  it('ne cherche rien sans adresse', async () => {
     // GIVEN
     vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle')
 
     // WHEN
-    const lieux = await rechercherLieuxInclusionSimilairesAction({ nom: '' })
+    const lieux = await rechercherLieuxInclusionSimilairesAction({ adresse: '' })
 
     // THEN
     expect(lieux).toStrictEqual([])
     expect(RechercherLieuxInclusionSimilaires.prototype.handle).not.toHaveBeenCalled()
   })
 
-  it('présente les lieux trouvés avec un lien vers leur fiche et un motif lisible, pour un administrateur', async () => {
+  it('présente chaque lieu avec sa typologie, son SIRET formaté, ses personnes rattachées et un lien vers sa fiche, pour un administrateur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
@@ -27,65 +27,48 @@ describe('rechercher les lieux d’inclusion similaires action', () => {
     )
     vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle').mockResolvedValueOnce([
       {
-        adresse: '1 Rue de la Paix 75001 Paris',
-        estLieuCoop: true,
+        adresse: '7 Rue des Champs Seigneur 71600 Paray-le-Monial',
         id: '42',
-        motif: 'adresse',
-        nom: 'Médiathèque',
-        siret: null,
+        nom: 'Petr du Pays Charolais Brionnais',
+        nombrePersonnesRattachees: 6,
+        siret: '20006949700013',
+        typologies: ['CCAS'],
       },
       {
-        adresse: '2 Rue de la Paix 75001 Paris',
-        estLieuCoop: false,
+        adresse: '7 Rue des Champs Seigneur 71600 Paray-le-Monial',
         id: '43',
-        motif: 'nom',
-        nom: 'Mediatheque',
+        nom: 'France Services du Pays Charolais',
+        nombrePersonnesRattachees: 1,
         siret: null,
-      },
-      {
-        adresse: '3 Rue de la Paix 75001 Paris',
-        estLieuCoop: false,
-        id: '44',
-        motif: 'siret',
-        nom: 'Autre',
-        siret: '12345678901234',
+        typologies: [],
       },
     ])
 
     // WHEN
     const lieux = await rechercherLieuxInclusionSimilairesAction({
-      adresse: '1 rue de la Paix 75001 Paris',
-      nom: 'Médiathèque',
-      siret: '12345678901234',
+      adresse: '7 rue des Champs Seigneur 71600 Paray-le-Monial',
     })
 
     // THEN
     expect(RechercherLieuxInclusionSimilaires.prototype.handle).toHaveBeenCalledWith({
-      adresse: '1 rue de la Paix 75001 Paris',
-      nom: 'Médiathèque',
-      siret: '12345678901234',
+      adresse: '7 rue des Champs Seigneur 71600 Paray-le-Monial',
     })
     expect(lieux).toStrictEqual([
       {
-        adresse: '1 Rue de la Paix 75001 Paris',
-        estLieuCoop: true,
-        href: '/lieu/42',
-        libelleMotif: 'Même adresse',
-        nom: 'Médiathèque',
+        adresse: '7 Rue des Champs Seigneur 71600 Paray-le-Monial',
+        href: '/lieu/42?dejaEnregistre=1',
+        libellePersonnesRattachees: '6 personnes rattachées',
+        libelleSiret: 'SIRET 200 069 497 00013',
+        nom: 'Petr du Pays Charolais Brionnais',
+        typologies: "Centres communaux d'action sociale",
       },
       {
-        adresse: '2 Rue de la Paix 75001 Paris',
-        estLieuCoop: false,
-        href: '/lieu/43',
-        libelleMotif: 'Nom proche, même commune',
-        nom: 'Mediatheque',
-      },
-      {
-        adresse: '3 Rue de la Paix 75001 Paris',
-        estLieuCoop: false,
-        href: '/lieu/44',
-        libelleMotif: 'Même SIRET',
-        nom: 'Autre',
+        adresse: '7 Rue des Champs Seigneur 71600 Paray-le-Monial',
+        href: '/lieu/43?dejaEnregistre=1',
+        libellePersonnesRattachees: '1 personne rattachée',
+        libelleSiret: 'Sans SIRET',
+        nom: 'France Services du Pays Charolais',
+        typologies: 'Non renseigné',
       },
     ])
   })
@@ -99,7 +82,7 @@ describe('rechercher les lieux d’inclusion similaires action', () => {
     vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle')
 
     // WHEN
-    const lieux = await rechercherLieuxInclusionSimilairesAction({ nom: 'Médiathèque' })
+    const lieux = await rechercherLieuxInclusionSimilairesAction({ adresse: '1 rue de la Paix 75001 Paris' })
 
     // THEN
     expect(lieux).toStrictEqual([])

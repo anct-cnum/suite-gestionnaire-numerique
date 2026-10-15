@@ -8,67 +8,81 @@ import {
 } from './RechercherLieuxInclusionSimilaires'
 import { AdresseGeocodeReadModel, BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 
-describe('rechercher les lieux d’inclusion similaires', () => {
-  it('géocode l’adresse saisie pour chercher par clef BAN et par commune, puis délègue au loader', async () => {
+describe('rechercher les lieux d’inclusion déjà déclarés à une adresse', () => {
+  it('géocode l’adresse saisie puis cherche les lieux portant la même clef BAN', async () => {
     // GIVEN
     let spiedCriteres: CriteresLieuxSimilaires | null = null
     const loader: LieuxInclusionSimilairesLoader = {
       async rechercher(criteres) {
         spiedCriteres = criteres
-        return Promise.resolve([lieuSimilaire])
+        return Promise.resolve([lieuDejaDeclare])
       },
     }
 
     // WHEN
     const lieux = await new RechercherLieuxInclusionSimilaires(banGeocodingGateway(adresseGeocodee), loader).handle({
       adresse: '1 rue de la Paix 75001 Paris',
-      nom: 'Ma médiathèque',
-      siret: '12345678901234',
     })
 
     // THEN
-    expect(spiedCriteres).toStrictEqual({
-      clefInterop: '75101_7141_00001',
-      codeInsee: '75101',
-      nom: 'Ma médiathèque',
-      siret: '12345678901234',
-    })
-    expect(lieux).toStrictEqual([lieuSimilaire])
+    expect(spiedCriteres).toStrictEqual({ clefInterop: '75101_7141_00001' })
+    expect(lieux).toStrictEqual([lieuDejaDeclare])
   })
 
-  it('sans adresse ni SIRET, cherche par nom seul', async () => {
+  it('sans adresse, ne géocode rien et ne cherche rien', async () => {
     // GIVEN
-    let spiedCriteres: CriteresLieuxSimilaires | null = null
     let geocodeAppele = false
-    const loader: LieuxInclusionSimilairesLoader = {
-      async rechercher(criteres) {
-        spiedCriteres = criteres
-        return Promise.resolve([])
-      },
-    }
+    let loaderAppele = false
     const gateway: BanGeocodingGateway = {
       async geocoder() {
         geocodeAppele = true
         return Promise.resolve(null)
       },
     }
+    const loader: LieuxInclusionSimilairesLoader = {
+      async rechercher() {
+        loaderAppele = true
+        return Promise.resolve([])
+      },
+    }
 
     // WHEN
-    await new RechercherLieuxInclusionSimilaires(gateway, loader).handle({ nom: 'Ma médiathèque' })
+    const lieux = await new RechercherLieuxInclusionSimilaires(gateway, loader).handle({ adresse: '' })
 
     // THEN
     expect(geocodeAppele).toBe(false)
-    expect(spiedCriteres).toStrictEqual({ clefInterop: null, codeInsee: null, nom: 'Ma médiathèque', siret: null })
+    expect(loaderAppele).toBe(false)
+    expect(lieux).toStrictEqual([])
+  })
+
+  it('quand l’adresse n’est pas reconnue par la BAN, ne propose aucun lieu', async () => {
+    // GIVEN
+    let loaderAppele = false
+    const loader: LieuxInclusionSimilairesLoader = {
+      async rechercher() {
+        loaderAppele = true
+        return Promise.resolve([lieuDejaDeclare])
+      },
+    }
+
+    // WHEN
+    const lieux = await new RechercherLieuxInclusionSimilaires(banGeocodingGateway(null), loader).handle({
+      adresse: 'une adresse introuvable',
+    })
+
+    // THEN
+    expect(loaderAppele).toBe(false)
+    expect(lieux).toStrictEqual([])
   })
 })
 
-const lieuSimilaire: LieuInclusionSimilaireReadModel = {
+const lieuDejaDeclare: LieuInclusionSimilaireReadModel = {
   adresse: '1 Rue de la Paix 75001 Paris',
-  estLieuCoop: false,
   id: '42',
-  motif: 'adresse',
   nom: 'Médiathèque',
+  nombrePersonnesRattachees: 3,
   siret: null,
+  typologies: ['BIB'],
 }
 
 const adresseGeocodee: AdresseGeocodeReadModel = {

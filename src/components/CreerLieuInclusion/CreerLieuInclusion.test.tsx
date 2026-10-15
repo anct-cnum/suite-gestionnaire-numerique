@@ -188,17 +188,18 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     expect(push).not.toHaveBeenCalled()
   })
 
-  it('dès qu’une adresse est choisie, propose les lieux existants aux alentours avec un lien vers leur fiche', async () => {
+  it('dès qu’une adresse est choisie, présente les lieux déjà déclarés à cette adresse, sans bloquer la création', async () => {
     // GIVEN
     const rechercherLieuxInclusionSimilairesAction = vi
       .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
       .mockResolvedValue([
         {
           adresse: '1 Rue de la Paix 75001 Paris',
-          estLieuCoop: true,
-          href: '/lieu/42',
-          libelleMotif: 'Même adresse',
+          href: '/lieu/42?dejaEnregistre=1',
+          libellePersonnesRattachees: '6 personnes rattachées',
+          libelleSiret: 'SIRET 200 069 497 00013',
           nom: 'Médiathèque',
+          typologies: 'Bibliothèque / Médiathèque',
         },
       ])
     const rechercherAdressesAction = vi
@@ -215,16 +216,20 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     await waitFor(() => {
       expect(rechercherLieuxInclusionSimilairesAction).toHaveBeenCalledWith({
         adresse: '1 Rue de la Paix, 75001 Paris',
-        nom: 'Médiathèque',
-        siret: '',
       })
     })
-    const titre = await screen.findByRole('heading', { level: 3, name: 'Des lieux existent déjà aux alentours' })
+    const titre = await screen.findByText('1 lieu est déjà déclaré à cette adresse')
     expect(titre).toBeInTheDocument()
-    const lien = screen.getByRole('link', { name: /Médiathèque/ })
-    expect(lien).toHaveAttribute('href', '/lieu/42')
-    expect(screen.getByText(/Même adresse/)).toBeInTheDocument()
-    expect(screen.getByText(/géré dans la Coop/)).toBeInTheDocument()
+    expect(
+      screen.getByText('Si c’est votre lieu, inutile de le créer. Sinon, poursuivez la création.')
+    ).toBeInTheDocument()
+    expect(screen.getByText('Médiathèque')).toBeInTheDocument()
+    expect(screen.getByText('Bibliothèque / Médiathèque ·')).toBeInTheDocument()
+    expect(screen.getByText('1 Rue de la Paix 75001 Paris')).toBeInTheDocument()
+    expect(screen.getByText('SIRET 200 069 497 00013 · 6 personnes rattachées')).toBeInTheDocument()
+    const lien = screen.getByRole('link', { name: 'C’est mon lieu' })
+    expect(lien).toHaveAttribute('href', '/lieu/42?dejaEnregistre=1')
+    expect(screen.getByRole('button', { name: 'Créer le lieu d’activité' })).toBeEnabled()
   })
 })
 

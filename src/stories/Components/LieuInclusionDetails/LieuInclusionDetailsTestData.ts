@@ -112,5 +112,6 @@ export function createDefaultLieuInclusionDetailsData(): LieuInclusionDetailsDat
     peutModifier: false,
     peutModifierInformationsGenerales: false,
     servicesInclusionNumerique: createDefaultServicesInclusionNumeriqueData(),
+    visiblePourCartographie: false,
   }
 }

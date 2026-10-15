@@ -5,58 +5,49 @@ import {
   LieuxInclusionSimilairesLoader,
 } from '@/use-cases/queries/RechercherLieuxInclusionSimilaires'
 
-// Lecture seule. Trois signaux, du plus sûr au plus flou : même SIRET, même adresse BAN
-// (clef_interop), nom proche dans la même commune (word_similarity, sans accents ni casse).
-// Les fonctions d'extension sont qualifiées `public.` (search_path Prisma sans public).
+// Lecture seule. Un seul signal depuis les maquettes V6 : la même adresse BAN
+// (clef_interop). Les colonnes enum[] sont castées en text[], sans quoi $queryRaw
+// les renvoie en chaîne brute. Le décompte des personnes suit la règle de la fiche
+// lieu : affectations actives, distinctes par personne.
 export class PrismaLieuxInclusionSimilairesLoader implements LieuxInclusionSimilairesLoader {
   async rechercher(criteres: CriteresLieuxSimilaires): Promise<ReadonlyArray<LieuInclusionSimilaireReadModel>> {
     const lignes = await prisma.$queryRaw<ReadonlyArray<Ligne>>`
-      WITH cible AS (
-        SELECT ${criteres.siret}::text AS siret,
-               ${criteres.clefInterop}::text AS clef_interop,
-               ${criteres.codeInsee}::text AS code_insee,
-               lower(public.unaccent(btrim(${criteres.nom}::text))) AS nom_n
-      )
       SELECT l.id::text AS id,
              l.nom,
              l.siret_a_l_enrichissement AS siret,
-             (l.structure_coop_id IS NOT NULL) AS est_lieu_coop,
-             btrim(concat_ws(' ', a.numero_voie::text || COALESCE(a.repetition, ''), a.nom_voie, a.code_postal, a.nom_commune)) AS adresse,
-             CASE
-               WHEN c.siret IS NOT NULL AND l.siret_a_l_enrichissement = c.siret THEN 'siret'
-               WHEN c.clef_interop IS NOT NULL AND a.clef_interop = c.clef_interop THEN 'adresse'
-               ELSE 'nom'
-             END AS motif
+             l.typologies::text[] AS typologies,
+             COALESCE(personnes.nombre, 0)::int AS nombre_personnes_rattachees,
+             btrim(concat_ws(' ', a.numero_voie::text || COALESCE(a.repetition, ''), a.nom_voie, a.code_postal, a.nom_commune)) AS adresse
       FROM main.lieu_inclusion l
-      LEFT JOIN main.adresse a ON a.id = l.adresse_id
-      CROSS JOIN cible c
+      INNER JOIN main.adresse a ON a.id = l.adresse_id
+      LEFT JOIN LATERAL (
+        SELECT COUNT(DISTINCT pal.personne_id) AS nombre
+        FROM main.personne_affectations_lieu pal
+        WHERE pal.lieu_id = l.id
+          AND pal.est_active = true
+      ) personnes ON true
       WHERE l.deleted_at IS NULL
-        AND (
-          (c.siret IS NOT NULL AND l.siret_a_l_enrichissement = c.siret)
-          OR (c.clef_interop IS NOT NULL AND a.clef_interop = c.clef_interop)
-          OR (c.code_insee IS NOT NULL AND c.nom_n <> '' AND a.code_insee = c.code_insee
-              AND public.word_similarity(c.nom_n, lower(public.unaccent(l.nom))) > 0.6)
-        )
-      ORDER BY motif, l.nom
+        AND a.clef_interop = ${criteres.clefInterop}
+      ORDER BY l.nom
       LIMIT 10
     `
 
     return lignes.map((ligne) => ({
       adresse: ligne.adresse,
-      estLieuCoop: ligne.est_lieu_coop,
       id: ligne.id,
-      motif: ligne.motif,
       nom: ligne.nom,
+      nombrePersonnesRattachees: ligne.nombre_personnes_rattachees,
       siret: ligne.siret,
+      typologies: ligne.typologies ?? [],
     }))
   }
 }
 
 type Ligne = Readonly<{
   adresse: string
-  est_lieu_coop: boolean
   id: string
-  motif: 'adresse' | 'nom' | 'siret'
   nom: string
+  nombre_personnes_rattachees: number
   siret: null | string
+  typologies: null | ReadonlyArray<string>
 }>

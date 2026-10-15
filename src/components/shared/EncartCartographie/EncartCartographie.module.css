@@ -1,7 +1,7 @@
 /* Bandeau d'en-tête de l'encart cartographie : le DSFR n'offre pas de carte à en-tête
    coloré (fr-callout impose sa barre d'accent à gauche, absente des maquettes V6).
    Coins arrondis en haut seulement, pour épouser la carte qui le contient. */
-.bandeau-cartographie {
+.bandeau {
   background-color: var(--background-alt-blue-france);
   border-radius: 0.5rem 0.5rem 0 0;
 }

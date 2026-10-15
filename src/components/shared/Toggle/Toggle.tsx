@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement, useId } from 'react'
+import { ChangeEvent, PropsWithChildren, ReactElement, useId } from 'react'
 
 import styles from './Toggle.module.css'
 
@@ -6,12 +6,15 @@ export default function Toggle({
   children,
   defaultChecked = false,
   // Stryker disable next-line BooleanLiteral
+  disabled = false,
+  // Stryker disable next-line BooleanLiteral
   hasSeparator = false,
   // Stryker disable next-line BooleanLiteral
   labelAGauche = false,
   // Stryker disable next-line BooleanLiteral
   libelleEtat = false,
   name,
+  onChange,
 }: Props): ReactElement {
   const id = useId()
   const className = hasSeparator ? `fr-pb-2w ${styles['fr-toggle--bb']}` : 'fr-mt-2w'
@@ -20,7 +23,15 @@ export default function Toggle({
 
   return (
     <div className={`fr-toggle ${labelAGauche ? 'fr-toggle--label-left' : ''} ${className}`}>
-      <input className="fr-toggle__input" defaultChecked={defaultChecked} id={id} name={name} type="checkbox" />
+      <input
+        className="fr-toggle__input"
+        defaultChecked={defaultChecked}
+        disabled={disabled}
+        id={id}
+        name={name}
+        onChange={onChange}
+        type="checkbox"
+      />
       <label className="fr-toggle__label" htmlFor={id} {...attributsEtat}>
         {children}
       </label>
@@ -31,9 +42,11 @@ export default function Toggle({
 type Props = PropsWithChildren<
   Readonly<{
     defaultChecked?: boolean
+    disabled?: boolean
     hasSeparator?: boolean
     labelAGauche?: boolean
     libelleEtat?: boolean
     name: string
+    onChange?(event: ChangeEvent<HTMLInputElement>): void
   }>
 >

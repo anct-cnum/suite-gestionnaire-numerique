@@ -1,9 +1,10 @@
 import { QueryHandler } from '../QueryHandler'
 import { BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 
-// Lieux existants aux alentours d'un lieu en cours de création (#1495) : la création
-// n'est jamais bloquée, on montre les candidats pour que l'humain tranche. L'adresse
-// saisie est géocodée pour comparer par clef BAN et par commune.
+// Lieux déjà déclarés à l'adresse saisie, pendant la création d'un lieu (#1495).
+// Maquettes V6 : un seul signal, l'adresse. L'adresse saisie est géocodée pour
+// comparer par clef BAN ; la création n'est jamais bloquée, les lieux trouvés sont
+// montrés pour que l'humain tranche.
 export class RechercherLieuxInclusionSimilaires implements QueryHandler<
   Query,
   ReadonlyArray<LieuInclusionSimilaireReadModel>
@@ -17,17 +18,18 @@ export class RechercherLieuxInclusionSimilaires implements QueryHandler<
   }
 
   async handle(query: Query): Promise<ReadonlyArray<LieuInclusionSimilaireReadModel>> {
-    const geocode =
-      query.adresse === undefined || query.adresse === ''
-        ? null
-        : await this.#banGeocodingGateway.geocoder({ adresse: query.adresse })
+    if (query.adresse === '') {
+      return []
+    }
 
-    return this.#loader.rechercher({
-      clefInterop: geocode?.banClefInterop ?? null,
-      codeInsee: geocode?.banCodeInsee ?? null,
-      nom: query.nom,
-      siret: query.siret ?? null,
-    })
+    // Sans clef BAN, aucune comparaison d'adresse n'est possible : on ne propose rien
+    // plutôt que de rapprocher des lieux sur un texte libre.
+    const geocode = await this.#banGeocodingGateway.geocoder({ adresse: query.adresse })
+    if (geocode === null) {
+      return []
+    }
+
+    return this.#loader.rechercher({ clefInterop: geocode.banClefInterop })
   }
 }
 
@@ -36,23 +38,18 @@ export interface LieuxInclusionSimilairesLoader {
 }
 
 export type CriteresLieuxSimilaires = Readonly<{
-  clefInterop: null | string
-  codeInsee: null | string
-  nom: string
-  siret: null | string
+  clefInterop: string
 }>
 
 export type LieuInclusionSimilaireReadModel = Readonly<{
   adresse: string
-  estLieuCoop: boolean
   id: string
-  motif: 'adresse' | 'nom' | 'siret'
   nom: string
+  nombrePersonnesRattachees: number
   siret: null | string
+  typologies: ReadonlyArray<string>
 }>
 
 type Query = Readonly<{
-  adresse?: string
-  nom: string
-  siret?: string
+  adresse: string
 }>

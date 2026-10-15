@@ -53,6 +53,7 @@ export function lieuDetailsPresenter(
     peutModifier,
     peutModifierInformationsGenerales,
     servicesInclusionNumerique: lieuDetailsReadModel.servicesInclusionNumerique,
+    visiblePourCartographie: lieuDetailsReadModel.visiblePourCartographie,
   }
 }
 
@@ -142,4 +143,5 @@ interface LieuInclusionDetailsData {
     nom: string
     thematiques: ReadonlyArray<string>
   }>
+  visiblePourCartographie: boolean
 }

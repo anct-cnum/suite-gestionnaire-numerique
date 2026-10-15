@@ -76,7 +76,7 @@ export default async function ListeLieuxInclusionController({
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Suivi des lieux' }]} />
       <ListeLieuxInclusion
         listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
-        peutCreer={contexte.aCesRoles('administrateur_dispositif')}
+        peutCreer={contexte.aCesRoles('administrateur_dispositif') && contexte.isBetaTesteur}
         peutModifierVisibilite={contexte.peutGererLesLieux()}
         peutSupprimer={contexte.peutGererLesLieux()}
         searchParams={currentSearchParams}

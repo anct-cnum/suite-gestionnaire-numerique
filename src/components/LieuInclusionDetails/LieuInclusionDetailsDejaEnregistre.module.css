@@ -1,0 +1,5 @@
+/* Le DSFR n'expose pas de classe utilitaire pour la couleur de texte « info » :
+   seule sa variable permet de teinter l'icône comme sur la maquette V6-3. */
+.icone {
+  color: var(--text-default-info);
+}
