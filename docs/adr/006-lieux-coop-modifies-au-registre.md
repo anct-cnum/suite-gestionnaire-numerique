@@ -12,7 +12,7 @@ Un lieu d'inclusion vit dans le registre partagé `main.lieu_inclusion`. Les lie
 
 Or la Coop écrit déjà chaque modification de lieu dans sa table et dans le registre, dans une même transaction, et elle affiche la fiche lue dans le registre. Elle présente à ses médiateurs, dans une modale d'écart, ce qui a été modifié ailleurs.
 
-L'analyse complète, avec les scénarios étudiés, est dans [`docs/chantiers/2101-lieux-coop-modifiables/`](../chantiers/2101-lieux-coop-modifiables/conception-lieux-coop-modifiables.md). La réponse de l'équipe Coop du 15/10/2026 est consignée au §8 de la [proposition](../chantiers/2101-lieux-coop-modifiables/proposition-coop-double-ecriture-min.md).
+L'analyse complète, avec les scénarios étudiés, est dans [`docs/archive/2101-lieux-coop-modifiables/`](../archive/2101-lieux-coop-modifiables/conception-lieux-coop-modifiables.md). La réponse de l'équipe Coop du 15/10/2026 est consignée au §8 de la [proposition](../archive/2101-lieux-coop-modifiables/proposition-coop-double-ecriture-min.md).
 
 ## Décision
 

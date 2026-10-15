@@ -66,10 +66,15 @@ docs/
 
 ## Chantiers en cours
 
-| Chantier                                | Documents                                                                                                                    |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Membres de gouvernance mal rattachés    | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
-| Lieux Coop modifiables dans MIN (#2101) | [conception-lieux-coop-modifiables.md](chantiers/2101-lieux-coop-modifiables/conception-lieux-coop-modifiables.md)           |
+| Chantier                             | Documents                                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Membres de gouvernance mal rattachés | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
+
+## Archives
+
+| Chantier clos                                                                                                                  | Documents                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lieux Coop modifiables dans MIN (#2101), clos le 15/10/2026 ; décision : [ADR-006](adr/006-lieux-coop-modifies-au-registre.md) | [conception-lieux-coop-modifiables.md](archive/2101-lieux-coop-modifiables/conception-lieux-coop-modifiables.md), [proposition-coop-double-ecriture-min.md](archive/2101-lieux-coop-modifiables/proposition-coop-double-ecriture-min.md) |
 
 ## Documentation dans les autres dépôts
 

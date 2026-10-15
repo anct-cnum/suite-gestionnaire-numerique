@@ -1,8 +1,30 @@
 # Rendre modifiables dans MIN les lieux gérés dans la Coop numérique
 
-> **Statut** : brouillon · **Public** : tech · **Mis à jour** : 2026-10-15 · **Tickets** : #2101, #2102 à #2108
+> **Statut** : figé · **Public** : tech · **Mis à jour** : 2026-10-15 · **Tickets** : #2101, #2102 à #2108, #2114
 
-Investigation et proposition de conception. Aucun code applicatif n'est modifié par ce chantier.
+## Bilan : chantier clos le 15/10/2026
+
+Les lieux gérés dans la Coop sont modifiables dans MIN en production depuis le 15/10/2026. La décision est consignée dans [ADR-006](../../adr/006-lieux-coop-modifies-au-registre.md). Les règles du cycle de vie des lieux sont documentées côté dataspace (`docs/reference/regles/cycle-de-vie-lieux-personnes.md`). Ce document est l'analyse qui a mené à la décision, figée à sa clôture.
+
+| Ticket | Livraison       | Ce qui a été livré                                                                                                                                                                                                                                                                                                                                                                           |
+| ------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #2102  | dataspace !1029 | Le DAG `coop-import` est supprimé. `verification-coherence-lieux-coop` vérifie chaque matin, en lecture seule, deux cas qui ne devraient pas arriver (lieu Coop absent du registre, inscription orpheline) et publie OK ou NOK sur Mattermost, sans rien corriger. V185 : le nombre de médiateurs est calculé à la lecture par les vues. V184 : description de `main.lieu_divergences_coop`. |
+| #2103  | #2110           | Bibliothèque du standard en 4.4.0, règles de saisie des lieux adossées à ses modèles. Un lieu n'a qu'un SIRET : le RIDET reste réservé aux structures.                                                                                                                                                                                                                                       |
+| #2105  | #2111           | Lecture seule levée pour toutes les actions (données, adresse, visibilité, suppression), avec les droits du rôle. Bandeau d'information, modale de suppression adaptée.                                                                                                                                                                                                                      |
+| #2106  | #2112           | Courriel sous `courriels.email`. Stock de production repris (22 lieux, dont 3 où la saisie MIN, plus récente, a été gardée).                                                                                                                                                                                                                                                                 |
+| #2107  | #2113           | ADR-006.                                                                                                                                                                                                                                                                                                                                                                                     |
+
+**Écarts avec la conception ci-dessous**
+
+- **Filet** (§2.2) : il est supprimé entièrement, pas réduit. La Coop est jugée fiable : les étapes 1 (identité) et 7 (orphelins) deviennent de simples vérifications. L'étape 4 (compteur) disparaît, remplacée par le calcul à la lecture (V185). La capture des utilisateurs Coop, sans consommateur, est retirée avec le DAG ; ses tables sont à supprimer (#2114).
+- **Visibilité et adresse** (§5, questions 1 et 2) : ouvertes sans attendre la réponse de la Coop. Les questions restent posées pour information (#2104).
+- **RIDET** : refusé pour un lieu, alors que la première version de #2103 l'acceptait.
+
+**Suites, hors chantier** : #2104 (questions à la Coop), #2108 (flux national), #2114 (P2, suppression de `source` et `staging.coop__utilisateurs`).
+
+---
+
+_Analyse et proposition de conception, telles que rédigées avant la mise en œuvre._
 
 Sources lues :
 
@@ -180,7 +202,7 @@ Décision du 15/10/2026 sur les questions 1 et 2 : **MIN ouvre la modification d
 
 ## 6. Tickets
 
-Créés le 15/10/2026, tous en P1, type Tech, statut Backlog sur le board SEPT.
+Créés le 15/10/2026, tous en P1, type Tech. Livrés le 15/10/2026 sauf #2104 et #2108 (cf. bilan en tête).
 
 ### T1 (#2102) — dataspace — Arrêter de réaligner le registre des lieux sur `coop.lieu_inclusion`
 
