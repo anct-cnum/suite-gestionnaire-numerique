@@ -179,10 +179,15 @@ export class PrismaLieuInclusionRepository
 
     // Mettre à jour l'email dans le contact
     if (data.email !== undefined) {
-      const existingCourriels = (updatedContact.courriels ?? {}) as Record<string, unknown>
+      // Clé email, celle de la Coop et d'api.carto ; l'ancienne clé contact_public est retirée (#2106).
+      const existingCourriels = Object.fromEntries(
+        Object.entries((updatedContact.courriels ?? {}) as Record<string, unknown>).filter(
+          ([cle]) => cle !== 'contact_public'
+        )
+      )
       updatedContact.courriels = {
         ...existingCourriels,
-        contact_public: data.email === '' ? null : data.email,
+        email: data.email === '' ? null : data.email,
       }
     }
 

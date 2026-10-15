@@ -44,6 +44,27 @@ describe('repository Prisma des lieux d’inclusion', () => {
     expect(lieu.updated_at_min).toStrictEqual(epochTime)
   })
 
+  it('écrit le courriel du lieu sous la clé email, celle que lisent la Coop et api.carto (#2106)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.update({
+      data: { contact: { courriels: { contact_public: 'ancien@exemple.fr' }, telephone: '+33102030405' } },
+      where: { id: LIEU_ID },
+    })
+
+    // WHEN
+    await new PrismaLieuInclusionRepository().updateServicesModalite({
+      date: epochTime,
+      email: 'lieu@exemple.fr',
+      fraisACharge: [],
+      modalitesAcces: [],
+      structureUid: new StructureUid(LIEU_ID),
+    })
+
+    // THEN
+    const lieu = await prisma.main_lieu_inclusion.findUniqueOrThrow({ where: { id: LIEU_ID } })
+    expect(lieu.contact).toStrictEqual({ courriels: { email: 'lieu@exemple.fr' }, telephone: '+33102030405' })
+  })
+
   it('un changement de visibilité ne touche pas à la source : c’est un état, pas une donnée (#1951)', async () => {
     // WHEN
     await new PrismaLieuInclusionRepository().updateVisibiliteCartographie({
