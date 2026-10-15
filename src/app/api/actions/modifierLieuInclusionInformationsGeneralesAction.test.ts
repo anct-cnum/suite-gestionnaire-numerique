@@ -19,16 +19,13 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     })
 
     // THEN
-    expect(messages).toStrictEqual([
-      'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
-    ])
+    expect(messages).toStrictEqual(['Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle'])
   })
 
   it.each([
     {
       intention: 'un SIRET dont la clé de contrôle est fausse',
-      message:
-        'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)',
+      message: 'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle',
       saisie: { siret: '13002603200017' },
     },
     {

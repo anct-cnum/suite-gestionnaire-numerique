@@ -20,8 +20,6 @@ import { z } from 'zod'
 
 const SEPARATEUR_LISTE = '|'
 
-const RIDET = /^\d{6,7}$/
-
 const TYPOLOGIES_DU_STANDARD: ReadonlySet<string> = new Set(Object.values(Typologie))
 
 export const nomDuStandard = z
@@ -29,11 +27,11 @@ export const nomDuStandard = z
   .trim()
   .refine((valeur) => Nom.safe(valeur) !== null, { message: 'Le nom du lieu d’activité doit être renseigné' })
 
-// Le RIDET (Nouvelle-Calédonie) n'est pas un SIRET et le standard l'ignore : MIN continue de
-// l'accepter tel quel, faute d'autre identifiant pour ces lieux.
+// Un lieu n'a qu'un SIRET (clé de Luhn), facultatif : le RIDET calédonien reste réservé aux
+// structures, et le standard ne le connaît pas.
 export const siretDuStandard = facultatif(
-  (valeur) => RIDET.test(valeur) || Siret.safe(valeur) !== null,
-  'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle (ou 6-7 chiffres pour un RIDET)'
+  (valeur) => Siret.safe(valeur) !== null,
+  'Le SIRET doit être composé de 14 chiffres et respecter sa clé de contrôle'
 )
 
 export const complementAdresseDuStandard = facultatif(
