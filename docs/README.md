@@ -57,7 +57,6 @@ docs/
 | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [postes-conseiller-numerique.md](reference/postes-conseiller-numerique.md) ⚠️               | Écran des postes CN et vue `min.postes_conseiller_numerique_synthese` (le SQL cité ne correspond plus à la vue) |
 | [couche-anticorruption-statistiques.md](reference/couche-anticorruption-statistiques.md) ⚠️ | Couche d'anticorruption des statistiques coop (cite des tables supprimées)                                      |
-| [api-coop-statistiques.md](reference/api-coop-statistiques.md)                              | Gateway de l'API coop pour les statistiques                                                                     |
 | [seo-vitrine.md](reference/vitrine/seo-vitrine.md)                                          | Métadonnées SEO du site vitrine                                                                                 |
 
 ## Décisions

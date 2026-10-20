@@ -235,56 +235,6 @@ Le script retourne un code d'erreur si des fichiers inutilisés sont trouvés :
 pnpm assets:unused:json || echo "Des assets inutilisés ont été trouvés"
 ```
 
----
-
-## Script de test du cache API Coop
-
-### Description
-
-Le script `test-cache-api-coop.ts` permet de tester le système de cache pour l'API Coop Numérique.
-
-### Usage
-
-```bash
-# Avec pnpm
-pnpm tsx scripts/test-cache-api-coop.ts
-
-# Avec npx
-npx tsx scripts/test-cache-api-coop.ts
-
-# Directement (si le fichier est exécutable)
-./scripts/test-cache-api-coop.ts
-```
-
-### Prérequis
-
-- **Token API valide** : Configurez `COOP_TOKEN` dans `.env.local` avec un vrai token (pas `FAKE_TOKEN`)
-- **Connexion internet** : Pour les appels API réels
-
-### Ce que teste le script
-
-1. **Cache MISS** : Premier appel lent (~7 secondes)
-2. **Cache HIT** : Appels répétés instantanés (0ms)
-3. **Cache par département** : Chaque territoire a son cache séparé
-4. **Accélération** : Mesure l'amélioration de performance (>1000x)
-5. **Statistiques** : Affiche l'état du cache (nombre d'entrées, âge)
-6. **Vidage du cache** : Test après suppression du cache
-
-### Exemple de sortie
-
-```
-📊 Test 1: Premier appel France entière (devrait être un MISS)...
-🌐 Cache MISS pour: france_entiere - Appel API en cours...
-✅ Données mises en cache pour: france_entiere
-   ⏱️ Temps: 7864ms
-   📊 Bénéficiaires: 1 027 790
-
-📊 Test 2: Deuxième appel France entière (devrait être un HIT)...
-📦 Cache HIT pour: france_entiere (âge: 8s)
-   ⏱️ Temps: 0ms
-   ✅ Accélération: >1000x plus rapide!
-```
-
 ## Script de mise à jour des statuts de subventions
 
 ### Description

@@ -1,7 +1,7 @@
 import { StatistiquesFilters } from './RecupererStatistiquesCoop'
 import { FiltreTerritorial, libelleFiltreTerritorial } from './shared/FiltreTerritorial'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { reportLoaderError } from '@/gateways/shared/sentryErrorReporter'
 import { PrismaAccompagnementsRealisesParACLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesParACLoader'
 import { PrismaDonneesStructureLoader } from '@/gateways/tableauDeBord/PrismaDonneesStructureLoader'
@@ -18,7 +18,7 @@ export type AccompagnementsRealisesResult = Readonly<{
 }>
 
 /**
- * Récupère le nombre d'accompagnements réalisés en combinant AC (base de données) et Coop (API)
+ * Récupère le nombre d'accompagnements réalisés en combinant AC (base de données) et Coop (statistiques Coop de l'entrepôt)
  * @param filtre - Périmètre territorial (national, département(s) ou communes)
  * @returns Promise avec le nombre total et la répartition mensuelle
  */
@@ -34,8 +34,8 @@ export async function fetchAccompagnementsRealises(
       return accompagnementsAC
     }
 
-    // Récupérer les statistiques Coop depuis l'API
-    const statistiquesCoopLoader = createApiCoopStatistiquesLoader()
+    // Récupérer les statistiques Coop
+    const statistiquesCoopLoader = createCoopStatistiquesLoader()
     const filters = filtresCoop(filtre)
 
     const statistiquesCoop = await statistiquesCoopLoader.recupererStatistiques(filters)
@@ -43,7 +43,7 @@ export async function fetchAccompagnementsRealises(
     // Calculer le total combiné
     const nombreTotal = accompagnementsAC.nombreTotalAC + statistiquesCoop.totaux.accompagnements.total
 
-    // Récupérer la répartition mensuelle depuis l'API Coop (6 derniers mois)
+    // Récupérer la répartition mensuelle depuis les statistiques Coop (6 derniers mois)
     const repartitionMensuelle = statistiquesCoop.accompagnementsParMois.slice(-6).map((item) => ({
       mois: item.label,
       nombre: item.count,

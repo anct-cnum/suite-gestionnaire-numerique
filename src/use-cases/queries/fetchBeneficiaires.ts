@@ -1,10 +1,10 @@
 import { StatistiquesFilters } from './RecupererStatistiquesCoop'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { reportLoaderError } from '@/gateways/shared/sentryErrorReporter'
 
 /**
- * Résultat de la récupération des bénéficiaires et accompagnements depuis l'API Coop
+ * Résultat de la récupération des bénéficiaires et accompagnements depuis les statistiques Coop
  */
 export type BeneficiairesEtAccompagnementsResult = Readonly<{
   accompagnements: number
@@ -12,7 +12,7 @@ export type BeneficiairesEtAccompagnementsResult = Readonly<{
 }>
 
 /**
- * Récupère le nombre de bénéficiaires et d'accompagnements depuis l'API Coop
+ * Récupère le nombre de bénéficiaires et d'accompagnements depuis les statistiques Coop
  * @param codeDepartement - Si undefined, retourne les stats France entière
  * @param periode - Période optionnelle avec dates de début et fin pour filtrer les statistiques
  * @returns Promise avec le nombre de bénéficiaires et d'accompagnements
@@ -22,7 +22,7 @@ export async function fetchBeneficiairesEtAccompagnements(
   periode?: { depuis: Date; jusqua: Date }
 ): Promise<BeneficiairesEtAccompagnementsResult | ErrorViewModel> {
   try {
-    const loader = createApiCoopStatistiquesLoader()
+    const loader = createCoopStatistiquesLoader()
 
     // Créer le filtre selon les paramètres fournis
     let filters: StatistiquesFilters | undefined

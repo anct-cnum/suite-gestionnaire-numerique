@@ -28,27 +28,27 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
         return accompagnementsData
       }
 
-      // 2. Récupérer les statistiques des bénéficiaires via l'API Coop
+      // 2. Récupérer les statistiques des bénéficiaires depuis les statistiques Coop
       let beneficiairesAccompagnes = 0
-      let erreurApiCoop: null | string = null
+      let erreurCoop: null | string = null
 
       try {
-        const filtres = this.construireFiltresApiCoop(query.territoire)
+        const filtres = this.construireFiltresCoop(query.territoire)
         const statistiquesCoop = await this.statistiquesCoopLoader.recupererStatistiques(filtres)
         beneficiairesAccompagnes = statistiquesCoop.totaux.beneficiaires.total
       } catch (error) {
-        // En cas d'erreur API Coop, on continue avec les données Prisma
+        // En cas d'erreur de lecture des statistiques Coop, on continue avec les données Prisma
         // mais on note l'erreur pour l'affichage
-        erreurApiCoop = error instanceof Error ? error.message : "Erreur inconnue de l'API Coop"
+        erreurCoop = error instanceof Error ? error.message : 'Erreur inconnue des statistiques Coop'
 
-        console.warn('Erreur API Coop, utilisation des données partielles:', erreurApiCoop)
+        console.warn('Erreur statistiques Coop, utilisation des données partielles:', erreurCoop)
       }
 
       // 3. Combiner les données
       return {
         ...accompagnementsData,
         beneficiairesAccompagnes,
-        erreurApiCoop,
+        erreurCoop,
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
@@ -59,7 +59,7 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
     }
   }
 
-  private construireFiltresApiCoop(territoire?: string): StatistiquesFilters | undefined {
+  private construireFiltresCoop(territoire?: string): StatistiquesFilters | undefined {
     // Si c'est pour toute la France, pas de filtre départemental
     if (typeof territoire !== 'string' || territoire.trim() === '' || territoire === 'France') {
       return undefined
@@ -75,7 +75,7 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
 type AccompagnementsEtMediateursEnrichiReadModel = AccompagnementsEtMediateursReadModel &
   Readonly<{
     beneficiairesAccompagnes: number
-    erreurApiCoop: null | string
+    erreurCoop: null | string
   }>
 
 type RecupererAccompagnementsEtMediateursEnrichiQuery = Readonly<{

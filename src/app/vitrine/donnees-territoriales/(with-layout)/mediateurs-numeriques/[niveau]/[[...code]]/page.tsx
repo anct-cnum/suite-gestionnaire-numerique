@@ -16,7 +16,7 @@ import CarteStatistiqueAidantsConnect from '@/components/vitrine/MediateursNumer
 import CarteStatistiqueConseillersNumeriques from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueConseillersNumeriques'
 import CarteStatistiqueMediateurs from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueMediateurs'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistiquesMediateursLoader'
 import {
   statistiquesMediateursPresenter,
@@ -145,7 +145,7 @@ async function recupererStatistiques(
   dateFin?: string
 ): Promise<ErrorViewModel | StatistiquesMediateursData> {
   try {
-    const loader = createApiCoopStatistiquesLoader()
+    const loader = createCoopStatistiquesLoader()
     const filtres = {
       ...filtresCoop(filtre),
       ...(dateDebut !== undefined ? { du: dateDebut } : {}),

@@ -4,7 +4,7 @@ import {
   StatistiquesFilters,
 } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
-export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
+export class CachedCoopStatistiquesLoader implements StatistiquesCoopLoader {
   private static readonly cache = new Map<string, CacheEntry>()
   private static readonly CACHE_DURATION_MS = 60 * 60 * 1000 // 1 heure de cache
   private readonly baseLoader: StatistiquesCoopLoader
@@ -50,22 +50,22 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     const maintenant = Date.now()
 
     // Vérifier si on a une entrée en cache valide
-    const entreeCache = CachedApiCoopStatistiquesLoader.cache.get(cacheKey)
+    const entreeCache = CachedCoopStatistiquesLoader.cache.get(cacheKey)
 
     if (entreeCache && this.estCacheValide(entreeCache, maintenant)) {
       console.log(`📦 Cache HIT pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`)
       return entreeCache.data
     }
 
-    // Si pas de cache ou cache expiré, appeler l'API
+    // Si pas de cache ou cache expiré, interroger le loader de base
 
-    console.log(`🌐 Cache MISS pour: ${cacheKey} - Appel API en cours...`)
+    console.log(`🌐 Cache MISS pour: ${cacheKey} - Lecture en cours...`)
 
     try {
       const donnees = await this.baseLoader.recupererStatistiques(filtres)
 
       // Mettre en cache les nouvelles données
-      CachedApiCoopStatistiquesLoader.cache.set(cacheKey, {
+      CachedCoopStatistiquesLoader.cache.set(cacheKey, {
         cacheKey,
         data: donnees,
         timestamp: maintenant,
@@ -77,10 +77,10 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       console.log(`✅ Données mises en cache pour: ${cacheKey}`)
       return donnees
     } catch (error) {
-      // En cas d'erreur API, essayer de retourner des données périmées si disponibles
+      // En cas d'erreur de lecture, essayer de retourner des données périmées si disponibles
       if (entreeCache) {
         console.warn(
-          `⚠️ Erreur API, utilisation du cache périmé pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`
+          `⚠️ Erreur de lecture, utilisation du cache périmé pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`
         )
         return entreeCache.data
       }
@@ -91,7 +91,7 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
   }
 
   private estCacheValide(entree: CacheEntry, maintenant: number): boolean {
-    return maintenant - entree.timestamp < CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS
+    return maintenant - entree.timestamp < CachedCoopStatistiquesLoader.CACHE_DURATION_MS
   }
 
   private genererCleCache(filtres?: StatistiquesFilters): string {
@@ -135,26 +135,26 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
 
   private nettoyerCache(maintenant: number): void {
     // Supprimer les entrées expirées depuis plus de 2x la durée du cache
-    const seuilSuppression = maintenant - CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS * 2
+    const seuilSuppression = maintenant - CachedCoopStatistiquesLoader.CACHE_DURATION_MS * 2
 
-    for (const [cle, entree] of CachedApiCoopStatistiquesLoader.cache.entries()) {
+    for (const [cle, entree] of CachedCoopStatistiquesLoader.cache.entries()) {
       if (entree.timestamp < seuilSuppression) {
-        CachedApiCoopStatistiquesLoader.cache.delete(cle)
+        CachedCoopStatistiquesLoader.cache.delete(cle)
 
         console.log(`🗑️ Cache supprimé pour: ${cle} (trop ancien)`)
       }
     }
 
     // Limiter la taille du cache à 100 entrées max
-    if (CachedApiCoopStatistiquesLoader.cache.size > 100) {
+    if (CachedCoopStatistiquesLoader.cache.size > 100) {
       // Trier par timestamp et garder les 100 plus récentes
-      const entries = Array.from(CachedApiCoopStatistiquesLoader.cache.entries())
+      const entries = Array.from(CachedCoopStatistiquesLoader.cache.entries())
         .sort((entree1, entree2) => entree2[1].timestamp - entree1[1].timestamp)
         .slice(0, 100)
 
-      CachedApiCoopStatistiquesLoader.cache.clear()
+      CachedCoopStatistiquesLoader.cache.clear()
       for (const [cle, valeur] of entries) {
-        CachedApiCoopStatistiquesLoader.cache.set(cle, valeur)
+        CachedCoopStatistiquesLoader.cache.set(cle, valeur)
       }
 
       console.log('🧹 Cache réduit à 100 entrées')
