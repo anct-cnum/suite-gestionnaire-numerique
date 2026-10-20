@@ -1,7 +1,7 @@
 import { AccompagnementsEtMediateursReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
 export type AccompagnementsEtMediateursViewModel = Readonly<{
-  avertissementApiCoop?: string
+  avertissementCoop?: string
   metriques: Array<{
     chiffre: string
     sousTitre: string

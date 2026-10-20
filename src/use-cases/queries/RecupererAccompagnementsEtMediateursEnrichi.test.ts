@@ -58,7 +58,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     useCase = new RecupererAccompagnementsEtMediateursEnrichi(mockAccompagnementsLoader, mockStatistiquesCoopLoader)
   })
 
-  it('devrait combiner les données Prisma et API Coop avec succès', async () => {
+  it('devrait combiner les données Prisma et statistiques Coop avec succès', async () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,
@@ -89,11 +89,11 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     expect(result).toStrictEqual({
       ...mockAccompagnementsData,
       beneficiairesAccompagnes: 25000,
-      erreurApiCoop: null,
+      erreurCoop: null,
     })
   })
 
-  it("devrait continuer avec des données partielles si l'API Coop échoue", async () => {
+  it('devrait continuer avec des données partielles si la lecture des statistiques Coop échoue', async () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,
@@ -107,7 +107,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     }
 
     mockAccompagnementsLoader.setMockResult(mockAccompagnementsData)
-    mockStatistiquesCoopLoader.setShouldThrow(new Error('API Coop indisponible'))
+    mockStatistiquesCoopLoader.setShouldThrow(new Error('Statistiques Coop indisponibles'))
 
     // Act
     const result = await useCase.execute({ territoire: 'France' })
@@ -116,7 +116,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     expect(result).toStrictEqual({
       ...mockAccompagnementsData,
       beneficiairesAccompagnes: 0,
-      erreurApiCoop: 'API Coop indisponible',
+      erreurCoop: 'Statistiques Coop indisponibles',
     })
   })
 
@@ -136,7 +136,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     expect(result).toStrictEqual(mockError)
   })
 
-  it('devrait construire les filtres API Coop correctement pour un département', async () => {
+  it('devrait construire les filtres des statistiques Coop correctement pour un département', async () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 5000,
@@ -160,7 +160,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     // Assert - On vérifie simplement que les données sont bien combinées
     expect(result).toMatchObject({
       beneficiairesAccompagnes: 8000,
-      erreurApiCoop: null,
+      erreurCoop: null,
     })
   })
 
@@ -188,7 +188,7 @@ describe('recupererAccompagnementsEtMediateursEnrichi', () => {
     // Assert - Vérifier que les données sont bien combinées pour la France
     expect(result).toMatchObject({
       beneficiairesAccompagnes: 25000,
-      erreurApiCoop: null,
+      erreurCoop: null,
     })
   })
 })

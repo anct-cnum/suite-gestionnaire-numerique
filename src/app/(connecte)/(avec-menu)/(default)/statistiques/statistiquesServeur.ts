@@ -1,7 +1,7 @@
 import { statistiquesCoopToMediateursData } from '@/components/coop/Statistiques/statistiquesCoopToMediateursData'
 import type { StatistiquesMediateursData } from '@/components/coop/Statistiques/types'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { PrismaLieuxCoopLoader } from '@/gateways/PrismaLieuxCoopLoader'
 import { clamperPeriode } from '@/shared/dispositif'
 import { uuidPattern } from '@/shared/patterns'
@@ -50,7 +50,7 @@ export async function recupererStatistiques(
   filtres: StatistiquesPageFilters
 ): Promise<ErrorViewModel | StatistiquesMediateursData> {
   try {
-    // Traduire les IDs SGN en coop_ids (UUIDs attendus par l'API Coop)
+    // Traduire les IDs SGN en coop_ids (UUIDs du schéma coop)
     const lieuxCoopIds = filtres.lieux ? await new PrismaLieuxCoopLoader().recupererCoopIds(filtres.lieux) : []
 
     // Scope implicite → filtres Coop
@@ -78,7 +78,7 @@ export async function recupererStatistiques(
       types: filtres.types,
     }
 
-    const readModel = await createApiCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
+    const readModel = await createCoopStatistiquesLoader(false).recupererStatistiques(coopFiltres)
     const vueTerritorialisee =
       (coopFiltres.departements?.length ?? 0) > 0 ||
       (coopFiltres.communes?.length ?? 0) > 0 ||

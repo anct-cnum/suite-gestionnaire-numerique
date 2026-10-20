@@ -63,11 +63,11 @@ export default async function ListeAidantsMediateursController({
   const codeDepartementUnique =
     scopeFiltre.type === 'departemental' && scopeFiltre.codes.length === 1 ? scopeFiltre.codes[0] : undefined
 
-  // Les stats 30 jours viennent de l'API Coop, dont la granularité ne descend pas sous le département :
+  // Les stats 30 jours viennent des statistiques Coop, dont la granularité ne descend pas sous le département :
   // on ne les affiche que pour la France entière ou un département unique (sinon le chiffre serait faux).
   const peutAfficherStatistiques30Jours = scopeFiltre.type === 'national' || codeDepartementUnique !== undefined
 
-  // Récupérer les bénéficiaires et accompagnements depuis l'API Coop
+  // Récupérer les bénéficiaires et accompagnements depuis les statistiques Coop
   const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(codeDepartementUnique, {
     depuis,
     jusqua,

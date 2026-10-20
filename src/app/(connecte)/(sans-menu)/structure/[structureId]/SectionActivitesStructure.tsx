@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 
 import StructureActivites from '@/components/Structure/StructureActivites'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { PrismaAccompagnementsAcStructureLoader } from '@/gateways/PrismaAccompagnementsAcStructureLoader'
 import { activitesStructurePresenter } from '@/presenters/activitesStructurePresenter'
 import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
@@ -11,7 +11,7 @@ export default async function SectionActivitesStructure({ structureId }: Props):
   try {
     const maintenant = new Date()
     const readModel = await new RecupererActivitesStructure(
-      createApiCoopStatistiquesLoader(false),
+      createCoopStatistiquesLoader(false),
       new PrismaAccompagnementsAcStructureLoader()
     ).handle({ au: maintenant.toISOString().slice(0, 10), du: DATE_DEBUT_DISPOSITIF, structureId })
 

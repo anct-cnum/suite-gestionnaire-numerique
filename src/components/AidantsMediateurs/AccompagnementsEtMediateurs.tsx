@@ -152,9 +152,9 @@ export default function AccompagnementsEtMediateurs({
               <p className="fr-text--sm fr-mb-0">
                 Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}
               </p>
-              {Boolean(accompagnementsEtMediateurs.avertissementApiCoop) && (
+              {Boolean(accompagnementsEtMediateurs.avertissementCoop) && (
                 <p className="fr-text--xs color-orange fr-mb-0 fr-mt-1v">
-                  ⚠️ {accompagnementsEtMediateurs.avertissementApiCoop}
+                  ⚠️ {accompagnementsEtMediateurs.avertissementCoop}
                 </p>
               )}
             </div>

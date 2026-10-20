@@ -57,7 +57,7 @@ function serieGraphique(
   taille: number,
   labelsParDefaut: () => ReadonlyArray<string>
 ): SerieGraphiqueViewModel {
-  // L'API Coop renvoie des séries déjà libellées : on ne garde que les dernières périodes.
+  // Les statistiques Coop arrivent en séries déjà libellées : on ne garde que les dernières périodes.
   const derniersPoints = points.slice(-taille)
   const labels = derniersPoints.length > 0 ? derniersPoints.map((point) => point.label) : labelsParDefaut()
   const data = derniersPoints.length > 0 ? derniersPoints.map((point) => point.count) : labels.map(() => 0)
