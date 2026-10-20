@@ -7,7 +7,13 @@ Une décision actée = un fichier `NNN-titre-kebab.md`, numéroté en continu. M
 - **Une décision par ADR**, rédigée au moment où elle est prise.
 - **Un ADR accepté ne se réécrit pas.** Si la décision change, on écrit un nouvel ADR qui le remplace et on passe l'ancien en « Remplacé par ADR-XXX ».
 - **Statuts** : `Proposé` (en discussion) → `Accepté` (en vigueur) → `Remplacé par ADR-XXX` ou `Abandonné`.
-- **Périmètre transverse** (MIN + dataspace, coop…) : l'ADR vit dans le dépôt propriétaire de l'objet concerné, l'autre dépôt y renvoie par un lien. Les données et le schéma partagés (`main.*`, `admin.*`) relèvent du dataspace ; le schéma `min` et l'interface relèvent de MIN.
+- **Périmètre transverse** (MIN + dataspace, coop…) : l'ADR vit dans le dépôt propriétaire de l'objet concerné, l'autre dépôt y renvoie par un lien ([DS-ADR-001](https://gitlab.com/incubateur-territoires/startups/data-space-societe-numerique/scripts/-/blob/main/docs/adr/001-entrepot-plateforme-applications-au-dessus.md) : l'entrepôt est la plateforme, MIN une application au-dessus) :
+  - données partagées et leurs règles (`main`, `admin`, `reference`…), qui fait foi, contrat entre l'entrepôt et MIN → **dataspace** ;
+  - écrans, outillage, schéma `min` et stockage propre de MIN (S3) → **MIN**.
+
+  Une décision qui touche les deux s'écrit en deux ADR liés : la règle de données dans le dataspace, la mise en œuvre applicative ici.
+
+- **Renvoi entre dépôts** : préfixer le numéro par le dépôt (`MIN-ADR-006`, `DS-ADR-002`), les deux dépôts numérotant chacun à partir de 001.
 - Un ADR décrit le **pourquoi**. Le **comment** à jour vit dans la doc de référence (`docs/`), qui cite l'ADR.
 - Pas de données personnelles.
 
