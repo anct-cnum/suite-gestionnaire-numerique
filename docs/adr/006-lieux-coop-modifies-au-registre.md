@@ -5,6 +5,7 @@
 **Décideurs** : équipe MIN, équipe Coop numérique, équipe dataspace
 **Périmètre** : transverse (min, dataspace, coop)
 **Tickets / MR** : #2101, #2102, #2103, #2105, #2106, dataspace !1029
+**Décision d'entrepôt liée** : [DS-ADR-002 — Le registre des lieux fait foi](https://gitlab.com/incubateur-territoires/startups/data-space-societe-numerique/scripts/-/blob/main/docs/adr/002-registre-lieux-fait-foi.md) (ajouté le 2026-10-20, contenu inchangé)
 
 ## Contexte
 
