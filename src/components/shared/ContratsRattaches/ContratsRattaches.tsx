@@ -44,10 +44,10 @@ export default function ContratsRattaches({ contrats, titre }: Props): ReactElem
         <div className="fr-container">
           <div className="fr-notice__body">
             <p>
-              <span className="fr-notice__title fr-text--regular">
+              <span className="fr-notice__title fr-text--sm fr-text--regular">
                 Un contrat est considéré comme en cours tant qu’aucune rupture n’a été déclarée sur le{' '}
                 <ExternalLink
-                  className="fr-link"
+                  className="fr-link fr-text--sm"
                   href="https://pilotage.conseiller-numerique.gouv.fr/"
                   title="Tableau de pilotage"
                 >
