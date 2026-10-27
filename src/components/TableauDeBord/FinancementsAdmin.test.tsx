@@ -11,9 +11,7 @@ describe('financements admin', () => {
     const viewModel = financementAdminViewModelFactory()
 
     // WHEN
-    renderComponent(
-      <FinancementsAdmin financementViewModel={viewModel} lienFinancements="/gouvernance/01/beneficiaires" />
-    )
+    renderComponent(<FinancementsAdmin financementViewModel={viewModel} />)
 
     // THEN
     expect(screen.getByText("Financements FNE engagés par l'État")).toBeInTheDocument()
@@ -32,9 +30,7 @@ describe('financements admin', () => {
     } as const
 
     // WHEN
-    renderComponent(
-      <FinancementsAdmin financementViewModel={viewModel} lienFinancements="/gouvernance/01/beneficiaires" />
-    )
+    renderComponent(<FinancementsAdmin financementViewModel={viewModel} />)
 
     // THEN
     expect(screen.getByText('Impossible de récupérer les données de financement admin')).toBeInTheDocument()

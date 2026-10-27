@@ -11,7 +11,6 @@ type MenuItem = Readonly<{
 }>
 
 type Section = Readonly<{
-  badge?: true
   menus: ReadonlyArray<MenuItem>
   titre: string
 }>
@@ -48,28 +47,6 @@ const menuMaStructureNonIdentifiee: MenuItem = {
   icon: 'building-line',
   label: 'Ma structure',
   url: () => '/ma-structure-non-identifiee',
-}
-
-function codeTerritoireOuPremierDepartement(contexte: Contexte): string {
-  const code = contexte.codeTerritoire()
-  return code === 'France' ? '01' : code
-}
-
-const sectionAVenir: Section = {
-  badge: true,
-  menus: [
-    {
-      icon: 'pen-nib-line',
-      label: 'Financements',
-      url: (contexte) => `/gouvernance/${codeTerritoireOuPremierDepartement(contexte)}/financements`,
-    },
-    {
-      icon: 'community-line',
-      label: 'Bénéficiaires',
-      url: (contexte) => `/gouvernance/${codeTerritoireOuPremierDepartement(contexte)}/beneficiaires`,
-    },
-  ],
-  titre: 'à venir',
 }
 
 const sectionBetaTesteur: Section = {
@@ -121,7 +98,6 @@ export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> 
     sections.push(sectionBetaTesteur)
   }
 
-  sections.push(sectionAVenir)
   return sections
 }
 

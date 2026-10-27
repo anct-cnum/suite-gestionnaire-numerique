@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
@@ -12,7 +11,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 
-export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaires }: Props): ReactElement {
+export default function Beneficiaires({ beneficiairesViewModel }: Props): ReactElement {
   if ('type' in beneficiairesViewModel) {
     return (
       <BlocCard labelledBy="beneficiaires">
@@ -44,14 +43,6 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
             <p className="fr-m-0 font-weight-500">Chiffres clés sur les bénéficiaires de financements</p>
           </div>
         </div>
-        {lienBeneficiaires !== undefined && (
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={lienBeneficiaires}
-          >
-            Les conventions
-          </Link>
-        )}
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
@@ -105,6 +96,4 @@ export default function Beneficiaires({ beneficiairesViewModel, lienBeneficiaire
 
 type Props = Readonly<{
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
-  // Absent à la maille région : la page de détail n'existe qu'au département.
-  lienBeneficiaires?: string
 }>
