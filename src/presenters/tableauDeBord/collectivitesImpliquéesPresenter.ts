@@ -47,8 +47,8 @@ function getColorForCategorie(categorie: string): string {
     Autres: 'dot-grey-sans-coporteur',
     Communes: 'dot-green-emeraude-main-632',
     'Conseils départementaux': 'dot-blue-france-main-525',
-    'Conseils régionaux': 'dot-green-menthe-main-548',
     EPCI: 'dot-green-bourgeon-main-640',
+    'Régions et collectivités à statut particulier': 'dot-green-menthe-main-548',
   }
 
   return couleursMappings[categorie] ?? 'dot-grey-sans-coporteur'

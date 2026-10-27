@@ -214,7 +214,6 @@ describe('membre repository', () => {
       id: 'structure-69-69',
       statut: 'candidat',
       structureId: 11,
-      type: 'Préfecture départementale',
     })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
 
@@ -245,7 +244,6 @@ describe('membre repository', () => {
       siretRidet: null,
       statut: 'confirme',
       structureId: 11,
-      type: 'Préfecture départementale',
     })
   })
 })

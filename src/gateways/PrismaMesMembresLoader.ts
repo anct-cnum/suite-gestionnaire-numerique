@@ -44,6 +44,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
 function toMesMembresReadModel(membre: Membre): MembreReadModel {
   return {
     adresse: 'Adresse bouchonnée',
+    estPrefectureDepartementale: membre.estPrefectureDepartementale,
     isDeletable: true,
     nom: membre.nom,
     nombreContacts: membre.nombreContacts,
@@ -52,7 +53,7 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     statut: membre.statut as MembreReadModel['statut'],
     structureId: membre.structureId,
     suppressionDuMembreAutorise: false,
-    typologie: membre.type,
+    typologie: membre.typologie,
     uid: membre.id,
   }
 }

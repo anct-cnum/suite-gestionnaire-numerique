@@ -202,6 +202,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                     prenom: premierContact.prenom,
                   }
                 : undefined,
+              estPrefectureDepartementale: membre.estPrefectureDepartementale,
               feuillesDeRoute: feuillesDeRoutePortees.map(({ nom, uid }) => ({ nom, uid })),
               links: { plusDetails: `/structure/${membre.structureId}` },
               nom: membre.nom,
@@ -211,7 +212,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 totalMontantsSubventionsAccordees: 0,
                 totalMontantsSubventionsFormationAccordees: 0,
               }),
-              type: membre.type,
+              type: membre.typologie,
               uid: membre.id,
             }
           }),
@@ -318,9 +319,9 @@ function fromMembreAvecRoles({
   nom,
   roles,
   structureId,
-  type,
+  typologie,
 }: Membre): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, structureId, type, uid: id }
+  return { nom, roles, structureId, type: typologie, uid: id }
 }
 
 type Totaux = Readonly<{

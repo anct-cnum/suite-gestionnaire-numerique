@@ -60,6 +60,7 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Laetitia',
             },
+            estPrefectureDepartementale: true,
             feuillesDeRoute: [
               { nom: 'Feuille de route inclusion', uid: '0' },
               { nom: 'Feuille de route numérique du Rhône', uid: '1' },
@@ -93,6 +94,7 @@ describe('recupérer une gouvernance', () => {
             poste: 'chargé de mission',
             prenom: 'Laetitia',
           },
+          estPrefectureDepartementale: true,
           feuillesDeRoute: [
             { nom: 'Feuille de route inclusion', uid: '0' },
             { nom: 'Feuille de route numérique du Rhône', uid: '1' },
@@ -125,6 +127,7 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
+            estPrefectureDepartementale: false,
             feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '44' }],
             links: {},
             nom: 'Département du Rhône',
@@ -157,6 +160,7 @@ describe('recupérer une gouvernance', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
+          estPrefectureDepartementale: false,
           feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '44' }],
           links: {},
           nom: 'Département du Rhône',
@@ -189,6 +193,7 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
+            estPrefectureDepartementale: false,
             feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }],
             links: {
               plusDetails: '/',
@@ -243,6 +248,7 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
+            estPrefectureDepartementale: false,
             feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }],
             links: {
               plusDetails: '/',
@@ -294,6 +300,7 @@ describe('recupérer une gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
+            estPrefectureDepartementale: false,
             feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }],
             links: {
               plusDetails: '/',

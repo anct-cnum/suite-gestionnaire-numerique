@@ -3,13 +3,15 @@ import { estEnveloppeDeFormation } from '@/shared/enveloppeFinancement'
 
 export type Membre = Readonly<{
   contacts: ReadonlyArray<ContactMembre>
+  estPrefectureDepartementale: boolean
   id: string
   nom: string
   nombreContacts: number
   roles: ReadonlyArray<Role>
   statut: string
   structureId: number
-  type: string
+  // Libellé INSEE de la catégorie juridique de la structure ('' si inconnue)
+  typologie: string
 }>
 
 type ContactMembre = Readonly<{
@@ -36,6 +38,7 @@ export const membreInclude = {
   CoFinancementRecord: true,
   relationStructureAdministrative: {
     include: {
+      categories_juridiques: true,
       contact_structures: {
         include: {
           contact: true,
@@ -104,13 +107,14 @@ function toMembre(membre: MembreRecord): Membre {
 
   const result = {
     contacts,
+    estPrefectureDepartementale: estIdDePrefectureDepartementale(membre.id),
     id: membre.id,
     nom: nomMembre,
     nombreContacts: contacts.length,
     roles,
     statut: membre.statut,
     structureId: membre.structureId,
-    type: membre.type ?? '',
+    typologie: membre.relationStructureAdministrative.categories_juridiques?.nom ?? '',
   }
 
   return result
@@ -125,7 +129,12 @@ function isCoporteur(membre: Membre): boolean {
 }
 
 function isPrefectureDepartementale(membre: Membre): boolean {
-  return membre.type === 'Préfecture départementale'
+  return membre.estPrefectureDepartementale
+}
+
+// Les préfectures départementales sont les seuls membres dont l'identifiant est « prefecture-<département> »
+function estIdDePrefectureDepartementale(membreId: string): boolean {
+  return membreId.startsWith('prefecture-')
 }
 
 type MembreRecord = Prisma.MembreRecordGetPayload<{

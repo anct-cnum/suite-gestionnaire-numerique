@@ -1,5 +1,7 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
+import { chargerMembresConfirmes } from '../shared/structuresMembresConfirmes'
+import { classerParCategorieJuridique } from '@/shared/categorieJuridique'
 import {
   GouvernancesTerritorialesLoader,
   GouvernancesTerritorialesReadModel,
@@ -9,56 +11,37 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerritorialesLoader {
   async get(): Promise<ErrorReadModel | GouvernancesTerritorialesReadModel> {
     try {
-      // Récupérer toutes les gouvernances
-      const gouvernances = await prisma.gouvernanceRecord.findMany({
-        include: {
-          membres: {
-            where: {
-              isCoporteur: true,
-            },
-          },
-        },
-      })
+      const [gouvernances, membres] = await Promise.all([
+        prisma.gouvernanceRecord.findMany({ select: { departementCode: true } }),
+        chargerMembresConfirmes(),
+      ])
 
-      // Compter les gouvernances sans coporteur (autre que préfecture)
-      const gouvernancesSansCoporteur = gouvernances.filter((gouvernance) => gouvernance.membres.length === 1).length
-
-      // Compter les gouvernances par type de coporteur
+      // Gouvernances ayant au moins un coporteur par libellé de catégorie,
+      // les services de l'État (préfectures, SGAR…) n'étant pas comptés comme coporteurs
       const gouvernancesParType = new Map<string, Set<string>>()
-
-      gouvernances.forEach((gouvernance) => {
-        // Collecter tous les types de coporteurs uniques pour cette gouvernance
-        const typesDeCetteGouvernance = new Set<string>()
-
-        gouvernance.membres.forEach((membre) => {
-          // Exclure les préfectures départementales du comptage
-          if (membre.type !== 'Préfecture départementale') {
-            const type = membre.type ?? 'Autre'
-            typesDeCetteGouvernance.add(type)
+      membres
+        .filter((membre) => membre.isCoporteur)
+        .forEach((membre) => {
+          const classement = classerParCategorieJuridique(membre.codeCategorieJuridique)
+          if (classement.famille === 'etat') {
+            return
           }
+          const gouvernancesDuType = gouvernancesParType.get(classement.libelle) ?? new Set<string>()
+          gouvernancesParType.set(classement.libelle, gouvernancesDuType.add(membre.gouvernance))
         })
 
-        // Pour chaque type trouvé dans cette gouvernance, l'ajouter au comptage
-        typesDeCetteGouvernance.forEach((type) => {
-          if (!gouvernancesParType.has(type)) {
-            gouvernancesParType.set(type, new Set())
-          }
-          const gouvernancesSet = gouvernancesParType.get(type)
-          if (gouvernancesSet) {
-            gouvernancesSet.add(gouvernance.departementCode)
-          }
-        })
-      })
-
-      // Convertir en tableau avec le nombre de gouvernances par type, trié par nombre décroissant
-      const ventilationParTypeDeCoporteur = Array.from(gouvernancesParType.entries())
-        .map(([type, gouvernancesSet]) => ({ count: gouvernancesSet.size, type }))
-        .sort((itemA, itemB) => itemB.count - itemA.count)
+      const gouvernancesAvecCoporteur = new Set(
+        Array.from(gouvernancesParType.values()).flatMap((gouvernancesDuType) => Array.from(gouvernancesDuType))
+      )
 
       return {
-        nombreSansCoporteur: gouvernancesSansCoporteur,
-        nombreTotal: 105, // Nombre fixe de départements/gouvernances
-        ventilationParTypeDeCoporteur,
+        nombreSansCoporteur: gouvernances.filter(
+          ({ departementCode }) => !gouvernancesAvecCoporteur.has(departementCode)
+        ).length,
+        nombreTotal: gouvernances.length,
+        ventilationParTypeDeCoporteur: Array.from(gouvernancesParType.entries())
+          .map(([type, gouvernancesDuType]) => ({ count: gouvernancesDuType.size, type }))
+          .toSorted((itemA, itemB) => itemB.count - itemA.count || itemA.type.localeCompare(itemB.type)),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaGouvernancesTerritorialesLoader', {

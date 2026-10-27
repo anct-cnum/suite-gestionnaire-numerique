@@ -53,28 +53,22 @@ function isErrorReadModel(readModel: ErrorReadModel | GouvernancesTerritorialesR
   return 'type' in readModel
 }
 
-// Mapping des types de coporteur vers les classes CSS prédéfinies
+// Mapping des catégories de coporteur (catégorie juridique) vers les classes CSS prédéfinies
 function getColorForType(type: string): string {
   const couleursMappings: Record<string, string> = {
-    Association: 'dot-green-menthe-main-548',
-    Autre: 'dot-pink-tuile-main-556',
-    'Collectivité, commune': 'dot-green-tilleul-verveine-925',
-    'Collectivité, EPCI': 'dot-orange-terre-battue-850-200',
-    'Collectivité, intercommunalité': 'dot-blue-france-main-525',
-    'Collectivité territoriale': 'dot-pink-macaron-925-125',
-    Commune: 'dot-purple-glycine-850-200',
-    'Conseil départemental': 'dot-purple-glycine-main-494',
-    'Entreprise privée': 'dot-purple-glycine-950-100',
+    'Associations et fondations': 'dot-green-menthe-main-548',
+    Autres: 'dot-pink-tuile-main-556',
+    'CCAS / CIAS': 'dot-purple-glycine-850-200',
+    'Chambres consulaires': 'dot-pink-tuile-850-200',
+    Communes: 'dot-green-tilleul-verveine-925',
+    'Conseils départementaux': 'dot-purple-glycine-main-494',
+    'Entreprises et coopératives': 'dot-purple-glycine-950-100',
     EPCI: 'dot-green-tilleul-verveine-850',
-    'Établissement public': 'dot-pink-macaron-850-200',
-    Institution: 'dot-purple-glycine-975-75',
-    Opérateur: 'dot-pink-tuile-850-200',
-    'Organisme de formation': 'dot-purple-glycine-main-732',
-    'Partenaire privé': 'dot-purple-glycine-100-950',
-    'Préfecture régionale': 'dot-purple-glycine-925-125',
-    Région: 'dot-green-tilleul-verveine-950',
-    'Service public': 'dot-purple-glycine-200-850',
-    'Structure associative': 'dot-pink-macaron-main-689',
+    'Établissements publics': 'dot-pink-macaron-850-200',
+    GIP: 'dot-purple-glycine-975-75',
+    'Organismes de sécurité sociale': 'dot-pink-macaron-925-125',
+    'Régions et collectivités à statut particulier': 'dot-green-tilleul-verveine-950',
+    Syndicats: 'dot-orange-terre-battue-850-200',
   }
 
   return couleursMappings[type] ?? 'dot-pink-tuile-main-556'

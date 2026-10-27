@@ -117,6 +117,7 @@ export type CoporteurDetailReadModel = Readonly<{
     poste: string
     prenom: string
   }>
+  estPrefectureDepartementale: boolean
   feuillesDeRoute: ReadonlyArray<
     Readonly<{
       nom: string
@@ -176,7 +177,7 @@ function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): Cop
   }
 }
 function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolean {
-  return coporteur.type === 'Préfecture départementale'
+  return coporteur.estPrefectureDepartementale
 }
 
 function createMembresCoporteurs(
