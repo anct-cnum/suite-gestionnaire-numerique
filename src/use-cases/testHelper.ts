@@ -162,6 +162,7 @@ export function gouvernanceReadModelFactory(override?: Partial<UneGouvernanceRea
             poste: 'chargé de mission',
             prenom: 'Laetitia',
           },
+          estPrefectureDepartementale: true,
           feuillesDeRoute: [
             { nom: 'Feuille de route inclusion', uid: '0' },
             { nom: 'Feuille de route numérique du Rhône', uid: '1' },
@@ -182,6 +183,7 @@ export function gouvernanceReadModelFactory(override?: Partial<UneGouvernanceRea
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
+          estPrefectureDepartementale: false,
           feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '0' }],
           links: { plusDetails: '/structure/20' },
           nom: 'Département du Rhône',
@@ -537,6 +539,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
     membres: [
       {
         adresse: '29,31 Cours de la Liberté 69483 LYON Cedex 03',
+        estPrefectureDepartementale: true,
         isDeletable: false,
         nom: 'Préfecture du Rhône',
         nombreContacts: 1,
@@ -550,6 +553,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '29,31 Cours de la Liberté 69483 LYON Cedex 03',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Rhône (69)',
         nombreContacts: 1,
@@ -563,6 +567,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '790 allée de Pluvy – 69590 Pomeys',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'CC des Monts du Lyonnais',
         nombreContacts: 2,
@@ -576,6 +581,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '26 rue Emile Decorps 69100 VILLEURBANNE',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: "La Voie du Num'",
         nombreContacts: 1,
@@ -589,6 +595,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '17 rue Jean Bourgey 69100 Villeurbanne',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
         nombreContacts: 0,
@@ -602,6 +609,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '66 cours Charlemagne, Lyon 2e',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Info-Jeunes Auvergne Rhône-Alpes (CRIJ)',
         nombreContacts: 1,
@@ -615,6 +623,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '71 rue Archereau, 75019 PARIS',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Emmaüs Connect',
         nombreContacts: 1,
@@ -628,6 +637,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '21/23 Rue DE LA VANNE 92120 MONTROUGE',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Croix Rouge Française',
         nombreContacts: 1,
@@ -641,6 +651,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '111 Quai du Président Roosevelt 92449 Issy-les-Moulineaux',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Orange',
         nombreContacts: 1,
@@ -654,6 +665,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
       },
       {
         adresse: '66 cours Charlemagne, Lyon 2e',
+        estPrefectureDepartementale: false,
         isDeletable: true,
         nom: 'Info-Jeunes Rhône (CRIJ)',
         nombreContacts: 1,

@@ -39,7 +39,6 @@ export class PrismaMembreRepository implements MembreRepository {
         siretRidet: entrepriseData.siret,
         statut: membre.state.statut,
         structureId: membre.state.uidStructure.value,
-        type: entrepriseData.categorieJuridiqueUniteLegale,
       },
     })
   }

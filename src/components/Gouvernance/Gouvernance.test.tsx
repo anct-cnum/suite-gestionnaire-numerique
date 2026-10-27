@@ -170,6 +170,7 @@ describe('gouvernance', () => {
                 poste: 'chargé de mission',
                 prenom: 'Laetitia',
               },
+              estPrefectureDepartementale: true,
               feuillesDeRoute: [
                 { nom: 'Feuille de route inclusion', uid: '0' },
                 { nom: 'Feuille de route numérique du Rhône', uid: '1' },
@@ -192,6 +193,7 @@ describe('gouvernance', () => {
                 poste: 'chargé de mission',
                 prenom: 'Durant',
               },
+              estPrefectureDepartementale: false,
               feuillesDeRoute: [{ nom: 'Feuille de route inclusion', uid: '2' }],
               links: { plusDetails: '/structure/20' },
               nom: 'Département du Rhône',
@@ -273,6 +275,7 @@ describe('gouvernance', () => {
                 poste: 'chargé de mission',
                 prenom: 'Laetitia',
               },
+              estPrefectureDepartementale: true,
               feuillesDeRoute: [
                 { nom: 'Feuille de route inclusion', uid: '0' },
                 { nom: 'Feuille de route numérique du Rhône', uid: '1' },

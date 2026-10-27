@@ -1,5 +1,6 @@
 import prisma from '../../../prisma/prismaClient'
-import { membreInclude, toMembres } from '../shared/MembresGouvernance'
+import { Membre, membreInclude, toMembre } from '../shared/MembresGouvernance'
+import { classerParCategorieJuridique } from '@/shared/categorieJuridique'
 import {
   GouvernanceTerritorialeLoader,
   GouvernanceTerritorialeReadModel,
@@ -22,26 +23,15 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
     }
   }
 
-  #determinerCategorie(type: string): string {
-    // Déduire la catégorie depuis le type
-    const typeLower = type.toLowerCase()
-
-    if (typeLower.includes('préfecture') || typeLower.includes('département')) {
+  #determinerCategorie(membre: Membre, codeCategorieJuridique: null | string): string {
+    if (membre.estPrefectureDepartementale) {
       return 'departement'
     }
-    if (typeLower.includes('commune')) {
-      return 'commune'
-    }
-    if (typeLower.includes('epci')) {
-      return 'epci'
-    }
-    if (typeLower.includes('sgar')) {
+    const classement = classerParCategorieJuridique(codeCategorieJuridique)
+    if (classement.famille === 'etat') {
       return 'sgar'
     }
-    if (typeLower.includes('association') || typeLower.includes('structure')) {
-      return 'structure'
-    }
-    return 'autre'
+    return categoriesParLibelle[classement.libelle] ?? 'autre'
   }
 
   async #getMembres(codeDepartement: string): Promise<ReadonlyArray<MembreTerritorialReadModel>> {
@@ -55,21 +45,22 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
       },
     })
 
-    const membres = toMembres(membresRecords)
-
-    return membres.map((membre) => ({
-      categorie: this.#determinerCategorie(membre.type),
-      details: [
-        {
-          information: membre.type,
-          intitule: 'Type de structure',
-        },
-      ],
-      id: membre.id,
-      nom: membre.nom,
-      roles: membre.roles as ReadonlyArray<RoleMembre>,
-      type: membre.type,
-    }))
+    return membresRecords.map((membreRecord) => {
+      const membre = toMembre(membreRecord)
+      return {
+        categorie: this.#determinerCategorie(membre, membreRecord.relationStructureAdministrative.categorie_juridique),
+        details: [
+          {
+            information: membre.typologie,
+            intitule: 'Type de structure',
+          },
+        ],
+        id: membre.id,
+        nom: membre.nom,
+        roles: membre.roles as ReadonlyArray<RoleMembre>,
+        type: membre.typologie,
+      }
+    })
   }
 
   async #getStatistiques(codeDepartement: string): Promise<GouvernanceTerritorialeReadModel['statistiques']> {
@@ -110,4 +101,12 @@ export class PrismaGouvernanceTerritorialeLoader implements GouvernanceTerritori
       },
     }
   }
+}
+
+// Catégorie d'affichage (logo) de la vitrine selon le classement par catégorie juridique
+const categoriesParLibelle: Readonly<Record<string, string>> = {
+  'Associations et fondations': 'structure',
+  Communes: 'commune',
+  'Conseils départementaux': 'departement',
+  EPCI: 'epci',
 }

@@ -44,6 +44,7 @@ export type MesMembresReadModel = Readonly<{
 
 export type MembreReadModel = Readonly<{
   adresse: string
+  estPrefectureDepartementale: boolean
   isDeletable: boolean
   nom: string
   nombreContacts: number
@@ -57,7 +58,7 @@ export type MembreReadModel = Readonly<{
 }>
 
 function isPrefectureDepartementale(membre: MesMembresReadModel['membres'][number]): boolean {
-  return membre.typologie === 'Préfecture départementale'
+  return membre.estPrefectureDepartementale
 }
 
 function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypologie {

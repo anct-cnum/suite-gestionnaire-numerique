@@ -43,24 +43,33 @@ function isErrorReadModel(readModel: AutresStructuresReadModel | ErrorReadModel)
 }
 
 function getColorForCategorie(categorie: string): string {
-  const couleursMappings: Record<string, string> = {
-    Associations: 'dot-pink-tuile-main-556',
-    Autres: 'dot-grey-sans-coporteur',
-    'Entreprises privées': 'dot-orange-terre-battue-850-200',
-    GIE: 'dot-pink-tuile-925-125',
-    'Syndicats mixtes': 'dot-pink-tuile-850-200',
-  }
-
-  return couleursMappings[categorie] ?? 'dot-grey-sans-coporteur'
+  return couleursParCategorie.get(categorie) ?? 'dot-grey-sans-coporteur'
 }
+
+// Map plutôt qu'objet : les règles de tri des clés divergent sur les libellés accentués
+const couleursParCategorie: ReadonlyMap<string, string> = new Map([
+  ['Associations et fondations', 'dot-pink-tuile-main-556'],
+  ['Autres', 'dot-grey-sans-coporteur'],
+  ['CCAS / CIAS', 'dot-purple-glycine-main-494'],
+  ['Chambres consulaires', 'dot-purple-glycine-850-200'],
+  ['Entreprises et coopératives', 'dot-orange-terre-battue-850-200'],
+  ['Établissements publics', 'dot-pink-macaron-main-689'],
+  ['GIP', 'dot-pink-tuile-925-125'],
+  ['Organismes de sécurité sociale', 'dot-pink-macaron-850-200'],
+  ['Syndicats', 'dot-pink-tuile-850-200'],
+])
 
 function getBackgroundColor(cssClass: string): string {
   const colorMappings: Record<string, string> = {
     'dot-grey-sans-coporteur': '#929292',
     'dot-orange-terre-battue-850-200': '#fcc0b0',
+    'dot-pink-macaron-850-200': '#fcc0b4',
+    'dot-pink-macaron-main-689': '#e18b76',
     'dot-pink-tuile-850-200': '#fcbfb7',
     'dot-pink-tuile-925-125': '#fddfdb',
     'dot-pink-tuile-main-556': '#ce614a',
+    'dot-purple-glycine-850-200': '#fbb8f6',
+    'dot-purple-glycine-main-494': '#a558a0',
   }
   return colorMappings[cssClass] ?? '#929292'
 }

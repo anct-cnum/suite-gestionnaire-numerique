@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { Prisma } from '../../../../../prisma/generated/client'
 import prisma from '../../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'
@@ -29,9 +28,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           orderBy: {
             id: 'asc',
           },
-          where: {
-            AND: [statut === null || statut === '' ? {} : { statut }, filtreParTypologie(typologie)],
-          },
+          where: statut === null || statut === '' ? {} : { statut },
         },
       },
       where: {
@@ -39,9 +36,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     })
 
-    const membres = toMembres(gouvernanceRecord.membres).filter(
-      (membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role)
-    )
+    // Typologie = libellé de la catégorie juridique de la structure ; '' (« Autre ») si inconnue
+    const membres = toMembres(gouvernanceRecord.membres)
+      .filter((membre) => typologie === null || membre.typologie === typologie)
+      .filter((membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role))
     const csvContent = generateCSV(membres)
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
@@ -59,17 +57,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-function filtreParTypologie(typologie: null | string): Prisma.MembreRecordWhereInput {
-  if (typologie === null) {
-    return {}
-  }
-  if (typologie === '') {
-    // « Autre » : membres dont la typologie n’est pas renseignée
-    return { OR: [{ type: null }, { type: '' }] }
-  }
-  return { type: typologie }
-}
-
 type MembreAvecContacts = Readonly<{
   contacts: ReadonlyArray<
     Readonly<{
@@ -82,7 +69,7 @@ type MembreAvecContacts = Readonly<{
     }>
   >
   nom: string
-  type: string
+  typologie: string
 }>
 
 function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
@@ -90,12 +77,12 @@ function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
 
   const rows = membres.flatMap((membre) => {
     if (membre.contacts.length === 0) {
-      return [[escapeCSV(membre.nom), escapeCSV(membre.type), '', '', '', '', '', '']]
+      return [[escapeCSV(membre.nom), escapeCSV(membre.typologie), '', '', '', '', '', '']]
     }
 
     return membre.contacts.map((contact) => [
       escapeCSV(membre.nom),
-      escapeCSV(membre.type),
+      escapeCSV(membre.typologie),
       escapeCSV(contact.nom),
       escapeCSV(contact.prenom),
       escapeCSV(contact.email),
