@@ -12,7 +12,6 @@ export function MenuItemLien({
   ariaExpanded,
   children,
   customIcon,
-  estAVenir,
   icon,
   label,
   url,
@@ -43,17 +42,8 @@ export function MenuItemLien({
         className="fr-sidemenu__link"
         href={url}
       >
-        {estAVenir === true ? (
-          <span className="color-grey">
-            {icone}
-            {label}
-          </span>
-        ) : (
-          <>
-            {icone}
-            {label}
-          </>
-        )}
+        {icone}
+        {label}
       </Link>
       {children}
     </li>
@@ -65,7 +55,6 @@ type Props = PropsWithChildren<
     ariaControls?: string
     ariaExpanded?: boolean
     customIcon?: string
-    estAVenir?: boolean
     icon?: string
     label: string
     url: string

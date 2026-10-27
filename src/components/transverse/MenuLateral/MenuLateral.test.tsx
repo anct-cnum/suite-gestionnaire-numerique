@@ -47,6 +47,7 @@ describe('menu lateral', () => {
 
   it.each([
     { name: 'Gouvernance', url: '/gouvernance/93' },
+    { name: 'Aidants et médiateurs', url: '/gouvernance/93/aidants-mediateurs' },
     { name: "Lieux d'inclusion", url: '/liste-lieux-inclusion' },
   ])(
     "étant un gestionnaire de département, quand j'affiche le menu latéral, alors il s'affiche avec le lien du menu $name",
@@ -79,25 +80,6 @@ describe('menu lateral', () => {
     }
   )
 
-  it.each([
-    { name: 'Financements', url: '/gouvernance/93/financements' },
-    { name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
-    { name: 'Aidants et médiateurs', url: '/gouvernance/93/aidants-mediateurs' },
-  ])(
-    "étant un gestionnaire de département, quand j'affiche le menu latéral, alors il s'affiche dans la section A VENIR avec le lien du menu $name",
-    ({ name, url }) => {
-      // WHEN
-      afficherMenuLateralGouvernance()
-
-      // THEN
-      const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-      const donneesEtStatistiques = within(nav).getByText('à venir')
-      expect(donneesEtStatistiques).toBeInTheDocument()
-      const element = screen.getByRole('link', { name })
-      expect(element).toHaveAttribute('href', url)
-    }
-  )
-
   it("étant un gestionnaire de département sur la page d'accueil, quand j'affiche le menu latéral, alors le sous-menu Gouvernance est replié", () => {
     // WHEN
     afficherMenuLateralGouvernance('/')
@@ -126,8 +108,6 @@ describe('menu lateral', () => {
     { itemIndex: 3, listIndex: 2, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
     { itemIndex: 4, listIndex: 2, name: "Lieux d'inclusion", pathname: '/liste-lieux-inclusion' },
     { itemIndex: 0, listIndex: 4, name: 'Statistiques', pathname: '/statistiques' },
-    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
-    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
   ])(
     "étant un utilisateur, quand j'accède à l'URL $pathname, alors l'item $name du menu a le focus",
     ({ itemIndex, listIndex, name, pathname }) => {

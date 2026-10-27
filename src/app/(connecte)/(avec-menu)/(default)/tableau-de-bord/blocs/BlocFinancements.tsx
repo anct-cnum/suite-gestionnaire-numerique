@@ -49,11 +49,7 @@ async function financementsNationaux(): Promise<ReactElement> {
   const financementsViewModel = handleReadModelOrError(financementsReadModel, financementAdminPresenter)
 
   return (
-    <FinancementsAdmin
-      enveloppesConseillerNumerique={enveloppesConum}
-      financementViewModel={financementsViewModel}
-      lienFinancements="/gouvernance/01/beneficiaires"
-    />
+    <FinancementsAdmin enveloppesConseillerNumerique={enveloppesConum} financementViewModel={financementsViewModel} />
   )
 }
 
@@ -64,16 +60,10 @@ async function financementsDepartement(code: string): Promise<ReactElement> {
   ])
   const financementsViewModel = handleReadModelOrError(financementsReadModel, financementsPrefPresenter)
 
-  return (
-    <FinancementsPref
-      conventionnement={financementsViewModel}
-      enveloppesConseillerNumerique={enveloppesConum}
-      lienFinancements={`/gouvernance/${code}/financements`}
-    />
-  )
+  return <FinancementsPref conventionnement={financementsViewModel} enveloppesConseillerNumerique={enveloppesConum} />
 }
 
-// Agrégat des départements de la région ; lien de détail masqué (les pages /gouvernance ne connaissent pas la région).
+// Agrégat des départements de la région.
 async function financementsRegion(codesDepartement: ReadonlyArray<string>): Promise<ReactElement> {
   const [financementsReadModel, enveloppesConumReadModel] = await Promise.all([
     new PrismaFinancementsLoader().getPourDepartements(codesDepartement),

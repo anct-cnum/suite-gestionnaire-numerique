@@ -1,10 +1,11 @@
-import { ReactElement, ReactNode } from 'react'
+import { ReactElement } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import Table from '@/components/shared/Table/Table'
 import TableauVide from '@/components/shared/TableauVide/TableauVide'
 
-export default function ContratsRattaches({ bandeau, contrats, titre }: Props): ReactElement {
+export default function ContratsRattaches({ contrats, titre }: Props): ReactElement {
   return (
     <section aria-labelledby="contrats" className="grey-border border-radius fr-mb-2w fr-p-4w" id="contrats">
       <h2 className="fr-h6" id="contratsRattaches">
@@ -39,7 +40,25 @@ export default function ContratsRattaches({ bandeau, contrats, titre }: Props): 
           </Table>
         )}
       </article>
-      {bandeau}
+      <div className="fr-notice fr-notice--info fr-mt-3w">
+        <div className="fr-container">
+          <div className="fr-notice__body">
+            <p>
+              <span className="fr-notice__title fr-text--regular">
+                Un contrat est considéré comme en cours tant qu’aucune rupture n’a été déclarée sur le{' '}
+                <ExternalLink
+                  className="fr-link"
+                  href="https://pilotage.conseiller-numerique.gouv.fr/"
+                  title="Tableau de pilotage"
+                >
+                  tableau de pilotage
+                </ExternalLink>{' '}
+                et que les documents de fin de contrat n’ont pas été transmis.
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
@@ -58,7 +77,6 @@ export type ContratRattacheViewModel = Readonly<{
 }>
 
 type Props = Readonly<{
-  bandeau?: ReactNode
   contrats: ReadonlyArray<ContratRattacheViewModel>
   titre: string
 }>

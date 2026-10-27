@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
@@ -13,7 +12,6 @@ import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financemen
 export default function FinancementsAdmin({
   enveloppesConseillerNumerique,
   financementViewModel,
-  lienFinancements,
 }: Props): ReactElement {
   if (isErrorViewModel(financementViewModel)) {
     return (
@@ -30,9 +28,6 @@ export default function FinancementsAdmin({
               </p>
             </div>
           </div>
-          <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienFinancements}>
-            Les demandes
-          </Link>
         </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
@@ -58,9 +53,6 @@ export default function FinancementsAdmin({
             </p>
           </div>
         </div>
-        <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienFinancements}>
-          Les demandes
-        </Link>
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-3w fr-mr-4w">
@@ -108,5 +100,4 @@ function isErrorViewModel(viewModel: ErrorViewModel | FinancementAdminViewModel)
 type Props = Readonly<{
   enveloppesConseillerNumerique?: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
   financementViewModel: ErrorViewModel | FinancementAdminViewModel
-  lienFinancements: string
 }>

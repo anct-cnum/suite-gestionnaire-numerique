@@ -3,7 +3,6 @@ import { Fragment, ReactElement } from 'react'
 import { MenuItemLien } from './MenuItemLien'
 import styles from './MenuLateral.module.css'
 import { sectionsParContexte } from './registreMenus'
-import Badge from '@/components/shared/Badge/Badge'
 import { Contexte } from '@/use-cases/queries/ResoudreContexte'
 
 export default function MenuLateral({ contexte }: Props): ReactElement {
@@ -16,16 +15,9 @@ export default function MenuLateral({ contexte }: Props): ReactElement {
       </div>
       {sections.map((section) => (
         <Fragment key={section.titre}>
-          {section.titre !== '' &&
-            (section.badge === true ? (
-              <div className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
-                <Badge color="new" icon={true}>
-                  {section.titre}
-                </Badge>
-              </div>
-            ) : (
-              <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">{section.titre}</p>
-            ))}
+          {section.titre !== '' && (
+            <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">{section.titre}</p>
+          )}
           <ul className="fr-sidemenu__list">
             {section.menus
               .filter((menu) => menu.visible === undefined || menu.visible(contexte))
@@ -34,7 +26,6 @@ export default function MenuLateral({ contexte }: Props): ReactElement {
                   ariaControls={menu.ariaControls}
                   ariaExpanded={menu.sousMenus === undefined ? undefined : false}
                   customIcon={menu.customIcon}
-                  estAVenir={section.badge}
                   icon={menu.icon}
                   key={menu.label}
                   label={menu.label}

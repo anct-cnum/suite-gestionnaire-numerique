@@ -15,27 +15,14 @@ export default async function BlocBeneficiaires({ territoire }: Props): Promise<
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
   let beneficiairesReadModel
   if (territoire.type === 'region') {
-    // Agrégat des départements de la région ; lien de détail masqué
-    // (les pages /gouvernance ne connaissent pas la région).
+    // Agrégat des départements de la région.
     beneficiairesReadModel = await beneficiairesLoader.getPourDepartements(territoire.codesDepartement)
   } else {
     beneficiairesReadModel = await beneficiairesLoader.get(territoire.type === 'france' ? 'France' : territoire.code)
   }
   const beneficiairesViewModel = handleReadModelOrError(beneficiairesReadModel, beneficiairesPresenter)
 
-  const lienBeneficiaires = lien(territoire)
-
-  return <Beneficiaires beneficiairesViewModel={beneficiairesViewModel} lienBeneficiaires={lienBeneficiaires} />
-}
-
-function lien(territoire: TerritoireTableauDeBord): string | undefined {
-  if (territoire.type === 'france') {
-    return '/gouvernance/01/beneficiaires'
-  }
-  if (territoire.type === 'departement') {
-    return `/gouvernance/${territoire.code}/beneficiaires`
-  }
-  return undefined
+  return <Beneficiaires beneficiairesViewModel={beneficiairesViewModel} />
 }
 
 type Props = Readonly<{

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import BlocCard from './BlocCard'
@@ -10,11 +9,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { EnveloppeConseillerNumeriqueViewModel } from '@/presenters/tableauDeBord/enveloppesConseillerNumeriquePresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 
-export default function FinancementsPref({
-  conventionnement,
-  enveloppesConseillerNumerique,
-  lienFinancements,
-}: Props): ReactElement {
+export default function FinancementsPref({ conventionnement, enveloppesConseillerNumerique }: Props): ReactElement {
   if (isErrorViewModel(conventionnement)) {
     return (
       <BlocCard labelledBy="conventionnements">
@@ -30,14 +25,6 @@ export default function FinancementsPref({
               </p>
             </div>
           </div>
-          {lienFinancements !== undefined && (
-            <Link
-              className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-              href={lienFinancements}
-            >
-              Les demandes en cours
-            </Link>
-          )}
         </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
@@ -63,11 +50,6 @@ export default function FinancementsPref({
             </p>
           </div>
         </div>
-        {lienFinancements !== undefined && (
-          <Link className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line" href={lienFinancements}>
-            Les demandes en cours
-          </Link>
-        )}
       </div>
       <div className="fr-grid-row fr-mb-4w">
         <div className="fr-col background-blue-france fr-p-3w fr-mr-4w">
@@ -116,6 +98,4 @@ function isErrorViewModel(viewModel: ErrorViewModel | FinancementViewModel): vie
 type Props = Readonly<{
   conventionnement: ErrorViewModel | FinancementViewModel
   enveloppesConseillerNumerique?: ReadonlyArray<EnveloppeConseillerNumeriqueViewModel>
-  // Absent à la maille région : la page de détail n'existe qu'au département.
-  lienFinancements?: string
 }>
