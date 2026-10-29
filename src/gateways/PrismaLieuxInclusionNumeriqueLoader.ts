@@ -17,6 +17,12 @@ export interface LieuxInclusionNumeriqueReadModel {
 // désormais supprimée.
 const JOIN_ADRESSE = Prisma.sql`LEFT JOIN main.adresse a ON a.id = l.adresse_id`
 
+// Critère de la cartographie nationale, repris à l'identique de la vue api.carto
+// de l'entrepôt de données (V192) : la visibilité décide seule, l'identifiant
+// mednum n'entre plus dans le compte. Une seule constante pour les quatre
+// requêtes concernées, sinon elles redivergent.
+const FILTRE_CARTO = Prisma.sql`l.visible_pour_cartographie_nationale = true AND l.deleted_at IS NULL`
+
 export class PrismaLieuxInclusionNumeriqueLoader {
   async getDepartemental(codeDepartement: string): Promise<LieuxInclusionNumeriqueReadModel> {
     return this.getStats({ codeDepartement })
@@ -59,7 +65,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       SELECT COUNT(*)::int AS nb_lieux_inclusion_numerique
       FROM main.lieu_inclusion l
       ${JOIN_ADRESSE}
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
+      WHERE ${FILTRE_CARTO}
         ${deptFilter};
     `)
 
@@ -70,7 +76,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         INNER JOIN admin.zonage z
           ON (z.type = 'FRR' AND a.code_insee = z.code_insee)
           OR (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
+      WHERE ${FILTRE_CARTO}
         ${deptFilter};
     `)
 
@@ -80,7 +86,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${JOIN_ADRESSE}
         INNER JOIN admin.zonage z
           ON (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
+      WHERE ${FILTRE_CARTO}
         ${deptFilter};
     `)
 
@@ -90,7 +96,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${JOIN_ADRESSE}
         INNER JOIN admin.zonage z
           ON (z.type = 'FRR' AND a.code_insee = z.code_insee)
-      WHERE l.structure_cartographie_nationale_id IS NOT NULL
+      WHERE ${FILTRE_CARTO}
         ${deptFilter};
     `)
 

@@ -8,9 +8,6 @@ export interface LieuDetailsReadModel {
   // Lieu porté par la Coop numérique (structure_coop_id) : la Coop garde sa vérité,
   // MIN le présente en lecture seule (#1951).
   estLieuCoop: boolean
-  // Référencé sur la carte nationale (structure_cartographie_nationale_id) : sans ce lien,
-  // api.carto ne sert pas le lieu même visible (#1495).
-  estReferenceSurLaCarte: boolean
   header: {
     editeur?: string
     miseAJourLe?: Date

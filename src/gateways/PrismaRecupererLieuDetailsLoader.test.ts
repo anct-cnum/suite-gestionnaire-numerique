@@ -97,7 +97,7 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect((readModel as LieuDetailsReadModel).lieuAccueilPublic.email).toBeUndefined()
   })
 
-  it('expose le référencement carto et le drapeau de visibilité pour signaler un lieu en attente (#1495)', async () => {
+  it('expose le drapeau de visibilité pour la cartographie nationale', async () => {
     // GIVEN
     await prisma.main_lieu_inclusion.create({
       data: {
@@ -113,7 +113,6 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
 
     // THEN
     expect(readModel).not.toHaveProperty('type')
-    expect((readModel as LieuDetailsReadModel).estReferenceSurLaCarte).toBe(false)
     expect((readModel as LieuDetailsReadModel).visiblePourCartographie).toBe(true)
   })
 
