@@ -352,6 +352,55 @@ describe('utilisateur repository', () => {
     })
   })
 
+  describe('structure des gestionnaires région d’une région', () => {
+    const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+
+    beforeEach(async () => {
+      await creerUneRegion({ code: '53' })
+      await creerUneRegion({ code: '24' })
+      await creerUneStructure({ id: 212 })
+      await creerUneStructure({ id: 199 })
+    })
+
+    it('quand tous les gestionnaires région de la région partagent une structure, alors elle est renvoyée', async () => {
+      // GIVEN
+      await creerUnGestionnaireRegion(1, { regionCode: '53', structureId: 212 })
+      await creerUnGestionnaireRegion(2, { regionCode: '53', structureId: 212 })
+      await creerUnGestionnaireRegion(3, { regionCode: '53' })
+
+      // WHEN
+      const structureId = await repository.structureDesGestionnairesRegion('53')
+
+      // THEN
+      expect(structureId).toBe(212)
+    })
+
+    it('quand aucun gestionnaire région de la région n’a de structure, alors aucune n’est renvoyée', async () => {
+      // GIVEN
+      await creerUnGestionnaireRegion(1, { regionCode: '53' })
+
+      // WHEN
+      const structureId = await repository.structureDesGestionnairesRegion('53')
+
+      // THEN
+      expect(structureId).toBeNull()
+    })
+
+    it('les gestionnaires région supprimés, d’une autre région et les autres rôles sont ignorés', async () => {
+      // GIVEN
+      await creerUnGestionnaireRegion(1, { regionCode: '53', structureId: 212 })
+      await creerUnGestionnaireRegion(2, { isSupprime: true, regionCode: '53', structureId: 199 })
+      await creerUnGestionnaireRegion(3, { regionCode: '24', structureId: 199 })
+      await creerUnGestionnaireRegion(4, { regionCode: '53', role: 'gestionnaire_structure', structureId: 199 })
+
+      // WHEN
+      const structureId = await repository.structureDesGestionnairesRegion('53')
+
+      // THEN
+      expect(structureId).toBe(212)
+    })
+  })
+
   describe('mise à jour du ssoId d’un utilisateur', () => {
     it('changement du ssoId à partir de l’email de connexion', async () => {
       // GIVEN
@@ -472,3 +521,16 @@ describe('utilisateur repository', () => {
     })
   })
 })
+
+async function creerUnGestionnaireRegion(
+  id: number,
+  override: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
+): Promise<void> {
+  await creerUnUtilisateur({
+    id,
+    role: 'gestionnaire_region',
+    ssoEmail: `gestionnaire.region${id}@example.net`,
+    ssoId: `gestionnaireRegion${id}`,
+    ...override,
+  })
+}

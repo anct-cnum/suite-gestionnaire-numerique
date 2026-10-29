@@ -14,7 +14,9 @@ describe('inviter un utilisateur', () => {
     spiedUidToFind = 0
     spiedUtilisateurToAdd = null
     spiedCodeDepartementPrefecture = ''
+    spiedCodeRegionGestionnaires = ''
     structurePrefecture = null
+    structureDesGestionnairesRegion = null
     spiedDestinataire = {
       email: '',
       nom: '',
@@ -255,30 +257,111 @@ describe('inviter un utilisateur', () => {
     })
   })
 
-  it('étant donné un gestionnaire région rattaché à une structure qui invite un pair, quand il l’invite, alors celui-ci est créé sans structure', async () => {
-    // GIVEN
-    const repository = new RepositorySpy(
-      utilisateurFactory({ codeOrganisation: '53', role: 'Gestionnaire région', structureUid: 163 })
-    )
-    const inviterUnUtilisateur = new InviterUnUtilisateur(
-      repository,
-      emailGatewayFactorySpy,
-      epochTime,
-      structurePrefectureLoaderSpy
-    )
+  describe('rattachement à une structure d’un gestionnaire région invité', () => {
+    it('étant donné un gestionnaire région rattaché à une structure qui invite un pair, quand il l’invite, alors celui-ci hérite de sa structure sans recherche parmi ses pairs', async () => {
+      // GIVEN
+      structureDesGestionnairesRegion = 212
+      const repository = new RepositorySpy(
+        utilisateurFactory({ codeOrganisation: '53', role: 'Gestionnaire région', structureUid: 163 })
+      )
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
 
-    // WHEN
-    const result = await inviterUnUtilisateur.handle({
-      email: 'martine.dugenoux@example.com',
-      nom: 'Dugenoux',
-      prenom: 'Martine',
-      uidUtilisateurCourant: 2,
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        uidUtilisateurCourant: 2,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeDepartementPrefecture).toBe('')
+      expect(spiedCodeRegionGestionnaires).toBe('')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 163 })
     })
 
-    // THEN
-    expect(result).toBe('OK')
-    expect(spiedCodeDepartementPrefecture).toBe('')
-    expect(spiedUtilisateurToAdd?.state.structureUid).toBeUndefined()
+    it('étant donné un gestionnaire région sans structure qui invite un pair, quand il l’invite, alors celui-ci est rattaché à la structure des gestionnaires de sa région', async () => {
+      // GIVEN
+      structureDesGestionnairesRegion = 212
+      const repository = new RepositorySpy(utilisateurFactory({ codeOrganisation: '53', role: 'Gestionnaire région' }))
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        uidUtilisateurCourant: 2,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeRegionGestionnaires).toBe('53')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 212 })
+    })
+
+    it('étant donné un admin qui invite un gestionnaire région, quand il l’invite, alors celui-ci est rattaché à la structure des gestionnaires de la région choisie', async () => {
+      // GIVEN
+      structureDesGestionnairesRegion = 212
+      const repository = new RepositorySpy(utilisateurFactory({ role: 'Administrateur dispositif' }))
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: { codeOrganisation: '53', type: 'Gestionnaire région' },
+        uidUtilisateurCourant: 1,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeRegionGestionnaires).toBe('53')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toStrictEqual({ value: 212 })
+    })
+
+    it('étant donné un admin qui invite un gestionnaire région d’une région dont aucun gestionnaire n’a de structure, quand il l’invite, alors celui-ci est créé sans structure', async () => {
+      // GIVEN
+      structureDesGestionnairesRegion = null
+      const repository = new RepositorySpy(utilisateurFactory({ role: 'Administrateur dispositif' }))
+      const inviterUnUtilisateur = new InviterUnUtilisateur(
+        repository,
+        emailGatewayFactorySpy,
+        epochTime,
+        structurePrefectureLoaderSpy
+      )
+
+      // WHEN
+      const result = await inviterUnUtilisateur.handle({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: { codeOrganisation: '76', type: 'Gestionnaire région' },
+        uidUtilisateurCourant: 1,
+      })
+
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedCodeRegionGestionnaires).toBe('76')
+      expect(spiedUtilisateurToAdd?.state.structureUid).toBeUndefined()
+    })
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
@@ -357,7 +440,9 @@ let spiedUidToFind: number
 let spiedUtilisateurToAdd: null | Utilisateur
 let spiedDestinataire: Destinataire
 let spiedCodeDepartementPrefecture: string
+let spiedCodeRegionGestionnaires: string
 let structurePrefecture: null | number
+let structureDesGestionnairesRegion: null | number
 
 const structurePrefectureLoaderSpy = new (class implements StructurePrefectureDuDepartementLoader {
   async structurePrefectureDuDepartement(codeDepartement: string): Promise<null | number> {
@@ -380,6 +465,11 @@ class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepositor
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(this.#utilisateurCourant)
+  }
+
+  async structureDesGestionnairesRegion(codeRegion: string): Promise<null | number> {
+    spiedCodeRegionGestionnaires = codeRegion
+    return Promise.resolve(structureDesGestionnairesRegion)
   }
 }
 

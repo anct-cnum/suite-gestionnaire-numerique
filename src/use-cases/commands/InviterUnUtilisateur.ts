@@ -9,6 +9,10 @@ export interface StructurePrefectureDuDepartementLoader {
   structurePrefectureDuDepartement(codeDepartement: string): Promise<null | number>
 }
 
+export interface StructureDesGestionnairesRegionLoader {
+  structureDesGestionnairesRegion(codeRegion: string): Promise<null | number>
+}
+
 export class InviterUnUtilisateur implements CommandHandler<Command> {
   readonly #date: Date
   readonly #emailGatewayFactory: EmailGatewayFactory
@@ -66,17 +70,38 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
     return 'emailExistant'
   }
 
+  async #structureUidPourGestionnaireRegion(
+    command: Command,
+    utilisateurCourantState: UtilisateurState
+  ): Promise<number | undefined> {
+    const structureInvitant =
+      utilisateurCourantState.role.nom === 'Gestionnaire région'
+        ? utilisateurCourantState.structureUid?.value
+        : undefined
+    if (structureInvitant !== undefined) {
+      return structureInvitant
+    }
+
+    const codeRegion = utilisateurCourantState.region?.code ?? command.role?.codeOrganisation
+    if (codeRegion === undefined || codeRegion === '') {
+      return undefined
+    }
+
+    return (await this.#utilisateurRepository.structureDesGestionnairesRegion(codeRegion)) ?? undefined
+  }
+
   // Un gestionnaire département invité est rattaché à une structure : celle de son invitant
   // s'il est lui-même gestionnaire du département, sinon la préfecture du département
   // (structure du membre 'prefecture-<dept>' de la gouvernance).
-  // Un gestionnaire région invité n'est rattaché à aucune structure (décision PO #1279).
+  // Un gestionnaire région invité est rattaché à la préfecture de région : celle de son invitant
+  // s'il est lui-même gestionnaire région, sinon celle de ses pairs de la région.
   async #structureUidPourInvitation(
     roleACreer: TypologieRole,
     command: Command,
     utilisateurCourantState: UtilisateurState
   ): Promise<number | undefined> {
     if (roleACreer === 'Gestionnaire région') {
-      return undefined
+      return this.#structureUidPourGestionnaireRegion(command, utilisateurCourantState)
     }
 
     if (roleACreer !== 'Gestionnaire département') {
@@ -116,4 +141,5 @@ type Command = Readonly<{
 
 type Failure = 'emailExistant' | 'utilisateurNePeutPasGererUtilisateurACreer'
 
-interface UtilisateurRepository extends AddUtilisateurRepository, GetUtilisateurRepository {}
+interface UtilisateurRepository
+  extends AddUtilisateurRepository, GetUtilisateurRepository, StructureDesGestionnairesRegionLoader {}
