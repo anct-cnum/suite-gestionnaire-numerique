@@ -93,7 +93,7 @@ export default function AccompagnementsEtMediateurs({
                 labels={accompagnementsEtMediateurs.thematiques.map((thematique) => thematique.nom)}
               />
             </div>
-            <div style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}>
+            <div style={{ marginTop: '-3rem', pointerEvents: 'none', position: 'relative', zIndex: -1 }}>
               <AsyncLoaderErrorBoundary
                 fallback={
                   <div>

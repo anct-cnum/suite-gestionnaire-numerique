@@ -84,7 +84,7 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
           </div>
           <div
             className="metrique-nombre-grand fr-mb-0"
-            style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
+            style={{ marginTop: '-3rem', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
           >
             {niveauDeFormation.aidantsEtMediateursFormes}
           </div>
