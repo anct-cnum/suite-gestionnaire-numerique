@@ -3,9 +3,10 @@ import { Prisma } from '../../prisma/generated/client'
 import { DepartementState } from '@/domain/Departement'
 import { Utilisateur, UtilisateurState, UtilisateurUidState } from '@/domain/Utilisateur'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
+import { StructureDesGestionnairesRegionLoader } from '@/use-cases/commands/InviterUnUtilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
-export class PrismaUtilisateurRepository implements UtilisateurRepository {
+export class PrismaUtilisateurRepository implements StructureDesGestionnairesRegionLoader, UtilisateurRepository {
   readonly #dataResource: Prisma.UtilisateurRecordDelegate
 
   constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
@@ -117,6 +118,24 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       telephone: record.telephone,
       uid: { email: record.ssoEmail, value: record.id },
     }).create(toTypologieRole(record.role))
+  }
+
+  async structureDesGestionnairesRegion(codeRegion: string): Promise<null | number> {
+    const gestionnaire = await this.#dataResource.findFirst({
+      select: {
+        structureId: true,
+      },
+      where: {
+        isSupprime: false,
+        regionCode: codeRegion,
+        role: 'gestionnaire_region',
+        structureId: {
+          not: null,
+        },
+      },
+    })
+
+    return gestionnaire?.structureId ?? null
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
