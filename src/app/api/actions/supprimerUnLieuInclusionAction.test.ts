@@ -139,7 +139,6 @@ const lieuDetailsReadModel: LieuDetailsReadModel = {
   codeDepartement: '75',
   estArchive: false,
   estLieuCoop: false,
-  estReferenceSurLaCarte: true,
   header: {
     nom: 'Mon lieu',
     tags: [],

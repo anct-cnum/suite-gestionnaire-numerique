@@ -54,19 +54,6 @@ describe('fiche d’un lieu d’inclusion', () => {
     expect(screen.getByRole('button', { name: 'Supprimer ce lieu' })).toBeInTheDocument()
   })
 
-  it('signale un lieu visible mais pas encore référencé sur la carte (#1495)', () => {
-    // GIVEN
-    const data = { ...createDefaultLieuInclusionDetailsData(), estEnAttenteDeReferencement: true }
-
-    // WHEN
-    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
-
-    // THEN
-    expect(
-      screen.getByRole('heading', { level: 3, name: 'En attente de référencement sur la cartographie' })
-    ).toBeInTheDocument()
-  })
-
   it('quand on arrive depuis « C’est mon lieu », accueille avec un bandeau qui dit que le lieu existe déjà (V6-3)', () => {
     // GIVEN
     const data = createDefaultLieuInclusionDetailsData()
@@ -92,18 +79,5 @@ describe('fiche d’un lieu d’inclusion', () => {
 
     // THEN
     expect(screen.queryByText('Ce lieu est déjà enregistré')).not.toBeInTheDocument()
-  })
-
-  it('ne signale rien quand le lieu est référencé sur la carte', () => {
-    // GIVEN
-    const data = { ...createDefaultLieuInclusionDetailsData(), estEnAttenteDeReferencement: false }
-
-    // WHEN
-    renderComponent(<LieuxInclusionDetails data={data} dejaEnregistre={false} lieuId="42" peutSupprimer={false} />)
-
-    // THEN
-    expect(
-      screen.queryByRole('heading', { level: 3, name: 'En attente de référencement sur la cartographie' })
-    ).not.toBeInTheDocument()
   })
 })

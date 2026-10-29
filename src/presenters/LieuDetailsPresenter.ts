@@ -9,11 +9,6 @@ export function lieuDetailsPresenter(
   now: Date
 ): LieuInclusionDetailsData {
   return {
-    // Visible mais pas encore référencé sur la carte : l'apparition attend un référencement (#1495).
-    estEnAttenteDeReferencement:
-      lieuDetailsReadModel.visiblePourCartographie &&
-      !lieuDetailsReadModel.estReferenceSurLaCarte &&
-      !lieuDetailsReadModel.estLieuCoop,
     estLieuCoop: lieuDetailsReadModel.estLieuCoop,
     header: {
       fraicheur: getFraicheur(lieuDetailsReadModel.header, now),
@@ -87,7 +82,6 @@ const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
 }
 
 interface LieuInclusionDetailsData {
-  estEnAttenteDeReferencement: boolean
   estLieuCoop: boolean
   header: {
     fraicheur?: {

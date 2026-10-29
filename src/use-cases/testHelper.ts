@@ -698,7 +698,6 @@ export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadMo
     codeRegion: '11',
     estArchive: false,
     estLieuCoop: false,
-    estReferenceSurLaCarte: true,
     header: {
       nom: 'Mon lieu',
       tags: [],
