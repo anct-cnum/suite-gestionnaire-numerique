@@ -176,6 +176,30 @@ describe('modification des informations générales d’un lieu', () => {
     // THEN
     expect(screen.queryByText('Médiathèque du centre-ville')).not.toBeInTheDocument()
   })
+
+  it('quand une nouvelle adresse correspond à d’autres lieux, remplace le contenu de l’encadré', async () => {
+    // GIVEN
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockResolvedValueOnce([
+        lieuSimilaire('Bibliothèque Musée de l’Opéra'),
+        lieuSimilaire('Bibliothèque Musée National'),
+      ])
+      .mockResolvedValueOnce([lieuSimilaire('Médiathèque du centre-ville')])
+    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
+    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
+    const titrePluriel = await screen.findByText('2 lieux sont déjà déclarés à cette adresse')
+    expect(titrePluriel).toBeInTheDocument()
+
+    // WHEN
+    await choisirAdresse('19 Rue Proudhon, 93210 Saint-Denis')
+
+    // THEN
+    const titreSingulier = await screen.findByText('1 lieu est déjà déclaré à cette adresse')
+    expect(titreSingulier).toBeInTheDocument()
+    expect(screen.getByText('Médiathèque du centre-ville')).toBeInTheDocument()
+    expect(screen.queryByText('Bibliothèque Musée National')).not.toBeInTheDocument()
+  })
 })
 
 // Formulaire des informations générales ouvert, avec une autocomplétion qui propose deux adresses.
