@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import LieuxInclusionDetails from './LieuInclusionDetails'
 import LieuInclusionDetailsInformationsGenerales from './LieuInclusionDetailsInformationsGenerales'
 import { renderComponent } from '../testHelper'
+import * as notification from '@/components/shared/Notification/Notification'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import {
   createDefaultInformationsGeneralesData,
@@ -134,4 +135,80 @@ describe('modification des informations générales d’un lieu', () => {
     expect(screen.getByRole('link', { name: 'C’est mon lieu' })).toHaveAttribute('href', '/lieu/7')
     expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
   })
+
+  it('quand la recherche des lieux déjà déclarés échoue, notifie l’erreur sans afficher d’encadré ni bloquer l’enregistrement', async () => {
+    // GIVEN
+    vi.spyOn(notification, 'Notification').mockImplementationOnce(() => undefined)
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockRejectedValueOnce(new Error('Service indisponible'))
+    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
+
+    // WHEN
+    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
+
+    // THEN
+    await waitFor(() => {
+      expect(notification.Notification).toHaveBeenCalledWith('error', {
+        description:
+          'la recherche des lieux déjà déclarés à cette adresse a échoué. Vous pouvez poursuivre la modification.',
+        title: 'Erreur : ',
+      })
+    })
+    expect(screen.queryByText(/déjà déclarés? à cette adresse/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
+  })
+
+  it('quand l’adresse change, efface aussitôt les lieux de l’ancienne adresse', async () => {
+    // GIVEN
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockResolvedValueOnce([lieuSimilaire('Médiathèque du centre-ville')])
+      .mockReturnValueOnce(new Promise(() => undefined))
+    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
+    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
+    const lieuAncienneAdresse = await screen.findByText('Médiathèque du centre-ville')
+    expect(lieuAncienneAdresse).toBeInTheDocument()
+
+    // WHEN
+    await choisirAdresse('19 Rue Proudhon, 93210 Saint-Denis')
+
+    // THEN
+    expect(screen.queryByText('Médiathèque du centre-ville')).not.toBeInTheDocument()
+  })
 })
+
+// Formulaire des informations générales ouvert, avec une autocomplétion qui propose deux adresses.
+async function afficherLeFormulaire(
+  rechercherLieuxInclusionSimilairesAction: () => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>
+): Promise<void> {
+  const rechercherAdressesAction = vi
+    .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+    .mockResolvedValue([
+      { label: '4 Place de la Légion d’Honneur, 93200 Saint-Denis' },
+      { label: '19 Rue Proudhon, 93210 Saint-Denis' },
+    ])
+  renderComponent(
+    <LieuInclusionDetailsInformationsGenerales data={createDefaultInformationsGeneralesData()} peutModifier={true} />,
+    { rechercherAdressesAction, rechercherLieuxInclusionSimilairesAction }
+  )
+  await userEvent.click(screen.getByRole('button', { name: 'Modifier' }))
+}
+
+async function choisirAdresse(label: string): Promise<void> {
+  const champ = screen.getByRole('combobox', { name: /Adresse du lieu \*/ })
+  await userEvent.clear(champ)
+  await userEvent.type(champ, 'saint')
+  await userEvent.click(await screen.findByRole('option', { name: label }))
+}
+
+function lieuSimilaire(nom: string): LieuInclusionSimilaireViewModel {
+  return {
+    adresse: '4 Place de la Légion d’Honneur, 93200 Saint-Denis',
+    href: '/lieu/7',
+    libellePersonnesRattachees: '3 personnes rattachées',
+    libelleSiret: 'Sans SIRET',
+    nom,
+    typologies: 'Bibliothèque, Médiathèque',
+  }
+}

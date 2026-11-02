@@ -36,13 +36,26 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   }
 
   async function proposerLieuxSimilaires(nouvelEtat: EtatLieuInclusionFormulaire): Promise<void> {
+    // Les lieux de l'ancienne adresse ne valent plus pour la nouvelle : on les retire aussitôt.
+    setLieuxSimilaires([])
     if (nouvelEtat.adresse === '') {
-      setLieuxSimilaires([])
       return
     }
-    setLieuxSimilaires(
-      await rechercherLieuxInclusionSimilairesAction({ adresse: nouvelEtat.adresse, idLieuEnModification: structureId })
-    )
+    try {
+      setLieuxSimilaires(
+        await rechercherLieuxInclusionSimilairesAction({
+          adresse: nouvelEtat.adresse,
+          idLieuEnModification: structureId,
+        })
+      )
+    } catch {
+      // Contrôle non bloquant : en cas d'échec, aucun résultat n'est affiché et la modification se poursuit.
+      Notification('error', {
+        description:
+          'la recherche des lieux déjà déclarés à cette adresse a échoué. Vous pouvez poursuivre la modification.',
+        title: 'Erreur : ',
+      })
+    }
   }
 
   function handleChangement(nouvelEtat: EtatLieuInclusionFormulaire): void {
