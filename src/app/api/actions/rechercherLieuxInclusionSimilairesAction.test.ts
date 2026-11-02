@@ -73,6 +73,37 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
     ])
   })
 
+  it('en modification, transmet le lieu en cours et propose les autres lieux sans le bandeau « déjà enregistré », propre à la création', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ role: 'Administrateur dispositif' })
+    )
+    vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle').mockResolvedValueOnce([
+      {
+        adresse: '7 Rue des Champs Seigneur 71600 Paray-le-Monial',
+        id: '43',
+        nom: 'France Services du Pays Charolais',
+        nombrePersonnesRattachees: 1,
+        siret: null,
+        typologies: [],
+      },
+    ])
+
+    // WHEN
+    const lieux = await rechercherLieuxInclusionSimilairesAction({
+      adresse: '7 rue des Champs Seigneur 71600 Paray-le-Monial',
+      idLieuEnModification: '42',
+    })
+
+    // THEN
+    expect(RechercherLieuxInclusionSimilaires.prototype.handle).toHaveBeenCalledWith({
+      adresse: '7 rue des Champs Seigneur 71600 Paray-le-Monial',
+      idLieuEnModification: '42',
+    })
+    expect(lieux.map((lieu) => lieu.href)).toStrictEqual(['/lieu/43'])
+  })
+
   it('ne renvoie rien à un utilisateur qui ne peut pas créer de lieu', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)

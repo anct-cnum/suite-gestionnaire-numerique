@@ -25,8 +25,28 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse', 
     })
 
     // THEN
-    expect(spiedCriteres).toStrictEqual({ clefInterop: '75101_7141_00001' })
+    expect(spiedCriteres).toStrictEqual({ clefInterop: '75101_7141_00001', idLieuEnModification: undefined })
     expect(lieux).toStrictEqual([lieuDejaDeclare])
+  })
+
+  it('transmet au loader le lieu en cours de modification, pour qu’il ne soit pas proposé comme doublon de lui-même', async () => {
+    // GIVEN
+    let spiedCriteres: CriteresLieuxSimilaires | null = null
+    const loader: LieuxInclusionSimilairesLoader = {
+      async rechercher(criteres) {
+        spiedCriteres = criteres
+        return Promise.resolve([])
+      },
+    }
+
+    // WHEN
+    await new RechercherLieuxInclusionSimilaires(banGeocodingGateway(adresseGeocodee), loader).handle({
+      adresse: '1 rue de la Paix 75001 Paris',
+      idLieuEnModification: '42',
+    })
+
+    // THEN
+    expect(spiedCriteres).toStrictEqual({ clefInterop: '75101_7141_00001', idLieuEnModification: '42' })
   })
 
   it('sans adresse, ne géocode rien et ne cherche rien', async () => {

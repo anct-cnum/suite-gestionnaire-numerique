@@ -10,6 +10,7 @@ import LieuInclusionFormulaire, {
   EtatLieuInclusionFormulaire,
 } from '@/components/shared/LieuInclusionFormulaire/LieuInclusionFormulaire'
 import { Notification } from '@/components/shared/Notification/Notification'
+import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import { libelleTypologie } from '@/presenters/shared/typologie'
 
 export default function LieuInclusionDetailsInformationsGenerales(props: Props): ReactElement {
@@ -17,8 +18,10 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   const [isEditing, setIsEditing] = useState(false)
   const [isDisabled, setIsDisabled] = useState(false)
   const [etatFormulaire, setEtatFormulaire] = useState(etatInitial(data))
+  const [lieuxSimilaires, setLieuxSimilaires] = useState<ReadonlyArray<LieuInclusionSimilaireViewModel>>([])
 
-  const { modifierLieuInclusionInformationsGeneralesAction } = useContext(clientContext)
+  const { modifierLieuInclusionInformationsGeneralesAction, rechercherLieuxInclusionSimilairesAction } =
+    useContext(clientContext)
   const pathname = usePathname()
 
   // Extraire l'ID du lieu depuis l'URL (/lieu/[id])
@@ -29,6 +32,25 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   function quitterEdition(): void {
     setIsEditing(false)
     setEtatFormulaire(etatInitial(data))
+    setLieuxSimilaires([])
+  }
+
+  async function proposerLieuxSimilaires(nouvelEtat: EtatLieuInclusionFormulaire): Promise<void> {
+    if (nouvelEtat.adresse === '') {
+      setLieuxSimilaires([])
+      return
+    }
+    setLieuxSimilaires(
+      await rechercherLieuxInclusionSimilairesAction({ adresse: nouvelEtat.adresse, idLieuEnModification: structureId })
+    )
+  }
+
+  function handleChangement(nouvelEtat: EtatLieuInclusionFormulaire): void {
+    const adresseChange = nouvelEtat.adresse !== etatFormulaire.adresse
+    setEtatFormulaire(nouvelEtat)
+    if (adresseChange) {
+      void proposerLieuxSimilaires(nouvelEtat)
+    }
   }
 
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
@@ -89,7 +111,11 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
         >
           <LieuInclusionFormulaire
             idPrefixe="informations-generales"
-            onChangement={setEtatFormulaire}
+            lieuxDejaDeclares={{
+              consigne: 'Vérifiez qu’il ne s’agit pas du même lieu avant d’enregistrer la nouvelle adresse.',
+              lieux: lieuxSimilaires,
+            }}
+            onChangement={handleChangement}
             valeursInitiales={data}
           />
 

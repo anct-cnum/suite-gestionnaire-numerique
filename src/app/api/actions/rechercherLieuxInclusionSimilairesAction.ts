@@ -20,7 +20,7 @@ export async function rechercherLieuxInclusionSimilairesAction(
   if (validationResult.error) {
     return []
   }
-  const { adresse } = validationResult.data
+  const { adresse, idLieuEnModification } = validationResult.data
   if (adresse === '') {
     return []
   }
@@ -33,15 +33,17 @@ export async function rechercherLieuxInclusionSimilairesAction(
   const lieux = await new RechercherLieuxInclusionSimilaires(
     new ApiBanGeocodingGateway(),
     new PrismaLieuxInclusionSimilairesLoader()
-  ).handle({ adresse })
+  ).handle({ adresse, idLieuEnModification })
 
-  return lieuxInclusionSimilairesPresenter(lieux)
+  return lieuxInclusionSimilairesPresenter(lieux, idLieuEnModification !== undefined)
 }
 
 type ActionParams = Readonly<{
   adresse: string
+  idLieuEnModification?: string
 }>
 
 const validator = z.object({
   adresse: z.string(),
+  idLieuEnModification: z.string().optional(),
 })

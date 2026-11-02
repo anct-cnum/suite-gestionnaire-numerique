@@ -6,7 +6,8 @@ import {
 } from '@/use-cases/queries/RechercherLieuxInclusionSimilaires'
 
 // Lecture seule. Un seul signal depuis les maquettes V6 : la même adresse BAN
-// (clef_interop). Les colonnes enum[] sont castées en text[], sans quoi $queryRaw
+// (clef_interop). En modification, le lieu en cours n'est pas proposé comme doublon
+// de lui-même. Les colonnes enum[] sont castées en text[], sans quoi $queryRaw
 // les renvoie en chaîne brute. Le décompte des personnes suit la règle de la fiche
 // lieu : affectations actives, distinctes par personne.
 export class PrismaLieuxInclusionSimilairesLoader implements LieuxInclusionSimilairesLoader {
@@ -28,6 +29,7 @@ export class PrismaLieuxInclusionSimilairesLoader implements LieuxInclusionSimil
       ) personnes ON true
       WHERE l.deleted_at IS NULL
         AND a.clef_interop = ${criteres.clefInterop}
+        AND l.id::text IS DISTINCT FROM ${criteres.idLieuEnModification ?? null}
       ORDER BY l.nom
       LIMIT 10
     `

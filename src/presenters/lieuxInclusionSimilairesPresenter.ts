@@ -2,13 +2,15 @@ import { libelleTypologie } from '@/presenters/shared/typologie'
 import { LieuInclusionSimilaireReadModel } from '@/use-cases/queries/RechercherLieuxInclusionSimilaires'
 
 export function lieuxInclusionSimilairesPresenter(
-  lieux: ReadonlyArray<LieuInclusionSimilaireReadModel>
+  lieux: ReadonlyArray<LieuInclusionSimilaireReadModel>,
+  enModification: boolean
 ): ReadonlyArray<LieuInclusionSimilaireViewModel> {
   return lieux.map((lieu) => ({
     adresse: lieu.adresse,
-    // « C'est mon lieu » mène à la fiche du lieu existant, qui accueille l'utilisateur
-    // avec un bandeau lui disant qu'il n'a pas besoin de le créer (maquette V6-3).
-    href: `/lieu/${lieu.id}?dejaEnregistre=1`,
+    // À la création, « C'est mon lieu » mène à la fiche du lieu existant, qui accueille
+    // l'utilisateur avec un bandeau lui disant qu'il n'a pas besoin de le créer (maquette V6-3).
+    // En modification, ce bandeau n'a pas de sens : la fiche s'ouvre normalement.
+    href: enModification ? `/lieu/${lieu.id}` : `/lieu/${lieu.id}?dejaEnregistre=1`,
     libellePersonnesRattachees: libellePersonnesRattachees(lieu.nombrePersonnesRattachees),
     libelleSiret: lieu.siret === null ? 'Sans SIRET' : `SIRET ${formaterSiret(lieu.siret)}`,
     nom: lieu.nom,

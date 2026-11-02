@@ -1,9 +1,15 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import LieuxInclusionDetails from './LieuInclusionDetails'
+import LieuInclusionDetailsInformationsGenerales from './LieuInclusionDetailsInformationsGenerales'
 import { renderComponent } from '../testHelper'
-import { createDefaultLieuInclusionDetailsData } from '@/stories/Components/LieuInclusionDetails/LieuInclusionDetailsTestData'
+import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
+import {
+  createDefaultInformationsGeneralesData,
+  createDefaultLieuInclusionDetailsData,
+} from '@/stories/Components/LieuInclusionDetails/LieuInclusionDetailsTestData'
 
 // Les sections lisent l'identifiant du lieu dans l'URL et le bouton de suppression redirige.
 vi.mock(import('next/navigation'), () => ({
@@ -79,5 +85,53 @@ describe('fiche d’un lieu d’inclusion', () => {
 
     // THEN
     expect(screen.queryByText('Ce lieu est déjà enregistré')).not.toBeInTheDocument()
+  })
+})
+
+describe('modification des informations générales d’un lieu', () => {
+  it('dès qu’une adresse est choisie, présente les lieux déjà déclarés à cette adresse, sans bloquer l’enregistrement', async () => {
+    // GIVEN
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockResolvedValue([
+        {
+          adresse: '4 Place de la Légion d’Honneur, 93200 Saint-Denis',
+          href: '/lieu/7',
+          libellePersonnesRattachees: '3 personnes rattachées',
+          libelleSiret: 'Sans SIRET',
+          nom: 'Médiathèque du centre-ville',
+          typologies: 'Bibliothèque, Médiathèque',
+        },
+      ])
+    const rechercherAdressesAction = vi
+      .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+      .mockResolvedValue([{ label: '4 Place de la Légion d’Honneur, 93200 Saint-Denis' }])
+    renderComponent(
+      <LieuInclusionDetailsInformationsGenerales data={createDefaultInformationsGeneralesData()} peutModifier={true} />,
+      { rechercherAdressesAction, rechercherLieuxInclusionSimilairesAction }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier' }))
+
+    // WHEN
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'légion')
+    await userEvent.click(
+      await screen.findByRole('option', { name: '4 Place de la Légion d’Honneur, 93200 Saint-Denis' })
+    )
+
+    // THEN
+    await waitFor(() => {
+      expect(rechercherLieuxInclusionSimilairesAction).toHaveBeenCalledWith({
+        adresse: '4 Place de la Légion d’Honneur, 93200 Saint-Denis',
+        idLieuEnModification: '42',
+      })
+    })
+    const titre = await screen.findByText('1 lieu est déjà déclaré à cette adresse')
+    expect(titre).toBeInTheDocument()
+    expect(
+      screen.getByText('Vérifiez qu’il ne s’agit pas du même lieu avant d’enregistrer la nouvelle adresse.')
+    ).toBeInTheDocument()
+    expect(screen.getByText('Médiathèque du centre-ville')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'C’est mon lieu' })).toHaveAttribute('href', '/lieu/7')
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
   })
 })
