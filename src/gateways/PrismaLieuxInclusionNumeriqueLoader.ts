@@ -104,11 +104,12 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     // l'entrepôt main.lieu_dispositifs (DS-ADR-004). « Conseillers numériques »
     // n'est jamais stocké au registre : lire la colonne de main.lieu_inclusion
     // ferait compter zéro. Une seule requête, la vue n'est calculée qu'une fois.
+    // « Au moins un dispositif » : une liste vide ({}) vaut « aucun », comme NULL.
     const [dispositifs] = await prisma.$queryRaw<
       Array<{ avec_conseillers_numeriques: number; avec_france_services: number; avec_programme_national: number }>
     >(Prisma.sql`
       SELECT
-        COUNT(*) FILTER (WHERE ld.dispositifs_internes IS NOT NULL)::int AS avec_programme_national,
+        COUNT(*) FILTER (WHERE cardinality(ld.dispositifs_internes) > 0)::int AS avec_programme_national,
         COUNT(*) FILTER (WHERE 'Conseillers numériques' = ANY(ld.dispositifs_internes))::int AS avec_conseillers_numeriques,
         COUNT(*) FILTER (WHERE 'France Services' = ANY(ld.dispositifs_internes))::int AS avec_france_services
       FROM main.lieu_inclusion l

@@ -183,7 +183,8 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       -- Dispositifs effectifs (déclarés + dérivés), vue de référence de l'entrepôt (DS-ADR-004)
       JOIN main.lieu_dispositifs ld ON ld.lieu_id = l.id
       LEFT JOIN main.adresse a ON a.id = l.adresse_id
-      WHERE ld.dispositifs_internes IS NOT NULL
+      -- « Au moins un dispositif » : une liste vide ({}) vaut « aucun », comme NULL
+      WHERE cardinality(ld.dispositifs_internes) > 0
         ${whereConditions}
     `
 
