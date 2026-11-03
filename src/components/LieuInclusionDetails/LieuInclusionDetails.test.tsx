@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -256,6 +256,22 @@ describe('modification des informations générales d’un lieu', () => {
     // THEN
     const lieu = await screen.findByText('Médiathèque du centre-ville')
     expect(lieu).toBeInTheDocument()
+  })
+
+  it('annonce l’apparition des lieux déjà déclarés aux technologies d’assistance', async () => {
+    // GIVEN
+    const rechercherLieuxInclusionSimilairesAction = vi
+      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+      .mockResolvedValueOnce([lieuSimilaire('Médiathèque du centre-ville')])
+    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
+    const zoneAnnonce = screen.getByRole('status')
+
+    // WHEN
+    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
+
+    // THEN
+    const titre = await within(zoneAnnonce).findByText('1 lieu est déjà déclaré à cette adresse')
+    expect(titre).toBeInTheDocument()
   })
 })
 

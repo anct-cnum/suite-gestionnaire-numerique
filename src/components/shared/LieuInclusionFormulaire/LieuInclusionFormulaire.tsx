@@ -142,15 +142,20 @@ export default function LieuInclusionFormulaire({
         />
       </div>
 
-      {lieuxDejaDeclares !== undefined && lieuxDejaDeclares.lieux.length > 0 ? (
-        <div className="fr-mb-2w">
-          <LieuxDejaDeclares
-            consigne={lieuxDejaDeclares.consigne}
-            lieux={lieuxDejaDeclares.lieux}
-            nouvelOnglet={lieuxDejaDeclares.nouvelOnglet}
-          />
+      {lieuxDejaDeclares === undefined ? null : (
+        // Zone présente avant l'encadré, pour que son apparition soit annoncée par les lecteurs d'écran.
+        <div role="status">
+          {lieuxDejaDeclares.lieux.length > 0 ? (
+            <div className="fr-mb-2w">
+              <LieuxDejaDeclares
+                consigne={lieuxDejaDeclares.consigne}
+                lieux={lieuxDejaDeclares.lieux}
+                nouvelOnglet={lieuxDejaDeclares.nouvelOnglet}
+              />
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      )}
 
       <div className="fr-checkbox-group fr-mb-2w">
         <input
