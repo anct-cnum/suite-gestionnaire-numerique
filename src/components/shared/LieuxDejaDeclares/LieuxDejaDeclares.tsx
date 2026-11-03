@@ -7,7 +7,7 @@ import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimi
 // Contrôle non bloquant sous le champ adresse (maquettes V6) : les lieux déjà
 // déclarés à l'adresse saisie sont présentés pour que l'humain tranche, jamais pour
 // empêcher la saisie. « C'est mon lieu » mène à la fiche du lieu existant (V6-3).
-export default function LieuxDejaDeclares({ consigne, lieux }: Props): ReactElement {
+export default function LieuxDejaDeclares({ consigne, lieux, nouvelOnglet = false }: Props): ReactElement {
   return (
     <div className={`fr-py-2w fr-pl-5v fr-pr-2w ${styles.encart}`}>
       <p className="fr-text--bold fr-mb-1v">
@@ -32,7 +32,17 @@ export default function LieuxDejaDeclares({ consigne, lieux }: Props): ReactElem
                 </p>
               </div>
               <div className="fr-col-auto fr-pl-2w">
-                <Link className="fr-btn fr-btn--secondary fr-btn--sm" href={lieu.href}>
+                <Link
+                  className="fr-btn fr-btn--secondary fr-btn--sm"
+                  href={lieu.href}
+                  {...(nouvelOnglet
+                    ? {
+                        rel: 'noopener noreferrer',
+                        target: '_blank',
+                        title: `Voir la fiche de ${lieu.nom} - nouvelle fenêtre`,
+                      }
+                    : {})}
+                >
                   C’est mon lieu
                 </Link>
               </div>
@@ -47,4 +57,6 @@ export default function LieuxDejaDeclares({ consigne, lieux }: Props): ReactElem
 type Props = Readonly<{
   consigne: string
   lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
+  // En modification, la fiche s'ouvre dans un nouvel onglet pour ne pas perdre la saisie en cours.
+  nouvelOnglet?: boolean
 }>

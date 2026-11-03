@@ -127,6 +127,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
             lieuxDejaDeclares={{
               consigne: 'Vérifiez qu’il ne s’agit pas du même lieu avant d’enregistrer la nouvelle adresse.',
               lieux: lieuxSimilaires,
+              nouvelOnglet: true,
             }}
             onChangement={handleChangement}
             valeursInitiales={data}

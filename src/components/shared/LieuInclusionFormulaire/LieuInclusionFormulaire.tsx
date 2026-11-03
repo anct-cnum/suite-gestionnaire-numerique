@@ -140,7 +140,11 @@ export default function LieuInclusionFormulaire({
 
       {lieuxDejaDeclares !== undefined && lieuxDejaDeclares.lieux.length > 0 ? (
         <div className="fr-mb-2w">
-          <LieuxDejaDeclares consigne={lieuxDejaDeclares.consigne} lieux={lieuxDejaDeclares.lieux} />
+          <LieuxDejaDeclares
+            consigne={lieuxDejaDeclares.consigne}
+            lieux={lieuxDejaDeclares.lieux}
+            nouvelOnglet={lieuxDejaDeclares.nouvelOnglet}
+          />
         </div>
       ) : null}
 
@@ -260,6 +264,7 @@ type Props = Readonly<{
   lieuxDejaDeclares?: Readonly<{
     consigne: string
     lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
+    nouvelOnglet?: boolean
   }>
   onChangement(etat: EtatLieuInclusionFormulaire): void
   valeursInitiales: ValeursInitialesLieuInclusion
