@@ -19,6 +19,7 @@ import { typologieLabels } from '@/presenters/shared/typologie'
 export default function LieuInclusionFormulaire({
   idPrefixe,
   lieuxDejaDeclares,
+  onAdresseChoisie,
   onChangement,
   valeursInitiales,
 }: Props): ReactElement {
@@ -51,6 +52,7 @@ export default function LieuInclusionFormulaire({
     const resultat = await rechercherUneEntrepriseAction({ siret: etat.siretSaisi })
     if ('identifiant' in resultat) {
       mettreAJour({ adresse: resultat.adresse, nom: resultat.denomination })
+      onAdresseChoisie?.(resultat.adresse)
     } else {
       Notification('error', { description: resultat.join(', '), title: 'Erreur : ' })
     }
@@ -133,16 +135,26 @@ export default function LieuInclusionFormulaire({
           id={`${idPrefixe}-adresse`}
           onAdresseChoisie={(adresse) => {
             mettreAJour({ adresse })
+            onAdresseChoisie?.(adresse)
           }}
           rechercherAdressesAction={rechercherAdressesAction}
         />
       </div>
 
-      {lieuxDejaDeclares !== undefined && lieuxDejaDeclares.lieux.length > 0 ? (
-        <div className="fr-mb-2w">
-          <LieuxDejaDeclares consigne={lieuxDejaDeclares.consigne} lieux={lieuxDejaDeclares.lieux} />
+      {lieuxDejaDeclares === undefined ? null : (
+        // Toujours présente : un lecteur d'écran n'annonce que les changements d'une zone déjà affichée.
+        <div role="status">
+          {lieuxDejaDeclares.lieux.length > 0 ? (
+            <div className="fr-mb-2w">
+              <LieuxDejaDeclares
+                consigne={lieuxDejaDeclares.consigne}
+                lieux={lieuxDejaDeclares.lieux}
+                nouvelOnglet={lieuxDejaDeclares.nouvelOnglet}
+              />
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      )}
 
       <div className="fr-checkbox-group fr-mb-2w">
         <input
@@ -260,7 +272,10 @@ type Props = Readonly<{
   lieuxDejaDeclares?: Readonly<{
     consigne: string
     lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
+    nouvelOnglet?: boolean
   }>
+  // Appelé à chaque choix d'adresse, même identique à la précédente.
+  onAdresseChoisie?(adresse: string): void
   onChangement(etat: EtatLieuInclusionFormulaire): void
   valeursInitiales: ValeursInitialesLieuInclusion
 }>

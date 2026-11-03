@@ -29,7 +29,10 @@ export class RechercherLieuxInclusionSimilaires implements QueryHandler<
       return []
     }
 
-    return this.#loader.rechercher({ clefInterop: geocode.banClefInterop })
+    return this.#loader.rechercher({
+      clefInterop: geocode.banClefInterop,
+      idLieuEnModification: query.idLieuEnModification,
+    })
   }
 }
 
@@ -39,6 +42,7 @@ export interface LieuxInclusionSimilairesLoader {
 
 export type CriteresLieuxSimilaires = Readonly<{
   clefInterop: string
+  idLieuEnModification?: string
 }>
 
 export type LieuInclusionSimilaireReadModel = Readonly<{
@@ -52,4 +56,5 @@ export type LieuInclusionSimilaireReadModel = Readonly<{
 
 type Query = Readonly<{
   adresse: string
+  idLieuEnModification?: string
 }>

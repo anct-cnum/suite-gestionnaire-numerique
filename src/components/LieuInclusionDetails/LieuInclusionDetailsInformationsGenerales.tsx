@@ -10,6 +10,7 @@ import LieuInclusionFormulaire, {
   EtatLieuInclusionFormulaire,
 } from '@/components/shared/LieuInclusionFormulaire/LieuInclusionFormulaire'
 import { Notification } from '@/components/shared/Notification/Notification'
+import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import { libelleTypologie } from '@/presenters/shared/typologie'
 
 export default function LieuInclusionDetailsInformationsGenerales(props: Props): ReactElement {
@@ -17,8 +18,10 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   const [isEditing, setIsEditing] = useState(false)
   const [isDisabled, setIsDisabled] = useState(false)
   const [etatFormulaire, setEtatFormulaire] = useState(etatInitial(data))
+  const [lieuxSimilaires, setLieuxSimilaires] = useState<ReadonlyArray<LieuInclusionSimilaireViewModel>>([])
 
-  const { modifierLieuInclusionInformationsGeneralesAction } = useContext(clientContext)
+  const { modifierLieuInclusionInformationsGeneralesAction, rechercherLieuxInclusionSimilairesAction } =
+    useContext(clientContext)
   const pathname = usePathname()
 
   // Extraire l'ID du lieu depuis l'URL (/lieu/[id])
@@ -29,6 +32,25 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   function quitterEdition(): void {
     setIsEditing(false)
     setEtatFormulaire(etatInitial(data))
+    setLieuxSimilaires([])
+  }
+
+  async function proposerLieuxSimilaires(adresse: string): Promise<void> {
+    // Les lieux de l'ancienne adresse ne valent plus pour la nouvelle : on les retire aussitôt.
+    setLieuxSimilaires([])
+    if (adresse === '') {
+      return
+    }
+    try {
+      setLieuxSimilaires(await rechercherLieuxInclusionSimilairesAction({ adresse, idLieuEnModification: structureId }))
+    } catch {
+      // Contrôle non bloquant : en cas d'échec, aucun résultat n'est affiché et la modification se poursuit.
+      Notification('error', {
+        description:
+          'la recherche des lieux déjà déclarés à cette adresse a échoué. Vous pouvez poursuivre la modification.',
+        title: 'Erreur : ',
+      })
+    }
   }
 
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
@@ -89,6 +111,14 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
         >
           <LieuInclusionFormulaire
             idPrefixe="informations-generales"
+            lieuxDejaDeclares={{
+              consigne: 'Vérifiez qu’il ne s’agit pas du même lieu avant d’enregistrer la nouvelle adresse.',
+              lieux: lieuxSimilaires,
+              nouvelOnglet: true,
+            }}
+            onAdresseChoisie={(adresse) => {
+              void proposerLieuxSimilaires(adresse)
+            }}
             onChangement={setEtatFormulaire}
             valeursInitiales={data}
           />

@@ -105,6 +105,17 @@ describe('lieux d’inclusion déjà déclarés à une adresse (loader Prisma)',
     ])
   })
 
+  it('ne propose pas le lieu en cours de modification comme doublon de lui-même', async () => {
+    // WHEN
+    const lieux = await new PrismaLieuxInclusionSimilairesLoader().rechercher({
+      clefInterop: CLEF_INTEROP,
+      idLieuEnModification: '992101',
+    })
+
+    // THEN
+    expect(lieux.map((lieu) => lieu.id)).toStrictEqual(['992103'])
+  })
+
   it('ne renvoie rien pour une adresse sans lieu déclaré', async () => {
     // WHEN
     const lieux = await new PrismaLieuxInclusionSimilairesLoader().rechercher({ clefInterop: '75198_9999_00009' })
