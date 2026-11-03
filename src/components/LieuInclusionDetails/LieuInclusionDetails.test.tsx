@@ -132,11 +132,12 @@ describe('modification des informations générales d’un lieu', () => {
       screen.getByText('Vérifiez qu’il ne s’agit pas du même lieu avant d’enregistrer la nouvelle adresse.')
     ).toBeInTheDocument()
     expect(screen.getByText('Médiathèque du centre-ville')).toBeInTheDocument()
-    const lien = screen.getByRole('link', { name: 'C’est mon lieu' })
+    const lien = screen.getByRole('link', {
+      name: 'C’est mon lieu : voir la fiche de Médiathèque du centre-ville - nouvelle fenêtre',
+    })
     expect(lien).toHaveAttribute('href', '/lieu/7')
     expect(lien).toHaveAttribute('target', '_blank')
     expect(lien).toHaveAttribute('rel', 'noopener noreferrer')
-    expect(lien).toHaveAttribute('title', 'Voir la fiche de Médiathèque du centre-ville - nouvelle fenêtre')
     expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
   })
 

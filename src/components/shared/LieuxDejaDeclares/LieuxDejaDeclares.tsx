@@ -37,9 +37,9 @@ export default function LieuxDejaDeclares({ consigne, lieux, nouvelOnglet = fals
                   href={lieu.href}
                   {...(nouvelOnglet
                     ? {
+                        'aria-label': `C’est mon lieu : voir la fiche de ${lieu.nom} - nouvelle fenêtre`,
                         rel: 'noopener noreferrer',
                         target: '_blank',
-                        title: `Voir la fiche de ${lieu.nom} - nouvelle fenêtre`,
                       }
                     : {})}
                 >
