@@ -205,40 +205,7 @@ describe('modification des informations générales d’un lieu', () => {
     expect(screen.queryByText('Bibliothèque Musée National')).not.toBeInTheDocument()
   })
 
-  it('quand le lieu est itinérant, ne cherche pas les lieux déjà déclarés à l’adresse choisie', async () => {
-    // GIVEN
-    const rechercherLieuxInclusionSimilairesAction = vi
-      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
-      .mockResolvedValue([lieuSimilaire('Médiathèque du centre-ville')])
-    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' }))
-
-    // WHEN
-    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
-
-    // THEN
-    expect(rechercherLieuxInclusionSimilairesAction).not.toHaveBeenCalled()
-    expect(screen.queryByText(/déjà déclarés? à cette adresse/)).not.toBeInTheDocument()
-  })
-
-  it('quand le lieu devient itinérant, masque l’encadré des lieux déjà déclarés', async () => {
-    // GIVEN
-    const rechercherLieuxInclusionSimilairesAction = vi
-      .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
-      .mockResolvedValueOnce([lieuSimilaire('Médiathèque du centre-ville')])
-    await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
-    await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
-    const lieu = await screen.findByText('Médiathèque du centre-ville')
-    expect(lieu).toBeInTheDocument()
-
-    // WHEN
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' }))
-
-    // THEN
-    expect(screen.queryByText('Médiathèque du centre-ville')).not.toBeInTheDocument()
-  })
-
-  it('quand le lieu n’est plus itinérant, re-choisir la même adresse relance la recherche', async () => {
+  it('re-choisir la même adresse relance la recherche des lieux déjà déclarés', async () => {
     // GIVEN
     const rechercherLieuxInclusionSimilairesAction = vi
       .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
@@ -246,16 +213,14 @@ describe('modification des informations générales d’un lieu', () => {
     await afficherLeFormulaire(rechercherLieuxInclusionSimilairesAction)
     await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
     await screen.findByText('Médiathèque du centre-ville')
-    const caseItinerant = screen.getByRole('checkbox', { name: 'Lieu d’activité itinérant (exemple : bus)' })
-    await userEvent.click(caseItinerant)
-    await userEvent.click(caseItinerant)
 
     // WHEN
     await choisirAdresse('4 Place de la Légion d’Honneur, 93200 Saint-Denis')
 
     // THEN
-    const lieu = await screen.findByText('Médiathèque du centre-ville')
-    expect(lieu).toBeInTheDocument()
+    await waitFor(() => {
+      expect(rechercherLieuxInclusionSimilairesAction).toHaveBeenCalledTimes(2)
+    })
   })
 
   it('annonce l’apparition des lieux déjà déclarés aux technologies d’assistance', async () => {

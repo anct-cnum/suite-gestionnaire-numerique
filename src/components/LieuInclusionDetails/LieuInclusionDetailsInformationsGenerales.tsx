@@ -19,7 +19,6 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   const [isDisabled, setIsDisabled] = useState(false)
   const [etatFormulaire, setEtatFormulaire] = useState(etatInitial(data))
   const [lieuxSimilaires, setLieuxSimilaires] = useState<ReadonlyArray<LieuInclusionSimilaireViewModel>>([])
-  const [itinerant, setItinerant] = useState(data.itinerant ?? false)
 
   const { modifierLieuInclusionInformationsGeneralesAction, rechercherLieuxInclusionSimilairesAction } =
     useContext(clientContext)
@@ -34,7 +33,6 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     setIsEditing(false)
     setEtatFormulaire(etatInitial(data))
     setLieuxSimilaires([])
-    setItinerant(data.itinerant ?? false)
   }
 
   async function proposerLieuxSimilaires(adresse: string): Promise<void> {
@@ -52,20 +50,6 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
           'la recherche des lieux déjà déclarés à cette adresse a échoué. Vous pouvez poursuivre la modification.',
         title: 'Erreur : ',
       })
-    }
-  }
-
-  function handleAdresseChoisie(adresse: string): void {
-    // Un lieu itinérant n'a normalement pas d'adresse propre : pas de doublon à chercher par adresse.
-    if (!itinerant) {
-      void proposerLieuxSimilaires(adresse)
-    }
-  }
-
-  function handleItinerantChange(nouvelItinerant: boolean): void {
-    setItinerant(nouvelItinerant)
-    if (nouvelItinerant) {
-      setLieuxSimilaires([])
     }
   }
 
@@ -132,9 +116,10 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
               lieux: lieuxSimilaires,
               nouvelOnglet: true,
             }}
-            onAdresseChoisie={handleAdresseChoisie}
+            onAdresseChoisie={(adresse) => {
+              void proposerLieuxSimilaires(adresse)
+            }}
             onChangement={setEtatFormulaire}
-            onItinerantChange={handleItinerantChange}
             valeursInitiales={data}
           />
 

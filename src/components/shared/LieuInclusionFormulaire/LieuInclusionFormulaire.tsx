@@ -21,7 +21,6 @@ export default function LieuInclusionFormulaire({
   lieuxDejaDeclares,
   onAdresseChoisie,
   onChangement,
-  onItinerantChange,
   valeursInitiales,
 }: Props): ReactElement {
   const { rechercherAdressesAction, rechercherUneEntrepriseAction } = useContext(clientContext)
@@ -162,9 +161,6 @@ export default function LieuInclusionFormulaire({
           defaultChecked={valeursInitiales.itinerant ?? false}
           id={`${idPrefixe}-itinerant`}
           name="itinerant"
-          onChange={(event) => {
-            onItinerantChange?.(event.target.checked)
-          }}
           type="checkbox"
         />
         <label className="fr-label" htmlFor={`${idPrefixe}-itinerant`}>
@@ -281,6 +277,5 @@ type Props = Readonly<{
   // Appelé à chaque choix d'adresse, même identique à la précédente.
   onAdresseChoisie?(adresse: string): void
   onChangement(etat: EtatLieuInclusionFormulaire): void
-  onItinerantChange?(itinerant: boolean): void
   valeursInitiales: ValeursInitialesLieuInclusion
 }>
