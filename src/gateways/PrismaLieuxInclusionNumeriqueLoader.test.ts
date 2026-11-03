@@ -115,6 +115,22 @@ describe('lieux d’inclusion numérique — compteur de la cartographie nationa
     expect(avant - sansLesLieuxDuTest).toBe(2)
   })
 
+  it('ne compte comme labellisé qu’un lieu portant au moins un dispositif, une liste vide valant « aucun »', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.update({
+      data: { dispositif_programmes_nationaux: ['FranceServices'] },
+      where: { id: 992201 },
+    })
+    await prisma.main_lieu_inclusion.update({ data: { dispositif_programmes_nationaux: [] }, where: { id: 992202 } })
+
+    // WHEN
+    const stats = await new PrismaLieuxInclusionNumeriqueLoader().getDepartemental(DEPARTEMENT)
+
+    // THEN
+    expect(stats.nombreStructuresAvecProgrammeNational).toStrictEqual([{ count: 1 }])
+    expect(stats.nombreStructuresAvecFranceServices).toStrictEqual([{ count: 1 }])
+  })
+
   describe('label « Conseillers numériques », dérivé par l’entrepôt (DS-ADR-004)', () => {
     const PERSONNE_ID = 992290
     const SA_ID = 992291
