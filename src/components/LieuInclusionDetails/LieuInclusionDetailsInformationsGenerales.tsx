@@ -37,19 +37,14 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     setItinerant(data.itinerant ?? false)
   }
 
-  async function proposerLieuxSimilaires(nouvelEtat: EtatLieuInclusionFormulaire): Promise<void> {
+  async function proposerLieuxSimilaires(adresse: string): Promise<void> {
     // Les lieux de l'ancienne adresse ne valent plus pour la nouvelle : on les retire aussitôt.
     setLieuxSimilaires([])
-    if (nouvelEtat.adresse === '') {
+    if (adresse === '') {
       return
     }
     try {
-      setLieuxSimilaires(
-        await rechercherLieuxInclusionSimilairesAction({
-          adresse: nouvelEtat.adresse,
-          idLieuEnModification: structureId,
-        })
-      )
+      setLieuxSimilaires(await rechercherLieuxInclusionSimilairesAction({ adresse, idLieuEnModification: structureId }))
     } catch {
       // Contrôle non bloquant : en cas d'échec, aucun résultat n'est affiché et la modification se poursuit.
       Notification('error', {
@@ -60,12 +55,10 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     }
   }
 
-  function handleChangement(nouvelEtat: EtatLieuInclusionFormulaire): void {
-    const adresseChange = nouvelEtat.adresse !== etatFormulaire.adresse
-    setEtatFormulaire(nouvelEtat)
+  function handleAdresseChoisie(adresse: string): void {
     // Un lieu itinérant n'a normalement pas d'adresse propre : pas de doublon à chercher par adresse.
-    if (adresseChange && !itinerant) {
-      void proposerLieuxSimilaires(nouvelEtat)
+    if (!itinerant) {
+      void proposerLieuxSimilaires(adresse)
     }
   }
 
@@ -139,7 +132,8 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
               lieux: lieuxSimilaires,
               nouvelOnglet: true,
             }}
-            onChangement={handleChangement}
+            onAdresseChoisie={handleAdresseChoisie}
+            onChangement={setEtatFormulaire}
             onItinerantChange={handleItinerantChange}
             valeursInitiales={data}
           />

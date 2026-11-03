@@ -19,6 +19,7 @@ import { typologieLabels } from '@/presenters/shared/typologie'
 export default function LieuInclusionFormulaire({
   idPrefixe,
   lieuxDejaDeclares,
+  onAdresseChoisie,
   onChangement,
   onItinerantChange,
   valeursInitiales,
@@ -52,6 +53,7 @@ export default function LieuInclusionFormulaire({
     const resultat = await rechercherUneEntrepriseAction({ siret: etat.siretSaisi })
     if ('identifiant' in resultat) {
       mettreAJour({ adresse: resultat.adresse, nom: resultat.denomination })
+      onAdresseChoisie?.(resultat.adresse)
     } else {
       Notification('error', { description: resultat.join(', '), title: 'Erreur : ' })
     }
@@ -134,6 +136,7 @@ export default function LieuInclusionFormulaire({
           id={`${idPrefixe}-adresse`}
           onAdresseChoisie={(adresse) => {
             mettreAJour({ adresse })
+            onAdresseChoisie?.(adresse)
           }}
           rechercherAdressesAction={rechercherAdressesAction}
         />
@@ -270,6 +273,8 @@ type Props = Readonly<{
     lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
     nouvelOnglet?: boolean
   }>
+  // Appelé à chaque choix d'adresse, même identique à la précédente (contrôle des doublons en modification).
+  onAdresseChoisie?(adresse: string): void
   onChangement(etat: EtatLieuInclusionFormulaire): void
   // En modification, un lieu itinérant n'a pas de doublon à chercher par adresse.
   onItinerantChange?(itinerant: boolean): void
