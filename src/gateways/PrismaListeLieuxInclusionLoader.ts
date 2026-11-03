@@ -177,11 +177,13 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       WITH ${scopeCte}
       SELECT
         COUNT(*) AS total,
-        SUM(CASE WHEN 'Conseillers numériques' = ANY(l.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_conseillers
+        SUM(CASE WHEN 'Conseillers numériques' = ANY(ld.dispositifs_internes) THEN 1 ELSE 0 END) AS nb_conseillers
       FROM main.lieu_inclusion l
       JOIN lieux_dans_scope lds ON lds.id = l.id
+      -- Dispositifs effectifs (déclarés + dérivés), vue de référence de l'entrepôt (DS-ADR-004)
+      JOIN main.lieu_dispositifs ld ON ld.lieu_id = l.id
       LEFT JOIN main.adresse a ON a.id = l.adresse_id
-      WHERE l.dispositif_programmes_nationaux IS NOT NULL
+      WHERE ld.dispositifs_internes IS NOT NULL
         ${whereConditions}
     `
 

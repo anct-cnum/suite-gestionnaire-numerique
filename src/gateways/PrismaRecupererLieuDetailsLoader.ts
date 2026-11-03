@@ -196,10 +196,10 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     }
 
     // Tag Conseiller numérique
-    // On affiche le tag si la structure a le dispositif OU si au moins une personne est conseiller numérique
+    // Lu dans les dispositifs effectifs du lieu (main.lieu_dispositifs, DS-ADR-004) : la règle
+    // « un conseiller en poste exerce sur le lieu » vit dans l'entrepôt, pas recalculée ici.
     const hasConseillerNumerique =
-      structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') === true ||
-      personnes.some((personne) => personne.est_actuellement_conseiller_numerique)
+      structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') === true
     if (hasConseillerNumerique) {
       tags.push('Conseiller numérique')
     }
@@ -389,7 +389,9 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         l.id::text,
         l.nom,
         sa_first.structure_administrative_id,
-        l.dispositif_programmes_nationaux::text[] AS dispositif_programmes_nationaux,
+        -- Dispositifs effectifs (déclarés + dérivés) : vue de référence de l'entrepôt
+        -- (DS-ADR-004). « Conseillers numériques » n'est jamais stocké au registre.
+        ld.dispositifs_internes::text[] AS dispositif_programmes_nationaux,
         l.horaires,
         l.itinerance::text[] AS itinerance,
         l.modalites_acces::text[] AS modalites_acces,
@@ -432,6 +434,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         END AS est_qpv
       FROM main.lieu_inclusion l
       LEFT JOIN main.adresse a ON l.adresse_id = a.id
+      LEFT JOIN main.lieu_dispositifs ld ON ld.lieu_id = l.id
       LEFT JOIN LATERAL (
         SELECT pae.structure_administrative_id
         FROM main.personne_affectations_lieu pal
