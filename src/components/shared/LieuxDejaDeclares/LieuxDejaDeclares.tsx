@@ -57,6 +57,6 @@ export default function LieuxDejaDeclares({ consigne, lieux, nouvelOnglet = fals
 type Props = Readonly<{
   consigne: string
   lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
-  // En modification, la fiche s'ouvre dans un nouvel onglet pour ne pas perdre la saisie en cours.
+  // Ouvre la fiche sans quitter le formulaire en cours.
   nouvelOnglet?: boolean
 }>

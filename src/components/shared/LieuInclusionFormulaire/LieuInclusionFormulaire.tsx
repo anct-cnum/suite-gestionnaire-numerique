@@ -143,7 +143,7 @@ export default function LieuInclusionFormulaire({
       </div>
 
       {lieuxDejaDeclares === undefined ? null : (
-        // Zone présente avant l'encadré, pour que son apparition soit annoncée par les lecteurs d'écran.
+        // Toujours présente : un lecteur d'écran n'annonce que les changements d'une zone déjà affichée.
         <div role="status">
           {lieuxDejaDeclares.lieux.length > 0 ? (
             <div className="fr-mb-2w">
@@ -278,10 +278,9 @@ type Props = Readonly<{
     lieux: ReadonlyArray<LieuInclusionSimilaireViewModel>
     nouvelOnglet?: boolean
   }>
-  // Appelé à chaque choix d'adresse, même identique à la précédente (contrôle des doublons en modification).
+  // Appelé à chaque choix d'adresse, même identique à la précédente.
   onAdresseChoisie?(adresse: string): void
   onChangement(etat: EtatLieuInclusionFormulaire): void
-  // En modification, un lieu itinérant n'a pas de doublon à chercher par adresse.
   onItinerantChange?(itinerant: boolean): void
   valeursInitiales: ValeursInitialesLieuInclusion
 }>

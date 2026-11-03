@@ -7,9 +7,7 @@ export function lieuxInclusionSimilairesPresenter(
 ): ReadonlyArray<LieuInclusionSimilaireViewModel> {
   return lieux.map((lieu) => ({
     adresse: lieu.adresse,
-    // À la création, « C'est mon lieu » mène à la fiche du lieu existant, qui accueille
-    // l'utilisateur avec un bandeau lui disant qu'il n'a pas besoin de le créer (maquette V6-3).
-    // En modification, ce bandeau n'a pas de sens : la fiche s'ouvre normalement.
+    // Le bandeau « déjà enregistré » (maquette V6-3) n'a de sens qu'à la création.
     href: enModification ? `/lieu/${lieu.id}` : `/lieu/${lieu.id}?dejaEnregistre=1`,
     libellePersonnesRattachees: libellePersonnesRattachees(lieu.nombrePersonnesRattachees),
     libelleSiret: lieu.siret === null ? 'Sans SIRET' : `SIRET ${formaterSiret(lieu.siret)}`,
