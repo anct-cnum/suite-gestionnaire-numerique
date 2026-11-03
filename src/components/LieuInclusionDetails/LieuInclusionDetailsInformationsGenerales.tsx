@@ -19,6 +19,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   const [isDisabled, setIsDisabled] = useState(false)
   const [etatFormulaire, setEtatFormulaire] = useState(etatInitial(data))
   const [lieuxSimilaires, setLieuxSimilaires] = useState<ReadonlyArray<LieuInclusionSimilaireViewModel>>([])
+  const [itinerant, setItinerant] = useState(data.itinerant ?? false)
 
   const { modifierLieuInclusionInformationsGeneralesAction, rechercherLieuxInclusionSimilairesAction } =
     useContext(clientContext)
@@ -33,6 +34,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     setIsEditing(false)
     setEtatFormulaire(etatInitial(data))
     setLieuxSimilaires([])
+    setItinerant(data.itinerant ?? false)
   }
 
   async function proposerLieuxSimilaires(nouvelEtat: EtatLieuInclusionFormulaire): Promise<void> {
@@ -61,8 +63,16 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
   function handleChangement(nouvelEtat: EtatLieuInclusionFormulaire): void {
     const adresseChange = nouvelEtat.adresse !== etatFormulaire.adresse
     setEtatFormulaire(nouvelEtat)
-    if (adresseChange) {
+    // Un lieu itinérant n'a normalement pas d'adresse propre : pas de doublon à chercher par adresse.
+    if (adresseChange && !itinerant) {
       void proposerLieuxSimilaires(nouvelEtat)
+    }
+  }
+
+  function handleItinerantChange(nouvelItinerant: boolean): void {
+    setItinerant(nouvelItinerant)
+    if (nouvelItinerant) {
+      setLieuxSimilaires([])
     }
   }
 
@@ -130,6 +140,7 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
               nouvelOnglet: true,
             }}
             onChangement={handleChangement}
+            onItinerantChange={handleItinerantChange}
             valeursInitiales={data}
           />
 

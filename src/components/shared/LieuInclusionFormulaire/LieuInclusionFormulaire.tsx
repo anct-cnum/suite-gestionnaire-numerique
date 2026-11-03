@@ -20,6 +20,7 @@ export default function LieuInclusionFormulaire({
   idPrefixe,
   lieuxDejaDeclares,
   onChangement,
+  onItinerantChange,
   valeursInitiales,
 }: Props): ReactElement {
   const { rechercherAdressesAction, rechercherUneEntrepriseAction } = useContext(clientContext)
@@ -153,6 +154,9 @@ export default function LieuInclusionFormulaire({
           defaultChecked={valeursInitiales.itinerant ?? false}
           id={`${idPrefixe}-itinerant`}
           name="itinerant"
+          onChange={(event) => {
+            onItinerantChange?.(event.target.checked)
+          }}
           type="checkbox"
         />
         <label className="fr-label" htmlFor={`${idPrefixe}-itinerant`}>
@@ -267,5 +271,7 @@ type Props = Readonly<{
     nouvelOnglet?: boolean
   }>
   onChangement(etat: EtatLieuInclusionFormulaire): void
+  // En modification, un lieu itinérant n'a pas de doublon à chercher par adresse.
+  onItinerantChange?(itinerant: boolean): void
   valeursInitiales: ValeursInitialesLieuInclusion
 }>
