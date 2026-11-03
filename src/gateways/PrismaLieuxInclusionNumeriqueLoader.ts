@@ -100,34 +100,28 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${deptFilter};
     `)
 
-    const nombreStructuresAvecProgrammeNational = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
-      SELECT COUNT(*)::int AS count
+    // Dispositifs effectifs d'un lieu (déclarés + dérivés) : vue de référence de
+    // l'entrepôt main.lieu_dispositifs (DS-ADR-004). « Conseillers numériques »
+    // n'est jamais stocké au registre : lire la colonne de main.lieu_inclusion
+    // ferait compter zéro. Une seule requête, la vue n'est calculée qu'une fois.
+    const [dispositifs] = await prisma.$queryRaw<
+      Array<{ avec_conseillers_numeriques: number; avec_france_services: number; avec_programme_national: number }>
+    >(Prisma.sql`
+      SELECT
+        COUNT(*) FILTER (WHERE ld.dispositifs_internes IS NOT NULL)::int AS avec_programme_national,
+        COUNT(*) FILTER (WHERE 'Conseillers numériques' = ANY(ld.dispositifs_internes))::int AS avec_conseillers_numeriques,
+        COUNT(*) FILTER (WHERE 'France Services' = ANY(ld.dispositifs_internes))::int AS avec_france_services
       FROM main.lieu_inclusion l
+        INNER JOIN main.lieu_dispositifs ld ON ld.lieu_id = l.id
         ${JOIN_ADRESSE}
-      WHERE l.dispositif_programmes_nationaux IS NOT NULL
-        ${deptFilter};
-    `)
-
-    const nombreStructuresAvecConseillersNumeriques = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
-      SELECT COUNT(*)::int AS count
-      FROM main.lieu_inclusion l
-        ${JOIN_ADRESSE}
-      WHERE 'Conseillers numériques' = ANY(l.dispositif_programmes_nationaux)
-        ${deptFilter};
-    `)
-
-    const nombreStructuresAvecFranceServices = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
-      SELECT COUNT(*)::int AS count
-      FROM main.lieu_inclusion l
-        ${JOIN_ADRESSE}
-      WHERE 'France Services' = ANY(l.dispositif_programmes_nationaux)
+      WHERE TRUE
         ${deptFilter};
     `)
 
     return {
-      nombreStructuresAvecConseillersNumeriques,
-      nombreStructuresAvecFranceServices,
-      nombreStructuresAvecProgrammeNational,
+      nombreStructuresAvecConseillersNumeriques: [{ count: dispositifs.avec_conseillers_numeriques }],
+      nombreStructuresAvecFranceServices: [{ count: dispositifs.avec_france_services }],
+      nombreStructuresAvecProgrammeNational: [{ count: dispositifs.avec_programme_national }],
       nombreStructuresFRR,
       nombreStructuresQPV,
       nombreStructuresZonesPrioritaires,

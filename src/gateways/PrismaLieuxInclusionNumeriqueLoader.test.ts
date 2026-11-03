@@ -115,6 +115,53 @@ describe('lieux d’inclusion numérique — compteur de la cartographie nationa
     expect(avant - sansLesLieuxDuTest).toBe(2)
   })
 
+  describe('label « Conseillers numériques », dérivé par l’entrepôt (DS-ADR-004)', () => {
+    const PERSONNE_ID = 992290
+    const SA_ID = 992291
+
+    beforeEach(async () => {
+      await prisma.main_structure_administrative.create({ data: { id: SA_ID, siret: '99229100000017' } })
+      await prisma.personne.create({ data: { id: PERSONNE_ID, nom: 'Conseiller', prenom: 'Test' } })
+      await prisma.main_personne_affectations_lieu.create({
+        data: { est_active: true, lieu_id: 992201, personne_id: PERSONNE_ID, source: 'coop' },
+      })
+    })
+
+    afterEach(async () => {
+      await prisma.main_personne_affectations_lieu.deleteMany({ where: { personne_id: PERSONNE_ID } })
+      await prisma.main_personne_affectations_emploi.deleteMany({ where: { personne_id: PERSONNE_ID } })
+      await prisma.personne.deleteMany({ where: { id: PERSONNE_ID } })
+      await prisma.main_structure_administrative.deleteMany({ where: { id: SA_ID } })
+    })
+
+    it('compte un lieu où exerce un conseiller en poste, sans label déclaré au registre', async () => {
+      // GIVEN
+      await prisma.main_personne_affectations_emploi.create({
+        data: { est_active: true, personne_id: PERSONNE_ID, source: 'idposte', structure_administrative_id: SA_ID },
+      })
+
+      // WHEN
+      const stats = await new PrismaLieuxInclusionNumeriqueLoader().getDepartemental(DEPARTEMENT)
+
+      // THEN
+      expect(stats.nombreStructuresAvecConseillersNumeriques).toStrictEqual([{ count: 1 }])
+      expect(stats.nombreStructuresAvecProgrammeNational).toStrictEqual([{ count: 1 }])
+    })
+
+    it('ne compte pas un lieu où exerce un ancien conseiller (affectation idposte inactive)', async () => {
+      // GIVEN
+      await prisma.main_personne_affectations_emploi.create({
+        data: { est_active: false, personne_id: PERSONNE_ID, source: 'idposte', structure_administrative_id: SA_ID },
+      })
+
+      // WHEN
+      const stats = await new PrismaLieuxInclusionNumeriqueLoader().getDepartemental(DEPARTEMENT)
+
+      // THEN
+      expect(stats.nombreStructuresAvecConseillersNumeriques).toStrictEqual([{ count: 0 }])
+    })
+  })
+
   it('ne compte pas les indicateurs de zonage sur les lieux écartés du critère', async () => {
     // WHEN
     const stats = await new PrismaLieuxInclusionNumeriqueLoader().getDepartemental(DEPARTEMENT)

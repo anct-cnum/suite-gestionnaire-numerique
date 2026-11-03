@@ -42,6 +42,47 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect(details.lieuAccueilPublic.conseillerNumeriqueLabellePhase2).toBe(true)
   })
 
+  describe('label « Conseillers numériques », dérivé par l’entrepôt (DS-ADR-004)', () => {
+    const PERSONNE_ID = 991890
+    const SA_ID = 991891
+
+    afterEach(async () => {
+      await prisma.main_personne_affectations_lieu.deleteMany({ where: { personne_id: PERSONNE_ID } })
+      await prisma.main_personne_affectations_emploi.deleteMany({ where: { personne_id: PERSONNE_ID } })
+      await prisma.personne.deleteMany({ where: { id: PERSONNE_ID } })
+      await prisma.main_structure_administrative.deleteMany({ where: { id: SA_ID } })
+    })
+
+    it.each([
+      { affectationIdposteActive: true, intention: 'labellise le lieu où exerce un conseiller en poste' },
+      { affectationIdposteActive: false, intention: 'ne labellise pas le lieu où exerce un ancien conseiller' },
+    ])('$intention, sans label déclaré au registre', async ({ affectationIdposteActive }) => {
+      // GIVEN
+      await prisma.main_lieu_inclusion.create({ data: { id: LIEU_ID, nom: 'Lieu test label dérivé' } })
+      await prisma.main_structure_administrative.create({ data: { id: SA_ID, siret: '99189100000015' } })
+      await prisma.personne.create({ data: { id: PERSONNE_ID, nom: 'Conseiller', prenom: 'Test' } })
+      await prisma.main_personne_affectations_lieu.create({
+        data: { est_active: true, lieu_id: LIEU_ID, personne_id: PERSONNE_ID, source: 'coop' },
+      })
+      await prisma.main_personne_affectations_emploi.create({
+        data: {
+          est_active: affectationIdposteActive,
+          personne_id: PERSONNE_ID,
+          source: 'idposte',
+          structure_administrative_id: SA_ID,
+        },
+      })
+
+      // WHEN
+      const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+      // THEN
+      const details = readModel as LieuDetailsReadModel
+      expect(details.lieuAccueilPublic.conseillerNumeriqueLabellePhase2).toBe(affectationIdposteActive)
+      expect(details.header.tags.includes('Conseiller numérique')).toBe(affectationIdposteActive)
+    })
+  })
+
   it.each([
     {
       estLieuCoop: true,
