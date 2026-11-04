@@ -97,18 +97,30 @@ describe('lieu d’inclusion : qui peut le modifier', () => {
   )
 })
 
-describe('lieu d’inclusion (règles métier)', () => {
-  it.each(Roles.map((role) => ({ attendu: role === 'Administrateur dispositif', role })))(
-    'un $role peut créer un lieu : $attendu (#1495)',
-    ({ attendu, role }) => {
-      // GIVEN
-      const utilisateur = utilisateurFactory({ role })
+describe('lieu d’inclusion : qui peut en créer un', () => {
+  // La création ne contrôle aucun périmètre (#2226) : le périmètre gouverne la visibilité et la
+  // gestion, pas le droit de créer. Trou assumé, et identique pour tous les rôles — un lieu créé
+  // hors de son territoire, ou sans personne employée pour un gestionnaire de structure, sort de
+  // la liste de son créateur aussitôt enregistré. Décision produit, pas un défaut.
+  it('la création est ouverte, sans condition de rôle ni de territoire (#2226)', () => {
+    // WHEN
+    const peutCreer = LieuInclusion.peutEtreCreePar()
 
-      // WHEN
-      const peutCreer = LieuInclusion.peutEtreCreePar(utilisateur)
+    // THEN
+    expect(peutCreer).toBe(true)
+  })
 
-      // THEN
-      expect(peutCreer).toBe(attendu)
-    }
-  )
+  it.each(Roles)('un lieu créé hors de son périmètre échappe à son créateur %s (#2226)', (role) => {
+    // GIVEN
+    const gestionnaireDu93 = utilisateurFactory({ codeOrganisation: '93', role })
+    const lieuDu75 = { codeDepartement: '75', estDeLaStructureDuDemandeur: false }
+
+    // WHEN
+    const peutCreer = LieuInclusion.peutEtreCreePar()
+    const peutModifier = LieuInclusion.peutEtreModifiePar(gestionnaireDu93, lieuDu75)
+
+    // THEN
+    expect(peutCreer).toBe(true)
+    expect(peutModifier).toBe(role === 'Administrateur dispositif')
+  })
 })
