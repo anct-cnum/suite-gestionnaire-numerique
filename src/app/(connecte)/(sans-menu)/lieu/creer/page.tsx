@@ -14,7 +14,9 @@ export const metadata: Metadata = {
 }
 
 // Le segment statique `creer` prime sur `lieu/[id]` : la fiche n'est jamais appelée avec
-// l'identifiant « creer ». Création réservée aux administrateurs (#1495).
+// l'identifiant « creer ». La page suit la même porte que le bouton du listing et que
+// `verifierDroitsCreationLieu` : quatre gardes protégeaient la création, la PR #2227 en avait
+// traité trois et laissait un bouton qui renvoyait au tableau de bord (#2226).
 async function CreerLieuPage(): Promise<ReactElement> {
   const session = await getSession()
   if (!session) {
@@ -23,7 +25,7 @@ async function CreerLieuPage(): Promise<ReactElement> {
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
-  if (!contexte.aCesRoles('administrateur_dispositif')) {
+  if (!contexte.peutGererLesLieux()) {
     redirect('/tableau-de-bord')
   }
 

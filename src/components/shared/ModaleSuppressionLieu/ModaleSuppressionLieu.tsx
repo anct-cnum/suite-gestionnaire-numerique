@@ -31,8 +31,10 @@ export default function ModaleSuppressionLieu({
       <p className="fr-text--bold fr-mb-1w">Cette suppression entraîne&nbsp;:</p>
       <ul>
         <li>
-          Le retrait du lieu de la cartographie nationale, sous 24 heures&nbsp;: les usagers ne pourront plus le
-          trouver.
+          {/* Depuis #2027 (27/10/2026) la copie du site est invalidée dès qu'un lieu change,
+              avec un tick de 10 min : le délai n'est plus de 24 heures (#2226). */}
+          Le retrait du lieu de la cartographie nationale, sous une dizaine de minutes&nbsp;: les usagers ne pourront
+          plus le trouver.
         </li>
         {estLieuCoop ? (
           <>
