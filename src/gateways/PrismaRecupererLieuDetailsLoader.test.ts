@@ -157,19 +157,28 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     expect((readModel as LieuDetailsReadModel).visiblePourCartographie).toBe(true)
   })
 
+  // Le code postal n'est pas le code du département en Corse (200xx → 2A) ni en outre-mer
+  // (97200 → 972) : le périmètre géographique se lit dans main.adresse.departement, colonne
+  // générée depuis le code INSEE, comme le fait déjà le filtre de la liste (#2226).
   it.each([
-    { codeInsee: '05061', codeRegion: '93', intention: 'd’un département métropolitain' },
-    { codeInsee: '2A004', codeRegion: '94', intention: 'de Corse' },
-    { codeInsee: '97209', codeRegion: '02', intention: 'd’outre-mer' },
+    {
+      codeDepartement: '05',
+      codeInsee: '05061',
+      codePostal: '05000',
+      codeRegion: '93',
+      intention: 'd’un département métropolitain',
+    },
+    { codeDepartement: '2A', codeInsee: '2A004', codePostal: '20000', codeRegion: '94', intention: 'de Corse' },
+    { codeDepartement: '972', codeInsee: '97209', codePostal: '97200', codeRegion: '02', intention: 'd’outre-mer' },
   ])(
-    'déduit la région d’un lieu $intention du département de son adresse (#2092)',
-    async ({ codeInsee, codeRegion }) => {
+    'déduit le département et la région d’un lieu $intention de l’adresse, pas du code postal (#2092, #2226)',
+    async ({ codeDepartement, codeInsee, codePostal, codeRegion }) => {
       // GIVEN
       const adresse = await prisma.adresse.create({
         data: {
           clef_interop: CLEF_INTEROP,
           code_insee: codeInsee,
-          code_postal: '00000',
+          code_postal: codePostal,
           nom_commune: 'Commune',
           nom_voie: 'Rue',
         },
@@ -182,6 +191,7 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
       const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
 
       // THEN
+      expect((readModel as LieuDetailsReadModel).codeDepartement).toBe(codeDepartement)
       expect((readModel as LieuDetailsReadModel).codeRegion).toBe(codeRegion)
     }
   )

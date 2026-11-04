@@ -25,8 +25,8 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
   it('présente chaque lieu avec sa typologie, son SIRET formaté, ses personnes rattachées et un lien vers sa fiche, pour un administrateur', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ role: 'Administrateur dispositif' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
     )
     vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle').mockResolvedValueOnce([
       {
@@ -162,11 +162,48 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
     expect(RechercherLieuxInclusionSimilaires.prototype.handle).not.toHaveBeenCalled()
   })
 
-  it('ne renvoie rien à un utilisateur qui ne peut pas créer de lieu', async () => {
+  // La détection suit la création : ouverte à tous les rôles, elle reste fermée hors du
+  // périmètre bêta tant que #1716 n'est pas tranché (#2226).
+  it('en création, renvoie les lieux déjà déclarés à un gestionnaire département bêta-testeur (#2226)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
-    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
-      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({
+        departementCode: '75',
+        isBetaTesteur: true,
+        role: {
+          ...utilisateurReadModelFactory().role,
+          nom: 'Gestionnaire département',
+          type: 'gestionnaire_departement',
+        },
+      })
+    )
+    vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle').mockResolvedValueOnce([])
+
+    // WHEN
+    const lieux = await rechercherLieuxInclusionSimilairesAction({ adresse: '1 rue de la Paix 75001 Paris' })
+
+    // THEN
+    expect(lieux).toStrictEqual([])
+    expect(RechercherLieuxInclusionSimilaires.prototype.handle).toHaveBeenCalledWith({
+      adresse: '1 rue de la Paix 75001 Paris',
+      idLieuEnModification: undefined,
+    })
+  })
+
+  it('en création, ne renvoie rien hors du périmètre bêta (#2226)', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({
+        departementCode: '75',
+        isBetaTesteur: false,
+        role: {
+          ...utilisateurReadModelFactory().role,
+          nom: 'Gestionnaire département',
+          type: 'gestionnaire_departement',
+        },
+      })
     )
     vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle')
 

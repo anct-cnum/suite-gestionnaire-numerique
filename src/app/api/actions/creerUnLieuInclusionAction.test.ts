@@ -5,8 +5,10 @@ import { creerUnLieuInclusionAction } from './creerUnLieuInclusionAction'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { ApiSireneLoader } from '@/gateways/apiEntreprise/ApiSireneLoader'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { CreerUnLieuInclusion } from '@/use-cases/commands/CreerUnLieuInclusion'
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('créer un lieu d’inclusion action', () => {
   it('renvoie une erreur de validation quand le SIRET est mal formé, sans consulter la session', async () => {
@@ -77,16 +79,33 @@ describe('créer un lieu d’inclusion action', () => {
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
   })
 
-  it('refuse un gestionnaire : la création est réservée aux administrateurs (#1495)', async () => {
+  it('accepte un gestionnaire département bêta-testeur : la création n’est plus réservée aux administrateurs (#2226)', async () => {
     // GIVEN
     connecte('Gestionnaire département')
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
+      lieuId: 4242,
+      visibilitePourCartographieForcee: false,
+    })
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
+
+    // WHEN
+    const resultat = await creerUnLieuInclusionAction(creation)
+
+    // THEN
+    // L'identifiant renvoyé vient du use case mocké : le recevoir prouve qu'il a été appelé.
+    expect(resultat).toStrictEqual({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
+  })
+
+  it('refuse un gestionnaire hors du périmètre bêta, la porte restant fermée pendant la recette (#2226)', async () => {
+    // GIVEN
+    connecte('Gestionnaire département', false)
     vi.spyOn(CreerUnLieuInclusion.prototype, 'handle')
 
     // WHEN
     const resultat = await creerUnLieuInclusionAction(creation)
 
     // THEN
-    expect(resultat).toStrictEqual({ messages: ["Vous n'avez pas les droits pour créer un lieu"], statut: 'erreur' })
+    expect(resultat).toStrictEqual({ messages: ['Action réservée aux bêta-testeurs'], statut: 'erreur' })
     expect(CreerUnLieuInclusion.prototype.handle).not.toHaveBeenCalled()
   })
 
@@ -228,8 +247,24 @@ const entrepriseTrouvee = {
   numeroVoie: '1',
 }
 
-function connecte(role: 'Administrateur dispositif' | 'Gestionnaire département'): void {
+// La porte bêta est un OU : le rôle administrateur l'ouvre à lui seul. Un test de refus doit
+// donc porter un rôle de gestion, sans quoi il passerait par le rôle et non par le flag (#2226).
+function connecte(role: 'Administrateur dispositif' | 'Gestionnaire département', isBetaTesteur = true): void {
   vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+  vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+    utilisateurReadModelFactory({
+      departementCode: '75',
+      isBetaTesteur,
+      role:
+        role === 'Administrateur dispositif'
+          ? utilisateurReadModelFactory().role
+          : {
+              ...utilisateurReadModelFactory().role,
+              nom: 'Gestionnaire département',
+              type: 'gestionnaire_departement',
+            },
+    })
+  )
   vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
     utilisateurFactory({ codeOrganisation: '75', role })
   )

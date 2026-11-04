@@ -126,7 +126,11 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     const lieuAccueilPublic = this.construireLieuAccueilPublic(structure)
     const personnesTravaillant = personnes.map((personne) => this.mapperPersonne(personne))
     const servicesInclusionNumerique = this.construireServices(structure)
-    const codeDepartement = this.extraireCodeDepartement(structure.code_postal)
+    // Périmètre géographique : main.adresse.departement, colonne générée depuis le code INSEE
+    // (3 caractères en 97x/98x, 2 sinon). Le code postal ne porte pas le code du département en
+    // Corse (200xx → 2A) ni en outre-mer (97200 → 972), et la liste filtre déjà sur cette
+    // colonne — les deux règles divergeaient sur 1 090 lieux (#2226).
+    const codeDepartement = structure.departement ?? undefined
 
     return {
       codeDepartement,
@@ -225,14 +229,6 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     }
 
     return tags
-  }
-
-  private extraireCodeDepartement(codePostal: null | string): string | undefined {
-    if (codePostal === null || codePostal.length < 2) {
-      return undefined
-    }
-    // Extraire les 2 premiers caractères du code postal
-    return codePostal.slice(0, 2)
   }
 
   private extraireContactInfo(contact: null | Record<string, unknown>): {

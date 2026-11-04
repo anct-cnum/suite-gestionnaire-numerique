@@ -6,13 +6,19 @@ import { Utilisateur } from './Utilisateur'
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class LieuInclusion {
   /**
-   * Création réservée aux administrateurs (#1495). Depuis le retrait du lien
-   * lieu ↔ structure (#1711), rien ne rattache un lieu au champ de visibilité
-   * d'un gestionnaire : un lieu créé n'a personne dedans et sortirait de sa
-   * liste. À élargir quand le périmètre sera tranché.
+   * Création ouverte à tous les rôles de gestion, sans contrôle de périmètre (#2226).
+   *
+   * Le périmètre gouverne la visibilité et la gestion d'un lieu, pas le droit d'en créer un.
+   * Conséquence assumée, et identique pour tous les rôles : depuis le retrait du lien
+   * lieu ↔ structure (#1711), un lieu créé n'a personne dedans — un gestionnaire de structure
+   * ne le verra donc pas, et un gestionnaire de département ou de région qui le crée hors de
+   * son territoire ne le verra pas non plus. C'est une décision produit, pas un défaut.
+   *
+   * La fonction garde sa place comme point d'accroche si un périmètre est tranché plus tard ;
+   * la porte qui referme la fonctionnalité pendant la recette est `peutGererLesLieux()`.
    */
-  static peutEtreCreePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isAdmin
+  static peutEtreCreePar(): boolean {
+    return true
   }
 
   /**
