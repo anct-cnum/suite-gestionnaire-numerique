@@ -33,6 +33,7 @@ export function listeLieuxInclusionPresenter(
     totalConseillerNumerique: readModel.totalConseillerNumerique,
     totalLabellise: readModel.totalLabellise,
     totalSansRecherche: readModel.totalSansRecherche,
+    totalVisibleCartographie: readModel.totalVisibleCartographie,
   }
 }
 
@@ -48,6 +49,7 @@ export interface ListeLieuxInclusionViewModel {
   totalConseillerNumerique: number
   totalLabellise: number
   totalSansRecherche: number
+  totalVisibleCartographie: number
 }
 
 export interface LieuInclusionViewModel {

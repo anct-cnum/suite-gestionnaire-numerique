@@ -151,6 +151,33 @@ describe('ajout d’un lieu depuis la liste (#1495)', () => {
   })
 })
 
+describe('encart de synthèse (#2235)', () => {
+  it('la carte du total annonce combien de ces lieux sont visibles sur la cartographie', () => {
+    // GIVEN
+    const listeLieuxInclusionViewModel = {
+      ...viewModel(),
+      totalSansRecherche: 24_975,
+      totalVisibleCartographie: 19_010,
+    }
+
+    // WHEN
+    render(
+      <ListeLieuxInclusion
+        listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
+        peutCreer={false}
+        peutModifierVisibilite={false}
+        peutSupprimer={false}
+        searchParams={new URLSearchParams()}
+        utilisateurRole="Administrateur dispositif"
+      />
+    )
+
+    // THEN
+    expect(screen.getByText('24975')).toBeInTheDocument()
+    expect(screen.getByText('Dont 19010 visibles sur la cartographie')).toBeInTheDocument()
+  })
+})
+
 function viewModel(lieu: Partial<ListeLieuxInclusionViewModel['lieux'][number]> = {}): ListeLieuxInclusionViewModel {
   return {
     displayPagination: false,
@@ -179,5 +206,6 @@ function viewModel(lieu: Partial<ListeLieuxInclusionViewModel['lieux'][number]> 
     totalConseillerNumerique: 0,
     totalLabellise: 0,
     totalSansRecherche: 1,
+    totalVisibleCartographie: 1,
   }
 }

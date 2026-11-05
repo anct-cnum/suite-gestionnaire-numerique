@@ -292,6 +292,7 @@ export default function ListeLieuxInclusion({
             total: viewModel.totalSansRecherche,
             totalConseillerNumerique: viewModel.totalConseillerNumerique,
             totalLabellise: viewModel.totalLabellise,
+            totalVisibleCartographie: viewModel.totalVisibleCartographie,
           }}
         />
       )}

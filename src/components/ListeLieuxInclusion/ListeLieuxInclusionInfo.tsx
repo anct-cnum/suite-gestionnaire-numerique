@@ -11,7 +11,7 @@ export default function ListeLieuxInclusionInfo(props: Props): ReactElement {
           {renderLieuxInclusionInfoCard({
             description: "Lieux d'inclusion numérique",
             indicateur: String(infos.total),
-            legends: '',
+            legends: `Dont ${infos.totalVisibleCartographie} visibles sur la cartographie`,
           })}
           {renderLieuxInclusionInfoCard({
             description: 'Lieux labellisés ou habilités',
@@ -102,6 +102,7 @@ type LieuxInclusionInfoData = Readonly<{
   total: number
   totalConseillerNumerique: number
   totalLabellise: number
+  totalVisibleCartographie: number
 }>
 
 type Props = Readonly<{

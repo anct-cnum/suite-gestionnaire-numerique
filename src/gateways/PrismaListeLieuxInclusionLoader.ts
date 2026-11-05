@@ -27,10 +27,16 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     const limitOffset = Prisma.sql`OFFSET ${pagination.page * pagination.limite} FETCH NEXT ${pagination.limite} ROWS ONLY`
     const filtreEmployeuseActivites = this.buildFiltreEmployeuseActivites(filtres)
 
-    const [totalActifs, totalArchives, totalSansRecherche, lieux, stats] = await Promise.all([
+    const [totalActifs, totalArchives, totalSansRecherche, totalVisibleCartographie, lieux, stats] = await Promise.all([
       this.queryTotal(scopeCteActifs, whereConditions),
       this.queryTotal(scopeCteArchives, whereConditions),
       this.queryTotal(scopeCteActifs, whereConditionsSansRecherche),
+      // « Dont X visibles sur la cartographie » qualifie totalSansRecherche : même base exactement
+      // (lieux actifs du périmètre, filtres du tiroir, recherche par nom ignorée), sinon le « dont » est faux.
+      this.queryTotal(
+        scopeCteActifs,
+        Prisma.sql`${whereConditionsSansRecherche} AND l.visible_pour_cartographie_nationale IS TRUE`
+      ),
       this.queryLieux(scopeCte, whereConditions, limitOffset, filtreEmployeuseActivites),
       this.queryStats(scopeCte, whereConditionsSansRecherche),
     ])
@@ -45,6 +51,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       totalConseillerNumerique: stats.totalConseillerNumerique,
       totalLabellise: stats.totalLabellise,
       totalSansRecherche,
+      totalVisibleCartographie,
     }
   }
 
