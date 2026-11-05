@@ -24,7 +24,7 @@ describe('revue des appariements de lieux', () => {
     const enTetes = within(table).getAllByRole('columnheader')
     expect(enTetes.map((enTete) => enTete.textContent)).toStrictEqual([
       'Record cartographie',
-      'Lieu coop',
+      'Lieu retenu',
       'Score',
       'Distance',
       'Décision',
@@ -42,7 +42,40 @@ describe('revue des appariements de lieux', () => {
     expect(within(ligne).getByText('12 m')).toBeInTheDocument()
     expect(within(ligne).getByRole('button', { name: 'Valider' })).toBeInTheDocument()
     expect(within(ligne).getByRole('button', { name: 'Rejeter' })).toBeInTheDocument()
+    expect(within(ligne).getAllByText('Visible sur la carte')).toHaveLength(2)
+    expect(within(ligne).queryByText('Valider retirera ce lieu de la carte.')).not.toBeInTheDocument()
     expect(screen.queryByRole('navigation', { name: 'Pagination' })).not.toBeInTheDocument()
+  })
+
+  it('prévient, sur la file à valider, qu’apparier à un lieu masqué ou supprimé retire le lieu de la carte', () => {
+    // GIVEN
+    const viewModel = viewModelFactory({
+      appariements: [
+        appariementFactory({
+          lieu: {
+            adresse: '36 bis Rue Cayrade, Decazeville',
+            id: 14800,
+            nom: 'Atelier numérique de Decazeville',
+            visibilite: { couleur: 'warning', libelle: 'Masqué sur la carte' },
+          },
+          retireDeLaCarte: true,
+        }),
+      ],
+    })
+
+    // WHEN
+    renderComponent(<AppariementsLieux viewModel={viewModel} />)
+
+    // THEN
+    expect(
+      screen.getByText(
+        'Apparier un lieu à un lieu retenu masqué ou supprimé fait disparaître ce lieu de la cartographie nationale.'
+      )
+    ).toBeInTheDocument()
+    const ligne = within(screen.getByRole('table', { name: 'Appariements de lieux' })).getAllByRole('row')[1]
+    expect(within(ligne).getByText('Masqué sur la carte')).toHaveClass('fr-badge--warning')
+    expect(within(ligne).getByText('Visible sur la carte')).toHaveClass('fr-badge--success')
+    expect(within(ligne).getByText('Valider retirera ce lieu de la carte.')).toBeInTheDocument()
   })
 
   it('valide une paire, notifie et rafraîchit la page', async () => {
@@ -166,6 +199,7 @@ describe('revue des appariements de lieux', () => {
     expect(within(table).getByText('Rejeté')).toBeInTheDocument()
     expect(within(table).queryByRole('button', { name: 'Valider' })).not.toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Pagination' })).toBeInTheDocument()
+    expect(screen.queryByText(/fait disparaître ce lieu de la cartographie nationale/)).not.toBeInTheDocument()
   })
 
   it('affiche un résumé au singulier et aucun tableau quand la file est vide', () => {
@@ -192,9 +226,15 @@ function viewModelFactory(override: Partial<AppariementsLieuxViewModel>): Appari
           recordId: 'France-Services_2277',
           segments: 'France-Services_2277',
           source: 'France Services',
+          visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
         },
         cle: 'France-Services_2277|6895',
-        lieu: { adresse: '3 Place de la Fraternité, Paron', id: 6895, nom: 'France services de Paron' },
+        lieu: {
+          adresse: '3 Place de la Fraternité, Paron',
+          id: 6895,
+          nom: 'France services de Paron',
+          visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
+        },
       }),
     ],
     onglets: [
@@ -216,11 +256,18 @@ function appariementFactory(override: Partial<AppariementLieuViewModel>): Appari
       recordId: 'RhinOcc_QxE__RhinOcc_RCR',
       segments: 'RhinOcc_QxE + RhinOcc_RCR',
       source: 'RhinOcc',
+      visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
     },
     cle: 'RhinOcc_QxE__RhinOcc_RCR|14800',
     decision: null,
     distance: '12 m',
-    lieu: { adresse: '36 bis Rue Cayrade, Decazeville', id: 14800, nom: 'Atelier numérique de Decazeville' },
+    lieu: {
+      adresse: '36 bis Rue Cayrade, Decazeville',
+      id: 14800,
+      nom: 'Atelier numérique de Decazeville',
+      visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
+    },
+    retireDeLaCarte: false,
     scores: { adresse: '90', distance: '100', global: '92', nom: '95' },
     statut: 'a_valider',
     ...override,

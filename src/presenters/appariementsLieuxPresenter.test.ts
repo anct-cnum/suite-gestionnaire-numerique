@@ -18,6 +18,7 @@ describe('appariements de lieux presenter', () => {
             recordId: 'France-Services_2277',
             segments: ['France-Services_2277'],
             source: null,
+            visibilite: 'absent',
           },
           distanceM: 1250,
           lieu: {
@@ -28,6 +29,7 @@ describe('appariements de lieux presenter', () => {
             nomVoie: null,
             numeroVoie: null,
             repetition: null,
+            visibilite: 'masque',
           },
           scores: { adresse: null, distance: null, global: null, nom: null },
         }),
@@ -54,6 +56,7 @@ describe('appariements de lieux presenter', () => {
         recordId: 'RhinOcc_QxE__RhinOcc_RCR',
         segments: 'RhinOcc_QxE + RhinOcc_RCR',
         source: 'RhinOcc',
+        visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
       },
       cle: 'RhinOcc_QxE__RhinOcc_RCR|14800',
       decision: null,
@@ -62,7 +65,9 @@ describe('appariements de lieux presenter', () => {
         adresse: '36 bis Rue Cayrade, Decazeville',
         id: 14800,
         nom: 'Atelier numérique de Decazeville',
+        visibilite: { couleur: 'success', libelle: 'Visible sur la carte' },
       },
+      retireDeLaCarte: false,
       scores: { adresse: '90', distance: '100', global: '92', nom: '95' },
       statut: 'a_valider',
     })
@@ -73,11 +78,18 @@ describe('appariements de lieux presenter', () => {
         recordId: 'France-Services_2277',
         segments: 'France-Services_2277',
         source: 'Source inconnue',
+        visibilite: { couleur: 'info', libelle: 'Absent de la carte' },
       },
       cle: 'France-Services_2277|6895',
       decision: null,
       distance: '1,3 km',
-      lieu: { adresse: '—', id: 6895, nom: 'France services de Paron' },
+      lieu: {
+        adresse: '—',
+        id: 6895,
+        nom: 'France services de Paron',
+        visibilite: { couleur: 'warning', libelle: 'Masqué sur la carte' },
+      },
+      retireDeLaCarte: false,
       scores: { adresse: '—', distance: '—', global: '—', nom: '—' },
       statut: 'a_valider',
     })
@@ -104,6 +116,38 @@ describe('appariements de lieux presenter', () => {
     expect(viewModel.appariements[1].decision).toStrictEqual({ le: '01/01/1970', par: 'Inconnu' })
     expect(viewModel.appariements[1].distance).toBe('—')
   })
+
+  it('signale qu’une validation retire de la carte un lieu publié apparié à un lieu masqué ou supprimé', () => {
+    // GIVEN
+    const recordPublie = appariement({}).carto
+    const lieu = appariement({}).lieu
+    const readModel = {
+      appariements: [
+        appariement({ lieu: { ...lieu, visibilite: 'masque' } }),
+        appariement({ lieu: { ...lieu, visibilite: 'supprime' } }),
+        appariement({ carto: { ...recordPublie, visibilite: 'masque' }, lieu: { ...lieu, visibilite: 'masque' } }),
+        appariement({ lieu: { ...lieu, visibilite: 'masque' }, statut: 'valide' }),
+      ],
+      compteurs: { a_valider: 3, rejete: 0, valide: 1 },
+      total: 3,
+    }
+
+    // WHEN
+    const viewModel = appariementsLieuxPresenter(readModel, 'a_valider')
+
+    // THEN
+    expect(viewModel.appariements.map((appariement) => appariement.retireDeLaCarte)).toStrictEqual([
+      true,
+      true,
+      false,
+      false,
+    ])
+    expect(viewModel.appariements[1].lieu.visibilite).toStrictEqual({ couleur: 'error', libelle: 'Supprimé' })
+    expect(viewModel.appariements[2].carto.visibilite).toStrictEqual({
+      couleur: 'warning',
+      libelle: 'Masqué sur la carte',
+    })
+  })
 })
 
 function appariement(override: Partial<AppariementLieuReadModel>): AppariementLieuReadModel {
@@ -115,6 +159,7 @@ function appariement(override: Partial<AppariementLieuReadModel>): AppariementLi
       recordId: 'RhinOcc_QxE__RhinOcc_RCR',
       segments: ['RhinOcc_QxE', 'RhinOcc_RCR'],
       source: 'RhinOcc',
+      visibilite: 'visible',
     },
     decideLe: null,
     decidePar: null,
@@ -128,6 +173,7 @@ function appariement(override: Partial<AppariementLieuReadModel>): AppariementLi
       nomVoie: 'Rue Cayrade',
       numeroVoie: 36,
       repetition: 'bis',
+      visibilite: 'visible',
     },
     scores: { adresse: 90, distance: 100, global: 92, nom: 95 },
     statut: 'a_valider',

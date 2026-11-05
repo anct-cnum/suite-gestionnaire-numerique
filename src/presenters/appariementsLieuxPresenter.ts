@@ -3,12 +3,20 @@ import {
   AppariementLieuReadModel,
   AppariementsLieuxReadModel,
   StatutAppariement,
+  VisibiliteDuRecord,
 } from '@/use-cases/queries/RechercherAppariementsLieux'
 
 const LIBELLE_STATUT: Readonly<Record<StatutAppariement, string>> = {
   a_valider: 'À valider',
   rejete: 'Rejetés',
   valide: 'Validés',
+}
+
+const VISIBILITE: Readonly<Record<VisibiliteDuRecord, VisibiliteViewModel>> = {
+  absent: { couleur: 'info', libelle: 'Absent de la carte' },
+  masque: { couleur: 'warning', libelle: 'Masqué sur la carte' },
+  supprime: { couleur: 'error', libelle: 'Supprimé' },
+  visible: { couleur: 'success', libelle: 'Visible sur la carte' },
 }
 
 export function appariementsLieuxPresenter(
@@ -49,6 +57,7 @@ export type AppariementLieuViewModel = Readonly<{
     recordId: string
     segments: string
     source: string
+    visibilite: VisibiliteViewModel
   }>
   cle: string
   // Renseigné pour les statuts valide / rejete.
@@ -58,7 +67,11 @@ export type AppariementLieuViewModel = Readonly<{
     adresse: string
     id: number
     nom: string
+    visibilite: VisibiliteViewModel
   }>
+  // Paire à arbitrer dont la validation fait disparaître le lieu de la carte :
+  // la fiche publiée s'efface au profit d'un lieu retenu masqué ou supprimé.
+  retireDeLaCarte: boolean
   scores: Readonly<{
     adresse: string
     distance: string
@@ -66,6 +79,11 @@ export type AppariementLieuViewModel = Readonly<{
     nom: string
   }>
   statut: StatutAppariement
+}>
+
+export type VisibiliteViewModel = Readonly<{
+  couleur: 'error' | 'info' | 'success' | 'warning'
+  libelle: string
 }>
 
 function versAppariementViewModel(appariement: AppariementLieuReadModel): AppariementLieuViewModel {
@@ -78,6 +96,7 @@ function versAppariementViewModel(appariement: AppariementLieuReadModel): Appari
       recordId: carto.recordId,
       segments: carto.segments.join(' + '),
       source: carto.source ?? 'Source inconnue',
+      visibilite: VISIBILITE[carto.visibilite],
     },
     cle: `${carto.recordId}|${lieu.id}`,
     decision:
@@ -92,7 +111,10 @@ function versAppariementViewModel(appariement: AppariementLieuReadModel): Appari
       ),
       id: lieu.id,
       nom: lieu.nom,
+      visibilite: VISIBILITE[lieu.visibilite],
     },
+    retireDeLaCarte:
+      appariement.statut === 'a_valider' && carto.visibilite === 'visible' && lieu.visibilite !== 'visible',
     scores: {
       adresse: formaterScore(scores.adresse),
       distance: formaterScore(scores.distance),
