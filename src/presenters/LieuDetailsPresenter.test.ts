@@ -118,6 +118,7 @@ describe('lieu details presenter', () => {
 
 function createReadModel(header: Partial<LieuDetailsReadModel['header']>): LieuDetailsReadModel {
   return {
+    adresseBanTrouvee: true,
     estArchive: false,
     estLieuCoop: false,
     estReferenceSurLaCarte: true,

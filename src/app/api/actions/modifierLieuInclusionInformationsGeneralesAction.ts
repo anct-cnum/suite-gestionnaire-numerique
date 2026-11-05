@@ -19,6 +19,12 @@ const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
   adresseIntrouvable: 'Adresse introuvable — vérifiez la saisie',
 }
 
+// #1495 : un lieu publié perdant son adresse BAN voit sa visibilité forcée à false ; ce
+// message s'ajoute à 'OK' pour que l'interface le signale, sans changer le contrat de
+// retour (ReadonlyArray<string>, cf. skill server-action).
+const MESSAGE_VISIBILITE_FORCEE =
+  'ce lieu n’est plus proposé à la cartographie nationale : son adresse n’a pas été trouvée dans la Base Adresse Nationale'
+
 export async function modifierLieuInclusionInformationsGeneralesAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
@@ -52,13 +58,14 @@ export async function modifierLieuInclusionInformationsGeneralesAction(
         structureId: validationResult.data.structureId,
       })
 
-      if (result !== 'OK') {
+      if (typeof result === 'string') {
         return [MESSAGES_ECHEC[result]]
       }
 
       revalidatePath(validationResult.data.path)
 
-      return ['OK']
+      // #1495 : signale la perte de visibilité forcée pour que l'interface la remonte.
+      return result.visibilitePourCartographieForcee ? ['OK', MESSAGE_VISIBILITE_FORCEE] : ['OK']
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue lors de la modification'
       return [errorMessage]

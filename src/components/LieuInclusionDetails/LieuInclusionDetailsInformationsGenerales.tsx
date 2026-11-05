@@ -49,7 +49,14 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     })
 
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifiées', title: 'Informations générales ' })
+      // #1495 : un second message accompagne 'OK' quand la visibilité cartographie a été
+      // forcée à false (adresse perdue dans la BAN) — à afficher à la suite du message standard.
+      const messageComplementaire =
+        typeof messages === 'string' ? undefined : messages.find((message) => message !== 'OK')
+      Notification('success', {
+        description: messageComplementaire === undefined ? 'modifiées' : `modifiées, mais ${messageComplementaire}`,
+        title: 'Informations générales ',
+      })
       quitterEdition()
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })

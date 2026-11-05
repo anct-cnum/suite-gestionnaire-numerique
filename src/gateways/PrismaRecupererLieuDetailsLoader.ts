@@ -84,6 +84,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
   private construireReadModel(
     structure: {
+      clef_interop: null | string
       code_postal: null | string
       complement_adresse: null | string
       contact: null | Record<string, unknown>
@@ -130,6 +131,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     const codeDepartement = this.extraireCodeDepartement(structure.code_postal)
 
     return {
+      adresseBanTrouvee: structure.clef_interop !== null,
       codeDepartement,
       codeRegion: departements.find((departement) => departement.code === structure.departement)?.regionCode,
       estArchive: structure.deleted_at !== null,
@@ -344,6 +346,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
   private async recupererStructure(id: string): Promise<
     Array<{
+      clef_interop: null | string
       code_insee: null | string
       code_postal: null | string
       complement_adresse: null | string
@@ -419,6 +422,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         a.nom_commune,
         a.code_insee,
         a.departement,
+        a.clef_interop,
         CASE
           WHEN EXISTS (
             SELECT 1 FROM admin.zonage z

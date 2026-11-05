@@ -45,6 +45,36 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     expect(messages).toStrictEqual(['OK'])
   })
 
+  it('traduit le refus du use case quand le lieu n’a pas d’adresse BAN (#1495)', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: true })
+    )
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ role: 'Administrateur dispositif' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory()
+    )
+    vi.spyOn(prisma.membreRecord, 'findMany').mockResolvedValueOnce([])
+    vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle').mockResolvedValueOnce('adresseBanAbsente')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
+
+    // WHEN
+    const messages = await modifierLieuInclusionVisibiliteCartographieAction({
+      lieuId: '42',
+      path: '/liste-lieux-inclusion',
+      visiblePourCartographie: true,
+    })
+
+    // THEN
+    expect(messages).toStrictEqual([
+      'Ce lieu ne peut pas être rendu visible sur la cartographie : son adresse n’a pas été trouvée dans la Base Adresse Nationale',
+    ])
+    expect(nextCache.revalidatePath).not.toHaveBeenCalled()
+  })
+
   it('renvoie une erreur de validation quand l’identifiant du lieu est vide', async () => {
     // WHEN
     const messages = await modifierLieuInclusionVisibiliteCartographieAction({

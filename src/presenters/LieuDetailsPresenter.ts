@@ -9,6 +9,7 @@ export function lieuDetailsPresenter(
   now: Date
 ): LieuInclusionDetailsData {
   return {
+    adresseBanTrouvee: lieuDetailsReadModel.adresseBanTrouvee,
     // Visible mais pas encore référencé sur la carte : l'apparition attend un référencement (#1495).
     estEnAttenteDeReferencement:
       lieuDetailsReadModel.visiblePourCartographie &&
@@ -87,6 +88,7 @@ const nomApplicationParEditeur: Readonly<Record<string, string | undefined>> = {
 }
 
 interface LieuInclusionDetailsData {
+  adresseBanTrouvee: boolean
   estEnAttenteDeReferencement: boolean
   estLieuCoop: boolean
   header: {

@@ -682,6 +682,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
 
 export function lieuDetailsReadModelFactory(override?: Partial<LieuDetailsReadModel>): LieuDetailsReadModel {
   return {
+    adresseBanTrouvee: true,
     codeDepartement: '75',
     codeRegion: '11',
     estArchive: false,

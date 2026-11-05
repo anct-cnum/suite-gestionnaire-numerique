@@ -103,6 +103,7 @@ export function createDefaultServicesInclusionNumeriqueData(): ReadonlyArray<Ser
 
 export function createDefaultLieuInclusionDetailsData(): LieuInclusionDetailsData {
   return {
+    adresseBanTrouvee: true,
     estEnAttenteDeReferencement: false,
     estLieuCoop: false,
     header: createDefaultHeaderData(),

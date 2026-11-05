@@ -6,11 +6,13 @@ import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
 
 const LIEU_ID = 991881
 const CLEF_INTEROP = 'test_2092_region_du_lieu'
+const COMMUNE_TEST_ADRESSE_BAN = 'Testville 1495 adresse BAN'
 
 describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
   afterEach(async () => {
     await prisma.main_lieu_inclusion.deleteMany({ where: { id: LIEU_ID } })
     await prisma.adresse.deleteMany({ where: { clef_interop: CLEF_INTEROP } })
+    await prisma.adresse.deleteMany({ where: { nom_commune: COMMUNE_TEST_ADRESSE_BAN } })
   })
 
   it('désérialise les colonnes array d’enums Postgres en vrais tableaux (#1881)', async () => {
@@ -69,6 +71,42 @@ describe('détails d’un lieu d’inclusion (loader Prisma)', () => {
     // THEN
     expect(readModel).not.toHaveProperty('type')
     expect((readModel as LieuDetailsReadModel).estLieuCoop).toBe(estLieuCoop)
+  })
+
+  it('indique qu’un lieu sans adresse n’a pas d’adresse BAN (#1495)', async () => {
+    // GIVEN
+    await prisma.main_lieu_inclusion.create({ data: { id: LIEU_ID, nom: 'Lieu test adresse BAN' } })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect((readModel as LieuDetailsReadModel).adresseBanTrouvee).toBe(false)
+  })
+
+  it.each([
+    { attendu: false, clefInterop: null, intention: 'sans clef BAN' },
+    { attendu: true, clefInterop: CLEF_INTEROP, intention: 'avec une clef BAN' },
+  ])('indique si le lieu a une adresse BAN, avec une adresse $intention (#1495)', async ({ attendu, clefInterop }) => {
+    // GIVEN
+    const adresse = await prisma.adresse.create({
+      data: {
+        clef_interop: clefInterop,
+        code_insee: '75101',
+        code_postal: '75001',
+        nom_commune: COMMUNE_TEST_ADRESSE_BAN,
+        nom_voie: 'rue de la Paix',
+      },
+    })
+    await prisma.main_lieu_inclusion.create({
+      data: { adresse_id: adresse.id, id: LIEU_ID, nom: 'Lieu test adresse BAN' },
+    })
+
+    // WHEN
+    const readModel = await new PrismaRecupererLieuDetailsLoader().recuperer(String(LIEU_ID))
+
+    // THEN
+    expect((readModel as LieuDetailsReadModel).adresseBanTrouvee).toBe(attendu)
   })
 
   it('expose le référencement carto et le drapeau de visibilité pour signaler un lieu en attente (#1495)', async () => {

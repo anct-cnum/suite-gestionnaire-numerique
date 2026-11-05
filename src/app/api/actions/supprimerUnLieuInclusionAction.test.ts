@@ -136,6 +136,7 @@ describe('supprimer un lieu d’inclusion action', () => {
 })
 
 const lieuDetailsReadModel: LieuDetailsReadModel = {
+  adresseBanTrouvee: true,
   codeDepartement: '75',
   estArchive: false,
   estLieuCoop: false,

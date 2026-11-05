@@ -11,6 +11,7 @@ import { CreerLieuInclusionData } from '@/use-cases/commands/shared/LieuInclusio
 
 const LIEU_ID = 991882
 const SOURCE_INITIALE = 'dora'
+const CLEF_INTEROP_VISIBILITE = 'test_1495_visibilite_ban'
 
 describe('repository Prisma des lieux d’inclusion', () => {
   beforeEach(async () => {
@@ -26,6 +27,43 @@ describe('repository Prisma des lieux d’inclusion', () => {
 
   afterEach(async () => {
     await prisma.main_lieu_inclusion.deleteMany({ where: { id: LIEU_ID } })
+    await prisma.adresse.deleteMany({ where: { clef_interop: CLEF_INTEROP_VISIBILITE } })
+  })
+
+  it('lit la visibilité cartographie actuelle du lieu (#1495)', async () => {
+    // WHEN
+    const visible = await new PrismaLieuInclusionRepository().estVisiblePourCartographie(new StructureUid(LIEU_ID))
+
+    // THEN
+    expect(visible).toBe(true)
+  })
+
+  it('indique qu’un lieu sans adresse n’a pas d’adresse BAN (#1495)', async () => {
+    // WHEN
+    const aUneAdresseBan = await new PrismaLieuInclusionRepository().aUneAdresseBan(new StructureUid(LIEU_ID))
+
+    // THEN
+    expect(aUneAdresseBan).toBe(false)
+  })
+
+  it('indique qu’un lieu dont l’adresse porte une clef BAN a bien une adresse BAN (#1495)', async () => {
+    // GIVEN
+    const adresse = await prisma.adresse.create({
+      data: {
+        clef_interop: CLEF_INTEROP_VISIBILITE,
+        code_insee: '75101',
+        code_postal: '75001',
+        nom_commune: 'Paris',
+        nom_voie: 'rue de la Paix',
+      },
+    })
+    await prisma.main_lieu_inclusion.update({ data: { adresse_id: adresse.id }, where: { id: LIEU_ID } })
+
+    // WHEN
+    const aUneAdresseBan = await new PrismaLieuInclusionRepository().aUneAdresseBan(new StructureUid(LIEU_ID))
+
+    // THEN
+    expect(aUneAdresseBan).toBe(true)
   })
 
   it('une écriture de données signe la ligne : source MIN, éditeur min, date de modification MIN (#1951)', async () => {
@@ -58,6 +96,41 @@ describe('repository Prisma des lieux d’inclusion', () => {
     expect(lieu.source).toBe(SOURCE_INITIALE)
     expect(lieu.edited_by).toBe('min')
     expect(lieu.updated_at_min).toStrictEqual(epochTime)
+  })
+
+  it('updateInformationsGenerales force la visibilité à false quand demandé (#1495)', async () => {
+    // WHEN
+    await new PrismaLieuInclusionRepository().updateInformationsGenerales({
+      adresseEnrichie: null,
+      adresseSirene: null,
+      complementAdresse: null,
+      date: epochTime,
+      nom: 'Lieu test visibilité forcée',
+      siret: null,
+      structureUid: new StructureUid(LIEU_ID),
+      visiblePourCartographie: false,
+    })
+
+    // THEN
+    const lieu = await prisma.main_lieu_inclusion.findUniqueOrThrow({ where: { id: LIEU_ID } })
+    expect(lieu.visible_pour_cartographie_nationale).toBe(false)
+  })
+
+  it('updateInformationsGenerales ne touche pas à la visibilité quand elle n’est pas forcée (#1495)', async () => {
+    // WHEN
+    await new PrismaLieuInclusionRepository().updateInformationsGenerales({
+      adresseEnrichie: null,
+      adresseSirene: null,
+      complementAdresse: null,
+      date: epochTime,
+      nom: 'Lieu test visibilité non forcée',
+      siret: null,
+      structureUid: new StructureUid(LIEU_ID),
+    })
+
+    // THEN
+    const lieu = await prisma.main_lieu_inclusion.findUniqueOrThrow({ where: { id: LIEU_ID } })
+    expect(lieu.visible_pour_cartographie_nationale).toBe(true)
   })
 
   it('une suppression ne touche pas à la source et masque le lieu (#1951)', async () => {
