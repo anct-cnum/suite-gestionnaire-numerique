@@ -17,6 +17,9 @@ export type UpdateLieuInclusionDescriptionData = Readonly<{
 }>
 
 export interface UpdateLieuInclusionInformationsGeneralesRepository {
+  // Lu avant d'écrire : sert à savoir si une adresse perdant son adresse BAN doit forcer
+  // la visibilité à false (#1495), sans quoi un lieu déjà publié resterait visible sans BAN.
+  estVisiblePourCartographie(structureUid: StructureUid): Promise<boolean>
   updateInformationsGenerales(data: UpdateLieuInclusionInformationsGeneralesData): Promise<void>
 }
 
@@ -53,6 +56,9 @@ export type UpdateLieuInclusionInformationsGeneralesData = Readonly<{
   siret: null | string
   structureUid: StructureUid
   typologies?: ReadonlyArray<string>
+  // Renseigné seulement pour forcer la visibilité à false (#1495) ; omis sinon, cette
+  // commande ne gérant pas la visibilité au quotidien (cf. ModifierLieuInclusionVisibiliteCartographie).
+  visiblePourCartographie?: false
 }>
 
 export interface CreerLieuInclusionRepository {
@@ -118,6 +124,8 @@ export type SupprimerLieuInclusionData = Readonly<{
 }>
 
 export interface UpdateLieuInclusionVisibiliteCartographieRepository {
+  // Un lieu sans adresse BAN ne peut pas être rendu visible sur la cartographie (#1495).
+  aUneAdresseBan(structureUid: StructureUid): Promise<boolean>
   updateVisibiliteCartographie(data: UpdateLieuInclusionVisibiliteCartographieData): Promise<void>
 }
 

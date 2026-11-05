@@ -1,6 +1,9 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface LieuDetailsReadModel {
+  // Sans adresse BAN, un lieu ne peut pas être rendu visible sur la cartographie
+  // nationale (#1495) : sert à désactiver la bascule de visibilité sur la fiche.
+  adresseBanTrouvee: boolean
   codeDepartement?: string
   // Région du département de l'adresse du lieu (droits du gestionnaire région, #2092).
   codeRegion?: string

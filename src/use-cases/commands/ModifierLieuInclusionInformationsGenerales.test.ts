@@ -13,6 +13,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     spiedGeocodageParams = null
     spiedUpdateData = null
     geocodeResultat = adresseGeocodee
+    lieuActuellementVisible = false
   })
 
   it('avec un SIRET, quand l’adresse reprise du SIRET est trouvée dans la BAN, alors le lieu est mis à jour tel que saisi', async () => {
@@ -30,7 +31,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     })
 
     // THEN
-    expect(result).toBe('OK')
+    expect(result).toStrictEqual({ visibilitePourCartographieForcee: false })
     // Le code INSEE du SIRET aide le géocodage tant que l'adresse n'a pas été retouchée.
     expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret, codeInsee: '75101' })
     expect(spiedUpdateData?.adresseEnrichie).toStrictEqual(adresseGeocodee)
@@ -42,6 +43,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     expect(spiedUpdateData?.siret).toBe('12345678901234')
     expect(spiedUpdateData?.structureUid.state.value).toBe(42)
     expect(spiedUpdateData?.typologies).toStrictEqual(['BIB'])
+    expect(spiedUpdateData?.visiblePourCartographie).toBeUndefined()
   })
 
   it('avec un SIRET, quand l’adresse reprise du SIRET est introuvable dans la BAN, alors le lieu est mis à jour avec les composants SIRENE', async () => {
@@ -55,7 +57,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     })
 
     // THEN
-    expect(result).toBe('OK')
+    expect(result).toStrictEqual({ visibilitePourCartographieForcee: false })
     expect(spiedUpdateData?.adresseEnrichie).toBeNull()
     expect(spiedUpdateData?.adresseSirene).toStrictEqual({
       codeInsee: '75101',
@@ -64,6 +66,38 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
       nomVoie: 'rue de la Paix',
       numeroVoie: 1,
     })
+  })
+
+  it('avec un SIRET, quand l’adresse perd sa BAN et que le lieu était déjà publié, force la visibilité à false et le signale (#1495)', async () => {
+    // GIVEN
+    geocodeResultat = null
+    lieuActuellementVisible = true
+
+    // WHEN
+    const result = await modifierLieuInclusion().handle({
+      modification: { ...modificationSaisie, repliSirene, siret: '12345678901234' },
+      structureId: '42',
+    })
+
+    // THEN
+    expect(result).toStrictEqual({ visibilitePourCartographieForcee: true })
+    expect(spiedUpdateData?.visiblePourCartographie).toBe(false)
+  })
+
+  it('avec un SIRET, quand l’adresse perd sa BAN mais que le lieu n’était pas publié, ne force rien ni ne le signale', async () => {
+    // GIVEN
+    geocodeResultat = null
+    lieuActuellementVisible = false
+
+    // WHEN
+    const result = await modifierLieuInclusion().handle({
+      modification: { ...modificationSaisie, repliSirene, siret: '12345678901234' },
+      structureId: '42',
+    })
+
+    // THEN
+    expect(result).toStrictEqual({ visibilitePourCartographieForcee: false })
+    expect(spiedUpdateData?.visiblePourCartographie).toBeUndefined()
   })
 
   it('avec un SIRET, quand le numéro de voie SIRENE est vide, alors il est enregistré comme nul', async () => {
@@ -118,7 +152,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
     })
 
     // THEN
-    expect(result).toBe('OK')
+    expect(result).toStrictEqual({ visibilitePourCartographieForcee: false })
     expect(spiedGeocodageParams).toStrictEqual({ adresse: adresseDuSiret })
     expect(spiedUpdateData?.adresseEnrichie).toStrictEqual(adresseGeocodee)
     expect(spiedUpdateData?.adresseSirene).toBeNull()
@@ -157,6 +191,7 @@ describe('modifier les informations générales d’un lieu d’inclusion', () =
 let spiedGeocodageParams: GeocodageParams | null
 let spiedUpdateData: null | UpdateLieuInclusionInformationsGeneralesData
 let geocodeResultat: AdresseGeocodeReadModel | null
+let lieuActuellementVisible: boolean
 
 const adresseDuSiret = '1 rue de la Paix 75001 Paris'
 
@@ -204,6 +239,9 @@ const banGeocodingGateway: BanGeocodingGateway = {
 }
 
 const lieuInclusionRepository: UpdateLieuInclusionInformationsGeneralesRepository = {
+  async estVisiblePourCartographie(): Promise<boolean> {
+    return Promise.resolve(lieuActuellementVisible)
+  },
   async updateInformationsGenerales(data: UpdateLieuInclusionInformationsGeneralesData): Promise<void> {
     spiedUpdateData = data
     return Promise.resolve()

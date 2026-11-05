@@ -22,6 +22,7 @@ import {
   Prisma,
 } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
+import { StructureUid } from '@/domain/Structure'
 import {
   AdresseLieuEnrichie,
   AdresseLieuSirene,
@@ -59,6 +60,16 @@ export class PrismaLieuInclusionRepository
     UpdateLieuInclusionServicesTypePublicRepository,
     UpdateLieuInclusionVisibiliteCartographieRepository
 {
+  // Un lieu sans adresse BAN ne peut pas être rendu visible sur la cartographie (#1495).
+  async aUneAdresseBan(structureUid: StructureUid): Promise<boolean> {
+    const lieu = await prisma.main_lieu_inclusion.findUnique({
+      select: { adresse: { select: { clef_interop: true } } },
+      where: { id: structureUid.state.value },
+    })
+
+    return (lieu?.adresse?.clef_interop ?? null) !== null
+  }
+
   // Création (#1495) : signée MIN (source, edited_by, updated_at_min — cette dernière
   // sort la ligne du cycle de vie nocturne du carto-dag), drapeau carte = choix du
   // gestionnaire, aucun identifiant externe. created_at et updated_at (générée) sont
@@ -85,6 +96,18 @@ export class PrismaLieuInclusionRepository
 
       return lieu.id
     })
+  }
+
+  // Lu avant updateInformationsGenerales (#1495) : une adresse qui perd sa correspondance
+  // BAN doit forcer la visibilité d'un lieu déjà publié, sans quoi il resterait visible
+  // sans BAN. Pas de droit à vérifier ici : c'est fait au niveau de la Server Action.
+  async estVisiblePourCartographie(structureUid: StructureUid): Promise<boolean> {
+    const lieu = await prisma.main_lieu_inclusion.findUnique({
+      select: { visible_pour_cartographie_nationale: true },
+      where: { id: structureUid.state.value },
+    })
+
+    return lieu?.visible_pour_cartographie_nationale === true
   }
 
   async supprimer(data: SupprimerLieuInclusionData): Promise<void> {
@@ -134,6 +157,7 @@ export class PrismaLieuInclusionRepository
         source: string
         typologies?: Array<main_typologie>
         updated_at_min: Date
+        visible_pour_cartographie_nationale?: false
       } = {
         adresse_id: adresseId,
         complement_adresse: data.complementAdresse,
@@ -150,6 +174,10 @@ export class PrismaLieuInclusionRepository
 
       if (data.typologies !== undefined) {
         updateData.typologies = versEnumsLieuInclusion(data.typologies, typologiesVersEnum, 'typologies')
+      }
+
+      if (data.visiblePourCartographie === false) {
+        updateData.visible_pour_cartographie_nationale = false
       }
 
       await transaction.main_lieu_inclusion.update({

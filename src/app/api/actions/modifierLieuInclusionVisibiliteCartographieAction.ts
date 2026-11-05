@@ -7,7 +7,15 @@ import { avecJournalisationMin } from './shared/journalisation'
 import { verifierDroitsLieu } from './shared/verifierDroitsLieu'
 import { PrismaLieuInclusionRepository } from '@/gateways/PrismaLieuInclusionRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ModifierLieuInclusionVisibiliteCartographie } from '@/use-cases/commands/ModifierLieuInclusionVisibiliteCartographie'
+import {
+  Failure,
+  ModifierLieuInclusionVisibiliteCartographie,
+} from '@/use-cases/commands/ModifierLieuInclusionVisibiliteCartographie'
+
+const MESSAGES_ECHEC: Readonly<Record<Failure, string>> = {
+  adresseBanAbsente:
+    'Ce lieu ne peut pas être rendu visible sur la cartographie : son adresse n’a pas été trouvée dans la Base Adresse Nationale',
+}
 
 export async function modifierLieuInclusionVisibiliteCartographieAction(
   actionParams: ActionParams
@@ -34,10 +42,14 @@ export async function modifierLieuInclusionVisibiliteCartographieAction(
       visiblePourCartographie: actionParams.visiblePourCartographie,
     })
 
+    if (result !== 'OK') {
+      return [MESSAGES_ECHEC[result]]
+    }
+
     // Invalider le cache de la page
     revalidatePath(validationResult.data.path)
 
-    return [result]
+    return ['OK']
   })
 }
 

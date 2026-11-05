@@ -10,6 +10,7 @@ import { Notification } from '@/components/shared/Notification/Notification'
 // s'enregistre dès le clic. Si le serveur refuse, l'interrupteur revient à son état
 // précédent, comme dans le tableau de la liste des lieux.
 export default function LieuInclusionDetailsVisibiliteCartographie({
+  adresseBanTrouvee,
   lieuId,
   peutModifier,
   visiblePourCartographie,
@@ -36,7 +37,8 @@ export default function LieuInclusionDetailsVisibiliteCartographie({
   return (
     <EncartCartographie
       defaultChecked={visiblePourCartographie}
-      disabled={!peutModifier}
+      // #1495 : sans adresse BAN, impossible de (re)publier — mais toujours possible de masquer.
+      disabled={!peutModifier || (!adresseBanTrouvee && !visiblePourCartographie)}
       name="visiblePourCartographie"
       onChange={(event) => {
         void basculer(event)
@@ -46,6 +48,7 @@ export default function LieuInclusionDetailsVisibiliteCartographie({
 }
 
 type Props = Readonly<{
+  adresseBanTrouvee: boolean
   lieuId: string
   peutModifier: boolean
   visiblePourCartographie: boolean

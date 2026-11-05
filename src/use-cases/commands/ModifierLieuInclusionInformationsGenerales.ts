@@ -7,7 +7,10 @@ import { BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 // création (#1495) : tous les champs sont saisis, le SIRET n'étant qu'un accélérateur de
 // remplissage. L'adresse est validée par la BAN ; seule celle reprise telle quelle d'un
 // SIRET peut retomber sur les composants SIRENE quand la BAN ne la reconnaît pas.
-export class ModifierLieuInclusionInformationsGenerales implements CommandHandler<Command> {
+//
+// #1495 : une adresse qui perd sa correspondance BAN force la visibilité à false si le
+// lieu était déjà publié, sans quoi il resterait visible sur la cartographie sans BAN.
+export class ModifierLieuInclusionInformationsGenerales implements CommandHandler<Command, Failure, Succes> {
   readonly #banGeocodingGateway: BanGeocodingGateway
   readonly #date: Date
   readonly #lieuInclusionRepository: UpdateLieuInclusionInformationsGeneralesRepository
@@ -22,10 +25,11 @@ export class ModifierLieuInclusionInformationsGenerales implements CommandHandle
     this.#date = date
   }
 
-  async handle(command: Command): ResultAsync<Failure> {
+  async handle(command: Command): ResultAsync<Failure, Succes> {
     // La validation des permissions est effectuée au niveau de la Server Action.
     const { modification } = command
     const { repliSirene } = modification
+    const structureUid = new StructureUid(Number(command.structureId))
 
     // L'adresse n'est reconnue comme venant du SIRET que si l'utilisateur ne l'a pas
     // retouchée : son code INSEE aide alors le géocodage, et ses composants servent de repli.
@@ -42,6 +46,9 @@ export class ModifierLieuInclusionInformationsGenerales implements CommandHandle
       return 'adresseIntrouvable'
     }
 
+    const visibilitePourCartographieForcee =
+      geocode === null && (await this.#lieuInclusionRepository.estVisiblePourCartographie(structureUid))
+
     await this.#lieuInclusionRepository.updateInformationsGenerales({
       adresseEnrichie: geocode,
       adresseSirene,
@@ -50,15 +57,18 @@ export class ModifierLieuInclusionInformationsGenerales implements CommandHandle
       itinerance: [modification.itinerant ? 'Itinérant' : 'Fixe'],
       nom: modification.nom,
       siret: modification.siret,
-      structureUid: new StructureUid(Number(command.structureId)),
+      structureUid,
       typologies: modification.typologies,
+      visiblePourCartographie: visibilitePourCartographieForcee ? false : undefined,
     })
 
-    return 'OK'
+    return { visibilitePourCartographieForcee }
   }
 }
 
 export type Failure = 'adresseIntrouvable'
+
+type Succes = Readonly<{ visibilitePourCartographieForcee: boolean }>
 
 // Repli sans géométrie sur les composants SIRENE, seulement s'ils suffisent à
 // localiser le lieu (code INSEE, code postal, commune).

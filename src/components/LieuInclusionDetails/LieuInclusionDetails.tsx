@@ -68,6 +68,8 @@ export type ServiceInclusionNumeriqueData = Readonly<{
 }>
 
 export type LieuInclusionDetailsData = Readonly<{
+  // Sans adresse BAN, un lieu ne peut pas être rendu visible sur la cartographie (#1495).
+  adresseBanTrouvee: boolean
   // Visible mais pas encore référencé sur la carte nationale (#1495).
   estEnAttenteDeReferencement: boolean
   // Lieu porté par la Coop numérique : présenté en lecture seule (#1951).
@@ -125,6 +127,7 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
 
       <div id="visibilite-cartographie">
         <LieuInclusionDetailsVisibiliteCartographie
+          adresseBanTrouvee={data.adresseBanTrouvee}
           lieuId={lieuId}
           peutModifier={data.peutModifierInformationsGenerales}
           visiblePourCartographie={data.visiblePourCartographie}
