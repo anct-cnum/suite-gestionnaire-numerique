@@ -8,7 +8,11 @@ import { Notification } from '../shared/Notification/Notification'
 import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
-import { AppariementLieuViewModel, AppariementsLieuxViewModel } from '@/presenters/appariementsLieuxPresenter'
+import {
+  AppariementLieuViewModel,
+  AppariementsLieuxViewModel,
+  VisibiliteViewModel,
+} from '@/presenters/appariementsLieuxPresenter'
 import { DecisionAppariementLieu } from '@/use-cases/commands/DeciderAppariementLieu'
 import { StatutAppariement } from '@/use-cases/queries/RechercherAppariementsLieux'
 
@@ -53,10 +57,19 @@ export default function AppariementsLieux({ viewModel }: Props): ReactElement {
     <section>
       <h1>Appariements de lieux</h1>
       <p className="fr-text--sm fr-text-mention--grey">
-        Rapprochements entre les lieux du fichier national de la cartographie (dora, RhinOcc, France Services…) et les
-        lieux de la Coop médiation numérique, détectés par similarité de nom, d’adresse et de distance. Valider une
-        paire confirme qu’il s’agit du même lieu ; la fusion effective est réalisée ensuite par l’Entrepôt de données.
+        Rapprochements entre les fiches du fichier national de la cartographie (dora, RhinOcc, France Services…) et les
+        lieux du registre, détectés par similarité de nom, d’adresse et de distance. Valider une paire confirme qu’il
+        s’agit du même lieu : lors de la mise à jour de la nuit, la fiche de la cartographie s’efface au profit du lieu
+        retenu, seul affiché ensuite. Rien n’est fusionné : ni les informations, ni les médiateurs, ni l’activité.
       </p>
+
+      {estFileDeRevue ? (
+        <div className="fr-alert fr-alert--warning fr-alert--sm fr-mb-2w">
+          <p>
+            Apparier un lieu à un lieu retenu masqué ou supprimé fait disparaître ce lieu de la cartographie nationale.
+          </p>
+        </div>
+      ) : null}
 
       <ul className="fr-tags-group fr-mb-2w">
         {viewModel.onglets.map((onglet) => (
@@ -85,7 +98,7 @@ export default function AppariementsLieux({ viewModel }: Props): ReactElement {
             <Table
               enTetes={[
                 'Record cartographie',
-                'Lieu coop',
+                'Lieu retenu',
                 'Score',
                 'Distance',
                 estFileDeRevue ? 'Décision' : 'Décidé',
@@ -130,6 +143,8 @@ function LigneAppariement({ appariement, estEnCours, onDecision }: PropsLigne): 
         <span className="fr-badge fr-badge--no-icon fr-badge--sm" title={carto.segments}>
           {carto.source}
         </span>
+        <br />
+        <BadgeVisibilite visibilite={carto.visibilite} />
       </td>
       <td style={{ width: '40%' }}>
         <Link className="fr-text--bold" href={`/lieu/${lieu.id}`}>
@@ -137,6 +152,8 @@ function LigneAppariement({ appariement, estEnCours, onDecision }: PropsLigne): 
         </Link>
         <br />
         <span className="fr-text--xs fr-text-mention--grey">{lieu.adresse}</span>
+        <br />
+        <BadgeVisibilite visibilite={lieu.visibilite} />
       </td>
       <td>
         <span className="fr-text--bold">{scores.global}</span>
@@ -169,6 +186,9 @@ function LigneAppariement({ appariement, estEnCours, onDecision }: PropsLigne): 
             >
               Rejeter
             </button>
+            {appariement.retireDeLaCarte ? (
+              <p className="fr-message fr-message--warning">Valider retirera ce lieu de la carte.</p>
+            ) : null}
           </div>
         ) : (
           <Decision appariement={appariement} />
@@ -176,6 +196,10 @@ function LigneAppariement({ appariement, estEnCours, onDecision }: PropsLigne): 
       </td>
     </tr>
   )
+}
+
+function BadgeVisibilite({ visibilite }: Readonly<{ visibilite: VisibiliteViewModel }>): ReactElement {
+  return <span className={`fr-badge fr-badge--sm fr-badge--${visibilite.couleur} fr-mt-1v`}>{visibilite.libelle}</span>
 }
 
 function Decision({ appariement }: Readonly<{ appariement: AppariementLieuViewModel }>): ReactElement {

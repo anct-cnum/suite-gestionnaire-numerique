@@ -25,6 +25,16 @@ export type StatutAppariement = 'a_valider' | 'rejete' | 'valide'
 
 export const statutsAppariement: ReadonlyArray<StatutAppariement> = ['a_valider', 'valide', 'rejete']
 
+// Présence sur la cartographie nationale. Valider une paire retire la fiche qui
+// porte le record au profit du lieu retenu : si celui-ci n'est pas visible, le
+// lieu disparaît de la carte (#2232).
+export type VisibiliteSurLaCarte = 'masque' | 'supprime' | 'visible'
+
+// Côté record : « absent » quand aucune fiche du registre ne porte le record.
+export type VisibiliteDuRecord = 'absent' | VisibiliteSurLaCarte
+
+export const visibilitesDuRecord: ReadonlyArray<VisibiliteDuRecord> = ['absent', 'masque', 'supprime', 'visible']
+
 export type AppariementsLieuxReadModel = Readonly<{
   appariements: ReadonlyArray<AppariementLieuReadModel>
   // Nombre de paires par statut, tous statuts de revue confondus (onglets).
@@ -42,6 +52,9 @@ export type AppariementLieuReadModel = Readonly<{
     // Segments d'id mednum (un par source composant le record), ex. « France-Services_789 ».
     segments: ReadonlyArray<string>
     source: null | string
+    // Fiche du registre qui porte le record : identifiant courant, sinon
+    // mémoire des segments externes (fiche éteinte après un appariement).
+    visibilite: VisibiliteDuRecord
   }>
   decideLe: Date | null
   decidePar: null | string
@@ -55,6 +68,7 @@ export type AppariementLieuReadModel = Readonly<{
     nomVoie: null | string
     numeroVoie: null | number
     repetition: null | string
+    visibilite: VisibiliteSurLaCarte
   }>
   scores: Readonly<{
     adresse: null | number

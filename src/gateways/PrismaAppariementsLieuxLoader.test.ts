@@ -10,6 +10,9 @@ const CLEF_INTEROP = '99845_9999_00001'
 const LIEU_AVEC_ADRESSE = 990846
 const LIEU_SANS_ADRESSE = 990847
 const LIEU_INEXISTANT = 990848
+const LIEU_SUPPRIME = 990849
+const FICHE_PUBLIEE = 990850
+const FICHE_ETEINTE = 990851
 
 describe('file de revue des appariements de lieux (loader Prisma)', () => {
   afterEach(nettoyer)
@@ -85,6 +88,7 @@ describe('file de revue des appariements de lieux (loader Prisma)', () => {
           recordId: `${PREFIXE}_FS_C`,
           segments: [`${PREFIXE}_FS_C`],
           source: null,
+          visibilite: 'absent',
         },
         decideLe: null,
         decidePar: null,
@@ -98,6 +102,7 @@ describe('file de revue des appariements de lieux (loader Prisma)', () => {
           nomVoie: null,
           numeroVoie: null,
           repetition: null,
+          visibilite: 'masque',
         },
         scores: { adresse: 90, distance: 100, global: 100, nom: 95 },
         statut: 'a_valider',
@@ -110,6 +115,7 @@ describe('file de revue des appariements de lieux (loader Prisma)', () => {
           recordId: `${PREFIXE}_RhinOcc_A__${PREFIXE}_dora_B`,
           segments: [`${PREFIXE}_RhinOcc_A`, `${PREFIXE}_dora_B`],
           source: 'RhinOcc',
+          visibilite: 'absent',
         },
         decideLe: null,
         decidePar: null,
@@ -123,6 +129,7 @@ describe('file de revue des appariements de lieux (loader Prisma)', () => {
           nomVoie: 'Rue Cayrade',
           numeroVoie: 36,
           repetition: 'bis',
+          visibilite: 'visible',
         },
         scores: { adresse: 90, distance: 100, global: 92, nom: 95 },
         statut: 'a_valider',
@@ -163,6 +170,69 @@ describe('file de revue des appariements de lieux (loader Prisma)', () => {
       statut: 'rejete',
     })
   })
+
+  it('donne la visibilité sur la carte du lieu retenu et de la fiche qui porte le record', async () => {
+    // GIVEN
+    await seedLieux()
+    await prisma.main_lieu_inclusion.createMany({
+      data: [
+        // Lieu retenu supprimé : la paire reste proposée.
+        { deleted_at: epochTime, id: LIEU_SUPPRIME, nom: 'Lieu supprimé', visible_pour_cartographie_nationale: false },
+        // Fiche externe publiée qui porte le record (identifiant courant).
+        {
+          id: FICHE_PUBLIEE,
+          nom: 'Fiche publiée',
+          structure_cartographie_nationale_id: `${PREFIXE}_FS_G`,
+          visible_pour_cartographie_nationale: true,
+        },
+        // Fiche externe éteinte après un appariement : elle a perdu l'identifiant,
+        // seule la mémoire des segments externes la retrouve.
+        { id: FICHE_ETEINTE, nom: 'Fiche éteinte', visible_pour_cartographie_nationale: false },
+      ],
+    })
+    await prisma.main_lieu_appariement.createMany({
+      data: [
+        segment({
+          carto_record_id: `${PREFIXE}_FS_G`,
+          carto_segment: `${PREFIXE}_FS_G`,
+          lieu_id: LIEU_SUPPRIME,
+          score_global: 99,
+        }),
+        segment({
+          carto_record_id: `${PREFIXE}_FS_H`,
+          carto_segment: `${PREFIXE}_FS_H`,
+          lieu_id: LIEU_AVEC_ADRESSE,
+          score_global: 98,
+        }),
+        segment({
+          carto_record_id: `${PREFIXE}_FS_H`,
+          carto_segment: `${PREFIXE}_FS_H`,
+          lieu_id: FICHE_ETEINTE,
+          methode: 'segment_externe',
+          statut: 'auto',
+        }),
+      ],
+    })
+
+    // WHEN
+    const readModel = await new PrismaAppariementsLieuxLoader().rechercher({
+      pagination: { limite: 10, page: 0 },
+      statut: 'a_valider',
+    })
+
+    // THEN
+    expect(readModel.compteurs.a_valider).toBe(2)
+    expect(
+      readModel.appariements.map((appariement) => [
+        appariement.carto.recordId,
+        appariement.carto.visibilite,
+        appariement.lieu.visibilite,
+      ])
+    ).toStrictEqual([
+      [`${PREFIXE}_FS_G`, 'visible', 'supprime'],
+      [`${PREFIXE}_FS_H`, 'masque', 'visible'],
+    ])
+  })
 })
 
 async function seedLieux(): Promise<void> {
@@ -179,7 +249,12 @@ async function seedLieux(): Promise<void> {
   })
   await prisma.main_lieu_inclusion.createMany({
     data: [
-      { adresse_id: adresse.id, id: LIEU_AVEC_ADRESSE, nom: 'Atelier numérique de Decazeville' },
+      {
+        adresse_id: adresse.id,
+        id: LIEU_AVEC_ADRESSE,
+        nom: 'Atelier numérique de Decazeville',
+        visible_pour_cartographie_nationale: true,
+      },
       { id: LIEU_SANS_ADRESSE, nom: 'Lieu sans adresse' },
     ],
   })
@@ -210,7 +285,7 @@ function segment(
 async function nettoyer(): Promise<void> {
   await prisma.main_lieu_appariement.deleteMany({ where: { carto_segment: { startsWith: PREFIXE } } })
   await prisma.main_lieu_inclusion.deleteMany({
-    where: { id: { in: [LIEU_AVEC_ADRESSE, LIEU_SANS_ADRESSE] } },
+    where: { id: { in: [LIEU_AVEC_ADRESSE, LIEU_SANS_ADRESSE, LIEU_SUPPRIME, FICHE_PUBLIEE, FICHE_ETEINTE] } },
   })
   await prisma.adresse.deleteMany({ where: { clef_interop: CLEF_INTEROP } })
 }

@@ -5,6 +5,9 @@ import {
   AppariementsLieuxReadModel,
   StatutAppariement,
   statutsAppariement,
+  VisibiliteDuRecord,
+  visibilitesDuRecord,
+  VisibiliteSurLaCarte,
 } from '@/use-cases/queries/RechercherAppariementsLieux'
 
 export class PrismaAppariementsLieuxLoader implements AppariementsLieuxLoader {
@@ -45,39 +48,66 @@ export class PrismaAppariementsLieuxLoader implements AppariementsLieuxLoader {
   // (calculés sur le record complet) — MAX/MIN ne servent qu'à les sortir du GROUP BY.
   // Tri : meilleur score d'abord (file de revue), puis décision la plus récente
   // (historique), puis record pour un ordre stable en pagination.
+  // Visibilité (#2232) : celle du lieu retenu, et celle de la fiche du registre
+  // qui porte le record — par son identifiant courant, sinon par la mémoire des
+  // segments externes, seule trace d'une fiche éteinte après un appariement.
   async #lister(query: Parameters<AppariementsLieuxLoader['rechercher']>[0]): Promise<ReadonlyArray<Ligne>> {
     const { limite, page } = query.pagination
 
     return prisma.$queryRaw<Array<Ligne>>`
-      SELECT la.carto_record_id,
-             la.lieu_id,
-             array_agg(la.carto_segment ORDER BY la.carto_segment) AS segments,
-             MAX(la.source) AS source,
-             MAX(la.carto_nom) AS carto_nom,
-             MAX(la.carto_adresse) AS carto_adresse,
-             MAX(la.carto_commune) AS carto_commune,
-             MAX(la.score_nom)::int AS score_nom,
-             MAX(la.score_adresse)::int AS score_adresse,
-             MAX(la.score_distance)::int AS score_distance,
-             MAX(la.score_global)::int AS score_global,
-             MIN(la.distance_m) AS distance_m,
-             MAX(la.derniere_detection) AS derniere_detection,
-             MAX(la.decide_par) AS decide_par,
-             MAX(la.decide_le) AS decide_le,
-             l.nom AS lieu_nom,
-             a.numero_voie AS lieu_numero_voie,
-             a.repetition AS lieu_repetition,
-             a.nom_voie AS lieu_nom_voie,
-             a.nom_commune AS lieu_commune,
-             a.code_insee AS lieu_code_insee
-      FROM main.lieu_appariement la
-      JOIN main.lieu_inclusion l ON l.id = la.lieu_id
-      LEFT JOIN main.adresse a ON a.id = l.adresse_id
-      WHERE la.statut = ${query.statut}
-      GROUP BY la.carto_record_id, la.lieu_id, l.nom,
-               a.numero_voie, a.repetition, a.nom_voie, a.nom_commune, a.code_insee
-      ORDER BY MAX(la.score_global) DESC NULLS LAST, MAX(la.decide_le) DESC NULLS LAST, la.carto_record_id, la.lieu_id
-      LIMIT ${limite} OFFSET ${page * limite}
+      WITH paires AS (
+        SELECT la.carto_record_id,
+               la.lieu_id,
+               array_agg(la.carto_segment ORDER BY la.carto_segment) AS segments,
+               MAX(la.source) AS source,
+               MAX(la.carto_nom) AS carto_nom,
+               MAX(la.carto_adresse) AS carto_adresse,
+               MAX(la.carto_commune) AS carto_commune,
+               MAX(la.score_nom)::int AS score_nom,
+               MAX(la.score_adresse)::int AS score_adresse,
+               MAX(la.score_distance)::int AS score_distance,
+               MAX(la.score_global)::int AS score_global,
+               MIN(la.distance_m) AS distance_m,
+               MAX(la.derniere_detection) AS derniere_detection,
+               MAX(la.decide_par) AS decide_par,
+               MAX(la.decide_le) AS decide_le,
+               l.nom AS lieu_nom,
+               CASE WHEN l.deleted_at IS NOT NULL THEN 'supprime'
+                    WHEN l.visible_pour_cartographie_nationale THEN 'visible'
+                    ELSE 'masque' END AS lieu_visibilite,
+               a.numero_voie AS lieu_numero_voie,
+               a.repetition AS lieu_repetition,
+               a.nom_voie AS lieu_nom_voie,
+               a.nom_commune AS lieu_commune,
+               a.code_insee AS lieu_code_insee
+        FROM main.lieu_appariement la
+        JOIN main.lieu_inclusion l ON l.id = la.lieu_id
+        LEFT JOIN main.adresse a ON a.id = l.adresse_id
+        WHERE la.statut = ${query.statut}
+        GROUP BY la.carto_record_id, la.lieu_id, l.nom, l.deleted_at, l.visible_pour_cartographie_nationale,
+                 a.numero_voie, a.repetition, a.nom_voie, a.nom_commune, a.code_insee
+        ORDER BY MAX(la.score_global) DESC NULLS LAST, MAX(la.decide_le) DESC NULLS LAST, la.carto_record_id, la.lieu_id
+        LIMIT ${limite} OFFSET ${page * limite}
+      )
+      SELECT p.*,
+             CASE WHEN f.id IS NULL THEN 'absent'
+                  WHEN f.deleted_at IS NOT NULL THEN 'supprime'
+                  WHEN f.visible_pour_cartographie_nationale THEN 'visible'
+                  ELSE 'masque' END AS carto_visibilite
+      FROM paires p
+      LEFT JOIN LATERAL (
+        SELECT fiche.id, fiche.deleted_at, fiche.visible_pour_cartographie_nationale
+        FROM main.lieu_inclusion fiche
+        WHERE fiche.id <> p.lieu_id
+          AND (fiche.structure_cartographie_nationale_id = p.carto_record_id
+               OR fiche.id IN (SELECT e.lieu_id
+                               FROM main.lieu_appariement e
+                               WHERE e.methode = 'segment_externe'
+                                 AND e.carto_segment = ANY (p.segments)))
+        ORDER BY fiche.structure_cartographie_nationale_id = p.carto_record_id DESC, fiche.id
+        LIMIT 1
+      ) f ON TRUE
+      ORDER BY p.score_global DESC NULLS LAST, p.decide_le DESC NULLS LAST, p.carto_record_id, p.lieu_id
     `.then((lignes) => lignes.map((ligne) => ({ ...ligne, statut: query.statut })))
   }
 }
@@ -91,6 +121,7 @@ function versReadModel(ligne: Ligne): AppariementLieuReadModel {
       recordId: ligne.carto_record_id,
       segments: ligne.segments,
       source: ligne.source,
+      visibilite: versVisibiliteDuRecord(ligne.carto_visibilite),
     },
     decideLe: ligne.decide_le,
     decidePar: ligne.decide_par,
@@ -104,6 +135,7 @@ function versReadModel(ligne: Ligne): AppariementLieuReadModel {
       nomVoie: ligne.lieu_nom_voie,
       numeroVoie: ligne.lieu_numero_voie,
       repetition: ligne.lieu_repetition,
+      visibilite: versVisibiliteSurLaCarte(ligne.lieu_visibilite),
     },
     scores: {
       adresse: ligne.score_adresse,
@@ -115,11 +147,21 @@ function versReadModel(ligne: Ligne): AppariementLieuReadModel {
   }
 }
 
+// Le SQL ne produit que ces valeurs ; le repli ne sert qu'au typage.
+function versVisibiliteDuRecord(valeur: string): VisibiliteDuRecord {
+  return visibilitesDuRecord.find((candidat) => candidat === valeur) ?? 'absent'
+}
+
+function versVisibiliteSurLaCarte(valeur: string): VisibiliteSurLaCarte {
+  return valeur === 'visible' || valeur === 'supprime' ? valeur : 'masque'
+}
+
 type Ligne = Readonly<{
   carto_adresse: null | string
   carto_commune: null | string
   carto_nom: null | string
   carto_record_id: string
+  carto_visibilite: string
   decide_le: Date | null
   decide_par: null | string
   derniere_detection: Date
@@ -131,6 +173,7 @@ type Ligne = Readonly<{
   lieu_nom_voie: null | string
   lieu_numero_voie: null | number
   lieu_repetition: null | string
+  lieu_visibilite: string
   score_adresse: null | number
   score_distance: null | number
   score_global: null | number
