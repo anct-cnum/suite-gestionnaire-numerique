@@ -31,6 +31,7 @@ export interface RecupererLieuxInclusionReadModel {
   totalConseillerNumerique: number
   totalLabellise: number
   totalSansRecherche: number
+  totalVisibleCartographie: number
 }
 
 export interface LieuInclusionNumeriqueItem {

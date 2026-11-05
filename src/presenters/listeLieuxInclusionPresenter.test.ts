@@ -22,6 +22,17 @@ describe('liste des lieux d’inclusion presenter', () => {
     // THEN
     expect(viewModel.lieux[0].estLieuCoop).toBe(estLieuCoop)
   })
+
+  it('expose le nombre de lieux visibles sur la cartographie nationale (#2235)', () => {
+    // GIVEN
+    const readModel = { ...createReadModel({}), totalSansRecherche: 24_975, totalVisibleCartographie: 19_010 }
+
+    // WHEN
+    const viewModel = listeLieuxInclusionPresenter(readModel, now)
+
+    // THEN
+    expect(viewModel.totalVisibleCartographie).toBe(19_010)
+  })
 })
 
 function createReadModel(lieu: Partial<LieuInclusionNumeriqueItem>): RecupererLieuxInclusionReadModel {
@@ -56,5 +67,6 @@ function createReadModel(lieu: Partial<LieuInclusionNumeriqueItem>): RecupererLi
     totalConseillerNumerique: 0,
     totalLabellise: 0,
     totalSansRecherche: 1,
+    totalVisibleCartographie: 1,
   }
 }
