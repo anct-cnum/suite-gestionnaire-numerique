@@ -25,7 +25,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
             <strong>Mon inclusion numérique</strong> est un service public numérique développé par le programme Société
             Numérique de l&apos;ANCT. Il a deux objectifs :
           </p>
-          <ul className="fr-pl-2w fr-mb-3w" style={{ listStyleType: 'disc' }}>
+          <ul className="fr-list fr-pl-2w fr-mb-3w">
             <li>
               mesurer précisément l&apos;impact de la politique publique d&apos;inclusion numérique, notamment en
               évaluant la montée en compétence des bénéficiaires d&apos;accompagnement au numérique ;
@@ -69,7 +69,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
             Quelles sont les données à caractère personnel que nous traitons ?
           </h2>
           <p>Les données traitées sont les suivantes :</p>
-          <ul className="fr-pl-2w" style={{ listStyleType: 'disc' }}>
+          <ul className="fr-list fr-pl-2w">
             <li>
               <strong>Données relatives aux comptes des acteurs de l&apos;inclusion numérique via ProConnect :</strong>{' '}
               nom, prénom, adresse courriel, numéro de téléphone professionnel ;
@@ -134,7 +134,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
             Quels sont vos droits ?
           </h2>
           <p>Vous disposez :</p>
-          <ul className="fr-pl-2w fr-mb-3w" style={{ listStyleType: 'disc' }}>
+          <ul className="fr-list fr-pl-2w fr-mb-3w">
             <li>D&apos;un droit d&apos;information et d&apos;accès à vos données ;</li>
             <li>D&apos;un droit de rectification ;</li>
             <li>D&apos;un droit d&apos;opposition ;</li>
