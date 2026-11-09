@@ -8,6 +8,26 @@ import {
 } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
+const includeRelations = {
+  relationDepartement: true,
+  relationGroupement: true,
+  relationRegion: true,
+  relationStructureAdministrative: {
+    include: {
+      adresse: true,
+      membres: {
+        select: {
+          gouvernanceDepartementCode: true,
+        },
+        take: 1,
+        where: {
+          statut: 'confirme',
+        },
+      },
+    },
+  },
+} as const
+
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
@@ -101,26 +121,6 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       },
     })
 
-    const includeRelations = {
-      relationDepartement: true,
-      relationGroupement: true,
-      relationRegion: true,
-      relationStructureAdministrative: {
-        include: {
-          adresse: true,
-          membres: {
-            select: {
-              gouvernanceDepartementCode: true,
-            },
-            take: 1,
-            where: {
-              statut: 'confirme',
-            },
-          },
-        },
-      },
-    } as const
-
     // Si recherche flexible, pagination et tri gérés via les IDs pré-triés par pertinence
     if (idsFromSearch !== undefined) {
       const idsPagines = idsFromSearch.slice(
@@ -163,6 +163,20 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       total,
       utilisateursCourants: utilisateursRecord.map(transform),
     }
+  }
+
+  async tousLesUtilisateurs(): Promise<ReadonlyArray<UnUtilisateurReadModel>> {
+    const utilisateursRecord = await this.#dataResource.findMany({
+      include: includeRelations,
+      orderBy: {
+        id: 'asc',
+      },
+      where: {
+        isSupprime: false,
+      },
+    })
+
+    return utilisateursRecord.map(transform)
   }
 
   async #construireFiltreWhere(

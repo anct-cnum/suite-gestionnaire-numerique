@@ -924,6 +924,38 @@ describe('prisma utilisateur query', () => {
     const codeRegion = '0'
   })
 
+  describe('chercher tous les utilisateurs', () => {
+    it('quand je cherche tous les utilisateurs alors je les trouve tous quel que soit leur rôle, sauf ceux supprimés, rangés par identifiant', async () => {
+      // GIVEN
+      await creerUneRegion()
+      await creerUnDepartement()
+      await creerUnUtilisateur({
+        departementCode: '75',
+        id: 3,
+        role: 'gestionnaire_departement',
+        ssoEmail: 'gestionnaire.departement@example.net',
+        ssoId: 'ssoId3',
+      })
+      await creerUnUtilisateur({ id: 1, role: 'administrateur_dispositif', ssoId: 'ssoId1' })
+      await creerUnUtilisateur({
+        id: 2,
+        isSupprime: true,
+        ssoEmail: 'utilisateur.supprime@example.net',
+        ssoId: 'ssoId2',
+      })
+
+      // WHEN
+      const utilisateurs = await new PrismaUtilisateurLoader().tousLesUtilisateurs()
+
+      // THEN
+      expect(utilisateurs.map((utilisateur) => utilisateur.uid)).toStrictEqual([1, 3])
+      expect(utilisateurs.map((utilisateur) => utilisateur.role.nom)).toStrictEqual([
+        'Administrateur dispositif',
+        'Gestionnaire département',
+      ])
+    })
+  })
+
   describe('chercher un utilisateur par son nom ou son email', () => {
     const structureId = 15
     const pageCourante = 0
