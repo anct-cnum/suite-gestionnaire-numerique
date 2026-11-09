@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import MentionsLegales from './MentionsLegales'
@@ -36,5 +36,30 @@ describe('pages légales', () => {
     // THEN
     const section = screen.getByRole('region', { name: 'Signaler un dysfonctionnement' })
     expect(section).toBeInTheDocument()
+  })
+
+  it('le contact de la déclaration d’accessibilité est une liste', () => {
+    // WHEN
+    render(<Accessibilite />)
+
+    // THEN
+    const [liste] = screen
+      .getAllByRole('list')
+      .filter((element) => within(element).queryByRole('link', { name: 'societe.numerique@anct.gouv.fr' }) !== null)
+    const contacts = within(liste).getAllByRole('listitem')
+    expect(contacts.map((contact) => contact.textContent)).toStrictEqual([
+      'E-mail\u00a0: societe.numerique@anct.gouv.fr',
+      'Adresse\u00a0: 20 avenue de Ségur, 75007 Paris',
+    ])
+  })
+
+  it('la politique de confidentialité ne double pas les puces de ses listes par des tirets tapés', () => {
+    // WHEN
+    render(<PolitiqueConfidentialite />)
+
+    // THEN
+    screen.getAllByRole('listitem').forEach((element) => {
+      expect(element.textContent.trim()).not.toMatch(/^-/)
+    })
   })
 })

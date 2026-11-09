@@ -75,12 +75,15 @@ export default function VitrineHomePage(): ReactElement {
                 Principalement, parce que ces personnes ne se sentent pas assez compétentes pour utiliser pleinement le
                 numérique.
               </p>
-              <p className="fr-text--sm fr-mb-0" style={{ color: '#666' }}>
-                * Baromètre du numérique, 2024.
-                <br />
-                ** ANCT, CREDOC, Université Rennes 2 CREAD-M@rsouin, La société numérique française : définir et mesurer
-                l&apos;éloignement numérique, 2023.
-              </p>
+              <div>
+                <p className="fr-text--sm fr-mb-0" style={{ color: '#666' }}>
+                  * Baromètre du numérique, 2024.
+                </p>
+                <p className="fr-text--sm fr-mb-0" style={{ color: '#666' }}>
+                  ** ANCT, CREDOC, Université Rennes 2 CREAD-M@rsouin, La société numérique française : définir et
+                  mesurer l&apos;éloignement numérique, 2023.
+                </p>
+              </div>
             </div>
           </div>
         </div>

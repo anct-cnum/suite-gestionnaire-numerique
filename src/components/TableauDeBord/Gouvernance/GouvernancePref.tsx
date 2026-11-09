@@ -32,8 +32,8 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
             </Link>
           )}
         </div>
-        <div className={styles.cartesContainer}>
-          <div className={`${styles.carte} background-blue-france fr-p-3w`}>
+        <ul className={`fr-raw-list ${styles.cartesContainer}`}>
+          <li className={`${styles.carte} background-blue-france fr-p-3w`}>
             <div className={`${tableauDeBordStyles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="bank-line" />-
             </div>
@@ -41,22 +41,22 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
               Membres de la gouvernance
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
-          </div>
-          <div className={`${styles.carte} background-blue-france fr-p-3w`}>
+          </li>
+          <li className={`${styles.carte} background-blue-france fr-p-3w`}>
             <div className={`${tableauDeBordStyles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="community-line" />-
             </div>
             <div className="font-weight-500">Collectivité impliquées</div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
-          </div>
-          <div className={`${styles.carte} background-blue-france fr-p-3w`}>
+          </li>
+          <li className={`${styles.carte} background-blue-france fr-p-3w`}>
             <div className={`${tableauDeBordStyles.indicateurValeur} fr-m-0`}>
               <TitleIcon background="white" icon="file-download-line" />-
             </div>
             <div className="font-weight-500">Feuilles de route déposées</div>
             <div className="fr-text--xs color-blue-france fr-mb-0">Erreur lors du chargement des données</div>
-          </div>
-        </div>
+          </li>
+        </ul>
       </BlocCard>
     )
   }
@@ -78,8 +78,8 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
           </Link>
         )}
       </div>
-      <div className={styles.cartesContainer}>
-        <div className={`${styles.carte} background-blue-france fr-p-3w`}>
+      <ul className={`fr-raw-list ${styles.cartesContainer}`}>
+        <li className={`${styles.carte} background-blue-france fr-p-3w`}>
           <div className={`${tableauDeBordStyles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="bank-line" />
             {gouvernanceViewModel.membre.total}
@@ -90,8 +90,8 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
           <div className="fr-text--xs color-blue-france fr-mb-0">
             dont <span style={{ fontWeight: 700 }}>{gouvernanceViewModel.membre.coporteur} coporteurs</span>
           </div>
-        </div>
-        <div className={`${styles.carte} background-blue-france fr-p-3w`}>
+        </li>
+        <li className={`${styles.carte} background-blue-france fr-p-3w`}>
           <div className={`${tableauDeBordStyles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="file-download-line" />
             {gouvernanceViewModel.feuilleDeRoute.total}
@@ -103,8 +103,8 @@ export default function GouvernancePref({ gouvernanceViewModel, lienGouvernance 
             comprenant{' '}
             <span style={{ fontWeight: 700 }}>{gouvernanceViewModel.feuilleDeRoute.action} actions enregistrées</span>
           </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </BlocCard>
   )
 }

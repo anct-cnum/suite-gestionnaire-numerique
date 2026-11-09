@@ -119,23 +119,23 @@ function renderCartesStatistiques(viewModel: ErrorViewModel | StatistiquesMediat
   }
 
   return (
-    <div className="fr-grid-row fr-grid-row--gutters fr-mb-3v">
-      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+    <ul className="fr-raw-list fr-grid-row fr-grid-row--gutters fr-mb-3v">
+      <li className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
         <CarteStatistiqueMediateurs nombre={viewModel.mediateurs.nombre} sousTexte={viewModel.mediateurs.sousTexte} />
-      </div>
-      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+      </li>
+      <li className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
         <CarteStatistiqueConseillersNumeriques
           nombre={viewModel.conseillersNumeriques.nombre}
           sousTexte={viewModel.conseillersNumeriques.sousTexte}
         />
-      </div>
-      <div className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
+      </li>
+      <li className="fr-col-12 fr-col-sm-6 fr-col-lg-4">
         <CarteStatistiqueAidantsConnect
           nombre={viewModel.aidantsConnect.nombre}
           sousTexte={viewModel.aidantsConnect.sousTexte}
         />
-      </div>
-    </div>
+      </li>
+    </ul>
   )
 }
 

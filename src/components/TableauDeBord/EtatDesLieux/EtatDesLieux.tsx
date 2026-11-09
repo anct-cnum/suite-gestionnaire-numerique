@@ -59,11 +59,15 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
       </div>
       <div className="fr-grid-row">
         {carte}
-        <div className={`fr-col-12 fr-col-xl-4 ${styles.cardsColumn}`}>
-          <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
-          <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
-          {accompagnements}
-        </div>
+        <ul className={`fr-raw-list fr-col-12 fr-col-xl-4 ${styles.cardsColumn}`}>
+          <li>
+            <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
+          </li>
+          <li>
+            <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
+          </li>
+          <li>{accompagnements}</li>
+        </ul>
       </div>
     </section>
   )

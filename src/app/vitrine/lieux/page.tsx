@@ -154,7 +154,8 @@ export default function LieuxPage(): ReactElement {
           </div>
           <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>Exemples d&apos;intégration de la cartographie</h2>
 
-          <div
+          <ul
+            className="fr-raw-list"
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -163,7 +164,7 @@ export default function LieuxPage(): ReactElement {
               maxWidth: '60rem',
             }}
           >
-            <div
+            <li
               className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
@@ -238,9 +239,9 @@ export default function LieuxPage(): ReactElement {
                   style={{ height: 'auto', maxHeight: '5rem', maxWidth: '10.875rem', width: 'auto' }}
                 />
               </div>
-            </div>
+            </li>
 
-            <div
+            <li
               className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
@@ -314,8 +315,8 @@ export default function LieuxPage(): ReactElement {
                   style={{ height: 'auto', maxHeight: '11.25rem', maxWidth: '17.5rem', width: 'auto' }}
                 />
               </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -332,8 +333,8 @@ export default function LieuxPage(): ReactElement {
           </div>
           <h2 className={`fr-mb-8w ${styles.sectionTitle}`}>Les avantages de cet outil</h2>
 
-          <div className={styles.avantagesCarte}>
-            <div
+          <ul className={`fr-raw-list ${styles.avantagesCarte}`}>
+            <li
               style={{
                 display: 'flex',
                 flex: '1',
@@ -364,11 +365,9 @@ export default function LieuxPage(): ReactElement {
                 En quelques secondes, renseignez les besoins d&apos;un bénéficiaire, son adresse et ses disponibilités
                 afin d&apos;afficher uniquement les lieux qui pourront l&apos;aider.
               </p>
-            </div>
+            </li>
 
-            <div className={styles.avantagesSeparateur} />
-
-            <div
+            <li
               style={{
                 display: 'flex',
                 flex: '1',
@@ -400,11 +399,9 @@ export default function LieuxPage(): ReactElement {
                 standard de données des lieux d&apos;inclusion numérique établi par la Mednum , Datactivist et
                 l&apos;ANCT.
               </p>
-            </div>
+            </li>
 
-            <div className={styles.avantagesSeparateur} />
-
-            <div
+            <li
               style={{
                 display: 'flex',
                 flex: '1',
@@ -436,11 +433,9 @@ export default function LieuxPage(): ReactElement {
                 acteurs de l&apos;inclusion numérique. Cette mutualisation permet une mise à jour plus fréquente et plus
                 simple de ses données.
               </p>
-            </div>
+            </li>
 
-            <div className={styles.avantagesSeparateur} />
-
-            <div
+            <li
               style={{
                 display: 'flex',
                 flex: '1',
@@ -472,8 +467,8 @@ export default function LieuxPage(): ReactElement {
                 échelles : nationale, régionale, départementale, locale, micro-locale. Ouverte et contributive, les
                 données peuvent être réutilisées par tous les acteurs de la médiation numérique.
               </p>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -521,8 +516,8 @@ export default function LieuxPage(): ReactElement {
             En savoir plus sur cette cartographie et ses usages variés
           </p>
 
-          <div
-            className="fr-grid-row fr-grid-row--gutters"
+          <ul
+            className="fr-raw-list fr-grid-row fr-grid-row--gutters"
             style={{
               backgroundColor: '#fff',
               border: '1px solid #ddd',
@@ -530,7 +525,7 @@ export default function LieuxPage(): ReactElement {
               padding: '2.5rem',
             }}
           >
-            <div
+            <li
               className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
@@ -578,9 +573,9 @@ export default function LieuxPage(): ReactElement {
                   Diffuser la cartographie dans mon réseau
                 </Link>
               </div>
-            </div>
+            </li>
 
-            <div
+            <li
               className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
@@ -628,9 +623,9 @@ export default function LieuxPage(): ReactElement {
                   Prendre en main la cartographie
                 </Link>
               </div>
-            </div>
+            </li>
 
-            <div
+            <li
               className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
@@ -678,8 +673,8 @@ export default function LieuxPage(): ReactElement {
                   Voir les évolutions du standard national
                 </Link>
               </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </section>
 

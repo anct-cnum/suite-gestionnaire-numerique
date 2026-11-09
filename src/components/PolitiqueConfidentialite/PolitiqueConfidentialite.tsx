@@ -25,17 +25,16 @@ export default function PolitiqueConfidentialite(): ReactElement {
             <strong>Mon inclusion numérique</strong> est un service public numérique développé par le programme Société
             Numérique de l&apos;ANCT. Il a deux objectifs :
           </p>
-          <ul>
+          <ul className="fr-pl-2w fr-mb-3w" style={{ listStyleType: 'disc' }}>
             <li>
-              - mesurer précisément l&apos;impact de la politique publique d&apos;inclusion numérique, notamment en
+              mesurer précisément l&apos;impact de la politique publique d&apos;inclusion numérique, notamment en
               évaluant la montée en compétence des bénéficiaires d&apos;accompagnement au numérique ;
             </li>
             <li>
-              - piloter l&apos;ensemble des dispositifs d&apos;inclusion numérique déployés à une échelle nationale,
+              piloter l&apos;ensemble des dispositifs d&apos;inclusion numérique déployés à une échelle nationale,
               régionale, départementale, communale.
             </li>
           </ul>
-          <br />
           <p>
             Pour cela, Mon inclusion numérique expose et administre les données de l&apos;entrepôt de données de
             l&apos;inclusion numérique de l&apos;ANCT ayant vocation à rassembler l&apos;ensemble des données relatives
@@ -70,17 +69,15 @@ export default function PolitiqueConfidentialite(): ReactElement {
             Quelles sont les données à caractère personnel que nous traitons ?
           </h2>
           <p>Les données traitées sont les suivantes :</p>
-          <ul>
+          <ul className="fr-pl-2w" style={{ listStyleType: 'disc' }}>
             <li>
-              <strong>
-                - Données relatives aux comptes des acteurs de l&apos;inclusion numérique via ProConnect :
-              </strong>{' '}
+              <strong>Données relatives aux comptes des acteurs de l&apos;inclusion numérique via ProConnect :</strong>{' '}
               nom, prénom, adresse courriel, numéro de téléphone professionnel ;
             </li>
             <li>
               <strong>
-                - Données relatives aux contacts principaux des structures de rattachement des acteurs de
-                l&apos;inclusion numérique :
+                Données relatives aux contacts principaux des structures de rattachement des acteurs de l&apos;inclusion
+                numérique :
               </strong>{' '}
               nom, prénom, adresse courriel.
             </li>
@@ -137,13 +134,12 @@ export default function PolitiqueConfidentialite(): ReactElement {
             Quels sont vos droits ?
           </h2>
           <p>Vous disposez :</p>
-          <ul>
-            <li>- D&apos;un droit d&apos;information et d&apos;accès à vos données ;</li>
-            <li>- D&apos;un droit de rectification ;</li>
-            <li>- D&apos;un droit d&apos;opposition ;</li>
-            <li>- D&apos;un droit à la limitation du traitement de vos données.</li>
+          <ul className="fr-pl-2w fr-mb-3w" style={{ listStyleType: 'disc' }}>
+            <li>D&apos;un droit d&apos;information et d&apos;accès à vos données ;</li>
+            <li>D&apos;un droit de rectification ;</li>
+            <li>D&apos;un droit d&apos;opposition ;</li>
+            <li>D&apos;un droit à la limitation du traitement de vos données.</li>
           </ul>
-          <br />
           <p>
             Pour exercer vos droits, vous pouvez nous contacter à :{' '}
             <a className="fr-link" href="mailto:dpo@anct.gouv.fr">
