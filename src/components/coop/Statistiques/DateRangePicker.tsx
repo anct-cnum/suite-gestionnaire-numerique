@@ -1,7 +1,7 @@
 'use client'
 
-import type { ReactElement } from 'react'
-import { useCallback, useState } from 'react'
+import type { KeyboardEvent, ReactElement } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import styles from './DateRangePicker.module.css'
 
@@ -23,6 +23,7 @@ const JOURS_ABREV = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const
 const JOURS_ARIA = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] as const
 
 type DayCell = Readonly<{ date: Date; isOutside: boolean }>
+type Mois = Readonly<{ annee: number; mois: number }>
 
 function addMois(annee: number, mois: number, delta: number): Readonly<{ annee: number; mois: number }> {
   const date = new Date(annee, mois + delta, 1)
@@ -69,19 +70,84 @@ function entreInclus(date: Date, debut: Date, fin: Date): boolean {
   return date >= debut && date <= fin
 }
 
+// Format local (pas toISOString, qui convertit en UTC et décale la date d'un jour).
 function isoJour(date: Date): string {
-  return date.toISOString().slice(0, 10)
+  const annee = date.getFullYear()
+  const mois = String(date.getMonth() + 1).padStart(2, '0')
+  const jour = String(date.getDate()).padStart(2, '0')
+  return `${annee}-${mois}-${jour}`
+}
+
+function debutDuJour(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+function borner(date: Date, minDate: Date, maxDate: Date): Date {
+  const jour = debutDuJour(date)
+  if (jour < debutDuJour(minDate)) return debutDuJour(minDate)
+  if (jour > maxDate) return debutDuJour(maxDate)
+  return jour
+}
+
+function indexMois({ annee, mois }: Mois): number {
+  return annee * 12 + mois
+}
+
+function moisDe(date: Date): Mois {
+  return { annee: date.getFullYear(), mois: date.getMonth() }
+}
+
+function decalerMois(date: Date, delta: number): Date {
+  const dernierJourCible = new Date(date.getFullYear(), date.getMonth() + delta + 1, 0).getDate()
+  return new Date(date.getFullYear(), date.getMonth() + delta, Math.min(date.getDate(), dernierJourCible))
+}
+
+function premierJourSelectionnable({ annee, mois }: Mois, minDate: Date, maxDate: Date): Date | null {
+  const dernier = new Date(annee, mois + 1, 0).getDate()
+  for (let jour = 1; jour <= dernier; jour++) {
+    const date = new Date(annee, mois, jour)
+    if (date >= debutDuJour(minDate) && date <= maxDate) return date
+  }
+  return null
+}
+
+// Navigation clavier dans la grille (motif « date picker » WAI-ARIA).
+function jourCible(jour: Date, touche: string, shift: boolean): Date | null {
+  const indexSemaine = (jour.getDay() + 6) % 7 // lundi = 0
+  const decalerJours = (delta: number): Date => new Date(jour.getFullYear(), jour.getMonth(), jour.getDate() + delta)
+  switch (touche) {
+    case 'ArrowLeft':
+      return decalerJours(-1)
+    case 'ArrowRight':
+      return decalerJours(1)
+    case 'ArrowUp':
+      return decalerJours(-7)
+    case 'ArrowDown':
+      return decalerJours(7)
+    case 'Home':
+      return decalerJours(-indexSemaine)
+    case 'End':
+      return decalerJours(6 - indexSemaine)
+    case 'PageUp':
+      return decalerMois(jour, shift ? -12 : -1)
+    case 'PageDown':
+      return decalerMois(jour, shift ? 12 : 1)
+    default:
+      return null
+  }
 }
 
 type CalendrierMoisProps = Readonly<{
   annee: number
   debut: Date | null
   fin: Date | null
+  jourTabulable: Date | null
   maxDate: Date
   minDate: Date
   mois: number
   onAnneeChange: (annee: number) => void
   onClick: (date: Date) => void
+  onKeyDown: (date: Date, event: KeyboardEvent<HTMLButtonElement>) => void
   onMoisChange: (mois: number) => void
 }>
 
@@ -89,11 +155,13 @@ function CalendrierMois({
   annee,
   debut,
   fin,
+  jourTabulable,
   maxDate,
   minDate,
   mois,
   onAnneeChange,
   onClick,
+  onKeyDown,
   onMoisChange,
 }: CalendrierMoisProps): ReactElement {
   const semaines = semainsDuMois(annee, mois)
@@ -226,7 +294,10 @@ function CalendrierMois({
                       onClick={() => {
                         onClick(jour)
                       }}
-                      tabIndex={estDesactive ? -1 : 0}
+                      onKeyDown={(event) => {
+                        onKeyDown(jour, event)
+                      }}
+                      tabIndex={jourTabulable !== null && memeJour(jour, jourTabulable) ? 0 : -1}
                       type="button"
                     >
                       {jour.getDate()}
@@ -254,14 +325,48 @@ export default function DateRangePicker({
   const today = new Date()
   const initial = debut ?? today
   const [moisGauche, setMoisGauche] = useState({ annee: initial.getFullYear(), mois: initial.getMonth() })
+  // Un seul jour dans l'ordre de tabulation (tabindex mobile), déplacé aux flèches.
+  const [jourActif, setJourActif] = useState(() => borner(initial, minDate, maxDate))
+  const rootRef = useRef<HTMLDivElement>(null)
+  // À l'ouverture puis à chaque déplacement, le focus est envoyé sur le jour tabulable. Le panneau défile
+  // si besoin pour que le jour focalisé reste visible (panneau tronqué quand le bouton est bas dans la fenêtre).
+  const focusAFaire = useRef(true)
 
   const moisDroite = addMois(moisGauche.annee, moisGauche.mois, 1)
+
+  const jourActifVisible =
+    indexMois(moisDe(jourActif)) === indexMois(moisGauche) || indexMois(moisDe(jourActif)) === indexMois(moisDroite)
+  const jourTabulable = jourActifVisible
+    ? jourActif
+    : (premierJourSelectionnable(moisGauche, minDate, maxDate) ??
+      premierJourSelectionnable(moisDroite, minDate, maxDate))
+
+  useEffect(() => {
+    if (!focusAFaire.current || jourTabulable === null) return
+    focusAFaire.current = false
+    rootRef.current?.querySelector<HTMLButtonElement>(`[data-day="${isoJour(jourTabulable)}"] button`)?.focus()
+  })
+
+  function naviguerAuClavier(jour: Date, event: KeyboardEvent<HTMLButtonElement>): void {
+    const cible = jourCible(jour, event.key, event.shiftKey)
+    if (cible === null) return
+    event.preventDefault()
+    const jourBorne = borner(cible, minDate, maxDate)
+    if (indexMois(moisDe(jourBorne)) < indexMois(moisGauche)) {
+      setMoisGauche(moisDe(jourBorne))
+    } else if (indexMois(moisDe(jourBorne)) > indexMois(moisDroite)) {
+      setMoisGauche(addMois(jourBorne.getFullYear(), jourBorne.getMonth(), -1))
+    }
+    setJourActif(jourBorne)
+    focusAFaire.current = true
+  }
 
   const peutReculer = moisGauche.annee > minDate.getFullYear() || moisGauche.mois > minDate.getMonth()
   const peutAvancer = moisDroite.annee < maxDate.getFullYear() || moisDroite.mois < maxDate.getMonth()
 
   const handleClick = useCallback(
     (date: Date) => {
+      setJourActif(date)
       if (debut === null || fin !== null) {
         onChange({ debut: date, fin: null })
       } else if (memeJour(date, debut)) {
@@ -287,7 +392,7 @@ export default function DateRangePicker({
   }
 
   return (
-    <div className={`${styles.root} fr-position-relative`} data-mode="range" data-multiple-months="true">
+    <div className={`${styles.root} fr-position-relative`} ref={rootRef} data-mode="range" data-multiple-months="true">
       <div className="fr-flex fr-flex-gap-6v">
         <nav
           className="fr-flex fr-justify-content-space-between fr-width-full fr-position-absolute fr-text-label--blue-france"
@@ -339,6 +444,7 @@ export default function DateRangePicker({
           annee={moisGauche.annee}
           debut={debut}
           fin={fin}
+          jourTabulable={jourTabulable}
           maxDate={maxDate}
           minDate={minDate}
           mois={moisGauche.mois}
@@ -346,6 +452,7 @@ export default function DateRangePicker({
             setMoisGauche((prev) => ({ ...prev, annee }))
           }}
           onClick={handleClick}
+          onKeyDown={naviguerAuClavier}
           onMoisChange={(mois) => {
             setMoisGauche((prev) => ({ ...prev, mois }))
           }}
@@ -355,6 +462,7 @@ export default function DateRangePicker({
           annee={moisDroite.annee}
           debut={debut}
           fin={fin}
+          jourTabulable={jourTabulable}
           maxDate={maxDate}
           minDate={minDate}
           mois={moisDroite.mois}
@@ -362,6 +470,7 @@ export default function DateRangePicker({
             setMoisGauche(addMois(annee, moisDroite.mois, -1))
           }}
           onClick={handleClick}
+          onKeyDown={naviguerAuClavier}
           onMoisChange={(mois) => {
             setMoisGauche(addMois(moisDroite.annee, mois, -1))
           }}

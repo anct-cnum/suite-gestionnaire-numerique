@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { CSSProperties, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import { CSSProperties, ReactElement, useCallback, useEffect, useId, useRef, useState } from 'react'
 
 import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 import DateRangePicker from './DateRangePicker'
@@ -12,6 +12,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const panneauId = useId()
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({})
 
   const isFilled = dateDebut !== DATE_DEBUT_DISPOSITIF || dateFin !== new Date().toISOString().slice(0, 10)
@@ -49,6 +50,12 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     }
   }, [calculerPosition, isOpen])
 
+  // Ferme le panneau et rend le focus au bouton « Période ».
+  const fermer = useCallback(() => {
+    setIsOpen(false)
+    buttonRef.current?.focus()
+  }, [])
+
   const appliquer = useCallback(
     (selectedDebut: Date | null, selectedFin: Date | null) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -67,9 +74,9 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
 
       const queryString = params.toString()
       router.push(queryString ? `${pathname}?${queryString}` : pathname)
-      setIsOpen(false)
+      fermer()
     },
-    [pathname, router, searchParams]
+    [fermer, pathname, router, searchParams]
   )
 
   const valider = useCallback(() => {
@@ -86,9 +93,18 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     debut !== null && fin !== null ? `${formaterDateCourte(debut)} - ${formaterDateCourte(fin)}` : 'Période'
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      onKeyDown={(event) => {
+        if (isOpen && event.key === 'Escape') {
+          event.stopPropagation()
+          fermer()
+        }
+      }}
+    >
       <button
         ref={buttonRef}
+        aria-controls={panneauId}
         aria-expanded={isOpen}
         className={`fr-btn ${isFilled ? 'fr-btn--secondary' : 'fr-btn--tertiary'} fr-border-radius--4 ${isFilled ? styles.filled : ''} ${isOpen ? styles.open : ''}`}
         onClick={() => {
@@ -115,7 +131,13 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
               setIsOpen(false)
             }}
           />
-          <div className={styles.popover} style={popoverStyle}>
+          <div
+            aria-label="Choisir une période"
+            className={styles.popover}
+            id={panneauId}
+            role="dialog"
+            style={popoverStyle}
+          >
             <DateRangePicker
               debut={debut}
               fin={fin}
