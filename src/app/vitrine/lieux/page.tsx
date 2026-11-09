@@ -124,7 +124,8 @@ export default function LieuxPage(): ReactElement {
             </div>
             <div className="fr-col-12 fr-col-md-6">
               <img
-                alt="Implémentez facilement la cartographie sur votre site"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/lieux/illustration-implementation.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -145,7 +146,8 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
-              alt="Icône exemples"
+              alt=""
+              aria-hidden="true"
               src="/vitrine/lieux/icone-exemples.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
@@ -320,7 +322,8 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
-              alt="Icône avantages"
+              alt=""
+              aria-hidden="true"
               src="/vitrine/lieux/icone-avantages.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
@@ -338,7 +341,8 @@ export default function LieuxPage(): ReactElement {
             >
               <div>
                 <img
-                  alt="Icône Orientation"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-orientation.png"
                   style={{ height: '5rem', width: '5rem' }}
                 />
@@ -372,7 +376,8 @@ export default function LieuxPage(): ReactElement {
             >
               <div>
                 <img
-                  alt="Icône Standardisation"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-standardisation.png"
                   style={{ height: '5rem', width: '5rem' }}
                 />
@@ -407,7 +412,8 @@ export default function LieuxPage(): ReactElement {
             >
               <div>
                 <img
-                  alt="Icône La mise à jour"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-mise-a-jour.png"
                   style={{ height: '5rem', width: '5rem' }}
                 />
@@ -442,7 +448,8 @@ export default function LieuxPage(): ReactElement {
             >
               <div>
                 <img
-                  alt="Icône Visibilité"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-visibilite.png"
                   style={{ height: '5rem', width: '5rem' }}
                 />
@@ -501,7 +508,8 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
-              alt="Icône ressources"
+              alt=""
+              aria-hidden="true"
               src="/vitrine/lieux/icone-ressources.png"
               style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
@@ -540,7 +548,8 @@ export default function LieuxPage(): ReactElement {
                 }}
               >
                 <img
-                  alt="Icône Diffuser"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-diffuser.png"
                   style={{ height: '2.5rem', width: '2.5rem' }}
                 />
@@ -589,7 +598,8 @@ export default function LieuxPage(): ReactElement {
                 }}
               >
                 <img
-                  alt="Icône Collecter"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-collecter.png"
                   style={{ height: '2.5rem', width: '2.5rem' }}
                 />
@@ -638,7 +648,8 @@ export default function LieuxPage(): ReactElement {
                 }}
               >
                 <img
-                  alt="Icône Évolution"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/lieux/icone-evolution.png"
                   style={{ height: '2.5rem', width: '2.5rem' }}
                 />
