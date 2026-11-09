@@ -1,7 +1,9 @@
+import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import styles from './ToolCard.module.css'
 import Badge from '@/components/shared/Badge/Badge'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function ToolCard({
   badge,
@@ -39,11 +41,17 @@ export default function ToolCard({
               </Badge>
             )}
             <p className="fr-text--md fr-mb-0">{description}</p>
-            {link !== undefined && link !== '' && (
+            {link !== undefined && (
               <div>
-                <a className="fr-btn" href={link} rel="noopener noreferrer" target="_blank">
-                  {buttonText ?? 'En savoir plus'}
-                </a>
+                {link.startsWith('/') ? (
+                  <Link className="fr-btn" href={link}>
+                    {buttonText}
+                  </Link>
+                ) : (
+                  <ExternalLink className="fr-btn" href={link} title={buttonText}>
+                    {buttonText}
+                  </ExternalLink>
+                )}
               </div>
             )}
           </div>
@@ -72,24 +80,25 @@ export default function ToolCard({
   )
 }
 
-type ToolCardProps = {
-  readonly badge?: string
-
-  readonly badgeColor?: string
-
-  readonly badgeIcon?: boolean
-
-  readonly buttonText?: string
-  readonly description: string
-
-  readonly icon?: string
-  readonly imageAlt: string
-
-  readonly imageBackground?: string
-  readonly imageSrc: string
-
-  readonly link?: string
-
-  readonly reverse?: boolean
-  readonly title: string
-}
+type ToolCardProps = (
+  | Readonly<{
+      buttonText: string
+      link: string
+    }>
+  | Readonly<{
+      buttonText?: never
+      link?: never
+    }>
+) &
+  Readonly<{
+    badge?: string
+    badgeColor?: string
+    badgeIcon?: boolean
+    description: string
+    icon?: string
+    imageAlt: string
+    imageBackground?: string
+    imageSrc: string
+    reverse?: boolean
+    title: string
+  }>
