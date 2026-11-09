@@ -12,7 +12,7 @@ export default function Accessibilite(): ReactElement {
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
         style={{ maxWidth: '960px' }}
       >
-        <PageTitle>Déclaration d&apos;accessibilité</PageTitle>
+        <PageTitle id="declaration-accessibilite-title">Déclaration d&apos;accessibilité</PageTitle>
 
         <p>
           Établie le <span>24 juillet 2026.</span>

@@ -87,8 +87,7 @@ export default function Header({ titre }: Props): ReactElement {
       <div className={`fr-grid-row fr-grid-row--gutters ${styles.titleRow}`}>
         <div className="fr-col-12 fr-col-md-8">
           <h1 className={`fr-mb-0 ${styles.title}`}>
-            {titre}
-            <br />
+            {titre} <br />
             {territoireActuel}
           </h1>
         </div>

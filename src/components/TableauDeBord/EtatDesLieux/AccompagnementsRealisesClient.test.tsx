@@ -14,6 +14,7 @@ describe(AccompagnementsRealisesClient, () => {
 
     // THEN
     expect(screen.getByText('Chargement...').textContent).toBe('Chargement...')
+    expect(screen.getByRole('heading', { level: 3, name: 'Accompagnements des 6 derniers mois' })).toBeInTheDocument()
   })
 
   it('récupère les accompagnements du territoire puis affiche le résultat', async () => {
@@ -31,6 +32,7 @@ describe(AccompagnementsRealisesClient, () => {
 
     // THEN
     await expect(screen.findByText('Bar Chart Mock')).resolves.toBeDefined()
+    expect(screen.getByRole('heading', { level: 3, name: 'Accompagnements des 6 derniers mois' })).toBeInTheDocument()
     expect(fetchSpy).toHaveBeenCalledWith('/api/tableau-de-bord/accompagnements-realises?territoire=06')
   })
 
@@ -45,6 +47,7 @@ describe(AccompagnementsRealisesClient, () => {
 
     // THEN
     expect((await screen.findAllByText('Erreur Coop')).length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { level: 3, name: 'Accompagnements des 6 derniers mois' })).toBeInTheDocument()
   })
 
   it("affiche un message d'erreur générique quand la requête échoue", async () => {

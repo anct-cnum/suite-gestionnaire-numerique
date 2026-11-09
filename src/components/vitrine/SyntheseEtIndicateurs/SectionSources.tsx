@@ -5,7 +5,9 @@ import BarreLogosPartenaires from '../BarreLogosPartenaires/BarreLogosPartenaire
 export default function SectionSources(): ReactElement {
   return (
     <div className="background-blue-france fr-p-4w" style={{ borderRadius: '8px', textAlign: 'center' }}>
-      <h2 className="fr-h6 color-blue-france fr-mb-3w">Sources et données utilisées</h2>
+      <h2 className="fr-h6 color-blue-france fr-mb-3w" id="sources-donnees">
+        Sources et données utilisées
+      </h2>
       <BarreLogosPartenaires className="fr-mb-3w" />
       <p className="fr-text--sm fr-mb-3w" style={{ margin: '0 auto', maxWidth: '720px' }}>
         <strong>Mon Inclusion Numérique</strong> utilise et agrège plusieurs sources de données issues de plusieurs

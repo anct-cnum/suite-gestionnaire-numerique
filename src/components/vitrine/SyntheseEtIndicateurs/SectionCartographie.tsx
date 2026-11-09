@@ -45,8 +45,7 @@ export default function SectionCartographie(): ReactElement {
         }}
       >
         <h2 className={`fr-mb-0 ${styles.titre}`}>
-          Voir tous les lieux
-          <br />
+          Voir tous les lieux <br />
           sur la cartographie
         </h2>
         <a

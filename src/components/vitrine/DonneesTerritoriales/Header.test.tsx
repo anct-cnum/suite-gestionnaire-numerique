@@ -59,4 +59,17 @@ describe('header des données territoriales', () => {
     const departement = within(filAriane).getByText('Rhône · 69')
     expect(departement.textContent).toBe('Rhône · 69')
   })
+
+  it('le titre de niveau 1 restitue le titre et le territoire séparés par une espace', () => {
+    // GIVEN
+    mockPathname.current = '/vitrine/donnees-territoriales/synthese-et-indicateurs/national'
+    mockParams.current = { niveau: 'national' }
+
+    // WHEN
+    renderComponent(<Header titre="Données de l’inclusion numérique" />)
+
+    // THEN
+    const titre = screen.getByRole('heading', { level: 1 })
+    expect(titre).toHaveAccessibleName('Données de l’inclusion numérique France')
+  })
 })
