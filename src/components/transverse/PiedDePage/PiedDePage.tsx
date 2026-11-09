@@ -3,14 +3,18 @@ import { ReactElement } from 'react'
 
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
-export default function PiedDePage(): ReactElement {
+export default function PiedDePage({ vitrine = false }: Props): ReactElement {
+  const lienAccueil = vitrine
+    ? { 'aria-label': "République Française - Retour à l'accueil Inclusion Numérique", href: '/' }
+    : { href: '/tableau-de-bord', title: 'Accueil' }
+
   return (
     <footer className="fr-footer" id="footer">
       <div className="fr-container">
         <div className="fr-footer__body">
           <div className="fr-footer__brand fr-enlarge-link">
-            <Link href="/tableau-de-bord" title="Accueil">
-              <p className="fr-logo">
+            <Link {...lienAccueil}>
+              <p aria-hidden={vitrine ? true : undefined} className="fr-logo">
                 République
                 <br />
                 Française
@@ -103,3 +107,7 @@ export default function PiedDePage(): ReactElement {
     </footer>
   )
 }
+
+type Props = Readonly<{
+  vitrine?: boolean
+}>
