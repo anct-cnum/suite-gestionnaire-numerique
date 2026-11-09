@@ -4,6 +4,20 @@ import { describe, expect, it } from 'vitest'
 import PiedDePage from './PiedDePage'
 
 describe('pied de page', () => {
+  it('sur la vitrine, le logo ramène à l’accueil de la vitrine avec un intitulé explicite', () => {
+    // WHEN
+    render(<PiedDePage vitrine />)
+
+    // THEN
+    const piedDePage = screen.getByRole('contentinfo')
+    const lienAccueil = within(piedDePage).getByRole('link', {
+      name: "République Française - Retour à l'accueil Inclusion Numérique",
+    })
+    expect(lienAccueil).toHaveAttribute('href', '/')
+    expect(lienAccueil).not.toHaveAttribute('title')
+    expect(within(lienAccueil).getByText('République', { exact: false })).toHaveAttribute('aria-hidden', 'true')
+  })
+
   it('afficher le pied de page', () => {
     // WHEN
     render(<PiedDePage />)
