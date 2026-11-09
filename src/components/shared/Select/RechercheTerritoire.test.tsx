@@ -136,6 +136,123 @@ describe('recherche territoire', () => {
     expect(screen.queryAllByRole('option')).toHaveLength(0)
   })
 
+  it('quand aucun territoire ne correspond alors le message d’erreur est relié au champ et annoncé', async () => {
+    // GIVEN
+    const rechercher = vi.fn<Rechercher>().mockResolvedValueOnce({ territoires: [], total: 0 })
+    renderComponent(
+      <RechercheTerritoire id="territoire" onSelectionner={vi.fn<OnSelectionner>()} rechercher={rechercher} />
+    )
+    const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+    expect(champ).not.toHaveAttribute('aria-invalid')
+
+    // WHEN
+    await userEvent.type(champ, 'saonne')
+
+    // THEN
+    const message = await screen.findByText(/Aucun territoire ne correspond à/)
+    expect(message).toHaveAttribute('id', 'territoire-erreur')
+    expect(champ).toHaveAttribute('aria-invalid', 'true')
+    expect(champ.getAttribute('aria-describedby')?.split(' ')).toContain('territoire-erreur')
+    expect(champ).toHaveAccessibleDescription(/Aucun territoire ne correspond à « saonne »/)
+    const statut = screen.getByRole('status')
+    expect(statut.textContent).toBe('Aucun territoire ne correspond à « saonne »')
+    expect(screen.getByRole('log').textContent).not.toContain('Utilisez les flèches')
+  })
+
+  it('quand une recherche aboutit après une erreur alors le champ n’est plus en erreur', async () => {
+    // GIVEN
+    const rechercher = vi
+      .fn<Rechercher>()
+      .mockResolvedValueOnce({ territoires: [], total: 0 })
+      .mockResolvedValueOnce(createDefaultTerritoiresTrouves())
+    renderComponent(
+      <RechercheTerritoire id="territoire" onSelectionner={vi.fn<OnSelectionner>()} rechercher={rechercher} />
+    )
+    const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+    await userEvent.type(champ, 'saonne')
+    await screen.findByText(/Aucun territoire ne correspond à/)
+
+    // WHEN
+    await userEvent.clear(champ)
+    await userEvent.type(champ, 'saône')
+
+    // THEN
+    await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+    expect(champ).not.toHaveAttribute('aria-invalid')
+    expect(champ.getAttribute('aria-describedby') ?? '').not.toContain('territoire-erreur')
+    expect(screen.getByRole('status').textContent).toBe('')
+  })
+
+  it('quand le champ reçoit le focus alors l’aide à la saisie est annoncée en français', async () => {
+    // GIVEN
+    renderComponent(
+      <RechercheTerritoire
+        id="territoire"
+        onSelectionner={vi.fn<OnSelectionner>()}
+        rechercher={async () => Promise.resolve(createDefaultTerritoiresTrouves())}
+      />
+    )
+
+    // WHEN
+    await userEvent.tab()
+
+    // THEN
+    const aide = await screen.findByText(
+      'Rechercher un territoire : saisissez au moins 2 caractères pour lancer la recherche, ' +
+        'puis utilisez la flèche bas pour parcourir les résultats.'
+    )
+    expect(aide).toBeInTheDocument()
+  })
+
+  it('quand des territoires sont proposés alors le nombre de résultats et le mode d’emploi sont annoncés en français', async () => {
+    // GIVEN
+    const rechercher = vi.fn<Rechercher>().mockResolvedValueOnce(createDefaultTerritoiresTrouves())
+    renderComponent(
+      <RechercheTerritoire id="territoire" onSelectionner={vi.fn<OnSelectionner>()} rechercher={rechercher} />
+    )
+
+    // WHEN
+    await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+
+    // THEN
+    await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+    const nombreDeResultats = await screen.findByText('5 résultats disponibles pour la recherche « saône ».')
+    expect(nombreDeResultats).toBeInTheDocument()
+    const modeEmploi = screen.getByText(
+      'Utilisez les flèches haut et bas pour parcourir les résultats, ' +
+        'Entrée pour sélectionner le résultat en surbrillance, Échap pour fermer la liste, ' +
+        'Tabulation pour sélectionner le résultat et quitter la liste.'
+    )
+    expect(modeEmploi).toBeInTheDocument()
+  })
+
+  it('quand le champ contenant un territoire reçoit le focus alors le territoire sélectionné est annoncé en français', async () => {
+    // GIVEN
+    renderComponent(
+      <RechercheTerritoire
+        id="territoire"
+        onSelectionner={vi.fn<OnSelectionner>()}
+        rechercher={async () => Promise.resolve(createDefaultTerritoiresTrouves())}
+        valeurInitiale={{
+          code: '70',
+          label: 'Haute-Saône · 70',
+          type: 'departement',
+          value: 'departement-70',
+        }}
+      />
+    )
+
+    // WHEN
+    await userEvent.tab()
+
+    // THEN
+    const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+    expect(champ).toHaveAccessibleDescription(
+      'Territoire sélectionné : Haute-Saône · 70. Rechercher un territoire : saisissez au moins 2 caractères pour lancer ' +
+        'la recherche, puis utilisez la flèche bas pour parcourir les résultats.'
+    )
+  })
+
   it('quand la sélection est effacée alors le filtre est supprimé', async () => {
     // GIVEN
     const onSelectionner = vi.fn<OnSelectionner>()
