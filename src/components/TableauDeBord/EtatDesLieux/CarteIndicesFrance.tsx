@@ -54,7 +54,7 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
             <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
               <div className="font-weight-700 color-blue-france">
                 <span> Indice de Fragilité numérique</span>
-                <Information>
+                <Information libelle="Plus d'information sur l'indice de fragilité numérique">
                   <p className="fr-mb-0">
                     L&apos;Indice de Fragilité Numérique est issu des données de la <strong>Mednum</strong>, calculées
                     en <strong>2021.</strong>
@@ -91,7 +91,7 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
             <div className="font-weight-700 color-blue-france">
               <span> Indice de Fragilité numérique</span>
-              <Information>
+              <Information libelle="Plus d'information sur l'indice de fragilité numérique">
                 <p className="fr-mb-0">
                   L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
                 </p>

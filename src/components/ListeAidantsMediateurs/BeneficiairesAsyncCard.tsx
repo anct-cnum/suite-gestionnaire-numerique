@@ -54,7 +54,7 @@ export default function BeneficiairesAsyncCard({ hasActiveFilters, totalBenefici
         <div className="fr-h5 fr-text-title--blue-france fr-m-0">{formaterEnNombreFrancais(beneficiaires)}</div>
         <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
           Bénéficiaires accompagnés
-          <Information>
+          <Information libelle="Plus d'information sur les bénéficiaires accompagnés">
             <div className="fr-mb-0">
               <p className="fr-mb-1v">
                 Après un accompagnement le médiateur peut choisir d&apos;enregistrer la personne accompagnée dans sa{' '}

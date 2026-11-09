@@ -528,7 +528,11 @@ function CarteStructure({
           {rattachementsDetail.map((rattachement) => (
             <li key={rattachement.label}>
               {rattachement.label} : <span className="fr-text--bold">{rattachement.nombre}</span>
-              {rattachement.info === undefined ? null : <Information>{rattachement.info}</Information>}
+              {rattachement.info === undefined ? null : (
+                <Information libelle={`Plus d'information sur « ${rattachement.label} »`}>
+                  {rattachement.info}
+                </Information>
+              )}
             </li>
           ))}
         </ul>

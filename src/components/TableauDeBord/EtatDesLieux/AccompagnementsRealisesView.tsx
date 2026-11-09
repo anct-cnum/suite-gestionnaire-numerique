@@ -23,7 +23,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           </div>
           <div className="font-weight-500">
             <span> Accompagnements réalisés</span>
-            <Information>
+            <Information libelle="Plus d'information sur les accompagnements réalisés">
               <p className="fr-mb-0">
                 Depuis <strong>2021</strong>, avec les dispositifs <strong>Conseillers Numériques</strong> et
                 <strong>Aidants Connect.</strong>
@@ -34,7 +34,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
           <div className="font-weight-500">
             <span> Accompagnements des 6 derniers mois</span>
-            <Information>
+            <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
               <p className="fr-mb-0">
                 Accompagnements saisis sur <strong>La Coop.</strong>
               </p>
@@ -55,7 +55,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           </div>
           <div className="font-weight-500">
             <span> Accompagnements réalisés</span>
-            <Information>
+            <Information libelle="Plus d'information sur les accompagnements réalisés">
               <p className="fr-mb-0">
                 Depuis <strong>2021</strong>, avec les dispositifs <strong>Conseillers Numériques</strong> et
                 <strong>Aidants Connect.</strong>
@@ -67,7 +67,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
           <div className="font-weight-500">
             <span> Accompagnements des 6 derniers mois</span>
-            <Information>
+            <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
               <p className="fr-mb-0">Accompagnements saisis sur La Coop</p>
             </Information>
           </div>
@@ -89,7 +89,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
         </div>
         <div className="font-weight-500">
           <span> Accompagnements réalisés</span>
-          <Information>
+          <Information libelle="Plus d'information sur les accompagnements réalisés">
             <p className="fr-mb-0">
               Depuis 2021, avec les dispositifs <strong>Conseillers Numériques</strong> et{' '}
               <strong>Aidants Connect</strong>
@@ -104,7 +104,7 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           header={
             <div className="font-weight-500">
               <span> Accompagnements des 6 derniers mois</span>
-              <Information>
+              <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
                 <p className="fr-mb-0">
                   Accompagnements saisis sur <strong>La Coop.</strong>
                 </p>
