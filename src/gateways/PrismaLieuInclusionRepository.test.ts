@@ -150,6 +150,16 @@ describe('repository Prisma des lieux d’inclusion — création (#1495)', () =
     expect(adresse.repetition).toBe('B')
   })
 
+  it('crée un lieu avec des services vides plutôt que NULL, sur lequel la fiche de la cartographie plante', async () => {
+    // WHEN
+    const lieuId = await new PrismaLieuInclusionRepository().creer(donneesCreation({ visiblePourCartographie: true }))
+
+    // THEN
+    const [lieu] = await prisma.$queryRaw<Array<{ services: null | ReadonlyArray<string> }>>`
+      SELECT services::text[] AS services FROM main.lieu_inclusion WHERE id = ${lieuId}`
+    expect(lieu.services).toStrictEqual([])
+  })
+
   it('crée un lieu avec SIRET sur les composants SIRENE quand la BAN n’a rien trouvé (champs BAN vides)', async () => {
     // WHEN
     const lieuId = await new PrismaLieuInclusionRepository().creer(

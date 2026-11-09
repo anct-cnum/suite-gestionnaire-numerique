@@ -74,6 +74,9 @@ export class PrismaLieuInclusionRepository
           edited_by: 'min',
           itinerance: versEnumsLieuInclusion(data.itinerance, itineranceVersEnum, 'itinerance'),
           nom: data.nom,
+          // Pas saisis à la création : tableau vide, car la cartographie nationale plante
+          // sur une fiche dont les services valent NULL.
+          services: [],
           siret_a_l_enrichissement: data.siret,
           source: SOURCE_MIN,
           typologies: versEnumsLieuInclusion(data.typologies, typologiesVersEnum, 'typologies'),
