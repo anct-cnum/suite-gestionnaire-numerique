@@ -9,7 +9,18 @@ import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
-  const { dateGeneration, description = '', details, graphiqueInfos, indicateur, information, label } = props
+  const {
+    dateGeneration,
+    description = '',
+    details,
+    graphiqueInfos,
+    indicateur,
+    information,
+    label,
+    niveauTitre,
+  } = props
+  // Sans niveau de titre (page sans titre parent), le libellé reste un simple texte mis en forme
+  const Libelle = niveauTitre ?? 'div'
   const componentRef = useRef<HTMLDivElement>(null)
   return (
     <section className="fr-mb-3w">
@@ -24,14 +35,14 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
             />
           </div>
           <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{indicateur}</div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">
+          <Libelle className="fr-text--lg font-weight-700 fr-m-0 fr-text-default--grey">
             {label}
             {information === undefined ? null : (
               <Information libelle={`Plus d'information sur « ${label} »`}>
                 <p className="fr-mb-0">{information}</p>
               </Information>
             )}
-          </div>
+          </Libelle>
           {description === '' ? null : <div className="color-blue-france fr-pb-1w separator">{description}</div>}
 
           <div className="fr-mt-4w">
@@ -77,6 +88,7 @@ type Props = {
   indicateur: number
   information?: string
   label: string
+  niveauTitre?: 'h3'
 }
 
 type Info = {

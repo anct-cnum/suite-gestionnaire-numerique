@@ -32,14 +32,14 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           </div>
         </div>
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
-          <div className="font-weight-500">
+          <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
             <span> Accompagnements des 6 derniers mois</span>
             <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
               <p className="fr-mb-0">
                 Accompagnements saisis sur <strong>La Coop.</strong>
               </p>
             </Information>
-          </div>
+          </h3>
           <div className="fr-text--sm color-grey fr-mt-2w">Chargement...</div>
         </div>
       </>
@@ -65,12 +65,12 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           <div className="fr-text--xs color-blue-france fr-mb-0">{etat.message}</div>
         </div>
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
-          <div className="font-weight-500">
+          <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
             <span> Accompagnements des 6 derniers mois</span>
             <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
               <p className="fr-mb-0">Accompagnements saisis sur La Coop</p>
             </Information>
-          </div>
+          </h3>
           <div className="fr-text--xs color-blue-france fr-mb-0">{etat.message}</div>
         </div>
       </>
@@ -102,14 +102,14 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
           backgroundColor={backgroundColor}
           data={resultat.repartitionMensuelle.map((item) => item.nombre)}
           header={
-            <div className="font-weight-500">
+            <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
               <span> Accompagnements des 6 derniers mois</span>
               <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
                 <p className="fr-mb-0">
                   Accompagnements saisis sur <strong>La Coop.</strong>
                 </p>
               </Information>
-            </div>
+            </h3>
           }
           labels={resultat.repartitionMensuelle.map((item) => item.mois)}
         />

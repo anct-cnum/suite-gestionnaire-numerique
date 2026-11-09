@@ -58,9 +58,8 @@ export default function Navigation(): ReactElement {
 
   return (
     <nav
-      aria-labelledby="donnees-territoriales-menu"
+      aria-label="Rubriques des données territoriales"
       className={`fr-sidemenu ${styles.navigationFixed}`}
-      role="navigation"
       style={{ top: topPosition }}
     >
       <div className="fr-sidemenu__inner">
