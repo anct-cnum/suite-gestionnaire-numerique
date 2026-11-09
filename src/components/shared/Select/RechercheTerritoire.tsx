@@ -1,7 +1,7 @@
 'use client'
 
-import { ReactElement, useMemo, useRef, useState } from 'react'
-import { components, GroupBase, MenuProps, StylesConfig } from 'react-select'
+import { createContext, ReactElement, use, useMemo, useRef, useState } from 'react'
+import { AriaLiveMessages, components, GroupBase, InputProps, MenuProps, StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
 import { dsfrSelectStyles } from './styles'
@@ -17,6 +17,9 @@ const stylePied = {
   lineHeight: '1.25rem',
   padding: '1.25rem 1rem .5rem',
 } as const
+
+// Identifiant du message d'erreur à relier au champ (aria-describedby), transmis au composant Input de react-select
+const IdErreurContext = createContext<string | undefined>(undefined)
 
 export default function RechercheTerritoire({
   id,
@@ -34,10 +37,12 @@ export default function RechercheTerritoire({
   const debounce = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const enErreur = termeSansResultat !== null
+  const idErreur = `${id}-erreur`
   const avecBoutonEffacer = saisie !== '' || territoireSelectionne !== null
   const composants = useMemo(
     () => ({
       DropdownIndicator: (): null => null,
+      Input: ChampDeSaisie,
       LoadingIndicator: (): null => null,
       LoadingMessage: Chargement,
       Menu: enErreur ? (): null => null : creerMenu(resultat),
@@ -52,32 +57,39 @@ export default function RechercheTerritoire({
       </label>
       <div style={{ alignItems: 'stretch', display: 'flex' }}>
         <div style={{ flex: 1, position: 'relative' }}>
-          <AsyncSelect<TerritoireViewModel, false, GroupBase<TerritoireViewModel>>
-            components={composants}
-            inputId={id}
-            inputValue={saisie}
-            instanceId={id}
-            loadOptions={chargerLesTerritoires}
-            noOptionsMessage={() => 'Saisissez au moins 2 caractères pour lancer la recherche.'}
-            onChange={(option) => {
-              setTerritoireSelectionne(option)
-              onSelectionner(option)
-            }}
-            onInputChange={(valeur, actionMeta) => {
-              if (actionMeta.action === 'input-change') {
-                setSaisie(valeur)
-                if (valeur.trim().length < longueurMinimaleDeRecherche) {
-                  setTermeSansResultat(null)
-                  setResultat(null)
+          <IdErreurContext value={enErreur ? idErreur : undefined}>
+            <AsyncSelect<TerritoireViewModel, false, GroupBase<TerritoireViewModel>>
+              aria-invalid={enErreur ? true : undefined}
+              ariaLiveMessages={annoncesEnFrancais(label, enErreur)}
+              components={composants}
+              inputId={id}
+              inputValue={saisie}
+              instanceId={id}
+              loadOptions={chargerLesTerritoires}
+              noOptionsMessage={() => 'Saisissez au moins 2 caractères pour lancer la recherche.'}
+              onChange={(option) => {
+                setTerritoireSelectionne(option)
+                onSelectionner(option)
+              }}
+              onInputChange={(valeur, actionMeta) => {
+                if (actionMeta.action === 'input-change') {
+                  setSaisie(valeur)
+                  if (valeur.trim().length < longueurMinimaleDeRecherche) {
+                    setTermeSansResultat(null)
+                    setResultat(null)
+                  }
+                } else {
+                  setSaisie('')
                 }
-              } else {
-                setSaisie('')
+              }}
+              placeholder="Région, département, intercommunalité, ..."
+              screenReaderStatus={({ count }) =>
+                `${count} résultat${count > 1 ? 's' : ''} disponible${count > 1 ? 's' : ''}`
               }
-            }}
-            placeholder="Région, département, intercommunalité, ..."
-            styles={stylesRechercheTerritoire(enErreur, avecBoutonEffacer)}
-            value={territoireSelectionne}
-          />
+              styles={stylesRechercheTerritoire(enErreur, avecBoutonEffacer)}
+              value={territoireSelectionne}
+            />
+          </IdErreurContext>
           {avecBoutonEffacer ? (
             <button
               aria-label="Effacer la recherche"
@@ -101,13 +113,15 @@ export default function RechercheTerritoire({
         </div>
         <BoutonLoupe />
       </div>
-      {enErreur ? (
-        <p className="fr-error-text">
-          {'Aucun territoire ne correspond à « '}
-          <strong>{termeSansResultat}</strong>
-          {' »'}
-        </p>
-      ) : null}
+      <div role="status">
+        {enErreur ? (
+          <p className="fr-error-text" id={idErreur}>
+            {'Aucun territoire ne correspond à « '}
+            <strong>{termeSansResultat}</strong>
+            {' »'}
+          </p>
+        ) : null}
+      </div>
       {perimetreLimite && !enErreur ? <p className="fr-info-text">Recherche limitée à votre périmètre</p> : null}
     </div>
   )
@@ -165,6 +179,63 @@ type Resultat = Readonly<{
   terme: string
   total: number
 }>
+
+// Annonces du composant react-select, en anglais par défaut (critère RGAA 8.7)
+function annoncesEnFrancais(
+  label: string,
+  enErreur: boolean
+): AriaLiveMessages<TerritoireViewModel, false, GroupBase<TerritoireViewModel>> {
+  return {
+    guidance: ({ context, isInitialFocus, tabSelectsValue }) => {
+      if (context === 'menu') {
+        // En erreur, la liste est masquée : seul le message d'erreur est annoncé
+        if (enErreur) {
+          return ''
+        }
+        return `Utilisez les flèches haut et bas pour parcourir les résultats, Entrée pour sélectionner le résultat en surbrillance, Échap pour fermer la liste${
+          tabSelectsValue ? ', Tabulation pour sélectionner le résultat et quitter la liste' : ''
+        }.`
+      }
+      return context === 'input' && isInitialFocus
+        ? `${label} : saisissez au moins 2 caractères pour lancer la recherche, puis utilisez la flèche bas pour parcourir les résultats.`
+        : ''
+    },
+    onChange: ({ action, label: libelle, labels }) => {
+      switch (action) {
+        case 'deselect-option':
+        case 'pop-value':
+        case 'remove-value':
+          return `Territoire désélectionné : ${libelle}.`
+        case 'initial-input-focus':
+          return labels.length === 0 ? '' : `Territoire sélectionné : ${labels.join(', ')}.`
+        case 'select-option':
+          return `Territoire sélectionné : ${libelle}.`
+        default:
+          return ''
+      }
+    },
+    onFilter: ({ inputValue, resultsMessage }) =>
+      inputValue === '' ? `${resultsMessage}.` : `${resultsMessage} pour la recherche « ${inputValue} ».`,
+    onFocus: ({ context, focused, isAppleDevice, isSelected, label: libelle, options }) => {
+      // Hors appareils Apple, react-select restitue l'option active via aria-activedescendant
+      if (context !== 'menu' || !isAppleDevice) {
+        return ''
+      }
+      const optionsAPlat = options.flatMap((option) => ('options' in option ? option.options : [option]))
+      return `${libelle}${isSelected ? ', sélectionné' : ''}, ${optionsAPlat.indexOf(focused) + 1} sur ${optionsAPlat.length}.`
+    },
+  }
+}
+
+function ChampDeSaisie(
+  props: Readonly<InputProps<TerritoireViewModel, false, GroupBase<TerritoireViewModel>>>
+): ReactElement {
+  const idErreur = use(IdErreurContext)
+  const descriptions = [props['aria-describedby'], idErreur].filter((description) => description !== undefined)
+  return (
+    <components.Input {...props} aria-describedby={descriptions.length === 0 ? undefined : descriptions.join(' ')} />
+  )
+}
 
 function BoutonLoupe(): ReactElement {
   return (
