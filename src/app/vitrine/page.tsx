@@ -324,9 +324,9 @@ export default function VitrineHomePage(): ReactElement {
                 façon collégiale.
               </p>
               <div>
-                <Link className="fr-btn" href="#">
+                <a className="fr-btn" href="https://mon.inclusion-numerique.anct.gouv.fr/">
                   Accéder à la plateforme
-                </Link>
+                </a>
               </div>
             </div>
           </div>

@@ -13,7 +13,7 @@ export default function VitrineLayout({ children }: Readonly<PropsWithChildren>)
       <main className="fr-container--fluid" id="content">
         {children}
       </main>
-      <PiedDePage />
+      <PiedDePage vitrine />
       <Dsfr />
     </>
   )

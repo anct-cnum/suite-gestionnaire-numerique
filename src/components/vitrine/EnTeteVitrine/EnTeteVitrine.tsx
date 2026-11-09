@@ -49,8 +49,10 @@ export default function EnTeteVitrine(): ReactElement {
                 </div>
               </div>
               <div className="fr-header__service">
-                <Link href="/" title="Accueil">
-                  <p className="fr-header__service-title">Inclusion Numérique</p>
+                <Link aria-label="Retour à l'accueil Inclusion Numérique" href="/">
+                  <p aria-hidden="true" className="fr-header__service-title">
+                    Inclusion Numérique
+                  </p>
                 </Link>
               </div>
             </div>
