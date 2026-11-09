@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import styles from './page.module.css'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
@@ -64,14 +65,13 @@ export default function DispositifsPage(): ReactElement {
                 <li>Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne</li>
               </ul>
               <div>
-                <a
+                <ExternalLink
                   className="fr-btn"
                   href="https://www.conseiller-numerique.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
+                  title="Découvrir le dispositif Conseiller numérique"
                 >
-                  En savoir plus
-                </a>
+                  Découvrir le dispositif Conseiller numérique
+                </ExternalLink>
               </div>
             </div>
             <div
@@ -119,14 +119,13 @@ export default function DispositifsPage(): ReactElement {
                 et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de l&apos;outil Aidants Connect.
               </p>
               <div>
-                <a
+                <ExternalLink
                   className="fr-btn"
                   href="https://aidantsconnect.beta.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
+                  title="Découvrir Aidants Connect"
                 >
-                  En savoir plus
-                </a>
+                  Découvrir Aidants Connect
+                </ExternalLink>
               </div>
             </div>
           </div>

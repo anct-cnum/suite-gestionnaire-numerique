@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
+
 export default function EnTeteVitrine(): ReactElement {
   const pathname = usePathname()
   return (
@@ -138,24 +140,22 @@ export default function EnTeteVitrine(): ReactElement {
                 <div className="fr-collapse fr-menu" id="menu-etudes">
                   <ul className="fr-menu__list">
                     <li>
-                      <a
+                      <ExternalLink
                         className="fr-nav__link"
                         href="https://www.societenumerique.gouv.fr/nos-ressources/etudes"
-                        rel="noopener noreferrer"
-                        target="_blank"
+                        title="Études"
                       >
                         Études
-                      </a>
+                      </ExternalLink>
                     </li>
                     <li>
-                      <a
+                      <ExternalLink
                         className="fr-nav__link"
                         href="https://labo.societenumerique.gouv.fr/fr/"
-                        rel="noopener noreferrer"
-                        target="_blank"
+                        title="Labo Société Numérique"
                       >
                         Labo Société Numérique
-                      </a>
+                      </ExternalLink>
                     </li>
                   </ul>
                 </div>

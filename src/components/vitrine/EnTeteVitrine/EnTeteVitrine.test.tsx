@@ -19,4 +19,18 @@ describe('en-tête de la vitrine', () => {
     expect(lienAccueil).not.toHaveAttribute('title')
     expect(within(lienAccueil).getByText('Inclusion Numérique')).toHaveAttribute('aria-hidden', 'true')
   })
+
+  it.each([
+    { href: 'https://www.societenumerique.gouv.fr/nos-ressources/etudes', intitule: 'Études' },
+    { href: 'https://labo.societenumerique.gouv.fr/fr/', intitule: 'Labo Société Numérique' },
+  ])('le lien « $intitule » du menu signale qu’il ouvre une nouvelle fenêtre', ({ href, intitule }) => {
+    // WHEN
+    render(<EnTeteVitrine />)
+
+    // THEN
+    const lien = screen.getByRole('link', { hidden: true, name: intitule })
+    expect(lien).toHaveAttribute('href', href)
+    expect(lien).toHaveAttribute('target', '_blank')
+    expect(lien).toHaveAttribute('title', `${intitule} - nouvelle fenêtre`)
+  })
 })

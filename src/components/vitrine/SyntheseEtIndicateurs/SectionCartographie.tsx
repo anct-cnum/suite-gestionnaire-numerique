@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import styles from './SectionCartographie.module.css'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function SectionCartographie(): ReactElement {
   return (
@@ -49,14 +50,13 @@ export default function SectionCartographie(): ReactElement {
           <br />
           sur la cartographie
         </h2>
-        <a
+        <ExternalLink
           className="fr-btn fr-btn--icon-right fr-icon-external-link-line"
           href="https://cartographie.societenumerique.gouv.fr/"
-          rel="noopener noreferrer"
-          target="_blank"
+          title="Voir la cartographie nationale"
         >
-          La cartographie
-        </a>
+          Voir la cartographie nationale
+        </ExternalLink>
       </div>
     </div>
   )

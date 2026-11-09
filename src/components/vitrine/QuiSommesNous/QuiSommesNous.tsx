@@ -1,5 +1,7 @@
 import { ReactElement } from 'react'
 
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
+
 export default function QuiSommesNous(): ReactElement {
   return (
     <section className="fr-py-12w" style={{ backgroundColor: '#f5f5fe' }}>
@@ -14,19 +16,22 @@ export default function QuiSommesNous(): ReactElement {
             {/* Paragraphes avec liens */}
             <p className="fr-text--md fr-mb-4w" style={{ textAlign: 'center' }}>
               Nous sommes un collectif d&apos;acteurs de l&apos;inclusion numérique animé par le{' '}
-              <a className="fr-link" href="https://societenumerique.gouv.fr/" rel="noopener noreferrer" target="_blank">
+              <ExternalLink
+                className="fr-link"
+                href="https://societenumerique.gouv.fr/"
+                title="Programme Société Numérique"
+              >
                 Programme Société Numérique
-              </a>
+              </ExternalLink>
               , qui porte la politique nationale d&apos;inclusion numérique, formalisée par une feuille de route
               co-écrite avec l&apos;ensemble des acteurs du secteur :{' '}
-              <a
+              <ExternalLink
                 className="fr-link"
                 href="https://www.societenumerique.gouv.fr/nos-missions/france-numerique-ensemble"
-                rel="noopener noreferrer"
-                target="_blank"
+                title="France Numérique Ensemble"
               >
                 France Numérique Ensemble
-              </a>
+              </ExternalLink>
               .{' '}
             </p>
             <p className="fr-text--md" style={{ textAlign: 'center' }}>
