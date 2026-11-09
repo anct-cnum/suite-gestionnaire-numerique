@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import Dsfr from '@/app/Dsfr'
 import ClientContext from '@/components/shared/ClientContext'
 import DateProvider from '@/components/shared/DateProvider'
 import EnTete from '@/components/transverse/EnTete/EnTete'
@@ -14,21 +15,24 @@ import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthenti
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
+import { estSiteVitrine } from '@/shared/estSiteVitrine'
 import config from '@/use-cases/config.json'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
-export const metadata: Metadata = {
-  title: 'Page non trouvée',
+export async function generateMetadata(): Promise<Metadata> {
+  return metadataPageNonTrouvee((await headers()).get('host') ?? '')
+}
+
+export function metadataPageNonTrouvee(hostname: string): Metadata {
+  return {
+    title: estSiteVitrine(hostname) ? 'Page non trouvée - Inclusion Numérique' : 'Page non trouvée',
+  }
 }
 
 export default async function NotFound(): Promise<ReactElement> {
   const hostname = (await headers()).get('host') ?? ''
-  const isVitrineDomain =
-    hostname.startsWith('inclusion-numerique.anct.gouv.fr') &&
-    !hostname.startsWith('min.inclusion-numerique.anct.gouv.fr')
-  const isVitrineMode = process.env.SITE_MODE === 'vitrine'
 
-  if (isVitrineDomain || isVitrineMode) {
+  if (estSiteVitrine(hostname)) {
     return <NotFoundVitrine />
   }
   return <NotFoundMin />
@@ -43,6 +47,7 @@ function NotFoundVitrine(): ReactElement {
         <Erreur404 />
       </main>
       <PiedDePage vitrine />
+      <Dsfr />
     </>
   )
 }
@@ -67,6 +72,7 @@ async function NotFoundMin(): Promise<ReactElement> {
               <Erreur404 />
             </main>
             <PiedDePage />
+            <Dsfr />
           </ClientContext>
         </DateProvider>
       )
@@ -80,6 +86,7 @@ async function NotFoundMin(): Promise<ReactElement> {
         <Erreur404 />
       </main>
       <PiedDePage />
+      <Dsfr />
     </>
   )
 }
