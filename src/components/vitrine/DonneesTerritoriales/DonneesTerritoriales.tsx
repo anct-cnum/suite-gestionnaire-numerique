@@ -45,7 +45,8 @@ export default function DonneesTerritoriales(): ReactElement {
                     }}
                   >
                     <img
-                      alt="Carte de France miniature"
+                      alt=""
+                      aria-hidden="true"
                       src="/vitrine/donnees-territoriales/france-miniature.png"
                       style={{
                         height: '53px',

@@ -18,7 +18,7 @@ export function DownloadButton({ onClick, title }: DownloadButtonProps): React.R
         title={title}
         type="button"
       >
-        <span className="fr-sr-only">{`Télécharger le graphique${title}`}</span>
+        <span className="fr-sr-only">{`Télécharger le graphique ${title}`}</span>
       </button>
     </div>
   )

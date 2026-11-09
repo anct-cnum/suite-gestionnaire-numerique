@@ -159,7 +159,8 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               }}
             >
               <img
-                alt="Illustration carte de France avec gouvernances"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/outils/min/illustration-1.png"
                 style={{
                   border: 'none',
@@ -174,7 +175,12 @@ export default function MonInclusionNumeriquePage(): ReactElement {
             {/* Contenu à droite */}
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div>
-                <img alt="" src="/vitrine/outils/min/logo-instituer.svg" style={{ height: '56px', width: 'auto' }} />
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  src="/vitrine/outils/min/logo-instituer.svg"
+                  style={{ height: '56px', width: 'auto' }}
+                />
               </div>
               <h2 className="fr-h2" style={{ marginBottom: 0 }}>
                 À qui s&apos;adresse cet outil ?
@@ -206,6 +212,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               <div>
                 <img
                   alt=""
+                  aria-hidden="true"
                   src="/vitrine/outils/min/logo-territorialiser.svg"
                   style={{ height: '56px', width: 'auto' }}
                 />
@@ -277,7 +284,8 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               }}
             >
               <img
-                alt="Illustration gouvernance territoriale"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-participer.png"
                 style={{
                   height: 'auto',
