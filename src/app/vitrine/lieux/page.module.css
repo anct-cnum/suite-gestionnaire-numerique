@@ -33,9 +33,10 @@
   padding: 2.5rem;
 }
 
-.avantagesSeparateur {
+/* Séparateur entre deux avantages, porté par l'élément de liste suivant */
+.avantagesCarte > li + li {
   border-left: 0.0625rem solid var(--border-default-grey);
-  width: 0.0625rem;
+  padding-left: 1rem;
 }
 
 @media (width <= 48rem) {
@@ -44,11 +45,11 @@
     padding: 1.5rem;
   }
 
-  .avantagesSeparateur {
+  .avantagesCarte > li + li {
     border-left: none;
     border-top: 0.0625rem solid var(--border-default-grey);
-    height: 0.0625rem;
-    width: 100%;
+    padding-left: 0;
+    padding-top: 1rem;
   }
 }
 

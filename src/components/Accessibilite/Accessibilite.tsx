@@ -144,15 +144,17 @@ export default function Accessibilite(): ReactElement {
             sous une autre forme.
           </p>
           <div className="fr-highlight fr-mb-3w">
-            <p className="fr-mb-0">
-              <strong>E-mail&nbsp;:</strong>{' '}
-              <a className="fr-link" href="mailto:societe.numerique@anct.gouv.fr">
-                societe.numerique@anct.gouv.fr
-              </a>
-            </p>
-            <p className="fr-mb-0">
-              <strong>Adresse&nbsp;:</strong> <span>20 avenue de Ségur, 75007 Paris</span>
-            </p>
+            <ul className="fr-raw-list">
+              <li>
+                <strong>E-mail&nbsp;:</strong>{' '}
+                <a className="fr-link" href="mailto:societe.numerique@anct.gouv.fr">
+                  societe.numerique@anct.gouv.fr
+                </a>
+              </li>
+              <li>
+                <strong>Adresse&nbsp;:</strong> <span>20 avenue de Ségur, 75007 Paris</span>
+              </li>
+            </ul>
           </div>
           <p>
             Nous essayons de répondre dans les <span>2 jours ouvrés</span>.

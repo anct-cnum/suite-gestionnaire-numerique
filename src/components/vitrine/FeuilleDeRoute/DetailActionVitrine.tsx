@@ -17,48 +17,51 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
         <p className="fr-text--sm color-grey fr-text--bold">{Object.entries(action.besoins)[0]?.[1]}</p>
       )}
 
-      <div className="color-grey fr-mt-2w fr-mb-1w">Porteur de l&apos;action</div>
-      {action.porteurs.length === 0 ? (
-        <span className="fr-text--bold">-</span>
-      ) : (
-        <ul className="fr-tags-group">
-          {action.porteurs.map((porteur) => (
-            <li key={porteur.link}>
-              <p className="fr-tag">{porteur.label}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <dl className="fr-raw-list">
+        <dt className="color-grey fr-mt-2w fr-mb-1w">Porteur de l&apos;action</dt>
+        <dd>
+          {action.porteurs.length === 0 ? (
+            <span className="fr-text--bold">-</span>
+          ) : (
+            <ul className="fr-tags-group">
+              {action.porteurs.map((porteur) => (
+                <li key={porteur.link}>
+                  <p className="fr-tag">{porteur.label}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </dd>
 
-      <div className="color-grey fr-mt-2w fr-mb-1w ">Budget total de l&apos;action</div>
-      <p className="fr-text--bold">{action.budgetPrevisionnel.global.montant}</p>
+        <dt className="color-grey fr-mt-2w fr-mb-1w">Budget total de l&apos;action</dt>
+        <dd>
+          <p className="fr-text--bold">{action.budgetPrevisionnel.global.montant}</p>
+        </dd>
 
-      {action.description.length > 0 && (
-        <>
-          <div className="color-grey fr-text--bold fr-mt-2w fr-mb-1w">Contexte de l&apos;action</div>
-          <ReadMoreVitrine texte={action.description} />
-        </>
-      )}
+        {action.description.length > 0 && (
+          <>
+            <dt className="color-grey fr-mt-2w fr-mb-1w">Description de l&apos;action</dt>
+            <dd>
+              <ReadMoreVitrine texte={action.description} />
+            </dd>
+          </>
+        )}
 
-      {action.description.length > 0 && (
-        <>
-          <div className="color-grey fr-mt-1w fr-mb-1w">Description de l&apos;action</div>
-          <ReadMoreVitrine texte={action.description} />
-        </>
-      )}
-
-      <div className="color-grey fr-mt-2w fr-mb-1w">Bénéficiaires des subventions</div>
-      {action.beneficiaires.length === 0 ? (
-        <span className="fr-text--bold">-</span>
-      ) : (
-        <ul className="fr-tags-group">
-          {action.beneficiaires.map((beneficiaire) => (
-            <li key={beneficiaire.link}>
-              <p className="fr-tag">{beneficiaire.label}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+        <dt className="color-grey fr-mt-2w fr-mb-1w">Bénéficiaires des subventions</dt>
+        <dd>
+          {action.beneficiaires.length === 0 ? (
+            <span className="fr-text--bold">-</span>
+          ) : (
+            <ul className="fr-tags-group">
+              {action.beneficiaires.map((beneficiaire) => (
+                <li key={beneficiaire.link}>
+                  <p className="fr-tag">{beneficiaire.label}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </dd>
+      </dl>
     </div>
   )
 }

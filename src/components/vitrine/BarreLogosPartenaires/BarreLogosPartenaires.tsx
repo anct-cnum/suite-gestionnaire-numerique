@@ -13,13 +13,13 @@ const logos: ReadonlyArray<Logo> = [
 
 export default function BarreLogosPartenaires({ className = '' }: Props): ReactElement {
   return (
-    <div className={`${styles.container} ${className}`}>
+    <ul className={`fr-raw-list ${styles.container} ${className}`}>
       {logos.map((logo) => (
-        <div className={logo.hasBackground === true ? styles.logoWithBackground : styles.logo} key={logo.src}>
+        <li className={logo.hasBackground === true ? styles.logoWithBackground : styles.logo} key={logo.src}>
           <img alt={logo.alt} src={logo.src} />
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
 
