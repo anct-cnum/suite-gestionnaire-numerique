@@ -27,7 +27,7 @@ export default function LieuxInclusionNumerique({ viewModel }: Props): ReactElem
       </div>
       <div className="font-weight-500">
         <span>Lieux d&apos;inclusion numérique</span>
-        <Information>
+        <Information libelle="Plus d'information sur les lieux d'inclusion numérique">
           <p className="fr-mb-0">
             Lieux référencés sur la <strong>Cartographie nationale</strong> des lieux d&apos;inclusion numérique.
           </p>

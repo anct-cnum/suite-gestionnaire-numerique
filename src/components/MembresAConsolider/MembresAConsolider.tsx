@@ -133,7 +133,9 @@ function ListeMembres({ viewModel }: Readonly<{ viewModel: MembresAConsoliderVie
         <li className="fr-mb-1v">
           <span className="fr-text--bold">Établissement réel proposé</span> : candidat que le système détecte comme
           étant proche.
-          <Information>Structure dont le SIRET est identique</Information>
+          <Information libelle="Plus d'information sur l'établissement réel proposé">
+            Structure dont le SIRET est identique
+          </Information>
         </li>
       </ul>
       <p className="fr-text--sm fr-text-mention--grey">{resume}</p>
