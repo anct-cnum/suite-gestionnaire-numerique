@@ -73,7 +73,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
       {/* La cartographie des lieux d'inclusion */}
       <ToolCard
         description="Que vous soyez un particulier ou un professionnel, la cartographie nationale est là pour vous aider à trouver les lieux d'inclusion numérique avec des services adaptés à vos besoins ou à ceux de vos bénéficiaires !"
-        icon="/vitrine/outils/icon-min.png"
+        icon="/vitrine/accueil/logo-carto.png"
         imageAlt="Capture d'écran de la cartographie des lieux d'inclusion"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-cartographie.png"

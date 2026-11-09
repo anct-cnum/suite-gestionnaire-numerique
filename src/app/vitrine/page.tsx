@@ -107,7 +107,8 @@ export default function VitrineHomePage(): ReactElement {
             </div>
             <div className={`fr-col-12 fr-col-md-6 ${styles.imageRight}`}>
               <img
-                alt="Approche renouvelée"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-approche.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -131,7 +132,8 @@ export default function VitrineHomePage(): ReactElement {
             <div className="fr-col-12 fr-col-md-6" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <img
-                  alt="Développer formations"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/accueil/icone-developper-formations.png"
                   style={{ height: 'auto', marginTop: '2em', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
@@ -155,7 +157,8 @@ export default function VitrineHomePage(): ReactElement {
           {/* Icône et titre centré */}
           <div className="fr-mb-4w" style={{ textAlign: 'center' }}>
             <img
-              alt="Accompagner acteurs"
+              alt=""
+              aria-hidden="true"
               src="/vitrine/accueil/icone-accompagner-acteurs.png"
               style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
             />
@@ -171,7 +174,8 @@ export default function VitrineHomePage(): ReactElement {
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentLeft}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
-                  alt="Icône Territorialiser"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/accueil/icone-territorialiser.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
@@ -205,7 +209,8 @@ export default function VitrineHomePage(): ReactElement {
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
-                  alt="Icône Former acteurs"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/accueil/icone-former-acteurs.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
@@ -227,7 +232,8 @@ export default function VitrineHomePage(): ReactElement {
             </div>
             <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
-                alt="Dispositifs"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-dispositifs.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -239,7 +245,8 @@ export default function VitrineHomePage(): ReactElement {
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentLeft}`}>
               <div style={{ marginBottom: '8px' }}>
                 <img
-                  alt="Icône Évaluer"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/accueil/icone-evaluer.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
@@ -261,7 +268,8 @@ export default function VitrineHomePage(): ReactElement {
             </div>
             <div className={`fr-col-12 fr-col-md-6 ${styles.imageRight}`}>
               <img
-                alt="Données et études"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-donnees.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -273,7 +281,8 @@ export default function VitrineHomePage(): ReactElement {
             <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div style={{ marginBottom: '8px', marginTop: '2em' }}>
                 <img
-                  alt="Icône Outiller"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/accueil/icone-outiller.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
@@ -295,7 +304,8 @@ export default function VitrineHomePage(): ReactElement {
             </div>
             <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
-                alt="Outils"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-visuel-bleu.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -310,7 +320,8 @@ export default function VitrineHomePage(): ReactElement {
           <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <div className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}>
               <img
-                alt="Participer à une gouvernance"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/accueil/illustration-participer.png"
                 style={{ height: 'auto', width: '100%' }}
               />

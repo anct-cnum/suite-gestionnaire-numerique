@@ -23,7 +23,8 @@ export default function SectionCartographie(): ReactElement {
         }}
       >
         <img
-          alt="Aperçu cartographie"
+          alt=""
+          aria-hidden="true"
           src="/carte-inclusion-numerique.png"
           style={{
             height: '100%',

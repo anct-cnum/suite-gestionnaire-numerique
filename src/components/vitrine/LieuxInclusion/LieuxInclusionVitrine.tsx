@@ -108,6 +108,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w" style={{ borderRadius: '1rem', position: 'relative' }}>
           <Image
             alt=""
+            aria-hidden="true"
             className="fr-mr-2w"
             fill
             src="/carte-inclusion-numerique.png"
