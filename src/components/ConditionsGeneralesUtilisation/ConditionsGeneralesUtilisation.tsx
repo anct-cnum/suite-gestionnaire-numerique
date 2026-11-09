@@ -11,7 +11,7 @@ export default function ConditionsGeneralesUtilisation(): ReactElement {
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
         style={{ maxWidth: '960px' }}
       >
-        <PageTitle>Conditions générales d&apos;utilisation</PageTitle>
+        <PageTitle id="cgu-title">Conditions générales d&apos;utilisation</PageTitle>
 
         <p>
           Les présentes conditions générales d&apos;utilisation (ci-après &quot;CGU&quot;) fixent le cadre juridique de

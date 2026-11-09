@@ -12,7 +12,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
         style={{ maxWidth: '960px' }}
       >
-        <PageTitle>
+        <PageTitle id="politique-confidentialite-title">
           Politique de confidentialité – Mon inclusion numérique, en lien avec l&apos;Entrepôt de données de
           l&apos;inclusion numérique
         </PageTitle>

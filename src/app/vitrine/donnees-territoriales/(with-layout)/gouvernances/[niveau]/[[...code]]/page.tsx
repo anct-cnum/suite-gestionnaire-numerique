@@ -70,8 +70,6 @@ export default async function Gouvernances({ params }: Props): Promise<ReactElem
 
   return (
     <div className="fr-pr-md-10w" style={{ display: 'flex', flexDirection: 'column' }}>
-      <h2 className="fr-h2 color-blue-france">Gouvernances</h2>
-
       {/* Bandeau d'information : pas de gouvernance propre à une intercommunalité */}
       {noticeGouvernance === null ? null : <NoticeInformation viewModel={noticeGouvernance} />}
 

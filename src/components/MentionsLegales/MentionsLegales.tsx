@@ -11,7 +11,7 @@ export default function MentionsLegales(): ReactElement {
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
         style={{ maxWidth: '960px' }}
       >
-        <PageTitle>Mentions légales</PageTitle>
+        <PageTitle id="mentions-title">Mentions légales</PageTitle>
 
         <section aria-labelledby="editeur-title" className="fr-mb-4w">
           <h2 className="fr-h6" id="editeur-title">
@@ -59,7 +59,9 @@ export default function MentionsLegales(): ReactElement {
         </section>
 
         <section aria-labelledby="accessibilite-title" className="fr-mb-4w">
-          <h3 className="fr-text--md fr-mt-3w">Signaler un dysfonctionnement</h3>
+          <h3 className="fr-text--md fr-mt-3w" id="accessibilite-title">
+            Signaler un dysfonctionnement
+          </h3>
           <p>
             Si vous rencontrez un défaut d&apos;accessibilité vous empêchant d&apos;accéder à un contenu ou une
             fonctionnalité du site, merci de nous en faire part :{' '}

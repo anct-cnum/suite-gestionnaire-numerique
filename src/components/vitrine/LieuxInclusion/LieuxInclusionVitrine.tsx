@@ -69,6 +69,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             ]}
             indicateur={viewModel.territoriesPrioritaires}
             label="Lieux en territoires prioritaires"
+            niveauTitre="h3"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-pl-1w">
@@ -101,6 +102,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             indicateur={viewModel.nombreLabellisesOuHabilites}
             information="Un lieu peut accueillir des médiateurs de plusieurs dispositifs, il est alors comptabilisé dans chaque catégorie"
             label="Lieux labellisés ou habilités"
+            niveauTitre="h3"
           />
         </div>
       </div>
@@ -135,9 +137,9 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
           }}
         >
           <div style={{ height: 'auto', textAlign: 'start', width: '60%' }}>
-            <span className={`fr-h2 fr-text-label--blue-france ${styles.titreCartographie}`}>
+            <h2 className={`fr-h2 fr-mb-0 fr-text-label--blue-france ${styles.titreCartographie}`}>
               Voir tous les lieux sur la cartographie
-            </span>
+            </h2>
           </div>
           <div className="fr-mt-2w">
             <ExternalLink
