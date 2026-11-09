@@ -6,7 +6,7 @@ import { ReactElement } from 'react'
 import ClientContext from '@/components/shared/ClientContext'
 import DateProvider from '@/components/shared/DateProvider'
 import EnTete from '@/components/transverse/EnTete/EnTete'
-import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
+import LienEvitement, { menuPrincipalVitrine } from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import EnTeteVitrine from '@/components/vitrine/EnTeteVitrine/EnTeteVitrine'
 import { Roles } from '@/domain/Role'
@@ -37,7 +37,7 @@ export default async function NotFound(): Promise<ReactElement> {
 function NotFoundVitrine(): ReactElement {
   return (
     <>
-      <LienEvitement />
+      <LienEvitement menu={menuPrincipalVitrine} />
       <EnTeteVitrine />
       <main className="fr-container--fluid" id="content">
         <Erreur404 />
