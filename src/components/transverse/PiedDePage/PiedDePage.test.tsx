@@ -10,7 +10,9 @@ describe('pied de page', () => {
 
     // THEN
     const piedDePage = screen.getByRole('contentinfo')
-    const lienAccueil = within(piedDePage).getByRole('link', { name: "Retour à l'accueil Inclusion Numérique" })
+    const lienAccueil = within(piedDePage).getByRole('link', {
+      name: "République Française - Retour à l'accueil Inclusion Numérique",
+    })
     expect(lienAccueil).toHaveAttribute('href', '/')
     expect(lienAccueil).not.toHaveAttribute('title')
     expect(within(lienAccueil).getByText('République', { exact: false })).toHaveAttribute('aria-hidden', 'true')

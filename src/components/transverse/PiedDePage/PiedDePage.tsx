@@ -5,7 +5,7 @@ import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function PiedDePage({ vitrine = false }: Props): ReactElement {
   const lienAccueil = vitrine
-    ? { 'aria-label': "Retour à l'accueil Inclusion Numérique", href: '/' }
+    ? { 'aria-label': "République Française - Retour à l'accueil Inclusion Numérique", href: '/' }
     : { href: '/tableau-de-bord', title: 'Accueil' }
 
   return (
