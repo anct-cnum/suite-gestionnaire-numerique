@@ -55,7 +55,10 @@ export default function Accessibilite(): ReactElement {
           Cette déclaration d&apos;accessibilité s&apos;applique à <strong>Mon Inclusion Numérique</strong>{' '}
           <span>
             (
-            <ExternalLink href="https://mon.inclusion-numerique.anct.gouv.fr/" title="Mon Inclusion Numérique">
+            <ExternalLink
+              href="https://mon.inclusion-numerique.anct.gouv.fr/"
+              title="https://mon.inclusion-numerique.anct.gouv.fr/"
+            >
               https://mon.inclusion-numerique.anct.gouv.fr/
             </ExternalLink>
             ).

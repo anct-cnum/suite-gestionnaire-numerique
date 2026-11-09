@@ -47,6 +47,7 @@ export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }
         <section aria-labelledby="document" className="fr-mb-4w grey-border border-radius fr-p-4w fr-mt-3w">
           <OuvrirPdf
             href={feuilleDeRoute.pieceJointe.href}
+            intitule={`Ouvrir « ${feuilleDeRoute.nom} » (PDF)`}
             metadonnee={feuilleDeRoute.pieceJointe.metadonnee}
             nom={feuilleDeRoute.pieceJointe.nom}
           />

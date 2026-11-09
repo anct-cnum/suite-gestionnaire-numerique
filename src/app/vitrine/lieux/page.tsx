@@ -53,7 +53,7 @@ export default function LieuxPage(): ReactElement {
               </p>
               <div>
                 <Link className="fr-btn" href="https://cartographie.societenumerique.gouv.fr/cartographie">
-                  Voir la cartographie
+                  Voir la cartographie nationale
                 </Link>
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function LieuxPage(): ReactElement {
               </p>
               <div>
                 <Link className="fr-btn" href="https://cartographie.societenumerique.gouv.fr/cartographie">
-                  Voir la cartographie
+                  Voir la cartographie nationale
                 </Link>
               </div>
             </div>
@@ -215,6 +215,7 @@ export default function LieuxPage(): ReactElement {
                     rel="noopener noreferrer"
                     style={{ display: 'inline-block' }}
                     target="_blank"
+                    title="Cartographie du Hub Normandie - nouvelle fenêtre"
                   >
                     Cartographie du Hub Normandie
                   </a>
@@ -290,8 +291,9 @@ export default function LieuxPage(): ReactElement {
                     rel="noopener noreferrer"
                     style={{ display: 'inline-block' }}
                     target="_blank"
+                    title="Cartographie nationale - nouvelle fenêtre"
                   >
-                    Voir la cartographie
+                    Cartographie nationale
                   </a>
                 </div>
               </div>
@@ -573,7 +575,7 @@ export default function LieuxPage(): ReactElement {
                   className="fr-btn fr-btn--tertiary"
                   href="https://lesbases.anct.gouv.fr/ressources/diffuser-la-cartographie-nationale-au-sein-de-mon-reseau"
                 >
-                  Voir la ressource
+                  Diffuser la cartographie dans mon réseau
                 </Link>
               </div>
             </div>
@@ -623,7 +625,7 @@ export default function LieuxPage(): ReactElement {
                   className="fr-btn fr-btn--tertiary"
                   href="https://lesbases.anct.gouv.fr/ressources/collectivite-comment-prendre-en-main-la-cartographie"
                 >
-                  Voir la ressource
+                  Prendre en main la cartographie
                 </Link>
               </div>
             </div>
@@ -673,7 +675,7 @@ export default function LieuxPage(): ReactElement {
                   className="fr-btn fr-btn--tertiary"
                   href="https://lesbases.anct.gouv.fr/ressources/evolution-du-standard-national"
                 >
-                  Voir la ressource
+                  Voir les évolutions du standard national
                 </Link>
               </div>
             </div>

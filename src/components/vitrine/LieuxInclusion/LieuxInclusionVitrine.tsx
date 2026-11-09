@@ -6,6 +6,7 @@ import { ReactElement } from 'react'
 import styles from './LieuxInclusionVitrine.module.css'
 import GraphiqueDemiCercle from '@/components/GraphiqueDemiCercle/GraphiqueDemiCercle'
 import LieuxInclusionCategory from '@/components/LieuxInclusion/LieuxInclusionCategory'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
 
@@ -139,14 +140,13 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             </span>
           </div>
           <div className="fr-mt-2w">
-            <a
+            <ExternalLink
               className="fr-btn fr-icon-external-link-line fr-btn--icon-right"
               href="https://cartographie.societenumerique.gouv.fr/cartographie"
-              rel="noopener noreferrer"
-              target="_blank"
+              title="Voir la cartographie nationale"
             >
-              La cartographie
-            </a>
+              Voir la cartographie nationale
+            </ExternalLink>
           </div>
         </div>
       </div>
