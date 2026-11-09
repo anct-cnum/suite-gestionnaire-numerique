@@ -17,6 +17,15 @@ const niveauxParSection: Readonly<Record<string, ReadonlyArray<string> | undefin
   gouvernances: ['departement', 'epci'],
 }
 
+// Nom de la rubrique, restitué aux lecteurs d'écran dans le titre de niveau 1 (RGAA 9.1)
+const rubriques: Readonly<Record<string, string | undefined>> = {
+  'feuille-de-route': 'Feuille de route',
+  gouvernances: 'Gouvernances',
+  'lieux-inclusion': "Lieux d'inclusion",
+  'mediateurs-numeriques': 'Médiateurs numériques',
+  'synthese-et-indicateurs': 'Synthèse et indicateurs',
+}
+
 export default function Header({ titre }: Props): ReactElement {
   const router = useRouter()
   const params = useParams()
@@ -62,6 +71,7 @@ export default function Header({ titre }: Props): ReactElement {
     }
   }, [niveau, code])
 
+  const rubrique = rubriques[currentSection]
   const territoireActuel = getTerritoireLabel(niveau, code, epci)
   const territoireInitial = getTerritoireInitial(niveau, code, epci)
 
@@ -87,6 +97,7 @@ export default function Header({ titre }: Props): ReactElement {
       <div className={`fr-grid-row fr-grid-row--gutters ${styles.titleRow}`}>
         <div className="fr-col-12 fr-col-md-8">
           <h1 className={`fr-mb-0 ${styles.title}`}>
+            {rubrique === undefined ? null : <span className="fr-sr-only">{`${rubrique} – `}</span>}
             {titre} <br />
             {territoireActuel}
           </h1>

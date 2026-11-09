@@ -60,16 +60,27 @@ describe('header des données territoriales', () => {
     expect(departement.textContent).toBe('Rhône · 69')
   })
 
-  it('le titre de niveau 1 restitue le titre et le territoire séparés par une espace', () => {
-    // GIVEN
-    mockPathname.current = '/vitrine/donnees-territoriales/synthese-et-indicateurs/national'
-    mockParams.current = { niveau: 'national' }
+  it.each([
+    { rubrique: 'Synthèse et indicateurs', section: 'synthese-et-indicateurs' },
+    { rubrique: "Lieux d'inclusion", section: 'lieux-inclusion' },
+    { rubrique: 'Médiateurs numériques', section: 'mediateurs-numeriques' },
+    { rubrique: 'Gouvernances', section: 'gouvernances' },
+    { rubrique: 'Feuille de route', section: 'feuille-de-route' },
+  ])(
+    'rubrique $section : le titre de niveau 1 restitue la rubrique, le titre et le territoire',
+    ({ rubrique, section }) => {
+      // GIVEN : URL publique du site vitrine, sans préfixe /vitrine
+      mockPathname.current = `/donnees-territoriales/${section}/national`
+      mockParams.current = { niveau: 'national' }
 
-    // WHEN
-    renderComponent(<Header titre="Données de l’inclusion numérique" />)
+      // WHEN
+      renderComponent(<Header titre="Données de l’inclusion numérique" />)
 
-    // THEN
-    const titre = screen.getByRole('heading', { level: 1 })
-    expect(titre).toHaveAccessibleName('Données de l’inclusion numérique France')
-  })
+      // THEN : la rubrique est réservée aux lecteurs d'écran, le rendu visuel est inchangé
+      const titre = screen.getByRole('heading', { level: 1 })
+      expect(titre).toHaveAccessibleName(`${rubrique} – Données de l’inclusion numérique France`)
+      const libelleRubrique = within(titre).getByText(`${rubrique} –`)
+      expect(libelleRubrique).toHaveClass('fr-sr-only')
+    }
+  )
 })
