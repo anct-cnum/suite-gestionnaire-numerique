@@ -38,7 +38,10 @@ describe('titre des cartes de l’indice de fragilité numérique', () => {
     render(carte)
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 3, name: 'Indice de Fragilité numérique' })
+    const titre = screen.getByRole('heading', {
+      level: 3,
+      name: "Indice de Fragilité numérique Plus d'information sur l'indice de fragilité numérique",
+    })
     expect(titre).toBeInTheDocument()
   })
 })

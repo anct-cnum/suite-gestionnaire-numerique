@@ -30,7 +30,10 @@ describe('lieux d’inclusion du site vitrine', () => {
       name: 'Lieux en territoires prioritaires',
     })
     expect(titreTerritoiresPrioritaires).toBeInTheDocument()
-    const titreLabellises = screen.getByRole('heading', { level: 3, name: 'Lieux labellisés ou habilités' })
+    const titreLabellises = screen.getByRole('heading', {
+      level: 3,
+      name: "Lieux labellisés ou habilités Plus d'information sur « Lieux labellisés ou habilités »",
+    })
     expect(titreLabellises).toBeInTheDocument()
   })
 })
