@@ -13,14 +13,14 @@ export default function VentilationFinancements({
       <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w" style={{ fontWeight: 500 }}>
         {nombreDeFinancementsEngagesParLEtat} financement(s) engagé(s) par l&apos;État
         {contexte === 'departement' && (
-          <Information>
+          <Information libelle="Plus d'information sur les financements engagés par l'État">
             <p className="fr-mb-0">
               Nombre de demandes de subventions validées des feuilles de route de votre gouvernance.
             </p>
           </Information>
         )}
         {contexte === 'admin' && (
-          <Information>
+          <Information libelle="Plus d'information sur les financements engagés par l'État">
             <p className="fr-mb-0">Nombre de demandes de subventions validées des feuilles de route.</p>
           </Information>
         )}

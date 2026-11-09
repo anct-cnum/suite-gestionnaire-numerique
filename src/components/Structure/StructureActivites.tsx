@@ -81,7 +81,7 @@ function CarteIndicateur({
       </p>
       <p className="fr-text--sm fr-text--bold fr-m-0">
         {libelle}
-        <Information>{children}</Information>
+        <Information libelle={`Plus d'information sur « ${libelle} »`}>{children}</Information>
       </p>
     </div>
   )
@@ -104,7 +104,7 @@ function CarteBeneficiaires({
       <p className="fr-text--sm fr-mb-1v">{beneficiaires.suivis} bénéficiaires suivis</p>
       <p className="fr-text--sm fr-m-0">
         {beneficiaires.anonymes} bénéficiaires anonymes
-        <Information>
+        <Information libelle="Plus d'information sur les bénéficiaires accompagnés">
           Bénéficiaires déclarés par les médiateurs et conseillers numériques de la structure : les bénéficiaires suivis
           disposent d&apos;une fiche, les bénéficiaires anonymes non.
         </Information>
@@ -124,7 +124,7 @@ function GraphiqueCard({ graphique }: Readonly<{ graphique: ActivitesStructureVi
       <div className="grey-border border-radius fr-p-3w">
         <h3 className="fr-h6 fr-mb-2w">
           Nombre d&apos;accompagnements
-          <Information>
+          <Information libelle="Plus d'information sur le nombre d'accompagnements">
             Somme des accompagnements de médiation numérique enregistrés (accompagnements individuels et participations
             aux ateliers collectifs) et, sur la vue mensuelle, des accompagnements Aidants Connect.
           </Information>

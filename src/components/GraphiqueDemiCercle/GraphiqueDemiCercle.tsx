@@ -38,7 +38,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           <Libelle className="fr-text--lg font-weight-700 fr-m-0 fr-text-default--grey">
             {label}
             {information === undefined ? null : (
-              <Information>
+              <Information libelle={`Plus d'information sur « ${label} »`}>
                 <p className="fr-mb-0">{information}</p>
               </Information>
             )}

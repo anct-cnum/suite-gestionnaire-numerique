@@ -42,7 +42,7 @@ function NotFoundVitrine(): ReactElement {
       <main className="fr-container--fluid" id="content">
         <Erreur404 />
       </main>
-      <PiedDePage />
+      <PiedDePage vitrine />
     </>
   )
 }

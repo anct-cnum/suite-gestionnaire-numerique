@@ -51,6 +51,7 @@ export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }
           <OuvrirPdf
             href={feuilleDeRoute.pieceJointe.href}
             idTitre={idTitreDocument}
+            intitule={`Ouvrir « ${feuilleDeRoute.nom} » (PDF)`}
             metadonnee={feuilleDeRoute.pieceJointe.metadonnee}
             niveauTitre="h3"
             nom={feuilleDeRoute.pieceJointe.nom}

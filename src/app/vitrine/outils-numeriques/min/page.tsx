@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import styles from './page.module.css'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
@@ -131,14 +132,13 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                 L&apos;outil de pilotage par la donnée des dispositifs d&apos;inclusion numérique
               </p>
               <div>
-                <a
+                <ExternalLink
                   className="fr-btn fr-btn--lg"
                   href="https://mon.inclusion-numerique.anct.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
+                  title="Se connecter à Mon Inclusion Numérique"
                 >
-                  Se connecter
-                </a>
+                  Se connecter à Mon Inclusion Numérique
+                </ExternalLink>
               </div>
             </div>
           </div>
@@ -262,6 +262,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
       {/* Section: Suivre les dispositifs */}
       <ToolCard
+        buttonText="Accéder à Mon Inclusion Numérique"
         description="Un outil unique pour piloter l’ensemble des dispositifs d’inclusion d’inclusion numérique (Aidants Connect, Conseiller numérique, etc.)"
         icon="/vitrine/outils/min/logo-identifier.svg"
         imageAlt="Capture d'écran du suivi des dispositifs"
@@ -306,14 +307,13 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                 Conseil Régional, Conseil Département ou EPCI, vous pouvez également porter une feuille de route.
               </p>
               <div>
-                <a
+                <ExternalLink
                   className="fr-btn"
                   href="https://mon.inclusion-numerique.anct.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
+                  title="Accéder au formulaire"
                 >
-                  Accéder au formulaire{' '}
-                </a>
+                  Accéder au formulaire
+                </ExternalLink>
               </div>
             </div>
           </div>

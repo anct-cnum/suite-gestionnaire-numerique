@@ -26,4 +26,44 @@ describe('carte d’un outil', () => {
     expect(icone.getAttribute('alt')).toBe('')
     expect(icone.getAttribute('aria-hidden')).toBe('true')
   })
+
+  it('un lien interne s’ouvre dans le même onglet', () => {
+    // WHEN
+    renderComponent(
+      <ToolCard
+        buttonText="Découvrir Mon Inclusion Numérique"
+        description="Description de l’outil"
+        imageAlt="Capture d'écran"
+        imageSrc="/vitrine/outils/visuel-min.png"
+        link="/vitrine/outils-numeriques/min"
+        title="Mon inclusion Numérique"
+      />
+    )
+
+    // THEN
+    const lien = screen.getByRole('link', { name: 'Découvrir Mon Inclusion Numérique' })
+    expect(lien.getAttribute('href')).toBe('/vitrine/outils-numeriques/min')
+    expect(lien.getAttribute('target')).toBeNull()
+    expect(lien.getAttribute('title')).toBeNull()
+  })
+
+  it('un lien externe s’ouvre dans une nouvelle fenêtre et le signale', () => {
+    // WHEN
+    renderComponent(
+      <ToolCard
+        buttonText="Découvrir Aidants Connect"
+        description="Description de l’outil"
+        imageAlt="Capture d'écran"
+        imageSrc="/vitrine/outils/visuel-aidants-connect.png"
+        link="https://aidantsconnect.beta.gouv.fr/"
+        title="Aidants Connect"
+      />
+    )
+
+    // THEN
+    const lien = screen.getByRole('link', { name: 'Découvrir Aidants Connect' })
+    expect(lien.getAttribute('href')).toBe('https://aidantsconnect.beta.gouv.fr/')
+    expect(lien.getAttribute('target')).toBe('_blank')
+    expect(lien.getAttribute('title')).toBe('Découvrir Aidants Connect - nouvelle fenêtre')
+  })
 })

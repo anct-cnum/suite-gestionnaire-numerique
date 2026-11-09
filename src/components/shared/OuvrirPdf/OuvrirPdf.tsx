@@ -11,6 +11,7 @@ import { isNullishOrEmpty } from '@/shared/lang'
 export default function OuvrirPdf({
   href,
   idTitre = 'document',
+  intitule = 'Ouvrir le pdf',
   isReplacing = false,
   metadonnee,
   niveauTitre = 'h2',
@@ -33,8 +34,8 @@ export default function OuvrirPdf({
         <div className="fr-upload-group" />
         <ul className="fr-btns-group fr-btns-group--inline-sm fr-mt-2w">
           <li>
-            <ExternalLink className="fr-btn fr-btn--secondary" href={href} title="Ouvrir le pdf">
-              Ouvrir le pdf
+            <ExternalLink className="fr-btn fr-btn--secondary" href={href} title={intitule}>
+              {intitule}
             </ExternalLink>
           </li>
           {onReplace ? (
@@ -85,6 +86,7 @@ export default function OuvrirPdf({
 type Props = Readonly<{
   href: string
   idTitre?: string
+  intitule?: string
   isReplacing?: boolean
   metadonnee?: string
   niveauTitre?: 'h2' | 'h3'
