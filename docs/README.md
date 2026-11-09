@@ -65,9 +65,10 @@ docs/
 
 ## Chantiers en cours
 
-| Chantier                             | Documents                                                                                                                    |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| Membres de gouvernance mal rattachés | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
+| Chantier                               | Documents                                                                                                                    |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Pré-audit RGAA du site vitrine (#2238) | [pre-audit-vitrine.md](chantiers/2238-pre-audit-rgaa-vitrine/pre-audit-vitrine.md)                                           |
+| Membres de gouvernance mal rattachés   | [constat-membres-gouvernance-mal-raccroches.md](chantiers/membres-gouvernance/constat-membres-gouvernance-mal-raccroches.md) |
 
 ## Archives
 
