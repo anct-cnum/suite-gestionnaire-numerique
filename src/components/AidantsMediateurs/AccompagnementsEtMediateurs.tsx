@@ -70,7 +70,7 @@ export default function AccompagnementsEtMediateurs({
         <div>
           <h2 className="fr-h5 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
             Accompagnements et médiateurs numériques
-            <Information>
+            <Information libelle="Plus d'information sur les accompagnements et médiateurs numériques">
               <p className="fr-mb-0">
                 Les indicateurs affichés concernent les médiateurs numériques inscrits sur{' '}
                 <strong>la Coop de la médiation</strong> ainsi que les conseillers numériques de votre territoire.

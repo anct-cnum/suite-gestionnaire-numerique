@@ -1,15 +1,17 @@
 import { ReactElement, ReactNode, useId } from 'react'
 
-export default function Information({ children }: Props): ReactElement {
+export default function Information({ children, libelle }: Props): ReactElement {
   const id = useId().replace(/:/g, '')
 
   return (
-    <span className="fr-ml-1w" style={{ display: 'inline-block', position: 'relative' }}>
-      <span
+    <span className="fr-ml-1v" style={{ display: 'inline-block', position: 'relative' }}>
+      <button
         aria-describedby={id}
-        className="fr-icon fr-icon-information-line fr-p-0 fr-btn--sm color-blue-france"
-        role="img"
-      />
+        className="fr-btn fr-btn--tertiary-no-outline fr-btn--sm fr-icon-information-line"
+        type="button"
+      >
+        {libelle}
+      </button>
 
       <span
         aria-hidden="true"
@@ -34,4 +36,6 @@ export default function Information({ children }: Props): ReactElement {
 
 type Props = Readonly<{
   children: ReactNode
+  // Nom accessible du bouton déclencheur, ex. « Plus d'information sur l'indice de fragilité numérique »
+  libelle: string
 }>
