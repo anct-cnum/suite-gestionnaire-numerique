@@ -328,8 +328,9 @@ export default function DateRangePicker({
   // Un seul jour dans l'ordre de tabulation (tabindex mobile), déplacé aux flèches.
   const [jourActif, setJourActif] = useState(() => borner(initial, minDate, maxDate))
   const rootRef = useRef<HTMLDivElement>(null)
-  // À l'ouverture, le focus est envoyé dans la grille, sans faire défiler le panneau.
-  const focusAFaire = useRef<'navigation' | 'ouverture' | null>('ouverture')
+  // À l'ouverture puis à chaque déplacement, le focus est envoyé sur le jour tabulable. Le panneau défile
+  // si besoin pour que le jour focalisé reste visible (panneau tronqué quand le bouton est bas dans la fenêtre).
+  const focusAFaire = useRef(true)
 
   const moisDroite = addMois(moisGauche.annee, moisGauche.mois, 1)
 
@@ -341,12 +342,9 @@ export default function DateRangePicker({
       premierJourSelectionnable(moisDroite, minDate, maxDate))
 
   useEffect(() => {
-    if (focusAFaire.current === null || jourTabulable === null) return
-    const preventScroll = focusAFaire.current === 'ouverture'
-    focusAFaire.current = null
-    rootRef.current
-      ?.querySelector<HTMLButtonElement>(`[data-day="${isoJour(jourTabulable)}"] button`)
-      ?.focus({ preventScroll })
+    if (!focusAFaire.current || jourTabulable === null) return
+    focusAFaire.current = false
+    rootRef.current?.querySelector<HTMLButtonElement>(`[data-day="${isoJour(jourTabulable)}"] button`)?.focus()
   })
 
   function naviguerAuClavier(jour: Date, event: KeyboardEvent<HTMLButtonElement>): void {
@@ -360,7 +358,7 @@ export default function DateRangePicker({
       setMoisGauche(addMois(jourBorne.getFullYear(), jourBorne.getMonth(), -1))
     }
     setJourActif(jourBorne)
-    focusAFaire.current = 'navigation'
+    focusAFaire.current = true
   }
 
   const peutReculer = moisGauche.annee > minDate.getFullYear() || moisGauche.mois > minDate.getMonth()
