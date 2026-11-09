@@ -44,7 +44,8 @@ export default function DispositifsPage(): ReactElement {
             <div className="fr-col-12 fr-col-md-5" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <img
-                  alt="Icône Conseiller numérique"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/dispositifs/logo-conseillers-numeriques.png"
                   style={{ height: 'auto', width: '80px' }}
                 />
@@ -95,7 +96,8 @@ export default function DispositifsPage(): ReactElement {
           <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
             <div className={`fr-col-12 fr-col-md-6 ${styles.aidantsConnectImage}`}>
               <img
-                alt="Illustration Aidants Connect"
+                alt=""
+                aria-hidden="true"
                 src="/vitrine/dispositifs/illustration-aidants-connect.png"
                 style={{ height: 'auto', width: '100%' }}
               />
@@ -103,7 +105,8 @@ export default function DispositifsPage(): ReactElement {
             <div className={`fr-col-12 fr-col-md-5 ${styles.aidantsConnectContent}`}>
               <div>
                 <img
-                  alt="Logo Aidants Connect"
+                  alt=""
+                  aria-hidden="true"
                   src="/vitrine/dispositifs/logo-aidants-connect.png"
                   style={{ height: 'auto', width: '80px' }}
                 />

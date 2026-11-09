@@ -29,7 +29,7 @@ export default function ToolCard({
           >
             {icon !== undefined && icon !== '' && (
               <div>
-                <img alt={`Icône ${title}`} src={icon} style={{ height: '90px', width: 'auto' }} />
+                <img alt="" aria-hidden="true" src={icon} style={{ height: '90px', width: 'auto' }} />
               </div>
             )}
             <h2 className="fr-h2 fr-mb-0">{title}</h2>
