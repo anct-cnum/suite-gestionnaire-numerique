@@ -162,8 +162,8 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
     expect(RechercherLieuxInclusionSimilaires.prototype.handle).not.toHaveBeenCalled()
   })
 
-  // La détection suit la création : ouverte à tous les rôles, elle reste fermée hors du
-  // périmètre bêta tant que #1716 n'est pas tranché (#2226).
+  // La détection suit la création : ouverte à tous les rôles de gestion, et plus seulement
+  // aux bêta-testeurs depuis #1716 (#2226).
   it('en création, renvoie les lieux déjà déclarés à un gestionnaire département bêta-testeur (#2226)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
@@ -191,7 +191,9 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
     })
   })
 
-  it('en création, ne renvoie rien hors du périmètre bêta (#2226)', async () => {
+  // La porte bêta est ouverte (#1716) : le contrôle anti-doublon tourne aussi pour un
+  // gestionnaire hors bêta, sans quoi il créerait des lieux sans ce garde-fou.
+  it('en création, renvoie les lieux déjà déclarés à un gestionnaire hors bêta (#1716)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -205,13 +207,16 @@ describe('rechercher les lieux d’inclusion déjà déclarés à une adresse, a
         },
       })
     )
-    vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle')
+    vi.spyOn(RechercherLieuxInclusionSimilaires.prototype, 'handle').mockResolvedValueOnce([])
 
     // WHEN
     const lieux = await rechercherLieuxInclusionSimilairesAction({ adresse: '1 rue de la Paix 75001 Paris' })
 
     // THEN
     expect(lieux).toStrictEqual([])
-    expect(RechercherLieuxInclusionSimilaires.prototype.handle).not.toHaveBeenCalled()
+    expect(RechercherLieuxInclusionSimilaires.prototype.handle).toHaveBeenCalledWith({
+      adresse: '1 rue de la Paix 75001 Paris',
+      idLieuEnModification: undefined,
+    })
   })
 })

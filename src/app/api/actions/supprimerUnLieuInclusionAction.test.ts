@@ -46,7 +46,8 @@ describe('supprimer un lieu d’inclusion action', () => {
     expect(messages).toStrictEqual(["L'identifiant du lieu doit être renseigné"])
   })
 
-  it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951)', async () => {
+  // La porte bêta est ouverte (#1716) : seul le périmètre décide désormais.
+  it('laisse un gestionnaire hors bêta supprimer un lieu de son département (#1716)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -59,12 +60,19 @@ describe('supprimer un lieu d’inclusion action', () => {
         },
       })
     )
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(lieuDetailsReadModel)
+    vi.spyOn(SupprimerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const messages = await supprimerUnLieuInclusionAction({ lieuId: '42', path: '/liste-lieux-inclusion' })
 
     // THEN
-    expect(messages).toStrictEqual(['Action réservée aux bêta-testeurs'])
+    expect(messages).toStrictEqual(['OK'])
+    expect(SupprimerUnLieuInclusion.prototype.handle).toHaveBeenCalledWith({ lieuId: '42' })
   })
 
   it('renvoie une erreur quand le lieu est introuvable', async () => {

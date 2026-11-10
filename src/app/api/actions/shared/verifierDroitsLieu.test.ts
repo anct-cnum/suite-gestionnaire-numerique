@@ -66,20 +66,50 @@ describe('vérifier les droits sur un lieu d’inclusion (helper des actions)', 
     expect(verification.statut).toBe('ok')
   })
 
-  it('refuse un gestionnaire hors bêta quand l’action est en ouverture progressive, sans charger le lieu', async () => {
+  // #1716 : la porte bêta est ouverte. Un gestionnaire hors bêta n'est plus arrêté avant le
+  // chargement du lieu — il est désormais jugé sur son seul périmètre.
+  it('laisse passer un gestionnaire hors bêta sur un lieu de son périmètre (#1716)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
       utilisateurReadModelFactory({ isBetaTesteur: false, role: roleGestionnaireDepartement })
     )
-    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer')
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    )
+    const lieu = lieuDetailsReadModelFactory({ codeDepartement: '75' })
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(lieu)
 
     // WHEN
     const verification = await verifierDroitsLieu('42', { action: 'supprimer', reserveAuxBetaTesteurs: true })
 
     // THEN
-    expect(verification).toStrictEqual({ message: 'Action réservée aux bêta-testeurs', statut: 'refus' })
-    expect(PrismaRecupererLieuDetailsLoader.prototype.recuperer).not.toHaveBeenCalled()
+    expect(verification).toStrictEqual({ lieu, statut: 'ok' })
+  })
+
+  // Le périmètre, lui, continue de refuser : ouvrir la porte bêta ne donne pas de droits
+  // sur un lieu hors du territoire du gestionnaire (#1716).
+  it('refuse toujours un gestionnaire hors bêta sur un lieu hors de son périmètre (#1716)', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
+    vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
+      utilisateurReadModelFactory({ isBetaTesteur: false, role: roleGestionnaireDepartement })
+    )
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory({ codeDepartement: '93' })
+    )
+
+    // WHEN
+    const verification = await verifierDroitsLieu('42', { action: 'supprimer', reserveAuxBetaTesteurs: true })
+
+    // THEN
+    expect(verification).toStrictEqual({
+      message: "Vous n'avez pas les droits pour supprimer ce lieu",
+      statut: 'refus',
+    })
   })
 
   it('refuse quand le lieu est introuvable', async () => {
