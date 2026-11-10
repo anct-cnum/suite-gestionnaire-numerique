@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import CreerLieuInclusion from './CreerLieuInclusion'
 import { ResultatCreationLieu } from '@/app/api/actions/creerUnLieuInclusionAction'
+import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import * as notification from '@/components/shared/Notification/Notification'
 import { renderComponent } from '@/components/testHelper'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
@@ -231,6 +232,99 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
     expect(lien).toHaveAttribute('href', '/lieu/42?dejaEnregistre=1')
     expect(screen.getByRole('button', { name: 'Créer le lieu d’activité' })).toBeEnabled()
   })
+
+  it('le bouton « Rechercher » du SIRET interroge l’API Entreprise sans créer de lieu (#2278)', async () => {
+    // GIVEN
+    const creerUnLieuInclusionAction = vi.fn<() => Promise<ResultatCreationLieu>>()
+    const rechercherUneEntrepriseAction = vi.fn<() => Promise<EntrepriseViewModel>>().mockResolvedValueOnce(entreprise)
+    renderComponent(<CreerLieuInclusion />, {
+      creerUnLieuInclusionAction,
+      rechercherLieuxInclusionSimilairesAction: aucunLieuSimilaire(),
+      rechercherUneEntrepriseAction,
+    })
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu/ }), '21690271800016')
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+    // THEN
+    await waitFor(() => {
+      expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '21690271800016' })
+    })
+    expect(creerUnLieuInclusionAction).not.toHaveBeenCalled()
+  })
+
+  // Le bouton « Rechercher » n'étant pas un bouton de soumission, le bouton par défaut du
+  // formulaire est « Créer le lieu d'activité » : Entrée dans le champ SIRET crée le lieu au
+  // lieu de lancer la recherche, et sans que le contrôle anti-doublon ait tourné.
+  it('la touche Entrée dans le champ SIRET lance la recherche sans créer de lieu (#2278)', async () => {
+    // GIVEN un formulaire dont tous les champs obligatoires sont déjà saisis
+    vi.spyOn(notification, 'Notification').mockImplementation(() => undefined)
+    // Bouchon réaliste : si la soumission part malgré tout, elle aboutit — l'échec du test
+    // doit venir de l'assertion, pas d'une exception sur un retour indéfini.
+    const creerUnLieuInclusionAction = vi
+      .fn<() => Promise<ResultatCreationLieu>>()
+      .mockResolvedValue({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
+    const rechercherUneEntrepriseAction = vi.fn<() => Promise<EntrepriseViewModel>>().mockResolvedValueOnce(entreprise)
+    const rechercherAdressesAction = vi
+      .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+      .mockResolvedValue([{ label: '1 Rue de la Paix, 75001 Paris' }])
+    renderComponent(<CreerLieuInclusion />, {
+      creerUnLieuInclusionAction,
+      rechercherAdressesAction,
+      rechercherLieuxInclusionSimilairesAction: aucunLieuSimilaire(),
+      rechercherUneEntrepriseAction,
+      router: routerAvec(vi.fn<(href: string) => void>()),
+    })
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
+    await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
+    await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
+
+    // WHEN
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu/ }), '21690271800016{Enter}')
+
+    // THEN
+    expect(creerUnLieuInclusionAction).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '21690271800016' })
+    })
+  })
+
+  // Corollaire du correctif (#2278) : dans ce champ, Entrée veut dire « rechercher » et rien
+  // d'autre. Un SIRET vide n'a rien à rechercher, donc Entrée ne fait rien — surtout pas créer
+  // le lieu, ce qui était le piège d'origine quand les autres champs étaient déjà saisis.
+  it('la touche Entrée dans un champ SIRET vide ne crée pas de lieu et ne lance pas de recherche (#2278)', async () => {
+    // GIVEN un formulaire dont tous les champs obligatoires sont saisis, sauf le SIRET
+    vi.spyOn(notification, 'Notification').mockImplementation(() => undefined)
+    const creerUnLieuInclusionAction = vi
+      .fn<() => Promise<ResultatCreationLieu>>()
+      .mockResolvedValue({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
+    const rechercherUneEntrepriseAction = vi.fn<() => Promise<EntrepriseViewModel>>()
+    const rechercherAdressesAction = vi
+      .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+      .mockResolvedValue([{ label: '1 Rue de la Paix, 75001 Paris' }])
+    renderComponent(<CreerLieuInclusion />, {
+      creerUnLieuInclusionAction,
+      rechercherAdressesAction,
+      rechercherLieuxInclusionSimilairesAction: aucunLieuSimilaire(),
+      rechercherUneEntrepriseAction,
+      router: routerAvec(vi.fn<(href: string) => void>()),
+    })
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
+    await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
+    await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
+
+    // WHEN
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu/ }), '{Enter}')
+
+    // THEN
+    expect(creerUnLieuInclusionAction).not.toHaveBeenCalled()
+    expect(rechercherUneEntrepriseAction).not.toHaveBeenCalled()
+  })
 })
 
 function routerAvec(push: (href: string) => void): ReturnType<typeof import('next/navigation').useRouter> {
@@ -243,4 +337,23 @@ function routerAvec(push: (href: string) => void): ReturnType<typeof import('nex
     refresh: vi.fn<() => void>(),
     replace: vi.fn<() => void>(),
   } as unknown as ReturnType<typeof import('next/navigation').useRouter>
+}
+
+function aucunLieuSimilaire(): () => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>> {
+  return vi.fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>().mockResolvedValue([])
+}
+
+const entreprise: EntrepriseViewModel = {
+  activitePrincipale: '84.11Z',
+  activitePrincipaleLibelle: 'Administration publique générale',
+  adresse: '60 Rue de la République 69680 Chassieu',
+  categorieJuridiqueCode: '7210',
+  categorieJuridiqueLibelle: 'Commune',
+  codeInsee: '69271',
+  codePostal: '69680',
+  commune: 'Chassieu',
+  denomination: 'COMMUNE DE CHASSIEU',
+  identifiant: '21690271800016',
+  nomVoie: 'Rue de la République',
+  numeroVoie: '60',
 }

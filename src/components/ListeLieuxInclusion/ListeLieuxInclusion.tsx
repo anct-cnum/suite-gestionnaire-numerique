@@ -364,14 +364,9 @@ export default function ListeLieuxInclusion({
             Suivi des lieux d&apos;inclusion numérique
           </PageTitle>
         </div>
-        <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-          {peutCreer ? (
-            <div className="fr-col-auto">
-              <Link className="fr-btn fr-btn--icon-left fr-icon-add-line" href="/lieu/creer">
-                Ajouter un lieu
-              </Link>
-            </div>
-          ) : null}
+        {/* Action principale à droite des actions secondaires, et demi-gouttière entre les
+        boutons : fr-grid-row--gutters en mettrait 1rem, fr-ml-1w en met 0,5rem. */}
+        <div className="fr-col-auto fr-grid-row fr-grid-row--middle">
           <div className="fr-col-auto">
             <button
               className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
@@ -381,7 +376,7 @@ export default function ListeLieuxInclusion({
               Export
             </button>
           </div>
-          <div className="fr-col-auto">
+          <div className="fr-col-auto fr-ml-1w">
             <button
               aria-controls={drawerId}
               className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
@@ -394,6 +389,13 @@ export default function ListeLieuxInclusion({
               Filtres
             </button>
           </div>
+          {peutCreer ? (
+            <div className="fr-col-auto fr-ml-1w">
+              <Link className="fr-btn fr-btn--icon-left fr-icon-add-line" href="/lieu/creer">
+                Ajouter un lieu
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
 

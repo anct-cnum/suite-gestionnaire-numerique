@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import LieuxInclusionDetails from './LieuInclusionDetails'
 import LieuInclusionDetailsInformationsGenerales from './LieuInclusionDetailsInformationsGenerales'
 import { renderComponent } from '../testHelper'
+import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import * as notification from '@/components/shared/Notification/Notification'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import {
@@ -239,6 +240,43 @@ describe('modification des informations générales d’un lieu', () => {
     const titre = await within(zoneAnnonce).findByText('1 lieu est déjà déclaré à cette adresse')
     expect(titre).toBeInTheDocument()
   })
+
+  // Même piège qu'à la création (#2278), en pire : les champs sont pré-remplis par le lieu
+  // existant, donc rien ne retient la soumission. Entrée dans le champ SIRET enregistre la
+  // modification au lieu de lancer la recherche.
+  it('la touche Entrée dans le champ SIRET lance la recherche sans enregistrer la modification (#2278)', async () => {
+    // GIVEN
+    vi.spyOn(notification, 'Notification').mockImplementation(() => undefined)
+    // Bouchon réaliste : si la soumission part malgré tout, elle aboutit — l'échec du test
+    // doit venir de l'assertion, pas d'une exception sur un retour indéfini.
+    const modifierLieuInclusionInformationsGeneralesAction = vi
+      .fn<() => Promise<ReadonlyArray<string>>>()
+      .mockResolvedValue(['OK'])
+    const rechercherUneEntrepriseAction = vi.fn<() => Promise<EntrepriseViewModel>>().mockResolvedValueOnce(entreprise)
+    renderComponent(
+      <LieuInclusionDetailsInformationsGenerales
+        data={{ ...createDefaultInformationsGeneralesData(), typologies: ['ASSO'] }}
+        peutModifier={true}
+      />,
+      {
+        modifierLieuInclusionInformationsGeneralesAction,
+        rechercherLieuxInclusionSimilairesAction: vi
+          .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+          .mockResolvedValue([]),
+        rechercherUneEntrepriseAction,
+      }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier' }))
+
+    // WHEN
+    await userEvent.type(screen.getByRole('textbox', { name: /N° SIRET du lieu/ }), '21690271800016{Enter}')
+
+    // THEN
+    expect(modifierLieuInclusionInformationsGeneralesAction).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '21690271800016' })
+    })
+  })
 })
 
 // Formulaire des informations générales ouvert, avec une autocomplétion qui propose deux adresses.
@@ -274,4 +312,19 @@ function lieuSimilaire(nom: string): LieuInclusionSimilaireViewModel {
     nom,
     typologies: 'Bibliothèque, Médiathèque',
   }
+}
+
+const entreprise: EntrepriseViewModel = {
+  activitePrincipale: '84.11Z',
+  activitePrincipaleLibelle: 'Administration publique générale',
+  adresse: '60 Rue de la République 69680 Chassieu',
+  categorieJuridiqueCode: '7210',
+  categorieJuridiqueLibelle: 'Commune',
+  codeInsee: '69271',
+  codePostal: '69680',
+  commune: 'Chassieu',
+  denomination: 'COMMUNE DE CHASSIEU',
+  identifiant: '21690271800016',
+  nomVoie: 'Rue de la République',
+  numeroVoie: '60',
 }

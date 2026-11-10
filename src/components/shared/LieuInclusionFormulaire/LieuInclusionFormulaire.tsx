@@ -1,7 +1,7 @@
 'use client'
 
 import { Typologie } from '@gouvfr-anct/lieux-de-mediation-numerique'
-import { ReactElement, useContext, useState } from 'react'
+import { KeyboardEvent, ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import LieuxDejaDeclares from '@/components/shared/LieuxDejaDeclares/LieuxDejaDeclares'
@@ -60,6 +60,21 @@ export default function LieuInclusionFormulaire({
     setRechercheEnCours(false)
   }
 
+  // « Rechercher » n'est pas un bouton de soumission : sans cette interception, Entrée dans
+  // le champ SIRET déclencherait le bouton par défaut du formulaire, donc la création ou
+  // l'enregistrement du lieu — et sans que le contrôle des lieux déjà déclarés, lié au choix
+  // d'une adresse, ait tourné (#2278). Entrée lance donc la recherche, et ne soumet jamais.
+  function surToucheDansLeSiret(event: KeyboardEvent<HTMLInputElement>): void {
+    if (event.key !== 'Enter') {
+      return
+    }
+    event.preventDefault()
+    if (rechercheEnCours || etat.siretSaisi === '') {
+      return
+    }
+    void rechercherEntreprise()
+  }
+
   return (
     <>
       <div className="fr-input-group fr-mb-2w">
@@ -78,6 +93,7 @@ export default function LieuInclusionFormulaire({
               onChange={(event) => {
                 mettreAJour({ siretSaisi: event.target.value })
               }}
+              onKeyDown={surToucheDansLeSiret}
               type="text"
               value={etat.siretSaisi}
             />
