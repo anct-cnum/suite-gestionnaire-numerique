@@ -96,17 +96,22 @@ describe('créer un lieu d’inclusion action', () => {
     expect(resultat).toStrictEqual({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
   })
 
-  it('refuse un gestionnaire hors du périmètre bêta, la porte restant fermée pendant la recette (#2226)', async () => {
+  // La porte qui tenait la fonctionnalité pendant la recette est ouverte (#1716) : le flag
+  // bêta n'est plus consulté, tous les rôles de gestion peuvent créer un lieu.
+  it('accepte un gestionnaire département hors bêta (#1716)', async () => {
     // GIVEN
     connecte('Gestionnaire département', false)
-    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle')
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockResolvedValueOnce({
+      lieuId: 4242,
+      visibilitePourCartographieForcee: false,
+    })
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const resultat = await creerUnLieuInclusionAction(creation)
 
     // THEN
-    expect(resultat).toStrictEqual({ messages: ['Action réservée aux bêta-testeurs'], statut: 'erreur' })
-    expect(CreerUnLieuInclusion.prototype.handle).not.toHaveBeenCalled()
+    expect(resultat).toStrictEqual({ lieuId: '4242', statut: 'cree', visibilitePourCartographieForcee: false })
   })
 
   it('avec un SIRET introuvable, renvoie le message de l’API Entreprise', async () => {
