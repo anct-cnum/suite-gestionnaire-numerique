@@ -4,17 +4,19 @@ import { useRouter } from 'next/navigation'
 import { memo, ReactElement, useState } from 'react'
 
 import styles from './DonneesTerritoriales.module.css'
+import ListeDepartements from './ListeDepartements'
 import { rechercherTerritoires } from './rechercherTerritoires'
 import RechercheTerritoire from '@/components/shared/Select/RechercheTerritoire'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import CarteFranceVitrine from '@/components/vitrine/CarteFranceVitrine/CarteFranceVitrine'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
+import { ListeDepartementsViewModel } from '@/presenters/listeDepartementsPresenter'
 import { TerritoireViewModel } from '@/presenters/rechercheTerritoiresPresenter'
 
 const MemoizedCarteFranceVitrine = memo(CarteFranceVitrine)
 
-export default function DonneesTerritoriales(): ReactElement {
+export default function DonneesTerritoriales({ departements }: Props): ReactElement {
   const [navigationEnCours, setNavigationEnCours] = useState(false)
 
   const router = useRouter()
@@ -108,6 +110,10 @@ export default function DonneesTerritoriales(): ReactElement {
             </div>
           </div>
         </div>
+        {/* Alternative clavier et lecteur d'écran au clic sur la carte */}
+        <div className="fr-container fr-pb-6w">
+          <ListeDepartements groupes={departements} />
+        </div>
       </section>
 
       {/* Séparateur */}
@@ -132,3 +138,7 @@ export default function DonneesTerritoriales(): ReactElement {
     </>
   )
 }
+
+type Props = Readonly<{
+  departements: ListeDepartementsViewModel
+}>
