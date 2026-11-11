@@ -1,13 +1,22 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import {
+  matchWithoutMarkup,
+  renderComponent,
+  simulerResizeObserver,
+  stubbedServerAction,
+} from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('comitologie', () => {
+  beforeEach(() => {
+    simulerResizeObserver()
+  })
+
   describe('quand je clique sur ajouter une comitologie,', () => {
     it('alors le drawer pour ajouter un comité s’affiche', () => {
       // GIVEN

@@ -1,13 +1,22 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import {
+  matchWithoutMarkup,
+  renderComponent,
+  simulerResizeObserver,
+  stubbedServerAction,
+} from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('note privée', () => {
+  beforeEach(() => {
+    simulerResizeObserver()
+  })
+
   it('quand j’affiche une gouvernance sans note privée, alors elle s’affiche avec son résumé vide lui demandant d’en ajouter une', () => {
     // WHEN
     afficherUneGouvernanceSansNotePrivee()

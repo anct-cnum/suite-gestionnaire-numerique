@@ -1,11 +1,15 @@
 import { screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import pageGouvernances from './page'
-import { renderComponent } from '@/components/testHelper'
+import { renderComponent, simulerResizeObserver } from '@/components/testHelper'
 import { PrismaGouvernanceTerritorialeLoader } from '@/gateways/vitrine/PrismaGouvernanceTerritorialeLoader'
 
 describe('page vitrine des gouvernances', () => {
+  beforeEach(() => {
+    simulerResizeObserver()
+  })
+
   it('un seul titre « Gouvernances » : celui de la carte, de niveau 2', async () => {
     // GIVEN
     vi.spyOn(PrismaGouvernanceTerritorialeLoader.prototype, 'get').mockResolvedValueOnce({
