@@ -69,3 +69,28 @@
     gap: 1.5rem;
   }
 }
+
+/* MIN (#2246, RGAA 10.11 / 10.12) : les segments passent à la ligne quand la place manque
+   (zoom, espacement du texte) au lieu de déborder ; en mobile ils s'empilent
+   (équivalent de fr-segmented--vertical, qui n'existe pas par point de rupture) */
+.segmentsQuiSeReplient :global(.fr-segmented__elements) {
+  flex-wrap: wrap;
+}
+
+.segmentsQuiSeReplient input ~ label {
+  white-space: normal;
+}
+
+/* MIN (#2246) : camembert et légende côte à côte, la légende passe dessous en mobile */
+@media (width < 36rem) {
+  .segmentsQuiSeReplient :global(.fr-segmented__elements) {
+    flex-direction: column;
+    margin-left: 0;
+  }
+
+  .camembertEtLegende {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

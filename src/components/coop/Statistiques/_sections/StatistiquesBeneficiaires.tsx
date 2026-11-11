@@ -23,7 +23,7 @@ export const StatistiquesBeneficiaires = ({
       <span className="ri-user-heart-line fr-mr-1w" aria-hidden />
       Statistiques sur les bénéficiaires
     </h3>
-    <div className="fr-border fr-p-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
+    <div className="fr-border fr-p-2w fr-p-md-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-lg-6 fr-col-12">
           <h4 className="fr-text--md fr-text--nowrap fr-mb-4v">Genres</h4>
