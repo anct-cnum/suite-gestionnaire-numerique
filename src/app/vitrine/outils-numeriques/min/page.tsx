@@ -38,7 +38,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
       <section
         style={{
           background: 'url(/vitrine/outils/hero.png) center/cover no-repeat',
-          height: '720px',
+          minHeight: '720px',
           position: 'relative',
         }}
       >

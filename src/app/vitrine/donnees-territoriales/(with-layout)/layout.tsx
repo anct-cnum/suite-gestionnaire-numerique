@@ -13,12 +13,14 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
       </div>
 
       <div className="fr-container">
-        <div className={styles.wrapper}>
-          <aside className={styles.sidebar}>
+        {/* Grille DSFR (#2246) : la colonne de contenu a une largeur bornée et ne peut plus
+            pousser la page au-delà de l'écran quand un élément refuse de passer à la ligne. */}
+        <div className="fr-grid-row">
+          <aside className={`fr-col-12 fr-col-lg-3 ${styles.sidebar}`}>
             <Navigation />
           </aside>
 
-          <div className={styles.content}>{children}</div>
+          <div className={`fr-col-12 fr-col-lg-9 ${styles.content}`}>{children}</div>
         </div>
       </div>
     </>

@@ -107,7 +107,10 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
         </div>
       </div>
 
-      <div className="fr-grid-row fr-mb-4w fr-border-default--grey" style={{ borderRadius: '1rem', height: '20rem' }}>
+      <div
+        className="fr-grid-row fr-mb-4w fr-border-default--grey"
+        style={{ borderRadius: '1rem', minHeight: '20rem' }}
+      >
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w" style={{ borderRadius: '1rem', position: 'relative' }}>
           <Image
             alt=""
@@ -121,8 +124,9 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             }}
           />
         </div>
+        {/* #2246 : marges DSFR au lieu d'une largeur fixe, le titre passe à la ligne sans couper ses mots */}
         <div
-          className="fr-col-12 fr-col-md-6 fr-pr-1w"
+          className="fr-col-12 fr-col-md-6 fr-px-3w fr-py-4w fr-px-md-6w"
           style={{
             alignItems: 'flex-start',
             backgroundColor: 'var(--success-975-75)',
@@ -130,13 +134,11 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             borderTopRightRadius: '1rem',
             display: 'flex',
             flexDirection: 'column',
-            height: '100%',
             justifyContent: 'center',
-            padding: '2rem 3rem',
             textAlign: 'center',
           }}
         >
-          <div style={{ height: 'auto', textAlign: 'start', width: '60%' }}>
+          <div style={{ textAlign: 'start' }}>
             <h2 className={`fr-h2 fr-mb-0 fr-text-label--blue-france ${styles.titreCartographie}`}>
               Voir tous les lieux sur la cartographie
             </h2>
