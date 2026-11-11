@@ -49,29 +49,34 @@ export const AccompagnementPieChart = ({
   const emptyData = [{ label: 'Aucune donnée', count: 1, proportion: 100 }]
 
   return (
-    <ResponsiveContainer width={size} height={half ? size / 2 + 10 : size} className={className}>
-      <PieChart>
-        <Pie
-          strokeWidth={0}
-          dataKey="count"
-          nameKey="label"
-          isAnimationActive={isAnimationActive}
-          data={isEmpty ? emptyData : data}
-          cx="50%"
-          cy={half ? '100%' : '50%'}
-          innerRadius={size / 2 - width}
-          outerRadius={size / 2}
-          startAngle={half ? 180 : 0}
-          endAngle={half ? 0 : 360}
-        >
-          {isEmpty ? (
-            <Cell fill="var(--blue-france-975-75)" />
-          ) : (
-            data.map((item, index) => <Cell key={item.label} fill={colors[index % colors.length]} />)
-          )}
-        </Pie>
-        {!isEmpty && <Tooltip content={<CustomTooltip />} />}
-      </PieChart>
-    </ResponsiveContainer>
+    // #2251 : anneau redondant avec sa légende textuelle (libellé, nombre, part) : masqué aux aides techniques
+    // et hors tabulation
+    <div aria-hidden style={{ width: size }}>
+      <ResponsiveContainer width={size} height={half ? size / 2 + 10 : size} className={className}>
+        <PieChart accessibilityLayer={false}>
+          <Pie
+            rootTabIndex={-1}
+            strokeWidth={0}
+            dataKey="count"
+            nameKey="label"
+            isAnimationActive={isAnimationActive}
+            data={isEmpty ? emptyData : data}
+            cx="50%"
+            cy={half ? '100%' : '50%'}
+            innerRadius={size / 2 - width}
+            outerRadius={size / 2}
+            startAngle={half ? 180 : 0}
+            endAngle={half ? 0 : 360}
+          >
+            {isEmpty ? (
+              <Cell fill="var(--blue-france-975-75)" />
+            ) : (
+              data.map((item, index) => <Cell key={item.label} fill={colors[index % colors.length]} />)
+            )}
+          </Pie>
+          {!isEmpty && <Tooltip content={<CustomTooltip />} />}
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   )
 }

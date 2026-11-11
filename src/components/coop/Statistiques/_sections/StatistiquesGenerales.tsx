@@ -4,16 +4,21 @@ import Button from '@codegouvfr/react-dsfr/Button'
 import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
 import { useState } from 'react'
 import { AccompagnementBarChart } from '../_components/AccompagnementBarChart'
-import type { AccompagnementCountByPeriod, AccompagnementsStats } from '../types'
+import type { AccompagnementCountByPeriod, AccompagnementsStats, TableauDeDonneesViewModel } from '../types'
 import { numberToString, sPluriel } from '../utils'
+import DonneesEnTableau from '@/components/shared/DonneesEnTableau/DonneesEnTableau'
 
 export const StatistiquesGenerales = ({
   totalCounts,
   accompagnementsParMois,
   accompagnementsParJour,
+  tableauAccompagnementsParJour,
+  tableauAccompagnementsParMois,
 }: {
   accompagnementsParJour: AccompagnementCountByPeriod
   accompagnementsParMois: AccompagnementCountByPeriod
+  tableauAccompagnementsParJour: TableauDeDonneesViewModel
+  tableauAccompagnementsParMois: TableauDeDonneesViewModel
   totalCounts: AccompagnementsStats
 }) => {
   const [isAccompagnementCountByMonth, setIsAccompagnementCountByMonth] = useState(true)
@@ -124,7 +129,8 @@ export const StatistiquesGenerales = ({
             </div>
           </div>
         </div>
-        <div className="fr-col fr-border fr-pt-6v fr-pb-4v fr-px-8v fr-border-radius--16 fr-flex fr-direction-column">
+        {/* #2251 : fr-min-width-0 : le tableau défile dans son conteneur au lieu d'élargir la colonne en mobile */}
+        <div className="fr-col fr-min-width-0 fr-border fr-pt-6v fr-pb-4v fr-px-8v fr-border-radius--16 fr-flex fr-direction-column">
           <div className="fr-mb-3w fr-flex fr-flex-wrap fr-justify-content-space-between fr-align-items-center fr-flex-gap-2v">
             <div className="fr-mb-0 fr-flex fr-align-items-center fr-text--nowrap">
               <h4 className="fr-text--lg fr-mb-0">Nombre d'accompagnements</h4>
@@ -150,7 +156,7 @@ export const StatistiquesGenerales = ({
               className="fr-ml-auto"
               hideLegend
               small
-              legend="Bascule entre entre les périodes"
+              legend="Afficher le nombre d’accompagnements par mois ou par jour"
               segments={[
                 {
                   label: 'Par mois',
@@ -169,11 +175,20 @@ export const StatistiquesGenerales = ({
               ]}
             />
           </div>
-          <div className="fr-flex-grow-1">
+          {/* #2251 : histogramme masqué aux aides techniques, ses valeurs exactes sont dans le tableau ci-dessous.
+              Hauteur minimale : sans elle, ouvrir le tableau écrase l'histogramme à 0 px (sa hauteur ne vient que de
+              l'espace libre de la colonne). 11rem reste sous sa hauteur actuelle en desktop (182 px), qui ne change
+              donc pas ; effet de bord : il réapparaît sous 1280 px, où il était vide. À reprendre avec #2246. */}
+          <div aria-hidden className="fr-flex-grow-1" style={{ minHeight: '11rem' }}>
             <AccompagnementBarChart
               data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}
             />
           </div>
+          <DonneesEnTableau
+            className="fr-mt-2w"
+            niveauTitre="h5"
+            {...(isAccompagnementCountByMonth ? tableauAccompagnementsParMois : tableauAccompagnementsParJour)}
+          />
         </div>
       </div>
     </div>
