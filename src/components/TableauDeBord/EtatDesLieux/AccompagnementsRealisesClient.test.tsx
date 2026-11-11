@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import AccompagnementsRealisesClient from './AccompagnementsRealisesClient'
@@ -44,6 +45,34 @@ describe(AccompagnementsRealisesClient, () => {
       })
     ).toBeInTheDocument()
     expect(fetchSpy).toHaveBeenCalledWith('/api/tableau-de-bord/accompagnements-realises?territoire=06')
+  })
+
+  it('propose les accompagnements de chaque mois sous forme de tableau, le mois en cours écrit en clair', async () => {
+    // GIVEN
+    const resultat: AccompagnementsRealisesResult = {
+      nombreTotal: 1234,
+      repartitionMensuelle: [
+        { mois: '10/26', nombre: 1200 },
+        { mois: '11/26', nombre: 34 },
+      ],
+    }
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+      json: async () => Promise.resolve(resultat),
+    } as unknown as Response)
+    render(<AccompagnementsRealisesClient territoire="France" />)
+    await screen.findByText('Bar Chart Mock')
+
+    // WHEN
+    await userEvent.click(screen.getByRole('radio', { name: 'Tableau' }))
+
+    // THEN
+    expect(screen.getByRole('group', { name: 'Affichage de l’histogramme des accompagnements' })).toBeInTheDocument()
+    const tableau = screen.getByRole('table', { name: 'Accompagnements des 6 derniers mois' })
+    const lignes = within(tableau).getAllByRole('row').slice(1)
+    expect(lignes.map((ligne) => ligne.textContent)).toStrictEqual([
+      'octobre 20261\u202f200',
+      'novembre 2026 (mois en cours, incomplet)34',
+    ])
   })
 
   it("affiche le message d'erreur quand l'API renvoie une erreur métier", async () => {

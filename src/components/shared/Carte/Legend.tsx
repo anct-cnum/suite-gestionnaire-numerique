@@ -1,22 +1,36 @@
 'use client'
 
-import { ReactElement } from 'react'
+import { ReactElement, useId } from 'react'
 
 import styles from './Legend.module.css'
-import { FRAGILITE_COLORS } from '@/presenters/tableauDeBord/indicesPresenter'
+import { CLASSE_DONNEE_NON_DISPONIBLE, CLASSES_FRAGILITE } from '@/presenters/tableauDeBord/indicesPresenter'
 
 export default function Legend(): ReactElement {
-  const colors = Object.values(FRAGILITE_COLORS)
+  const idTitre = useId()
 
   return (
-    <div className={styles.legendContainer} style={{ width: '100%' }}>
-      <span style={{ whiteSpace: 'nowrap' }}>Risque faible</span>
-      <div className={styles.gradientBar} style={{ width: '100%' }}>
-        {colors.map((color) => (
-          <div className={styles.colorBlock} key={color} style={{ backgroundColor: color }} />
+    <div className={`fr-px-2w fr-pb-1w ${styles.legende}`}>
+      <p className="fr-text--sm fr-text--bold fr-mb-1v" id={idTitre}>
+        Légende : indice de fragilité numérique, sur 10
+      </p>
+      <ul aria-labelledby={idTitre} className="fr-raw-list fr-grid-row fr-text--sm fr-mb-0">
+        {CLASSES_FRAGILITE.map((classe) => (
+          <li className={`fr-col-12 fr-col-sm-6 fr-col-md-4 ${styles.classe}`} key={classe.numero}>
+            <PastilleFragilite couleur={classe.couleur} />
+            <span>
+              {classe.tranche} : {classe.libelle}
+            </span>
+          </li>
         ))}
-      </div>
-      <span style={{ whiteSpace: 'nowrap' }}>Risque fort</span>
+        <li className={`fr-col-12 fr-col-sm-6 fr-col-md-4 ${styles.classe}`}>
+          <PastilleFragilite couleur={CLASSE_DONNEE_NON_DISPONIBLE.couleur} />
+          <span>{CLASSE_DONNEE_NON_DISPONIBLE.libelle}</span>
+        </li>
+      </ul>
     </div>
   )
+}
+
+export function PastilleFragilite({ couleur }: Readonly<{ couleur: string }>): ReactElement {
+  return <span aria-hidden="true" className={styles.pastille} style={{ backgroundColor: couleur }} />
 }
