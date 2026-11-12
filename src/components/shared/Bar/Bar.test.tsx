@@ -45,11 +45,7 @@ describe('histogramme', () => {
       />
     )
     const [plugin] = derniersProps().plugins ?? []
-    const ctx = {
-      fillText: vi.fn<(texte: string, abscisse: number, ordonnee: number) => void>(),
-      restore: vi.fn<() => void>(),
-      save: vi.fn<() => void>(),
-    } as Record<string, unknown>
+    const ctx = contexteDeDessin(2)
     const canvas = canvasAvecStyle({ color: 'rgb(206, 206, 206)' })
     const chart = {
       canvas,
@@ -65,9 +61,39 @@ describe('histogramme', () => {
 
     // THEN
     expect(ctx.fillStyle).toBe('rgb(206, 206, 206)')
+    expect(ctx.font).toBe('bold 12px Marianne, arial, sans-serif')
     expect(ctx.fillText).toHaveBeenNthCalledWith(1, '10', 10, 96)
     expect(ctx.fillText).toHaveBeenNthCalledWith(2, '1 234', 30, 46)
     expect(ctx.fillText).toHaveBeenNthCalledWith(3, '', 50, 16)
+  })
+
+  it('réduit la taille des valeurs pour que deux valeurs voisines ne se touchent pas', () => {
+    // GIVEN
+    render(
+      <Bar
+        backgroundColor={['#6a6af4', '#6a6af4']}
+        data={[90_777, 84_772]}
+        etiquettesValeurs={['90 777', '84 772']}
+        labels={['sept.', 'oct.']}
+      />
+    )
+    const [plugin] = derniersProps().plugins ?? []
+    // 5 px par caractère à 12 px : « 90 777 » mesure 30 px, pour 26 px entre deux barres
+    const ctx = contexteDeDessin(5)
+    const chart = {
+      canvas: canvasAvecStyle({ color: 'rgb(58, 58, 58)' }),
+      ctx,
+      getDatasetMeta: () => ({ data: [barre(20, 50), barre(46, 60)] }),
+    }
+
+    // WHEN
+    // @ts-expect-error graphique simulé : seules les propriétés lues par le plugin sont fournies
+    plugin.afterDatasetsDraw?.(chart, {}, {})
+
+    // THEN
+    expect(ctx.font).toBe('bold 8px Marianne, arial, sans-serif')
+    expect(ctx.fillText).toHaveBeenNthCalledWith(1, '90 777', 20, 46)
+    expect(ctx.fillText).toHaveBeenNthCalledWith(2, '84 772', 46, 56)
   })
 
   it('sans valeurs à écrire ni nom, garde le rendu d’origine', () => {
@@ -127,4 +153,14 @@ function canvasAvecStyle(style: Readonly<Record<string, string>>): HTMLCanvasEle
     canvas.style.setProperty(propriete, valeur)
   })
   return canvas
+}
+
+function contexteDeDessin(largeurParCaractere: number): Record<string, unknown> {
+  // Largeur mesurée à 12 px, la taille de départ des valeurs
+  return {
+    fillText: vi.fn<(texte: string, abscisse: number, ordonnee: number) => void>(),
+    measureText: (texte: string) => ({ width: texte.length * largeurParCaractere }),
+    restore: vi.fn<() => void>(),
+    save: vi.fn<() => void>(),
+  }
 }
