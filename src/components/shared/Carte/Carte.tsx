@@ -354,10 +354,12 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
 
   return (
     <>
+      {/* Hauteur minimale : les communes ne sont dans les tuiles qu'à partir du zoom 8, atteint au cadrage
+          d'un département à partir d'environ 500 px de haut. La légende est sous la carte, pas dessus. */}
       <div
         className={styles.mapWrapper}
         data-testid="carte-wrapper"
-        style={{ flex: 1, height: 'auto', minHeight: '24rem' }}
+        style={{ flex: 1, height: 'auto', minHeight: '34rem' }}
       >
         <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
         {carteCreee ? (
