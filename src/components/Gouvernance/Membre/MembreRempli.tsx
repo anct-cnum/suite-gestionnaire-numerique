@@ -5,6 +5,7 @@ import { Fragment, ReactElement, useEffect, useRef } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
 import Icon from '@/components/shared/Icon/Icon'
+import tableStyles from '@/components/shared/Table/Table.module.css'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 // Tableau DSFR multiligne à toutes les largeurs (#2246, RGAA 10.4, 10.11, 10.12) : les noms passent à la ligne,
@@ -32,7 +33,8 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
 
   return (
     <div className="fr-table fr-table--multiline fr-table--no-caption fr-mb-0">
-      <div className="fr-table__wrapper">
+      {/* Sans le contour gris du DSFR, comme les autres tableaux de MIN (composant Table) */}
+      <div className={`fr-table__wrapper ${tableStyles['fr-table__wrapper']}`}>
         <div aria-label="Membres de la gouvernance" className="fr-table__container" ref={cadre} role="region">
           <div className="fr-table__content">
             <table>
