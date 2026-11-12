@@ -14,10 +14,12 @@ export default function useAccompagnementsRealises(source: SourceAccompagnements
     let annule = false
     setEtat({ statut: 'chargement' })
 
+    // Une promesse transmise par le serveur arrive côté client sous forme de « thenable » React, dont « then » ne
+    // renvoie rien : Promise.resolve l'adopte et renvoie une vraie promesse, sur laquelle on peut chaîner « catch ».
     const promesse =
       typeof cle === 'string'
         ? fetch(cle).then(async (reponse) => reponse.json() as Promise<AccompagnementsRealisesResult | ErrorViewModel>)
-        : cle
+        : Promise.resolve(cle)
 
     void promesse
       .then((donnees) => {
