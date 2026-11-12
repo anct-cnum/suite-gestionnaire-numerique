@@ -2,6 +2,9 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import DonneesTerritoriales from '@/components/vitrine/DonneesTerritoriales/DonneesTerritoriales'
+import { PrismaRechercheTerritoiresLoader } from '@/gateways/PrismaRechercheTerritoiresLoader'
+import { listeDepartementsPresenter } from '@/presenters/listeDepartementsPresenter'
+import { ListerDepartementsParRegion } from '@/use-cases/queries/ListerDepartementsParRegion'
 
 export const metadata: Metadata = {
   description:
@@ -31,6 +34,7 @@ export const metadata: Metadata = {
   title: 'Données territoriales - Inclusion Numérique',
 }
 
-export default function DonneesTerritorialesController(): ReactElement {
-  return <DonneesTerritoriales />
+export default async function DonneesTerritorialesController(): Promise<ReactElement> {
+  const readModel = await new ListerDepartementsParRegion(new PrismaRechercheTerritoiresLoader()).handle()
+  return <DonneesTerritoriales departements={listeDepartementsPresenter(readModel)} />
 }

@@ -13,6 +13,7 @@ import {
 import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import { LOCALE_CARTE_FR, rendreCanevasMuet } from './accessibiliteCarte'
 import styles from './Map.module.css'
 import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
@@ -212,6 +213,7 @@ export default function CarteFranceAvecInsets({
       dragPan: false,
       dragRotate: false,
       keyboard: false,
+      locale: LOCALE_CARTE_FR,
       maplibreLogo: false,
       maxZoom: 7,
       minZoom: 4,
@@ -219,6 +221,7 @@ export default function CarteFranceAvecInsets({
       style: creerStyleVide(couleurFond),
       touchZoomRotate: false,
     })
+    rendreCanevasMuet(mainMap.current)
 
     mainMap.current.on('load', () => {
       if (!mainMap.current) {
@@ -248,6 +251,7 @@ export default function CarteFranceAvecInsets({
         dragRotate: false,
         interactive: true, // Garder pour les survols/popups
         keyboard: false,
+        locale: LOCALE_CARTE_FR,
         maplibreLogo: false,
         maxZoom: 10,
         minZoom: 3,
@@ -255,6 +259,7 @@ export default function CarteFranceAvecInsets({
         style: creerStyleVide(couleurFond),
         touchZoomRotate: false,
       })
+      rendreCanevasMuet(domTomMap)
 
       domTomMap.on('load', () => {
         const couleurActuelle =
@@ -293,7 +298,9 @@ export default function CarteFranceAvecInsets({
 
   return (
     <div className={styles.carteAvecInsetsWrapper}>
-      <div className={styles.carteAvecInsetsContainer}>
+      {/* La carte et les étiquettes des encarts forment une image, ignorée par les aides techniques
+          (aucun contrôle à l'intérieur). La légende, en dessous, reste restituée. */}
+      <div aria-hidden="true" className={styles.carteAvecInsetsContainer}>
         {/* Conteneur des insets DOM-TOM */}
         <div className={styles.insetsContainer}>
           {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {

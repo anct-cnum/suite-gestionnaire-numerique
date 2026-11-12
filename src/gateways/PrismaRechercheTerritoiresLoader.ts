@@ -1,13 +1,34 @@
 import { Prisma } from '../../prisma/generated/client'
 import prisma from '../../prisma/prismaClient'
 import {
+  DepartementsParRegionLoader,
+  DepartementsParRegionReadModel,
+} from '@/use-cases/queries/ListerDepartementsParRegion'
+import {
   PerimetreRechercheTerritoires,
   RechercheTerritoiresLoader,
   TerritoiresTrouvesReadModel,
   TypeTerritoire,
 } from '@/use-cases/queries/RechercherTerritoires'
 
-export class PrismaRechercheTerritoiresLoader implements RechercheTerritoiresLoader {
+export class PrismaRechercheTerritoiresLoader implements DepartementsParRegionLoader, RechercheTerritoiresLoader {
+  // Même référentiel que la recherche de territoire (admin.departement, admin.region).
+  async listerDepartementsParRegion(): Promise<DepartementsParRegionReadModel> {
+    const rows = await prisma.$queryRaw<ReadonlyArray<DepartementParRegionRow>>`
+      SELECT departement.code AS code_departement, departement.nom AS nom_departement,
+        region.code AS code_region, region.nom AS nom_region
+      FROM admin.departement
+      INNER JOIN admin.region ON region.id = departement.region_id
+      ORDER BY region.nom, departement.code
+    `
+    return rows.map((row) => ({
+      codeDepartement: row.code_departement,
+      codeRegion: row.code_region,
+      nomDepartement: row.nom_departement,
+      nomRegion: row.nom_region,
+    }))
+  }
+
   async rechercher(
     terme: string,
     limite: number,
@@ -80,4 +101,11 @@ type TerritoireRow = Readonly<{
   numero_departement: null | string
   total: number
   type: TypeTerritoire
+}>
+
+type DepartementParRegionRow = Readonly<{
+  code_departement: string
+  code_region: string
+  nom_departement: string
+  nom_region: string
 }>
