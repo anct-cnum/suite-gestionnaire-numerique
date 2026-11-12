@@ -64,6 +64,24 @@ describe('état des lieux de l’inclusion numérique', () => {
     expect(lignesDuTableauDesAccompagnements()).toHaveLength(2)
   })
 
+  it('affiche les accompagnements d’une promesse transmise par le serveur, dont « then » ne renvoie rien', async () => {
+    // GIVEN
+    // React transmet au client une promesse du serveur sous forme de « thenable » : son « then » ne renvoie pas
+    // de nouvelle promesse, on ne peut donc pas y chaîner « catch ».
+    const promesseDuServeur = {
+      then(resoudre: (valeur: AccompagnementsRealisesResult) => void): void {
+        resoudre(resultat)
+      },
+    } as unknown as Promise<AccompagnementsRealisesResult>
+
+    // WHEN
+    afficherLEtatDesLieux({ accompagnementsRealisesPromise: promesseDuServeur })
+
+    // THEN
+    await expect(screen.findByText('Bar Chart Mock')).resolves.toBeDefined()
+    expect(lignesDuTableauDesAccompagnements()).toHaveLength(2)
+  })
+
   it('affiche le message d’erreur quand l’API renvoie une erreur métier', async () => {
     // GIVEN
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
