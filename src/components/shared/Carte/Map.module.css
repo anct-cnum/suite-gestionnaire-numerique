@@ -24,6 +24,17 @@
   width: 100%;
 }
 
+/* Boutons de zoom DSFR posés sur la carte, en haut à droite */
+.boutonsZoom {
+  background-color: var(--background-default-grey);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+}
+
 /* Layout principal carte + insets + légende */
 .carteAvecInsetsWrapper {
   display: flex;

@@ -522,7 +522,10 @@ function loaderStub(
   }
 }
 
-describe('contexte - gestion des lieux d’inclusion (#1951)', () => {
+// La porte bêta de la recette est retirée (#1716) : la gestion des lieux est ouverte à tous
+// les rôles de gestion, que le flag bêta soit posé ou non. Le périmètre reste contrôlé lieu
+// par lieu par LieuInclusion.peutEtreModifiePar ; la création n'en contrôle aucun (#2226).
+describe('contexte - gestion des lieux d’inclusion (#1951, ouverte par #1716)', () => {
   it.each([
     {
       attendu: true,
@@ -537,16 +540,28 @@ describe('contexte - gestion des lieux d’inclusion (#1951)', () => {
       role: 'gestionnaire_departement' as const,
     },
     {
-      attendu: false,
+      attendu: true,
       intention: 'un gestionnaire département hors bêta',
       isBetaTesteur: false,
       role: 'gestionnaire_departement' as const,
     },
     {
-      attendu: false,
+      attendu: true,
       intention: 'un gestionnaire structure hors bêta',
       isBetaTesteur: false,
       role: 'gestionnaire_structure' as const,
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire région hors bêta',
+      isBetaTesteur: false,
+      role: 'gestionnaire_region' as const,
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire groupement hors bêta',
+      isBetaTesteur: false,
+      role: 'gestionnaire_groupement' as const,
     },
   ])('$intention peut gérer les lieux : $attendu', ({ attendu, isBetaTesteur, role }) => {
     // GIVEN

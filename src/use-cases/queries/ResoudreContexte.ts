@@ -133,11 +133,16 @@ export class Contexte {
     )
   }
 
-  // Gestion des lieux d'inclusion (édition, suppression, visibilité carto) : ouverte
-  // aux administrateurs dispositif, encore réservée aux bêta-testeurs pour les
-  // gestionnaires (périmètre de création et de visibilité à préciser, #1495, #1951).
+  // Gestion des lieux d'inclusion (création, édition, suppression, visibilité carto) :
+  // ouverte à tous les rôles de gestion depuis #1716. Le flag bêta qui la refermait
+  // pendant la recette n'est plus consulté.
+  //
+  // Ce qui gouverne les droits reste en aval : LieuInclusion.peutEtreModifiePar contrôle
+  // le périmètre lieu par lieu, et la création n'en contrôle aucun (décision produit
+  // #2226, voir LieuInclusion.peutEtreCreePar). Cette méthode demeure le point unique
+  // où refermer la fonctionnalité si l'ANCT revenait sur la décision.
   peutGererLesLieux(): boolean {
-    return this.aCesRoles('administrateur_dispositif') || this.isBetaTesteur
+    return true
   }
 
   peutGererStructure(structureId: number, codesDepartements: ReadonlyArray<string>): boolean {

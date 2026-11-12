@@ -56,7 +56,9 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     expect(messages).toStrictEqual(["L'identifiant du lieu doit être renseigné"])
   })
 
-  it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951) (#1951)', async () => {
+  // La porte bêta est ouverte (#1716) : un gestionnaire hors bêta n'est plus arrêté par le
+  // flag, il est jugé sur son seul périmètre — ici le lieu est dans son département.
+  it('laisse un gestionnaire hors bêta changer la visibilité d’un lieu de son département (#1716)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -69,7 +71,14 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
         },
       })
     )
-    vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle')
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory()
+    )
+    vi.spyOn(ModifierLieuInclusionVisibiliteCartographie.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const messages = await modifierLieuInclusionVisibiliteCartographieAction({
@@ -79,8 +88,11 @@ describe('modifier la visibilité cartographique d’un lieu d’inclusion actio
     })
 
     // THEN
-    expect(messages).toStrictEqual(['Action réservée aux bêta-testeurs'])
-    expect(ModifierLieuInclusionVisibiliteCartographie.prototype.handle).not.toHaveBeenCalled()
+    expect(messages).toStrictEqual(['OK'])
+    expect(ModifierLieuInclusionVisibiliteCartographie.prototype.handle).toHaveBeenCalledWith({
+      lieuId: '42',
+      visiblePourCartographie: true,
+    })
   })
 
   it('change la visibilité d’un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {

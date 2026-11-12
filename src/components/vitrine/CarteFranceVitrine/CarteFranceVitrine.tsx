@@ -54,7 +54,7 @@ export default function CarteFranceVitrine(): ReactElement {
         textAlign: 'center',
       }}
     >
-      Sélectionnez un territoire sur la carte
+      Cliquez sur un département, ou choisissez-le dans la liste.
     </div>
   )
 

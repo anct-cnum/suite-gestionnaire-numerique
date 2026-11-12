@@ -51,7 +51,8 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
   })
 
-  it('refuse l’action à un gestionnaire non bêta-testeur (ouverture progressive, #1951)', async () => {
+  // La porte bêta est ouverte (#1716) : seul le périmètre décide désormais.
+  it('laisse un gestionnaire hors bêta modifier un lieu de son département (#1716)', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
@@ -64,12 +65,21 @@ describe('modifier les informations générales d’un lieu d’inclusion action
         },
       })
     )
+    vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
+      utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' })
+    )
+    vi.spyOn(PrismaRecupererLieuDetailsLoader.prototype, 'recuperer').mockResolvedValueOnce(
+      lieuDetailsReadModelFactory()
+    )
+    vi.spyOn(ModifierLieuInclusionInformationsGenerales.prototype, 'handle').mockResolvedValueOnce('OK')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
 
     // WHEN
     const messages = await modifierLieuInclusionInformationsGeneralesAction(modification)
 
     // THEN
-    expect(messages).toStrictEqual(['Action réservée aux bêta-testeurs'])
+    expect(messages).toStrictEqual(['OK'])
+    expect(ModifierLieuInclusionInformationsGenerales.prototype.handle).toHaveBeenCalledTimes(1)
   })
 
   it('modifie un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {
