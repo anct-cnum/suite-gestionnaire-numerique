@@ -1,13 +1,17 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
-import { renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, simulerResizeObserver, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('note de contexte', () => {
+  beforeEach(() => {
+    simulerResizeObserver()
+  })
+
   describe('quand je clique sur ajouter une note de contexte', () => {
     it('quand j‘affiche une gouvernance sans note de contexte, lorsque je clique sur le bouton pour ajouter une note de contexte, alors le drawer pour ajouter une note de contexte s‘ouvre', () => {
       // GIVEN

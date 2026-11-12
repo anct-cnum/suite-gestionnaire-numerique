@@ -3,29 +3,17 @@
   border-top: 0.0625rem solid var(--border-default-grey);
 }
 
-.wrapper {
-  display: grid;
-  grid-template: 'sidebar content' 1fr / 16rem 1fr;
-}
-
 .sidebar {
   background-color: var(--background-default-grey);
-  grid-area: sidebar;
 }
 
 .content {
   background-color: var(--background-default-grey);
-  grid-area: content;
   padding-bottom: 5rem;
   padding-top: 2.5rem;
 }
 
 @media (width <= 62rem) {
-  .wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-
   .sidebar {
     margin-bottom: 1.5rem;
   }

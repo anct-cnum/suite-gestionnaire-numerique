@@ -1,13 +1,17 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import Gouvernance from './Gouvernance'
-import { matchWithoutMarkup, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent, simulerResizeObserver } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('gouvernance', () => {
+  beforeEach(() => {
+    simulerResizeObserver()
+  })
+
   it('quand j’affiche une gouvernance, alors elle s’affiche avec son titre et son sous titre', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(
@@ -229,35 +233,33 @@ describe('gouvernance', () => {
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membres')
-    const membres = screen.getByRole('table', { name: 'Membres' })
+    const membres = screen.getByRole('table', { name: 'Membres de la gouvernance' })
     const [head, body] = within(membres).getAllByRole('rowgroup')
-    expect(head).toHaveClass('fr-sr-only')
+    expect(head).not.toHaveClass('fr-sr-only')
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
-    expect(columnsHead).toHaveLength(4)
-    expect(columnsHead[0].textContent).toBe('Logo')
+    expect(columnsHead).toHaveLength(3)
+    expect(columnsHead[0].textContent).toBe('Nom')
     expect(columnsHead[0]).toHaveAttribute('scope', 'col')
-    expect(columnsHead[1].textContent).toBe('Nom')
+    expect(columnsHead[1].textContent).toBe('Type')
     expect(columnsHead[1]).toHaveAttribute('scope', 'col')
-    expect(columnsHead[2].textContent).toBe('Type')
+    expect(columnsHead[2].textContent).toBe('Rôle')
     expect(columnsHead[2]).toHaveAttribute('scope', 'col')
-    expect(columnsHead[3].textContent).toBe('Rôle')
-    expect(columnsHead[3]).toHaveAttribute('scope', 'col')
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
-    expect(columns1Body).toHaveLength(4)
-    const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('link', { name: 'Préfecture du Rhône' })
+    expect(columns1Body).toHaveLength(3)
+    const membrePrefectureDuRhone = within(columns1Body[0]).getByRole('link', { name: 'Préfecture du Rhône' })
     expect(membrePrefectureDuRhone).toHaveAttribute('href', '/structure/10')
-    expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
-    expect(columns1Body[2].textContent).toBe('Préfecture départementale')
-    expect(columns1Body[3].textContent).toBe('Co-porteur ')
+    expect(columns1Body[0].textContent).toBe('Préfecture du Rhône')
+    expect(columns1Body[1].textContent).toBe('Préfecture départementale')
+    expect(columns1Body[2].textContent).toBe('Co-porteur ')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
-    expect(columns2Body).toHaveLength(4)
-    const membreDepartementDuRhone = within(columns2Body[1]).getByRole('link', { name: 'Département du Rhône' })
+    expect(columns2Body).toHaveLength(3)
+    const membreDepartementDuRhone = within(columns2Body[0]).getByRole('link', { name: 'Département du Rhône' })
     expect(membreDepartementDuRhone).toHaveAttribute('href', '/structure/20')
-    expect(columns2Body[1].textContent).toBe('Département du Rhône')
-    expect(columns2Body[2].textContent).toBe('Conseil départemental')
-    expect(columns2Body[3].textContent).toBe('Co-porteur Co-financeur ')
+    expect(columns2Body[0].textContent).toBe('Département du Rhône')
+    expect(columns2Body[1].textContent).toBe('Conseil départemental')
+    expect(columns2Body[2].textContent).toBe('Co-porteur Co-financeur ')
   })
 
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {

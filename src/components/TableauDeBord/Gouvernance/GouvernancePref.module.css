@@ -4,7 +4,7 @@
   gap: 1rem;
 }
 
+/* #2246 (RGAA 10.11) : 15rem de base au lieu d'un minimum, la carte rétrécit sous 15rem au lieu de déborder */
 .carte {
-  flex: 1;
-  min-width: 15rem;
+  flex: 1 1 15rem;
 }

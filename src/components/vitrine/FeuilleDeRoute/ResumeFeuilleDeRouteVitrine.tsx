@@ -47,7 +47,10 @@ export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }
         </div>
       </div>
       {feuilleDeRoute.pieceJointe ? (
-        <section aria-labelledby={idTitreDocument} className="fr-mb-4w grey-border border-radius fr-p-4w fr-mt-3w">
+        <section
+          aria-labelledby={idTitreDocument}
+          className="fr-mb-4w grey-border border-radius fr-p-2w fr-p-md-4w fr-mt-3w"
+        >
           <OuvrirPdf
             href={feuilleDeRoute.pieceJointe.href}
             idTitre={idTitreDocument}

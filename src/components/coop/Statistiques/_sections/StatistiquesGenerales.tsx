@@ -28,7 +28,7 @@ export const StatistiquesGenerales = ({
       </div>
       <div className="fr-grid-row fr-flex-gap-6v fr-background-default--grey fr-border-radius--16">
         <div className="fr-flex fr-direction-column fr-flex-gap-6v fr-col-xl-4 fr-col-12">
-          <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-width-full">
+          <div className="fr-px-4v fr-px-md-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-width-full">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
               <span className="fr-h2 fr-mb-0">{numberToString(totalCounts.accompagnements.total)}</span>
               <span
@@ -75,7 +75,7 @@ export const StatistiquesGenerales = ({
               </span>
             </div>
           </div>
-          <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-flex-grow-1">
+          <div className="fr-px-4v fr-px-md-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-flex-grow-1">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
               <span className="fr-h2 fr-mb-0 fr-text--nowrap">{numberToString(totalCounts.beneficiaires.total)}</span>
               <span
@@ -98,7 +98,7 @@ export const StatistiquesGenerales = ({
                 {sPluriel(totalCounts.beneficiaires.suivis)} suivi
                 {sPluriel(totalCounts.beneficiaires.suivis)}
               </div>
-              <div className="fr-whitespace-nowrap">
+              <div>
                 <strong>{numberToString(totalCounts.beneficiaires.anonymes)}</strong> bénéficiaire
                 {sPluriel(totalCounts.beneficiaires.anonymes)} anonyme
                 {sPluriel(totalCounts.beneficiaires.anonymes)}
@@ -124,9 +124,9 @@ export const StatistiquesGenerales = ({
             </div>
           </div>
         </div>
-        <div className="fr-col fr-border fr-pt-6v fr-pb-4v fr-px-8v fr-border-radius--16 fr-flex fr-direction-column">
+        <div className="fr-col fr-border fr-pt-6v fr-pb-4v fr-px-4v fr-px-md-8v fr-border-radius--16 fr-flex fr-direction-column">
           <div className="fr-mb-3w fr-flex fr-flex-wrap fr-justify-content-space-between fr-align-items-center fr-flex-gap-2v">
-            <div className="fr-mb-0 fr-flex fr-align-items-center fr-text--nowrap">
+            <div className="fr-mb-0 fr-flex fr-align-items-center">
               <h4 className="fr-text--lg fr-mb-0">Nombre d'accompagnements</h4>
               <Button
                 className="fr-px-1v fr-ml-1v"
@@ -169,7 +169,9 @@ export const StatistiquesGenerales = ({
               ]}
             />
           </div>
-          <div className="fr-flex-grow-1">
+          {/* MIN (#2246) : hauteur minimale, sans elle l'histogramme a une hauteur nulle en mobile et disparaît.
+              11rem reste sous sa hauteur en desktop (182 px), qui ne change pas ; même valeur que #2251 */}
+          <div className="fr-flex-grow-1" style={{ minHeight: '11rem' }}>
             <AccompagnementBarChart
               data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}
             />

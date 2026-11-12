@@ -11,8 +11,7 @@
   min-width: 0;
 }
 
+/* #2246 : nom complet sur plusieurs lignes, coupé au besoin même sans espace (RGAA 10.4, 10.11, 10.12) */
 .fileName {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
