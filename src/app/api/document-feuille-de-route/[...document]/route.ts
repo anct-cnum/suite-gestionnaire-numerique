@@ -41,7 +41,7 @@ export async function GET(
     const nom = (await nomDocumentLoader.recupererNom(nameFile)) ?? nameFile
     return new NextResponse(flux, {
       headers: {
-        'Content-Disposition': `inline; filename="${encodeURIComponent(nom)}"`,
+        'Content-Disposition': enteteDeTelechargement(nom),
         'Content-Type': 'application/pdf',
       },
       status: 200,
@@ -65,4 +65,19 @@ export async function GET(
     }
     throw error
   }
+}
+
+// Téléchargement (standard DSFR) sous le nom déposé : « filename* » (RFC 6266 et 5987) porte le nom exact en UTF-8,
+// « filename » un repli en ASCII pour les clients qui ne lisent pas le premier
+function enteteDeTelechargement(nom: string): string {
+  const repliAscii = nom
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\x20-\x7e]|["\\]/g, '_')
+  // encodeURIComponent laisse passer ' ( ) * , interdits dans la valeur étendue de la RFC 5987
+  const nomEncode = encodeURIComponent(nom).replace(
+    /['()*]/g,
+    (caractere) => `%${caractere.charCodeAt(0).toString(16).toUpperCase()}`
+  )
+  return `attachment; filename="${repliAscii}"; filename*=UTF-8''${nomEncode}`
 }
