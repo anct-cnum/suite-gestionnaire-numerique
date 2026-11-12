@@ -203,11 +203,7 @@ export const StatistiquesActivites = ({
                 data={activites.typeLieu}
                 colors={canauxAccompagnementColors}
               />
-              <QuantifiedShareLegend
-                className="fr-pl-0 fr-pl-sm-3w"
-                quantifiedShares={activites.typeLieu}
-                colors={canauxAccompagnementColors}
-              />
+              <QuantifiedShareLegend quantifiedShares={activites.typeLieu} colors={canauxAccompagnementColors} />
             </div>
           </div>
           <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
@@ -220,11 +216,7 @@ export const StatistiquesActivites = ({
                 data={activites.durees}
                 colors={dureesAccompagnementColors}
               />
-              <QuantifiedShareLegend
-                className="fr-pl-0 fr-pl-sm-3w"
-                quantifiedShares={activites.durees}
-                colors={dureesAccompagnementColors}
-              />
+              <QuantifiedShareLegend quantifiedShares={activites.durees} colors={dureesAccompagnementColors} />
             </div>
           </div>
         </div>

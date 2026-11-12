@@ -81,7 +81,12 @@
   white-space: normal;
 }
 
-/* MIN (#2246) : camembert et légende côte à côte, la légende passe dessous en mobile */
+/* MIN (#2246) : camembert et légende côte à côte, séparés de 1,5rem (l'ancien fr-pl-3w de la légende),
+   la légende passe dessous en mobile */
+.camembertEtLegende {
+  column-gap: 1.5rem;
+}
+
 @media (width < 36rem) {
   .segmentsQuiSeReplient :global(.fr-segmented__elements) {
     flex-direction: column;
