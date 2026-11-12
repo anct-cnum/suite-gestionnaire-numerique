@@ -95,7 +95,7 @@ export default function CarteFragiliteDepartement({ fragilite, territoire }: Pro
             </h3>
           </div>
         </div>
-        <div style={{ flex: 1 }}>
+        <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
           {isReady ? <Carte fragilite={fragilite} territoire={territoire} /> : null}
         </div>

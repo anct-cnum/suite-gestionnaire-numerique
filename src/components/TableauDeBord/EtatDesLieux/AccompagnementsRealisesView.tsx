@@ -1,10 +1,12 @@
 import { ReactElement } from 'react'
 
+import TableauAccompagnementsMensuels from './TableauAccompagnementsMensuels'
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord.module.css'
 import Information from '@/components/shared/Information/Information'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
+import { accompagnementsMensuelsPresenter } from '@/presenters/tableauDeBord/accompagnementsMensuelsPresenter'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export type AccompagnementsRealisesEtat =
@@ -78,7 +80,11 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
   }
 
   const { resultat } = etat
-  const backgroundColor = ['#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#6A6AF4']
+  const mois = accompagnementsMensuelsPresenter(resultat.repartitionMensuelle)
+  // Tokens DSFR lus sur le canvas : bleu France 525 pour les mois passés, 113 (625 en sombre) pour le mois en cours
+  const backgroundColor = mois.map(({ enCours }) =>
+    enCours ? 'var(--blue-france-sun-113-625)' : 'var(--blue-france-main-525)'
+  )
 
   return (
     <>
@@ -100,7 +106,8 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
       <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
         <Bar
           backgroundColor={backgroundColor}
-          data={resultat.repartitionMensuelle.map((item) => item.nombre)}
+          data={mois.map((item) => item.nombre)}
+          etiquettesValeurs={mois.map((item) => item.nombreAffiche)}
           header={
             <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
               <span> Accompagnements des 6 derniers mois</span>
@@ -111,11 +118,25 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
               </Information>
             </h3>
           }
-          labels={resultat.repartitionMensuelle.map((item) => item.mois)}
+          labels={mois.map((item) => item.libelleAxe)}
+          nomAccessible="Histogramme des accompagnements des 6 derniers mois. Données détaillées dans les chiffres clés en tableau, sous les graphiques."
         />
       </div>
     </>
   )
+}
+
+export function TableauAccompagnementsRealises({ etat }: Props): ReactElement {
+  switch (etat.statut) {
+    case 'charge':
+      return (
+        <TableauAccompagnementsMensuels mois={accompagnementsMensuelsPresenter(etat.resultat.repartitionMensuelle)} />
+      )
+    case 'chargement':
+      return <p className="fr-text--sm fr-mb-0">Chargement...</p>
+    case 'erreur':
+      return <p className="fr-text--sm fr-mb-0">{etat.message}</p>
+  }
 }
 
 type Props = Readonly<{

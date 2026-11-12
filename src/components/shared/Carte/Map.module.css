@@ -24,15 +24,6 @@
   width: 100%;
 }
 
-.legendWrapper {
-  bottom: 0.5rem;
-  left: 50%;
-  pointer-events: none;
-  position: absolute;
-  transform: translateX(-50%);
-  z-index: 1;
-}
-
 /* Boutons de zoom DSFR posés sur la carte, en haut à droite */
 .boutonsZoom {
   background-color: var(--background-default-grey);

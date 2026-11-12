@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import { filtreDuTerritoire, recupererTerritoireVitrine, TerritoireVitrine } from '../../../../territoire'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
+import TableauIndicesFragilite from '@/components/TableauDeBord/EtatDesLieux/TableauIndicesFragilite'
 import NoticeInformation from '@/components/vitrine/DonneesTerritoriales/NoticeInformation'
 import CarteIndicesFragilite from '@/components/vitrine/SyntheseEtIndicateurs/CarteIndicesFragilite'
 import SectionCartographie from '@/components/vitrine/SyntheseEtIndicateurs/SectionCartographie'
@@ -97,6 +98,12 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
         accompagnementsRealisesPromise={accompagnementsRealisesPromise}
         afficherLienLieux={false}
         carte={<CarteIndicesFragilite indicesFragilite={indicesFragilite} territoire={territoireCarte(territoire)} />}
+        tableauFragilite={
+          <TableauIndicesFragilite
+            fragilite={indicesFragilite}
+            maille={territoire.type === 'national' || territoire.type === 'region' ? 'département' : 'commune'}
+          />
+        }
         lieuxInclusionViewModel={lieuxViewModel}
         mediateursEtAidantsViewModel={mediateursViewModel}
       />
