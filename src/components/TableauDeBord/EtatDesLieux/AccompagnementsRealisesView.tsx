@@ -1,6 +1,5 @@
 import { ReactElement } from 'react'
 
-import GraphiqueAvecDonnees from './GraphiqueAvecDonnees'
 import TableauAccompagnementsMensuels from './TableauAccompagnementsMensuels'
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
@@ -105,8 +104,11 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
         </div>
       </div>
       <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
-        <GraphiqueAvecDonnees
-          entete={
+        <Bar
+          backgroundColor={backgroundColor}
+          data={mois.map((item) => item.nombre)}
+          etiquettesValeurs={mois.map((item) => item.nombreAffiche)}
+          header={
             <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
               <span> Accompagnements des 6 derniers mois</span>
               <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
@@ -116,23 +118,25 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
               </Information>
             </h3>
           }
-          graphique={
-            <Bar
-              backgroundColor={backgroundColor}
-              data={mois.map((item) => item.nombre)}
-              etiquettesValeurs={mois.map((item) => item.nombreAffiche)}
-              labels={mois.map((item) => item.libelleAxe)}
-              nomAccessible="Histogramme des accompagnements des 6 derniers mois. Données détaillées disponibles sous forme de tableau."
-            />
-          }
-          idTableau="donnees-histogramme-accompagnements"
-          nomVueGraphique="Histogramme"
-          titre="l’histogramme des accompagnements"
-          tableau={<TableauAccompagnementsMensuels mois={mois} />}
+          labels={mois.map((item) => item.libelleAxe)}
+          nomAccessible="Histogramme des accompagnements des 6 derniers mois. Données détaillées dans les chiffres clés en tableau, sous les graphiques."
         />
       </div>
     </>
   )
+}
+
+export function TableauAccompagnementsRealises({ etat }: Props): ReactElement {
+  switch (etat.statut) {
+    case 'charge':
+      return (
+        <TableauAccompagnementsMensuels mois={accompagnementsMensuelsPresenter(etat.resultat.repartitionMensuelle)} />
+      )
+    case 'chargement':
+      return <p className="fr-text--sm fr-mb-0">Chargement...</p>
+    case 'erreur':
+      return <p className="fr-text--sm fr-mb-0">{etat.message}</p>
+  }
 }
 
 type Props = Readonly<{

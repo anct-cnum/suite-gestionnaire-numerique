@@ -2,18 +2,12 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'
-import GraphiqueAvecDonnees from './GraphiqueAvecDonnees'
-import TableauFragilite from './TableauFragilite'
 import CarteFranceAvecInsets from '../../shared/Carte/CarteFranceAvecInsets'
 import Legend from '../../shared/Carte/Legend'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import {
-  DepartementFragilite,
-  lignesTableauFragilite,
-  transformerDonneesCarteFrance,
-} from '@/presenters/tableauDeBord/indicesPresenter'
+import { DepartementFragilite, transformerDonneesCarteFrance } from '@/presenters/tableauDeBord/indicesPresenter'
 
 export default function CarteIndicesFrance({ departementsFragilite }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
@@ -93,40 +87,22 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
           height: '100%',
         }}
       >
-        <GraphiqueAvecDonnees
-          entete={
-            <div style={{ padding: '1rem' }}>
-              <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-                <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
-                  <span> Indice de Fragilité numérique</span>
-                  <Information libelle="Plus d'information sur l'indice de fragilité numérique">
-                    <p className="fr-mb-0">
-                      L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
-                    </p>
-                  </Information>
-                </h3>
-              </div>
-            </div>
-          }
-          graphique={
-            <div style={{ flex: 1 }}>
-              {/* On attend que le composant chart soit prêt avant de charger la carte */}
-              {isReady ? (
-                <CarteFranceAvecInsets donneesDepartements={departementsViewModel} legend={<Legend />} />
-              ) : null}
-            </div>
-          }
-          idTableau="donnees-carte-fragilite"
-          nomVueGraphique="Carte"
-          titre="l’indice de fragilité numérique"
-          tableau={
-            <TableauFragilite
-              lignes={lignesTableauFragilite(departementsFragilite)}
-              nomColonneTerritoire="Département"
-              titre="Indice de fragilité numérique par département"
-            />
-          }
-        />
+        <div style={{ padding: '1rem' }}>
+          <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+            <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
+              <span> Indice de Fragilité numérique</span>
+              <Information libelle="Plus d'information sur l'indice de fragilité numérique">
+                <p className="fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
+                </p>
+              </Information>
+            </h3>
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
+          {/* On attend que le composant chart soit prêt avant de charger la carte */}
+          {isReady ? <CarteFranceAvecInsets donneesDepartements={departementsViewModel} legend={<Legend />} /> : null}
+        </div>
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/Er
 import CarteFragiliteDepartement from '@/components/TableauDeBord/EtatDesLieux/CarteFragiliteDepartement'
 import CarteIndicesFrance from '@/components/TableauDeBord/EtatDesLieux/CarteIndicesFrance'
 import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
+import TableauIndicesFragilite from '@/components/TableauDeBord/EtatDesLieux/TableauIndicesFragilite'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
@@ -40,7 +41,10 @@ export default async function BlocEtatDesLieux({ territoire }: Props): Promise<R
     mediateursEtAidantsPresenter
   )
 
-  const carte = territoire.type === 'structure' ? <></> : await carteDuTerritoire(indicesLoader, territoire)
+  const { carte, tableauFragilite } =
+    territoire.type === 'structure'
+      ? { carte: <></>, tableauFragilite: undefined }
+      : await carteDuTerritoire(indicesLoader, territoire)
 
   const accompagnementsProps = accompagnements(territoire, filtre)
 
@@ -50,6 +54,7 @@ export default async function BlocEtatDesLieux({ territoire }: Props): Promise<R
       carte={carte}
       lieuxInclusionViewModel={lieuxInclusionViewModel}
       mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+      tableauFragilite={tableauFragilite}
     />
   )
 }
@@ -77,48 +82,65 @@ function accompagnements(territoire: TerritoireTableauDeBord, filtre: FiltreTerr
 async function carteDuTerritoire(
   indicesLoader: PrismaIndicesDeFragiliteLoader,
   territoire: TerritoireGeographique
-): Promise<ReactElement> {
+): Promise<Readonly<{ carte: ReactElement; tableauFragilite: ReactElement }>> {
   switch (territoire.type) {
     case 'departement': {
       const indicesReadModel = await indicesLoader.getForDepartement(territoire.code)
       const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
-      return (
-        <CarteFragiliteDepartement
-          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
-          territoire={{ code: territoire.code, type: 'departement' }}
-        />
-      )
+      return {
+        carte: (
+          <CarteFragiliteDepartement
+            fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+            territoire={{ code: territoire.code, type: 'departement' }}
+          />
+        ),
+        tableauFragilite: <TableauIndicesFragilite fragilite={indicesFragilite} maille="commune" />,
+      }
     }
     case 'epci': {
       const indicesReadModel = await indicesLoader.getForCommunes(territoire.codesInsee)
       const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragilitePresenter)
-      return (
-        <CarteFragiliteDepartement
-          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
-          territoire={{ bbox: territoire.bbox, code: territoire.code, codesInsee: territoire.codesInsee, type: 'epci' }}
-        />
-      )
+      return {
+        carte: (
+          <CarteFragiliteDepartement
+            fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+            territoire={{
+              bbox: territoire.bbox,
+              code: territoire.code,
+              codesInsee: territoire.codesInsee,
+              type: 'epci',
+            }}
+          />
+        ),
+        tableauFragilite: <TableauIndicesFragilite fragilite={indicesFragilite} maille="commune" />,
+      }
     }
     case 'france': {
       const indicesReadModel = await indicesLoader.getForFrance()
       if (isErrorReadModel(indicesReadModel)) {
-        return <CarteIndicesFrance departementsFragilite={[]} />
+        return {
+          carte: <CarteIndicesFrance departementsFragilite={[]} />,
+          tableauFragilite: <TableauIndicesFragilite fragilite={indicesReadModel} maille="département" />,
+        }
       }
-      return (
-        <CarteIndicesFrance
-          departementsFragilite={indiceFragiliteDepartementsPresenter(indicesReadModel.departements)}
-        />
-      )
+      const departementsFragilite = indiceFragiliteDepartementsPresenter(indicesReadModel.departements)
+      return {
+        carte: <CarteIndicesFrance departementsFragilite={departementsFragilite} />,
+        tableauFragilite: <TableauIndicesFragilite fragilite={departementsFragilite} maille="département" />,
+      }
     }
     case 'region': {
       const indicesReadModel = await indicesLoader.getForDepartements(territoire.codesDepartement)
       const indicesFragilite = handleReadModelOrError(indicesReadModel, indiceFragiliteDepartementsPresenter)
-      return (
-        <CarteFragiliteDepartement
-          fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
-          territoire={{ bbox: territoire.bbox, codesDepartement: territoire.codesDepartement, type: 'region' }}
-        />
-      )
+      return {
+        carte: (
+          <CarteFragiliteDepartement
+            fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
+            territoire={{ bbox: territoire.bbox, codesDepartement: territoire.codesDepartement, type: 'region' }}
+          />
+        ),
+        tableauFragilite: <TableauIndicesFragilite fragilite={indicesFragilite} maille="département" />,
+      }
     }
   }
 }

@@ -3,17 +3,11 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'
-import GraphiqueAvecDonnees from './GraphiqueAvecDonnees'
-import TableauFragilite from './TableauFragilite'
 import Carte, { TerritoireCarte } from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import {
-  CommuneFragilite,
-  DepartementFragilite,
-  lignesTableauFragilite,
-} from '@/presenters/tableauDeBord/indicesPresenter'
+import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
 export default function CarteFragiliteDepartement({ fragilite, territoire }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
@@ -78,9 +72,6 @@ export default function CarteFragiliteDepartement({ fragilite, territoire }: Pro
     )
   }
 
-  const parCommune = territoire.type !== 'region'
-  const maille = parCommune ? 'commune' : 'département'
-
   return (
     <div className={`fr-col-12 fr-col-xl-8 background-blue-france ${styles.carteContainer}`} ref={containerRef}>
       <div
@@ -92,38 +83,22 @@ export default function CarteFragiliteDepartement({ fragilite, territoire }: Pro
           height: '100%',
         }}
       >
-        <GraphiqueAvecDonnees
-          entete={
-            <div style={{ padding: '1rem' }}>
-              <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-                <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
-                  <span> Indice de Fragilité numérique</span>
-                  <Information libelle="Plus d'information sur l'indice de fragilité numérique">
-                    <p className="fr-mb-0">
-                      L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
-                    </p>
-                  </Information>
-                </h3>
-              </div>
-            </div>
-          }
-          graphique={
-            <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
-              {/* On attend que le composant chart soit prêt avant de charger la carte */}
-              {isReady ? <Carte fragilite={fragilite} territoire={territoire} /> : null}
-            </div>
-          }
-          idTableau="donnees-carte-fragilite"
-          nomVueGraphique="Carte"
-          titre="l’indice de fragilité numérique"
-          tableau={
-            <TableauFragilite
-              lignes={lignesTableauFragilite(fragilite)}
-              nomColonneTerritoire={parCommune ? 'Commune' : 'Département'}
-              titre={`Indice de fragilité numérique par ${maille} (${fragilite.length} ${maille}s)`}
-            />
-          }
-        />
+        <div style={{ padding: '1rem' }}>
+          <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+            <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
+              <span> Indice de Fragilité numérique</span>
+              <Information libelle="Plus d'information sur l'indice de fragilité numérique">
+                <p className="fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
+                </p>
+              </Information>
+            </h3>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+          {/* On attend que le composant chart soit prêt avant de charger la carte */}
+          {isReady ? <Carte fragilite={fragilite} territoire={territoire} /> : null}
+        </div>
       </div>
     </div>
   )
