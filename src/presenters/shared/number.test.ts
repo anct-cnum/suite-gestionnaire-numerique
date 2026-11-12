@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatMontantEnMillions } from './number'
+import { formaterPoidsDeFichier, formatMontantEnMillions } from './number'
 
 describe(formatMontantEnMillions, () => {
   it('affiche en M€ pour un montant >= 1 000 000', () => {
@@ -25,5 +25,17 @@ describe(formatMontantEnMillions, () => {
 
   it('affiche en € pour 0', () => {
     expect(formatMontantEnMillions(0)).toBe('0 €')
+  })
+})
+
+describe(formaterPoidsDeFichier, () => {
+  it.each([
+    { attendu: '1,6 Mo', intention: 'en Mo, à une décimale, au-delà d’un million d’octets', octets: 1_638_400 },
+    { attendu: '12 Mo', intention: 'en Mo, sans décimale inutile', octets: 12_000_000 },
+    { attendu: '1 Mo', intention: 'en Mo plutôt que « 1 000 Ko » quand l’arrondi y mène', octets: 999_600 },
+    { attendu: '12 Ko', intention: 'en Ko, arrondi, entre mille octets et un million', octets: 12_345 },
+    { attendu: '499 octets', intention: 'en octets en dessous de 500 octets', octets: 499 },
+  ])('affiche le poids $intention', ({ attendu, octets }) => {
+    expect(formaterPoidsDeFichier(octets)).toBe(attendu)
   })
 })

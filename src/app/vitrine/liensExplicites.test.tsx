@@ -110,7 +110,7 @@ describe('liens de la vitrine (RGAA 6.1 et 13.2)', () => {
     )
   })
 
-  it('feuille de route : le lien du PDF nomme la feuille de route et signale la nouvelle fenêtre', () => {
+  it('feuille de route : le lien de téléchargement nomme la feuille de route, son format et son poids, sans nouvelle fenêtre', () => {
     // WHEN
     renderComponent(
       <ResumeFeuilleDeRouteVitrine
@@ -120,9 +120,11 @@ describe('liens de la vitrine (RGAA 6.1 et 13.2)', () => {
           nom: 'Feuille de route inclusion numérique du Rhône',
           nombreDActionsAttachees: '0 action attachée à cette feuille de route',
           pieceJointe: {
+            detail: 'PDF – 1,6 Mo',
             href: '/fichier/feuille-de-route.pdf',
             metadonnee: 'Le 01/01/1970.',
             nom: 'feuille-de-route.pdf',
+            source: 'Document fourni par le territoire, mis en ligne le 01/01/1970.',
           },
           totaux: { budget: '0 €', coFinancement: '0 €', financementAccorde: '0 €' },
           uid: 'feuilleDeRouteFooId',
@@ -133,12 +135,12 @@ describe('liens de la vitrine (RGAA 6.1 et 13.2)', () => {
     )
 
     // THEN
-    const lien = screen.getByRole('link', { name: 'Ouvrir « Feuille de route inclusion numérique du Rhône » (PDF)' })
+    const lien = screen.getByRole('link', {
+      name: 'Télécharger la feuille de route « Feuille de route inclusion numérique du Rhône » PDF – 1,6 Mo',
+    })
     expect(lien.getAttribute('href')).toBe('/fichier/feuille-de-route.pdf')
-    expect(lien.getAttribute('target')).toBe('_blank')
-    expect(lien.getAttribute('title')).toBe(
-      'Ouvrir « Feuille de route inclusion numérique du Rhône » (PDF) - nouvelle fenêtre'
-    )
+    expect(lien.hasAttribute('download')).toBe(true)
+    expect(lien.getAttribute('target')).toBeNull()
   })
 })
 

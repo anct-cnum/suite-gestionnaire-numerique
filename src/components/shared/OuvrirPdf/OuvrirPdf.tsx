@@ -10,25 +10,22 @@ import { isNullishOrEmpty } from '@/shared/lang'
 
 export default function OuvrirPdf({
   href,
-  idTitre = 'document',
   intitule = 'Ouvrir le pdf',
   isReplacing = false,
   metadonnee,
-  niveauTitre = 'h2',
   nom,
   onDelete,
   onReplace,
 }: Props): ReactElement {
   const inputRef = useRef<HTMLInputElement>(null)
-  const Titre = niveauTitre
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
         <header>
-          <Titre className={`fr-h6 color-blue-france fr-mb-0 ${styles.fileName}`} id={idTitre}>
+          <h2 className={`fr-h6 color-blue-france fr-mb-0 ${styles.fileName}`} id="document">
             {nom}
-          </Titre>
+          </h2>
           {isNullishOrEmpty(metadonnee) ? null : <span className="fr-hint-text">{metadonnee}</span>}
         </header>
         <div className="fr-upload-group" />
@@ -85,11 +82,9 @@ export default function OuvrirPdf({
 
 type Props = Readonly<{
   href: string
-  idTitre?: string
   intitule?: string
   isReplacing?: boolean
   metadonnee?: string
-  niveauTitre?: 'h2' | 'h3'
   nom: string
   onDelete?(): void
   onReplace?(event: ChangeEvent<HTMLInputElement>): Promise<void>
