@@ -4,8 +4,10 @@ import { ReactElement } from 'react'
 
 import FeuilleDeRouteVitrine from '@/components/vitrine/FeuilleDeRoute/FeuilleDeRouteVitrine'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
+import { S3DocumentGateway } from '@/gateways/S3DocumentGateway'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
+import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -46,9 +48,10 @@ export default async function FeuilleDeRoute({ params }: Props): Promise<ReactEl
   const codeDepartement = code[0]
 
   try {
-    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance).get(
-      codeDepartement
-    )
+    const feuillesDeRouteReadModel = await new RecupererLesFeuillesDeRoute(
+      new PrismaLesFeuillesDeRouteLoader(etablirSyntheseFinanciereGouvernance),
+      new S3DocumentGateway()
+    ).handle({ codeDepartement })
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
 
     return <FeuilleDeRouteVitrine feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
