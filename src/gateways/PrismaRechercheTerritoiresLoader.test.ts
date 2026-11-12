@@ -221,6 +221,26 @@ describe('recherche territoires loader', () => {
       total: 0,
     })
   })
+
+  it('la liste des départements donne chaque département avec sa région', async () => {
+    // GIVEN
+    await creerLesTerritoires()
+
+    // WHEN
+    const readModel = await new PrismaRechercheTerritoiresLoader().listerDepartementsParRegion()
+
+    // THEN
+    expect(readModel).toStrictEqual([
+      { codeDepartement: '69', codeRegion: '84', nomDepartement: 'Rhône', nomRegion: 'Auvergne-Rhône-Alpes' },
+      { codeDepartement: '70', codeRegion: '27', nomDepartement: 'Haute-Saône', nomRegion: 'Bourgogne-Franche-Comté' },
+      {
+        codeDepartement: '71',
+        codeRegion: '27',
+        nomDepartement: 'Saône-et-Loire',
+        nomRegion: 'Bourgogne-Franche-Comté',
+      },
+    ])
+  })
 })
 
 async function creerLesTerritoires(): Promise<void> {

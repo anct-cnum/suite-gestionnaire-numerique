@@ -33,7 +33,7 @@ export const StatistiquesGenerales = ({
       </div>
       <div className="fr-grid-row fr-flex-gap-6v fr-background-default--grey fr-border-radius--16">
         <div className="fr-flex fr-direction-column fr-flex-gap-6v fr-col-xl-4 fr-col-12">
-          <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-width-full">
+          <div className="fr-px-4v fr-px-md-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-width-full">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
               <span className="fr-h2 fr-mb-0">{numberToString(totalCounts.accompagnements.total)}</span>
               <span
@@ -80,7 +80,7 @@ export const StatistiquesGenerales = ({
               </span>
             </div>
           </div>
-          <div className="fr-px-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-flex-grow-1">
+          <div className="fr-px-4v fr-px-md-8v fr-py-6v fr-border-radius--16 fr-background-alt--brown-caramel fr-flex-grow-1">
             <div className="fr-flex fr-align-items-center fr-justify-content-space-between">
               <span className="fr-h2 fr-mb-0 fr-text--nowrap">{numberToString(totalCounts.beneficiaires.total)}</span>
               <span
@@ -103,7 +103,7 @@ export const StatistiquesGenerales = ({
                 {sPluriel(totalCounts.beneficiaires.suivis)} suivi
                 {sPluriel(totalCounts.beneficiaires.suivis)}
               </div>
-              <div className="fr-whitespace-nowrap">
+              <div>
                 <strong>{numberToString(totalCounts.beneficiaires.anonymes)}</strong> bénéficiaire
                 {sPluriel(totalCounts.beneficiaires.anonymes)} anonyme
                 {sPluriel(totalCounts.beneficiaires.anonymes)}
@@ -130,9 +130,9 @@ export const StatistiquesGenerales = ({
           </div>
         </div>
         {/* #2251 : fr-min-width-0 : le tableau défile dans son conteneur au lieu d'élargir la colonne en mobile */}
-        <div className="fr-col fr-min-width-0 fr-border fr-pt-6v fr-pb-4v fr-px-8v fr-border-radius--16 fr-flex fr-direction-column">
+        <div className="fr-col fr-min-width-0 fr-border fr-pt-6v fr-pb-4v fr-px-4v fr-px-md-8v fr-border-radius--16 fr-flex fr-direction-column">
           <div className="fr-mb-3w fr-flex fr-flex-wrap fr-justify-content-space-between fr-align-items-center fr-flex-gap-2v">
-            <div className="fr-mb-0 fr-flex fr-align-items-center fr-text--nowrap">
+            <div className="fr-mb-0 fr-flex fr-align-items-center">
               <h4 className="fr-text--lg fr-mb-0">Nombre d'accompagnements</h4>
               <Button
                 className="fr-px-1v fr-ml-1v"
@@ -175,10 +175,10 @@ export const StatistiquesGenerales = ({
               ]}
             />
           </div>
-          {/* #2251 : histogramme masqué aux aides techniques, ses valeurs exactes sont dans le tableau ci-dessous.
-              Hauteur minimale : sans elle, ouvrir le tableau écrase l'histogramme à 0 px (sa hauteur ne vient que de
-              l'espace libre de la colonne). 11rem reste sous sa hauteur actuelle en desktop (182 px), qui ne change
-              donc pas ; effet de bord : il réapparaît sous 1280 px, où il était vide. À reprendre avec #2246. */}
+          {/* MIN (#2246) : hauteur minimale, sans elle l'histogramme a une hauteur nulle en mobile et disparaît.
+              11rem reste sous sa hauteur en desktop (182 px), qui ne change pas ; elle l'empêche aussi d'être écrasé
+              quand on ouvre le tableau de données (#2251) */}
+          {/* #2251 : histogramme masqué aux aides techniques, ses valeurs exactes sont dans le tableau ci-dessous */}
           <div aria-hidden className="fr-flex-grow-1" style={{ minHeight: '11rem' }}>
             <AccompagnementBarChart
               data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}

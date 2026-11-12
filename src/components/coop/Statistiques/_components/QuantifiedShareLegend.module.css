@@ -35,3 +35,26 @@
   text-align: right;
   margin-bottom: 0;
 }
+
+/* MIN (#2246, RGAA 10.11) : sous 576 px, le libellé occupe la ligne à droite de la pastille,
+   le nombre et la part passent dessous */
+@media (width < 36rem) {
+  .container {
+    grid-template-columns: auto auto 1fr;
+    row-gap: 4px;
+  }
+
+  .label {
+    grid-column: 2 / -1;
+  }
+
+  .count {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .proportion {
+    grid-column: 3;
+    text-align: left;
+  }
+}

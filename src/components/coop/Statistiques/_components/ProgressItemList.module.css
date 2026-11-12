@@ -39,3 +39,17 @@
 .progressBar {
   width: 100%;
 }
+
+/* MIN (#2246, RGAA 10.11) : sous 576 px, le libellé occupe toute la ligne,
+   le nombre, la part et la barre passent dessous */
+@media (width < 36rem) {
+  .container {
+    grid-template-columns: auto auto 1fr;
+    row-gap: 4px;
+  }
+
+  .label {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+}

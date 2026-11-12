@@ -10,7 +10,7 @@ export default function SectionCartographie(): ReactElement {
         backgroundColor: '#dffee6',
         borderRadius: '8px',
         display: 'flex',
-        height: '256px',
+        minHeight: '256px',
         overflow: 'hidden',
       }}
     >

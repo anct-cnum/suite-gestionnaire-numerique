@@ -1,7 +1,7 @@
 import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { Mock } from 'vitest'
+import { Mock, vi } from 'vitest'
 
 import departements from '../../ressources/departements.json'
 import groupements from '../../ressources/groupements.json'
@@ -167,4 +167,17 @@ export function stubbedConceal() {
 
 export function stubbedServerAction(result: ReadonlyArray<string>): Mock<() => Promise<ReadonlyArray<string>>> {
   return vi.fn<() => Promise<ReadonlyArray<string>>>().mockResolvedValueOnce(result)
+}
+
+// Le mock global de vitest.setup.ts n'est pas constructible : à appeler avant d'afficher un composant
+// qui fait « new ResizeObserver() » (ex. le cadre défilant du tableau des membres de la gouvernance)
+export function simulerResizeObserver(): void {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      disconnect = vi.fn<() => void>()
+      observe = vi.fn<() => void>()
+      unobserve = vi.fn<() => void>()
+    }
+  )
 }

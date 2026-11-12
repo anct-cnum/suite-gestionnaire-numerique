@@ -16,6 +16,7 @@ import {
 } from '../colors'
 import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
 import { numberToString, sPluriel } from '../utils'
+import styles from './StatistiquesActivites.module.css'
 
 type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
 
@@ -101,7 +102,7 @@ export const StatistiquesActivites = ({
         <span className="ri-service-line fr-mr-1w" aria-hidden />
         Statistiques sur les accompagnements
       </h3>
-      <div className="fr-background-alt--blue-france fr-px-8v fr-py-6v fr-mb-3w fr-border-radius--16 fr-grid-row fr-flex-gap-12v fr-position-relative">
+      <div className="fr-background-alt--blue-france fr-px-4v fr-px-md-8v fr-py-6v fr-mb-3w fr-border-radius--16 fr-grid-row fr-flex-gap-12v fr-position-relative">
         {activites.typeActivites.map(({ count, proportion, value }) => (
           <StatistiqueAccompagnement
             key={value}
@@ -120,10 +121,10 @@ export const StatistiquesActivites = ({
           </StatistiqueAccompagnement>
         ))}
       </div>
-      <div className="fr-border fr-p-4w fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16">
+      <div className="fr-border fr-p-2w fr-p-md-4w fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16">
         <div className="fr-flex">
           <SegmentedControl
-            className="fr-md-col fr-col-12 fr-ml-auto"
+            className={`fr-md-col fr-col-12 fr-ml-auto ${styles.segmentsQuiSeReplient}`}
             hideLegend
             legend="Bascule entre les thématiques"
             segments={
@@ -140,7 +141,7 @@ export const StatistiquesActivites = ({
               <Fragment key={category}>
                 <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
                   <div className="fr-mb-0 fr-flex fr-align-items-center">
-                    <h4 className="fr-text--md fr-mb-0 fr-text--nowrap">{title}</h4>
+                    <h4 className="fr-text--md fr-mb-0">{title}</h4>
                     <Button
                       className="fr-px-1v fr-ml-1v"
                       title={`Plus d'information à propos des ${title.toLowerCase()}`}
@@ -161,18 +162,12 @@ export const StatistiquesActivites = ({
                     </span>
                   </div>
                 </div>
-                <QuantifiedShareList
-                  colors={colors}
-                  limit={limite}
-                  oneLineLabel
-                  quantifiedShares={items}
-                  tooltipKey={category}
-                />
+                <QuantifiedShareList colors={colors} limit={limite} quantifiedShares={items} tooltipKey={category} />
               </Fragment>
             )
         )}
       </div>
-      <div className="fr-border fr-p-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
+      <div className="fr-border fr-p-4v fr-p-md-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
           <h4 className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</h4>
           <Button
@@ -196,11 +191,11 @@ export const StatistiquesActivites = ({
           ))}
         </div>
       </div>
-      <div className="fr-border fr-p-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
+      <div className="fr-border fr-p-2w fr-p-md-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-flex fr-flex-wrap fr-flex-gap-16v">
           <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
             <h4 className="fr-text--md fr-mb-4v">Canaux des accompagnements</h4>
-            <div className="fr-flex fr-align-items-center">
+            <div className={`fr-flex fr-align-items-center ${styles.camembertEtLegende}`}>
               <AccompagnementPieChart
                 className="fr-flex-shrink-0"
                 size={80}
@@ -208,16 +203,12 @@ export const StatistiquesActivites = ({
                 data={activites.typeLieu}
                 colors={canauxAccompagnementColors}
               />
-              <QuantifiedShareLegend
-                className="fr-pl-3w"
-                quantifiedShares={activites.typeLieu}
-                colors={canauxAccompagnementColors}
-              />
+              <QuantifiedShareLegend quantifiedShares={activites.typeLieu} colors={canauxAccompagnementColors} />
             </div>
           </div>
           <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
             <h4 className="fr-text--md fr-mb-4v">Durée des accompagnements</h4>
-            <div className="fr-flex fr-align-items-center">
+            <div className={`fr-flex fr-align-items-center ${styles.camembertEtLegende}`}>
               <AccompagnementPieChart
                 className="fr-flex-shrink-0"
                 size={80}
@@ -225,12 +216,7 @@ export const StatistiquesActivites = ({
                 data={activites.durees}
                 colors={dureesAccompagnementColors}
               />
-              <QuantifiedShareLegend
-                className="fr-pl-3w"
-                quantifiedShares={activites.durees}
-                colors={dureesAccompagnementColors}
-                oneLineLabel
-              />
+              <QuantifiedShareLegend quantifiedShares={activites.durees} colors={dureesAccompagnementColors} />
             </div>
           </div>
         </div>

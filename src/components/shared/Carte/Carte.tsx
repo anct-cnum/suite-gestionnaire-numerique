@@ -1,15 +1,10 @@
 'use client'
-import {
-  DataDrivenPropertyValueSpecification,
-  LngLatBounds,
-  Map,
-  NavigationControl,
-  Popup,
-  setWorkerUrl,
-} from 'maplibre-gl'
-import { ReactElement, useEffect, useRef } from 'react'
+import { DataDrivenPropertyValueSpecification, LngLatBounds, Map, Popup, setWorkerUrl } from 'maplibre-gl'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import { LOCALE_CARTE_FR, rendreCanevasMuet } from './accessibiliteCarte'
+import BoutonsZoom from './BoutonsZoom'
 import Legend from './Legend'
 import styles from './Map.module.css'
 import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
@@ -26,6 +21,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
   const map = useRef<Map | null>(null)
   const popup = useRef<null | Popup>(null)
   const annule = useRef(false)
+  const [carteCreee, setCarteCreee] = useState(false)
 
   function searchFeatures(): void {
     if (!map.current) {
@@ -247,12 +243,17 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
     map.current = new Map({
       attributionControl: false,
       container: mapContainer.current,
+      // Le canvas est masqué et hors tabulation : plus de déplacement aux flèches (zoom par les boutons DSFR)
+      keyboard: false,
+      locale: LOCALE_CARTE_FR,
       maplibreLogo: false,
       maxZoom: 11,
       minZoom: territoire.type === 'region' ? 5 : 6,
       scrollZoom: false,
       style: creerStyleVide(couleurFond),
     })
+    rendreCanevasMuet(map.current)
+    setCarteCreee(true)
 
     popup.current = new Popup({
       closeButton: false,
@@ -287,7 +288,6 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
         type: 'fill',
       })
 
-      map.current.addControl(new NavigationControl({ showCompass: false }), 'top-right')
       checkSourceLoaded()
     })
 
@@ -340,6 +340,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
 
     return (): void => {
       annule.current = true
+      setCarteCreee(false)
       observer.disconnect()
       if (map.current) {
         map.current.remove()
@@ -350,6 +351,16 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
   return (
     <div className={styles.mapWrapper} data-testid="carte-wrapper">
       <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
+      {carteCreee ? (
+        <BoutonsZoom
+          onDezoomer={() => {
+            map.current?.zoomOut()
+          }}
+          onZoomer={() => {
+            map.current?.zoomIn()
+          }}
+        />
+      ) : null}
       <div className={styles.legendWrapper} data-testid="legend-wrapper" style={{ width: '90%' }}>
         <Legend />
       </div>

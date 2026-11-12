@@ -31,7 +31,8 @@ export const StatistiqueAccompagnement = ({
         </div>
       )}
       <div>
-        <div className="fr-flex fr-direction-row fr-align-items-baseline fr-text--nowrap">
+        {/* MIN (#2246) : le nombre et la part passent à la ligne au lieu de déborder */}
+        <div className="fr-flex fr-direction-row fr-align-items-baseline fr-flex-wrap">
           <span className="fr-h4 fr-mb-0">{numberToString(count ?? 0)}</span>
           <span className="fr-ml-2v fr-text--sm fr-mb-0 fr-text-mention--grey ">{numberToPercentage(proportion)}</span>
           {children}

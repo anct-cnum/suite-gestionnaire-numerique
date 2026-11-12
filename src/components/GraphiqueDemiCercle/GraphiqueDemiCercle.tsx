@@ -48,8 +48,9 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           <div className="fr-mt-4w">
             <ul>
               {details.map((item) => (
-                <li className="fr-grid-row fr-btns-group--space-between fr-mb-1w" key={item.label}>
-                  <div className={styles['text-ellipsis']} style={{ flex: 1, minWidth: 0 }}>
+                <li className="fr-grid-row fr-grid-row--top fr-btns-group--space-between fr-mb-1w" key={item.label}>
+                  {/* #2246 : libellé sur plusieurs lignes plutôt que tronqué par « … » (RGAA 10.4, 10.12) */}
+                  <div className={`fr-col fr-pr-1w ${styles.libelle}`}>
                     <span className={styles['dot-margin']}>
                       <Dot color={item.backgroundColor} />
                     </span>
