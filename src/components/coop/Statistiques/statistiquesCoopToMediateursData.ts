@@ -1,4 +1,5 @@
 import type { StatistiquesMediateursData } from './types'
+import { tableauAccompagnementsPresenter } from '@/presenters/statistiquesPresenter'
 import type { StatistiquesCoopReadModel } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 // avecTags : les tags spécifiques ne sont affichés qu'en vue territorialisée ou ciblée, jamais en vue France
@@ -89,6 +90,8 @@ export function statistiquesCoopToMediateursData(
     },
     structures: [],
     communes: [],
+    tableauAccompagnementsParJour: tableauAccompagnementsPresenter(readModel.accompagnementsParJour, 'jour'),
+    tableauAccompagnementsParMois: tableauAccompagnementsPresenter(readModel.accompagnementsParMois, 'mois'),
     totalCounts: {
       accompagnements: {
         collectifs: {

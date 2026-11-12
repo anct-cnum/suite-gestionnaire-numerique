@@ -20,17 +20,20 @@ export const QuantifiedShareLegend = ({
   oneLineLabel?: boolean
   tooltipKey?: string
 }) => (
-  <div className={classNames('fr-width-full fr-px-0', styles.container, className)}>
+  // #2251 : vraie liste ; chaque élément se lit d'un tenant : « libellé : nombre soit part »
+  <ul
+    className={classNames(
+      'fr-raw-list fr-position-relative fr-width-full fr-px-0 fr-mb-0',
+      styles.container,
+      className
+    )}
+  >
     {quantifiedShares.map(({ label, count, proportion }, index) => {
       const showTooltip = (truncateLabel || oneLineLabel) && tooltipKey
 
       return (
-        <div key={label} className={styles.row}>
-          <span
-            className={classNames('ri-circle-fill', styles)}
-            style={{ color: colors[index % colors.length] }}
-            aria-hidden
-          />
+        <li key={label} className={styles.row}>
+          <span className="ri-circle-fill" style={{ color: colors[index % colors.length] }} aria-hidden />
           {showTooltip && (
             <span
               className="fr-tooltip fr-placement fr-text--sm fr-p-2v fr-border-radius--8"
@@ -52,6 +55,7 @@ export const QuantifiedShareLegend = ({
             aria-describedby={showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined}
           >
             {label}
+            <span className="fr-sr-only">&nbsp;:</span>
           </span>
           <span className={classNames('fr-text--sm fr-text--bold fr-text--nowrap', styles.count)}>
             {numberToString(count ?? 0)}
@@ -62,10 +66,11 @@ export const QuantifiedShareLegend = ({
               styles.proportion
             )}
           >
+            <span className="fr-sr-only">soit </span>
             {numberToPercentage(proportion)}
           </span>
-        </div>
+        </li>
       )
     })}
-  </div>
+  </ul>
 )
