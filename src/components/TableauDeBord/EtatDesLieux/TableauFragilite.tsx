@@ -96,7 +96,9 @@ export default function TableauFragilite({ lignes, nomColonneTerritoire, titre }
                       <td>{ligne.indiceAffiche}</td>
                       <td>
                         <PastilleFragilite couleur={ligne.classe.couleur} />{' '}
-                        {ligne.classe === CLASSE_DONNEE_NON_DISPONIBLE ? 'non disponible' : ligne.classe.libelle}
+                        {ligne.classe.numero === CLASSE_DONNEE_NON_DISPONIBLE.numero
+                          ? 'non disponible'
+                          : ligne.classe.libelle}
                       </td>
                     </tr>
                   ))}

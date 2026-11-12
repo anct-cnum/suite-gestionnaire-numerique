@@ -39,6 +39,26 @@ describe('tableau de l’indice de fragilité numérique', () => {
     expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
   })
 
+  it('affiche « non disponible » dans la colonne Classe quand les données ont été sérialisées du serveur au client', () => {
+    // GIVEN
+    const communes = structuredClone(indiceFragilitePresenter([{ codeInsee: '69123', ifn: null, nom: 'Lyon' }]))
+
+    // WHEN
+    render(
+      <TableauFragilite
+        lignes={lignesTableauFragilite(communes)}
+        nomColonneTerritoire="Commune"
+        titre="Indice de fragilité numérique par commune"
+      />
+    )
+
+    // THEN
+    expect(screen.getAllByRole('cell').map((cellule) => cellule.textContent)).toStrictEqual([
+      'non disponible',
+      ' non disponible',
+    ])
+  })
+
   it('trie par commune puis par indice croissant et décroissant, en l’annonçant sur l’en-tête de colonne', async () => {
     // GIVEN
     afficherLeTableau([
