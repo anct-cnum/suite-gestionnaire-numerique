@@ -23,6 +23,7 @@ export class PrismaDonneesStructureLoader implements DonneesStructureLoader {
         totalAccompagnements,
       }
     } catch (error) {
+      console.error('[PrismaDonneesStructureLoader] structureId=%d', structureId, error)
       reportLoaderError(error, 'PrismaDonneesStructureLoader', {
         operation: 'get',
         structureId,
