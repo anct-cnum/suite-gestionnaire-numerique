@@ -8,6 +8,8 @@ declare global {
   }
 
   namespace PrismaJson {
+    type ContenuReponseMesureImpact = import('./src/domain/mesure-impact/Questionnaire').Contenu
+
     type Contact = Readonly<{
       email: string
       fonction: string
