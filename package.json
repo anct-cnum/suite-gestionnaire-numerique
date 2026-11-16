@@ -69,6 +69,7 @@
     "@tiptap/pm": "^3.31.3",
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
+    "altcha-lib": "2.8.0",
     "chart.js": "^4.4.9",
     "classnames": "^2.5.1",
     "csv-parse": "^7.0.2",
