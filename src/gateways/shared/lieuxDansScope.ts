@@ -107,39 +107,26 @@ export function buildLieuxDansScopeCte(
 }
 
 // Lieu d'une structure administrative (alias `l` = main.lieu_inclusion). Depuis le retrait
-// de l'asso lieu ↔ SA (#1711), le rattachement passe par les personnes :
-// - un médiateur employé par la SA y est affecté aujourd'hui, toutes sources d'emploi
-//   (plus min.personne_enrichie pour les médiateurs Coop sans paf_emploi) ;
-// - ou un médiateur Coop y a été présent pendant son emploi dans la SA (chevauchement des
-//   périodes Coop) : un lieu quitté reste à la structure, sans rattacher les lieux qu'il
-//   a fréquentés pour un autre employeur.
+// de l'asso lieu ↔ SA (#1711), le rattachement passe par les personnes : un médiateur employé
+// par la SA y est affecté aujourd'hui, toutes sources d'emploi (plus min.personne_enrichie
+// pour les médiateurs Coop sans paf_emploi).
+// Le rattachement des lieux quittés (présence Coop pendant l'emploi dans la SA, #2092) a été
+// retiré : il lisait les périodes d'emploi de coop.employes_structures, table supprimée par la
+// Coop le 16/11/2026 (main fait foi pour les employeuses, ADR-002 Coop), et aucune autre
+// source ne porte ces périodes.
 // Source unique pour la liste des lieux, le filtre lieux des statistiques, le compteur
 // du tableau de bord structure et les droits de modification d'un lieu (#2092).
 export function conditionLieuDeLaStructure(structureId: number): Prisma.Sql {
-  return Prisma.sql`(
-    EXISTS (
-      SELECT 1 FROM main.personne_affectations_lieu pal
-      WHERE pal.lieu_id = l.id AND pal.est_active = true
-        AND pal.personne_id IN (
-          SELECT pae.personne_id FROM main.personne_affectations_emploi pae
-          WHERE pae.structure_administrative_id = ${structureId} AND pae.est_active = true
-          UNION
-          SELECT pe.id FROM min.personne_enrichie pe
-          WHERE pe.structure_employeuse_id = ${structureId}
-        )
-    )
-    OR EXISTS (
-      SELECT 1
-      FROM coop.mediateurs_en_activite mea
-        INNER JOIN coop.mediateurs m ON m.id = mea.mediateur_id
-        INNER JOIN coop.employes_structures es ON es.user_id = m.user_id
-      WHERE mea.structure_id = l.structure_coop_id
-        AND es.structure_main_id = ${structureId}
-        AND mea.suppression IS NULL
-        AND es.suppression IS NULL
-        AND COALESCE(mea.debut_activite, '-infinity'::timestamp) <= COALESCE(es.fin_emploi, 'infinity'::timestamp)
-        AND COALESCE(es.debut_emploi, '-infinity'::timestamp) <= COALESCE(mea.fin_activite, 'infinity'::timestamp)
-    )
+  return Prisma.sql`EXISTS (
+    SELECT 1 FROM main.personne_affectations_lieu pal
+    WHERE pal.lieu_id = l.id AND pal.est_active = true
+      AND pal.personne_id IN (
+        SELECT pae.personne_id FROM main.personne_affectations_emploi pae
+        WHERE pae.structure_administrative_id = ${structureId} AND pae.est_active = true
+        UNION
+        SELECT pe.id FROM min.personne_enrichie pe
+        WHERE pe.structure_employeuse_id = ${structureId}
+      )
   )`
 }
 
