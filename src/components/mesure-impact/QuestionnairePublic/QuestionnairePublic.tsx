@@ -110,6 +110,13 @@ function Parcours({ identifiantPublic, questionnaire }: ParcoursProps): ReactEle
     }
   }
 
+  function allerALaPartie(code: string): void {
+    const premiere = posees.find((posee) => posee.partie === code)
+    if (premiere !== undefined) {
+      allerA(premiere.code)
+    }
+  }
+
   function precedent(): void {
     if (position === 0) {
       setEcran('accueil')
@@ -130,7 +137,7 @@ function Parcours({ identifiantPublic, questionnaire }: ParcoursProps): ReactEle
         <div className="fr-callout fr-mb-4w">
           <h2 className="fr-callout__title fr-h6">Avant de commencer</h2>
           <ul className="fr-callout__text fr-text--md" style={{ listStyleType: 'disc', paddingLeft: '1.5rem' }}>
-            <li>Le questionnaire dure environ 10 minutes.</li>
+            <li>Le questionnaire dure environ 15 minutes.</li>
             <li>Il est anonyme : nous ne demandons ni votre nom, ni votre adresse e-mail.</li>
             <li>Il n’existe pas de mauvaise réponse. Répondez le plus sincèrement possible.</li>
             <li>Vous pouvez aussi demander une version papier à votre médiateur ou médiatrice.</li>
@@ -167,21 +174,33 @@ function Parcours({ identifiantPublic, questionnaire }: ParcoursProps): ReactEle
 
   return (
     <Page avecEntete titre={`Question ${numero} sur ${dansLaPartie.length} – ${partie.libelle} – ${TITRE}`}>
-      <h1 className="fr-h2">{TITRE}</h1>
       <ol aria-label="Étapes du questionnaire" className="fr-tags-group fr-mb-2w">
         {questionnaire.parties.map((candidate, index) => (
           <li key={candidate.code}>
-            <p
-              aria-current={index === partieCourante ? 'step' : undefined}
-              className={ETAPES[etatEtape(index, partieCourante)].classes}
-            >
-              {candidate.libelle}
-              <span className="fr-sr-only"> ({ETAPES[etatEtape(index, partieCourante)].etat})</span>
-            </p>
+            {index < partieCourante ? (
+              <button
+                className={ETAPES.terminee.classes}
+                onClick={() => {
+                  allerALaPartie(candidate.code)
+                }}
+                type="button"
+              >
+                {candidate.libelle}
+                <span className="fr-sr-only"> ({ETAPES.terminee.etat})</span>
+              </button>
+            ) : (
+              <p
+                aria-current={index === partieCourante ? 'step' : undefined}
+                className={ETAPES[etatEtape(index, partieCourante)].classes}
+              >
+                {candidate.libelle}
+                <span className="fr-sr-only"> ({ETAPES[etatEtape(index, partieCourante)].etat})</span>
+              </p>
+            )}
           </li>
         ))}
       </ol>
-      <h2 className="fr-h4 fr-mb-2w">{partie.titre}</h2>
+      <h1 className="fr-h3 fr-mb-2w">{partie.titre}</h1>
       <p>{partie.intro}</p>
       <form className="fr-mt-4w" noValidate onSubmit={suivant}>
         <QuestionAffichee
@@ -312,8 +331,8 @@ const TITRE = 'Votre avis sur vos accompagnements au numérique'
 
 const ENVOI_ECHOUE = 'Vos réponses n’ont pas pu être envoyées. Veuillez réessayer.'
 
-// Indicateur d'étape non cliquable : l'état est dit en texte, les icônes sont décoratives. Les couleurs
-// des tags DSFR ne valent que pour les tags cliquables : celles-ci viennent des utilitaires DSFR.
+// Indicateur d'étape : l'état est dit en texte, les icônes sont décoratives. Les parties terminées sont des
+// tags cliquables (couleur de tag DSFR) ; les autres ne le sont pas, leurs couleurs viennent des utilitaires DSFR.
 const ETAPES: Readonly<Record<EtatEtape, Readonly<{ classes: string; etat: string }>>> = {
   aVenir: { classes: 'fr-tag fr-text-mention--grey', etat: 'à venir' },
   enCours: {
@@ -322,8 +341,7 @@ const ETAPES: Readonly<Record<EtatEtape, Readonly<{ classes: string; etat: strin
     etat: 'en cours',
   },
   terminee: {
-    classes:
-      'fr-tag fr-tag--icon-left fr-icon-check-line fr-background-action-low--green-emeraude fr-text-action-high--green-emeraude',
+    classes: 'fr-tag fr-tag--icon-left fr-icon-check-line fr-tag--green-emeraude',
     etat: 'terminée',
   },
 }
