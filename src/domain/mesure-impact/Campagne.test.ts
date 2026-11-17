@@ -34,6 +34,18 @@ describe('campagne de mesure d’impact', () => {
     // THEN
     expect(campagne.accepteDesReponses(date)).toBe(accepte)
   })
+
+  it.each([
+    { intention: 'la structure qui la porte', pilotee: true, structureId: 42 },
+    { intention: 'pas une autre structure', pilotee: false, structureId: 43 },
+    { intention: 'pas une personne sans structure', pilotee: false, structureId: null },
+  ])('est pilotée par $intention', ({ pilotee, structureId }) => {
+    // GIVEN
+    const campagne = uneCampagne(null)
+
+    // THEN
+    expect(campagne.estPiloteePar(structureId)).toBe(pilotee)
+  })
 })
 
 function uneCampagne(fermeture: Date | null): Campagne {

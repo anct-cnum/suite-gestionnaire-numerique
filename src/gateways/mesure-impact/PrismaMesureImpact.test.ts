@@ -110,6 +110,73 @@ describe('mesure d’impact (gateways Prisma)', () => {
     expect(autreCampagne).toBe(0)
   })
 
+  it('charge les campagnes d’une structure', async () => {
+    // WHEN
+    const campagnes = await new PrismaCampagneLoader().deLaStructure(STRUCTURE_ID)
+    const aucune = await new PrismaCampagneLoader().deLaStructure(STRUCTURE_ID + 1)
+
+    // THEN
+    expect(campagnes.map((campagne) => campagne.state.identifiantPublic)).toStrictEqual(['sicoval-test'])
+    expect(aucune).toStrictEqual([])
+  })
+
+  it('suit les réponses d’une campagne : leur nombre et la dernière', async () => {
+    // GIVEN
+    await prisma.mesureImpactReponseRecord.createMany({
+      data: [epochTimePlusOneDay, epochTimeMinusOneDay].map((depot) => ({
+        campagneId: CAMPAGNE_ID,
+        canal: 'papier' as const,
+        contenu: {},
+        depot,
+        questionnaireVersion: 'socle-v22',
+      })),
+    })
+
+    // WHEN
+    const suivi = await new PrismaReponseLoader().suivi(CAMPAGNE_ID)
+    const sansReponse = await new PrismaReponseLoader().suivi(CAMPAGNE_ID + 1)
+
+    // THEN
+    expect(suivi).toStrictEqual({ derniere: epochTimePlusOneDay, nombre: 2 })
+    expect(sansReponse).toStrictEqual({ derniere: null, nombre: 0 })
+  })
+
+  it('charge les réponses d’une campagne avec leur canal, leur contenu, leur dépôt et leur version', async () => {
+    // GIVEN
+    await prisma.mesureImpactReponseRecord.createMany({
+      data: [
+        {
+          campagneId: CAMPAGNE_ID,
+          canal: 'en_ligne',
+          contenu: { q9: { valeur: 'plutot-oui' } },
+          depot: epochTime,
+          questionnaireVersion: 'socle-v22',
+        },
+        {
+          campagneId: CAMPAGNE_ID,
+          canal: 'telephone',
+          contenu: {},
+          depot: epochTimePlusOneDay,
+          questionnaireVersion: 'socle-v22',
+        },
+      ],
+    })
+
+    // WHEN
+    const reponses = await new PrismaReponseLoader().reponses(CAMPAGNE_ID)
+
+    // THEN
+    expect(reponses).toStrictEqual([
+      {
+        canal: 'en-ligne',
+        contenu: { q9: { valeur: 'plutot-oui' } },
+        depot: epochTime,
+        questionnaireVersion: 'socle-v22',
+      },
+      { canal: 'telephone', contenu: {}, depot: epochTimePlusOneDay, questionnaireVersion: 'socle-v22' },
+    ])
+  })
+
   it('un défi ne se consomme qu’une fois, et les défis échus sont oubliés', async () => {
     // GIVEN
     const defis = new PrismaDefiConsommeRepository()
