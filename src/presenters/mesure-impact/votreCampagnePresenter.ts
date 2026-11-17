@@ -21,6 +21,7 @@ export function votreCampagnePresenter(
       },
       { libelle: 'Questionnaire', valeur: pluriel(nombreDeQuestions, 'question', 'questions') },
     ],
+    lienQuestionnairePapier: `/mesure-impact/${identifiantPublic}/questionnaire-papier`,
     lienResultats: `/mesure-impact/${identifiantPublic}/resultats`,
     lienSaisie: `/mesure-impact/${identifiantPublic}/saisie`,
     nom,
@@ -34,6 +35,7 @@ export function votreCampagnePresenter(
 export type VotreCampagneViewModel = Readonly<{
   adresseDuQuestionnaire: string
   details: ReadonlyArray<Readonly<{ libelle: string; valeur: string }>>
+  lienQuestionnairePapier: string
   lienResultats: string
   lienSaisie: string
   nom: string

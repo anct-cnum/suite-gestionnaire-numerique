@@ -70,14 +70,15 @@ describe('votre campagne de mesure d’impact', () => {
     expect(screen.getByRole('status').textContent).toBe('Lien copié')
   })
 
-  it('le questionnaire papier n’est pas encore téléchargeable', () => {
+  it('le questionnaire papier se télécharge en PDF, à imprimer', () => {
     // WHEN
     render(<VotreCampagne viewModel={viewModel} />)
 
     // THEN
     const papier = screen.getByRole('region', { name: 'Questionnaire papier' })
-    expect(within(papier).queryByRole('link')).not.toBeInTheDocument()
-    expect(within(papier).getByText('Le questionnaire à imprimer sera disponible prochainement.')).toBeInTheDocument()
+    const telechargement = within(papier).getByRole('link', { name: /Télécharger le questionnaire à imprimer/ })
+    expect(telechargement).toHaveAttribute('href', '/mesure-impact/sicoval/questionnaire-papier')
+    expect(telechargement).toHaveAttribute('download')
   })
 
   it('prévient quand la campagne n’accepte pas de réponses', () => {
@@ -97,6 +98,7 @@ const viewModel: VotreCampagneViewModel = {
     { libelle: 'Territoire', valeur: 'Sicoval' },
     { libelle: 'Réponses reçues', valeur: '148 réponses' },
   ],
+  lienQuestionnairePapier: '/mesure-impact/sicoval/questionnaire-papier',
   lienResultats: '/mesure-impact/sicoval/resultats',
   lienSaisie: '/mesure-impact/sicoval/saisie',
   nom: 'Pilote Sicoval 2026',

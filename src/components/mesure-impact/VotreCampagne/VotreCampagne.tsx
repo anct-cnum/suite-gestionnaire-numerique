@@ -9,7 +9,16 @@ import { VotreCampagneViewModel } from '@/presenters/mesure-impact/votreCampagne
 // Espace de la structure qui porte la campagne (maquette 07b) : détails, résultats, saisie et diffusion.
 // L'adresse diffusée est celle du site vitrine, jamais celle de MIN (#2263).
 export default function VotreCampagne({ viewModel }: Props): ReactElement {
-  const { adresseDuQuestionnaire, details, lienResultats, lienSaisie, nomDuFichierQrCode, ouverte, qrCode } = viewModel
+  const {
+    adresseDuQuestionnaire,
+    details,
+    lienQuestionnairePapier,
+    lienResultats,
+    lienSaisie,
+    nomDuFichierQrCode,
+    ouverte,
+    qrCode,
+  } = viewModel
   const [annonce, setAnnonce] = useState('')
   const titreEnLigne = useId()
   const titrePapier = useId()
@@ -136,8 +145,10 @@ export default function VotreCampagne({ viewModel }: Props): ReactElement {
                     Pour les personnes sans appareil ou qui préfèrent le papier. Vous saisissez ensuite les réponses
                     dans l’outil.
                   </p>
-                  <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-                    Le questionnaire à imprimer sera disponible prochainement.
+                  <p className="fr-mb-0">
+                    <a className="fr-link fr-link--download" download href={lienQuestionnairePapier}>
+                      Télécharger le questionnaire à imprimer <span className="fr-link__detail">PDF</span>
+                    </a>
                   </p>
                 </div>
               </div>

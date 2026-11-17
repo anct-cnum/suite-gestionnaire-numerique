@@ -29,6 +29,25 @@ describe('questionnaire de la mesure d’impact (socle v22)', () => {
     expect(dependancesMalPlacees).toStrictEqual([])
   })
 
+  describe('numérotation et conditions, dites comme sur le papier et dans les résultats', () => {
+    const questionnaire = questionnaireDeVersion('socle-v22') as Questionnaire
+
+    it('numérote les questions de 1 à 26 dans l’ordre du questionnaire', () => {
+      // THEN
+      expect(questionnaire.numero('q1')).toBe(1)
+      expect(questionnaire.numero('q12')).toBe(12)
+      expect(questionnaire.numero('q26')).toBe(26)
+    })
+
+    it('décrit une condition par le numéro de la question qui la commande et les libellés des réponses attendues', () => {
+      // WHEN
+      const condition = questionnaire.decrire({ question: 'q12', reponsesParmi: ['oui-tout-a-fait', 'plutot-oui'] })
+
+      // THEN
+      expect(condition).toStrictEqual({ numero: 12, reponses: ['Oui tout à fait', 'Plutôt oui'] })
+    })
+  })
+
   describe('questions posées', () => {
     it('en ligne, la Q13 est posée tant que la Q12 n’a pas de réponse, puis seulement si la Q12 est positive', () => {
       // THEN

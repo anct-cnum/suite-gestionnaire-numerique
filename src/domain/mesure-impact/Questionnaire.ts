@@ -30,6 +30,17 @@ export class Questionnaire {
     return new Questionnaire(definition)
   }
 
+  // Une condition dite comme sur le papier et dans les résultats : le numéro de la question qui la commande
+  // et les libellés des réponses attendues
+  decrire(condition: Condition): ConditionDecrite {
+    const commande = this.questions.find((question) => question.code === condition.question)
+    const options = commande !== undefined && 'options' in commande ? commande.options : []
+    return {
+      numero: this.numero(condition.question),
+      reponses: options.filter((option) => condition.reponsesParmi.includes(option.code)).map(({ libelle }) => libelle),
+    }
+  }
+
   estRepondue(question: Question, contenu: Contenu, canal: Canal): boolean {
     const valeur = contenu[question.code]?.valeur
     switch (question.type) {
@@ -66,6 +77,11 @@ export class Questionnaire {
       const reponseNettoyee = this.#nettoyerReponse(question, reponse, nettoye, canal)
       return reponseNettoyee === undefined ? nettoye : { ...nettoye, [question.code]: reponseNettoyee }
     }, {})
+  }
+
+  // Numéro d'une question, de 1 à n dans l'ordre du questionnaire
+  numero(code: string): number {
+    return this.questions.findIndex((question) => question.code === code) + 1
   }
 
   optionsLequel(question: Question, contenu: Contenu, canal: Canal): ReadonlyArray<Option> {
@@ -264,6 +280,11 @@ export type Canal = 'en-ligne' | 'papier' | 'telephone'
 export type Condition = Readonly<{
   question: string
   reponsesParmi: ReadonlyArray<string>
+}>
+
+export type ConditionDecrite = Readonly<{
+  numero: number
+  reponses: ReadonlyArray<string>
 }>
 
 export type Option = Readonly<{
