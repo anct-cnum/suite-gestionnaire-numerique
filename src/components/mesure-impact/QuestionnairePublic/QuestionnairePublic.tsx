@@ -2,6 +2,8 @@
 
 import { ReactElement, ReactNode, SyntheticEvent, useEffect, useRef, useState } from 'react'
 
+import IndicateurDEtapes from '../IndicateurDEtapes'
+import LogoDuTerritoire from '../LogoDuTerritoire'
 import { preparerUnePreuve } from './preuveDeTravail'
 import QuestionAffichee from './QuestionAffichee'
 import { deposerUneReponseAction } from '@/app/api/actions/mesure-impact/deposerUneReponseAction'
@@ -174,32 +176,11 @@ function Parcours({ identifiantPublic, questionnaire }: ParcoursProps): ReactEle
 
   return (
     <Page avecEntete titre={`Question ${numero} sur ${dansLaPartie.length} – ${partie.libelle} – ${TITRE}`}>
-      <ol aria-label="Étapes du questionnaire" className="fr-tags-group fr-mb-2w">
-        {questionnaire.parties.map((candidate, index) => (
-          <li key={candidate.code}>
-            {index < partieCourante ? (
-              <button
-                className={ETAPES.terminee.classes}
-                onClick={() => {
-                  allerALaPartie(candidate.code)
-                }}
-                type="button"
-              >
-                {candidate.libelle}
-                <span className="fr-sr-only"> ({ETAPES.terminee.etat})</span>
-              </button>
-            ) : (
-              <p
-                aria-current={index === partieCourante ? 'step' : undefined}
-                className={ETAPES[etatEtape(index, partieCourante)].classes}
-              >
-                {candidate.libelle}
-                <span className="fr-sr-only"> ({ETAPES[etatEtape(index, partieCourante)].etat})</span>
-              </p>
-            )}
-          </li>
-        ))}
-      </ol>
+      <IndicateurDEtapes
+        onAllerALaPartie={allerALaPartie}
+        partieCourante={partieCourante}
+        parties={questionnaire.parties}
+      />
       <h1 className="fr-h3 fr-mb-2w">{partie.titre}</h1>
       <p>{partie.intro}</p>
       <form className="fr-mt-4w" noValidate onSubmit={suivant}>
@@ -284,19 +265,6 @@ function Entete(): ReactElement {
   )
 }
 
-// Logo du territoire pilote, en dur comme dans les maquettes : il viendra de la campagne quand il y en aura d'autres
-function LogoDuTerritoire({ className }: Readonly<{ className?: string }>): ReactElement {
-  return (
-    <img
-      alt="Sicoval – L’Agglo du Sud-Est Toulousain"
-      className={className}
-      height={64}
-      src="/mesure-impact/logo-sicoval.svg"
-      width={155}
-    />
-  )
-}
-
 function PiedDePageQuestionnaire(): ReactElement {
   return (
     <footer className="fr-footer" id="footer" role="contentinfo">
@@ -331,21 +299,6 @@ const TITRE = 'Votre avis sur vos accompagnements au numérique'
 
 const ENVOI_ECHOUE = 'Vos réponses n’ont pas pu être envoyées. Veuillez réessayer.'
 
-// Indicateur d'étape : l'état est dit en texte, les icônes sont décoratives. Les parties terminées sont des
-// tags cliquables (couleur de tag DSFR) ; les autres ne le sont pas, leurs couleurs viennent des utilitaires DSFR.
-const ETAPES: Readonly<Record<EtatEtape, Readonly<{ classes: string; etat: string }>>> = {
-  aVenir: { classes: 'fr-tag fr-text-mention--grey', etat: 'à venir' },
-  enCours: {
-    classes:
-      'fr-tag fr-tag--icon-left fr-icon-arrow-right-line fr-background-action-low--blue-france fr-text-action-high--blue-france',
-    etat: 'en cours',
-  },
-  terminee: {
-    classes: 'fr-tag fr-tag--icon-left fr-icon-check-line fr-tag--green-emeraude',
-    etat: 'terminée',
-  },
-}
-
 export type QuestionnairePublicViewModel = Readonly<{
   identifiantPublic: string
   libelleTerritoire: string
@@ -353,21 +306,12 @@ export type QuestionnairePublicViewModel = Readonly<{
   questionnaireVersion: string
 }>
 
-function etatEtape(index: number, partieCourante: number): EtatEtape {
-  if (index < partieCourante) {
-    return 'terminee'
-  }
-  return index === partieCourante ? 'enCours' : 'aVenir'
-}
-
 function libelleBoutonSuivant(derniere: boolean, enCours: boolean): string {
   if (!derniere) {
     return 'Question suivante'
   }
   return enCours ? 'Envoi en cours…' : 'Envoyer mes réponses'
 }
-
-type EtatEtape = 'aVenir' | 'enCours' | 'terminee'
 
 type Props = Readonly<{
   viewModel: QuestionnairePublicViewModel

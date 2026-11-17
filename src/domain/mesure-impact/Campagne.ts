@@ -71,6 +71,11 @@ export class Campagne extends Entity<CampagneState> {
   accepteDesReponses(date: Date): boolean {
     return date >= this.#ouverture && (this.#fermeture === null || date < this.#fermeture)
   }
+
+  // Les personnes rattachées à la structure qui porte la campagne la pilotent (ADR-007, décision 2)
+  estPiloteePar(structureId: null | number): boolean {
+    return structureId === this.#structureId
+  }
 }
 
 class CampagneUid extends Uid<CampagneUidState> {

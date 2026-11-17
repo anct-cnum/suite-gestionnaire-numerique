@@ -87,10 +87,10 @@ const sectionRapportsEtStatistiques: Section = {
   titre: 'RAPPORTS ET STATISTIQUES',
 }
 
-export function sectionsParContexte(contexte: Contexte): ReadonlyArray<Section> {
+export function sectionsParContexte(contexte: Contexte, avecMesureImpact = false): ReadonlyArray<Section> {
   const sections: Array<Section> = [sectionTableauDeBord, sectionOrganisationParContexte(contexte)]
 
-  sections.push(sectionPilotageParContexte(contexte))
+  sections.push(sectionPilotageParContexte(contexte, avecMesureImpact))
 
   sections.push(sectionRapportsEtStatistiques)
 
@@ -151,7 +151,7 @@ function menuGouvernanceParContexte(contexte: Contexte): MenuItem | undefined {
   }
 }
 
-function sectionPilotageParContexte(contexte: Contexte): Section {
+function sectionPilotageParContexte(contexte: Contexte, avecMesureImpact: boolean): Section {
   const menus: Array<MenuItem> = []
 
   const menuGouvernance = menuGouvernanceParContexte(contexte)
@@ -210,6 +210,15 @@ function sectionPilotageParContexte(contexte: Contexte): Section {
     label: 'Suivi des postes CoNum',
     url: () => '/postes-conseiller-numerique',
   })
+
+  // Seulement pour les personnes rattachées à une structure qui porte une campagne
+  if (avecMesureImpact) {
+    menus.push({
+      icon: 'line-chart-line',
+      label: "Mesure d'impact",
+      url: () => '/mesure-impact',
+    })
+  }
 
   return { menus, titre: estAdmin ? 'ADMINISTRATION' : 'PILOTAGE' }
 }

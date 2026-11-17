@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement, Suspense } from 'react'
 
 import Dsfr from '@/app/Dsfr'
+import { structurePorteUneCampagne } from '@/app/shared/structurePorteUneCampagne'
 import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import { MenuActifProvider } from '@/components/transverse/MenuLateral/MenuActifContext'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
@@ -19,12 +20,13 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  const avecMesureImpact = await structurePorteUneCampagne(utilisateur)
 
   return (
     <div className="fr-grid-row">
       <div className="fr-col-12 fr-col-md-3 fr-col-xl-3" style={{ flexShrink: 0, minWidth: '320px' }}>
         <MenuActifProvider>
-          <MenuLateral contexte={contexte} />
+          <MenuLateral avecMesureImpact={avecMesureImpact} contexte={contexte} />
         </MenuActifProvider>
       </div>
       <div className="fr-col-12 fr-col-md-9 fr-col-xl-9 fr-pl-md-7w menu-border" style={{ flex: 1, minWidth: 0 }}>

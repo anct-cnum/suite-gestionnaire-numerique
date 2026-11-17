@@ -4,7 +4,7 @@
 **Statut** : Accepté
 **Décideurs** : CTO MIN
 **Périmètre** : min, dataspace (schéma `mesure_impact` créé en production par la migration Flyway V199)
-**Tickets / MR** : #2263 à #2268 (questionnaire usager)
+**Tickets / MR** : #2263 à #2268 (questionnaire usager), #2302 à #2304 (espace de la structure, saisie, résultats)
 
 ## Contexte
 
@@ -27,6 +27,7 @@ Deux contraintes pèsent sur le modèle :
 6. **Anti-abus sans adresse IP** (décision du 16/11/2026, ticket #2268 RG6) : aucune adresse IP n'est lue, stockée ni hachée. Chaque envoi en ligne porte une preuve de travail ALTCHA (`altcha-lib`, MIT, hébergée par MIN) : le serveur signe un défi (HMAC, clé `ALTCHA_HMAC_KEY`) qui porte la campagne et une échéance d'une heure ; le navigateur le résout sans rien afficher, dès l'arrivée sur la dernière étape. La table `defi_consomme` garde chaque défi utilisé jusqu'à son échéance, pour qu'il ne serve qu'une fois. Le défi devient 16 fois plus coûteux quand la campagne a reçu 100 réponses depuis le début de l'heure.
 7. **Heure de dépôt arrondie à l'heure** : précise, elle désignerait la séance de médiation, donc la personne pour qui y était. L'heure suffit à suivre l'arrivée des réponses et à repérer une rafale.
 8. **Questionnaire publié sur le site vitrine, sans aucune trace de la personne qui répond** (décision du 16/11/2026, #2263) : adresse `inclusion-numerique.anct.gouv.fr/questionnaire/<campagne>`, que le proxy ne renvoie pas vers les routes de la vitrine. Le dépôt d'une réponse **n'est pas journalisé** dans `source.min__evenements`, par exception à la règle des mutations : depuis un navigateur connecté à MIN (un médiateur qui prête son appareil), le journal lierait la réponse complète au compte et à l'heure exacte. Ni Matomo ni les traces de performance Sentry ne tournent sur `/questionnaire/` ; seules les erreurs remontent.
+9. **Espace de la structure** (#2302 à #2304, 17/11/2026) : l'entrée de menu « Mesure d'impact », la page de la campagne, la saisie et les résultats sont réservés aux personnes dont la structure de rattachement (`min.utilisateur.structure_id`) porte la campagne ; la règle est dans le domaine (`Campagne.estPiloteePar`). Pendant le pilote, l'accès est en plus réservé aux bêta-testeurs (`min.utilisateur.is_beta_testeur`), en un seul point côté application (`structureDeLaMesureDImpact`), à retirer à l'ouverture. Le menu du back-office ne connaît pas le contexte : la page lui passe un booléen. L'adresse diffusée (lien, QR code, « Faire répondre quelqu'un ») est celle du site vitrine en production, et celle de l'hôte de l'application ailleurs, pour qu'un essai en préproduction ne réponde jamais en production. La saisie papier ou téléphonique est **journalisée**, sans preuve de travail. Chaque question des résultats est rapportée aux personnes qui y ont répondu, donc une question conditionnelle à celles à qui elle a été posée ; les réponses sont comptées par code d'option, stable d'une version à l'autre.
 
 ## Alternatives envisagées
 
@@ -43,7 +44,7 @@ Deux contraintes pèsent sur le modèle :
 - La fusion et le transfert de structures doivent déplacer les campagnes : la clé étrangère `ON DELETE RESTRICT` empêche de supprimer une structure qui porte une campagne.
 - La clé `ALTCHA_HMAC_KEY` doit être définie en production et en préproduction (les applications de revue la reçoivent de leur application parente à leur création) ; sans elle, aucun questionnaire en ligne ne peut être envoyé.
 - La preuve de travail freine les envois en masse sans les empêcher : un script décidé paie le calcul. La surveillance après coup (réponses par heure et par campagne) reste le filet.
-- Les réponses en ligne ne sont pas journalisées (décision 8) : un test gardien de `deposerUneReponseAction` l'impose. Les saisies papier et téléphone, faites par une personne connectée, le seront (lot 3).
+- Les réponses en ligne ne sont pas journalisées (décision 8) : un test gardien de `deposerUneReponseAction` l'impose. Les saisies papier et téléphone, faites par une personne connectée, le sont (décision 9).
 - Le questionnaire reste joignable sur le domaine de MIN, qui sert aussi en préproduction et dans les applications de revue : rien n'y est journalisé non plus, mais le lien diffusé (QR code, back-office) doit être celui du site vitrine.
 - Un résultat se calcule avec la version du questionnaire de chaque réponse : les agrégats devront regrouper les versions compatibles.
 - Signal de réexamen : questions complémentaires par campagne (questionnaire en base), ou reprise de la collecte par une autre application.
