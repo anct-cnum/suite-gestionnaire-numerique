@@ -1,6 +1,6 @@
 import {
   Canal,
-  Condition,
+  ConditionDecrite,
   Contenu,
   NIVEAUX_ECHELLE,
   Option,
@@ -120,9 +120,6 @@ function resultatsParQuestion(
   contenus: ReadonlyArray<Contenu>
 ): ReadonlyArray<ResultatQuestion> {
   const { questions } = questionnaire
-  function numero(code: string): number {
-    return questions.findIndex((question) => question.code === code) + 1
-  }
   const resultats: Array<ResultatQuestion> = []
   questions.forEach((question, index) => {
     const precedente = questions.at(index - 1)
@@ -132,14 +129,19 @@ function resultatsParQuestion(
       return
     }
     if (question.type === 'echelle' && suivante?.type === 'echelle') {
-      resultats.push(avantApres(question, suivante, contenus, [numero(question.code), numero(suivante.code)]))
+      resultats.push(
+        avantApres(question, suivante, contenus, [
+          questionnaire.numero(question.code),
+          questionnaire.numero(suivante.code),
+        ])
+      )
       return
     }
     if (question.type === 'grille') {
-      resultats.push(grille(question, contenus, numero(question.code)))
+      resultats.push(grille(question, contenus, questionnaire.numero(question.code)))
       return
     }
-    resultats.push(repartition(questionnaire, question, contenus, numero))
+    resultats.push(repartition(questionnaire, question, contenus))
   })
   return resultats
 }
@@ -147,16 +149,15 @@ function resultatsParQuestion(
 function repartition(
   questionnaire: Questionnaire,
   question: Exclude<Question, QuestionGrille>,
-  contenus: ReadonlyArray<Contenu>,
-  numero: (code: string) => number
+  contenus: ReadonlyArray<Contenu>
 ): ResultatRepartition {
   const valeurs = contenus.map((contenu) => valeursDe(contenu, question.code)).filter((codes) => codes.length > 0)
   return {
     base: valeurs.length,
     code: question.code,
-    condition: question.condition === undefined ? undefined : decrire(questionnaire, question.condition, numero),
+    condition: question.condition === undefined ? undefined : questionnaire.decrire(question.condition),
     multiple: question.type === 'choix-multiple',
-    numero: numero(question.code),
+    numero: questionnaire.numero(question.code),
     options: optionsDe(question, valeurs).map((option) => ({
       code: option.code,
       libelle: option.libelle,
@@ -234,19 +235,6 @@ function optionsDe(
   }
 }
 
-function decrire(
-  questionnaire: Questionnaire,
-  condition: Condition,
-  numero: (code: string) => number
-): ConditionDecrite {
-  const commande = questionnaire.questions.find((question) => question.code === condition.question)
-  const options = commande !== undefined && 'options' in commande ? commande.options : []
-  return {
-    numero: numero(condition.question),
-    reponses: options.filter((option) => condition.reponsesParmi.includes(option.code)).map(({ libelle }) => libelle),
-  }
-}
-
 function partDesReponses(
   contenus: ReadonlyArray<Contenu>,
   { question, reponsesParmi }: Readonly<{ question: string; reponsesParmi: ReadonlyArray<string> }>
@@ -301,11 +289,6 @@ function codePostalDe(questionnaire: Questionnaire, contenu: Contenu): string | 
   const valeur = question === undefined ? undefined : contenu[question.code]?.valeur
   return typeof valeur === 'string' ? valeur : undefined
 }
-
-type ConditionDecrite = Readonly<{
-  numero: number
-  reponses: ReadonlyArray<string>
-}>
 
 type ResultatRepartition = Readonly<{
   base: number

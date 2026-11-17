@@ -19,6 +19,7 @@ describe('votre campagne de mesure d’impact', () => {
         { libelle: 'Réponses reçues', valeur: '1 148 réponses' },
         { libelle: 'Questionnaire', valeur: '26 questions' },
       ],
+      lienQuestionnairePapier: '/mesure-impact/sicoval/questionnaire-papier',
       lienResultats: '/mesure-impact/sicoval/resultats',
       lienSaisie: '/mesure-impact/sicoval/saisie',
       nom: 'Pilote Sicoval 2026',
