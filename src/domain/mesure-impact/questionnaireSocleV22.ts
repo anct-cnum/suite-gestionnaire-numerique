@@ -2,13 +2,13 @@ import { DefinitionQuestionnaire, Option } from './Questionnaire'
 
 // Questionnaire socle v22 (22/10/2026), libellés tels quels, avec les retours du 06/11/2026.
 // Les codes des questions et des options sont stables : ils sont enregistrés dans les réponses
-// et ne changent jamais. Une modification de libellé ou de règle donne une nouvelle version.
+// et ne changent jamais. Une modification de règle, ou de libellé qui en change le sens, donne une
+// nouvelle version ; une reformulation qui garde le sens se fait dans la version en place.
 
 const MULTI = 'Vous pouvez sélectionner plusieurs réponses.'
 const MIEUX = 'Cochez la réponse qui correspond le mieux.'
 const POSITIF = ['oui-tout-a-fait', 'plutot-oui']
 const AISANCE = { maximum: 'Très à l’aise', minimum: 'Pas du tout à l’aise' }
-const LEGENDE_AISANCE = `1 = ${AISANCE.minimum}, 5 = ${AISANCE.maximum}`
 
 const EQUIPEMENTS: ReadonlyArray<Option> = [
   { code: 'ordinateur-fixe', libelle: 'Ordinateur fixe' },
@@ -127,7 +127,7 @@ export const questionnaireSocleV22: DefinitionQuestionnaire = {
       aide: "Nombre de séances, de rendez-vous ou d'ateliers.",
       code: 'q3',
       options: [
-        { code: '1-a-4', libelle: '4 séances ou moins' },
+        { code: '1-a-4', libelle: 'Entre 1 et 4 séances' },
         { code: '5-a-9', libelle: 'Entre 5 et 9 séances' },
         { code: '10-a-15', libelle: 'Entre 10 et 15 séances' },
         { code: '16-et-plus', libelle: '16 séances ou plus' },
@@ -236,19 +236,18 @@ export const questionnaireSocleV22: DefinitionQuestionnaire = {
       type: 'choix-unique',
     },
     {
-      aide: LEGENDE_AISANCE,
       code: 'q10',
       partie: 'bilan',
       poles: AISANCE,
-      titre: 'Avant ces accompagnements, comment vous sentiez-vous avec le numérique ?',
+      titre: 'Avant ces accompagnements, comment vous sentiez-vous avec le numérique, sur une échelle de 1 à 5 ?',
       type: 'echelle',
     },
     {
-      aide: LEGENDE_AISANCE,
       code: 'q11',
       partie: 'bilan',
       poles: AISANCE,
-      titre: 'Et aujourd’hui, après ces accompagnements, comment vous sentez-vous avec le numérique ?',
+      titre:
+        'Et aujourd’hui, après ces accompagnements, comment vous sentez-vous avec le numérique, sur une échelle de 1 à 5 ?',
       type: 'echelle',
     },
     {

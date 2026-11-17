@@ -24,7 +24,7 @@ describe('questionnaire public de mesure d’impact', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Votre avis sur vos accompagnements au numérique' })
     ).toBeInTheDocument()
-    expect(screen.getByText('Le questionnaire dure environ 10 minutes.')).toBeInTheDocument()
+    expect(screen.getByText('Le questionnaire dure environ 15 minutes.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Commencer le questionnaire' })).toBeInTheDocument()
     expect(container.ownerDocument.title).toBe('Votre avis sur vos accompagnements au numérique – Accueil')
   })
@@ -49,10 +49,10 @@ describe('questionnaire public de mesure d’impact', () => {
     await commencer()
 
     // THEN
+    expect(screen.getByRole('heading', { level: 1, name: 'Le contexte de vos accompagnements' })).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Votre avis sur vos accompagnements au numérique' })
-    ).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2, name: 'Le contexte de vos accompagnements' })).toBeInTheDocument()
+      screen.queryByRole('heading', { name: 'Votre avis sur vos accompagnements au numérique' })
+    ).not.toBeInTheDocument()
     const question = screen.getByRole('group', { name: /Question 1 sur 8/ })
     expect(question.textContent).toContain('quelles sont les principales raisons')
     expect(screen.getByRole('button', { name: 'Retour' })).toBeInTheDocument()
@@ -87,6 +87,20 @@ describe('questionnaire public de mesure d’impact', () => {
     // THEN
     expect(screen.getByText('Veuillez sélectionner au moins une réponse.')).toBeInTheDocument()
     expect(screen.getByRole('group', { name: /Question 1 sur 8/ })).toBeInTheDocument()
+  })
+
+  it('quand je passe à la suite d’une question à réponse unique sans répondre, alors on me demande une réponse', async () => {
+    // GIVEN
+    afficherLeQuestionnaire()
+    await commencer()
+    await repondreJusquA('Question 3 sur 8')
+
+    // WHEN
+    await suivante()
+
+    // THEN
+    expect(screen.getByText('Sélectionnez une réponse.')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Entre 1 et 4 séances' })).toBeInTheDocument()
   })
 
   it('quand je coche « Autre », alors je peux préciser, et la précision disparaît si je décoche', async () => {
@@ -204,7 +218,7 @@ describe('questionnaire public de mesure d’impact', () => {
     expect(screen.getByRole('textbox', { name: 'Pourquoi ? (facultatif)' })).toHaveValue('Trop rapide')
   })
 
-  it('quand j’arrive sur une échelle, alors les niveaux 1 et 5 portent le sens de leur extrémité', async () => {
+  it('quand j’arrive sur une échelle, alors le sens des extrémités est affiché sous les niveaux 1 et 5', async () => {
     // GIVEN
     afficherLeQuestionnaire()
     await commencer()
@@ -214,8 +228,10 @@ describe('questionnaire public de mesure d’impact', () => {
 
     // THEN
     expect(screen.getByRole('group', { name: /Question 2 sur 11/ }).textContent).toContain(
-      '1 = Pas du tout à l’aise, 5 = Très à l’aise'
+      'comment vous sentiez-vous avec le numérique, sur une échelle de 1 à 5 ?'
     )
+    expect(screen.getByText('Pas du tout à l’aise')).toBeInTheDocument()
+    expect(screen.getByText('Très à l’aise')).toBeInTheDocument()
     const niveaux = screen.getAllByRole('radio')
     expect(niveaux.map((niveau) => niveau.getAttribute('value'))).toStrictEqual(['1', '2', '3', '4', '5'])
     expect(screen.getByRole('radio', { name: '1 : Pas du tout à l’aise' })).toBeInTheDocument()
@@ -269,7 +285,7 @@ describe('questionnaire public de mesure d’impact', () => {
     expect(deposer).not.toHaveBeenCalled()
   })
 
-  it('quand j’arrive à la dernière étape, alors l’indicateur dit l’état de chaque étape, sans lien', async () => {
+  it('quand j’arrive à la dernière étape, alors l’indicateur dit l’état de chaque étape', async () => {
     // GIVEN
     afficherLeQuestionnaire()
     await commencer()
@@ -279,9 +295,24 @@ describe('questionnaire public de mesure d’impact', () => {
 
     // THEN
     expect(etapes()).toStrictEqual(['Le contexte (terminée)', 'Le bilan (terminée)', 'À propos de vous (en cours)'])
-    expect(screen.queryByRole('button', { name: /Le contexte/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /À propos de vous/ })).not.toBeInTheDocument()
     const indicateur = screen.getByRole('list', { name: 'Étapes du questionnaire' })
     expect(within(indicateur).getByText('À propos de vous')).toHaveAttribute('aria-current', 'step')
+  })
+
+  it('quand je clique sur une partie terminée, alors je reviens à sa première question', async () => {
+    // GIVEN
+    afficherLeQuestionnaire()
+    await commencer()
+    await repondreJusquA('Question 1 sur 11')
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Le contexte (terminée)' }))
+
+    // THEN
+    expect(screen.getByRole('heading', { level: 1, name: 'Le contexte de vos accompagnements' })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /Question 1 sur 8/ })).toBeInTheDocument()
+    expect(etapes()).toStrictEqual(['Le contexte (en cours)', 'Le bilan (à venir)', 'À propos de vous (à venir)'])
   })
 
   it('quand j’arrive à la dernière étape, alors la preuve anti-abus se prépare, une seule fois', async () => {

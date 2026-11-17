@@ -145,6 +145,11 @@ function Echelle({ modifier, question, reponse }: EchelleProps): ReactElement {
           </div>
         ))}
       </div>
+      {/* Sens des extrémités, visible sous l'échelle ; les lecteurs d'écran l'entendent avec les niveaux 1 et 5 */}
+      <div aria-hidden="true" className={`${styles.niveaux} fr-mt-1w`}>
+        <span className="fr-text--sm fr-mb-0">{question.poles.minimum}</span>
+        <span className="fr-text--sm fr-mb-0">{question.poles.maximum}</span>
+      </div>
     </div>
   )
 }
@@ -389,6 +394,9 @@ function Messages({ code, enErreur, message }: MessagesProps): ReactElement {
 
 function messageErreur(question: Question, reponse: ReponseQuestion | undefined): string {
   switch (question.type) {
+    case 'choix-unique':
+    case 'echelle':
+      return 'Sélectionnez une réponse.'
     case 'code-postal':
       return reponse?.valeur === undefined || reponse.valeur === ''
         ? 'Veuillez renseigner ce champ.'
