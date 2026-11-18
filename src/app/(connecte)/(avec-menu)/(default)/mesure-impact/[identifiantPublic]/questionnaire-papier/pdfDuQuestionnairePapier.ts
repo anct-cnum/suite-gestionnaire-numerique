@@ -6,8 +6,12 @@ import {
 } from '@/presenters/mesure-impact/questionnairePapierPresenter'
 
 // Questionnaire à imprimer, en A4, mise en page simple. Le PDF est balisé (titres, paragraphes, listes,
-// tableau) et en français ; les cases à cocher et les lignes d'écriture sont des éléments de mise en page.
-export async function pdfDuQuestionnairePapier(viewModel: QuestionnairePapierViewModel): Promise<Buffer> {
+// tableau) et en français ; les cases à cocher et les lignes d'écriture sont des éléments de mise en page. Le logo
+// du territoire, s'il y en a un, ouvre la première page.
+export async function pdfDuQuestionnairePapier(
+  viewModel: QuestionnairePapierViewModel,
+  logo?: LogoDuTerritoire
+): Promise<Buffer> {
   const doc = new PDFDocument({
     bufferPages: true,
     displayTitle: true,
@@ -31,7 +35,7 @@ export async function pdfDuQuestionnairePapier(viewModel: QuestionnairePapierVie
   doc.addStructure(racine)
   const page = new Page(doc, racine)
 
-  page.entete(viewModel)
+  page.entete(viewModel, logo)
   // Un titre de partie ne reste pas seul en bas de page, ni le mot de la fin seul sur la dernière page
   const derniere = viewModel.parties.at(-1)?.questions.at(-1)
   viewModel.parties.forEach((partie) => {
@@ -47,14 +51,22 @@ export async function pdfDuQuestionnairePapier(viewModel: QuestionnairePapierVie
   return termine
 }
 
+export type LogoDuTerritoire = Readonly<{
+  // Texte alternatif de l'image
+  description: string
+  image: Buffer
+}>
+
 const MARGE = 50
+// Environ 2 cm de haut : la largeur suit les proportions de l'image
+const HAUTEUR_DU_LOGO = 56
 const TAILLE = { aide: 9, partie: 14, question: 11, texte: 10, titre: 18 } as const
 const COULEUR = { aide: '#666666', texte: '#161616', titre: '#000091', trait: '#929292' } as const
 const CASE = 10
 const RETRAIT = 18
 const INTERLIGNE = 5
 const LIGNE_D_ECRITURE = 22
-const ESPACE = { fin: 18, intro: 4, partie: 18, question: 12, reponse: 5 } as const
+const ESPACE = { fin: 18, intro: 4, logo: 14, partie: 18, question: 12, reponse: 5 } as const
 const HAUTEUR_CODE_POSTAL = 26
 const HAUTEUR_LIGNE_DE_GRILLE = 22
 
@@ -79,7 +91,10 @@ class Page {
     this.#haut = doc.y
   }
 
-  entete(viewModel: QuestionnairePapierViewModel): void {
+  entete(viewModel: QuestionnairePapierViewModel, logo: LogoDuTerritoire | undefined): void {
+    if (logo !== undefined) {
+      this.#logo(logo)
+    }
     this.#texte(viewModel.titre, { couleur: COULEUR.titre, police: 'Helvetica-Bold', taille: TAILLE.titre, type: 'H1' })
     this.#texte(viewModel.territoire, { police: 'Helvetica-Bold', taille: TAILLE.question })
     this.#espace(6)
@@ -356,6 +371,16 @@ class Page {
       }
     })
     this.#haut = haut + LIGNE_D_ECRITURE * nombre + INTERLIGNE
+  }
+
+  #logo({ description, image }: LogoDuTerritoire): void {
+    const haut = this.#haut
+    this.#racine.add(
+      this.#doc.struct('Figure', { alt: description }, () => {
+        this.#doc.image(image, MARGE, haut, { height: HAUTEUR_DU_LOGO })
+      })
+    )
+    this.#haut = haut + HAUTEUR_DU_LOGO + ESPACE.logo
   }
 
   // Une question tient sur une seule page quand c'est possible ; sinon, elle ne commence pas en bas de page
