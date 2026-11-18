@@ -33,6 +33,18 @@ export default function EnTeteSimple(): ReactElement {
                   </defs>
                 </svg>
               </div>
+              <div className="fr-header__navbar">
+                <button
+                  aria-controls="menu-en-tete-simple"
+                  aria-haspopup="menu"
+                  className="fr-btn--menu fr-btn"
+                  data-fr-opened="false"
+                  id="bouton-menu-en-tete-simple"
+                  type="button"
+                >
+                  Menu
+                </button>
+              </div>
             </div>
             <div className="fr-header__service">
               <p className="fr-header__service-title">Mon Inclusion Numérique</p>
@@ -51,6 +63,18 @@ export default function EnTeteSimple(): ReactElement {
           </div>
         </div>
       </div>
+      <dialog
+        aria-labelledby="bouton-menu-en-tete-simple"
+        className="fr-header__menu fr-modal"
+        id="menu-en-tete-simple"
+      >
+        <div className="fr-container">
+          <button aria-controls="menu-en-tete-simple" className="fr-btn--close fr-btn" type="button">
+            Fermer
+          </button>
+          <div className="fr-header__menu-links" />
+        </div>
+      </dialog>
     </header>
   )
 }
