@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { NextRequest } from 'next/server'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -19,7 +20,7 @@ describe('route du questionnaire papier', () => {
     expect(reponse.status).toBe(401)
   })
 
-  it('donne le PDF à une personne bêta-testeuse de la structure qui porte la campagne, à garder en cache', async () => {
+  it('donne le PDF, avec le logo du territoire, à une personne bêta-testeuse de la structure qui porte la campagne, à garder en cache', async () => {
     // GIVEN
     connecter()
     vi.spyOn(RecupererLeQuestionnairePapier.prototype, 'handle').mockResolvedValueOnce({
@@ -40,7 +41,9 @@ describe('route du questionnaire papier', () => {
     expect(reponse.headers.get('Content-Type')).toBe('application/pdf')
     expect(reponse.headers.get('Content-Disposition')).toBe('attachment; filename="questionnaire-papier-sicoval.pdf"')
     expect(reponse.headers.get('Cache-Control')).toBe('private, max-age=86400')
-    expect(Buffer.from(await reponse.arrayBuffer()).toString('latin1', 0, 5)).toBe('%PDF-')
+    const pdf = Buffer.from(await reponse.arrayBuffer()).toString('latin1')
+    expect(pdf.startsWith('%PDF-')).toBe(true)
+    expect(pdf).toContain('/S /Figure')
   })
 
   it.each([

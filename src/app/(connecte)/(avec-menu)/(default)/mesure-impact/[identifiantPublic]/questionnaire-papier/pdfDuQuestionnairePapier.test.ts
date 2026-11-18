@@ -1,3 +1,5 @@
+// @vitest-environment node
+import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 
 import { pdfDuQuestionnairePapier } from './pdfDuQuestionnairePapier'
@@ -27,6 +29,27 @@ describe('pDF du questionnaire papier', () => {
     const pages = pdf.match(/\/Type \/Page\b(?!s)/g) ?? []
     expect(pages.length).toBeGreaterThanOrEqual(3)
     expect(pages.length).toBeLessThanOrEqual(10)
+  })
+
+  it('porte en tête le logo du territoire, balisé comme une figure avec son texte alternatif', async () => {
+    // GIVEN
+    const logo = { description: 'Sicoval', image: await readFile('public/mesure-impact/logo-sicoval.png') }
+
+    // WHEN
+    const pdf = (await pdfDuQuestionnairePapier(viewModelSocleV22(), logo)).toString('latin1')
+
+    // THEN
+    expect(pdf).toContain('/Subtype /Image')
+    expect(pdf).toContain('/S /Figure')
+    expect(pdf).toContain('/Alt (Sicoval)')
+  })
+
+  it('sans logo, n’a pas d’image', async () => {
+    // WHEN
+    const pdf = (await pdfDuQuestionnairePapier(viewModelSocleV22())).toString('latin1')
+
+    // THEN
+    expect(pdf).not.toContain('/Subtype /Image')
   })
 })
 

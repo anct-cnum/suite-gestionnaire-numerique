@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
 
-import { pdfDuQuestionnairePapier } from './pdfDuQuestionnairePapier'
+import { LogoDuTerritoire, pdfDuQuestionnairePapier } from './pdfDuQuestionnairePapier'
 import { structureDeLaMesureDImpact } from '@/app/shared/structurePorteUneCampagne'
 import { PrismaCampagneLoader } from '@/gateways/mesure-impact/PrismaCampagneLoader'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
@@ -29,7 +31,7 @@ export async function GET(_request: NextRequest, { params }: Contexte): Promise<
   }
 
   const viewModel = questionnairePapierPresenter(papier)
-  const pdf = await pdfDuQuestionnairePapier(viewModel)
+  const pdf = await pdfDuQuestionnairePapier(viewModel, await logoDuTerritoire())
   return new NextResponse(new Uint8Array(pdf), {
     headers: {
       'Cache-Control': 'private, max-age=86400',
@@ -37,6 +39,15 @@ export async function GET(_request: NextRequest, { params }: Contexte): Promise<
       'Content-Type': 'application/pdf',
     },
   })
+}
+
+// Logo du territoire pilote, en dur comme sur le web (LogoDuTerritoire) : il viendra de la campagne quand il y en
+// aura d'autres. En PNG, que pdfkit sait intégrer, à côté du SVG du web.
+async function logoDuTerritoire(): Promise<LogoDuTerritoire> {
+  return {
+    description: 'Sicoval – L’Agglo du Sud-Est Toulousain',
+    image: await readFile(path.join(process.cwd(), 'public', 'mesure-impact', 'logo-sicoval.png')),
+  }
 }
 
 type Contexte = Readonly<{
