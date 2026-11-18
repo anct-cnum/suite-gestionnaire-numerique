@@ -39,6 +39,8 @@ export type QuestionPapier = (
   | ChoixPapier
   | Readonly<{
       colonnes: ReadonlyArray<string>
+      // Quelles lignes remplir, dit en clair ; sinon, le renvoi à la question `selon`
+      consigne?: string
       lignes: ReadonlyArray<string>
       // Numéro de la question dont les réponses désignent les lignes à remplir
       selon: number
@@ -92,6 +94,7 @@ function questionPapier(questionnaire: Questionnaire, question: Question): Quest
       return {
         ...commune,
         colonnes: libelles(question.options),
+        ...(question.lignes.consignePapier === undefined ? {} : { consigne: question.lignes.consignePapier }),
         lignes: libelles(question.lignes.options),
         selon: questionnaire.numero(question.lignes.parmiLesReponsesA),
         type: 'grille',

@@ -277,6 +277,7 @@ export const questionnaireSocleV22: DefinitionQuestionnaire = {
       code: 'q14',
       // Seulement les équipements cochés à la Q6, dans l'ordre du document
       lignes: {
+        consignePapier: 'Répondez seulement pour les équipements que vous avez utilisés pendant vos accompagnements.',
         options: [
           { code: 'ordinateur-portable', libelle: 'Ordinateur portable' },
           { code: 'tablette', libelle: 'Tablette' },

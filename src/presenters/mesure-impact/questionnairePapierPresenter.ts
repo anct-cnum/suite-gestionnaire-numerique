@@ -105,7 +105,9 @@ function questionPresentee(question: QuestionPapier): QuestionPapierViewModel {
     case 'grille':
       return {
         aide: question.aide ?? 'Cochez une case par ligne.',
-        consigne: `Répondez seulement pour les réponses que vous avez cochées à la question ${question.selon}.`,
+        consigne:
+          question.consigne ??
+          `Répondez seulement pour les réponses que vous avez cochées à la question ${question.selon}.`,
         reponse: { colonnes: question.colonnes, lignes: question.lignes, type: 'grille' },
         titre,
       }

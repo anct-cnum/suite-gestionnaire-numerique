@@ -113,6 +113,13 @@ describe('version papier du questionnaire (socle v22)', () => {
     })
   })
 
+  it('une grille dit en clair quelles lignes remplir, quand sa définition le précise, plutôt que de renvoyer à une autre question', () => {
+    // THEN
+    expect(question(14)).toMatchObject({
+      consigne: 'Répondez seulement pour les équipements que vous avez utilisés pendant vos accompagnements.',
+    })
+  })
+
   it('le code postal est à écrire', () => {
     // THEN
     expect(question(26)).toStrictEqual({
