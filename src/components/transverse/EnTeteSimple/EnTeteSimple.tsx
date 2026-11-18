@@ -52,7 +52,7 @@ export default function EnTeteSimple(): ReactElement {
           </div>
           <div className="fr-header__tools">
             <div className="fr-header__tools-links">
-              <ul aria-label="menu" className="fr-links-group">
+              <ul aria-label="menu" className="fr-links-group" id="menuEnTeteSimple">
                 <li>
                   <a className="fr-link fr-icon-question-line" href="mailto:moninclusionnumerique@anct.gouv.fr">
                     Aide

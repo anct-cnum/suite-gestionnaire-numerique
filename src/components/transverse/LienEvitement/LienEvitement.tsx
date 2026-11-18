@@ -30,6 +30,8 @@ export default function LienEvitement({ menu = menuUtilisateur }: Props): ReactE
 
 export const menuPrincipalVitrine: CibleMenu = { ancre: 'navigation', libelle: 'Menu' }
 
+export const menuEnTeteSimple: CibleMenu = { ancre: 'menuEnTeteSimple', libelle: 'Menu' }
+
 const menuUtilisateur: CibleMenu = { ancre: 'menuUtilisateur', libelle: 'Menu utilisateur' }
 
 type CibleMenu = Readonly<{
