@@ -328,8 +328,10 @@ export type QuestionEchelle = QuestionCommune &
 
 export type QuestionGrille = QuestionCommune &
   Readonly<{
-    // Lignes : les options cochées à une autre question, dans l'ordre de `options`
-    lignes: Readonly<{ options: ReadonlyArray<Option>; parmiLesReponsesA: string }>
+    // Lignes : les options cochées à une autre question, dans l'ordre de `options`. Sur le papier, où la
+    // personne trie elle-même les lignes, `consignePapier` le lui dit en clair plutôt que de la renvoyer à
+    // cette autre question.
+    lignes: Readonly<{ consignePapier?: string; options: ReadonlyArray<Option>; parmiLesReponsesA: string }>
     options: ReadonlyArray<Option>
     type: 'grille'
   }>

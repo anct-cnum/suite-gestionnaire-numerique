@@ -142,6 +142,28 @@ describe('présentation du questionnaire papier', () => {
     })
   })
 
+  it('une grille reprend la consigne de sa définition, quand elle en a une, à la place du renvoi', () => {
+    // WHEN
+    const viewModel = questionnairePapierPresenter(
+      readModel([
+        {
+          colonnes: ['Plutôt oui', 'Plutôt non'],
+          consigne: 'Répondez seulement pour les équipements que vous avez utilisés pendant vos accompagnements.',
+          lignes: ['Tablette', 'Téléphone portable'],
+          numero: 14,
+          selon: 6,
+          titre: 'Mieux maîtriser les équipements suivants ?',
+          type: 'grille',
+        },
+      ])
+    )
+
+    // THEN
+    expect(premiereQuestion(viewModel)).toMatchObject({
+      consigne: 'Répondez seulement pour les équipements que vous avez utilisés pendant vos accompagnements.',
+    })
+  })
+
   it('le code postal s’écrit dans cinq cases', () => {
     // WHEN
     const viewModel = questionnairePapierPresenter(
