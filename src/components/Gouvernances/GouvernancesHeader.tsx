@@ -4,7 +4,7 @@ import { FilterType } from '@/components/Gouvernances/GouvernancesList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function GouvernancesHearder(props: Props): ReactElement {
-  const { drawerId, filterAvance, filtreGeographique, onFilterClick } = props
+  const { drawerId, filterAvance, filtreGeographique, onFilterClick, peutExporterLesContactsDesMembres } = props
   return (
     <section aria-labelledby="entete" className="fr-pb-2w">
       <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
@@ -16,6 +16,15 @@ export default function GouvernancesHearder(props: Props): ReactElement {
             Gouvernances territoriales
           </h2>
         </div>
+        {peutExporterLesContactsDesMembres ? (
+          <a
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line fr-mr-2w"
+            download
+            href="/api/export/contacts-membres-csv"
+          >
+            Exporter les contacts des membres
+          </a>
+        ) : null}
         <button
           aria-controls={drawerId}
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line badge-button"
@@ -72,4 +81,5 @@ type Props = Readonly<{
     value: string
   }
   onFilterClick(): void
+  peutExporterLesContactsDesMembres: boolean
 }>

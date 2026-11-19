@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { membreInclude, toMembres } from '@/gateways/shared/MembresGouvernance'
+import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { Membre, membreInclude, toMembre } from '@/gateways/shared/MembresGouvernance'
+import { toRoleViewModel } from '@/presenters/shared/role'
 import { escapeCSV } from '@/shared/csv'
+import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
+// Sans codeDepartement : export de toutes les gouvernances, réservé aux administrateurs.
+// Avec codeDepartement : réservé aux personnes qui peuvent voir cette gouvernance (cf. Contexte.peutVoirGouvernance).
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const session = await getSession()
@@ -13,37 +19,55 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const codeDepartement = request.nextUrl.searchParams.get('codeDepartement')
-    if (codeDepartement === null || codeDepartement === '') {
-      return NextResponse.json({ error: 'Paramètre codeDepartement manquant' }, { status: 400 })
+    const exportNational = codeDepartement === null || codeDepartement === ''
+    const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
+    const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+    if (exportNational ? !contexte.estNational() : !contexte.peutVoirGouvernance(codeDepartement)) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
     const statut = request.nextUrl.searchParams.get('statut')
     const role = request.nextUrl.searchParams.get('role')
     const typologie = request.nextUrl.searchParams.get('typologie')
 
-    const gouvernanceRecord = await prisma.gouvernanceRecord.findUniqueOrThrow({
+    const gouvernancesRecord = await prisma.gouvernanceRecord.findMany({
       include: {
         membres: {
           include: membreInclude,
           orderBy: {
             id: 'asc',
           },
-          where: statut === null || statut === '' ? {} : { statut },
+          // Sans statut demandé : candidats et confirmés, jamais les membres supprimés
+          where: statut === null || statut === '' ? { statut: { in: ['candidat', 'confirme'] } } : { statut },
+        },
+        relationDepartement: {
+          select: {
+            nom: true,
+          },
         },
       },
-      where: {
-        departementCode: codeDepartement,
+      orderBy: {
+        departementCode: 'asc',
       },
+      where: exportNational ? {} : { departementCode: codeDepartement },
     })
 
     // Typologie = libellé de la catégorie juridique de la structure ; '' (« Autre ») si inconnue
-    const membres = toMembres(gouvernanceRecord.membres)
-      .filter((membre) => typologie === null || membre.typologie === typologie)
-      .filter((membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role))
+    const membres = gouvernancesRecord.flatMap((gouvernance) =>
+      gouvernance.membres
+        .map((membreRecord) => ({
+          ...toMembre(membreRecord),
+          codeDepartement: gouvernance.departementCode,
+          departement: gouvernance.relationDepartement.nom,
+          siret: membreRecord.relationStructureAdministrative.siret ?? '',
+        }))
+        .filter((membre) => typologie === null || membre.typologie === typologie)
+        .filter((membre) => role === null || role === '' || membre.roles.some((membreRole) => membreRole === role))
+    )
     const csvContent = generateCSV(membres)
 
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
-    const filename = `contacts-membres-${timestamp}.csv`
+    const filename = `${exportNational ? 'contacts-membres-gouvernances' : 'contacts-membres'}-${timestamp}.csv`
 
     return new NextResponse(csvContent, {
       headers: {
@@ -57,32 +81,52 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-type MembreAvecContacts = Readonly<{
-  contacts: ReadonlyArray<
-    Readonly<{
-      email: string
-      estReferentFNE: boolean
-      fonction: string
-      nom: string
-      prenom: string
-      telephone: string
-    }>
-  >
-  nom: string
-  typologie: string
-}>
+type MembreAExporter = Membre &
+  Readonly<{
+    codeDepartement: string
+    departement: string
+    siret: string
+  }>
 
-function generateCSV(membres: ReadonlyArray<MembreAvecContacts>): string {
-  const headers = ['Structure', 'Typologie', 'Nom', 'Prénom', 'Email', 'Téléphone', 'Fonction', 'Referent FNE']
+const libelleStatut: Readonly<Record<string, string>> = {
+  candidat: 'Candidat',
+  confirme: 'Confirmé',
+}
+
+function generateCSV(membres: ReadonlyArray<MembreAExporter>): string {
+  const headers = [
+    'Code département',
+    'Département',
+    'Structure',
+    'SIRET',
+    'Typologie',
+    'Statut',
+    'Rôles',
+    'Nom',
+    'Prénom',
+    'Email',
+    'Téléphone',
+    'Fonction',
+    'Referent FNE',
+  ]
 
   const rows = membres.flatMap((membre) => {
+    const colonnesMembre = [
+      escapeCSV(membre.codeDepartement),
+      escapeCSV(membre.departement),
+      escapeCSV(membre.nom),
+      escapeCSV(membre.siret),
+      escapeCSV(membre.typologie),
+      escapeCSV(libelleStatut[membre.statut] ?? membre.statut),
+      escapeCSV(membre.roles.map((membreRole) => toRoleViewModel(membreRole).nom).join(' / ')),
+    ]
+
     if (membre.contacts.length === 0) {
-      return [[escapeCSV(membre.nom), escapeCSV(membre.typologie), '', '', '', '', '', '']]
+      return [[...colonnesMembre, '', '', '', '', '', '']]
     }
 
     return membre.contacts.map((contact) => [
-      escapeCSV(membre.nom),
-      escapeCSV(membre.typologie),
+      ...colonnesMembre,
       escapeCSV(contact.nom),
       escapeCSV(contact.prenom),
       escapeCSV(contact.email),

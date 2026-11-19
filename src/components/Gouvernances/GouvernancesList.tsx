@@ -12,8 +12,8 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { GouvernancesViewModel } from '@/presenters/gouvernancesPresenter'
 
-export default function GouvernancesList(props: GouvernancesViewModel): ReactElement {
-  const { details } = props
+export default function GouvernancesList(props: Props): ReactElement {
+  const { details, peutExporterLesContactsDesMembres } = props
   const [detailsFiltrer, setDetailsFiltrer] = useState(details)
   const [infosFiltrer, setInfosFiltrer] = useState<InfosGouvernances>(() => getInfosFilrer(details))
 
@@ -64,6 +64,7 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
         onFilterClick={() => {
           setIsDrawerOpen(true)
         }}
+        peutExporterLesContactsDesMembres={peutExporterLesContactsDesMembres}
       />
       <GouvernancesInfos infos={infosFiltrer} />
       <GouvernancesDetails details={detailsFiltrer} />
@@ -117,3 +118,8 @@ export enum FilterType {
   NO_GOUV = 'Départements sans gouvernance',
   NO_ROADMAP = 'Départements sans Feuilles de route',
 }
+
+type Props = GouvernancesViewModel &
+  Readonly<{
+    peutExporterLesContactsDesMembres: boolean
+  }>
