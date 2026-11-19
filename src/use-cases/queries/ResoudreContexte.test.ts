@@ -357,6 +357,77 @@ describe('résoudre contexte - scopes', () => {
     expect(contexte.peutGererGouvernance('43')).toBe(false)
   })
 
+  // Membres d'une gouvernance et export de leurs contacts : réservés aux admins, au gestionnaire du département,
+  // aux structures membres confirmées (coporteur ou non) et au gestionnaire de la région
+  it.each([
+    {
+      attendu: true,
+      intention: 'un administrateur peut voir toutes les gouvernances',
+      loader: loaderStub(),
+      utilisateur: utilisateurAvecRole('administrateur_dispositif'),
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire département peut voir la gouvernance de son département',
+      loader: loaderStub(),
+      utilisateur: utilisateurAvecRole('gestionnaire_departement', { departementCode: '15' }),
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire département ne peut pas voir la gouvernance d’un autre département',
+      loader: loaderStub(),
+      utilisateur: utilisateurAvecRole('gestionnaire_departement', { departementCode: '93' }),
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire structure membre simple peut voir la gouvernance',
+      loader: loaderStub({ appartenances: [{ codeDepartement: '15', estCoporteur: false }] }),
+      utilisateur: utilisateurAvecRole('gestionnaire_structure', { structureId: 42 }),
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire structure coporteur peut voir la gouvernance',
+      loader: loaderStub({ appartenances: [{ codeDepartement: '15', estCoporteur: true }] }),
+      utilisateur: utilisateurAvecRole('gestionnaire_structure', { structureId: 42 }),
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire structure membre d’une autre gouvernance ne peut pas la voir',
+      loader: loaderStub({ appartenances: [{ codeDepartement: '93', estCoporteur: false }] }),
+      utilisateur: utilisateurAvecRole('gestionnaire_structure', { structureId: 42 }),
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire structure hors gouvernance ne peut pas la voir',
+      loader: loaderStub(),
+      utilisateur: utilisateurAvecRole('gestionnaire_structure', { structureId: 42 }),
+    },
+    {
+      attendu: true,
+      intention: 'un gestionnaire région peut voir une gouvernance de sa région',
+      loader: loaderStub({ departementsDeLaRegion: ['15'] }),
+      utilisateur: utilisateurAvecRole('gestionnaire_region', { regionCode: '84' }),
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire région ne peut pas voir une gouvernance hors de sa région',
+      loader: loaderStub({ departementsDeLaRegion: ['43'] }),
+      utilisateur: utilisateurAvecRole('gestionnaire_region', { regionCode: '84' }),
+    },
+    {
+      attendu: false,
+      intention: 'un gestionnaire groupement ne peut pas voir la gouvernance',
+      loader: loaderStub(),
+      utilisateur: utilisateurAvecRole('gestionnaire_groupement'),
+    },
+  ])('peutVoirGouvernance — $intention', async ({ attendu, loader, utilisateur }) => {
+    // GIVEN
+    const contexte = await resoudreContexte(utilisateur, loader)
+
+    // WHEN / THEN
+    expect(contexte.peutVoirGouvernance('15')).toBe(attendu)
+  })
+
   it('scopeFiltre — administrateur dispositif retourne national', async () => {
     // GIVEN
     const utilisateur = utilisateurAvecRole('administrateur_dispositif')

@@ -156,6 +156,12 @@ export class Contexte {
     )
   }
 
+  // Membres d'une gouvernance et contacts de ces membres : admins, gestionnaire du département, structures membres
+  // confirmées (coporteur ou non) et gestionnaire de la région (qui a les droits d'un membre sur ses départements)
+  peutVoirGouvernance(codeDepartement: string): boolean {
+    return this.estNational() || this.codesDepartements().includes(codeDepartement)
+  }
+
   scopeFiltre(): ScopeFiltre {
     if (this.estNational()) {
       return { type: 'national' }

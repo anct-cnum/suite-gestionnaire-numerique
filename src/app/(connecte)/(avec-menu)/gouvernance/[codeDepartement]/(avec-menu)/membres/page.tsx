@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { forbidden, notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
@@ -32,6 +32,9 @@ export default async function MembresController({ params, searchParams }: Props)
 
   const utilisateur = await new PrismaUtilisateurLoader().findById(await getSessionUtilisateurId())
   const contexte = await resoudreContexte(utilisateur, new PrismaMembreLoader())
+  if (!contexte.peutVoirGouvernance(codeDepartement)) {
+    forbidden()
+  }
   const peutGererGouvernance = contexte.peutGererGouvernance(codeDepartement)
 
   const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({

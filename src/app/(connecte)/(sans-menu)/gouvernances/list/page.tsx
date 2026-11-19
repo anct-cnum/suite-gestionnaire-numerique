@@ -34,7 +34,10 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   return (
     <>
       <FilAriane items={[{ href: '/tableau-de-bord', label: 'Tableau de bord' }, { label: 'Gouvernances' }]} />
-      <GouvernancesList details={gouvernancesViewModel.details} />
+      <GouvernancesList
+        details={gouvernancesViewModel.details}
+        peutExporterLesContactsDesMembres={utilisateur.role.doesItBelongToGroupeAdmin}
+      />
     </>
   )
 }
