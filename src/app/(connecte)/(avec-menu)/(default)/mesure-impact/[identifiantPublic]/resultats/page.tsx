@@ -2,11 +2,10 @@ import { Metadata } from 'next'
 import { forbidden, notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import { filtresDeLAdresse, ParametresDeRecherche } from './filtresDeLAdresse'
 import { structureDeLaMesureDImpact } from '@/app/shared/structurePorteUneCampagne'
 import Resultats from '@/components/mesure-impact/Resultats/Resultats'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
-import { Canal } from '@/domain/mesure-impact/Questionnaire'
-import { Filtres } from '@/domain/mesure-impact/Resultats'
 import { PrismaCampagneLoader } from '@/gateways/mesure-impact/PrismaCampagneLoader'
 import { PrismaReponseLoader } from '@/gateways/mesure-impact/PrismaReponseLoader'
 import { getSession, getSessionUtilisateurId } from '@/gateways/NextAuthAuthentificationGateway'
@@ -53,19 +52,6 @@ export default async function ResultatsController({ params, searchParams }: Prop
     </>
   )
 }
-
-// Un filtre vide ou mal formé est ignoré : les résultats portent alors sur toute la campagne
-function filtresDeLAdresse({ canal, codePostal, mois }: ParametresDeRecherche): Filtres {
-  return {
-    ...(CANAUX.some((candidat) => candidat === canal) ? { canal: canal as Canal } : {}),
-    ...(typeof codePostal === 'string' && /^\d{5}$/.test(codePostal) ? { codePostal } : {}),
-    ...(typeof mois === 'string' && /^\d{4}-\d{2}$/.test(mois) ? { mois } : {}),
-  }
-}
-
-const CANAUX: ReadonlyArray<Canal> = ['en-ligne', 'papier', 'telephone']
-
-type ParametresDeRecherche = Readonly<Partial<Record<'canal' | 'codePostal' | 'mois', ReadonlyArray<string> | string>>>
 
 type Props = Readonly<{
   params: Promise<{ identifiantPublic: string }>

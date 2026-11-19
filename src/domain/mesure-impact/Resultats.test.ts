@@ -183,6 +183,35 @@ describe('résultats d’une campagne de mesure d’impact', () => {
     expect(filtrerLesReponses(socle(), reponses, {})).toStrictEqual(reponses)
   })
 
+  it('regroupe les textes libres identiques par question et par champ, les plus fréquents d’abord', () => {
+    // GIVEN
+    const reponses = [
+      uneReponse({ q9: { pourquoi: ' Trop  rapide ', valeur: 'plutot-non' } }),
+      uneReponse({ q9: { pourquoi: 'Pas assez de temps', valeur: 'non-pas-du-tout' } }),
+      uneReponse({ q9: { pourquoi: 'Trop rapide', valeur: 'non-pas-du-tout' } }),
+      uneReponse({ q9: { pourquoi: '   ', valeur: 'plutot-non' } }),
+      uneReponse({
+        q5: { autre: 'Montre connectée', valeur: ['autre'] },
+        q7: { lequelTexte: 'Une liseuse', valeur: 'oui' },
+      }),
+    ]
+
+    // WHEN
+    const { textesLibres } = calculerLesResultats(socle(), reponses)
+
+    // THEN
+    expect(textesLibres.map(({ champ, nombre, numero, texte }) => ({ champ, nombre, numero, texte }))).toStrictEqual([
+      { champ: 'autre', nombre: 1, numero: 5, texte: 'Montre connectée' },
+      { champ: 'lequelTexte', nombre: 1, numero: 7, texte: 'Une liseuse' },
+      { champ: 'pourquoi', nombre: 2, numero: 9, texte: 'Trop rapide' },
+      { champ: 'pourquoi', nombre: 1, numero: 9, texte: 'Pas assez de temps' },
+    ])
+    expect(textesLibres[2]).toMatchObject({
+      partie: 'bilan',
+      titre: 'Est-ce que les accompagnements à l’utilisation du numérique ont répondu à vos attentes ?',
+    })
+  })
+
   it('propose comme filtres les codes postaux et les mois des réponses', () => {
     // GIVEN
     const reponses = [

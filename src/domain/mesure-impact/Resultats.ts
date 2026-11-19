@@ -28,6 +28,7 @@ export function calculerLesResultats(
       progres: partDesReponses(contenus, CHIFFRES_CLES.progres),
     },
     questions: resultatsParQuestion(questionnaire, contenus),
+    textesLibres: textesLibres(questionnaire, contenus),
     total: reponses.length,
   }
 }
@@ -104,10 +105,26 @@ export type Part = Readonly<{
 export type Resultats = Readonly<{
   chiffresCles: Readonly<{ nouvellesChoses: Part; plusALAise: Part; progres: Part }>
   questions: ReadonlyArray<ResultatQuestion>
+  textesLibres: ReadonlyArray<TexteLibre>
   total: number
 }>
 
+// Texte saisi librement (« Précisez », « Lequel/lesquels ? », « Pourquoi ? »), avec le nombre de personnes qui
+// l'ont écrit
+export type TexteLibre = Readonly<{
+  champ: ChampLibre
+  nombre: number
+  numero: number
+  partie: Question['partie']
+  texte: string
+  titre: string
+}>
+
 export type ResultatQuestion = ResultatAvantApres | ResultatGrille | ResultatRepartition
+
+type ChampLibre = (typeof CHAMPS_LIBRES)[number]
+
+const CHAMPS_LIBRES = ['autre', 'lequelTexte', 'pourquoi'] as const
 
 type Compte = Readonly<{
   code: string
@@ -144,6 +161,34 @@ function resultatsParQuestion(
     resultats.push(repartition(questionnaire, question, contenus))
   })
   return resultats
+}
+
+// Textes identiques regroupés, aux espaces près ; les plus fréquents d'abord, puis par ordre alphabétique
+function textesLibres(questionnaire: Questionnaire, contenus: ReadonlyArray<Contenu>): ReadonlyArray<TexteLibre> {
+  return questionnaire.questions.flatMap((question) =>
+    CHAMPS_LIBRES.flatMap((champ) => {
+      const effectifs = new Map<string, number>()
+      contenus.forEach((contenu) => {
+        const texte = (contenu[question.code]?.[champ] ?? '').replace(/\s+/g, ' ').trim()
+        if (texte !== '') {
+          effectifs.set(texte, (effectifs.get(texte) ?? 0) + 1)
+        }
+      })
+      return [...effectifs]
+        .toSorted(
+          ([unTexte, unNombre], [autreTexte, autreNombre]) =>
+            autreNombre - unNombre || parOrdreAlphabetique(unTexte, autreTexte)
+        )
+        .map(([texte, nombre]) => ({
+          champ,
+          nombre,
+          numero: questionnaire.numero(question.code),
+          partie: question.partie,
+          texte,
+          titre: question.titre,
+        }))
+    })
+  )
 }
 
 function repartition(
