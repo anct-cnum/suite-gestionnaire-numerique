@@ -50,8 +50,9 @@ export const AccompagnementPieChart = ({
 
   return (
     // #2251 : anneau redondant avec sa légende textuelle (libellé, nombre, part) : masqué aux aides techniques
-    // et hors tabulation
-    <div aria-hidden style={{ width: size }}>
+    // et hors tabulation. fr-min-width-0 : le conteneur se rétrécit dans une ligne flexible comme l'anneau seul
+    // le faisait, la légende voisine ne se décale pas (export imprimable inchangé)
+    <div aria-hidden className="fr-min-width-0" style={{ width: size }}>
       <ResponsiveContainer width={size} height={half ? size / 2 + 10 : size} className={className}>
         <PieChart accessibilityLayer={false}>
           <Pie
