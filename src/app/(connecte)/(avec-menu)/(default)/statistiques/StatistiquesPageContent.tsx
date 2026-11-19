@@ -29,6 +29,8 @@ export default function StatistiquesPageContent({ libellesFiltres, statistiquesP
     beneficiaires,
     communes,
     structures,
+    tableauAccompagnementsParJour,
+    tableauAccompagnementsParMois,
     totalCounts,
   } = statistiques
 
@@ -39,6 +41,8 @@ export default function StatistiquesPageContent({ libellesFiltres, statistiquesP
           <StatistiquesGenerales
             accompagnementsParJour={accompagnementsParJour}
             accompagnementsParMois={accompagnementsParMois}
+            tableauAccompagnementsParJour={tableauAccompagnementsParJour}
+            tableauAccompagnementsParMois={tableauAccompagnementsParMois}
             totalCounts={totalCounts}
           />
         </section>

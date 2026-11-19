@@ -26,7 +26,9 @@ const ProgressBar = ({
   tooltipKey?: string
   style?: CSSProperties
 }) => (
+  // #2251 : barres purement visuelles, la valeur exacte est écrite à côté (libellé, nombre, part)
   <span
+    aria-hidden
     className={classNames(
       className,
       progress.length > 1 && 'fr-progress-stacked',

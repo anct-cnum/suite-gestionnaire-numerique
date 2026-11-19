@@ -38,14 +38,15 @@ export const ProgressItemList = ({
     progressBar?: CSSProperties
   }
 }) => (
-  <div className={classNames('fr-width-full', styles.container)}>
+  // #2251 : vraie liste ; chaque élément se lit d'un tenant : « libellé : nombre soit part »
+  <ul className={classNames('fr-raw-list fr-position-relative fr-width-full fr-mb-0', styles.container)}>
     {items.map(({ label, count, proportion }, index) => {
       const computedColors = color ? [color] : colors && colors.length > 0 ? [colors[index % colors.length]] : []
 
       const showTooltip = (truncateLabel || oneLineLabel) && tooltipKey
 
       return (
-        <div key={index} className={styles.row}>
+        <li key={index} className={styles.row}>
           {showTooltip && (
             <span
               className="fr-tooltip fr-placement fr-text--sm fr-p-2v fr-border-radius--8"
@@ -69,6 +70,7 @@ export const ProgressItemList = ({
             aria-describedby={showTooltip ? `tooltip-${tooltipKey}-${index}` : undefined}
           >
             {label}
+            <span className="fr-sr-only">&nbsp;:</span>
           </span>
           <span
             className={classNames(
@@ -88,6 +90,7 @@ export const ProgressItemList = ({
             )}
             style={style?.proportion}
           >
+            <span className="fr-sr-only">soit </span>
             {numberToPercentage(proportion)}
           </span>
           <ProgressBar
@@ -101,8 +104,8 @@ export const ProgressItemList = ({
             ]}
             colors={computedColors}
           />
-        </div>
+        </li>
       )
     })}
-  </div>
+  </ul>
 )

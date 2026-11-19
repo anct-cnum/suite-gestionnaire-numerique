@@ -13,6 +13,8 @@ import {
   YAxis,
 } from 'recharts'
 
+import { accompagnementsAffiches } from '@/presenters/statistiquesPresenter'
+
 const CustomTooltip = ({ active, payload, label }: TooltipContentProps<TooltipValueType, number | string>) =>
   active &&
   payload &&
@@ -31,13 +33,15 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps<TooltipVa
 
 export const AccompagnementBarChart = ({ data }: { data: { label: string; count: number }[] }) => {
   const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
-  const slicedData = data.length > 12 ? data.slice(-30) : data
+  const slicedData = accompagnementsAffiches(data)
   const emptyData = slicedData.map((item) => ({ ...item, count: 1 }))
   const displayData = isEmpty ? emptyData : slicedData
 
   return (
     <ResponsiveContainer width="100%" height="100%">
+      {/* #2251 : sans couche « application » ni tabulation ; le parent masque le graphique, doublé d'un tableau */}
       <BarChart
+        accessibilityLayer={false}
         data={displayData}
         margin={{ top: 15, right: 10, left: 5, bottom: 0 }}
         barSize={displayData.length > 18 ? 16 : 20}

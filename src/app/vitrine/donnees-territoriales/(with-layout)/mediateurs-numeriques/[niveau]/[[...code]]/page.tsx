@@ -15,9 +15,11 @@ import SpinnerSimple from '@/components/shared/Spinner/SpinnerSimple'
 import CarteStatistiqueAidantsConnect from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueAidantsConnect'
 import CarteStatistiqueConseillersNumeriques from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueConseillersNumeriques'
 import CarteStatistiqueMediateurs from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueMediateurs'
+import EnteteStatistiquesMediateurs from '@/components/vitrine/MediateursNumeriques/EnteteStatistiquesMediateurs'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { createCoopStatistiquesLoader } from '@/gateways/factories/coopLoaderFactory'
 import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistiquesMediateursLoader'
+import { periodeStatistiquesPresenter } from '@/presenters/statistiquesPresenter'
 import {
   statistiquesMediateursPresenter,
   StatistiquesMediateursViewModel,
@@ -87,6 +89,11 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
       </div>
       {renderCartesStatistiques(statistiquesMediateursViewModel)}
       <hr />
+      <EnteteStatistiquesMediateurs
+        dateDebut={dateDebut}
+        dateFin={dateFin}
+        periode={periodeStatistiquesPresenter(dateDebut, dateFin)}
+      />
       <AsyncLoaderErrorBoundary
         fallback={
           <div className="fr-py-4w">
@@ -97,7 +104,7 @@ export default async function MediateursNumeriques({ params, searchParams }: Pro
         }
       >
         <Suspense fallback={<SpinnerSimple text="Récupération des données" />} key={`${dateDebut}-${dateFin}`}>
-          <StatistiquesAsyncContent dateDebut={dateDebut} dateFin={dateFin} statistiquesPromise={statistiquesPromise} />
+          <StatistiquesAsyncContent statistiquesPromise={statistiquesPromise} />
         </Suspense>
       </AsyncLoaderErrorBoundary>
       <div className="fr-mb-4w ">
