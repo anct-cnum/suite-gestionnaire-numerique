@@ -5,8 +5,8 @@ import styles from './MenuLateral.module.css'
 import { sectionsParContexte } from './registreMenus'
 import { Contexte } from '@/use-cases/queries/ResoudreContexte'
 
-export default function MenuLateral({ contexte }: Props): ReactElement {
-  const sections = sectionsParContexte(contexte)
+export default function MenuLateral({ avecMesureImpact = false, contexte }: Props): ReactElement {
+  const sections = sectionsParContexte(contexte, avecMesureImpact)
 
   return (
     <nav aria-labelledby="fr-sidemenu-title" className={`fr-sidemenu fr-pt-5w ${styles.menu}`}>
@@ -50,5 +50,6 @@ export default function MenuLateral({ contexte }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  avecMesureImpact?: boolean
   contexte: Contexte
 }>

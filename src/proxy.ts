@@ -18,10 +18,12 @@ export function proxy(request: NextRequest): NextResponse {
     const url = request.nextUrl.clone()
 
     // Éviter les rewrites infinis en vérifiant qu'on n'est pas déjà sur /vitrine
+    // Le questionnaire de mesure d'impact est publié sur le site vitrine, hors de ses routes (#2263)
     if (
       !url.pathname.startsWith('/vitrine') &&
       !url.pathname.startsWith('/_next') &&
-      !url.pathname.startsWith('/api')
+      !url.pathname.startsWith('/api') &&
+      !url.pathname.startsWith('/questionnaire/')
     ) {
       url.pathname = `/vitrine${url.pathname}`
       return NextResponse.rewrite(url)

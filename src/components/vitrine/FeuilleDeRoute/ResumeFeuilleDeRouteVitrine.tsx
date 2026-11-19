@@ -1,8 +1,8 @@
-import { PropsWithChildren, ReactElement, useId } from 'react'
+import { PropsWithChildren, ReactElement } from 'react'
 
+import DocumentFeuilleDeRouteVitrine from './DocumentFeuilleDeRouteVitrine'
 import localStyles from './ResumeFeuilleDeRouteVitrine.module.css'
 import styles from '../../FeuillesDeRoute/FeuillesDeRoute.module.css'
-import OuvrirPdf from '../../shared/OuvrirPdf/OuvrirPdf'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
@@ -11,9 +11,6 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
  * Sans les boutons d'édition et sans le contexte gouvernance
  */
 export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }: Props): ReactElement {
-  // Un identifiant par feuille de route : plusieurs documents peuvent être affichés sur la même page
-  const idTitreDocument = `document-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
-
   return (
     <div aria-label={feuilleDeRoute.nom} className={localStyles.card} role="region">
       <div className={styles['align-items']}>
@@ -47,19 +44,10 @@ export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }
         </div>
       </div>
       {feuilleDeRoute.pieceJointe ? (
-        <section
-          aria-labelledby={idTitreDocument}
-          className="fr-mb-4w grey-border border-radius fr-p-2w fr-p-md-4w fr-mt-3w"
-        >
-          <OuvrirPdf
-            href={feuilleDeRoute.pieceJointe.href}
-            idTitre={idTitreDocument}
-            intitule={`Ouvrir « ${feuilleDeRoute.nom} » (PDF)`}
-            metadonnee={feuilleDeRoute.pieceJointe.metadonnee}
-            niveauTitre="h3"
-            nom={feuilleDeRoute.pieceJointe.nom}
-          />
-        </section>
+        <DocumentFeuilleDeRouteVitrine
+          nomFeuilleDeRoute={feuilleDeRoute.nom}
+          pieceJointe={feuilleDeRoute.pieceJointe}
+        />
       ) : null}
     </div>
   )

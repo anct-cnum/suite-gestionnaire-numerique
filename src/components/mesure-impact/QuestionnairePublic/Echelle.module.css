@@ -1,0 +1,9 @@
+/*
+ * Exception au DSFR, validée pour la mesure d'impact : le DSFR n'a pas d'échelle de 1 à 5.
+ * Les cinq niveaux tiennent sur une ligne, même à 320 px ; leur sens est donné par les extrémités,
+ * affichées sous l'échelle.
+ */
+.niveaux {
+  display: flex;
+  justify-content: space-between;
+}

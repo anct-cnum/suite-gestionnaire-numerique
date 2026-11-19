@@ -37,7 +37,43 @@ describe('route de téléchargement de document', () => {
     // THEN
     expect(result.status).toBe(200)
     expect(result.headers.get('Content-Type')).toBe('application/pdf')
-    expect(result.headers.get('Content-Disposition')).toBe('inline; filename="feuille-de-route-test.pdf"')
+    expect(result.headers.get('Content-Disposition')).toBe(
+      'attachment; filename="feuille-de-route-test.pdf"; filename*=UTF-8\'\'feuille-de-route-test.pdf'
+    )
+  })
+
+  it('devrait proposer le téléchargement sous le nom déposé, lisible avec ses espaces et ses accents', async () => {
+    // GIVEN
+    const req = {
+      nextUrl: {
+        pathname: '/api/document-feuille-de-route/user/fdr-uid/abc_document.pdf',
+      },
+    } as unknown as NextRequest
+    const res = {} as unknown as NextResponse
+    vi.spyOn(PrismaDocumentFeuilleDeRouteLoader.prototype, 'recupererNom').mockResolvedValueOnce(
+      'Feuille de route – Métropole de Lyon (2024) "V2".pdf'
+    )
+
+    // WHEN
+    const result = await GET(
+      req,
+      res,
+      new S3DocumentGateway({
+        send: async () =>
+          Promise.resolve({
+            Body: {
+              transformToWebStream: () => ({}),
+            },
+          }),
+      } as unknown as S3Client)
+    )
+
+    // THEN
+    expect(result.status).toBe(200)
+    expect(result.headers.get('Content-Disposition')).toBe(
+      'attachment; filename="Feuille de route _ Metropole de Lyon (2024) _V2_.pdf"; ' +
+        "filename*=UTF-8''Feuille%20de%20route%20%E2%80%93%20M%C3%A9tropole%20de%20Lyon%20%282024%29%20%22V2%22.pdf"
+    )
   })
 
   it('devrait utiliser le chemin comme nom de repli quand le document est inconnu en base', async () => {
@@ -67,7 +103,8 @@ describe('route de téléchargement de document', () => {
     // THEN
     expect(result.status).toBe(200)
     expect(result.headers.get('Content-Disposition')).toBe(
-      'inline; filename="user%2Ffdr-uid%2Ffeuille-de-route-test.pdf"'
+      'attachment; filename="user/fdr-uid/feuille-de-route-test.pdf"; ' +
+        "filename*=UTF-8''user%2Ffdr-uid%2Ffeuille-de-route-test.pdf"
     )
   })
 

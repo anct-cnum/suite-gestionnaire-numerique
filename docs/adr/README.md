@@ -27,5 +27,6 @@ Une décision actée = un fichier `NNN-titre-kebab.md`, numéroté en continu. M
 | [004](004-rationalisation-eslint.md)          | Rationalisation de la configuration ESLint   | En discussion ⚠️ | 2026-03-25 |
 | [005](005-commitlint-conventional-commits.md) | CommitLint pour les Conventional Commits     | En discussion ⚠️ | 2026-03-25 |
 | [006](006-lieux-coop-modifies-au-registre.md) | MIN modifie les lieux Coop au registre seul  | Accepté          | 2026-10-15 |
+| [007](007-contexte-mesure-impact-autonome.md) | La mesure d'impact est un contexte autonome  | Accepté          | 2026-11-10 |
 
 ⚠️ Les cinq décisions sont en œuvre dans le dépôt : passage en « Accepté » prévu à l'étape 7 de #2058.

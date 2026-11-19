@@ -424,6 +424,28 @@ describe('menu lateral', () => {
     const gouvernance = within(nav).queryByRole('link', { name: 'Gouvernance' })
     expect(gouvernance).not.toBeInTheDocument()
   })
+
+  it("étant rattaché à une structure qui porte une campagne de mesure d'impact, quand j'affiche le menu latéral, alors il s'affiche avec le lien Mesure d'impact", () => {
+    // WHEN
+    render(
+      <menuActifContext.Provider value="/">
+        <MenuLateral avecMesureImpact contexte={contexteParDefaut} />
+      </menuActifContext.Provider>
+    )
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).getByRole('link', { name: "Mesure d'impact" })).toHaveAttribute('href', '/mesure-impact')
+  })
+
+  it("étant rattaché à une structure sans campagne de mesure d'impact, quand j'affiche le menu latéral, alors il ne s'affiche pas avec le lien Mesure d'impact", () => {
+    // WHEN
+    afficherMenuLateral()
+
+    // THEN
+    const nav = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    expect(within(nav).queryByRole('link', { name: "Mesure d'impact" })).not.toBeInTheDocument()
+  })
 })
 
 function afficherMenuLateral(): void {

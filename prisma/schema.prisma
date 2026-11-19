@@ -11,7 +11,7 @@ generator json {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["admin", "main", "min", "reference"]
+  schemas  = ["admin", "main", "mesure_impact", "min", "reference"]
 }
 
 model GroupementRecord {
@@ -687,6 +687,7 @@ model main_structure_administrative {
   membres                      MembreRecord[]
   utilisateurs                 UtilisateurRecord[]
   labellisations               main_conum_labellisation[]
+  campagnesMesureImpact        MesureImpactCampagneRecord[]
 
   /// Refonte 2026 : remplace l'ancienne UNIQUE (siret) seule. Contrainte
   /// reelle en base : UNIQUE NULLS NOT DISTINCT (pgsql 15+) — non
@@ -1235,4 +1236,61 @@ model icp_departement {
   updated_at DateTime? @db.Timestamp(6)
 
   @@schema("admin")
+}
+
+/// Contexte « Mesure d'impact » (ADR-007) : schéma dédié, seul lien avec le back-office = la structure.
+model MesureImpactCampagneRecord {
+  id                   Int       @id @default(autoincrement())
+  identifiantPublic    String    @unique @map("identifiant_public")
+  nom                  String
+  /// Nom du territoire de la campagne, pour l'affichage (la dénomination SIRENE ne s'y prête pas)
+  libelleTerritoire    String    @map("libelle_territoire")
+  structureId          Int       @map("structure_id")
+  questionnaireVersion String    @map("questionnaire_version")
+  ouverture            DateTime  @db.Timestamptz(3)
+  fermeture            DateTime? @db.Timestamptz(3)
+  creation             DateTime  @default(now()) @db.Timestamptz(3)
+
+  relationStructure main_structure_administrative @relation(fields: [structureId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  reponses          MesureImpactReponseRecord[]
+
+  @@index([structureId])
+  @@map("campagne")
+  @@schema("mesure_impact")
+}
+
+model MesureImpactReponseRecord {
+  id                   Int               @id @default(autoincrement())
+  campagneId           Int               @map("campagne_id")
+  questionnaireVersion String            @map("questionnaire_version")
+  canal                MesureImpactCanal
+  /// [ContenuReponseMesureImpact]
+  contenu              Json
+  depot                DateTime          @db.Timestamptz(3)
+
+  relationCampagne MesureImpactCampagneRecord @relation(fields: [campagneId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([campagneId, depot])
+  @@map("reponse")
+  @@schema("mesure_impact")
+}
+
+/// Défis anti-abus déjà résolus (preuve de travail du questionnaire public), gardés jusqu'à leur échéance
+/// pour qu'une preuve ne serve qu'une fois. Aucune donnée sur la personne ni adresse IP.
+model MesureImpactDefiConsommeRecord {
+  signature  String   @id
+  expiration DateTime @db.Timestamptz(3)
+
+  @@index([expiration])
+  @@map("defi_consomme")
+  @@schema("mesure_impact")
+}
+
+enum MesureImpactCanal {
+  en_ligne
+  papier
+  telephone
+
+  @@map("canal")
+  @@schema("mesure_impact")
 }

@@ -3,26 +3,37 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import AccompagnementsRealises from './AccompagnementsRealises'
-import AccompagnementsRealisesClient from './AccompagnementsRealisesClient'
+import AccompagnementsRealisesView, { TableauAccompagnementsRealises } from './AccompagnementsRealisesView'
 import styles from './CarteFragilite.module.css'
 import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
+import useAccompagnementsRealises, { SourceAccompagnements } from './useAccompagnementsRealises'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import ChiffresClesEnTableau, {
+  OngletChiffresCles,
+} from '@/components/shared/ChiffresClesEnTableau/ChiffresClesEnTableau'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
-  const { afficherLienLieux = true, carte, lieuxInclusionViewModel, mediateursEtAidantsViewModel } = props
-  let accompagnements: ReactElement
-  if ('accompagnementsTerritoire' in props) {
-    accompagnements = <AccompagnementsRealisesClient territoire={props.accompagnementsTerritoire} />
-  } else if ('accompagnementsStructureId' in props) {
-    accompagnements = <AccompagnementsRealisesClient structureId={props.accompagnementsStructureId} />
-  } else {
-    accompagnements = <AccompagnementsRealises accompagnementsRealisesPromise={props.accompagnementsRealisesPromise} />
+  const {
+    afficherLienLieux = true,
+    carte,
+    lieuxInclusionViewModel,
+    mediateursEtAidantsViewModel,
+    tableauFragilite,
+  } = props
+  const etatAccompagnements = useAccompagnementsRealises(sourceAccompagnements(props))
+  const onglets: Array<OngletChiffresCles> = [
+    {
+      contenu: <TableauAccompagnementsRealises etat={etatAccompagnements} />,
+      titre: 'Accompagnements des 6 derniers mois',
+    },
+  ]
+  if (tableauFragilite !== undefined) {
+    onglets.unshift({ contenu: tableauFragilite, titre: 'Indice de fragilité numérique' })
   }
 
   return (
@@ -66,8 +77,13 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
           <li>
             <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
           </li>
-          <li>{accompagnements}</li>
+          <li>
+            <AccompagnementsRealisesView etat={etatAccompagnements} />
+          </li>
         </ul>
+      </div>
+      <div className="fr-mt-2w">
+        <ChiffresClesEnTableau id="chiffres-cles-etat-des-lieux" onglets={onglets} />
       </div>
     </section>
   )
@@ -83,4 +99,16 @@ type EtatDesLieuxProps = (
     carte: ReactElement
     lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
     mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
+    // Données de la carte en tableau, dans les chiffres clés ; absent quand le bloc n'a pas de carte
+    tableauFragilite?: ReactElement
   }>
+
+function sourceAccompagnements(props: EtatDesLieuxProps): SourceAccompagnements {
+  if ('accompagnementsTerritoire' in props) {
+    return { territoire: props.accompagnementsTerritoire }
+  }
+  if ('accompagnementsStructureId' in props) {
+    return { structureId: props.accompagnementsStructureId }
+  }
+  return { promesse: props.accompagnementsRealisesPromise }
+}

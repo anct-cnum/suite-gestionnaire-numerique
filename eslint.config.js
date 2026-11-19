@@ -130,6 +130,27 @@ export default [
               message: "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases.",
             },
             {
+              target: ['src/{domain,use-cases,gateways,presenters,components}/mesure-impact/**'],
+              from: ['src/{domain,use-cases,gateways,presenters,components}/**'],
+              except: [
+                '**/src/*/mesure-impact/**',
+                '**/src/*/shared/**',
+                '**/src/use-cases/CommandHandler.ts',
+                '**/src/use-cases/QueryHandler.ts',
+              ],
+              message:
+                "Le contexte Mesure d'impact est autonome : il ne dépend que de lui-même et des éléments partagés (ADR-007).",
+            },
+            {
+              target: [
+                'src/{domain,use-cases,gateways,presenters,components}/!(mesure-impact)',
+                'src/{domain,use-cases,gateways,presenters,components}/!(mesure-impact)/**',
+              ],
+              from: ['src/{domain,use-cases,gateways,presenters,components}/mesure-impact/**'],
+              message:
+                "Le contexte Mesure d'impact est autonome : le reste de l'application ne dépend pas de lui (ADR-007).",
+            },
+            {
               target: ['src/presenters/**[^test].ts'],
               from: ['src', 'node_modules'],
               except: ['use-cases', 'presenters/shared', 'shared'],

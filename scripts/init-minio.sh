@@ -12,7 +12,7 @@ mc alias set local http://127.0.0.1:9000 minioadmin minioadmin
 
 # Créer le bucket
 echo "Creating S3 bucket..."
-mc mb local/min-bucket
+mc mb --ignore-existing local/min-bucket
 
 # Configurer les permissions du bucket
 echo "Setting bucket policy..."

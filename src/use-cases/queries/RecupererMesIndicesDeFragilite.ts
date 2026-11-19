@@ -12,6 +12,7 @@ export interface IndicesLoader {
 export type CommuneReadModel = Readonly<{
   codeInsee: string
   ifn: null | number
+  nom?: string
 }>
 
 export type DepartementsReadModel = Readonly<{
@@ -27,11 +28,13 @@ export type DepartementsReadModel = Readonly<{
 
 export type DepartementIfnReadModel = Readonly<{
   codeDepartement: string
-  ifn: number
+  ifn: null | number
+  nom?: string
 }>
 
 type DepartementReadModel = Readonly<{
   codeDepartement: string
-  ifn: number
+  ifn: null | number
   indiceConfiance: null | string
+  nom?: string
 }>

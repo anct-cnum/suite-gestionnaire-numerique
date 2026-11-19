@@ -7,7 +7,11 @@ import { LOCALE_CARTE_FR, rendreCanevasMuet } from './accessibiliteCarte'
 import BoutonsZoom from './BoutonsZoom'
 import Legend from './Legend'
 import styles from './Map.module.css'
-import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
+import {
+  CommuneFragilite,
+  COULEUR_DONNEE_NON_DISPONIBLE,
+  DepartementFragilite,
+} from '@/presenters/tableauDeBord/indicesPresenter'
 
 const COULEUR_FOND_CLAIR = '#f5f5fe'
 const COULEUR_FOND_SOMBRE = '#1b1b35'
@@ -309,7 +313,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
               `
               <div class="fr-text--lg">
                 <div class="fr-text--bold fr-mb-1w">${feature.properties.nom}</div>
-                ${zone ? `<div class="color-blue-france">Indice : ${indiceDeZone(zone)}/10</div>` : ''}
+                ${zone ? `<div class="color-blue-france">Indice : ${libelleIndice(zone)}</div>` : ''}
               </div>
             `
             )
@@ -349,22 +353,30 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
   }, [territoire, fragilite])
 
   return (
-    <div className={styles.mapWrapper} data-testid="carte-wrapper">
-      <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
-      {carteCreee ? (
-        <BoutonsZoom
-          onDezoomer={() => {
-            map.current?.zoomOut()
-          }}
-          onZoomer={() => {
-            map.current?.zoomIn()
-          }}
-        />
-      ) : null}
-      <div className={styles.legendWrapper} data-testid="legend-wrapper" style={{ width: '90%' }}>
+    <>
+      {/* Hauteur minimale : les communes ne sont dans les tuiles qu'à partir du zoom 8, atteint au cadrage
+          d'un département à partir d'environ 500 px de haut. La légende est sous la carte, pas dessus. */}
+      <div
+        className={styles.mapWrapper}
+        data-testid="carte-wrapper"
+        style={{ flex: 1, height: 'auto', minHeight: '34rem' }}
+      >
+        <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
+        {carteCreee ? (
+          <BoutonsZoom
+            onDezoomer={() => {
+              map.current?.zoomOut()
+            }}
+            onZoomer={() => {
+              map.current?.zoomIn()
+            }}
+          />
+        ) : null}
+      </div>
+      <div data-testid="legend-wrapper">
         <Legend />
       </div>
-    </div>
+    </>
   )
 }
 
@@ -389,8 +401,9 @@ function codeDeZone(zone: CommuneFragilite | DepartementFragilite): string {
   return 'codeInsee' in zone ? zone.codeInsee : zone.codeDepartement
 }
 
-function indiceDeZone(zone: CommuneFragilite | DepartementFragilite): number {
-  return 'indice' in zone ? zone.indice : zone.score
+function libelleIndice(zone: CommuneFragilite | DepartementFragilite): string {
+  const indice = 'indice' in zone ? zone.indice : zone.score
+  return indice === null ? zone.indiceAffiche : `${zone.indiceAffiche}/10`
 }
 
 function couleursParCode(
@@ -400,7 +413,7 @@ function couleursParCode(
     'match',
     ['get', 'code'],
     ...fragilite.flatMap((zone) => [codeDeZone(zone), zone.couleur]),
-    '#ffffff',
+    COULEUR_DONNEE_NON_DISPONIBLE,
   ] as unknown as DataDrivenPropertyValueSpecification<string>
 }
 
