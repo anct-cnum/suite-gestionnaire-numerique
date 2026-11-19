@@ -1,4 +1,5 @@
-import { dateLongue, pluriel } from './format'
+import { filtresEnParametres } from './filtresDesResultats'
+import { dateLongue, pluriel, pourcentage } from './format'
 import { ResultatsReadModel } from '@/use-cases/mesure-impact/RecupererLesResultats'
 
 // Pourcentages arrondis à l'unité, rapportés à la base de chaque question (maquette 08c)
@@ -36,6 +37,7 @@ export function resultatsPresenter(readModel: ResultatsReadModel): ResultatsView
     },
     introduction: `${campagne.nom}, collecte commencée le ${dateLongue(campagne.ouverture)}.`,
     lienCampagne: `/mesure-impact/${campagne.identifiantPublic}`,
+    lienCsv: lienDuCsv(campagne.identifiantPublic, filtres),
     onglets: ONGLETS.map(({ id, libelle }) => ({
       id,
       libelle,
@@ -104,6 +106,8 @@ export type ResultatsViewModel = Readonly<{
   filtres: Readonly<{ canal: Filtre; codePostal: Filtre; mois: Filtre }>
   introduction: string
   lienCampagne: string
+  // Export des résultats affichés : mêmes filtres
+  lienCsv: string
   onglets: ReadonlyArray<Readonly<{ id: Partie; libelle: string; questions: ReadonlyArray<QuestionViewModel> }>>
   titre: string
   titreFilAriane: string
@@ -175,6 +179,12 @@ function baseDeLaRepartition(question: Extract<ResultatQuestion, { type: 'repart
   return `Base : ${repondants(question.base)}${condition}${multiple}`
 }
 
+function lienDuCsv(identifiantPublic: string, filtres: ResultatsReadModel['filtres']): string {
+  const parametres = new URLSearchParams(filtresEnParametres(filtres).map(([nom, valeur]) => [nom, valeur]))
+  const recherche = parametres.size === 0 ? '' : `?${parametres.toString()}`
+  return `/mesure-impact/${identifiantPublic}/resultats/csv${recherche}`
+}
+
 function libelleDuNiveau(niveau: string, index: number, nombre: number, poles: Poles): string {
   if (index === 0) {
     return `${niveau} · ${poles.minimum}`
@@ -194,10 +204,6 @@ function libelleDuMois(mois: string): string {
 
 function part({ base, nombre }: Readonly<{ base: number; nombre: number }>): string {
   return base === 0 ? '–' : `${pourcentage(nombre, base)} %`
-}
-
-function pourcentage(nombre: number, base: number): number {
-  return base === 0 ? 0 : Math.round((nombre * 100) / base)
 }
 
 function points(ecart: number): string {

@@ -12,6 +12,7 @@ describe('résultats d’une campagne de mesure d’impact', () => {
     expect(viewModel.titre).toBe('Résultats · Sicoval')
     expect(viewModel.introduction).toBe('Pilote Sicoval 2026, collecte commencée le 16 novembre 2026.')
     expect(viewModel.lienCampagne).toBe('/mesure-impact/sicoval')
+    expect(viewModel.lienCsv).toBe('/mesure-impact/sicoval/resultats/csv?mois=2026-11&canal=papier')
     expect(viewModel.total).toBe('Total : 148 réponses')
     expect(viewModel.filtres).toStrictEqual({
       canal: {
@@ -40,6 +41,14 @@ describe('résultats d’une campagne de mesure d’impact', () => {
         valeur: '2026-11',
       },
     })
+  })
+
+  it('sans filtre, le lien du CSV porte sur toute la campagne', () => {
+    // WHEN
+    const viewModel = resultatsPresenter(readModel)
+
+    // THEN
+    expect(viewModel.lienCsv).toBe('/mesure-impact/sicoval/resultats/csv')
   })
 
   it('présente les chiffres clés en pourcentage, ou un tiret sans réponse', () => {
@@ -281,6 +290,7 @@ const readModel: ResultatsReadModel = {
         type: 'grille',
       },
     ],
+    textesLibres: [],
     total: 148,
   },
 }

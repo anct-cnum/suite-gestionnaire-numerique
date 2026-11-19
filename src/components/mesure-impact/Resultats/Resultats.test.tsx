@@ -34,6 +34,16 @@ describe('résultats d’une campagne de mesure d’impact', () => {
     expect(within(formulaire).getByRole('button', { name: 'Afficher les résultats' })).toBeInTheDocument()
   })
 
+  it('propose de télécharger en CSV les résultats affichés, avec leurs filtres', () => {
+    // WHEN
+    render(<Resultats viewModel={viewModel} />)
+
+    // THEN
+    const lien = screen.getByRole('link', { name: 'Télécharger les données CSV' })
+    expect(lien).toHaveAttribute('href', '/mesure-impact/sicoval/resultats/csv?canal=papier')
+    expect(lien).toHaveAttribute('download')
+  })
+
   it('range les questions dans des onglets, le bilan ouvert par défaut', () => {
     // WHEN
     render(<Resultats viewModel={viewModel} />)
@@ -106,6 +116,7 @@ const viewModel: ResultatsViewModel = {
   },
   introduction: 'Pilote, collecte commencée le 16 novembre 2026.',
   lienCampagne: '/mesure-impact/sicoval',
+  lienCsv: '/mesure-impact/sicoval/resultats/csv?canal=papier',
   onglets: [
     {
       id: 'bilan',

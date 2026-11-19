@@ -8,7 +8,7 @@ import { QuestionViewModel, ResultatsViewModel } from '@/presenters/mesure-impac
 // Résultats de la campagne (maquette 08c). Les filtres rechargent la page : le calcul se fait côté serveur.
 // Le changement d'onglet est géré par le JS du DSFR, comme pour tout onglet canonique.
 export default function Resultats({ viewModel }: Props): ReactElement {
-  const { chiffresCles, filtres, introduction, onglets, titre, total } = viewModel
+  const { chiffresCles, filtres, introduction, lienCsv, onglets, titre, total } = viewModel
   const idFormulaire = useId()
 
   return (
@@ -47,6 +47,11 @@ export default function Resultats({ viewModel }: Props): ReactElement {
         </button>
       </form>
       <h2 className="fr-h4">{total}</h2>
+      <p>
+        <a className="fr-link fr-link--download" download href={lienCsv}>
+          Télécharger les données <span className="fr-link__detail">CSV</span>
+        </a>
+      </p>
       <ul aria-label="Chiffres clés" className="fr-grid-row fr-grid-row--gutters fr-raw-list fr-mb-4w">
         {chiffresCles.map(({ libelle, valeur }) => (
           <li className="fr-col-12 fr-col-md-4" key={libelle}>
