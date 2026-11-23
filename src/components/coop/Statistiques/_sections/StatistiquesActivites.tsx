@@ -1,8 +1,7 @@
 'use client'
 
 import Button from '@codegouvfr/react-dsfr/Button'
-import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
-import { Fragment, useState } from 'react'
+import { ReactNode } from 'react'
 import { AccompagnementPieChart } from '../_components/AccompagnementPieChart'
 import { QuantifiedShareList } from '../_components/QuantifiedShareList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
@@ -18,8 +17,6 @@ import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../t
 import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
 import styles from './StatistiquesActivites.module.css'
 
-type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
-
 const desc = ({ count: countA }: { count: number }, { count: countB }: { count: number }) => countB - countA
 
 export const StatistiquesActivites = ({
@@ -34,38 +31,10 @@ export const StatistiquesActivites = ({
   niveauTitre?: NiveauTitreSection
 }) => {
   const { bloc: TitreBloc, section: TitreSection } = niveauxDeTitre(niveauTitre)
-  const [accompagnementCategory, setAccompagnementCategory] = useState<AccompagnementCategory>('thematiques')
-
-  const segmentMediationNumerique = {
-    label: 'Médiation numérique',
-    nativeInputProps: {
-      checked: accompagnementCategory === 'thematiques',
-      onChange: () => setAccompagnementCategory('thematiques'),
-    },
-  }
-  const segmentDemarches = {
-    label: 'Démarches administratives',
-    nativeInputProps: {
-      checked: accompagnementCategory === 'demarches',
-      onChange: () => setAccompagnementCategory('demarches'),
-    },
-  }
-  const segmentTags = {
-    label: (
-      <>
-        <span className="ri-price-tag-3-line" aria-hidden />
-        &ensp;Tags spécifiques
-      </>
-    ),
-    nativeInputProps: {
-      checked: accompagnementCategory === 'tags',
-      onChange: () => setAccompagnementCategory('tags'),
-    },
-  }
-
   const accompagnementCategories = [
     {
       category: 'thematiques',
+      onglet: 'Médiation numérique' as ReactNode,
       title: 'Thématiques des accompagnements de médiation numérique',
       description:
         "Thématiques sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques.",
@@ -75,6 +44,7 @@ export const StatistiquesActivites = ({
     },
     {
       category: 'demarches',
+      onglet: 'Démarches administratives' as ReactNode,
       title: 'Thématiques des accompagnements de démarches administratives',
       description:
         "Thématiques des démarches administratives sélectionnées lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs thématiques administratives.",
@@ -82,12 +52,18 @@ export const StatistiquesActivites = ({
       colors: thematiquesAccompagnementColors,
       limite: undefined,
     },
-    // Tags absents (vue France) : ni la catégorie ni le segment ne sont rendus
+    // Tags absents (vue France) : ni la catégorie ni son onglet ne sont rendus
     ...(activites.tags === undefined
       ? []
       : [
           {
             category: 'tags',
+            onglet: (
+              <>
+                <span className="ri-price-tag-3-line" aria-hidden />
+                &ensp;Tags spécifiques
+              </>
+            ),
             title: 'Tags spécifiques',
             description:
               "Tags spécifiques sélectionnés lors de l'enregistrement d'un accompagnement. À noter : un accompagnement peut avoir plusieurs tags.",
@@ -125,50 +101,59 @@ export const StatistiquesActivites = ({
         ))}
       </div>
       <div className="fr-border fr-p-2w fr-p-md-4w fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16">
-        <div className="fr-flex">
-          <SegmentedControl
-            className={`fr-md-col fr-col-12 fr-ml-auto ${styles.segmentsQuiSeReplient}`}
-            hideLegend
-            legend="Bascule entre les thématiques"
-            segments={
-              activites.tags === undefined
-                ? [segmentMediationNumerique, segmentDemarches]
-                : [segmentMediationNumerique, segmentDemarches, segmentTags]
-            }
-          />
+        {/* #2352 (RGAA 7.1) : onglets DSFR canoniques (motif ARIA Tabs, activation automatique), gérés par le JS du DSFR */}
+        <div className="fr-tabs">
+          <ul aria-label="Affichage des thématiques des accompagnements" className="fr-tabs__list" role="tablist">
+            {accompagnementCategories.map(({ category, onglet }, index) => (
+              <li key={category} role="presentation">
+                <button
+                  aria-controls={`accompagnements-${category}-panneau`}
+                  aria-selected={index === 0}
+                  className="fr-tabs__tab"
+                  id={`accompagnements-${category}-onglet`}
+                  role="tab"
+                  tabIndex={index === 0 ? 0 : -1}
+                  type="button"
+                >
+                  {onglet}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {accompagnementCategories.map(({ category, title, description, items, colors, limite }, index) => (
+            <div
+              aria-label={title}
+              className={`fr-tabs__panel${index === 0 ? ' fr-tabs__panel--selected' : ''}`}
+              id={`accompagnements-${category}-panneau`}
+              key={category}
+              role="tabpanel"
+              tabIndex={0}
+            >
+              <div className="fr-flex fr-align-items-center fr-mb-6v">
+                <TitreBloc className="fr-text--md fr-mb-0">{title}</TitreBloc>
+                <Button
+                  className="fr-px-1v fr-ml-1v"
+                  title={`Plus d'information à propos des ${title.toLowerCase()}`}
+                  priority="tertiary no outline"
+                  size="small"
+                  type="button"
+                  aria-describedby={`tooltip-accompagnement-${category}`}
+                >
+                  <span className="ri-information-line fr-text--lg" aria-hidden />
+                </Button>
+                <span
+                  className="fr-tooltip fr-placement"
+                  id={`tooltip-accompagnement-${category}`}
+                  role="tooltip"
+                  aria-hidden
+                >
+                  {description}
+                </span>
+              </div>
+              <QuantifiedShareList colors={colors} limit={limite} quantifiedShares={items} tooltipKey={category} />
+            </div>
+          ))}
         </div>
-        <hr className="fr-separator-8v" />
-        {accompagnementCategories.map(
-          ({ category, title, description, items, colors, limite }) =>
-            category === accompagnementCategory && (
-              <Fragment key={category}>
-                <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
-                  <div className="fr-mb-0 fr-flex fr-align-items-center">
-                    <TitreBloc className="fr-text--md fr-mb-0">{title}</TitreBloc>
-                    <Button
-                      className="fr-px-1v fr-ml-1v"
-                      title={`Plus d'information à propos des ${title.toLowerCase()}`}
-                      priority="tertiary no outline"
-                      size="small"
-                      type="button"
-                      aria-describedby={`tooltip-accompagnement-${category}`}
-                    >
-                      <span className="ri-information-line fr-text--lg" aria-hidden />
-                    </Button>
-                    <span
-                      className="fr-tooltip fr-placement"
-                      id={`tooltip-accompagnement-${category}`}
-                      role="tooltip"
-                      aria-hidden
-                    >
-                      {description}
-                    </span>
-                  </div>
-                </div>
-                <QuantifiedShareList colors={colors} limit={limite} quantifiedShares={items} tooltipKey={category} />
-              </Fragment>
-            )
-        )}
       </div>
       <div className="fr-border fr-p-4v fr-p-md-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">

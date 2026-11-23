@@ -1,8 +1,6 @@
 'use client'
 
 import Button from '@codegouvfr/react-dsfr/Button'
-import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
-import { useState } from 'react'
 import { AccompagnementBarChart } from '../_components/AccompagnementBarChart'
 import type { AccompagnementCountByPeriod, AccompagnementsStats, TableauDeDonneesViewModel } from '../types'
 import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
@@ -24,7 +22,22 @@ export const StatistiquesGenerales = ({
   niveauTitre?: NiveauTitreSection
 }) => {
   const { bloc: TitreBloc, section: TitreSection, tableau: niveauTitreTableau } = niveauxDeTitre(niveauTitre)
-  const [isAccompagnementCountByMonth, setIsAccompagnementCountByMonth] = useState(true)
+  const periodes = [
+    {
+      accompagnements: accompagnementsParMois,
+      id: 'accompagnements-par-mois',
+      nomDuPanneau: 'Nombre d’accompagnements par mois',
+      onglet: 'Par mois',
+      tableau: tableauAccompagnementsParMois,
+    },
+    {
+      accompagnements: accompagnementsParJour,
+      id: 'accompagnements-par-jour',
+      nomDuPanneau: 'Nombre d’accompagnements par jour',
+      onglet: 'Par jour',
+      tableau: tableauAccompagnementsParJour,
+    },
+  ]
 
   return (
     <div>
@@ -134,64 +147,66 @@ export const StatistiquesGenerales = ({
         </div>
         {/* #2251 : fr-min-width-0 : le tableau défile dans son conteneur au lieu d'élargir la colonne en mobile */}
         <div className="fr-col fr-min-width-0 fr-border fr-pt-6v fr-pb-4v fr-px-4v fr-px-md-8v fr-border-radius--16 fr-flex fr-direction-column">
-          <div className="fr-mb-3w fr-flex fr-flex-wrap fr-justify-content-space-between fr-align-items-center fr-flex-gap-2v">
-            <div className="fr-mb-0 fr-flex fr-align-items-center">
-              <TitreBloc className="fr-text--lg fr-mb-0">Nombre d'accompagnements</TitreBloc>
-              <Button
-                className="fr-px-1v fr-ml-1v"
-                title="Plus d'information à propos du nombre d'accompagnements"
-                priority="tertiary no outline"
-                size="small"
-                type="button"
-                aria-describedby="tooltip-nombre-accompagnements"
+          <div className="fr-mb-3w fr-flex fr-align-items-center">
+            <TitreBloc className="fr-text--lg fr-mb-0">Nombre d'accompagnements</TitreBloc>
+            <Button
+              className="fr-px-1v fr-ml-1v"
+              title="Plus d'information à propos du nombre d'accompagnements"
+              priority="tertiary no outline"
+              size="small"
+              type="button"
+              aria-describedby="tooltip-nombre-accompagnements"
+            >
+              <span className="ri-information-line fr-text--lg" aria-hidden />
+            </Button>
+            <span className="fr-tooltip fr-placement" id="tooltip-nombre-accompagnements" role="tooltip" aria-hidden>
+              Le nombre d'accompagnements correspond à la somme des 2 types d'activités enregistrées&nbsp;:
+              accompagnement individuel et atelier collectif.
+              <br />
+              <br />À noter&nbsp;: Les ateliers collectifs comptent pour 1 accompagnement par participant. Ex&nbsp;: Un
+              atelier collectif avec 10 participants compte pour 10 accompagnements.
+            </span>
+          </div>
+          {/* #2352 (RGAA 7.1) : onglets DSFR canoniques (motif ARIA Tabs, activation automatique), gérés par le JS
+              du DSFR. Chaque panneau porte son histogramme et son tableau : le tableau suit toujours l'histogramme */}
+          <div className="fr-tabs fr-flex-grow-1">
+            <ul aria-label="Affichage des données d'accompagnement" className="fr-tabs__list" role="tablist">
+              {periodes.map(({ id, onglet }, index) => (
+                <li key={id} role="presentation">
+                  <button
+                    aria-controls={`${id}-panneau`}
+                    aria-selected={index === 0}
+                    className="fr-tabs__tab"
+                    id={`${id}-onglet`}
+                    role="tab"
+                    tabIndex={index === 0 ? 0 : -1}
+                    type="button"
+                  >
+                    {onglet}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {periodes.map(({ accompagnements, id, nomDuPanneau, tableau }, index) => (
+              <div
+                aria-label={nomDuPanneau}
+                className={`fr-tabs__panel${index === 0 ? ' fr-tabs__panel--selected' : ''}`}
+                id={`${id}-panneau`}
+                key={id}
+                role="tabpanel"
+                tabIndex={0}
               >
-                <span className="ri-information-line fr-text--lg" aria-hidden />
-              </Button>
-              <span className="fr-tooltip fr-placement" id="tooltip-nombre-accompagnements" role="tooltip" aria-hidden>
-                Le nombre d'accompagnements correspond à la somme des 2 types d'activités enregistrées&nbsp;:
-                accompagnement individuel et atelier collectif.
-                <br />
-                <br />À noter&nbsp;: Les ateliers collectifs comptent pour 1 accompagnement par participant. Ex&nbsp;:
-                Un atelier collectif avec 10 participants compte pour 10 accompagnements.
-              </span>
-            </div>
-            <SegmentedControl
-              className="fr-ml-auto"
-              hideLegend
-              small
-              legend="Afficher le nombre d’accompagnements par mois ou par jour"
-              segments={[
-                {
-                  label: 'Par mois',
-                  nativeInputProps: {
-                    checked: isAccompagnementCountByMonth,
-                    onChange: () => setIsAccompagnementCountByMonth(true),
-                  },
-                },
-                {
-                  label: 'Par jour',
-                  nativeInputProps: {
-                    checked: !isAccompagnementCountByMonth,
-                    onChange: () => setIsAccompagnementCountByMonth(false),
-                  },
-                },
-              ]}
-            />
+                {/* MIN (#2246, #2352) : hauteur explicite, sans elle l'histogramme (hauteur 100 %) a une hauteur nulle
+                    et disparaît ; 11rem est proche de son ancienne hauteur en desktop (182 px). Elle l'empêche aussi
+                    d'être écrasé quand on ouvre le tableau de données (#2251) */}
+                {/* #2251 : histogramme masqué aux aides techniques, ses valeurs exactes sont dans le tableau dessous */}
+                <div aria-hidden style={{ height: '11rem' }}>
+                  <AccompagnementBarChart data={accompagnements} />
+                </div>
+                <DonneesEnTableau className="fr-mt-2w" niveauTitre={niveauTitreTableau} {...tableau} />
+              </div>
+            ))}
           </div>
-          {/* MIN (#2246) : hauteur minimale, sans elle l'histogramme a une hauteur nulle en mobile et disparaît.
-              11rem reste sous sa hauteur en desktop (182 px), qui ne change pas ; elle l'empêche aussi d'être écrasé
-              quand on ouvre le tableau de données (#2251) */}
-          {/* #2251 : histogramme masqué aux aides techniques, ses valeurs exactes sont dans le tableau ci-dessous */}
-          <div aria-hidden className="fr-flex-grow-1" style={{ minHeight: '11rem' }}>
-            <AccompagnementBarChart
-              data={isAccompagnementCountByMonth ? accompagnementsParMois : accompagnementsParJour}
-            />
-          </div>
-          <DonneesEnTableau
-            className="fr-mt-2w"
-            niveauTitre={niveauTitreTableau}
-            {...(isAccompagnementCountByMonth ? tableauAccompagnementsParMois : tableauAccompagnementsParJour)}
-          />
         </div>
       </div>
     </div>

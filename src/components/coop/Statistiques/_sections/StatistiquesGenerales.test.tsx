@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { StatistiquesGenerales } from './StatistiquesGenerales'
@@ -11,23 +10,48 @@ describe('statistiques générales sur les accompagnements', () => {
 
     // THEN
     expect(screen.queryByRole('application', { hidden: true })).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Afficher les données sous forme de tableau' })).toBeInTheDocument()
-    expect(screen.getByRole('table', { hidden: true, name: 'Nombre d’accompagnements par mois' })).toBeInTheDocument()
+    const panneauParMois = screen.getByRole('tabpanel', { name: 'Nombre d’accompagnements par mois' })
     expect(
-      screen.getByRole('group', { name: 'Afficher le nombre d’accompagnements par mois ou par jour' })
+      within(panneauParMois).getByRole('button', { name: 'Afficher les données sous forme de tableau' })
+    ).toBeInTheDocument()
+    expect(
+      within(panneauParMois).getByRole('table', { hidden: true, name: 'Nombre d’accompagnements par mois' })
     ).toBeInTheDocument()
   })
 
-  it('quand je choisis « Par jour », alors le tableau suit l’histogramme', async () => {
-    // GIVEN
+  it('le choix « Par mois » / « Par jour » est un jeu d’onglets DSFR, chaque onglet pilotant son panneau (RGAA 7.1)', () => {
+    // WHEN
     afficherLesStatistiques()
 
+    // THEN
+    expect(screen.queryByRole('group')).not.toBeInTheDocument()
+    const listeOnglets = screen.getByRole('tablist', { name: "Affichage des données d'accompagnement" })
+    expect(listeOnglets).toHaveClass('fr-tabs__list')
+    const ongletParMois = within(listeOnglets).getByRole('tab', { name: 'Par mois', selected: true })
+    const ongletParJour = within(listeOnglets).getByRole('tab', { name: 'Par jour', selected: false })
+    expect(ongletParMois).toHaveAttribute('tabindex', '0')
+    expect(ongletParJour).toHaveAttribute('tabindex', '-1')
+
+    const panneauParMois = screen.getByRole('tabpanel', { name: 'Nombre d’accompagnements par mois' })
+    expect(ongletParMois).toHaveAttribute('aria-controls', panneauParMois.id)
+    expect(panneauParMois).toHaveAttribute('tabindex', '0')
+    expect(panneauParMois).toHaveClass('fr-tabs__panel fr-tabs__panel--selected')
+
+    const panneauParJour = screen.getByRole('tabpanel', { name: 'Nombre d’accompagnements par jour' })
+    expect(ongletParJour).toHaveAttribute('aria-controls', panneauParJour.id)
+    expect(panneauParJour).toHaveAttribute('tabindex', '0')
+    expect(panneauParJour).toHaveClass('fr-tabs__panel')
+    expect(panneauParJour).not.toHaveClass('fr-tabs__panel--selected')
+  })
+
+  it('le panneau « Par jour » porte le tableau des accompagnements par jour, synchronisé avec son histogramme', () => {
     // WHEN
-    await userEvent.click(screen.getByLabelText('Par jour'))
+    afficherLesStatistiques()
 
     // THEN
+    const panneauParJour = screen.getByRole('tabpanel', { name: 'Nombre d’accompagnements par jour' })
     expect(
-      screen.getByRole('table', {
+      within(panneauParJour).getByRole('table', {
         hidden: true,
         name: 'Nombre d’accompagnements par jour, 30 derniers jours de la période',
       })
