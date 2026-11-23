@@ -15,7 +15,7 @@ import {
   thematiquesAccompagnementColors,
 } from '../colors'
 import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
-import { numberToString, sPluriel } from '../utils'
+import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
 import styles from './StatistiquesActivites.module.css'
 
 type AccompagnementCategory = 'thematiques' | 'demarches' | 'tags'
@@ -25,12 +25,15 @@ const desc = ({ count: countA }: { count: number }, { count: countB }: { count: 
 export const StatistiquesActivites = ({
   activites,
   totalCounts,
+  niveauTitre = 'h3',
 }: {
   activites: ActivitesStats
   structures?: QuantifiedShare[]
   communes?: QuantifiedShare[]
   totalCounts: AccompagnementsStats
+  niveauTitre?: NiveauTitreSection
 }) => {
+  const { bloc: TitreBloc, section: TitreSection } = niveauxDeTitre(niveauTitre)
   const [accompagnementCategory, setAccompagnementCategory] = useState<AccompagnementCategory>('thematiques')
 
   const segmentMediationNumerique = {
@@ -98,10 +101,10 @@ export const StatistiquesActivites = ({
 
   return (
     <>
-      <h3 className="fr-h5 fr-text-mention--grey">
+      <TitreSection className="fr-h5 fr-text-mention--grey">
         <span className="ri-service-line fr-mr-1w" aria-hidden />
         Statistiques sur les accompagnements
-      </h3>
+      </TitreSection>
       <div className="fr-background-alt--blue-france fr-px-4v fr-px-md-8v fr-py-6v fr-mb-3w fr-border-radius--16 fr-grid-row fr-flex-gap-12v fr-position-relative">
         {activites.typeActivites.map(({ count, proportion, value }) => (
           <StatistiqueAccompagnement
@@ -141,7 +144,7 @@ export const StatistiquesActivites = ({
               <Fragment key={category}>
                 <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
                   <div className="fr-mb-0 fr-flex fr-align-items-center">
-                    <h4 className="fr-text--md fr-mb-0">{title}</h4>
+                    <TitreBloc className="fr-text--md fr-mb-0">{title}</TitreBloc>
                     <Button
                       className="fr-px-1v fr-ml-1v"
                       title={`Plus d'information à propos des ${title.toLowerCase()}`}
@@ -169,7 +172,7 @@ export const StatistiquesActivites = ({
       </div>
       <div className="fr-border fr-p-4v fr-p-md-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
-          <h4 className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</h4>
+          <TitreBloc className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</TitreBloc>
           <Button
             className="fr-px-1v fr-ml-1v"
             title="Plus d'information à propos du matériel utilisé"
@@ -194,7 +197,7 @@ export const StatistiquesActivites = ({
       <div className="fr-border fr-p-2w fr-p-md-4w fr-background-default--grey fr-border-radius--16 fr-position-relative">
         <div className="fr-flex fr-flex-wrap fr-flex-gap-16v">
           <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
-            <h4 className="fr-text--md fr-mb-4v">Canaux des accompagnements</h4>
+            <TitreBloc className="fr-text--md fr-mb-4v">Canaux des accompagnements</TitreBloc>
             <div className={`fr-flex fr-align-items-center ${styles.camembertEtLegende}`}>
               <AccompagnementPieChart
                 className="fr-flex-shrink-0"
@@ -207,7 +210,7 @@ export const StatistiquesActivites = ({
             </div>
           </div>
           <div className="fr-flex-grow-1 fr-flex-basis-full fr-flex-basis-lg-0">
-            <h4 className="fr-text--md fr-mb-4v">Durée des accompagnements</h4>
+            <TitreBloc className="fr-text--md fr-mb-4v">Durée des accompagnements</TitreBloc>
             <div className={`fr-flex fr-align-items-center ${styles.camembertEtLegende}`}>
               <AccompagnementPieChart
                 className="fr-flex-shrink-0"

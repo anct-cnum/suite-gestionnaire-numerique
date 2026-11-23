@@ -5,7 +5,7 @@ import { SegmentedControl } from '@codegouvfr/react-dsfr/SegmentedControl'
 import { useState } from 'react'
 import { AccompagnementBarChart } from '../_components/AccompagnementBarChart'
 import type { AccompagnementCountByPeriod, AccompagnementsStats, TableauDeDonneesViewModel } from '../types'
-import { numberToString, sPluriel } from '../utils'
+import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
 import DonneesEnTableau from '@/components/shared/DonneesEnTableau/DonneesEnTableau'
 
 export const StatistiquesGenerales = ({
@@ -14,22 +14,25 @@ export const StatistiquesGenerales = ({
   accompagnementsParJour,
   tableauAccompagnementsParJour,
   tableauAccompagnementsParMois,
+  niveauTitre = 'h3',
 }: {
   accompagnementsParJour: AccompagnementCountByPeriod
   accompagnementsParMois: AccompagnementCountByPeriod
   tableauAccompagnementsParJour: TableauDeDonneesViewModel
   tableauAccompagnementsParMois: TableauDeDonneesViewModel
   totalCounts: AccompagnementsStats
+  niveauTitre?: NiveauTitreSection
 }) => {
+  const { bloc: TitreBloc, section: TitreSection, tableau: niveauTitreTableau } = niveauxDeTitre(niveauTitre)
   const [isAccompagnementCountByMonth, setIsAccompagnementCountByMonth] = useState(true)
 
   return (
     <div>
       <div className="fr-flex fr-align-items-center fr-justify-content-space-between fr-mb-6v">
-        <h3 className="fr-h5 fr-text-mention--grey fr-mb-0">
+        <TitreSection className="fr-h5 fr-text-mention--grey fr-mb-0">
           <span className="ri-line-chart-line fr-mr-1w" aria-hidden />
           Statistiques générales sur les accompagnements
-        </h3>
+        </TitreSection>
       </div>
       <div className="fr-grid-row fr-flex-gap-6v fr-background-default--grey fr-border-radius--16">
         <div className="fr-flex fr-direction-column fr-flex-gap-6v fr-col-xl-4 fr-col-12">
@@ -133,7 +136,7 @@ export const StatistiquesGenerales = ({
         <div className="fr-col fr-min-width-0 fr-border fr-pt-6v fr-pb-4v fr-px-4v fr-px-md-8v fr-border-radius--16 fr-flex fr-direction-column">
           <div className="fr-mb-3w fr-flex fr-flex-wrap fr-justify-content-space-between fr-align-items-center fr-flex-gap-2v">
             <div className="fr-mb-0 fr-flex fr-align-items-center">
-              <h4 className="fr-text--lg fr-mb-0">Nombre d'accompagnements</h4>
+              <TitreBloc className="fr-text--lg fr-mb-0">Nombre d'accompagnements</TitreBloc>
               <Button
                 className="fr-px-1v fr-ml-1v"
                 title="Plus d'information à propos du nombre d'accompagnements"
@@ -186,7 +189,7 @@ export const StatistiquesGenerales = ({
           </div>
           <DonneesEnTableau
             className="fr-mt-2w"
-            niveauTitre="h5"
+            niveauTitre={niveauTitreTableau}
             {...(isAccompagnementCountByMonth ? tableauAccompagnementsParMois : tableauAccompagnementsParJour)}
           />
         </div>

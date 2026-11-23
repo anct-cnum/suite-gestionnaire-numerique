@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import FeuilleDeRouteVitrine from './FeuilleDeRouteVitrine'
@@ -112,5 +113,45 @@ describe('feuilles de route du site vitrine', () => {
     // THEN
     expect(screen.queryByRole('heading', { name: 'Document de la feuille de route' })).toBeNull()
     expect(screen.queryByRole('link', { name: /^Télécharger/ })).toBeNull()
+  })
+
+  it('le nombre d’actions attachées est un titre de niveau 3 dans la zone de sa feuille de route (RGAA 9.1)', () => {
+    // WHEN
+    render(
+      <FeuilleDeRouteVitrine feuillesDeRouteViewModel={feuillesDeRoutePresenter(feuillesDeRouteReadModelFactory())} />
+    )
+
+    // THEN
+    const zone = screen.getByRole('region', { name: 'Feuille de route 1' })
+    const titre = within(zone).getByRole('heading', {
+      level: 3,
+      name: /^\d+ actions? attachées? à cette feuille de route$/,
+    })
+    expect(titre).toBeInTheDocument()
+  })
+
+  it('quand j’ouvre le détail d’une action, le titre du volet est de niveau 1 et nomme le volet (RGAA 9.1)', async () => {
+    // GIVEN
+    render(
+      <FeuilleDeRouteVitrine feuillesDeRouteViewModel={feuillesDeRoutePresenter(feuillesDeRouteReadModelFactory())} />
+    )
+    const zone = screen.getByRole('region', { name: 'Feuille de route 1' })
+
+    // WHEN
+    await userEvent.click(
+      within(zone).getByRole('button', { name: 'Structurer une filière de reconditionnement locale 1' })
+    )
+
+    // THEN
+    const volet = screen.getByRole('dialog', {
+      hidden: true,
+      name: 'Structurer une filière de reconditionnement locale 1',
+    })
+    const titre = within(volet).getByRole('heading', {
+      hidden: true,
+      level: 1,
+      name: 'Structurer une filière de reconditionnement locale 1',
+    })
+    expect(titre).toBeInTheDocument()
   })
 })

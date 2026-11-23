@@ -9,6 +9,7 @@ import GouvernancePref from '@/components/TableauDeBord/Gouvernance/GouvernanceP
 import NoticeInformation from '@/components/vitrine/DonneesTerritoriales/NoticeInformation'
 import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { PrismaGouvernanceTerritorialeLoader } from '@/gateways/vitrine/PrismaGouvernanceTerritorialeLoader'
+import { formatPluriel } from '@/presenters/shared/text'
 import { gouvernancesTerritorialesPresenter } from '@/presenters/vitrine/gouvernancesTerritoriales/gouvernancesTerritorialesPresenter'
 import { noticeGouvernanceDepartementalePresenter } from '@/presenters/vitrine/noticeGouvernanceDepartementalePresenter'
 import { generateTerritoireMetadata } from '@/shared/territoireMetadata'
@@ -76,9 +77,13 @@ export default async function Gouvernances({ params }: Props): Promise<ReactElem
       {/* Section statistiques - 2 cartes (Membres et Feuilles de route) */}
       <GouvernancePref gouvernanceViewModel={viewModel.gouvernanceStats} />
 
-      {/* Section listing des membres */}
+      {/* Section listing des membres : titre enfant du h2 « Gouvernances » (RGAA 9.1, #2357) */}
       <section aria-labelledby="membres-gouvernance">
-        <SectionRemplie id="membres-gouvernance" title={`${viewModel.membres.total} membres`}>
+        <SectionRemplie
+          id="membres-gouvernance"
+          niveauTitre="h3"
+          title={`${viewModel.membres.total} membre${formatPluriel(viewModel.membres.total)} de la gouvernance`}
+        >
           <MembreRempli coporteurs={viewModel.membres.coporteurs} />
         </SectionRemplie>
       </section>

@@ -10,9 +10,10 @@ export default function Legend(): ReactElement {
 
   return (
     <div className={`fr-px-2w fr-pb-1w ${styles.legende}`}>
-      <p className="fr-text--sm fr-text--bold fr-mb-1v" id={idTitre}>
+      {/* RGAA 9.1 (#2357) : la légende introduit un bloc, c'est un titre ; rendu inchangé (taille et couleur du texte) */}
+      <h3 className="fr-text--sm fr-text--bold fr-text-default--grey fr-mb-1v" id={idTitre}>
         Légende : indice de fragilité numérique, sur 10
-      </p>
+      </h3>
       <ul aria-labelledby={idTitre} className="fr-raw-list fr-grid-row fr-text--sm fr-mb-0">
         {CLASSES_FRAGILITE.map((classe) => (
           <li className={`fr-col-12 fr-col-sm-6 fr-col-md-4 ${styles.classe}`} key={classe.numero}>
