@@ -4,6 +4,11 @@
   position: relative;
 }
 
+/* Total placé dans le titre (RGAA 9.1, #2357) : sur sa propre ligne, comme lorsqu'il précédait le titre */
+.total-du-titre {
+  display: block;
+}
+
 .libelle {
   text-align: left;
 }

@@ -22,4 +22,14 @@ describe('légende de l’indice de fragilité numérique', () => {
       'Donnée non disponible',
     ])
   })
+
+  it('le libellé de la légende est un titre de niveau 3, enfant de « Indice de Fragilité numérique » (RGAA 9.1)', () => {
+    // WHEN
+    render(<Legend />)
+
+    // THEN
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Légende : indice de fragilité numérique, sur 10' })
+    ).toBeInTheDocument()
+  })
 })

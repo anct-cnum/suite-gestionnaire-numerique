@@ -35,7 +35,8 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
     <div className="fr-table fr-table--multiline fr-table--no-caption fr-mb-0">
       {/* Sans le contour gris du DSFR, comme les autres tableaux de MIN (composant Table) */}
       <div className={`fr-table__wrapper ${tableStyles['fr-table__wrapper']}`}>
-        <div aria-label="Membres de la gouvernance" className="fr-table__container" ref={cadre} role="region">
+        {/* Sans rôle « region » ni nom : le tableau porte déjà sa légende (RGAA 9.1, #2357) */}
+        <div className="fr-table__container" ref={cadre}>
           <div className="fr-table__content">
             <table>
               <caption>Membres de la gouvernance</caption>

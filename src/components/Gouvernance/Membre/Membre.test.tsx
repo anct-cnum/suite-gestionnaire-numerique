@@ -87,8 +87,7 @@ describe('membres', () => {
     afficherMembres()
 
     // THEN
-    const cadre = screen.getByRole('region', { name: 'Membres de la gouvernance' })
-    expect(cadre).toHaveAttribute('tabindex', '0')
+    expect(cadreDuTableau()).toHaveAttribute('tabindex', '0')
   })
 
   it('quand le tableau tient dans son cadre, le cadre n’ajoute pas d’arrêt de tabulation', () => {
@@ -96,10 +95,22 @@ describe('membres', () => {
     afficherMembres()
 
     // THEN
-    const cadre = screen.getByRole('region', { name: 'Membres de la gouvernance' })
-    expect(cadre).not.toHaveAttribute('tabindex')
+    expect(cadreDuTableau()).not.toHaveAttribute('tabindex')
+  })
+
+  it('le cadre du tableau n’est pas une zone nommée : le tableau porte déjà son titre (RGAA 9.1)', () => {
+    // WHEN
+    afficherMembres()
+
+    // THEN
+    expect(screen.getByRole('table', { name: 'Membres de la gouvernance' })).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Membres de la gouvernance' })).not.toBeInTheDocument()
   })
 })
+
+function cadreDuTableau(): HTMLElement | null {
+  return screen.getByRole('table', { name: 'Membres de la gouvernance' }).closest('.fr-table__container')
+}
 
 function afficherMembres(): void {
   renderComponent(
