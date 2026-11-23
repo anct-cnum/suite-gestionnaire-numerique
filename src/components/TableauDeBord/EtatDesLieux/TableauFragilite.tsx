@@ -22,16 +22,13 @@ export default function TableauFragilite({ lignes, nomColonneTerritoire, titre }
   const nombreDePages = nombreDePage(lignes.length, LIGNES_PAR_PAGE)
   const lignesAffichees = trierLignesFragilite(lignes, tri).slice((page - 1) * LIGNES_PAR_PAGE, page * LIGNES_PAR_PAGE)
 
-  function trierPar(colonne: TriFragilite['colonne']): void {
-    setTri((precedent) => ({
-      colonne,
-      sens: precedent.colonne === colonne && precedent.sens === 'ascending' ? 'descending' : 'ascending',
-    }))
-    setPage(1)
-  }
-
-  function enTeteTriable(colonne: TriFragilite['colonne'], libelle: string, libelleTri: string): ReactElement {
+  function enTeteTriable(
+    colonne: TriFragilite['colonne'],
+    libelle: string,
+    libelleTri: (sens: TriFragilite['sens']) => string
+  ): ReactElement {
     const actif = tri.colonne === colonne
+    const sensAuClic = actif && tri.sens === 'ascending' ? 'descending' : 'ascending'
     let classeTri = 'fr-btn--sort'
     if (actif) {
       classeTri = tri.sens === 'ascending' ? 'fr-btn--sort-asc' : 'fr-btn--sort-desc'
@@ -43,11 +40,12 @@ export default function TableauFragilite({ lignes, nomColonneTerritoire, titre }
           <button
             className={`fr-btn fr-btn--sm ${classeTri}`}
             onClick={() => {
-              trierPar(colonne)
+              setTri({ colonne, sens: sensAuClic })
+              setPage(1)
             }}
             type="button"
           >
-            {libelleTri}
+            {libelleTri(sensAuClic)}
           </button>
         </div>
       </th>
@@ -84,8 +82,16 @@ export default function TableauFragilite({ lignes, nomColonneTerritoire, titre }
                 <caption>{titre}</caption>
                 <thead>
                   <tr>
-                    {enTeteTriable('territoire', nomColonneTerritoire, `Trier par ${territoire}`)}
-                    {enTeteTriable('indice', 'Indice (sur 10)', 'Trier par indice')}
+                    {enTeteTriable(
+                      'territoire',
+                      nomColonneTerritoire,
+                      (sens) => `Trier par ${territoire} ${sens === 'ascending' ? 'de A à Z' : 'de Z à A'}`
+                    )}
+                    {enTeteTriable(
+                      'indice',
+                      'Indice (sur 10)',
+                      (sens) => `Trier par indice ${sens === 'ascending' ? 'croissant' : 'décroissant'}`
+                    )}
                     <th scope="col">Classe</th>
                   </tr>
                 </thead>
