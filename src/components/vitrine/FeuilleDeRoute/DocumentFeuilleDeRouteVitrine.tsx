@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './ResumeFeuilleDeRouteVitrine.module.css'
 import DocumentVide from '../../shared/DocumentVide/DocumentVide'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
@@ -19,7 +20,7 @@ export default function DocumentFeuilleDeRouteVitrine({ nomFeuilleDeRoute, piece
           <h3 className="fr-h6 color-blue-france fr-mb-1v">Document de la feuille de route</h3>
           <p className="fr-hint-text fr-mb-2w">{pieceJointe.source}</p>
           <p className="fr-mb-2w">
-            <a className="fr-link fr-link--download" download href={pieceJointe.href}>
+            <a className={`fr-link fr-link--download ${styles.lienDeTelechargement}`} download href={pieceJointe.href}>
               {`Télécharger la feuille de route « ${nomFeuilleDeRoute} »`}
               <span className="fr-link__detail">{pieceJointe.detail}</span>
             </a>
