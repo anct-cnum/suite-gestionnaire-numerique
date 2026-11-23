@@ -21,6 +21,7 @@ const MOIS_FR = [
 ] as const
 const JOURS_ABREV = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const
 const JOURS_ARIA = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'] as const
+const JOURS_COMPLETS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'] as const
 
 type DayCell = Readonly<{ date: Date; isOutside: boolean }>
 type Mois = Readonly<{ annee: number; mois: number }>
@@ -60,6 +61,13 @@ function semainsDuMois(annee: number, mois: number): ReadonlyArray<ReadonlyArray
   }
 
   return semaines
+}
+
+function bornePeriode(estDebut: boolean, estFin: boolean): string {
+  if (estDebut && estFin) return ', début et fin de la période'
+  if (estDebut) return ', début de la période'
+  if (estFin) return ', fin de la période'
+  return ''
 }
 
 function memeJour(a: Date, b: Date): boolean {
@@ -141,6 +149,8 @@ type CalendrierMoisProps = Readonly<{
   annee: number
   debut: Date | null
   fin: Date | null
+  // Le premier mois affiché porte le départ de la période, le second sa fin.
+  departOuFin: 'départ' | 'fin'
   jourTabulable: Date | null
   maxDate: Date
   minDate: Date
@@ -155,6 +165,7 @@ function CalendrierMois({
   annee,
   debut,
   fin,
+  departOuFin,
   jourTabulable,
   maxDate,
   minDate,
@@ -177,7 +188,7 @@ function CalendrierMois({
       <div className="fr-flex fr-justify-content-center">
         <div className="fr-flex fr-flex-gap-1v fr-align-items-center">
           <select
-            aria-label="Choisir le mois"
+            aria-label={`Choisir le mois de ${departOuFin} de la période`}
             className={styles.dropdown}
             onChange={(ev) => {
               onMoisChange(Number(ev.target.value))
@@ -198,7 +209,7 @@ function CalendrierMois({
             ))}
           </select>
           <select
-            aria-label="Choisir l'année"
+            aria-label={`Choisir l’année de ${departOuFin} de la période`}
             className={styles.dropdown}
             onChange={(ev) => {
               onAnneeChange(Number(ev.target.value))
@@ -220,10 +231,11 @@ function CalendrierMois({
         className="rdp-month_grid"
         role="grid"
       >
-        <thead aria-hidden="true">
+        <thead>
           <tr className="fr-flex">
             {JOURS_ABREV.map((abrev, index) => (
               <th
+                abbr={JOURS_COMPLETS[index]}
                 aria-label={JOURS_ARIA[index]}
                 className={`fr-flex fr-align-items-center fr-justify-content-center fr-text--bold fr-text--uppercase ${styles.weekday}`}
                 key={JOURS_ARIA[index]}
@@ -267,7 +279,6 @@ function CalendrierMois({
                       data-day={isoJour(jour)}
                       data-outside="true"
                       key={`outside-${isoJour(jour)}`}
-                      role="gridcell"
                     />
                   )
                 }
@@ -285,10 +296,9 @@ function CalendrierMois({
                     className={dayClasses}
                     data-day={isoJour(jour)}
                     key={isoJour(jour)}
-                    role="gridcell"
                   >
                     <button
-                      aria-label={`${estAujourdhui ? "Aujourd'hui, " : ''}${labelJour}${estSelectionne ? ', sélectionné' : ''}`}
+                      aria-label={`${estAujourdhui ? "Aujourd'hui, " : ''}${labelJour}${estSelectionne ? ', sélectionné' : ''}${bornePeriode(estDebut, estFin)}`}
                       className={styles.dayButton}
                       disabled={estDesactive}
                       onClick={() => {
@@ -394,7 +404,7 @@ export default function DateRangePicker({
   return (
     <div className={`${styles.root} fr-position-relative`} ref={rootRef} data-mode="range" data-multiple-months="true">
       <div className="fr-flex fr-flex-gap-6v">
-        <nav
+        <div
           className="fr-flex fr-justify-content-space-between fr-width-full fr-position-absolute fr-text-label--blue-france"
           style={{ pointerEvents: 'none' }}
         >
@@ -438,12 +448,13 @@ export default function DateRangePicker({
               <span aria-hidden className="ri-arrow-right-double-line ri-lg" />
             </button>
           </div>
-        </nav>
+        </div>
 
         <CalendrierMois
           annee={moisGauche.annee}
           debut={debut}
           fin={fin}
+          departOuFin="départ"
           jourTabulable={jourTabulable}
           maxDate={maxDate}
           minDate={minDate}
@@ -462,6 +473,7 @@ export default function DateRangePicker({
           annee={moisDroite.annee}
           debut={debut}
           fin={fin}
+          departOuFin="fin"
           jourTabulable={jourTabulable}
           maxDate={maxDate}
           minDate={minDate}
@@ -485,10 +497,20 @@ export default function DateRangePicker({
       >
         <hr className="fr-separator-1px fr-my-6v fr-mx-n8v" />
         <div className="fr-flex fr-flex-gap-4v fr-align-items-center fr-justify-content-end">
-          <button className="fr-btn fr-btn--secondary" onClick={onEffacer} type="button">
+          <button
+            aria-label="Effacer la période sélectionnée"
+            className="fr-btn fr-btn--secondary"
+            onClick={onEffacer}
+            type="button"
+          >
             Effacer
           </button>
-          <button className="fr-btn" disabled={debut === null || fin === null} type="submit">
+          <button
+            aria-label="Valider la période sélectionnée"
+            className="fr-btn"
+            disabled={debut === null || fin === null}
+            type="submit"
+          >
             Valider
           </button>
         </div>

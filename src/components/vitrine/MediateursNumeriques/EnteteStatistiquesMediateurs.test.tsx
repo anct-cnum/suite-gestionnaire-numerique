@@ -28,9 +28,9 @@ describe('en-tête des statistiques des médiateurs', () => {
     // GIVEN
     const { rerender } = afficherLEnTete('2026-01-01', '2026-06-30', 'Données du 1er janvier 2026 au 30 juin 2026')
     const statut = screen.getByRole('status')
-    const bouton = screen.getByRole('button', { name: '01.01.26 - 30.06.26' })
+    const bouton = screen.getByRole('button', { name: 'Période des données à afficher, 01/01/26 - 30/06/26' })
     await userEvent.click(bouton)
-    await userEvent.click(screen.getByRole('button', { name: 'Valider' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Valider la période sélectionnée' }))
 
     // WHEN : la page est rendue de nouveau avec la nouvelle période
     rerender(
@@ -44,7 +44,7 @@ describe('en-tête des statistiques des médiateurs', () => {
     // THEN
     expect(screen.getByRole('status')).toBe(statut)
     expect(statut.textContent).toBe('Données du 1er février 2026 au 31 mars 2026')
-    expect(screen.getByRole('button', { name: '01.02.26 - 31.03.26' })).toBe(bouton)
+    expect(screen.getByRole('button', { name: 'Période des données à afficher, 01/02/26 - 31/03/26' })).toBe(bouton)
     expect(bouton).toHaveFocus()
   })
 })
