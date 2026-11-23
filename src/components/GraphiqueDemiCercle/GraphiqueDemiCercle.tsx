@@ -34,8 +34,19 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
               labels={graphiqueInfos.map((item) => item.label)}
             />
           </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{indicateur}</div>
+          {/* RGAA 9.1 (#2357) : avec un titre, le total en fait partie (« 42 Lieux en territoires prioritaires ») ;
+              il reste affiché en grand au-dessus du libellé, au centre du demi-cercle */}
+          {niveauTitre === undefined ? (
+            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{indicateur}</div>
+          ) : null}
           <Libelle className="fr-text--lg font-weight-700 fr-m-0 fr-text-default--grey">
+            {niveauTitre === undefined ? null : (
+              <>
+                <span className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']} ${styles['total-du-titre']}`}>
+                  {indicateur}
+                </span>{' '}
+              </>
+            )}
             {label}
             {information === undefined ? null : (
               <Information libelle={`Plus d'information sur « ${label} »`}>

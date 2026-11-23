@@ -5,7 +5,7 @@ import LieuxInclusionVitrine from './LieuxInclusionVitrine'
 import { epochTime } from '@/shared/testHelper'
 
 describe('lieux d’inclusion du site vitrine', () => {
-  it('les titres visibles des graphiques et du bloc cartographie sont de vrais titres', () => {
+  it('les titres visibles des graphiques, total compris, et du bloc cartographie sont de vrais titres (RGAA 9.1)', () => {
     // WHEN
     render(
       <LieuxInclusionVitrine
@@ -27,12 +27,12 @@ describe('lieux d’inclusion du site vitrine', () => {
     expect(titreCartographie).toBeInTheDocument()
     const titreTerritoiresPrioritaires = screen.getByRole('heading', {
       level: 3,
-      name: 'Lieux en territoires prioritaires',
+      name: '7 Lieux en territoires prioritaires',
     })
     expect(titreTerritoiresPrioritaires).toBeInTheDocument()
     const titreLabellises = screen.getByRole('heading', {
       level: 3,
-      name: "Lieux labellisés ou habilités Plus d'information sur « Lieux labellisés ou habilités »",
+      name: "15 Lieux labellisés ou habilités Plus d'information sur « Lieux labellisés ou habilités »",
     })
     expect(titreLabellises).toBeInTheDocument()
   })
