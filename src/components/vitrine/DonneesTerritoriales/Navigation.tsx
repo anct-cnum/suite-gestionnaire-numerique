@@ -69,7 +69,7 @@ export default function Navigation(): ReactElement {
           className="fr-sidemenu__btn"
           type="button"
         >
-          Dans cette rubrique
+          Consulter les données
         </button>
         <div className="fr-collapse" id="donnees-territoriales-menu-wrapper">
           <ul className="fr-sidemenu__list">

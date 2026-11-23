@@ -21,4 +21,14 @@ describe('menu latéral des données territoriales', () => {
     const rubriqueCourante = within(menu).getByRole('link', { current: 'page' })
     expect(rubriqueCourante.textContent).toBe('Gouvernances')
   })
+
+  it('sur mobile, le bouton qui déplie le menu dit l’action réalisée (RGAA 7.1)', () => {
+    // WHEN
+    renderComponent(<Navigation />)
+
+    // THEN
+    const menu = screen.getByRole('navigation', { name: 'Rubriques des données territoriales' })
+    const boutonMobile = within(menu).getByRole('button', { expanded: false, name: 'Consulter les données' })
+    expect(boutonMobile).toHaveAttribute('aria-controls', 'donnees-territoriales-menu-wrapper')
+  })
 })
