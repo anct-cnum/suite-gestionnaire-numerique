@@ -42,7 +42,7 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
           <>
             <dt className="color-grey fr-mt-2w fr-mb-1w">Description de l&apos;action</dt>
             <dd>
-              <ReadMoreVitrine texte={action.description} />
+              <ReadMoreVitrine key={action.uid} texte={action.description} />
             </dd>
           </>
         )}

@@ -58,6 +58,7 @@ export default function ResumeActionVitrine({ actions, uidFeuilleDeRoute }: Prop
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
+        contenuFocalisableSiDefilant
         id={drawerId}
         isFixedWidth={false}
         isOpen={isDrawerOpen}
