@@ -23,7 +23,7 @@ describe('tableau de l’indice de fragilité numérique', () => {
       within(entete)
         .getAllByRole('columnheader')
         .map((cellule) => cellule.textContent)
-    ).toStrictEqual(['CommuneTrier par commune', 'Indice (sur 10)Trier par indice', 'Classe'])
+    ).toStrictEqual(['CommuneTrier par commune de Z à A', 'Indice (sur 10)Trier par indice croissant', 'Classe'])
     expect(within(lignes[0]).getByRole('rowheader').textContent).toBe('Belleville-en-Beaujolais')
     expect(
       within(lignes[0])
@@ -73,7 +73,7 @@ describe('tableau de l’indice de fragilité numérique', () => {
     expect(communesAffichees()).toStrictEqual(['Affoux', 'Aigueperse', 'Belleville-en-Beaujolais'])
 
     // WHEN
-    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice croissant' }))
 
     // THEN
     expect(enTeteIndice).toHaveAttribute('aria-sort', 'ascending')
@@ -81,18 +81,68 @@ describe('tableau de l’indice de fragilité numérique', () => {
     expect(communesAffichees()).toStrictEqual(['Aigueperse', 'Affoux', 'Belleville-en-Beaujolais'])
 
     // WHEN
-    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice décroissant' }))
 
     // THEN
     expect(enTeteIndice).toHaveAttribute('aria-sort', 'descending')
     expect(communesAffichees()).toStrictEqual(['Belleville-en-Beaujolais', 'Affoux', 'Aigueperse'])
 
     // WHEN
-    await userEvent.click(screen.getByRole('button', { name: 'Trier par commune' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par commune de A à Z' }))
 
     // THEN
     expect(enTeteCommune).toHaveAttribute('aria-sort', 'ascending')
     expect(communesAffichees()).toStrictEqual(['Affoux', 'Aigueperse', 'Belleville-en-Beaujolais'])
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par commune de Z à A' }))
+
+    // THEN
+    expect(enTeteCommune).toHaveAttribute('aria-sort', 'descending')
+    expect(communesAffichees()).toStrictEqual(['Belleville-en-Beaujolais', 'Aigueperse', 'Affoux'])
+  })
+
+  it('chaque bouton de tri dit l’action qu’il déclenche, selon l’état du tri (RGAA 7.1)', async () => {
+    // GIVEN
+    afficherLeTableau([
+      { codeInsee: '69001', ifn: 5, nom: 'Affoux' },
+      { codeInsee: '69002', ifn: 2, nom: 'Aigueperse' },
+    ])
+
+    // THEN
+    expect(boutonsDeTri()).toStrictEqual(['Trier par commune de Z à A', 'Trier par indice croissant'])
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par commune de Z à A' }))
+
+    // THEN
+    expect(boutonsDeTri()).toStrictEqual(['Trier par commune de A à Z', 'Trier par indice croissant'])
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice croissant' }))
+
+    // THEN
+    expect(boutonsDeTri()).toStrictEqual(['Trier par commune de A à Z', 'Trier par indice décroissant'])
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice décroissant' }))
+
+    // THEN
+    expect(boutonsDeTri()).toStrictEqual(['Trier par commune de A à Z', 'Trier par indice croissant'])
+  })
+
+  it('nomme le bouton de tri d’après la colonne territoire, ici département', () => {
+    // WHEN
+    render(
+      <TableauFragilite
+        lignes={lignesTableauFragilite(indiceFragilitePresenter([{ codeInsee: '41', ifn: 5, nom: 'Loir-et-Cher' }]))}
+        nomColonneTerritoire="Département"
+        titre="Indice de fragilité numérique par département"
+      />
+    )
+
+    // THEN
+    expect(boutonsDeTri()).toStrictEqual(['Trier par département de Z à A', 'Trier par indice croissant'])
   })
 
   it('pagine par 20 lignes, avec première, précédente, suivante et dernière page', async () => {
@@ -159,7 +209,7 @@ describe('tableau de l’indice de fragilité numérique', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Page suivante' }))
 
     // WHEN
-    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Trier par indice croissant' }))
 
     // THEN
     expect(screen.getByRole('button', { current: 'page', name: '1' })).toBeInTheDocument()
@@ -179,4 +229,10 @@ function afficherLeTableau(communes: Parameters<typeof indiceFragilitePresenter>
 
 function communesAffichees(): ReadonlyArray<null | string> {
   return screen.getAllByRole('rowheader').map((cellule) => cellule.textContent)
+}
+
+function boutonsDeTri(): ReadonlyArray<string> {
+  return within(screen.getByRole('table'))
+    .getAllByRole('button')
+    .map((bouton) => bouton.textContent)
 }
