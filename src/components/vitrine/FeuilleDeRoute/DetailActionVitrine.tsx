@@ -8,7 +8,7 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 export default function DetailActionVitrine({ action, labelId }: Props): ReactElement {
   return (
     <div className="fr-pb-4w">
-      <DrawerTitle id={labelId}>
+      <DrawerTitle id={labelId} niveauTitre="h1">
         <TitleIcon background={action.statut.background} icon={action.statut.icon} />
         <br />
         {action.nom}

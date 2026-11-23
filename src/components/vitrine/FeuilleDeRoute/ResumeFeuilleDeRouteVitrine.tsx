@@ -27,7 +27,10 @@ export default function ResumeFeuilleDeRouteVitrine({ children, feuilleDeRoute }
       </div>
       <div className={localStyles.innerCard}>
         <div className={styles['align-items']}>
-          <p className="fr-text--bold fr-mb-0">{feuilleDeRoute.nombreDActionsAttachees}</p>
+          {/* RGAA 9.1 (#2357) : introduit la liste des actions, c'est un titre ; rendu inchangé (taille et couleur du texte) */}
+          <h3 className="fr-text--md fr-text--bold fr-text-default--grey fr-mb-0">
+            {feuilleDeRoute.nombreDActionsAttachees}
+          </h3>
         </div>
         <hr className="fr-mb-1w fr-py-1w" />
         {children}
