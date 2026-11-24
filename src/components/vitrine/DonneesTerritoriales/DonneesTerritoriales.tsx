@@ -21,11 +21,9 @@ export default function DonneesTerritoriales({ departements }: Props): ReactElem
 
   const router = useRouter()
 
-  function handleTerritoireChange(territoire: null | TerritoireViewModel): void {
-    if (territoire !== null) {
-      setNavigationEnCours(true)
-      router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${territoire.type}/${territoire.code}`)
-    }
+  function handleTerritoireChange(territoire: TerritoireViewModel): void {
+    setNavigationEnCours(true)
+    router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${territoire.type}/${territoire.code}`)
   }
 
   return (
@@ -66,7 +64,7 @@ export default function DonneesTerritoriales({ departements }: Props): ReactElem
                   <div className="fr-mb-4w">
                     <RechercheTerritoire
                       id="rechercheTerritoire"
-                      onSelectionner={handleTerritoireChange}
+                      onValider={handleTerritoireChange}
                       rechercher={rechercherTerritoires}
                     />
                   </div>

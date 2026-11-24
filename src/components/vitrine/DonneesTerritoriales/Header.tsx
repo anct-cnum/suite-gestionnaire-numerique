@@ -75,10 +75,7 @@ export default function Header({ titre }: Props): ReactElement {
   const territoireActuel = getTerritoireLabel(niveau, code, epci)
   const territoireInitial = getTerritoireInitial(niveau, code, epci)
 
-  function handleTerritoireChange(territoire: null | TerritoireViewModel): void {
-    if (territoire === null) {
-      return
-    }
+  function handleTerritoireChange(territoire: TerritoireViewModel): void {
     // Certaines sections n'existent pas à tous les niveaux territoriaux : repli sur la synthèse
     const niveauxAutorises = niveauxParSection[currentSection]
     const section =
@@ -95,18 +92,19 @@ export default function Header({ titre }: Props): ReactElement {
       <FilAriane items={breadcrumbItems} />
 
       <div className={`fr-grid-row fr-grid-row--gutters ${styles.titleRow}`}>
-        <div className="fr-col-12 fr-col-md-8">
+        <div className="fr-col-12 fr-col-xl-8">
           <h1 className={`fr-mb-0 ${styles.title}`}>
             {rubrique === undefined ? null : <span className="fr-sr-only">{`${rubrique} – `}</span>}
             {titre} <br />
             {territoireActuel}
           </h1>
         </div>
-        <div className="fr-col-12 fr-col-md-4">
+        {/* Côte à côte à partir de xl : en dessous, la colonne laisserait moins de 170 px au champ à côté du bouton */}
+        <div className="fr-col-12 fr-col-xl-4">
           <RechercheTerritoire
             id="rechercheTerritoireHeader"
             key={`${niveau ?? ''}-${code ?? ''}-${territoireInitial === null ? 'sans-valeur' : 'avec-valeur'}`}
-            onSelectionner={handleTerritoireChange}
+            onValider={handleTerritoireChange}
             rechercher={rechercherTerritoires}
             valeurInitiale={territoireInitial}
           />
