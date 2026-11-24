@@ -1,10 +1,12 @@
 import { ReactElement, ReactNode } from 'react'
 
+import { idContenuChiffresCles, idPanneauChiffresCles } from './LienVersChiffresCles'
+
 // Alternative textuelle des graphiques d'un bloc (RGAA 1.6, 3.1) : un accordéon DSFR fermé, placé sous les
 // graphiques, qui donne leurs données en tableau. Avec plusieurs graphiques, un onglet DSFR par graphique.
 // L'ouverture et le changement d'onglet sont gérés par le JS du DSFR, comme pour tout accordéon ou onglet canonique.
 export default function ChiffresClesEnTableau({ id, onglets }: Props): ReactElement {
-  const idContenu = `${id}-contenu`
+  const idContenu = idContenuChiffresCles(id)
 
   return (
     <section className="fr-accordion">
@@ -22,7 +24,7 @@ export default function ChiffresClesEnTableau({ id, onglets }: Props): ReactElem
               {onglets.map((onglet, index) => (
                 <li key={onglet.titre} role="presentation">
                   <button
-                    aria-controls={`${id}-panneau-${index}`}
+                    aria-controls={idPanneauChiffresCles(id, index)}
                     aria-selected={index === 0}
                     className="fr-tabs__tab"
                     id={`${id}-onglet-${index}`}
@@ -39,7 +41,7 @@ export default function ChiffresClesEnTableau({ id, onglets }: Props): ReactElem
               <div
                 aria-labelledby={`${id}-onglet-${index}`}
                 className={`fr-tabs__panel${index === 0 ? ' fr-tabs__panel--selected' : ''}`}
-                id={`${id}-panneau-${index}`}
+                id={idPanneauChiffresCles(id, index)}
                 key={onglet.titre}
                 role="tabpanel"
                 tabIndex={0}

@@ -13,8 +13,9 @@ import {
 import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import { LOCALE_CARTE_FR, rendreCanevasMuet } from './accessibiliteCarte'
+import { decrireCanevas, LOCALE_CARTE_FR } from './accessibiliteCarte'
 import styles from './Map.module.css'
+import { LienVersDonneesDeLaCarte } from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
 import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
 const COULEUR_FOND_CLAIR = '#f5f5fe'
@@ -51,6 +52,7 @@ const DOM_TOM_CONFIG = {
 export default function CarteFranceAvecInsets({
   donneesDepartements,
   legend,
+  nomAccessible,
   onDepartementClick,
 }: Props): ReactElement {
   const mainMapContainer = useRef<HTMLDivElement>(null)
@@ -221,7 +223,7 @@ export default function CarteFranceAvecInsets({
       style: creerStyleVide(couleurFond),
       touchZoomRotate: false,
     })
-    rendreCanevasMuet(mainMap.current)
+    decrireCanevas(mainMap.current, `${nomAccessible}, France métropolitaine`)
 
     mainMap.current.on('load', () => {
       if (!mainMap.current) {
@@ -259,7 +261,7 @@ export default function CarteFranceAvecInsets({
         style: creerStyleVide(couleurFond),
         touchZoomRotate: false,
       })
-      rendreCanevasMuet(domTomMap)
+      decrireCanevas(domTomMap, `${nomAccessible}, ${DOM_TOM_CONFIG[code as keyof typeof DOM_TOM_CONFIG].name}`)
 
       domTomMap.on('load', () => {
         const couleurActuelle =
@@ -294,13 +296,13 @@ export default function CarteFranceAvecInsets({
         map.remove()
       })
     }
-  }, [donneesDepartements])
+  }, [donneesDepartements, nomAccessible])
 
   return (
     <div className={styles.carteAvecInsetsWrapper}>
-      {/* La carte et les étiquettes des encarts forment une image, ignorée par les aides techniques
-          (aucun contrôle à l'intérieur). La légende, en dessous, reste restituée. */}
-      <div aria-hidden="true" className={styles.carteAvecInsetsContainer}>
+      {/* Chaque canvas (France métropolitaine et chaque encart) est une image nommée par son territoire
+          (RGAA 1.1) ; l'étiquette visible d'un encart, déjà dans ce nom, est ignorée par les aides techniques. */}
+      <div className={styles.carteAvecInsetsContainer}>
         {/* Conteneur des insets DOM-TOM */}
         <div className={styles.insetsContainer}>
           {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {
@@ -308,7 +310,9 @@ export default function CarteFranceAvecInsets({
             return (
               <div className={styles.insetItem} key={code}>
                 {/* Label du DOM-TOM au-dessus de l'inset */}
-                <div className={styles.insetLabel}>{config.name}</div>
+                <div aria-hidden="true" className={styles.insetLabel}>
+                  {config.name}
+                </div>
                 {/* Conteneur de la carte */}
                 <div
                   className={styles.insetMapContainer}
@@ -333,6 +337,8 @@ export default function CarteFranceAvecInsets({
           </div>
         </div>
       </div>
+      {/* Le canvas de la France métropolitaine est le dernier du DOM : le lien vers les données le suit */}
+      <LienVersDonneesDeLaCarte />
 
       {/* Légende en dessous */}
       <div className={styles.legendBottom} data-testid="legend-wrapper">
@@ -345,6 +351,8 @@ export default function CarteFranceAvecInsets({
 type Props = Readonly<{
   donneesDepartements: Array<DepartementData>
   legend: ReactElement
+  // Nom des canvas, complété par le territoire de chacun (« …, France métropolitaine », « …, Guadeloupe »)
+  nomAccessible: string
   onDepartementClick?(codeDepartement: string): void
 }>
 
