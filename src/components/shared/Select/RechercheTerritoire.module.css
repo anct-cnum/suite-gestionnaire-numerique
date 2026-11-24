@@ -1,0 +1,67 @@
+/* Enveloppe du champ react-select : min-width à 0 pour qu'il rétrécisse à côté du bouton Rechercher */
+.champ {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+/* Sans bouton Rechercher (application connectée) : champ et loupe décorative côte à côte */
+.champEtLoupe {
+  align-items: stretch;
+  display: flex;
+}
+
+.boutonEffacer {
+  align-items: center;
+  background: none;
+  color: var(--text-mention-grey);
+  display: flex;
+  padding: 0;
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.loupe {
+  align-items: center;
+  align-self: stretch;
+  background-color: var(--background-action-high-blue-france);
+  border-radius: 0 0.25rem 0 0;
+  color: var(--text-inverted-blue-france);
+  display: flex;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+/* Intitulés de groupe (« Régions », « Départements »…) */
+.intitule {
+  border-bottom: 0.0625rem solid var(--border-default-grey);
+  color: var(--text-title-blue-france);
+  text-transform: uppercase;
+}
+
+/* Pied de liste : nombre de résultats, absence d'option, recherche en cours */
+.pied {
+  border-top: 0.0625rem solid var(--border-default-grey);
+  color: var(--text-mention-grey);
+}
+
+.squelette {
+  background-color: var(--background-contrast-grey);
+  border-radius: 0.25rem;
+  height: 1rem;
+  max-width: 100%;
+}
+
+.ligneDeChargement:nth-child(1) .squelette {
+  width: 11.25rem;
+}
+
+.ligneDeChargement:nth-child(2) .squelette {
+  width: 18.75rem;
+}
+
+.ligneDeChargement:nth-child(3) .squelette {
+  width: 15rem;
+}
