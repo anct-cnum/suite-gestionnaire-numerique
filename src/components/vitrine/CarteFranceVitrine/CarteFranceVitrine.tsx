@@ -72,6 +72,7 @@ export default function CarteFranceVitrine(): ReactElement {
         <CarteFranceAvecInsets
           donneesDepartements={departementsViewModel}
           legend={legend}
+          nomAccessible="Carte des départements"
           onDepartementClick={handleDepartementClick}
         />
       ) : null}

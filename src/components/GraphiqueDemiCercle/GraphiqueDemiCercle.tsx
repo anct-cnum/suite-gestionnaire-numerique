@@ -18,6 +18,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
     information,
     label,
     niveauTitre,
+    nomAccessible,
   } = props
   // Sans niveau de titre (page sans titre parent), le libellé reste un simple texte mis en forme
   const Libelle = niveauTitre ?? 'div'
@@ -32,6 +33,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
               data={graphiqueInfos.map((item) => item.value)}
               isFull={false}
               labels={graphiqueInfos.map((item) => item.label)}
+              nomAccessible={nomAccessible}
             />
           </div>
           {/* RGAA 9.1 (#2357) : avec un titre, le total en fait partie (« 42 Lieux en territoires prioritaires ») ;
@@ -101,6 +103,8 @@ type Props = {
   information?: string
   label: string
   niveauTitre?: 'h3'
+  // RGAA 1.1 : nom du canvas du demi-anneau ; ses valeurs sont écrites dans la liste qui le suit
+  nomAccessible: string
 }
 
 type Info = {

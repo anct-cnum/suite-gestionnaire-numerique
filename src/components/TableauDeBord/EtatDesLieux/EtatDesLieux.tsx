@@ -12,6 +12,10 @@ import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import ChiffresClesEnTableau, {
   OngletChiffresCles,
 } from '@/components/shared/ChiffresClesEnTableau/ChiffresClesEnTableau'
+import {
+  CibleChiffresCles,
+  CibleDonneesDeLaCarte,
+} from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
@@ -35,6 +39,9 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
   if (tableauFragilite !== undefined) {
     onglets.unshift({ contenu: tableauFragilite, titre: 'Indice de fragilité numérique' })
   }
+  // Liens placés juste après le canvas de la carte et de l'histogramme, vers leur onglet des chiffres clés
+  const cibleCarte = tableauFragilite === undefined ? null : CIBLE_INDICE
+  const cibleHistogramme = tableauFragilite === undefined ? CIBLE_ACCOMPAGNEMENTS_SEULS : CIBLE_ACCOMPAGNEMENTS
 
   return (
     <section aria-labelledby="etatDesLieux" className="fr-mb-4w ">
@@ -69,7 +76,7 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
         </div>
       </div>
       <div className="fr-grid-row">
-        {carte}
+        <CibleDonneesDeLaCarte value={cibleCarte}>{carte}</CibleDonneesDeLaCarte>
         <ul className={`fr-raw-list fr-col-12 fr-col-xl-4 ${styles.cardsColumn}`}>
           <li>
             <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
@@ -78,16 +85,21 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
             <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
           </li>
           <li>
-            <AccompagnementsRealisesView etat={etatAccompagnements} />
+            <AccompagnementsRealisesView cibleTableau={cibleHistogramme} etat={etatAccompagnements} />
           </li>
         </ul>
       </div>
       <div className="fr-mt-2w">
-        <ChiffresClesEnTableau id="chiffres-cles-etat-des-lieux" onglets={onglets} />
+        <ChiffresClesEnTableau id={ID_CHIFFRES_CLES} onglets={onglets} />
       </div>
     </section>
   )
 }
+
+const ID_CHIFFRES_CLES = 'chiffres-cles-etat-des-lieux'
+const CIBLE_INDICE: CibleChiffresCles = { idChiffresCles: ID_CHIFFRES_CLES, indexOnglet: 0 }
+const CIBLE_ACCOMPAGNEMENTS: CibleChiffresCles = { idChiffresCles: ID_CHIFFRES_CLES, indexOnglet: 1 }
+const CIBLE_ACCOMPAGNEMENTS_SEULS: CibleChiffresCles = { idChiffresCles: ID_CHIFFRES_CLES, indexOnglet: null }
 
 type EtatDesLieuxProps = (
   | Readonly<{ accompagnementsRealisesPromise: Promise<AccompagnementsRealisesResult | ErrorViewModel> }>
