@@ -56,6 +56,15 @@
   z-index: 1;
 }
 
+/* Contrastes élevés : les couleurs du DSFR sont remplacées par celles du système ; l'onglet actif reprend la couleur
+   système de sélection, comme les onglets DSFR d'origine, en plus de sa bordure plus épaisse */
+@media (forced-colors: active) {
+  .ongletsSegmentes :global(.fr-tabs__list) :global(.fr-tabs__tab)[aria-selected='true'] {
+    border-color: highlight;
+    color: highlight;
+  }
+}
+
 /* Panneau sans marges latérales : le contenu garde la largeur de la carte ; focus dessiné à l'intérieur */
 .ongletsSegmentes :global(.fr-tabs__panel) {
   padding: 1rem 4px 4px;
