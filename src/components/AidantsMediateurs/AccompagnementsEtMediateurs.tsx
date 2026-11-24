@@ -1,7 +1,6 @@
 'use client'
 
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
-import html2canvas from 'html2canvas'
 import { ReactElement, Suspense, useRef } from 'react'
 
 import BeneficiairesEtAccompagnementsAsyncLoader from './BeneficiairesEtAccompagnementsAsyncLoader'
@@ -26,30 +25,6 @@ export default function AccompagnementsEtMediateurs({
   ChartJS.register(ArcElement, Tooltip)
 
   const componentRef = useRef<HTMLDivElement>(null)
-
-  async function handleDownload(): Promise<void> {
-    if (componentRef.current) {
-      try {
-        const canvas = await html2canvas(componentRef.current, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-        })
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.download = 'accompagnements-et-mediateurs.png'
-            link.href = url
-            link.click()
-            URL.revokeObjectURL(url)
-          }
-        })
-      } catch {
-        // Erreur silencieuse pour l'utilisateur
-      }
-    }
-  }
 
   if (isErrorViewModel(accompagnementsEtMediateurs)) {
     return (
@@ -159,9 +134,8 @@ export default function AccompagnementsEtMediateurs({
               )}
             </div>
             <DownloadButton
-              onClick={() => {
-                void handleDownload()
-              }}
+              cible={componentRef}
+              nomFichier="accompagnements-et-mediateurs.png"
               title="Accompagnements et médiateurs"
             />
           </div>

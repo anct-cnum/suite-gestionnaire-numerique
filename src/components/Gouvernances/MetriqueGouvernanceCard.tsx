@@ -1,7 +1,6 @@
 'use client'
 
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
-import html2canvas from 'html2canvas'
 import { ReactElement, ReactNode, useRef } from 'react'
 
 import styles from './Gouvernances.module.css'
@@ -14,29 +13,6 @@ export default function MetriqueGouvernanceCard(props: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
   const { ariaId, dateGeneration, downloadFilename, downloadTitle } = props
   const componentRef = useRef<HTMLDivElement>(null)
-
-  async function handleDownload(): Promise<void> {
-    if (componentRef.current) {
-      try {
-        const canvas = await html2canvas(componentRef.current, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-        })
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.download = downloadFilename
-            link.href = url
-            link.click()
-            URL.revokeObjectURL(url)
-          }
-        })
-      } catch {
-        // Erreur silencieuse pour l'utilisateur
-      }
-    }
-  }
 
   if ('error' in props) {
     return (
@@ -123,12 +99,7 @@ export default function MetriqueGouvernanceCard(props: Props): ReactElement {
         <p className="fr-text--xs fr-mb-0" style={{ flex: 1 }}>
           Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}
         </p>
-        <DownloadButton
-          onClick={() => {
-            void handleDownload()
-          }}
-          title={downloadTitle}
-        />
+        <DownloadButton cible={componentRef} nomFichier={downloadFilename} title={downloadTitle} />
       </div>
     </section>
   )

@@ -30,9 +30,6 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             >
               Données et statistiques
             </h2>
-            <button className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-download-line" type="button">
-              Exporter
-            </button>
           </div>
         </div>
       </div>

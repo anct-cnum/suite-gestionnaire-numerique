@@ -6,7 +6,6 @@ import Information from '../shared/Information/Information'
 import Dot from '@/components/shared/Dot/Dot'
 import Doughnut from '@/components/shared/Doughnut/Doughnut'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'
-import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
   const {
@@ -82,12 +81,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           <div style={{ display: 'none', flex: 1 }}>
             <p className="fr-text--sm fr-mb-0">Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}</p>
           </div>
-          <DownloadButton
-            onClick={() => {
-              void handleDownload(componentRef, label)
-            }}
-            title={label}
-          />
+          <DownloadButton cible={componentRef} nomFichier={label} title={label} />
         </div>
       </div>
     </section>

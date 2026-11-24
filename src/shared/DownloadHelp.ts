@@ -1,27 +1,17 @@
 import html2canvas from 'html2canvas'
-import { RefObject } from 'react'
 
-export async function handleDownload(component: RefObject<HTMLDivElement | null>, fileName: string): Promise<void> {
-  if (component.current) {
-    try {
-      const canvas = await html2canvas(component.current, {
-        backgroundColor: '#ffffff',
-        scale: 2, // Pour une meilleure qualité
-      })
+// Capture un élément de la page en image PNG ; null si la capture échoue (erreur silencieuse pour l'utilisateur)
+export async function capturerEnPng(element: HTMLElement): Promise<Blob | null> {
+  try {
+    const canvas = await html2canvas(element, {
+      backgroundColor: '#ffffff',
+      scale: 2, // Pour une meilleure qualité
+    })
 
-      // Convertir en blob et télécharger
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob)
-          const link = document.createElement('a')
-          link.download = fileName
-          link.href = url
-          link.click()
-          URL.revokeObjectURL(url)
-        }
-      })
-    } catch {
-      // Erreur silencieuse pour l'utilisateur
-    }
+    return await new Promise((resolve) => {
+      canvas.toBlob(resolve)
+    })
+  } catch {
+    return null
   }
 }
