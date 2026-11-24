@@ -15,6 +15,7 @@ import {
 } from '../colors'
 import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../types'
 import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
+import ongletsStyles from './OngletsSegmentes.module.css'
 import styles from './StatistiquesActivites.module.css'
 
 const desc = ({ count: countA }: { count: number }, { count: countB }: { count: number }) => countB - countA
@@ -102,7 +103,7 @@ export const StatistiquesActivites = ({
       </div>
       <div className="fr-border fr-p-2w fr-p-md-4w fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16">
         {/* #2352 (RGAA 7.1) : onglets DSFR canoniques (motif ARIA Tabs, activation automatique), gérés par le JS du DSFR */}
-        <div className="fr-tabs">
+        <div className={`fr-tabs ${ongletsStyles.ongletsSegmentes}`}>
           <ul aria-label="Affichage des thématiques des accompagnements" className="fr-tabs__list" role="tablist">
             {accompagnementCategories.map(({ category, onglet }, index) => (
               <li key={category} role="presentation">

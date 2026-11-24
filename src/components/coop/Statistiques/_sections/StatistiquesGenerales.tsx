@@ -4,6 +4,7 @@ import Button from '@codegouvfr/react-dsfr/Button'
 import { AccompagnementBarChart } from '../_components/AccompagnementBarChart'
 import type { AccompagnementCountByPeriod, AccompagnementsStats, TableauDeDonneesViewModel } from '../types'
 import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
+import styles from './OngletsSegmentes.module.css'
 import DonneesEnTableau from '@/components/shared/DonneesEnTableau/DonneesEnTableau'
 
 export const StatistiquesGenerales = ({
@@ -169,7 +170,7 @@ export const StatistiquesGenerales = ({
           </div>
           {/* #2352 (RGAA 7.1) : onglets DSFR canoniques (motif ARIA Tabs, activation automatique), gérés par le JS
               du DSFR. Chaque panneau porte son histogramme et son tableau : le tableau suit toujours l'histogramme */}
-          <div className="fr-tabs fr-flex-grow-1">
+          <div className={`fr-tabs fr-flex-grow-1 ${styles.ongletsSegmentes}`}>
             <ul aria-label="Affichage des données d'accompagnement" className="fr-tabs__list" role="tablist">
               {periodes.map(({ id, onglet }, index) => (
                 <li key={id} role="presentation">
