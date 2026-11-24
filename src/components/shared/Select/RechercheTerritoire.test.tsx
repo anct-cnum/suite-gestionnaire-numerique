@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import RechercheTerritoire from './RechercheTerritoire'
 import { renderComponent } from '@/components/testHelper'
@@ -183,7 +183,7 @@ describe('recherche territoire', () => {
     expect(screen.getByRole('status').textContent).toBe('')
   })
 
-  it('quand le champ reçoit le focus alors l’aide à la saisie est annoncée en français', async () => {
+  it('le champ est décrit par la consigne d’utilisation, sans consigne dans la zone d’annonce', async () => {
     // GIVEN
     renderComponent(
       <RechercheTerritoire
@@ -197,14 +197,16 @@ describe('recherche territoire', () => {
     await userEvent.tab()
 
     // THEN
-    const aide = await screen.findByText(
-      'Rechercher un territoire : saisissez au moins 2 caractères pour lancer la recherche, ' +
-        'puis utilisez la flèche bas pour parcourir les résultats.'
+    const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+    expect(champ).toHaveAccessibleDescription(
+      "La liste des territoires apparaît automatiquement lorsqu'au moins 2 caractères sont saisis dans le champ. " +
+        'Seuls les 5 premiers résultats seront affichés. Affinez votre recherche pour réduire la liste.' +
+        ' Région, département, intercommunalité, ...'
     )
-    expect(aide).toBeInTheDocument()
+    expect(screen.getByRole('log').textContent).toBe('')
   })
 
-  it('quand des territoires sont proposés alors le nombre de résultats et le mode d’emploi sont annoncés en français', async () => {
+  it('quand des territoires sont proposés alors seul le nombre de résultats est annoncé en français', async () => {
     // GIVEN
     const rechercher = vi.fn<Rechercher>().mockResolvedValueOnce(createDefaultTerritoiresTrouves())
     renderComponent(
@@ -218,12 +220,7 @@ describe('recherche territoire', () => {
     await screen.findByRole('option', { name: 'Haute-Saône · 70' })
     const nombreDeResultats = await screen.findByText('5 résultats disponibles pour la recherche « saône ».')
     expect(nombreDeResultats).toBeInTheDocument()
-    const modeEmploi = screen.getByText(
-      'Utilisez les flèches haut et bas pour parcourir les résultats, ' +
-        'Entrée pour sélectionner le résultat en surbrillance, Échap pour fermer la liste, ' +
-        'Tabulation pour sélectionner le résultat et quitter la liste.'
-    )
-    expect(modeEmploi).toBeInTheDocument()
+    expect(screen.getByRole('log').textContent).toBe('5 résultats disponibles pour la recherche « saône ».')
   })
 
   it('quand le champ contenant un territoire reçoit le focus alors le territoire sélectionné est annoncé en français', async () => {
@@ -248,8 +245,9 @@ describe('recherche territoire', () => {
     // THEN
     const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
     expect(champ).toHaveAccessibleDescription(
-      'Territoire sélectionné : Haute-Saône · 70. Rechercher un territoire : saisissez au moins 2 caractères pour lancer ' +
-        'la recherche, puis utilisez la flèche bas pour parcourir les résultats.'
+      "La liste des territoires apparaît automatiquement lorsqu'au moins 2 caractères sont saisis dans le champ. " +
+        'Seuls les 5 premiers résultats seront affichés. Affinez votre recherche pour réduire la liste.' +
+        ' Territoire sélectionné : Haute-Saône · 70.'
     )
   })
 
@@ -305,8 +303,209 @@ describe('recherche territoire', () => {
     const information = screen.getByText('Recherche limitée à votre périmètre')
     expect(information).toBeInTheDocument()
   })
+
+  describe('en mode « sélectionner puis rechercher » (vitrine)', () => {
+    afterEach(() => {
+      // La simulation d'un appareil Apple ne doit pas fuir vers les autres tests (ordre aléatoire)
+      vi.restoreAllMocks()
+    })
+
+    it('le champ et le bouton Rechercher forment un formulaire de recherche', () => {
+      // GIVEN
+      renderComponent(
+        <RechercheTerritoire id="territoire" onValider={vi.fn<OnValider>()} rechercher={rechercherParDefaut} />
+      )
+
+      // THEN
+      const formulaire = screen.getByRole('search')
+      expect(formulaire).toBeInTheDocument()
+      const bouton = screen.getByRole('button', { name: 'Rechercher' })
+      expect(bouton).toHaveAttribute('type', 'submit')
+    })
+
+    it('quand un territoire est sélectionné alors rien n’est lancé et le territoire est repris dans le champ', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+
+      // WHEN
+      await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+      await userEvent.click(await screen.findByRole('option', { name: 'Haute-Saône · 70' }))
+
+      // THEN
+      expect(onValider).not.toHaveBeenCalled()
+      const champ = screen.getByText('Haute-Saône · 70')
+      expect(champ).toBeInTheDocument()
+    })
+
+    it('quand un territoire est sélectionné puis le bouton Rechercher activé alors la recherche est lancée sur ce territoire', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+
+      // WHEN
+      await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+      await userEvent.click(await screen.findByRole('option', { name: 'Haute-Saône · 70' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+      // THEN
+      expect(onValider).toHaveBeenCalledExactlyOnceWith({
+        code: '70',
+        label: 'Haute-Saône · 70',
+        type: 'departement',
+        value: 'departement-70',
+      })
+    })
+
+    it('au clavier, Entrée sur une option la sélectionne seulement, puis Entrée liste fermée lance la recherche', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+      await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+      await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+
+      // WHEN
+      await userEvent.keyboard('{Enter}')
+
+      // THEN
+      expect(onValider).not.toHaveBeenCalled()
+
+      // WHEN
+      // jsdom est vu comme un écran tactile : react-select y retire le focus du champ après une sélection
+      await userEvent.tab()
+      await userEvent.keyboard('{Enter}')
+
+      // THEN
+      expect(onValider).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ label: 'Haute-Saône · 70' }))
+    })
+
+    it('quand le champ est vide et le bouton Rechercher activé alors une erreur reliée au champ demande de saisir puis sélectionner', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+
+      // WHEN
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+      // THEN
+      expect(onValider).not.toHaveBeenCalled()
+      const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+      expect(champ).toHaveAttribute('aria-invalid', 'true')
+      expect(champ).toHaveAccessibleDescription(
+        /^Saisissez au moins 2 caractères, puis sélectionnez un territoire dans la liste\./
+      )
+      expect(champ).toHaveFocus()
+    })
+
+    it('quand un texte est saisi sans sélection et le bouton Rechercher activé alors une erreur demande de sélectionner un territoire', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+      await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+      await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+
+      // WHEN
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+      // THEN
+      expect(onValider).not.toHaveBeenCalled()
+      const erreur = screen.getByText('Sélectionnez un territoire dans la liste des résultats.')
+      expect(erreur).toHaveClass('fr-error-text')
+      const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+      expect(champ).toHaveAttribute('aria-invalid', 'true')
+      expect(champ).toHaveFocus()
+    })
+
+    it('quand le texte est modifié après une sélection alors la sélection est annulée', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      renderComponent(<RechercheTerritoire id="territoire" onValider={onValider} rechercher={rechercherParDefaut} />)
+      const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+      await userEvent.type(champ, 'saône')
+      await userEvent.click(await screen.findByRole('option', { name: 'Haute-Saône · 70' }))
+
+      // WHEN
+      await userEvent.type(champ, 'lo')
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+      // THEN
+      expect(onValider).not.toHaveBeenCalled()
+      const erreur = screen.getByText('Sélectionnez un territoire dans la liste des résultats.')
+      expect(erreur).toBeInTheDocument()
+    })
+
+    it('quand le champ est pré-rempli et le bouton Rechercher activé alors la recherche est lancée sur le territoire affiché', async () => {
+      // GIVEN
+      const onValider = vi.fn<OnValider>()
+      const territoire: TerritoireViewModel = {
+        code: '41',
+        label: 'Loir-et-Cher · 41',
+        type: 'departement',
+        value: 'departement-41',
+      }
+      renderComponent(
+        <RechercheTerritoire
+          id="territoire"
+          onValider={onValider}
+          rechercher={rechercherParDefaut}
+          valeurInitiale={territoire}
+        />
+      )
+
+      // WHEN
+      await userEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+
+      // THEN
+      expect(onValider).toHaveBeenCalledExactlyOnceWith(territoire)
+    })
+
+    it('quand la liste est rouverte après une sélection alors l’option choisie porte aria-selected, y compris sur un appareil Apple', async () => {
+      // GIVEN
+      vi.spyOn(navigator, 'platform', 'get').mockReturnValue('MacIntel')
+      renderComponent(
+        <RechercheTerritoire id="territoire" onValider={vi.fn<OnValider>()} rechercher={rechercherParDefaut} />
+      )
+      const champ = screen.getByRole('combobox', { name: 'Rechercher un territoire' })
+      await userEvent.type(champ, 'saône')
+      await userEvent.click(await screen.findByRole('option', { name: 'Haute-Saône · 70' }))
+
+      // WHEN
+      // jsdom est vu comme un écran tactile : react-select y retire le focus du champ après une sélection
+      await userEvent.tab()
+      await userEvent.keyboard('{ArrowDown}')
+
+      // THEN
+      const choisie = await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+      expect(choisie).toHaveAttribute('aria-selected', 'true')
+      const autre = screen.getByRole('option', { name: 'Saône-et-Loire · 71' })
+      expect(autre).toHaveAttribute('aria-selected', 'false')
+    })
+
+    it('les textes de la liste qui ne sont pas des options sont des paragraphes', async () => {
+      // GIVEN
+      renderComponent(
+        <RechercheTerritoire id="territoire" onValider={vi.fn<OnValider>()} rechercher={rechercherParDefaut} />
+      )
+
+      // WHEN
+      await userEvent.type(screen.getByRole('combobox', { name: 'Rechercher un territoire' }), 'saône')
+      await screen.findByRole('option', { name: 'Haute-Saône · 70' })
+
+      // THEN
+      const intitule = screen.getByText('Départements')
+      expect(intitule.tagName).toBe('P')
+      const pied = screen.getByText(/5 territoires correspondent à/)
+      expect(pied.tagName).toBe('P')
+    })
+  })
 })
 
 type OnSelectionner = (territoire: null | TerritoireViewModel) => void
 
+type OnValider = (territoire: TerritoireViewModel) => void
+
 type Rechercher = (terme: string) => Promise<ReturnType<typeof createDefaultTerritoiresTrouves>>
+
+async function rechercherParDefaut(): ReturnType<Rechercher> {
+  return Promise.resolve(createDefaultTerritoiresTrouves())
+}

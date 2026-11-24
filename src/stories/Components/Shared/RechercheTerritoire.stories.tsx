@@ -54,3 +54,16 @@ export const TropDeResultats: Story = {
     },
   },
 }
+
+// Vitrine : la sélection remplit le champ, le bouton Rechercher lance la recherche
+export const SelectionPuisRecherche: Story = {
+  args: {
+    id: 'recherche-territoire-vitrine',
+    onValider(): void {
+      // rien à faire en story
+    },
+    async rechercher() {
+      return Promise.resolve(createDefaultTerritoiresTrouves())
+    },
+  },
+}
