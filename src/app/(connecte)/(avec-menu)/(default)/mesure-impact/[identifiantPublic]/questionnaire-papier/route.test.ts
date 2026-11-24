@@ -20,7 +20,7 @@ describe('route du questionnaire papier', () => {
     expect(reponse.status).toBe(401)
   })
 
-  it('donne le PDF, avec le logo du territoire, à une personne bêta-testeuse de la structure qui porte la campagne, à garder en cache', async () => {
+  it('donne le PDF, avec le logo du territoire, à une personne de la structure qui porte la campagne, à garder en cache', async () => {
     // GIVEN
     connecter()
     vi.spyOn(RecupererLeQuestionnairePapier.prototype, 'handle').mockResolvedValueOnce({
@@ -70,6 +70,6 @@ function connecter(): void {
   vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
   vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
   vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-    utilisateurReadModelFactory({ isBetaTesteur: true, structureId: 42 })
+    utilisateurReadModelFactory({ isBetaTesteur: false, structureId: 42 })
   )
 }
