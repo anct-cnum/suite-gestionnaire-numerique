@@ -1,7 +1,6 @@
 'use client'
 
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
-import html2canvas from 'html2canvas'
 import { ReactElement, useRef } from 'react'
 
 import Dot from '../shared/Dot/Dot'
@@ -18,30 +17,6 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
   ChartJS.register(ArcElement, Tooltip)
 
   const componentRef = useRef<HTMLDivElement>(null)
-
-  async function handleDownload(): Promise<void> {
-    if (componentRef.current) {
-      try {
-        const canvas = await html2canvas(componentRef.current, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-        })
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.download = 'niveau-de-formation.png'
-            link.href = url
-            link.click()
-            URL.revokeObjectURL(url)
-          }
-        })
-      } catch {
-        // Erreur silencieuse pour l'utilisateur
-      }
-    }
-  }
 
   if (isErrorViewModel(niveauDeFormation)) {
     return (
@@ -134,12 +109,7 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
         <div style={{ flex: 1 }}>
           <p className="fr-text--sm fr-mb-0">Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}</p>
         </div>
-        <DownloadButton
-          onClick={() => {
-            void handleDownload()
-          }}
-          title="Niveau de formation"
-        />
+        <DownloadButton cible={componentRef} nomFichier="niveau-de-formation.png" title="Niveau de formation" />
       </div>
     </section>
   )
