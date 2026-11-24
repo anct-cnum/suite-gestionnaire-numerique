@@ -272,54 +272,6 @@ export default function MonInclusionNumeriquePage(): ReactElement {
         title="Piloter ses actions au quotidien"
       />
 
-      {/* Section: Comment participer à une gouvernance territoriale */}
-      <section className="fr-py-12w" style={{ backgroundColor: '#FFF8E1' }}>
-        <div className="fr-container">
-          <div className="fr-grid-row" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            {/* Illustration à gauche */}
-            <div
-              className={`fr-col-12 fr-col-md-5 ${styles.imageLeft}`}
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
-              <img
-                alt=""
-                aria-hidden="true"
-                src="/vitrine/accueil/illustration-participer.png"
-                style={{
-                  height: 'auto',
-                  maxWidth: '384px',
-                  width: '100%',
-                }}
-              />
-            </div>
-
-            {/* Contenu à droite */}
-            <div className={`fr-col-12 fr-col-md-6 ${styles.contentRight}`}>
-              <h2 className="fr-h2" style={{ color: '#000091', marginBottom: 0 }}>
-                Comment participer à une gouvernance territoriale ?
-              </h2>
-              <p className="fr-text--md">
-                <strong>En tant que collectivité ou acteur territorial,</strong> vous êtes invité à manifester votre
-                souhait de participer à une gouvernance de l’inclusion numérique sur votre territoire. En tant que
-                Conseil Régional, Conseil Département ou EPCI, vous pouvez également porter une feuille de route.
-              </p>
-              <div>
-                <ExternalLink
-                  className="fr-btn"
-                  href="https://mon.inclusion-numerique.anct.gouv.fr/"
-                  title="Accéder au formulaire"
-                >
-                  Accéder au formulaire
-                </ExternalLink>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Section Qui sommes-nous */}
       <QuiSommesNous />
     </>

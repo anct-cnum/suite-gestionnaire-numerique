@@ -110,6 +110,17 @@ describe('liens de la vitrine (RGAA 6.1 et 13.2)', () => {
     )
   })
 
+  it('page outil Mon Inclusion Numérique : aucun lien n’annonce un formulaire de gouvernance inaccessible au public', () => {
+    // WHEN
+    renderComponent(<OutilMinPage />)
+
+    // THEN
+    expect(screen.queryByRole('link', { name: 'Accéder au formulaire' })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'Comment participer à une gouvernance territoriale ?' })
+    ).not.toBeInTheDocument()
+  })
+
   it('feuille de route : le lien de téléchargement nomme la feuille de route, son format et son poids, sans nouvelle fenêtre', () => {
     // WHEN
     renderComponent(
