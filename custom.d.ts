@@ -1,8 +1,14 @@
 declare global {
   interface Window {
     dsfr(element: HTMLElement | null): {
+      collapse: {
+        disclose(): void
+      }
       modal: {
         conceal(): void
+      }
+      tabPanel: {
+        disclose(): void
       }
     }
   }

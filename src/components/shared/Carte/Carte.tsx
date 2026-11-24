@@ -3,10 +3,11 @@ import { DataDrivenPropertyValueSpecification, LngLatBounds, Map, Popup, setWork
 import { ReactElement, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import { LOCALE_CARTE_FR, rendreCanevasMuet } from './accessibiliteCarte'
+import { decrireCanevas, LOCALE_CARTE_FR, nomAccessibleCarteFragilite } from './accessibiliteCarte'
 import BoutonsZoom from './BoutonsZoom'
 import Legend from './Legend'
 import styles from './Map.module.css'
+import { LienVersDonneesDeLaCarte } from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
 import {
   CommuneFragilite,
   COULEUR_DONNEE_NON_DISPONIBLE,
@@ -247,7 +248,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
     map.current = new Map({
       attributionControl: false,
       container: mapContainer.current,
-      // Le canvas est masqué et hors tabulation : plus de déplacement aux flèches (zoom par les boutons DSFR)
+      // Le canvas est hors tabulation : plus de déplacement aux flèches (zoom par les boutons DSFR)
       keyboard: false,
       locale: LOCALE_CARTE_FR,
       maplibreLogo: false,
@@ -256,7 +257,7 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
       scrollZoom: false,
       style: creerStyleVide(couleurFond),
     })
-    rendreCanevasMuet(map.current)
+    decrireCanevas(map.current, nomAccessibleCarteFragilite(territoire))
     setCarteCreee(true)
 
     popup.current = new Popup({
@@ -356,12 +357,13 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
     <>
       {/* Hauteur minimale : les communes ne sont dans les tuiles qu'à partir du zoom 8, atteint au cadrage
           d'un département à partir d'environ 500 px de haut. La légende est sous la carte, pas dessus. */}
+      {/* Les boutons de zoom, posés sur la carte, précèdent le canvas dans le DOM : le lien vers les données de la
+          carte en tableau le suit immédiatement (RGAA 1.1). */}
       <div
         className={styles.mapWrapper}
         data-testid="carte-wrapper"
         style={{ flex: 1, height: 'auto', minHeight: '34rem' }}
       >
-        <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
         {carteCreee ? (
           <BoutonsZoom
             onDezoomer={() => {
@@ -372,7 +374,9 @@ export default function Carte({ fragilite, territoire }: Props): ReactElement {
             }}
           />
         ) : null}
+        <div className={styles.mapContainer} data-testid="carte-container" ref={mapContainer} />
       </div>
+      <LienVersDonneesDeLaCarte />
       <div data-testid="legend-wrapper">
         <Legend />
       </div>
@@ -388,8 +392,8 @@ export type BboxCarte = Readonly<{
 }>
 
 export type TerritoireCarte =
-  | Readonly<{ bbox: BboxCarte; code: string; codesInsee: ReadonlyArray<string>; type: 'epci' }>
-  | Readonly<{ bbox: BboxCarte; codesDepartement: ReadonlyArray<string>; type: 'region' }>
+  | Readonly<{ bbox: BboxCarte; code: string; codesInsee: ReadonlyArray<string>; nom: string; type: 'epci' }>
+  | Readonly<{ bbox: BboxCarte; codesDepartement: ReadonlyArray<string>; nom: string; type: 'region' }>
   | Readonly<{ code: string; type: 'departement' }>
 
 type Props = Readonly<{
