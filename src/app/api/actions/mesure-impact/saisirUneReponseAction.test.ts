@@ -13,7 +13,7 @@ describe('saisir une réponse recueillie sur papier ou par téléphone', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-      utilisateurReadModelFactory({ isBetaTesteur: true, structureId: 42 })
+      utilisateurReadModelFactory({ isBetaTesteur: false, structureId: 42 })
     )
     vi.spyOn(SaisirUneReponse.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(() => undefined)
@@ -36,11 +36,11 @@ describe('saisir une réponse recueillie sur papier ou par téléphone', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('pendant le pilote, une personne qui n’est pas bêta-testeuse saisit sans structure, donc sans accès', async () => {
+  it('une personne sans structure saisit sans structure, donc sans accès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
     vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-      utilisateurReadModelFactory({ isBetaTesteur: false, structureId: 42 })
+      utilisateurReadModelFactory({ isBetaTesteur: false, structureId: null })
     )
     vi.spyOn(SaisirUneReponse.prototype, 'handle').mockResolvedValueOnce('accesRefuse')
 

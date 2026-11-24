@@ -9,6 +9,14 @@
   padding: 2rem;
 }
 
+/* RGAA 10.7 : sur plusieurs lignes, le contour de focus du lien (épaisseur et décalage de 0.125rem) recouvrait
+   la ligne voisine. Aucun utilitaire DSFR ne règle l'interligne d'un lien en ligne (un lien en bloc perdrait
+   le soulignement de chaque ligne) : 0.25rem de plus entre les lignes, la place du contour, qui s'arrête au bord
+   du texte voisin sans le couvrir ; au-delà, il toucherait le détail du fichier, placé par le DSFR sous la ligne. */
+.lienDeTelechargement {
+  line-height: 1.75rem;
+}
+
 .innerCard {
   border: 0.0625rem solid var(--border-default-grey);
   border-radius: 0.5rem;

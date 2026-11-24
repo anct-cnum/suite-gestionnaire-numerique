@@ -20,7 +20,7 @@ describe('route de l’export CSV des résultats', () => {
     expect(reponse.status).toBe(401)
   })
 
-  it('donne à une personne bêta-testeuse de la structure qui porte la campagne le CSV des résultats filtrés', async () => {
+  it('donne à une personne de la structure qui porte la campagne le CSV des résultats filtrés', async () => {
     // GIVEN
     connecter()
     vi.spyOn(RecupererLesResultats.prototype, 'handle').mockResolvedValueOnce({
@@ -89,6 +89,6 @@ function connecter(): void {
   vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
   vi.spyOn(ssoGateway, 'getSessionUtilisateurId').mockResolvedValueOnce(1)
   vi.spyOn(PrismaUtilisateurLoader.prototype, 'findById').mockResolvedValueOnce(
-    utilisateurReadModelFactory({ isBetaTesteur: true, structureId: 42 })
+    utilisateurReadModelFactory({ isBetaTesteur: false, structureId: 42 })
   )
 }

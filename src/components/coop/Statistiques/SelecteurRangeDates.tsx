@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { CSSProperties, ReactElement, useCallback, useEffect, useId, useRef, useState } from 'react'
+import { CSSProperties, KeyboardEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 
 import { DATE_DEBUT_DISPOSITIF } from '@/shared/dispositif'
 import DateRangePicker from './DateRangePicker'
@@ -12,7 +12,6 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const panneauId = useId()
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({})
 
   const isFilled = dateDebut !== DATE_DEBUT_DISPOSITIF || dateFin !== new Date().toISOString().slice(0, 10)
@@ -89,8 +88,8 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     appliquer(null, null)
   }, [appliquer])
 
-  const labelBouton =
-    debut !== null && fin !== null ? `${formaterDateCourte(debut)} - ${formaterDateCourte(fin)}` : 'Période'
+  const periodeAffichee =
+    debut !== null && fin !== null ? `${formaterDateCourte(debut)} - ${formaterDateCourte(fin)}` : null
 
   return (
     <div
@@ -104,8 +103,11 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
     >
       <button
         ref={buttonRef}
-        aria-controls={panneauId}
-        aria-expanded={isOpen}
+        aria-label={
+          periodeAffichee === null
+            ? 'Période des données à afficher'
+            : `Période des données à afficher, ${periodeAffichee}`
+        }
         className={`fr-btn ${isFilled ? 'fr-btn--secondary' : 'fr-btn--tertiary'} fr-border-radius--4 ${isFilled ? styles.filled : ''} ${isOpen ? styles.open : ''}`}
         onClick={() => {
           if (!isOpen) {
@@ -115,7 +117,7 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
         }}
         type="button"
       >
-        {labelBouton}
+        {periodeAffichee ?? 'Période'}
         <span
           aria-hidden
           className={`fr-ml-1v fr-icon--sm ${isOpen ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'}`}
@@ -133,8 +135,9 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
           />
           <div
             aria-label="Choisir une période"
+            aria-modal="true"
             className={styles.popover}
-            id={panneauId}
+            onKeyDown={garderLeFocusDansLaFenetre}
             role="dialog"
             style={popoverStyle}
           >
@@ -157,6 +160,24 @@ export default function SelecteurRangeDates({ dateFin, dateDebut }: Props): Reac
   )
 }
 
+// Fenêtre modale (RGAA 7.1) : Tab et Maj+Tab bouclent sur les éléments focalisables de la fenêtre.
+function garderLeFocusDansLaFenetre(event: KeyboardEvent<HTMLDivElement>): void {
+  if (event.key !== 'Tab') return
+  const focalisables = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, select')).filter(
+    (element) => !element.matches(':disabled') && element.tabIndex >= 0
+  )
+  if (focalisables.length === 0) return
+  const premier = focalisables[0]
+  const dernier = focalisables[focalisables.length - 1]
+  if (event.shiftKey && event.target === premier) {
+    event.preventDefault()
+    dernier.focus()
+  } else if (!event.shiftKey && event.target === dernier) {
+    event.preventDefault()
+    premier.focus()
+  }
+}
+
 type Props = Readonly<{
   dateDebut: string
   dateFin: string
@@ -166,7 +187,7 @@ function formaterDateCourte(date: Date): string {
   const jour = String(date.getDate()).padStart(2, '0')
   const mois = String(date.getMonth() + 1).padStart(2, '0')
   const annee = String(date.getFullYear()).slice(2)
-  return `${jour}.${mois}.${annee}`
+  return `${jour}/${mois}/${annee}`
 }
 
 // Format local (pas toISOString, qui convertit en UTC et peut faire glisser la date d'un jour).

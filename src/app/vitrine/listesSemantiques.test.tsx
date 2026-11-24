@@ -5,7 +5,7 @@ import LieuxPage from './lieux/page'
 import VitrineHomePage from './page'
 import EtatDesLieux from '@/components/TableauDeBord/EtatDesLieux/EtatDesLieux'
 import GouvernancePref from '@/components/TableauDeBord/Gouvernance/GouvernancePref'
-import { renderComponent } from '@/components/testHelper'
+import { renderComponent, simulerResizeObserver } from '@/components/testHelper'
 import DetailActionVitrine from '@/components/vitrine/FeuilleDeRoute/DetailActionVitrine'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
@@ -113,6 +113,7 @@ describe('listes et paragraphes sémantiques de la vitrine (RGAA 8.9 et 9.3)', (
 
   it('feuille de route : le détail d’une action est une liste de couples libellé/valeur, sans doublon de description', () => {
     // GIVEN
+    simulerResizeObserver()
     const action = feuillesDeRoutePresenter(feuillesDeRouteReadModelFactory()).feuillesDeRoute[0].actions[0]
 
     // WHEN

@@ -6,6 +6,7 @@ export default function Drawer({
   boutonFermeture,
   children,
   closeDrawer,
+  contenuFocalisableSiDefilant = false,
   footer,
   id,
   isFixedWidth,
@@ -31,7 +32,13 @@ export default function Drawer({
               title={boutonFermeture}
               type="button"
             />
-            <div className={`${popover === undefined ? 'fr-modal__content' : ''} ${styles['fr-modal__content']}`}>
+            <div
+              aria-labelledby={contenuFocalisableSiDefilant ? labelId : undefined}
+              // Marges : le contour de focus du contenu défilant n'est pas rogné par le cadre de la fenêtre (10.7)
+              className={`${popover === undefined ? 'fr-modal__content' : ''} ${styles['fr-modal__content']} ${contenuFocalisableSiDefilant ? 'fr-mx-1v fr-mb-1v' : ''}`}
+              ref={contenuFocalisableSiDefilant ? rendreFocalisableSiDefilant : undefined}
+              role={contenuFocalisableSiDefilant ? 'region' : undefined}
+            >
               {children}
             </div>
             {footer !== undefined && <div className={styles['fr-modal__footer']}>{footer}</div>}
@@ -67,10 +74,41 @@ export default function Drawer({
   )
 }
 
+// Firefox rend focalisable un contenu qui défile ; le piège à focus du DSFR, qui ne le connaît pas, renvoie alors
+// sur le bouton de fermeture et les éléments suivants (ex. « Lire moins ») ne sont plus atteignables au clavier
+// (RGAA 7.3). Le contenu entre explicitement dans l'ordre de tabulation, et seulement quand il défile ; zone nommée
+// par le titre du volet, pour être annoncée sans relire tout son contenu.
+function rendreFocalisableSiDefilant(contenu: HTMLDivElement | null): (() => void) | undefined {
+  if (contenu === null) {
+    return undefined
+  }
+  function ajuster(): void {
+    if (contenu === null) {
+      return
+    }
+    if (contenu.scrollHeight > contenu.clientHeight) {
+      contenu.setAttribute('tabindex', '0')
+    } else {
+      contenu.removeAttribute('tabindex')
+    }
+  }
+  ajuster()
+  const observateur = new ResizeObserver(ajuster)
+  observateur.observe(contenu)
+  // Le contenu change de hauteur sans que le cadre change de taille (texte déplié) : on observe aussi ses enfants
+  for (const enfant of Array.from(contenu.children)) {
+    observateur.observe(enfant)
+  }
+  return () => {
+    observateur.disconnect()
+  }
+}
+
 type Props = PropsWithChildren<
   Readonly<{
     boutonFermeture: string
     closeDrawer?(): void
+    contenuFocalisableSiDefilant?: boolean
     footer?: ReactNode
     id: string
     isFixedWidth: boolean
