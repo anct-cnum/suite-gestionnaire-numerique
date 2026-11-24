@@ -134,11 +134,22 @@ function territoireCarte(territoire: TerritoireVitrine): Parameters<typeof Carte
     case 'departement':
       return { code: territoire.code, type: 'departement' }
     case 'epci':
-      return { bbox: territoire.bbox, code: territoire.code, codesInsee: territoire.codesInsee, type: 'epci' }
+      return {
+        bbox: territoire.bbox,
+        code: territoire.code,
+        codesInsee: territoire.codesInsee,
+        nom: territoire.nom,
+        type: 'epci',
+      }
     case 'national':
       return 'national'
     case 'region':
-      return { bbox: territoire.bbox, codesDepartement: territoire.codesDepartement, type: 'region' }
+      return {
+        bbox: territoire.bbox,
+        codesDepartement: territoire.codesDepartement,
+        nom: territoire.nom,
+        type: 'region',
+      }
   }
 }
 

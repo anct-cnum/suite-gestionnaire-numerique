@@ -30,9 +30,6 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             >
               Données et statistiques
             </h2>
-            <button className="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-download-line" type="button">
-              Exporter
-            </button>
           </div>
         </div>
       </div>
@@ -69,6 +66,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             ]}
             indicateur={viewModel.territoriesPrioritaires}
             label="Lieux en territoires prioritaires"
+            nomAccessible="Diagramme en demi-anneau des lieux en territoires prioritaires"
             niveauTitre="h3"
           />
         </div>
@@ -102,6 +100,7 @@ export default function LieuxInclusionVitrine({ viewModel }: Props): ReactElemen
             indicateur={viewModel.nombreLabellisesOuHabilites}
             information="Un lieu peut accueillir des médiateurs de plusieurs dispositifs, il est alors comptabilisé dans chaque catégorie"
             label="Lieux labellisés ou habilités"
+            nomAccessible="Diagramme en demi-anneau des lieux labellisés ou habilités"
             niveauTitre="h3"
           />
         </div>

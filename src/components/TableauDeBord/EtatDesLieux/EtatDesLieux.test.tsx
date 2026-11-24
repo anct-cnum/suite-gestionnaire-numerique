@@ -1,11 +1,17 @@
-import { render, screen, within } from '@testing-library/react'
-import { ComponentProps } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { ComponentProps, ReactElement } from 'react'
+import { Bar as ReactBar } from 'react-chartjs-2'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import EtatDesLieux from './EtatDesLieux'
+import { LienVersDonneesDeLaCarte } from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
 
 describe('état des lieux de l’inclusion numérique', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('affiche l’état de chargement des accompagnements avant la réponse de l’API', () => {
     // GIVEN
     vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(new Promise(() => {}))
@@ -146,6 +152,98 @@ describe('état des lieux de l’inclusion numérique', () => {
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
     expect(lignesDuTableauDesAccompagnements()).toHaveLength(2)
   })
+
+  it('l’histogramme est une image nommée, suivie immédiatement d’un lien vers son onglet des chiffres clés', async () => {
+    // GIVEN
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+      json: async () => Promise.resolve(resultat),
+    } as unknown as Response)
+
+    // WHEN
+    afficherLEtatDesLieux({ accompagnementsTerritoire: 'France' })
+
+    // THEN
+    const lien = await screen.findByRole('link', { name: "Voir les données de l'histogramme en tableau" })
+    expect(vi.mocked(ReactBar).mock.lastCall?.[0]['aria-label']).toBe(
+      'Histogramme des accompagnements des 6 derniers mois'
+    )
+    expect(lien.parentElement?.previousSibling?.textContent).toBe('Bar Chart Mock')
+    expect(lien).toHaveAttribute('href', '#chiffres-cles-etat-des-lieux-panneau-1')
+    expect(cibleDuLien(lien)).toBe(
+      screen.getByRole('tabpanel', { hidden: true, name: 'Accompagnements des 6 derniers mois' })
+    )
+  })
+
+  it('la carte est suivie d’un lien vers l’onglet de l’indice de fragilité des chiffres clés', () => {
+    // GIVEN
+    vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(new Promise(() => {}))
+
+    // WHEN
+    afficherLEtatDesLieux({ accompagnementsTerritoire: 'France' }, true, <LienVersDonneesDeLaCarte />)
+
+    // THEN
+    const lien = screen.getByRole('link', { name: 'Voir les données de la carte en tableau' })
+    expect(lien).toHaveAttribute('href', '#chiffres-cles-etat-des-lieux-panneau-0')
+    expect(cibleDuLien(lien)).toBe(screen.getByRole('tabpanel', { name: 'Indice de fragilité numérique' }))
+  })
+
+  it('sans tableau de l’indice, aucun lien ne suit la carte et celui de l’histogramme vise les chiffres clés', async () => {
+    // GIVEN
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+      json: async () => Promise.resolve(resultat),
+    } as unknown as Response)
+
+    // WHEN
+    afficherLEtatDesLieux({ accompagnementsStructureId: 42 }, false, <LienVersDonneesDeLaCarte />)
+
+    // THEN
+    const lien = await screen.findByRole('link', { name: "Voir les données de l'histogramme en tableau" })
+    expect(screen.queryByRole('link', { name: 'Voir les données de la carte en tableau' })).not.toBeInTheDocument()
+    expect(lien).toHaveAttribute('href', '#chiffres-cles-etat-des-lieux-contenu')
+    expect(cibleDuLien(lien)).toBeInTheDocument()
+  })
+
+  it('activer le lien de la carte ouvre l’accordéon et l’onglet de l’indice par le DSFR, puis place le focus sur le tableau', async () => {
+    // GIVEN
+    vi.spyOn(globalThis, 'fetch').mockReturnValueOnce(new Promise(() => {}))
+    const disclose = vi.fn<(element: HTMLElement | null) => void>()
+    vi.stubGlobal('dsfr', (element: HTMLElement | null) => ({
+      collapse: {
+        disclose: () => {
+          disclose(element)
+        },
+      },
+      tabPanel: {
+        disclose: () => {
+          disclose(element)
+        },
+      },
+    }))
+    afficherLEtatDesLieux(
+      { accompagnementsTerritoire: 'France' },
+      <table>
+        <caption>Indice par commune</caption>
+        <thead>
+          <tr>
+            <th scope="col">Commune</th>
+          </tr>
+        </thead>
+      </table>,
+      <LienVersDonneesDeLaCarte />
+    )
+
+    // WHEN
+    fireEvent.click(screen.getByRole('link', { name: 'Voir les données de la carte en tableau' }))
+
+    // THEN
+    expect(disclose.mock.calls.map(([element]) => element?.id)).toStrictEqual([
+      'chiffres-cles-etat-des-lieux-contenu',
+      'chiffres-cles-etat-des-lieux-panneau-0',
+    ])
+    await waitFor(() => {
+      expect(screen.getByRole('table', { name: 'Indice par commune' })).toHaveFocus()
+    })
+  })
 })
 
 const resultat: AccompagnementsRealisesResult = {
@@ -161,13 +259,18 @@ type Source =
   | Readonly<{ accompagnementsStructureId: number }>
   | Readonly<{ accompagnementsTerritoire: string }>
 
-function afficherLEtatDesLieux(source: Source, avecCarte = true): void {
+function afficherLEtatDesLieux(
+  source: Source,
+  tableau: boolean | ReactElement = true,
+  carte: ReactElement = <div>La carte</div>
+): void {
+  const tableauFragilite = tableau === true ? <p>Tableau de l’indice</p> : tableau
   const props = {
     ...source,
-    carte: <div>La carte</div>,
+    carte,
     lieuxInclusionViewModel: { message: 'Erreur lieux', type: 'error' },
     mediateursEtAidantsViewModel: { message: 'Erreur médiateurs', type: 'error' },
-    tableauFragilite: avecCarte ? <p>Tableau de l’indice</p> : undefined,
+    tableauFragilite: tableauFragilite === false ? undefined : tableauFragilite,
   } as ComponentProps<typeof EtatDesLieux>
   render(<EtatDesLieux {...props} />)
 }
@@ -185,4 +288,8 @@ function lignesDuTableauDesAccompagnements(): ReadonlyArray<null | string> {
     .getAllByRole('row', { hidden: true })
     .slice(1)
     .map((ligne) => ligne.textContent)
+}
+
+function cibleDuLien(lien: HTMLElement): HTMLElement | null {
+  return document.getElementById((lien.getAttribute('href') ?? '').slice(1))
 }

@@ -10,7 +10,6 @@ import InformationDepliable, {
   TexteInformation,
   titreSuiviDuBouton,
 } from '@/components/shared/Information/InformationDepliable'
-import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
   const {
@@ -22,6 +21,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
     information,
     label,
     niveauTitre,
+    nomAccessible,
   } = props
   // Sans niveau de titre (page sans titre parent), le libellé reste un simple texte mis en forme
   const Libelle = niveauTitre ?? 'div'
@@ -37,6 +37,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
               data={graphiqueInfos.map((item) => item.value)}
               isFull={false}
               labels={graphiqueInfos.map((item) => item.label)}
+              nomAccessible={nomAccessible}
             />
           </div>
           {/* RGAA 9.1 (#2357) : avec un titre, le total en fait partie (« 42 Lieux en territoires prioritaires ») ;
@@ -88,12 +89,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           <div style={{ display: 'none', flex: 1 }}>
             <p className="fr-text--sm fr-mb-0">Données mises à jour le {dateGeneration.toLocaleDateString('fr-FR')}</p>
           </div>
-          <DownloadButton
-            onClick={() => {
-              void handleDownload(componentRef, label)
-            }}
-            title={label}
-          />
+          <DownloadButton cible={componentRef} nomFichier={label} title={label} />
         </div>
       </div>
     </section>
@@ -109,6 +105,8 @@ type Props = {
   information?: string
   label: string
   niveauTitre?: 'h3'
+  // RGAA 1.1 : nom du canvas du demi-anneau ; ses valeurs sont écrites dans la liste qui le suit
+  nomAccessible: string
 }
 
 type Info = {

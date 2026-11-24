@@ -108,6 +108,7 @@ async function carteDuTerritoire(
               bbox: territoire.bbox,
               code: territoire.code,
               codesInsee: territoire.codesInsee,
+              nom: territoire.nom,
               type: 'epci',
             }}
           />
@@ -136,7 +137,12 @@ async function carteDuTerritoire(
         carte: (
           <CarteFragiliteDepartement
             fragilite={'type' in indicesFragilite ? [] : indicesFragilite}
-            territoire={{ bbox: territoire.bbox, codesDepartement: territoire.codesDepartement, type: 'region' }}
+            territoire={{
+              bbox: territoire.bbox,
+              codesDepartement: territoire.codesDepartement,
+              nom: territoire.nom,
+              type: 'region',
+            }}
           />
         ),
         tableauFragilite: <TableauIndicesFragilite fragilite={indicesFragilite} maille="département" />,

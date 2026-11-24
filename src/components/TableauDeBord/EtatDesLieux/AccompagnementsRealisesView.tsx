@@ -4,6 +4,7 @@ import TableauAccompagnementsMensuels from './TableauAccompagnementsMensuels'
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord.module.css'
+import { CibleChiffresCles, LienVersChiffresCles } from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
 import InformationDepliable, {
   BoutonInformation,
   TexteInformation,
@@ -18,7 +19,7 @@ export type AccompagnementsRealisesEtat =
   | Readonly<{ resultat: AccompagnementsRealisesResult; statut: 'charge' }>
   | Readonly<{ statut: 'chargement' }>
 
-export default function AccompagnementsRealisesView({ etat }: Props): ReactElement {
+export default function AccompagnementsRealisesView({ cibleTableau, etat }: ViewProps): ReactElement {
   if (etat.statut === 'chargement') {
     return (
       <>
@@ -147,8 +148,14 @@ export default function AccompagnementsRealisesView({ etat }: Props): ReactEleme
             </InformationDepliable>
           }
           labels={mois.map((item) => item.libelleAxe)}
-          nomAccessible="Histogramme des accompagnements des 6 derniers mois. Données détaillées dans les chiffres clés en tableau, sous les graphiques."
+          nomAccessible="Histogramme des accompagnements des 6 derniers mois"
         />
+        {/* RGAA 1.1 : l'alternative suit immédiatement le canvas de l'histogramme */}
+        <p className="fr-mt-1w fr-mb-0">
+          <LienVersChiffresCles cible={cibleTableau}>
+            Voir les données de l&apos;histogramme en tableau
+          </LienVersChiffresCles>
+        </p>
       </div>
     </>
   )
@@ -170,3 +177,8 @@ export function TableauAccompagnementsRealises({ etat }: Props): ReactElement {
 type Props = Readonly<{
   etat: AccompagnementsRealisesEtat
 }>
+
+type ViewProps = Props &
+  Readonly<{
+    cibleTableau: CibleChiffresCles
+  }>

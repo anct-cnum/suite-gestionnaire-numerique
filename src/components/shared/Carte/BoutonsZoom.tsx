@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import styles from './Map.module.css'
 
 // Boutons de zoom DSFR à la place du NavigationControl de MapLibre : nom français, focus DSFR visible
-// (RGAA 7.1, 8.7, 10.7). Ils restent focalisables alors que le canvas de la carte est masqué aux aides techniques.
+// (RGAA 7.1, 8.7, 10.7). Ils restent focalisables alors que le canvas de la carte est hors tabulation.
 export default function BoutonsZoom({ onDezoomer, onZoomer }: Props): ReactElement {
   return (
     <div className={`fr-m-1w ${styles.boutonsZoom}`}>

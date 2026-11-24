@@ -2,6 +2,7 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import styles from './CarteFragilite.module.css'
+import { NOM_CARTE_FRAGILITE } from '../../shared/Carte/accessibiliteCarte'
 import CarteFranceAvecInsets from '../../shared/Carte/CarteFranceAvecInsets'
 import Legend from '../../shared/Carte/Legend'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
@@ -111,7 +112,13 @@ export default function CarteIndicesFrance({ departementsFragilite }: Props): Re
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ? <CarteFranceAvecInsets donneesDepartements={departementsViewModel} legend={<Legend />} /> : null}
+          {isReady ? (
+            <CarteFranceAvecInsets
+              donneesDepartements={departementsViewModel}
+              legend={<Legend />}
+              nomAccessible={`${NOM_CARTE_FRAGILITE} par département`}
+            />
+          ) : null}
         </div>
       </div>
     </div>

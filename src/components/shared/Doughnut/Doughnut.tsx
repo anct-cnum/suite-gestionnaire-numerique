@@ -4,9 +4,10 @@ import { Doughnut as ReactDoughnut } from 'react-chartjs-2'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function Doughnut({ backgroundColor, data, isFull = true, labels }: Props): ReactElement {
+export default function Doughnut({ backgroundColor, data, isFull = true, labels, nomAccessible }: Props): ReactElement {
   return (
     <ReactDoughnut
+      aria-label={nomAccessible}
       data={{
         datasets: [
           {
@@ -37,4 +38,6 @@ type Props = Readonly<{
   data: ReadonlyArray<number>
   isFull?: boolean
   labels: Array<string>
+  // Nom du canvas, restitué comme une image (role="img" posé par react-chartjs-2)
+  nomAccessible?: string
 }>
