@@ -309,7 +309,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               <div>
                 <ExternalLink
                   className="fr-btn"
-                  href="https://mon.inclusion-numerique.anct.gouv.fr/"
+                  href="https://mon.inclusion-numerique.anct.gouv.fr/gouvernances/rejoindre"
                   title="Accéder au formulaire"
                 >
                   Accéder au formulaire
