@@ -32,34 +32,14 @@
   }
 }
 
-.menuItem {
-  border-left: 0.125rem solid transparent;
-  box-sizing: border-box;
-  display: flex;
-  padding: 0.75rem 0.5rem;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-.menuItem:hover {
-  background-color: var(--background-contrast-grey);
-}
-
-.menuItemActive {
-  border-left-color: var(--border-plain-blue-france);
-  border-left-width: 0.125rem;
-}
-
-.menuItemLink {
-  color: var(--text-label-grey);
-  font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.5rem;
-  text-decoration: none;
-}
-
-.menuItemLinkActive {
-  color: var(--text-action-high-blue-france);
+/*
+ * Trait de l'élément actif épaissi à 4 px sous le point de rupture md du DSFR
+ * (décision utilisateur du 24/11/2026). Seule l'épaisseur change : structure, couleur et JS restent ceux du DSFR.
+ */
+@media (width < 48em) {
+  .navigationFixed :global(.fr-sidemenu__link[aria-current]:not([aria-current='false'])::before) {
+    width: 0.25rem;
+  }
 }
 
 .buttonAccess {

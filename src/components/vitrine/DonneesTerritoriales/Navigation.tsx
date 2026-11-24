@@ -5,6 +5,7 @@ import { useParams, usePathname } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import styles from './Navigation.module.css'
+import { etatCourant } from '../navigation/etatCourant'
 import useStickyPosition from '@/shared/hooks/useStickyPosition'
 
 export default function Navigation(): ReactElement {
@@ -25,24 +26,24 @@ export default function Navigation(): ReactElement {
 
   const allSections = [
     {
-      href: `/vitrine/donnees-territoriales/synthese-et-indicateurs${territoirePath}`,
+      href: `/donnees-territoriales/synthese-et-indicateurs${territoirePath}`,
       label: 'Synthèse et indicateurs',
     },
     {
-      href: `/vitrine/donnees-territoriales/lieux-inclusion${territoirePath}`,
+      href: `/donnees-territoriales/lieux-inclusion${territoirePath}`,
       label: "Lieux d'inclusion",
     },
     {
-      href: `/vitrine/donnees-territoriales/mediateurs-numeriques${territoirePath}`,
+      href: `/donnees-territoriales/mediateurs-numeriques${territoirePath}`,
       label: 'Médiateurs numériques',
     },
     {
-      href: `/vitrine/donnees-territoriales/gouvernances${territoirePath}`,
+      href: `/donnees-territoriales/gouvernances${territoirePath}`,
       label: 'Gouvernances',
       niveaux: ['departement', 'epci'],
     },
     {
-      href: `/vitrine/donnees-territoriales/feuille-de-route${territoirePath}`,
+      href: `/donnees-territoriales/feuille-de-route${territoirePath}`,
       label: 'Feuille de route',
       niveaux: ['departement'],
     },
@@ -74,19 +75,16 @@ export default function Navigation(): ReactElement {
         <div className="fr-collapse" id="donnees-territoriales-menu-wrapper">
           <ul className="fr-sidemenu__list">
             {sections.map((section) => {
-              const isActive = pathname.startsWith(section.href)
+              const etat = etatCourant(pathname, section.href)
 
               return (
-                <li className="fr-sidemenu__item" key={section.href}>
-                  <div className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ''}`}>
-                    <Link
-                      aria-current={isActive ? 'page' : undefined}
-                      className={`${styles.menuItemLink} ${isActive ? styles.menuItemLinkActive : ''}`}
-                      href={section.href}
-                    >
-                      {section.label}
-                    </Link>
-                  </div>
+                <li
+                  className={`fr-sidemenu__item${etat === undefined ? '' : ' fr-sidemenu__item--active'}`}
+                  key={section.href}
+                >
+                  <Link aria-current={etat} className="fr-sidemenu__link" href={section.href}>
+                    {section.label}
+                  </Link>
                 </li>
               )
             })}

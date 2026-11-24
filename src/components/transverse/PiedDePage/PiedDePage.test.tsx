@@ -4,6 +4,35 @@ import { describe, expect, it } from 'vitest'
 import PiedDePage from './PiedDePage'
 
 describe('pied de page', () => {
+  it('sur la vitrine, propose en premier un lien vers le plan du site (RGAA 12.1)', () => {
+    // WHEN
+    render(<PiedDePage vitrine />)
+
+    // THEN
+    const piedDePage = screen.getByRole('contentinfo')
+    const lienPlan = within(piedDePage).getByRole('link', { name: 'Plan du site' })
+    expect(lienPlan).toHaveAttribute('href', '/plan-du-site')
+    expect(lienPlan).toHaveClass('fr-footer__bottom-link')
+    const intitules = within(piedDePage)
+      .getAllByRole('link')
+      .map((lien) => lien.textContent)
+    const position = intitules.indexOf('Plan du site')
+    expect(intitules.slice(position - 1, position + 2)).toStrictEqual([
+      'data.gouv.fr',
+      'Plan du site',
+      'Accessibilité : non conforme',
+    ])
+  })
+
+  it('dans l’application connectée, ne propose pas de lien vers le plan du site', () => {
+    // WHEN
+    render(<PiedDePage />)
+
+    // THEN
+    const piedDePage = screen.getByRole('contentinfo')
+    expect(within(piedDePage).queryByRole('link', { name: 'Plan du site' })).not.toBeInTheDocument()
+  })
+
   it('sur la vitrine, le logo ramène à l’accueil de la vitrine avec un intitulé explicite', () => {
     // WHEN
     render(<PiedDePage vitrine />)
