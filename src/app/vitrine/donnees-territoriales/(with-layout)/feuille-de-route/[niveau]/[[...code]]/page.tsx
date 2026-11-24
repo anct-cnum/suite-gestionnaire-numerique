@@ -37,7 +37,7 @@ export default async function FeuilleDeRoute({ params }: Props): Promise<ReactEl
 
   // Rediriger vers la page d'accueil des données territoriales si niveau national ou régional
   if (niveau === 'national' || niveau === 'region') {
-    redirect('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+    redirect('/donnees-territoriales/synthese-et-indicateurs/national')
   }
 
   // Pour la vitrine, on affiche uniquement les données départementales

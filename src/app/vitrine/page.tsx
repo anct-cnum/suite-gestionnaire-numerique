@@ -193,7 +193,7 @@ export default function VitrineHomePage(): ReactElement {
                 de chacun.
               </p>
               <div>
-                <Link className="fr-btn" href="/vitrine/lieux">
+                <Link className="fr-btn" href="/lieux">
                   La cartographie nationale
                 </Link>
               </div>
@@ -228,7 +228,7 @@ export default function VitrineHomePage(): ReactElement {
                 sécurisée et confiante du numérique.
               </p>
               <div style={{ marginBottom: '2em' }}>
-                <Link className="fr-btn" href="/vitrine/dispositifs">
+                <Link className="fr-btn" href="/dispositifs">
                   Les dispositifs d&apos;inclusion numérique
                 </Link>
               </div>
@@ -264,7 +264,7 @@ export default function VitrineHomePage(): ReactElement {
                 d&apos;ajuster les stratégies locales d&apos;inclusion numérique.
               </p>
               <div>
-                <Link className="fr-btn" href="/vitrine/donnees-territoriales">
+                <Link className="fr-btn" href="/donnees-territoriales">
                   Choisir un territoire
                 </Link>
               </div>
@@ -300,7 +300,7 @@ export default function VitrineHomePage(): ReactElement {
                 oeuvrant partout en France.
               </p>
               <div>
-                <Link className="fr-btn" href="/vitrine/outils-numeriques">
+                <Link className="fr-btn" href="/outils-numeriques">
                   Découvrir les outils
                 </Link>
               </div>

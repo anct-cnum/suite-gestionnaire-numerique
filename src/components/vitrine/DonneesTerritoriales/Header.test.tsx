@@ -37,16 +37,16 @@ describe('header des données territoriales', () => {
     // THEN
     const filAriane = screen.getByRole('navigation', { name: 'vous êtes ici :' })
     const lienDepartement = await within(filAriane).findByRole('link', { name: 'Ille-et-Vilaine · 35' })
-    expect(lienDepartement).toHaveAttribute('href', '/vitrine/donnees-territoriales/gouvernances/departement/35')
+    expect(lienDepartement).toHaveAttribute('href', '/donnees-territoriales/gouvernances/departement/35')
     const lienRegion = within(filAriane).getByRole('link', { name: 'Bretagne' })
-    expect(lienRegion).toHaveAttribute('href', '/vitrine/donnees-territoriales/synthese-et-indicateurs/region/53')
+    expect(lienRegion).toHaveAttribute('href', '/donnees-territoriales/synthese-et-indicateurs/region/53')
     const epci = within(filAriane).getByText('CA Redon Agglomération')
     expect(epci.textContent).toBe('CA Redon Agglomération')
   })
 
   it('sur une page départementale, le fil d’Ariane reste inchangé avec la région puis le département', () => {
     // GIVEN
-    mockPathname.current = '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/69'
+    mockPathname.current = '/donnees-territoriales/synthese-et-indicateurs/departement/69'
     mockParams.current = { code: ['69'], niveau: 'departement' }
 
     // WHEN
@@ -55,7 +55,7 @@ describe('header des données territoriales', () => {
     // THEN
     const filAriane = screen.getByRole('navigation', { name: 'vous êtes ici :' })
     const lienRegion = within(filAriane).getByRole('link', { name: 'Auvergne-Rhône-Alpes' })
-    expect(lienRegion).toHaveAttribute('href', '/vitrine/donnees-territoriales/synthese-et-indicateurs/region/84')
+    expect(lienRegion).toHaveAttribute('href', '/donnees-territoriales/synthese-et-indicateurs/region/84')
     const departement = within(filAriane).getByText('Rhône · 69')
     expect(departement.textContent).toBe('Rhône · 69')
   })

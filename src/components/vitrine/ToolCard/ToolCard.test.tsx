@@ -35,14 +35,14 @@ describe('carte d’un outil', () => {
         description="Description de l’outil"
         imageAlt="Capture d'écran"
         imageSrc="/vitrine/outils/visuel-min.png"
-        link="/vitrine/outils-numeriques/min"
+        link="/outils-numeriques/min"
         title="Mon inclusion Numérique"
       />
     )
 
     // THEN
     const lien = screen.getByRole('link', { name: 'Découvrir Mon Inclusion Numérique' })
-    expect(lien.getAttribute('href')).toBe('/vitrine/outils-numeriques/min')
+    expect(lien.getAttribute('href')).toBe('/outils-numeriques/min')
     expect(lien.getAttribute('target')).toBeNull()
     expect(lien.getAttribute('title')).toBeNull()
   })

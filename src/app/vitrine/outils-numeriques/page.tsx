@@ -45,7 +45,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageAlt="Capture d'écran de Mon inclusion Numérique"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-min.png"
-        link="/vitrine/outils-numeriques/min"
+        link="/outils-numeriques/min"
         title="Mon inclusion Numérique"
       />
 

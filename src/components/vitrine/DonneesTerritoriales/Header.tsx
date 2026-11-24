@@ -82,7 +82,7 @@ export default function Header({ titre }: Props): ReactElement {
       niveauxAutorises === undefined || niveauxAutorises.includes(territoire.type)
         ? currentSection
         : 'synthese-et-indicateurs'
-    router.push(`/vitrine/donnees-territoriales/${section}/${territoire.type}/${territoire.code}`)
+    router.push(`/donnees-territoriales/${section}/${territoire.type}/${territoire.code}`)
   }
 
   const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection, epci, departementEpci)
@@ -188,9 +188,9 @@ function getBreadcrumbItems(
   const section = currentSection ?? 'synthese-et-indicateurs'
 
   const items: Array<{ href?: string; label: string }> = [
-    { href: '/vitrine', label: 'Accueil' },
-    { href: '/vitrine/donnees-territoriales', label: 'Données territoriales' },
-    { href: `/vitrine/donnees-territoriales/${section}/national`, label: 'France' },
+    { href: '/', label: 'Accueil' },
+    { href: '/donnees-territoriales', label: 'Données territoriales' },
+    { href: `/donnees-territoriales/${section}/national`, label: 'France' },
   ]
 
   if (niveau === undefined || niveau === '' || code === undefined) {
@@ -201,7 +201,7 @@ function getBreadcrumbItems(
     const region = regions.find((region) => region.code === code)
     if (region !== undefined) {
       items.push({
-        href: `/vitrine/donnees-territoriales/${section}/region/${code}`,
+        href: `/donnees-territoriales/${section}/region/${code}`,
         label: region.nom,
       })
     }
@@ -213,12 +213,12 @@ function getBreadcrumbItems(
       const regionCourante = regions.find((region) => region.code === departementCourant.regionCode)
       if (regionCourante !== undefined) {
         items.push({
-          href: `/vitrine/donnees-territoriales/synthese-et-indicateurs/region/${regionCourante.code}`,
+          href: `/donnees-territoriales/synthese-et-indicateurs/region/${regionCourante.code}`,
           label: regionCourante.nom,
         })
       }
       items.push({
-        href: `/vitrine/donnees-territoriales/${section}/departement/${code}`,
+        href: `/donnees-territoriales/${section}/departement/${code}`,
         label: `${departementCourant.nom} · ${code}`,
       })
     }
@@ -244,12 +244,12 @@ function getBreadcrumbItemsEpci(
     const regionRattachement = regions.find((region) => region.code === departementRattachement.regionCode)
     if (regionRattachement !== undefined) {
       items.push({
-        href: `/vitrine/donnees-territoriales/synthese-et-indicateurs/region/${regionRattachement.code}`,
+        href: `/donnees-territoriales/synthese-et-indicateurs/region/${regionRattachement.code}`,
         label: regionRattachement.nom,
       })
     }
     items.push({
-      href: `/vitrine/donnees-territoriales/${section}/departement/${departementRattachement.code}`,
+      href: `/donnees-territoriales/${section}/departement/${departementRattachement.code}`,
       label: `${departementRattachement.nom} · ${departementRattachement.code}`,
     })
   }
