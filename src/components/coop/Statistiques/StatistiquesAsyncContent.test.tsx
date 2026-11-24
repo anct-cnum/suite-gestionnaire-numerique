@@ -42,8 +42,10 @@ describe('niveaux de titre des statistiques des médiateurs (RGAA 9.1)', () => {
       'H4 Statistiques générales sur les accompagnements',
       "H5 Nombre d'accompagnements",
       'H6 Afficher les données sous forme de tableau',
+      'H6 Afficher les données sous forme de tableau',
       'H4 Statistiques sur les accompagnements',
       'H5 Thématiques des accompagnements de médiation numérique',
+      'H5 Thématiques des accompagnements de démarches administratives',
       'H5 Matériel utilisé lors des accompagnements',
       'H5 Canaux des accompagnements',
       'H5 Durée des accompagnements',
@@ -78,8 +80,10 @@ describe('niveaux de titre des statistiques des médiateurs (RGAA 9.1)', () => {
       'H3 Statistiques générales sur les accompagnements',
       "H4 Nombre d'accompagnements",
       'H5 Afficher les données sous forme de tableau',
+      'H5 Afficher les données sous forme de tableau',
       'H3 Statistiques sur les accompagnements',
       'H4 Thématiques des accompagnements de médiation numérique',
+      'H4 Thématiques des accompagnements de démarches administratives',
       'H4 Matériel utilisé lors des accompagnements',
       'H4 Canaux des accompagnements',
       'H4 Durée des accompagnements',
@@ -91,6 +95,8 @@ describe('niveaux de titre des statistiques des médiateurs (RGAA 9.1)', () => {
   })
 })
 
+// Les panneaux d'onglets inactifs (Par jour, Démarches administratives) sont dans le DOM, masqués par le CSS du DSFR :
+// leurs titres sont donc listés ici
 function titres(): ReadonlyArray<string> {
   return screen.getAllByRole('heading').map((titre) => `${titre.tagName} ${(titre.textContent ?? '').trim()}`)
 }

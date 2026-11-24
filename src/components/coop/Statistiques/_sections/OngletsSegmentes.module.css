@@ -1,0 +1,87 @@
+/* MIN (#2352) : onglets DSFR (structure et JS canoniques, motif ARIA Tabs) à l'apparence d'un contrôle segmenté,
+   comme avant la mise en conformité RGAA 7.1 : onglets accolés, fond blanc, bordure grise, onglet actif en bleu.
+   L'onglet actif a une bordure de 2 px au lieu de 1 px : un indice qui ne repose pas sur la couleur seule (RGAA 3.1),
+   conservé en mode contrastes élevés (vraies bordures, pas d'ombres). Couleurs : variables du DSFR uniquement. */
+
+/* Plus de cadre ni de fond autour des panneaux */
+.ongletsSegmentes {
+  box-shadow: none;
+}
+
+.ongletsSegmentes::before {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Les onglets passent à la ligne au lieu de défiler ; 1 px de marge en plus pour les bordures superposées */
+.ongletsSegmentes :global(.fr-tabs__list) {
+  flex-wrap: wrap;
+  min-height: auto;
+  padding: 4px 4px 5px 5px;
+}
+
+/* Bordures des onglets voisins superposées : pas d'espace ni de double trait entre eux */
+.ongletsSegmentes :global(.fr-tabs__list) > li {
+  margin: 0 0 -1px -1px;
+}
+
+.ongletsSegmentes :global(.fr-tabs__list) :global(.fr-tabs__tab) {
+  --idle: transparent;
+  --hover: var(--background-default-grey-hover);
+  --active: var(--background-default-grey-active);
+
+  background-color: var(--background-default-grey);
+  background-image: none;
+  border: 1px solid var(--border-default-grey);
+  box-shadow: none;
+  color: var(--text-action-high-grey);
+  margin: 0;
+}
+
+.ongletsSegmentes :global(.fr-tabs__list) > li:first-child :global(.fr-tabs__tab) {
+  border-bottom-left-radius: 0.25rem;
+  border-top-left-radius: 0.25rem;
+}
+
+.ongletsSegmentes :global(.fr-tabs__list) > li:last-child :global(.fr-tabs__tab) {
+  border-bottom-right-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+/* Onglet actif : bordure bleue de 2 px, padding réduit d'autant pour garder la même taille */
+.ongletsSegmentes :global(.fr-tabs__list) :global(.fr-tabs__tab)[aria-selected='true'] {
+  border: 2px solid var(--border-active-blue-france);
+  color: var(--text-active-blue-france);
+  padding: calc(0.5rem - 1px) calc(1rem - 1px);
+  z-index: 1;
+}
+
+/* Contrastes élevés : les couleurs du DSFR sont remplacées par celles du système ; l'onglet actif reprend la couleur
+   système de sélection, comme les onglets DSFR d'origine, en plus de sa bordure plus épaisse */
+@media (forced-colors: active) {
+  .ongletsSegmentes :global(.fr-tabs__list) :global(.fr-tabs__tab)[aria-selected='true'] {
+    border-color: highlight;
+    color: highlight;
+  }
+}
+
+/* Panneau sans marges latérales : le contenu garde la largeur de la carte ; focus dessiné à l'intérieur */
+.ongletsSegmentes :global(.fr-tabs__panel) {
+  padding: 1rem 4px 4px;
+}
+
+.ongletsSegmentes :global(.fr-tabs__panel):focus-visible {
+  outline-offset: -2px;
+}
+
+/* En mobile, les onglets occupent toute la largeur de leur ligne (comme l'ancien contrôle segmenté) */
+@media (width < 36rem) {
+  .ongletsSegmentes :global(.fr-tabs__list) > li {
+    flex: 1 1 auto;
+  }
+
+  .ongletsSegmentes :global(.fr-tabs__list) :global(.fr-tabs__tab) {
+    justify-content: center;
+    width: 100%;
+  }
+}
