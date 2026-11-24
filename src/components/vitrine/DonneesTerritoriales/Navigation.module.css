@@ -1,5 +1,5 @@
 .navigationFixed {
-  background-color: white;
+  background-color: var(--background-default-grey);
   box-shadow: none;
   left: max(1.5rem, calc((100vw - 78rem) / 2 + 1.5rem));
   position: fixed;
