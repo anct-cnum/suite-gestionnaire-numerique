@@ -4,7 +4,11 @@ import Link from 'next/link'
 import { ReactElement, ReactNode, useId, useState } from 'react'
 
 import Bar from '@/components/shared/Bar/Bar'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { ActivitesStructureViewModel } from '@/presenters/activitesStructurePresenter'
 
 export default function StructureActivites({ viewModel }: Props): ReactElement {
@@ -79,10 +83,13 @@ function CarteIndicateur({
         />
         {valeur}
       </p>
-      <p className="fr-text--sm fr-text--bold fr-m-0">
-        {libelle}
-        <Information libelle={`Plus d'information sur « ${libelle} »`}>{children}</Information>
-      </p>
+      <InformationDepliable>
+        <p className="fr-text--sm fr-text--bold fr-m-0">
+          {libelle}
+          <BoutonInformation libelle={`Plus d'information sur « ${libelle} »`} />
+        </p>
+        <TexteInformation>{children}</TexteInformation>
+      </InformationDepliable>
     </div>
   )
 }
@@ -102,13 +109,16 @@ function CarteBeneficiaires({
       </div>
       <p className="fr-text--sm fr-text--bold fr-mb-2w">Bénéficiaires accompagnés</p>
       <p className="fr-text--sm fr-mb-1v">{beneficiaires.suivis} bénéficiaires suivis</p>
-      <p className="fr-text--sm fr-m-0">
-        {beneficiaires.anonymes} bénéficiaires anonymes
-        <Information libelle="Plus d'information sur les bénéficiaires accompagnés">
+      <InformationDepliable>
+        <p className="fr-text--sm fr-m-0">
+          {beneficiaires.anonymes} bénéficiaires anonymes
+          <BoutonInformation libelle="Plus d'information sur les bénéficiaires accompagnés" />
+        </p>
+        <TexteInformation>
           Bénéficiaires déclarés par les médiateurs et conseillers numériques de la structure : les bénéficiaires suivis
           disposent d&apos;une fiche, les bénéficiaires anonymes non.
-        </Information>
-      </p>
+        </TexteInformation>
+      </InformationDepliable>
     </div>
   )
 }
@@ -122,13 +132,16 @@ function GraphiqueCard({ graphique }: Readonly<{ graphique: ActivitesStructureVi
   return (
     <div className="fr-col-12 fr-col-md-8">
       <div className="grey-border border-radius fr-p-3w">
-        <h3 className="fr-h6 fr-mb-2w">
-          Nombre d&apos;accompagnements
-          <Information libelle="Plus d'information sur le nombre d'accompagnements">
-            Somme des accompagnements de médiation numérique enregistrés (accompagnements individuels et participations
-            aux ateliers collectifs) et, sur la vue mensuelle, des accompagnements Aidants Connect.
-          </Information>
-        </h3>
+        <InformationDepliable>
+          <div className="fr-mb-2w">
+            <h3 className={`fr-h6 ${titreSuiviDuBouton}`}>Nombre d&apos;accompagnements</h3>
+            <BoutonInformation libelle="Plus d'information sur le nombre d'accompagnements" />
+            <TexteInformation>
+              Somme des accompagnements de médiation numérique enregistrés (accompagnements individuels et
+              participations aux ateliers collectifs) et, sur la vue mensuelle, des accompagnements Aidants Connect.
+            </TexteInformation>
+          </div>
+        </InformationDepliable>
         <fieldset className="fr-segmented fr-segmented--sm fr-mb-1w">
           <legend className="fr-sr-only">Période du graphique</legend>
           <div className="fr-segmented__elements">

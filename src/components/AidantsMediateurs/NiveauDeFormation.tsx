@@ -6,11 +6,15 @@ import { ReactElement, useRef } from 'react'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import { DownloadButton } from '../shared/Download/DownloadButton'
-import Information from '../shared/Information/Information'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 
 export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }: Props): ReactElement {
@@ -34,17 +38,20 @@ export default function NiveauDeFormation({ dateGeneration, niveauDeFormation }:
   return (
     <section aria-labelledby="niveau-de-formation" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
-        <div>
-          <h2 className="fr-h5 color-blue-france fr-m-0" id="niveau-de-formation">
-            Niveau de formation des aidants et médiateurs numériques
-            <Information libelle="Plus d'information sur le niveau de formation des aidants et médiateurs numériques">
-              <p className="fr-mb-0">
+        <InformationDepliable>
+          <div>
+            <h2 className={`fr-h5 color-blue-france fr-m-0 ${titreSuiviDuBouton}`} id="niveau-de-formation">
+              Niveau de formation des aidants et médiateurs numériques
+            </h2>
+            <BoutonInformation libelle="Plus d'information sur le niveau de formation des aidants et médiateurs numériques" />
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
                 Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur{' '}
                 <strong>la Coop de la médiation</strong> ainsi que les conseillers numériques de votre territoire
               </p>
-            </Information>
-          </h2>
-        </div>
+            </TexteInformation>
+          </div>
+        </InformationDepliable>
       </div>
 
       <div className="fr-grid-row fr-mb-4w" ref={componentRef}>

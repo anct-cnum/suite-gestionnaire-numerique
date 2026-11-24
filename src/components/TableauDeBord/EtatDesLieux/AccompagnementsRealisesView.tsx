@@ -5,7 +5,11 @@ import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord.module.css'
 import { CibleChiffresCles, LienVersChiffresCles } from '@/components/shared/ChiffresClesEnTableau/LienVersChiffresCles'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 import { accompagnementsMensuelsPresenter } from '@/presenters/tableauDeBord/accompagnementsMensuelsPresenter'
 import { AccompagnementsRealisesResult } from '@/use-cases/queries/fetchAccompagnementsRealises'
@@ -24,25 +28,33 @@ export default function AccompagnementsRealisesView({ cibleTableau, etat }: View
             <TitleIcon background="white" icon="compass-3-line" />
             <span className="color-grey">...</span>
           </div>
-          <div className="font-weight-500">
-            <span> Accompagnements réalisés</span>
-            <Information libelle="Plus d'information sur les accompagnements réalisés">
-              <p className="fr-mb-0">
+          <InformationDepliable>
+            <div className="font-weight-500">
+              <span> Accompagnements réalisés</span>
+              <BoutonInformation libelle="Plus d'information sur les accompagnements réalisés" />
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
                 Depuis <strong>2021</strong>, avec les dispositifs <strong>Conseillers Numériques</strong> et
                 <strong>Aidants Connect.</strong>
               </p>
-            </Information>
-          </div>
+            </TexteInformation>
+          </InformationDepliable>
         </div>
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
-          <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
-            <span> Accompagnements des 6 derniers mois</span>
-            <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
-              <p className="fr-mb-0">
+          <InformationDepliable>
+            <div>
+              <h3 className={`fr-text--md fr-m-0 font-weight-500 fr-text-default--grey ${titreSuiviDuBouton}`}>
+                Accompagnements des 6 derniers mois
+              </h3>
+              <BoutonInformation libelle="Plus d'information sur les accompagnements des 6 derniers mois" />
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
                 Accompagnements saisis sur <strong>La Coop.</strong>
               </p>
-            </Information>
-          </h3>
+            </TexteInformation>
+          </InformationDepliable>
           <div className="fr-text--sm color-grey fr-mt-2w">Chargement...</div>
         </div>
       </>
@@ -56,24 +68,32 @@ export default function AccompagnementsRealisesView({ cibleTableau, etat }: View
           <div className={`${styles.indicateurValeur} fr-m-0`}>
             <TitleIcon background="white" icon="error-warning-line" />—
           </div>
-          <div className="font-weight-500">
-            <span> Accompagnements réalisés</span>
-            <Information libelle="Plus d'information sur les accompagnements réalisés">
-              <p className="fr-mb-0">
+          <InformationDepliable>
+            <div className="font-weight-500">
+              <span> Accompagnements réalisés</span>
+              <BoutonInformation libelle="Plus d'information sur les accompagnements réalisés" />
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
                 Depuis <strong>2021</strong>, avec les dispositifs <strong>Conseillers Numériques</strong> et
                 <strong>Aidants Connect.</strong>
               </p>
-            </Information>
-          </div>
+            </TexteInformation>
+          </InformationDepliable>
           <div className="fr-text--xs color-blue-france fr-mb-0">{etat.message}</div>
         </div>
         <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
-          <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
-            <span> Accompagnements des 6 derniers mois</span>
-            <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
-              <p className="fr-mb-0">Accompagnements saisis sur La Coop</p>
-            </Information>
-          </h3>
+          <InformationDepliable>
+            <div>
+              <h3 className={`fr-text--md fr-m-0 font-weight-500 fr-text-default--grey ${titreSuiviDuBouton}`}>
+                Accompagnements des 6 derniers mois
+              </h3>
+              <BoutonInformation libelle="Plus d'information sur les accompagnements des 6 derniers mois" />
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">Accompagnements saisis sur La Coop</p>
+            </TexteInformation>
+          </InformationDepliable>
           <div className="fr-text--xs color-blue-france fr-mb-0">{etat.message}</div>
         </div>
       </>
@@ -94,15 +114,18 @@ export default function AccompagnementsRealisesView({ cibleTableau, etat }: View
           <TitleIcon background="white" icon="compass-3-line" />
           {formaterEnNombreFrancais(resultat.nombreTotal)}
         </div>
-        <div className="font-weight-500">
-          <span> Accompagnements réalisés</span>
-          <Information libelle="Plus d'information sur les accompagnements réalisés">
-            <p className="fr-mb-0">
+        <InformationDepliable>
+          <div className="font-weight-500">
+            <span> Accompagnements réalisés</span>
+            <BoutonInformation libelle="Plus d'information sur les accompagnements réalisés" />
+          </div>
+          <TexteInformation>
+            <p className="fr-text--sm fr-mb-0">
               Depuis 2021, avec les dispositifs <strong>Conseillers Numériques</strong> et{' '}
               <strong>Aidants Connect</strong>
             </p>
-          </Information>
-        </div>
+          </TexteInformation>
+        </InformationDepliable>
       </div>
       <div className="background-blue-france fr-p-3w fr-ml-1w fr-mt-1w">
         <Bar
@@ -110,14 +133,19 @@ export default function AccompagnementsRealisesView({ cibleTableau, etat }: View
           data={mois.map((item) => item.nombre)}
           etiquettesValeurs={mois.map((item) => item.nombreAffiche)}
           header={
-            <h3 className="fr-text--md fr-m-0 font-weight-500 fr-text-default--grey">
-              <span> Accompagnements des 6 derniers mois</span>
-              <Information libelle="Plus d'information sur les accompagnements des 6 derniers mois">
-                <p className="fr-mb-0">
+            <InformationDepliable>
+              <div>
+                <h3 className={`fr-text--md fr-m-0 font-weight-500 fr-text-default--grey ${titreSuiviDuBouton}`}>
+                  Accompagnements des 6 derniers mois
+                </h3>
+                <BoutonInformation libelle="Plus d'information sur les accompagnements des 6 derniers mois" />
+              </div>
+              <TexteInformation>
+                <p className="fr-text--sm fr-mb-0">
                   Accompagnements saisis sur <strong>La Coop.</strong>
                 </p>
-              </Information>
-            </h3>
+              </TexteInformation>
+            </InformationDepliable>
           }
           labels={mois.map((item) => item.libelleAxe)}
           nomAccessible="Histogramme des accompagnements des 6 derniers mois"

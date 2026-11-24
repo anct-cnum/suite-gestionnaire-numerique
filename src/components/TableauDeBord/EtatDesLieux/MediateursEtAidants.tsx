@@ -3,7 +3,10 @@ import { ReactElement } from 'react'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+} from '@/components/shared/Information/InformationDepliable'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
 export default function MediateursEtAidants({ viewModel }: Props): ReactElement {
@@ -13,14 +16,17 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
         <div className={`${styles.indicateurValeur} fr-m-0`}>
           <TitleIcon background="white" icon="error-warning-line" />—
         </div>
-        <div className="font-weight-500">
-          <span>Médiateurs et aidants numériques</span>
-          <Information libelle="Plus d'information sur les médiateurs et aidants numériques">
-            <p className="fr-mb-0">
+        <InformationDepliable>
+          <div className="font-weight-500">
+            <span>Médiateurs et aidants numériques</span>
+            <BoutonInformation libelle="Plus d'information sur les médiateurs et aidants numériques" />
+          </div>
+          <TexteInformation>
+            <p className="fr-text--sm fr-mb-0">
               Professionnels inscrits sur <strong>la Coop</strong> et/ou labellisés <strong>Aidants Connect.</strong>
             </p>
-          </Information>
-        </div>
+          </TexteInformation>
+        </InformationDepliable>
         <div className="fr-text--xs color-blue-france fr-mb-0">{viewModel.message}</div>
       </div>
     )
@@ -32,14 +38,17 @@ export default function MediateursEtAidants({ viewModel }: Props): ReactElement 
         <TitleIcon background="white" icon="map-pin-user-line" />
         {viewModel.total}
       </div>
-      <div className="font-weight-500">
-        <span>Médiateurs et aidants numériques</span>
-        <Information libelle="Plus d'information sur les médiateurs et aidants numériques">
-          <p className="fr-mb-0">
+      <InformationDepliable>
+        <div className="font-weight-500">
+          <span>Médiateurs et aidants numériques</span>
+          <BoutonInformation libelle="Plus d'information sur les médiateurs et aidants numériques" />
+        </div>
+        <TexteInformation>
+          <p className="fr-text--sm fr-mb-0">
             Professionnels inscrits sur <strong>la Coop</strong> et/ou labellisés <strong>Aidants Connect</strong>
           </p>
-        </Information>
-      </div>
+        </TexteInformation>
+      </InformationDepliable>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 'use client'
 
-import Button from '@codegouvfr/react-dsfr/Button'
 import { ReactNode } from 'react'
 import { AccompagnementPieChart } from '../_components/AccompagnementPieChart'
+import { BoutonInformationCoop } from '../_components/BoutonInformationCoop'
 import { QuantifiedShareList } from '../_components/QuantifiedShareList'
 import { QuantifiedShareLegend } from '../_components/QuantifiedShareLegend'
 import { StatistiqueAccompagnement } from '../_components/StatistiqueAccompagnement'
@@ -17,6 +17,7 @@ import type { AccompagnementsStats, ActivitesStats, QuantifiedShare } from '../t
 import { NiveauTitreSection, niveauxDeTitre, numberToString, sPluriel } from '../utils'
 import ongletsStyles from './OngletsSegmentes.module.css'
 import styles from './StatistiquesActivites.module.css'
+import InformationDepliable, { TexteInformation } from '@/components/shared/Information/InformationDepliable'
 
 const desc = ({ count: countA }: { count: number }, { count: countB }: { count: number }) => countB - countA
 
@@ -130,50 +131,40 @@ export const StatistiquesActivites = ({
               role="tabpanel"
               tabIndex={0}
             >
-              <div className="fr-flex fr-align-items-center fr-mb-6v">
-                <TitreBloc className="fr-text--md fr-mb-0">{title}</TitreBloc>
-                <Button
-                  className="fr-px-1v fr-ml-1v"
-                  title={`Plus d'information à propos des ${title.toLowerCase()}`}
-                  priority="tertiary no outline"
-                  size="small"
-                  type="button"
-                  aria-describedby={`tooltip-accompagnement-${category}`}
-                >
-                  <span className="ri-information-line fr-text--lg" aria-hidden />
-                </Button>
-                <span
-                  className="fr-tooltip fr-placement"
-                  id={`tooltip-accompagnement-${category}`}
-                  role="tooltip"
-                  aria-hidden
-                >
-                  {description}
-                </span>
-              </div>
+              {/* MIN (#2350, RGAA 7.3) : le « i » déplie son texte dans la page au lieu d'une infobulle */}
+              <InformationDepliable>
+                <div className="fr-flex fr-align-items-center fr-mb-6v">
+                  <TitreBloc className="fr-text--md fr-mb-0">{title}</TitreBloc>
+                  <BoutonInformationCoop
+                    className="fr-px-1v fr-ml-1v"
+                    libelle={`Plus d'information à propos des ${title.toLowerCase()}`}
+                  />
+                </div>
+                <TexteInformation>
+                  <p className="fr-text--sm fr-mb-3w">{description}</p>
+                </TexteInformation>
+              </InformationDepliable>
               <QuantifiedShareList colors={colors} limit={limite} quantifiedShares={items} tooltipKey={category} />
             </div>
           ))}
         </div>
       </div>
       <div className="fr-border fr-p-4v fr-p-md-8v fr-pb-10v fr-mb-3w fr-border-radius--16 fr-background-default--grey fr-border-radius--16 fr-position-relative">
-        <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
-          <TitreBloc className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</TitreBloc>
-          <Button
-            className="fr-px-1v fr-ml-1v"
-            title="Plus d'information à propos du matériel utilisé"
-            priority="tertiary no outline"
-            size="small"
-            type="button"
-            aria-describedby="tooltip-meteriel-utilise"
-          >
-            <span className="ri-information-line fr-text--lg" aria-hidden />
-          </Button>
-          <span className="fr-tooltip fr-placement" id="tooltip-meteriel-utilise" role="tooltip" aria-hidden>
-            Matériel utilisé lors d'un accompagnement de médiation numérique. À noter&nbsp;: Plusieurs matériels ont pu
-            être utilisés lors d'un même accompagnement.
-          </span>
-        </div>
+        <InformationDepliable>
+          <div className="fr-col fr-flex fr-align-items-center fr-mb-8v">
+            <TitreBloc className="fr-text--md fr-mb-0">Matériel utilisé lors des accompagnements</TitreBloc>
+            <BoutonInformationCoop
+              className="fr-px-1v fr-ml-1v"
+              libelle="Plus d'information à propos du matériel utilisé"
+            />
+          </div>
+          <TexteInformation>
+            <p className="fr-text--sm fr-mb-3w">
+              Matériel utilisé lors d'un accompagnement de médiation numérique. À noter&nbsp;: Plusieurs matériels ont
+              pu être utilisés lors d'un même accompagnement.
+            </p>
+          </TexteInformation>
+        </InformationDepliable>
         <div className="fr-flex fr-flex-wrap fr-justify-content-space-between fr-flex-gap-6v fr-px-4v">
           {activites.materiels.map(({ value, label, count, proportion }) => (
             <StatistiqueMateriel key={value} value={value} label={label} count={count} proportion={proportion} />

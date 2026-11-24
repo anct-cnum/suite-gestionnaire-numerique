@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { StatistiquesGenerales } from './StatistiquesGenerales'
@@ -56,6 +57,29 @@ describe('statistiques générales sur les accompagnements', () => {
         name: 'Nombre d’accompagnements par jour, 30 derniers jours de la période',
       })
     ).toBeInTheDocument()
+  })
+
+  it('le « i » des accompagnements, nommé sans bulle du navigateur, déplie dans la page leur détail chiffré en liste (RGAA 7.3, #2350)', async () => {
+    // GIVEN
+    afficherLesStatistiques()
+    const bouton = screen.getByRole('button', { name: "Plus d'information à propos des accompagnements" })
+    expect(bouton).not.toHaveAttribute('title')
+    expect(bouton).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByText(/accompagnements au total dont/)).not.toBeInTheDocument()
+
+    // WHEN
+    bouton.focus()
+    await userEvent.keyboard('{Enter}')
+
+    // THEN
+    expect(bouton).toHaveFocus()
+    expect(bouton).toHaveAttribute('aria-expanded', 'true')
+    const texte = document.getElementById(bouton.getAttribute('aria-controls') ?? '')
+    expect(texte).not.toBeNull()
+    const detail = within(texte as HTMLElement)
+      .getAllByRole('listitem')
+      .map((item) => item.textContent)
+    expect(detail).toStrictEqual(['2\u202F813 accompagnements individuels', '0 participations lors de 0 ateliers*'])
   })
 })
 

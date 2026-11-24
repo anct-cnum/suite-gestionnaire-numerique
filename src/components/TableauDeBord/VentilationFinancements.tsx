@@ -1,7 +1,10 @@
 import { ReactElement } from 'react'
 
 import Dot from '../shared/Dot/Dot'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+} from '@/components/shared/Information/InformationDepliable'
 
 export default function VentilationFinancements({
   contexte,
@@ -10,21 +13,19 @@ export default function VentilationFinancements({
 }: Props): ReactElement {
   return (
     <>
-      <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w" style={{ fontWeight: 500 }}>
-        {nombreDeFinancementsEngagesParLEtat} financement(s) engagé(s) par l&apos;État
-        {contexte === 'departement' && (
-          <Information libelle="Plus d'information sur les financements engagés par l'État">
-            <p className="fr-mb-0">
-              Nombre de demandes de subventions validées des feuilles de route de votre gouvernance.
-            </p>
-          </Information>
-        )}
-        {contexte === 'admin' && (
-          <Information libelle="Plus d'information sur les financements engagés par l'État">
-            <p className="fr-mb-0">Nombre de demandes de subventions validées des feuilles de route.</p>
-          </Information>
-        )}
-      </div>
+      <InformationDepliable>
+        <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-2w" style={{ fontWeight: 500 }}>
+          {nombreDeFinancementsEngagesParLEtat} financement(s) engagé(s) par l&apos;État
+          <BoutonInformation libelle="Plus d'information sur les financements engagés par l'État" />
+        </div>
+        <TexteInformation>
+          <p className="fr-text--sm fr-mb-2w">
+            {contexte === 'departement'
+              ? 'Nombre de demandes de subventions validées des feuilles de route de votre gouvernance.'
+              : 'Nombre de demandes de subventions validées des feuilles de route.'}
+          </p>
+        </TexteInformation>
+      </InformationDepliable>
       <ul>
         {ventilationSubventionsParEnveloppe.map((detail) => (
           <li key={detail.label} style={{ listStyle: 'none' }}>

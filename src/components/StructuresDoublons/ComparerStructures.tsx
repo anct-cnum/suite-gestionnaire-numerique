@@ -4,10 +4,13 @@ import Link from 'next/link'
 import { CSSProperties, ReactElement, useContext, useState } from 'react'
 
 import ModaleCanonisation from './ModaleCanonisation'
-import Information from '../shared/Information/Information'
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
 import { Notification } from '../shared/Notification/Notification'
 import { clientContext } from '@/components/shared/ClientContext'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+} from '@/components/shared/Information/InformationDepliable'
 import {
   ComparaisonViewModel,
   ConceptViewModel,
@@ -529,9 +532,10 @@ function CarteStructure({
             <li key={rattachement.label}>
               {rattachement.label} : <span className="fr-text--bold">{rattachement.nombre}</span>
               {rattachement.info === undefined ? null : (
-                <Information libelle={`Plus d'information sur « ${rattachement.label} »`}>
-                  {rattachement.info}
-                </Information>
+                <InformationDepliable>
+                  <BoutonInformation libelle={`Plus d'information sur « ${rattachement.label} »`} />
+                  <TexteInformation>{rattachement.info}</TexteInformation>
+                </InformationDepliable>
               )}
             </li>
           ))}

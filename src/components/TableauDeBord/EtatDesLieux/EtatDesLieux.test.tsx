@@ -278,7 +278,7 @@ function afficherLEtatDesLieux(
 function titreDeLHistogramme(): HTMLElement {
   return screen.getByRole('heading', {
     level: 3,
-    name: "Accompagnements des 6 derniers mois Plus d'information sur les accompagnements des 6 derniers mois",
+    name: 'Accompagnements des 6 derniers mois',
   })
 }
 
