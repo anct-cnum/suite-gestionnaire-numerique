@@ -35,7 +35,7 @@ function groupe(id: string, titre: string, departements: ReadonlyArray<Departeme
       .sort((premier, second) => premier.codeDepartement.localeCompare(second.codeDepartement))
       .map((departement) => ({
         libelle: `${departement.nomDepartement} (${departement.codeDepartement})`,
-        lien: `/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/${departement.codeDepartement}`,
+        lien: `/donnees-territoriales/synthese-et-indicateurs/departement/${departement.codeDepartement}`,
       })),
     id,
     titre,

@@ -60,6 +60,13 @@ export default function PiedDePage({ vitrine = false }: Props): ReactElement {
         </div>
         <div className="fr-footer__bottom">
           <ul className="fr-footer__bottom-list">
+            {vitrine ? (
+              <li className="fr-footer__bottom-item">
+                <Link className="fr-footer__bottom-link" href="/plan-du-site">
+                  Plan du site
+                </Link>
+              </li>
+            ) : null}
             <li className="fr-footer__bottom-item">
               <Link className="fr-footer__bottom-link" href="/accessibilite">
                 Accessibilité : non conforme

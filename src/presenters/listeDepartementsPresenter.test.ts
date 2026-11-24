@@ -24,8 +24,8 @@ describe('liste des départements presenter', () => {
     expect(viewModel).toStrictEqual([
       {
         departements: [
-          { libelle: 'Ain (01)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/01' },
-          { libelle: 'Rhône (69)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/69' },
+          { libelle: 'Ain (01)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/01' },
+          { libelle: 'Rhône (69)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/69' },
         ],
         id: 'departements-region-84',
         titre: 'Auvergne-Rhône-Alpes',
@@ -34,7 +34,7 @@ describe('liste des départements presenter', () => {
         departements: [
           {
             libelle: 'Corse-du-Sud (2A)',
-            lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/2A',
+            lien: '/donnees-territoriales/synthese-et-indicateurs/departement/2A',
           },
         ],
         id: 'departements-region-94',
@@ -42,7 +42,7 @@ describe('liste des départements presenter', () => {
       },
       {
         departements: [
-          { libelle: 'Paris (75)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/75' },
+          { libelle: 'Paris (75)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/75' },
         ],
         id: 'departements-region-11',
         titre: 'Île-de-France',
@@ -51,18 +51,18 @@ describe('liste des départements presenter', () => {
         departements: [
           {
             libelle: 'Guadeloupe (971)',
-            lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/971',
+            lien: '/donnees-territoriales/synthese-et-indicateurs/departement/971',
           },
           {
             libelle: 'Martinique (972)',
-            lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/972',
+            lien: '/donnees-territoriales/synthese-et-indicateurs/departement/972',
           },
-          { libelle: 'Guyane (973)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/973' },
+          { libelle: 'Guyane (973)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/973' },
           {
             libelle: 'La Réunion (974)',
-            lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/974',
+            lien: '/donnees-territoriales/synthese-et-indicateurs/departement/974',
           },
-          { libelle: 'Mayotte (976)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/976' },
+          { libelle: 'Mayotte (976)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/976' },
         ],
         id: 'departements-outre-mer',
         titre: 'Outre-mer',

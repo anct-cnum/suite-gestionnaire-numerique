@@ -56,8 +56,8 @@ export default function MonInclusionNumeriquePage(): ReactElement {
         >
           <FilAriane
             items={[
-              { href: '/vitrine', label: "Page d'accueil" },
-              { href: '/vitrine/outils-numeriques', label: 'Outils numériques' },
+              { href: '/', label: "Page d'accueil" },
+              { href: '/outils-numeriques', label: 'Outils numériques' },
               { label: 'Mon Inclusion Numérique' },
             ]}
           />

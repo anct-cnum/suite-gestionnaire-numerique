@@ -44,7 +44,7 @@ export default async function Gouvernances({ params }: Props): Promise<ReactElem
 
   // Rediriger vers la page d'accueil des données territoriales si niveau national ou régional
   if (niveau === 'national' || niveau === 'region') {
-    redirect('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+    redirect('/donnees-territoriales/synthese-et-indicateurs/national')
   }
 
   // Les gouvernances sont pilotées à l'échelle départementale : un code département ou EPCI est obligatoire

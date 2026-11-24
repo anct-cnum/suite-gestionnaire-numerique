@@ -35,7 +35,7 @@ export default function CarteFranceVitrine(): ReactElement {
 
   const handleDepartementClick = useCallback(
     (codeDepartement: string) => {
-      router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/${codeDepartement}`)
+      router.push(`/donnees-territoriales/synthese-et-indicateurs/departement/${codeDepartement}`)
     },
     [router]
   )

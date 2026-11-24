@@ -23,7 +23,7 @@ export default function DonneesTerritoriales({ departements }: Props): ReactElem
 
   function handleTerritoireChange(territoire: TerritoireViewModel): void {
     setNavigationEnCours(true)
-    router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${territoire.type}/${territoire.code}`)
+    router.push(`/donnees-territoriales/synthese-et-indicateurs/${territoire.type}/${territoire.code}`)
   }
 
   return (
@@ -80,7 +80,7 @@ export default function DonneesTerritoriales({ departements }: Props): ReactElem
                         className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
                         onClick={() => {
                           setNavigationEnCours(true)
-                          router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+                          router.push('/donnees-territoriales/synthese-et-indicateurs/national')
                         }}
                         type="button"
                       >

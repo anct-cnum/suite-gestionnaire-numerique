@@ -92,7 +92,7 @@ describe('liens de la vitrine (RGAA 6.1 et 13.2)', () => {
 
     // THEN
     const lienMin = screen.getByRole('link', { name: 'Découvrir Mon Inclusion Numérique' })
-    expect(lienMin.getAttribute('href')).toBe('/vitrine/outils-numeriques/min')
+    expect(lienMin.getAttribute('href')).toBe('/outils-numeriques/min')
     expect(lienMin.getAttribute('target')).toBeNull()
     expect(screen.getByRole('link', { name: 'Découvrir La Coop de la médiation numérique' }).getAttribute('href')).toBe(
       'https://coop-numerique.anct.gouv.fr/'

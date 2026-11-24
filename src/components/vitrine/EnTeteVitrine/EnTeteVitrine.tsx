@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import styles from './EnTeteVitrine.module.css'
+import { etatCourant } from '../navigation/etatCourant'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function EnTeteVitrine(): ReactElement {
@@ -86,53 +88,19 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
             </ul>
           </div>
-          <nav aria-label="Menu principal" className="fr-nav" role="navigation">
+          <nav aria-label="Menu principal" className={`fr-nav ${styles.navigation}`} role="navigation">
             <ul className="fr-nav__list">
-              <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname === '/vitrine' || pathname === '/' ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine"
-                >
-                  Accueil
-                </Link>
-              </li>
-              <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname === '/vitrine/lieux' ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine/lieux"
-                >
-                  Lieux
-                </Link>
-              </li>
-              <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname === '/vitrine/dispositifs' ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine/dispositifs"
-                >
-                  Dispositifs
-                </Link>
-              </li>
-              <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname === '/vitrine/donnees-territoriales' ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine/donnees-territoriales"
-                >
-                  Données territoriales
-                </Link>
-              </li>
-              <li className="fr-nav__item">
-                <Link
-                  aria-current={pathname.startsWith('/vitrine/outils-numeriques') ? 'page' : undefined}
-                  className="fr-nav__link"
-                  href="/vitrine/outils-numeriques"
-                >
-                  Outils numériques
-                </Link>
-              </li>
+              {rubriques.map((rubrique) => (
+                <li className="fr-nav__item" key={rubrique.href}>
+                  <Link
+                    aria-current={etatCourant(pathname, rubrique.href)}
+                    className="fr-nav__link"
+                    href={rubrique.href}
+                  >
+                    {rubrique.libelle}
+                  </Link>
+                </li>
+              ))}
               <li className="fr-nav__item">
                 <button aria-controls="menu-etudes" aria-expanded="false" className="fr-nav__btn" type="button">
                   Études et enquêtes
@@ -167,3 +135,12 @@ export default function EnTeteVitrine(): ReactElement {
     </header>
   )
 }
+
+// Adresses publiques : le préfixe technique /vitrine n'apparaît jamais dans la barre d'adresse.
+const rubriques: ReadonlyArray<Readonly<{ href: string; libelle: string }>> = [
+  { href: '/', libelle: 'Accueil' },
+  { href: '/lieux', libelle: 'Lieux' },
+  { href: '/dispositifs', libelle: 'Dispositifs' },
+  { href: '/donnees-territoriales', libelle: 'Données territoriales' },
+  { href: '/outils-numeriques', libelle: 'Outils numériques' },
+]

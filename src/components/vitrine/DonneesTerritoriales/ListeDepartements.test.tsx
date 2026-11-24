@@ -29,13 +29,13 @@ describe('liste des départements de l’accueil des données', () => {
     expect(listes).toHaveLength(2)
     const liensRegion = within(listes[0]).getAllByRole('link', { hidden: true })
     expect(liensRegion.map((lien) => [lien.textContent, lien.getAttribute('href')])).toStrictEqual([
-      ['Ain (01)', '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/01'],
-      ['Rhône (69)', '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/69'],
+      ['Ain (01)', '/donnees-territoriales/synthese-et-indicateurs/departement/01'],
+      ['Rhône (69)', '/donnees-territoriales/synthese-et-indicateurs/departement/69'],
     ])
     expect(liensRegion[0].className).toBe('fr-link')
     const liensOutreMer = within(listes[1]).getAllByRole('link', { hidden: true })
     expect(liensOutreMer.map((lien) => [lien.textContent, lien.getAttribute('href')])).toStrictEqual([
-      ['Guadeloupe (971)', '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/971'],
+      ['Guadeloupe (971)', '/donnees-territoriales/synthese-et-indicateurs/departement/971'],
     ])
   })
 })
@@ -46,8 +46,8 @@ function afficherLaListe(): void {
       groupes={[
         {
           departements: [
-            { libelle: 'Ain (01)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/01' },
-            { libelle: 'Rhône (69)', lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/69' },
+            { libelle: 'Ain (01)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/01' },
+            { libelle: 'Rhône (69)', lien: '/donnees-territoriales/synthese-et-indicateurs/departement/69' },
           ],
           id: 'departements-region-84',
           titre: 'Auvergne-Rhône-Alpes',
@@ -56,7 +56,7 @@ function afficherLaListe(): void {
           departements: [
             {
               libelle: 'Guadeloupe (971)',
-              lien: '/vitrine/donnees-territoriales/synthese-et-indicateurs/departement/971',
+              lien: '/donnees-territoriales/synthese-et-indicateurs/departement/971',
             },
           ],
           id: 'departements-outre-mer',

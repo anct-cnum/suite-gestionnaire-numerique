@@ -1,0 +1,9 @@
+/*
+ * Trait de l'élément actif du menu principal épaissi à 4 px sous le point de rupture md du DSFR
+ * (décision utilisateur du 24/11/2026). Seule l'épaisseur change : structure, couleur et JS restent ceux du DSFR.
+ */
+@media (width < 48em) {
+  .navigation :global(.fr-nav__link[aria-current]:not([aria-current='false'])::before) {
+    width: 0.25rem;
+  }
+}
