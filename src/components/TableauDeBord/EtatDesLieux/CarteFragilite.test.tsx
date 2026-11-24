@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import CarteFragiliteDepartement from './CarteFragiliteDepartement'
@@ -40,8 +40,13 @@ describe('titre des cartes de l’indice de fragilité numérique', () => {
     // THEN
     const titre = screen.getByRole('heading', {
       level: 3,
-      name: "Indice de Fragilité numérique Plus d'information sur l'indice de fragilité numérique",
+      name: 'Indice de Fragilité numérique',
     })
     expect(titre).toBeInTheDocument()
+    // RGAA 9.1 (#2350) : le « i » suit le titre sans en faire partie
+    expect(within(titre).queryByRole('button')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: "Plus d'information sur l'indice de fragilité numérique" })
+    ).toBeInTheDocument()
   })
 })

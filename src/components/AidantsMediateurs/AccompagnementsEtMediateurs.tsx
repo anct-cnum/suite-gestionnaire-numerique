@@ -10,11 +10,15 @@ import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import { DownloadButton } from '../shared/Download/DownloadButton'
-import Information from '../shared/Information/Information'
 import Metric from '../shared/Metric/Metric'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 import { BeneficiairesEtAccompagnementsResult } from '@/use-cases/queries/fetchBeneficiaires'
 
@@ -67,17 +71,20 @@ export default function AccompagnementsEtMediateurs({
   return (
     <section aria-labelledby="accompagnements-et-mediateurs" className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--middle separator fr-pb-3w fr-mb-3w">
-        <div>
-          <h2 className="fr-h5 color-blue-france fr-m-0" id="accompagnements-et-mediateurs">
-            Accompagnements et médiateurs numériques
-            <Information libelle="Plus d'information sur les accompagnements et médiateurs numériques">
-              <p className="fr-mb-0">
+        <InformationDepliable>
+          <div>
+            <h2 className={`fr-h5 color-blue-france fr-m-0 ${titreSuiviDuBouton}`} id="accompagnements-et-mediateurs">
+              Accompagnements et médiateurs numériques
+            </h2>
+            <BoutonInformation libelle="Plus d'information sur les accompagnements et médiateurs numériques" />
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
                 Les indicateurs affichés concernent les médiateurs numériques inscrits sur{' '}
                 <strong>la Coop de la médiation</strong> ainsi que les conseillers numériques de votre territoire.
               </p>
-            </Information>
-          </h2>
-        </div>
+            </TexteInformation>
+          </div>
+        </InformationDepliable>
       </div>
 
       <div className="fr-grid-row fr-mb-4w fr-grid-row--gutters" ref={componentRef}>

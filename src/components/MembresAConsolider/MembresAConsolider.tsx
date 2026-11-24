@@ -3,11 +3,14 @@
 import Link from 'next/link'
 import { ReactElement, useContext, useId, useState } from 'react'
 
-import Information from '../shared/Information/Information'
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
 import { Notification } from '../shared/Notification/Notification'
 import Table from '../shared/Table/Table'
 import { clientContext } from '@/components/shared/ClientContext'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+} from '@/components/shared/Information/InformationDepliable'
 import {
   ImportCsvResultViewModel,
   MembreCsvLigneViewModel,
@@ -133,9 +136,10 @@ function ListeMembres({ viewModel }: Readonly<{ viewModel: MembresAConsoliderVie
         <li className="fr-mb-1v">
           <span className="fr-text--bold">Établissement réel proposé</span> : candidat que le système détecte comme
           étant proche.
-          <Information libelle="Plus d'information sur l'établissement réel proposé">
-            Structure dont le SIRET est identique
-          </Information>
+          <InformationDepliable>
+            <BoutonInformation libelle="Plus d'information sur l'établissement réel proposé" />
+            <TexteInformation>Structure dont le SIRET est identique</TexteInformation>
+          </InformationDepliable>
         </li>
       </ul>
       <p className="fr-text--sm fr-text-mention--grey">{resume}</p>

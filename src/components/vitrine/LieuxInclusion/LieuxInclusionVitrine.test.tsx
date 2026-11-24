@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import LieuxInclusionVitrine from './LieuxInclusionVitrine'
@@ -32,8 +32,13 @@ describe('lieux d’inclusion du site vitrine', () => {
     expect(titreTerritoiresPrioritaires).toBeInTheDocument()
     const titreLabellises = screen.getByRole('heading', {
       level: 3,
-      name: "15 Lieux labellisés ou habilités Plus d'information sur « Lieux labellisés ou habilités »",
+      name: '15 Lieux labellisés ou habilités',
     })
     expect(titreLabellises).toBeInTheDocument()
+    // RGAA 9.1 (#2350) : le « i » suit le titre sans en faire partie
+    expect(within(titreLabellises).queryByRole('button')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: "Plus d'information sur « Lieux labellisés ou habilités »" })
+    ).toBeInTheDocument()
   })
 })

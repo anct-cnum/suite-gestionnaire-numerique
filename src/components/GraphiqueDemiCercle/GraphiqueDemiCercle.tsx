@@ -2,10 +2,14 @@
 import { ReactElement, useRef } from 'react'
 
 import styles from './GraphiqueDemiCercle.module.css'
-import Information from '../shared/Information/Information'
 import Dot from '@/components/shared/Dot/Dot'
 import Doughnut from '@/components/shared/Doughnut/Doughnut'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
@@ -26,7 +30,8 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
     <section className="fr-mb-3w">
       <div className="fr-p-4w fr-border-default--grey" style={{ borderRadius: '1rem' }}>
         <div className="center" ref={componentRef}>
-          <div>
+          {/* RGAA 10.7 (#2350) : le contour de focus du « i » du libellé ne chevauche pas le demi-cercle */}
+          <div className="fr-mb-1w">
             <Doughnut
               backgroundColor={graphiqueInfos.map((item) => item.backgroundColor)}
               data={graphiqueInfos.map((item) => item.value)}
@@ -39,21 +44,24 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           {niveauTitre === undefined ? (
             <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>{indicateur}</div>
           ) : null}
-          <Libelle className="fr-text--lg font-weight-700 fr-m-0 fr-text-default--grey">
-            {niveauTitre === undefined ? null : (
-              <>
-                <span className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']} ${styles['total-du-titre']}`}>
-                  {indicateur}
-                </span>{' '}
-              </>
-            )}
-            {label}
-            {information === undefined ? null : (
-              <Information libelle={`Plus d'information sur « ${label} »`}>
-                <p className="fr-mb-0">{information}</p>
-              </Information>
-            )}
-          </Libelle>
+          <InformationDepliable>
+            <div>
+              <Libelle className={`fr-text--lg font-weight-700 fr-m-0 fr-text-default--grey ${titreSuiviDuBouton}`}>
+                {niveauTitre === undefined ? null : (
+                  <>
+                    <span className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']} ${styles['total-du-titre']}`}>
+                      {indicateur}
+                    </span>{' '}
+                  </>
+                )}
+                {label}
+              </Libelle>
+              {information === undefined ? null : <BoutonInformation libelle={`Plus d'information sur « ${label} »`} />}
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">{information}</p>
+            </TexteInformation>
+          </InformationDepliable>
           {description === '' ? null : <div className="color-blue-france fr-pb-1w separator">{description}</div>}
 
           <div className="fr-mt-4w">

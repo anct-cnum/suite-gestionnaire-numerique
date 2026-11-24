@@ -1,0 +1,4 @@
+/* Titre suivi de son « i » (#2350) : le titre s'écoule en ligne, le bouton qui le suit reste sur sa dernière ligne */
+.titre-suivi-du-bouton {
+  display: inline;
+}

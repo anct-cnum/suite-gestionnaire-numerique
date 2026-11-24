@@ -6,7 +6,11 @@ import styles from './CarteFragilite.module.css'
 import Carte, { TerritoireCarte } from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+  titreSuiviDuBouton,
+} from '@/components/shared/Information/InformationDepliable'
 import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
 export default function CarteFragiliteDepartement({ fragilite, territoire }: Props): ReactElement {
@@ -49,17 +53,20 @@ export default function CarteFragiliteDepartement({ fragilite, territoire }: Pro
           }}
         >
           <div style={{ padding: '1rem' }}>
-            <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-              <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
-                <span> Indice de Fragilité numérique</span>
-                <Information libelle="Plus d'information sur l'indice de fragilité numérique">
-                  <p className="fr-mb-0">
-                    L&apos;Indice de Fragilité Numérique est issu des données de la <strong>Mednum</strong>, calculées
-                    en <strong>2021.</strong>
-                  </p>
-                </Information>
-              </h3>
-            </div>
+            <InformationDepliable>
+              <div>
+                <h3 className={`fr-text--md fr-m-0 font-weight-700 color-blue-france ${titreSuiviDuBouton}`}>
+                  Indice de Fragilité numérique
+                </h3>
+                <BoutonInformation libelle="Plus d'information sur l'indice de fragilité numérique" />
+              </div>
+              <TexteInformation>
+                <p className="fr-text--sm fr-mb-0">
+                  L&apos;Indice de Fragilité Numérique est issu des données de la <strong>Mednum</strong>, calculées en{' '}
+                  <strong>2021.</strong>
+                </p>
+              </TexteInformation>
+            </InformationDepliable>
           </div>
           <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
             <div style={{ textAlign: 'center' }}>
@@ -84,16 +91,19 @@ export default function CarteFragiliteDepartement({ fragilite, territoire }: Pro
         }}
       >
         <div style={{ padding: '1rem' }}>
-          <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-            <h3 className="fr-text--md fr-m-0 font-weight-700 color-blue-france">
-              <span> Indice de Fragilité numérique</span>
-              <Information libelle="Plus d'information sur l'indice de fragilité numérique">
-                <p className="fr-mb-0">
-                  L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
-                </p>
-              </Information>
-            </h3>
-          </div>
+          <InformationDepliable>
+            <div>
+              <h3 className={`fr-text--md fr-m-0 font-weight-700 color-blue-france ${titreSuiviDuBouton}`}>
+                Indice de Fragilité numérique
+              </h3>
+              <BoutonInformation libelle="Plus d'information sur l'indice de fragilité numérique" />
+            </div>
+            <TexteInformation>
+              <p className="fr-text--sm fr-mb-0">
+                L&apos;Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021
+              </p>
+            </TexteInformation>
+          </InformationDepliable>
         </div>
         <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}

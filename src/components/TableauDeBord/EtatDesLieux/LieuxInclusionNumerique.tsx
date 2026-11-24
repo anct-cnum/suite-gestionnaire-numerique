@@ -3,7 +3,10 @@ import { ReactElement } from 'react'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import Information from '@/components/shared/Information/Information'
+import InformationDepliable, {
+  BoutonInformation,
+  TexteInformation,
+} from '@/components/shared/Information/InformationDepliable'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 
 export default function LieuxInclusionNumerique({ viewModel }: Props): ReactElement {
@@ -25,14 +28,17 @@ export default function LieuxInclusionNumerique({ viewModel }: Props): ReactElem
         <TitleIcon background="white" icon="map-pin-2-line" />
         {viewModel.nombreLieux}
       </div>
-      <div className="font-weight-500">
-        <span>Lieux d&apos;inclusion numérique</span>
-        <Information libelle="Plus d'information sur les lieux d'inclusion numérique">
-          <p className="fr-mb-0">
+      <InformationDepliable>
+        <div className="font-weight-500">
+          <span>Lieux d&apos;inclusion numérique</span>
+          <BoutonInformation libelle="Plus d'information sur les lieux d'inclusion numérique" />
+        </div>
+        <TexteInformation>
+          <p className="fr-text--sm fr-mb-0">
             Lieux référencés sur la <strong>Cartographie nationale</strong> des lieux d&apos;inclusion numérique.
           </p>
-        </Information>
-      </div>
+        </TexteInformation>
+      </InformationDepliable>
     </div>
   )
 }
