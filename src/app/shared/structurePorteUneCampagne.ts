@@ -1,10 +1,10 @@
 import { PrismaCampagneLoader } from '@/gateways/mesure-impact/PrismaCampagneLoader'
 import { RecupererLesCampagnesDeLaStructure } from '@/use-cases/mesure-impact/RecupererLesCampagnesDeLaStructure'
 
-// Pendant le pilote, la mesure d'impact est réservée aux bêta-testeurs : une autre personne n'agit pour aucune
-// structure, donc n'a accès à aucune campagne (menu, pages et saisie)
+// Une personne agit, pour la mesure d'impact, au nom de sa structure de rattachement (menu, pages et saisie) ;
+// sans structure, elle n'a accès à aucune campagne
 export function structureDeLaMesureDImpact(utilisateur: Utilisateur): number | undefined {
-  return utilisateur.isBetaTesteur ? (utilisateur.structureId ?? undefined) : undefined
+  return utilisateur.structureId ?? undefined
 }
 
 // Le menu « Mesure d'impact » ne s'affiche qu'aux personnes rattachées à une structure qui porte une campagne
@@ -16,6 +16,5 @@ export async function structurePorteUneCampagne(utilisateur: Utilisateur): Promi
 }
 
 type Utilisateur = Readonly<{
-  isBetaTesteur: boolean
   structureId: null | number
 }>
