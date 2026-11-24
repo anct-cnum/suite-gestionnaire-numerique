@@ -1,17 +1,14 @@
 'use client'
-import { ReactElement, useRef } from 'react'
+import { ReactElement } from 'react'
 
 import Information from '../shared/Information/Information'
-import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
-import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function LieuxInclusionCategory(props: Props): ReactElement {
   const { nombreLieuxInclusion } = props
-  const divCard = useRef<HTMLDivElement>(null)
   return (
     <section className="fr-p-3w fr-mb-2w fr-border-default--grey" style={{ borderRadius: '1rem' }}>
-      <div className="fr-card fr-card--no-border fr-p-1w" ref={divCard}>
+      <div className="fr-card fr-card--no-border fr-p-1w">
         <div className="fr-grid-row fr-grid-row--middle">
           <div className="fr-col">
             <div className="fr-col-auto" style={{ alignItems: 'stretch', display: 'flex' }}>
@@ -25,14 +22,6 @@ export default function LieuxInclusionCategory(props: Props): ReactElement {
                 numérique
               </p>
             </Information>
-          </div>
-          <div className="fr-col-auto">
-            <DownloadButton
-              onClick={() => {
-                void handleDownload(divCard, 'Lieux d’inclusion numérique')
-              }}
-              title="Lieux d’inclusion numérique"
-            />
           </div>
         </div>
       </div>

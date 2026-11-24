@@ -36,4 +36,40 @@ describe('lieux d’inclusion du site vitrine', () => {
     })
     expect(titreLabellises).toBeInTheDocument()
   })
+
+  it('n’affiche ni bouton « Exporter » sans action, ni téléchargement du chiffre des lieux : seuls les graphiques se téléchargent, par des liens (RGAA 7.1)', () => {
+    // WHEN
+    render(
+      <LieuxInclusionVitrine
+        viewModel={{
+          categoryGenerationDate: epochTime,
+          lieuxConseillerNumeriques: 10,
+          lieuxFranceService: 5,
+          nombreLabellisesOuHabilites: 15,
+          nombreLieuxInclusion: 100,
+          territoriesFRR: 3,
+          territoriesPrioritaires: 7,
+          territoriesQPV: 4,
+        }}
+      />
+    )
+
+    // THEN
+    expect(screen.queryByRole('button', { name: /Exporter/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Exporter/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Télécharger/ })).not.toBeInTheDocument()
+    const telechargements = screen
+      .getAllByRole('link', { name: /^Télécharger/ })
+      .map((lien) => ({ download: lien.getAttribute('download'), intitule: lien.textContent }))
+    expect(telechargements).toStrictEqual([
+      {
+        download: 'Lieux en territoires prioritaires',
+        intitule: 'Télécharger le graphique Lieux en territoires prioritaires (PNG)',
+      },
+      {
+        download: 'Lieux labellisés ou habilités',
+        intitule: 'Télécharger le graphique Lieux labellisés ou habilités (PNG)',
+      },
+    ])
+  })
 })
