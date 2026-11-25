@@ -83,6 +83,23 @@ describe('canonisation de structure (repository Prisma)', () => {
     await expect(prisma.adresse.count({ where: { clef_interop: CLEF_INTEROP } })).resolves.toBe(1)
   })
 
+  it('préfère l’adresse avec voie à une ligne sans voie de même clef_interop', async () => {
+    // GIVEN une ligne sans voie, créée en premier, et l’adresse avec voie portant la même clef_interop.
+    await seedCategorie()
+    const adresse = { clef_interop: CLEF_INTEROP, code_insee: '75107', code_postal: '75007', nom_commune: 'Paris' }
+    const sansVoie = await prisma.adresse.create({ data: adresse })
+    const avecVoie = await prisma.adresse.create({ data: { ...adresse, nom_voie: 'Avenue de Ségur', numero_voie: 20 } })
+    await creerUneStructure({ denomination_antenne: 'Antenne', id: ANTENNE, nom: 'Antenne', siret: SIRET })
+    await prisma.main_structure_administrative.update({ data: { adresse_id: sansVoie.id }, where: { id: ANTENNE } })
+
+    // WHEN
+    const result = await new PrismaStructureCanonisationRepository().canoniser(canonisation({}))
+
+    // THEN
+    expect(result).toBe('OK')
+    expect((await lire(ANTENNE))?.adresse_id).toBe(avecVoie.id)
+  })
+
   it('réutilise une adresse existante via le code BAN unique, même si la clef_interop diffère', async () => {
     // GIVEN une adresse déjà présente avec un code_ban (colonne unique) mais sans clef_interop.
     await seedCategorie()

@@ -153,6 +153,8 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
     geocode: NonNullable<Canonisation['geocode']>
   ): Promise<number> {
     const existante = await tx.adresse.findFirst({
+      // Plusieurs lignes peuvent partager une clef_interop : celles sans voie passent en dernier.
+      orderBy: { nom_voie: { nulls: 'last', sort: 'desc' } },
       where:
         geocode.banCodeBan === null
           ? { clef_interop: geocode.banClefInterop }
