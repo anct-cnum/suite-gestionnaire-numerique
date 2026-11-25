@@ -36,6 +36,9 @@ const TAILLE_DES_GRADUATIONS = { fontSize: '0.75rem' }
 
 const MARGE_ENTRE_LES_DATES = 8
 
+// #2382 : place laissée à droite pour que la dernière date, toujours affichée, reste entière avec le texte à 200 %
+const MARGE_DROITE = 20
+
 export const AccompagnementBarChart = ({ data }: { data: { label: string; count: number }[] }) => {
   const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
   const slicedData = accompagnementsAffiches(data)
@@ -48,7 +51,7 @@ export const AccompagnementBarChart = ({ data }: { data: { label: string; count:
       <BarChart
         accessibilityLayer={false}
         data={displayData}
-        margin={{ top: 15, right: 10, left: 5, bottom: 0 }}
+        margin={{ top: 15, right: MARGE_DROITE, left: 5, bottom: 0 }}
         barSize={displayData.length > 18 ? 16 : 20}
       >
         <CartesianGrid horizontal vertical={false} strokeDasharray="3 3" stroke="#ddd" />
