@@ -31,6 +31,11 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps<TooltipVa
     </div>
   )
 
+// Taille de fr-text--xxs, en rem pour suivre le zoom du texte
+const TAILLE_DES_GRADUATIONS = { fontSize: '0.75rem' }
+
+const MARGE_ENTRE_LES_DATES = 8
+
 export const AccompagnementBarChart = ({ data }: { data: { label: string; count: number }[] }) => {
   const isEmpty = data.length === 0 || data.every((item) => item.count === 0)
   const slicedData = accompagnementsAffiches(data)
@@ -47,23 +52,28 @@ export const AccompagnementBarChart = ({ data }: { data: { label: string; count:
         barSize={displayData.length > 18 ? 16 : 20}
       >
         <CartesianGrid horizontal vertical={false} strokeDasharray="3 3" stroke="#ddd" />
+        {/* #2382 : les graduations sont rendues hors du groupe de l'axe, une classe CSS n'y arrive pas : leur taille
+            passe par `tick`. Recharts mesure ensuite chaque date et n'affiche que celles qui tiennent sans se toucher,
+            à intervalle régulier, la dernière toujours visible ; toutes restent dans le tableau (#2251) */}
         <XAxis
-          className="fr-text--xxs"
           dataKey="label"
           scale="point"
           padding={{ left: 14, right: 14 }}
+          tick={TAILLE_DES_GRADUATIONS}
           tickLine={false}
           axisLine={false}
-          interval={displayData.length > 12 ? 2 : 0}
+          interval="equidistantPreserveEnd"
+          minTickGap={MARGE_ENTRE_LES_DATES}
         />
+        {/* #2382 : largeur ajustée aux valeurs pour qu'aucune ne soit coupée */}
         <YAxis
-          width={35}
+          width="auto"
+          tick={TAILLE_DES_GRADUATIONS}
           tickCount={5}
           tickLine={false}
           axisLine={false}
           allowDecimals={false}
           domain={isEmpty ? [0, 1] : undefined}
-          className="fr-text--xxs"
           tickFormatter={(value) => (isEmpty ? '' : value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value.toString())}
         />
         {!isEmpty && <Tooltip content={CustomTooltip} />}
