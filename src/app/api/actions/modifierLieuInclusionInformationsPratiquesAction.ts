@@ -20,35 +20,28 @@ export async function modifierLieuInclusionInformationsPratiquesAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    try {
-      // Vérification des droits (session, [bêta], lieu, rôle)
-      const droits = await verifierDroitsLieu(actionParams.structureId, {
-        action: 'modifier',
-        reserveAuxBetaTesteurs: false,
-      })
-      if (droits.statut === 'refus') {
-        return [droits.message]
-      }
-
-      // Appel du Use Case
-      const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle(
-        {
-          horaires: validationResult.data.horaires,
-          itinerance: validationResult.data.itinerance,
-          priseRdvUrl: validationResult.data.priseRdvUrl,
-          structureId: validationResult.data.structureId,
-          websiteUrl: validationResult.data.websiteUrl,
-        }
-      )
-
-      // Invalider le cache de la page
-      revalidatePath(validationResult.data.path)
-
-      return [result]
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue lors de la modification'
-      return [errorMessage]
+    // Vérification des droits (session, [bêta], lieu, rôle)
+    const droits = await verifierDroitsLieu(actionParams.structureId, {
+      action: 'modifier',
+      reserveAuxBetaTesteurs: false,
+    })
+    if (droits.statut === 'refus') {
+      return [droits.message]
     }
+
+    // Appel du Use Case
+    const result = await new ModifierLieuInclusionDescription(new PrismaLieuInclusionRepository(), new Date()).handle({
+      horaires: validationResult.data.horaires,
+      itinerance: validationResult.data.itinerance,
+      priseRdvUrl: validationResult.data.priseRdvUrl,
+      structureId: validationResult.data.structureId,
+      websiteUrl: validationResult.data.websiteUrl,
+    })
+
+    // Invalider le cache de la page
+    revalidatePath(validationResult.data.path)
+
+    return [result]
   })
 }
 

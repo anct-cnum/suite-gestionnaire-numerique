@@ -51,20 +51,16 @@ export async function modifierInformationsPersonnellesAidantAction(
       return ['Veuillez renseigner une adresse électronique valide.']
     }
 
-    try {
-      await new PrismaAidantRepository().modifierInformationsPersonnelles(
-        actionParams.aidantId,
-        {
-          emails,
-          nom: actionParams.nom,
-          prenom: actionParams.prenom,
-          telephone: actionParams.telephone,
-        },
-        new Date()
-      )
-    } catch {
-      return ["Une erreur est survenue. Les modifications n'ont pas été enregistrées. Veuillez réessayer."]
-    }
+    await new PrismaAidantRepository().modifierInformationsPersonnelles(
+      actionParams.aidantId,
+      {
+        emails,
+        nom: actionParams.nom,
+        prenom: actionParams.prenom,
+        telephone: actionParams.telephone,
+      },
+      new Date()
+    )
 
     revalidatePath(actionParams.path)
 

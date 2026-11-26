@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { modifierLieuInclusionInformationsPratiquesAction } from './modifierLieuInclusionInformationsPratiquesAction'
+import * as droitsLieu from './shared/verifierDroitsLieu'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 
 describe('modifier les informations pratiques d’un lieu d’inclusion action', () => {
@@ -34,5 +35,16 @@ describe('modifier les informations pratiques d’un lieu d’inclusion action',
     // THEN
     expect(messages).toStrictEqual([message])
     expect(ssoGateway.getSessionUtilisateurId).not.toHaveBeenCalled()
+  })
+
+  it('laisse remonter une erreur technique, pour qu’elle soit signalée à Sentry (#2390)', async () => {
+    // GIVEN
+    vi.spyOn(droitsLieu, 'verifierDroitsLieu').mockRejectedValueOnce(new Error('connexion à la base perdue'))
+
+    // WHEN
+    const messages = modifierLieuInclusionInformationsPratiquesAction({ path: '/lieu/42', structureId: '42' })
+
+    // THEN
+    await expect(messages).rejects.toThrow('connexion à la base perdue')
   })
 })

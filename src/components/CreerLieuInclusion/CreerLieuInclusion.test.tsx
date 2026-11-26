@@ -6,7 +6,7 @@ import CreerLieuInclusion from './CreerLieuInclusion'
 import { ResultatCreationLieu } from '@/app/api/actions/creerUnLieuInclusionAction'
 import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import * as notification from '@/components/shared/Notification/Notification'
-import { renderComponent } from '@/components/testHelper'
+import { renderComponent, serverActionEnPanne } from '@/components/testHelper'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import { typologieLabels } from '@/presenters/shared/typologie'
 
@@ -186,6 +186,35 @@ describe('création d’un lieu d’inclusion numérique (#1495)', () => {
         title: 'Erreur : ',
       })
     })
+    expect(push).not.toHaveBeenCalled()
+  })
+
+  it('affiche un message générique et rend la main si la création lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    const push = vi.fn<(href: string) => void>()
+    renderComponent(<CreerLieuInclusion />, {
+      creerUnLieuInclusionAction: serverActionEnPanne(),
+      rechercherAdressesAction: vi
+        .fn<() => Promise<ReadonlyArray<{ label: string }>>>()
+        .mockResolvedValue([{ label: '1 Rue de la Paix, 75001 Paris' }]),
+      rechercherLieuxInclusionSimilairesAction: vi
+        .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+        .mockResolvedValue([]),
+      router: routerAvec(push),
+    })
+    await userEvent.type(screen.getByRole('combobox', { name: /Adresse du lieu \*/ }), 'paix')
+    await userEvent.click(await screen.findByRole('option', { name: '1 Rue de la Paix, 75001 Paris' }))
+    await userEvent.type(screen.getByRole('textbox', { name: /Nom du lieu d’activité \*/ }), 'Mon lieu')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Typologie(s) du lieu d’activité *' }))
+    await userEvent.click(await screen.findByRole('option', { name: typologieLabels.ASSO }))
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Créer le lieu d’activité' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Créer le lieu d’activité' })).toBeEnabled()
     expect(push).not.toHaveBeenCalled()
   })
 

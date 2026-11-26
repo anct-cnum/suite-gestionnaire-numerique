@@ -15,7 +15,6 @@ const MESSAGES_ECHEC: Readonly<Record<TransfertFailure, string>> = {
   membreIntrouvable: 'Membre introuvable sur la structure d’origine',
   structureIntrouvable: 'Structure introuvable ou déjà supprimée',
   transfertCreeraitDoublonMembre: 'La structure cible est déjà membre de cette gouvernance',
-  transfertEchoue: 'Le transfert a échoué, aucune modification effectuée',
   transfertImpossibleMemeStructure: 'La structure d’origine et la structure cible sont identiques',
 }
 

@@ -49,7 +49,6 @@ export type TransfertNotionsFailure =
   // La cible est déjà membre d'une gouvernance dont la source est aussi membre (double rattachement).
   | 'collisionMembreGouvernance'
   | 'structureIntrouvable'
-  | 'transfertEchoue'
   | 'transfertImpossibleMemeStructure'
 
 type Command = Readonly<{

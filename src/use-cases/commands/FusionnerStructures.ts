@@ -41,7 +41,6 @@ export type Fusion = Readonly<{
 export type FusionFailure =
   | 'collisionIdentifiantSource'
   | 'collisionMembreGouvernance'
-  | 'fusionEchouee'
   // Une canonique (INSEE) peut être absorbée par une autre canonique (doublons inter-SIRET), mais
   // jamais par une antenne : on ne fait pas disparaître une entité INSEE au profit d'une variante.
   | 'fusionImpossibleCanoniqueDansAntenne'

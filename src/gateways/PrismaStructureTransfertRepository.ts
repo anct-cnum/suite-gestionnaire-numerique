@@ -14,11 +14,7 @@ import {
 // PrismaStructureFusionRepository) avec la totalité des notions.
 export class PrismaStructureTransfertRepository implements StructureTransfertRepository {
   async transfererNotions(transfert: TransfertNotions): ResultAsync<TransfertNotionsFailure> {
-    try {
-      return await prisma.$transaction(async (tx) => this.#transfererDansTransaction(tx, transfert))
-    } catch {
-      return 'transfertEchoue'
-    }
+    return prisma.$transaction(async (tx) => this.#transfererDansTransaction(tx, transfert))
   }
 
   async #journaliser(

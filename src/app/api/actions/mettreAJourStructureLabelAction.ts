@@ -48,12 +48,7 @@ export async function mettreAJourStructureLabelAction(actionParams: ActionParams
 
     // Les données officielles font foi (RG3/RG4) : on re-consulte l'API Entreprise côté
     // serveur plutôt que de faire confiance aux données transmises par le client.
-    let entreprise: Awaited<ReturnType<RechercherUneEntreprise['handle']>>
-    try {
-      entreprise = await new RechercherUneEntreprise(createApiEntrepriseLoader(siret)).handle({ siret })
-    } catch {
-      return ['Service temporairement indisponible. Veuillez réessayer.']
-    }
+    const entreprise = await new RechercherUneEntreprise(createApiEntrepriseLoader(siret)).handle({ siret })
     if ('estTrouvee' in entreprise) {
       return ['Le SIRET renseigné n’a pas pu être retrouvé. Vérifiez le numéro saisi.']
     }

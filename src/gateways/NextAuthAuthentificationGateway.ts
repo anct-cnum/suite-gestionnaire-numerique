@@ -7,6 +7,7 @@ import { ClientSafeProvider } from 'next-auth/react'
 
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
+import { reportErreurConnexion } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
 import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
 import { MettreAJourDateDeDerniereConnexion } from '@/use-cases/commands/MettreAJourDateDeDerniereConnexion'
@@ -36,21 +37,23 @@ const nextAuthOptions = {
       }
     },
     async signIn({ profile }): Promise<boolean> {
-      if (profile?.sub !== undefined && profile.email !== undefined) {
-        const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-        const utilisateurLoader = new PrismaUtilisateurLoader()
-        const utilisateurReadModel = await recupereretMettreAJourUtilisateur(
-          profile as Profile,
-          utilisateurLoader,
-          utilisateurRepository
-        )
-        if (!utilisateurReadModel) {
-          return false
+      try {
+        if (profile?.sub !== undefined && profile.email !== undefined) {
+          const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+          const utilisateurLoader = new PrismaUtilisateurLoader()
+          const utilisateurReadModel = await recupereretMettreAJourUtilisateur(
+            profile as Profile,
+            utilisateurLoader,
+            utilisateurRepository
+          )
+          await corrigerNomPrenomUtilisateur(utilisateurReadModel, profile as Profile, utilisateurRepository)
+          await mettreAJourDateConnexion(utilisateurReadModel.uid, utilisateurRepository)
         }
-        await corrigerNomPrenomUtilisateur(utilisateurReadModel, profile as Profile, utilisateurRepository)
-        await mettreAJourDateConnexion(utilisateurReadModel.uid, utilisateurRepository)
+        return true
+      } catch (error) {
+        reportErreurConnexion(error)
+        throw error
       }
-      return true
     },
   },
   debug: process.env.NODE_ENV !== 'production',
@@ -138,21 +141,17 @@ async function recupereretMettreAJourUtilisateur(
   profile: Profile,
   utilisateurLoader: PrismaUtilisateurLoader,
   utilisateurRepository: PrismaUtilisateurRepository
-): Promise<null | UnUtilisateurReadModel> {
+): Promise<UnUtilisateurReadModel> {
   let utilisateurReadModel
   try {
     utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub, profile.email)
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === 'Doit etre mis a jour') {
-        try {
-          await new MettreAJourUidALaPremiereConnexion(utilisateurRepository).handle({
-            email: profile.email,
-            uid: profile.sub,
-          })
-        } catch {
-          return null
-        }
+        await new MettreAJourUidALaPremiereConnexion(utilisateurRepository).handle({
+          email: profile.email,
+          uid: profile.sub,
+        })
       } else {
         throw error
       }

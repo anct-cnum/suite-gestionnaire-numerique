@@ -80,12 +80,8 @@ export type Canonisation = Readonly<{
 }>
 
 export type CanoniserFailure =
-  | 'canoniqueExistante'
   // Une canonique de même SIRET existe déjà : la canonisation violerait la contrainte d'unicité.
-  | 'canonisationEchouee'
-  | 'entrepriseIntrouvable'
-  | 'siretManquant'
-  | 'structureIntrouvable'
+  'canoniqueExistante' | 'entrepriseIntrouvable' | 'siretManquant' | 'structureIntrouvable'
 
 type Command = Readonly<{
   structureId: number

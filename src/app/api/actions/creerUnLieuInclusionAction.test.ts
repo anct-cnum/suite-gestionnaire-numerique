@@ -216,6 +216,18 @@ describe('créer un lieu d’inclusion action', () => {
     })
   })
 
+  it('laisse remonter une erreur technique, pour qu’elle soit signalée à Sentry (#2390)', async () => {
+    // GIVEN
+    connecte('Administrateur dispositif')
+    vi.spyOn(CreerUnLieuInclusion.prototype, 'handle').mockRejectedValueOnce(new Error('connexion à la base perdue'))
+
+    // WHEN
+    const resultat = creerUnLieuInclusionAction(creation)
+
+    // THEN
+    await expect(resultat).rejects.toThrow('connexion à la base perdue')
+  })
+
   it('traduit l’échec du use case en message lisible', async () => {
     // GIVEN
     connecte('Administrateur dispositif')

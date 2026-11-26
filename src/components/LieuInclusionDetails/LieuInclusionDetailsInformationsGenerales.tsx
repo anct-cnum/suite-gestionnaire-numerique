@@ -9,7 +9,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import LieuInclusionFormulaire, {
   EtatLieuInclusionFormulaire,
 } from '@/components/shared/LieuInclusionFormulaire/LieuInclusionFormulaire'
-import { Notification } from '@/components/shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '@/components/shared/Notification/Notification'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import { libelleTypologie } from '@/presenters/shared/typologie'
 
@@ -59,16 +59,23 @@ export default function LieuInclusionDetailsInformationsGenerales(props: Props):
     const form = new FormData(event.currentTarget)
     setIsDisabled(true)
 
-    const messages = await modifierLieuInclusionInformationsGeneralesAction({
-      adresse: form.get('adresse') as string,
-      complementAdresse: form.get('complementAdresse') as string,
-      itinerant: form.get('itinerant') === 'on',
-      nom: form.get('nom') as string,
-      path: pathname,
-      siret: etatFormulaire.siretSaisi,
-      structureId,
-      typologies: form.getAll('typologies').map(String),
-    })
+    let messages: Awaited<ReturnType<typeof modifierLieuInclusionInformationsGeneralesAction>>
+    try {
+      messages = await modifierLieuInclusionInformationsGeneralesAction({
+        adresse: form.get('adresse') as string,
+        complementAdresse: form.get('complementAdresse') as string,
+        itinerant: form.get('itinerant') === 'on',
+        nom: form.get('nom') as string,
+        path: pathname,
+        siret: etatFormulaire.siretSaisi,
+        structureId,
+        typologies: form.getAll('typologies').map(String),
+      })
+    } catch {
+      notifierErreurInattendue()
+      setIsDisabled(false)
+      return
+    }
 
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiées', title: 'Informations générales ' })

@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import ComparerStructures from './ComparerStructures'
-import { renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, serverActionEnPanne, stubbedServerAction } from '@/components/testHelper'
 import {
   ComparaisonViewModel,
   ConceptViewModel,
@@ -192,6 +192,24 @@ describe('consolider un doublon (cible + transfert/fusion par notion)', () => {
       notions: ['coop'],
       path: '/structures-doublons/comparer',
     })
+  })
+
+  it('affiche un message générique et rend la main si la fusion lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    renderComponent(<ComparerStructures peutFusionner={true} viewModel={deuxStructures()} />, {
+      fusionnerStructuresAction: serverActionEnPanne(),
+      pathname: '/structures-doublons/comparer',
+    })
+
+    // WHEN
+    fireEvent.click(screen.getByLabelText(/Fusionner/))
+    fireEvent.click(screen.getByRole('button', { name: 'Appliquer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmer' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Appliquer' })).toBeEnabled()
   })
 
   it('bascule sur la vue Distances et affiche la matrice', () => {

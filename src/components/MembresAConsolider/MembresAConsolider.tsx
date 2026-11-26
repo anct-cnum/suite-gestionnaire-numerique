@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ReactElement, useContext, useId, useState } from 'react'
 
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
-import { Notification } from '../shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '../shared/Notification/Notification'
 import Table from '../shared/Table/Table'
 import { clientContext } from '@/components/shared/ClientContext'
 import InformationDepliable, {
@@ -223,9 +223,16 @@ function BoutonTransfererMembre({
       return
     }
     setEnCours(true)
-    const messages = await transfererMembreAction({ idCible: cible, idMembre, idSource, path: pathname })
-    setEnCours(false)
-    setEstModaleOuverte(false)
+    let messages: ReadonlyArray<string>
+    try {
+      messages = await transfererMembreAction({ idCible: cible, idMembre, idSource, path: pathname })
+    } catch {
+      notifierErreurInattendue()
+      return
+    } finally {
+      setEnCours(false)
+      setEstModaleOuverte(false)
+    }
 
     if (messages.includes('OK')) {
       Notification('success', { description: 'transféré', title: 'Membre ' })

@@ -169,6 +169,11 @@ export function stubbedServerAction(result: ReadonlyArray<string>): Mock<() => P
   return vi.fn<() => Promise<ReadonlyArray<string>>>().mockResolvedValueOnce(result)
 }
 
+// Server action qui lève une exception (panne technique, déjà signalée à Sentry côté serveur)
+export function serverActionEnPanne(): Mock<() => Promise<never>> {
+  return vi.fn<() => Promise<never>>().mockRejectedValueOnce(new Error('panne technique'))
+}
+
 // Le mock global de vitest.setup.ts n'est pas constructible : à appeler avant d'afficher un composant
 // qui fait « new ResizeObserver() » (ex. le cadre défilant du tableau des membres de la gouvernance)
 export function simulerResizeObserver(): void {

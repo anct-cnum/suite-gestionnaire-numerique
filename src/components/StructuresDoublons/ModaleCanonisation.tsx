@@ -3,7 +3,7 @@
 import { ReactElement, useContext, useEffect, useState } from 'react'
 
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
-import { Notification } from '../shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '../shared/Notification/Notification'
 import { clientContext } from '@/components/shared/ClientContext'
 import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import { StructureComparaisonViewModel } from '@/presenters/comparaisonDoublonsPresenter'
@@ -42,8 +42,15 @@ export default function ModaleCanonisation({ isOpen, onClose, structure }: Props
 
   async function synchroniser(): Promise<void> {
     setIsSubmitting(true)
-    const messages = await canoniserStructureAction({ path: pathname, structureId: structure.id })
-    setIsSubmitting(false)
+    let messages: ReadonlyArray<string>
+    try {
+      messages = await canoniserStructureAction({ path: pathname, structureId: structure.id })
+    } catch {
+      notifierErreurInattendue()
+      return
+    } finally {
+      setIsSubmitting(false)
+    }
     if (messages.includes('OK')) {
       onClose()
       Notification('success', { description: 'synchronisée avec l’INSEE', title: 'Structure ' })

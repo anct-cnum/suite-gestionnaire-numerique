@@ -30,36 +30,32 @@ export async function creerUnLieuInclusionAction(actionParams: ActionParams): Pr
       return erreur(validationResult.error.issues.map(({ message }) => message))
     }
 
-    try {
-      const droits = await verifierDroitsCreationLieu()
-      if (droits.statut === 'refus') {
-        return erreur([droits.message])
-      }
+    const droits = await verifierDroitsCreationLieu()
+    if (droits.statut === 'refus') {
+      return erreur([droits.message])
+    }
 
-      const creation = await construireCreation(validationResult.data)
-      if (typeof creation === 'string') {
-        return erreur([creation])
-      }
+    const creation = await construireCreation(validationResult.data)
+    if (typeof creation === 'string') {
+      return erreur([creation])
+    }
 
-      const result = await new CreerUnLieuInclusion(
-        new ApiBanGeocodingGateway(),
-        new PrismaLieuInclusionRepository(),
-        new Date()
-      ).handle({ creation, visiblePourCartographie: validationResult.data.visiblePourCartographie })
+    const result = await new CreerUnLieuInclusion(
+      new ApiBanGeocodingGateway(),
+      new PrismaLieuInclusionRepository(),
+      new Date()
+    ).handle({ creation, visiblePourCartographie: validationResult.data.visiblePourCartographie })
 
-      if (typeof result === 'string') {
-        return erreur([MESSAGES_ECHEC[result]])
-      }
+    if (typeof result === 'string') {
+      return erreur([MESSAGES_ECHEC[result]])
+    }
 
-      revalidatePath('/liste-lieux-inclusion')
+    revalidatePath('/liste-lieux-inclusion')
 
-      return {
-        lieuId: String(result.lieuId),
-        statut: 'cree',
-        visibilitePourCartographieForcee: result.visibilitePourCartographieForcee,
-      }
-    } catch (error) {
-      return erreur([error instanceof Error ? error.message : 'Une erreur est survenue lors de la création'])
+    return {
+      lieuId: String(result.lieuId),
+      statut: 'cree',
+      visibilitePourCartographieForcee: result.visibilitePourCartographieForcee,
     }
   })
 }

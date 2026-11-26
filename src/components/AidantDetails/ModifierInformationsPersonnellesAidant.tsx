@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { ReactElement, SyntheticEvent, useId, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import { Notification } from '../shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TextInput from '../shared/TextInput/TextInput'
 import { modifierInformationsPersonnellesAidantAction } from '@/app/api/actions/modifierInformationsPersonnellesAidantAction'
@@ -79,14 +79,21 @@ export default function ModifierInformationsPersonnellesAidant({
 
     setIsDisabled(true)
 
-    const messages = await modifierInformationsPersonnellesAidantAction({
-      aidantId,
-      emails: form.get('emails') as string,
-      nom: form.get('nom') as string,
-      path: pathname,
-      prenom: form.get('prenom') as string,
-      telephone: form.get('telephone') as string,
-    })
+    let messages: ReadonlyArray<string>
+    try {
+      messages = await modifierInformationsPersonnellesAidantAction({
+        aidantId,
+        emails: form.get('emails') as string,
+        nom: form.get('nom') as string,
+        path: pathname,
+        prenom: form.get('prenom') as string,
+        telephone: form.get('telephone') as string,
+      })
+    } catch {
+      notifierErreurInattendue()
+      setIsDisabled(false)
+      return
+    }
 
     if (messages.includes('OK')) {
       Notification('success', {
