@@ -3,7 +3,7 @@ import { describe, expect, it, Mock, vi } from 'vitest'
 
 import ModaleCanonisation from './ModaleCanonisation'
 import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
-import { renderComponent } from '@/components/testHelper'
+import { renderComponent, serverActionEnPanne } from '@/components/testHelper'
 import { StructureComparaisonViewModel } from '@/presenters/comparaisonDoublonsPresenter'
 
 describe('modale de canonisation (comparaison structure / INSEE)', () => {
@@ -78,6 +78,23 @@ describe('modale de canonisation (comparaison structure / INSEE)', () => {
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toContain('Erreur :')
     expect(refresh).not.toHaveBeenCalled()
+  })
+
+  it('affiche un message générique et rend la main si la synchronisation lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    const rechercherUneEntrepriseAction = rechercherMock().mockResolvedValueOnce(insee)
+    renderComponent(<ModaleCanonisation isOpen onClose={vi.fn<() => void>()} structure={antenne()} />, {
+      canoniserStructureAction: serverActionEnPanne(),
+      rechercherUneEntrepriseAction,
+    })
+
+    // WHEN
+    fireEvent.click(await screen.findByRole('button', { name: 'Synchroniser avec INSEE' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Synchroniser avec INSEE' })).toBeEnabled()
   })
 
   it('ignore le clic « Synchroniser » tant que l’image INSEE n’est pas chargée', () => {

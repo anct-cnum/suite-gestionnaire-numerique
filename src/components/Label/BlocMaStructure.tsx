@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { ChangeEvent, ReactElement, SyntheticEvent, useState } from 'react'
 
 import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
-import { Notification } from '../shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '../shared/Notification/Notification'
 import Search from '../shared/Search/Search'
 import { mettreAJourStructureLabelAction } from '@/app/api/actions/mettreAJourStructureLabelAction'
 import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
@@ -78,12 +78,19 @@ export default function BlocMaStructure({ identite, onModeEditionChange, structu
       return
     }
     setEnregistrementEnCours(true)
-    const messages = await mettreAJourStructureLabelAction({
-      path: pathname,
-      siret: entreprise.identifiant,
-      structureId,
-    })
-    setEnregistrementEnCours(false)
+    let messages: ReadonlyArray<string>
+    try {
+      messages = await mettreAJourStructureLabelAction({
+        path: pathname,
+        siret: entreprise.identifiant,
+        structureId,
+      })
+    } catch {
+      notifierErreurInattendue()
+      return
+    } finally {
+      setEnregistrementEnCours(false)
+    }
     if (messages.includes('OK')) {
       Notification('success', {
         description: 'Les informations de votre structure ont bien été mises à jour.',

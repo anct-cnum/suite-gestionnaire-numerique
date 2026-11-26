@@ -150,6 +150,17 @@ describe('transfert des notions d’une structure (repository Prisma)', () => {
     await expect(structureIdDuMembre()).resolves.toBe(SOURCE)
   })
 
+  it('laisse remonter une erreur technique au lieu de la transformer en échec métier', async () => {
+    // GIVEN
+    vi.spyOn(prisma, '$transaction').mockRejectedValueOnce(new Error('connexion à la base perdue'))
+
+    // WHEN
+    const transfert = transferer(['contacts'])
+
+    // THEN
+    await expect(transfert).rejects.toThrow('connexion à la base perdue')
+  })
+
   it('retourne structureIntrouvable quand une structure n’existe pas', async () => {
     // GIVEN seule la source existe.
     await seedBase()

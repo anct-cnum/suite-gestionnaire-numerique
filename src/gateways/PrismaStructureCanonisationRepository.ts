@@ -27,9 +27,9 @@ export class PrismaStructureCanonisationRepository implements CanoniserStructure
       if (estViolationUnicite(erreur)) {
         return 'canoniqueExistante'
       }
+      // Toute autre erreur est une panne technique : tracée puis relancée vers Sentry (#2390).
       await this.#journaliserEchec(canonisation, erreur)
-
-      return 'canonisationEchouee'
+      throw erreur
     }
   }
 

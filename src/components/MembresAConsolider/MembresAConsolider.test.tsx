@@ -2,7 +2,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import MembresAConsolider from './MembresAConsolider'
-import { renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, serverActionEnPanne, stubbedServerAction } from '@/components/testHelper'
 import { MembresAConsoliderViewModel, reglesPresenter } from '@/presenters/membresAConsoliderPresenter'
 
 describe('membres à consolider', () => {
@@ -106,6 +106,22 @@ describe('membres à consolider', () => {
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Erreur : La structure cible est déjà membre de cette gouvernance')
+  })
+
+  it('affiche un message générique et rend la main si le transfert lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    renderComponent(<MembresAConsolider regles={reglesPresenter('structure-fantome')} viewModel={unMembre()} />, {
+      transfererMembreAction: serverActionEnPanne(),
+    })
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Transférer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Transférer le membre' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Transférer' })).toBeEnabled()
   })
 
   it('importe une liste depuis un CSV collé et transfère une ligne', async () => {

@@ -6,7 +6,7 @@ import { ReactElement, SyntheticEvent, useContext, useState } from 'react'
 import EditHoraires, { transformHoraires } from '@/components/LieuInclusionDetails/EditHoraires'
 import { LieuAccueilPublicData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import { clientContext } from '@/components/shared/ClientContext'
-import { Notification } from '@/components/shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '@/components/shared/Notification/Notification'
 import HorairesOuverture from '@/shared/components/HorairesOuverture/HorairesOuverture'
 
 export default function LieuInclusionDetailsAccueilInformationsPratique(props: Props): ReactElement {
@@ -35,14 +35,21 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
 
     setIsDisabled(true)
 
-    const messages = await modifierLieuInclusionInformationsPratiquesAction({
-      horaires: horairesValue,
-      itinerance: itineranceValue,
-      path: pathname,
-      priseRdvUrl: priseRdvUrlValue,
-      structureId,
-      websiteUrl: websiteUrlValue,
-    })
+    let messages: Awaited<ReturnType<typeof modifierLieuInclusionInformationsPratiquesAction>>
+    try {
+      messages = await modifierLieuInclusionInformationsPratiquesAction({
+        horaires: horairesValue,
+        itinerance: itineranceValue,
+        path: pathname,
+        priseRdvUrl: priseRdvUrlValue,
+        structureId,
+        websiteUrl: websiteUrlValue,
+      })
+    } catch {
+      notifierErreurInattendue()
+      setIsDisabled(false)
+      return
+    }
 
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiées', title: 'Informations pratiques ' })

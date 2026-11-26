@@ -5,7 +5,7 @@ import { CSSProperties, ReactElement, useContext, useState } from 'react'
 
 import ModaleCanonisation from './ModaleCanonisation'
 import ConfirmationModal from '../shared/Modal/ConfirmationModal'
-import { Notification } from '../shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '../shared/Notification/Notification'
 import { clientContext } from '@/components/shared/ClientContext'
 import InformationDepliable, {
   BoutonInformation,
@@ -132,6 +132,26 @@ export default function ComparerStructures({ peutFusionner, viewModel }: Props):
 
   async function appliquer(): Promise<void> {
     setIsSubmitting(true)
+    let echecs: ReadonlyArray<string>
+    try {
+      echecs = await executerLesOperations()
+    } catch {
+      notifierErreurInattendue()
+      return
+    } finally {
+      setIsSubmitting(false)
+      setIsModalOpen(false)
+    }
+
+    if (echecs.length === 0) {
+      Notification('success', { description: 'appliquées', title: 'Opérations ' })
+      router.push('/structures-doublons')
+    } else {
+      Notification('error', { description: echecs.join(' · '), title: 'Erreur : ' })
+    }
+  }
+
+  async function executerLesOperations(): Promise<ReadonlyArray<string>> {
     const echecs: Array<string> = []
 
     if (cartesFusion.length > 0) {
@@ -156,14 +176,7 @@ export default function ComparerStructures({ peutFusionner, viewModel }: Props):
       }
     }
 
-    setIsSubmitting(false)
-    setIsModalOpen(false)
-    if (echecs.length === 0) {
-      Notification('success', { description: 'appliquées', title: 'Opérations ' })
-      router.push('/structures-doublons')
-    } else {
-      Notification('error', { description: echecs.join(' · '), title: 'Erreur : ' })
-    }
+    return echecs
   }
 
   return (

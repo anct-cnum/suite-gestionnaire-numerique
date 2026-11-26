@@ -15,7 +15,6 @@ import { resoudreContexte } from '@/use-cases/queries/ResoudreContexte'
 
 const MESSAGES_ECHEC: Readonly<Record<CanoniserFailure, string>> = {
   canoniqueExistante: 'Une structure canonique existe déjà pour ce SIRET : fusionnez-la plutôt',
-  canonisationEchouee: 'La canonisation a échoué, aucune modification effectuée',
   entrepriseIntrouvable: 'Aucun établissement actif trouvé à l’INSEE pour ce SIRET',
   siretManquant: 'La structure n’a pas de SIRET : impossible d’interroger l’INSEE',
   structureIntrouvable: 'Structure introuvable ou déjà supprimée',

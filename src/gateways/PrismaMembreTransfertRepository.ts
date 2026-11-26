@@ -6,11 +6,7 @@ import { MembreTransfertRepository, Transfert, TransfertFailure } from '@/use-ca
 
 export class PrismaMembreTransfertRepository implements MembreTransfertRepository {
   async transferer(transfert: Transfert): ResultAsync<TransfertFailure> {
-    try {
-      return await prisma.$transaction(async (tx) => this.#transfererDansTransaction(tx, transfert))
-    } catch {
-      return 'transfertEchoue'
-    }
+    return prisma.$transaction(async (tx) => this.#transfererDansTransaction(tx, transfert))
   }
 
   async #transfererDansTransaction(tx: Prisma.TransactionClient, transfert: Transfert): ResultAsync<TransfertFailure> {

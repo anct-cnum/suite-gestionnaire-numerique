@@ -183,6 +183,32 @@ describe('fusion de structures (repository Prisma)', () => {
     })
   })
 
+  it('laisse remonter une erreur technique, journalise l’échec et ne modifie rien', async () => {
+    // GIVEN le repointage coop refusé par la base, comme en prod (#2390) : un trigger des compteurs
+    // coop écrivait dans une table où le rôle de MIN n'a que la lecture.
+    await seedBase()
+    await creerUneStructure({ id: SURVIVANTE, nom: 'SURVIVANTE', siret: '99002100000001' })
+    await creerUneStructure({
+      denomination_antenne: 'Antenne absorbée',
+      id: ABSORBEE,
+      nom: 'ABSORBEE',
+      siret: '99002100000002',
+    })
+    await creerSchemaCoopPostBascule()
+    await refuserLesEcrituresSurLesActivitesCoop()
+
+    // WHEN
+    const fusion = fusionner()
+
+    // THEN
+    await expect(fusion).rejects.toThrow('permission denied for table mediateurs')
+    await expect(dernierAuditEchoue()).resolves.toMatchObject({
+      error_message: expect.stringContaining('permission denied for table mediateurs') as string,
+    })
+    await expect(estSupprimee(ABSORBEE)).resolves.toBe(false)
+    await expect(referencesCoopVers(ABSORBEE)).resolves.toStrictEqual({ activites: 2, employesStructures: 1 })
+  })
+
   it('retourne structureIntrouvable quand la survivante n’existe pas', async () => {
     // GIVEN seule l'absorbée existe.
     await seedBase()
@@ -261,6 +287,28 @@ async function creerSchemaCoopPostBascule(): Promise<void> {
   await prisma.$executeRaw`CREATE TABLE coop.employes_structures (id serial PRIMARY KEY, structure_main_id integer)`
   await prisma.$executeRaw`INSERT INTO coop.activites (structure_employeuse_main_id) VALUES (${ABSORBEE}), (${ABSORBEE})`
   await prisma.$executeRaw`INSERT INTO coop.employes_structures (structure_main_id) VALUES (${ABSORBEE})`
+}
+
+async function refuserLesEcrituresSurLesActivitesCoop(): Promise<void> {
+  await prisma.$executeRaw`
+    CREATE FUNCTION coop.refuser_ecriture() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+      RAISE insufficient_privilege USING MESSAGE = 'permission denied for table mediateurs';
+    END $$
+  `
+  await prisma.$executeRaw`
+    CREATE TRIGGER refuser_ecriture AFTER UPDATE ON coop.activites
+    FOR EACH STATEMENT EXECUTE FUNCTION coop.refuser_ecriture()
+  `
+}
+
+async function dernierAuditEchoue(): Promise<Record<string, unknown> | undefined> {
+  const lignes = await prisma.$queryRaw<Array<Record<string, unknown>>>`
+    SELECT error_message FROM audit.structure_merge_log
+    WHERE status = 'FAILURE' AND dag_id = 'min-ui' AND winner_id = ${SURVIVANTE} AND loser_id = ${ABSORBEE}
+    ORDER BY id DESC LIMIT 1
+  `
+  return lignes.at(0)
 }
 
 async function referencesCoopVers(structureId: number): Promise<Record<string, number>> {

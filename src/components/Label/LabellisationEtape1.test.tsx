@@ -125,6 +125,27 @@ describe('labellisation étape 1', () => {
     expect(screen.getByText('Adresse introuvable — vérifiez la saisie')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Étape suivante' })).toBeDisabled()
   })
+
+  it('affiche un message générique et rend la main si l’enregistrement lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    vi.spyOn(rechercherUneEntreprise, 'rechercherUneEntrepriseAction').mockResolvedValueOnce(entrepriseTrouvee())
+    vi.spyOn(mettreAJourStructureLabel, 'mettreAJourStructureLabelAction').mockRejectedValueOnce(
+      new Error('panne technique')
+    )
+    afficherEtape1()
+    modifierMaStructure()
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '79227291600034' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Rechercher' }))
+    await screen.findByText('Solidarnum')
+
+    // WHEN
+    fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
+  })
 })
 
 function afficherEtape1(viewModel: LabellisationEtape1ViewModel = createDefaultLabellisationEtape1ViewModel()): void {

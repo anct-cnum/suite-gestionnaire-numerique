@@ -8,7 +8,7 @@ import EncartCartographie from '@/components/shared/EncartCartographie/EncartCar
 import LieuInclusionFormulaire, {
   EtatLieuInclusionFormulaire,
 } from '@/components/shared/LieuInclusionFormulaire/LieuInclusionFormulaire'
-import { Notification } from '@/components/shared/Notification/Notification'
+import { Notification, notifierErreurInattendue } from '@/components/shared/Notification/Notification'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
@@ -50,15 +50,22 @@ export default function CreerLieuInclusion(): ReactElement {
     const visiblePourCartographie = form.get('visiblePourCartographie') === 'on'
     setIsDisabled(true)
 
-    const resultat = await creerUnLieuInclusionAction({
-      adresse: form.get('adresse') as string,
-      complementAdresse: form.get('complementAdresse') as string,
-      itinerant: form.get('itinerant') === 'on',
-      nom: form.get('nom') as string,
-      siret: etat.siretSaisi,
-      typologies: form.getAll('typologies').map(String),
-      visiblePourCartographie,
-    })
+    let resultat: Awaited<ReturnType<typeof creerUnLieuInclusionAction>>
+    try {
+      resultat = await creerUnLieuInclusionAction({
+        adresse: form.get('adresse') as string,
+        complementAdresse: form.get('complementAdresse') as string,
+        itinerant: form.get('itinerant') === 'on',
+        nom: form.get('nom') as string,
+        siret: etat.siretSaisi,
+        typologies: form.getAll('typologies').map(String),
+        visiblePourCartographie,
+      })
+    } catch {
+      notifierErreurInattendue()
+      setIsDisabled(false)
+      return
+    }
 
     if (resultat.statut === 'cree') {
       Notification('success', {

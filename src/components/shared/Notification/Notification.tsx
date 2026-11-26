@@ -19,3 +19,12 @@ export function Notification(
     }
   )
 }
+
+// Une server action a levé une exception : panne technique, déjà signalée à Sentry côté serveur
+// (onRequestError). L'utilisateur ne reçoit qu'un message générique, sans détail technique.
+export function notifierErreurInattendue(): void {
+  Notification('error', {
+    description: 'un problème technique est survenu, veuillez réessayer plus tard.',
+    title: 'Erreur : ',
+  })
+}

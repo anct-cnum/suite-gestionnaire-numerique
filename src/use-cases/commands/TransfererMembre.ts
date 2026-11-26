@@ -35,11 +35,7 @@ export type Transfert = Readonly<{
 }>
 
 export type TransfertFailure =
-  | 'membreIntrouvable'
-  | 'structureIntrouvable'
-  | 'transfertCreeraitDoublonMembre'
-  | 'transfertEchoue'
-  | 'transfertImpossibleMemeStructure'
+  'membreIntrouvable' | 'structureIntrouvable' | 'transfertCreeraitDoublonMembre' | 'transfertImpossibleMemeStructure'
 
 type Command = Readonly<{
   idCible: number

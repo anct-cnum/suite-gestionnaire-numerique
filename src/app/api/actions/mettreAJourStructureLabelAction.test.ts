@@ -158,21 +158,21 @@ describe('mettre à jour la structure depuis le parcours label action', () => {
     expect(messages).toStrictEqual(['Le SIRET renseigné n’a pas pu être retrouvé. Vérifiez le numéro saisi.'])
   })
 
-  it('renvoie une erreur quand l’API Entreprise est indisponible', async () => {
+  it('laisse remonter l’indisponibilité de l’API Entreprise, pour qu’elle soit signalée à Sentry (#2390)', async () => {
     // GIVEN
     stubGestionnaireBetaTesteur()
     vi.spyOn(PrismaEligibiliteLabelConumLoader.prototype, 'estEligible').mockResolvedValueOnce(true)
     vi.spyOn(RechercherUneEntreprise.prototype, 'handle').mockRejectedValueOnce(new Error('timeout'))
 
     // WHEN
-    const messages = await mettreAJourStructureLabelAction({
+    const messages = mettreAJourStructureLabelAction({
       path: '/label',
       siret: '79227291600034',
       structureId: 978,
     })
 
     // THEN
-    expect(messages).toStrictEqual(['Service temporairement indisponible. Veuillez réessayer.'])
+    await expect(messages).rejects.toThrow('timeout')
   })
 
   it('traduit l’échec « adresse introuvable » renvoyé par la commande', async () => {

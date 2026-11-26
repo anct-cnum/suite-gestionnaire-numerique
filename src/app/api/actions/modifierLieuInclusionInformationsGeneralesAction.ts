@@ -34,41 +34,36 @@ export async function modifierLieuInclusionInformationsGeneralesAction(
       return validationResult.error.issues.map(({ message }) => message)
     }
 
-    try {
-      // Vérification des droits (session, [bêta], lieu, rôle)
-      const droits = await verifierDroitsLieu(validationResult.data.structureId, {
-        action: 'modifier',
-        reserveAuxBetaTesteurs: true,
-      })
-      if (droits.statut === 'refus') {
-        return [droits.message]
-      }
-
-      const modification = await construireModification(validationResult.data)
-      if (typeof modification === 'string') {
-        return [modification]
-      }
-
-      const result = await new ModifierLieuInclusionInformationsGenerales(
-        new ApiBanGeocodingGateway(),
-        new PrismaLieuInclusionRepository(),
-        new Date()
-      ).handle({
-        modification,
-        structureId: validationResult.data.structureId,
-      })
-
-      if (result !== 'OK') {
-        return [MESSAGES_ECHEC[result]]
-      }
-
-      revalidatePath(validationResult.data.path)
-
-      return ['OK']
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue lors de la modification'
-      return [errorMessage]
+    // Vérification des droits (session, [bêta], lieu, rôle)
+    const droits = await verifierDroitsLieu(validationResult.data.structureId, {
+      action: 'modifier',
+      reserveAuxBetaTesteurs: true,
+    })
+    if (droits.statut === 'refus') {
+      return [droits.message]
     }
+
+    const modification = await construireModification(validationResult.data)
+    if (typeof modification === 'string') {
+      return [modification]
+    }
+
+    const result = await new ModifierLieuInclusionInformationsGenerales(
+      new ApiBanGeocodingGateway(),
+      new PrismaLieuInclusionRepository(),
+      new Date()
+    ).handle({
+      modification,
+      structureId: validationResult.data.structureId,
+    })
+
+    if (result !== 'OK') {
+      return [MESSAGES_ECHEC[result]]
+    }
+
+    revalidatePath(validationResult.data.path)
+
+    return ['OK']
   })
 }
 

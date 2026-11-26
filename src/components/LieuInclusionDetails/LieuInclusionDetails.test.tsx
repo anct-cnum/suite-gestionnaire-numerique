@@ -3,13 +3,15 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import LieuxInclusionDetails from './LieuInclusionDetails'
+import LieuInclusionDetailsAccueilInformationsPratique from './LieuInclusionDetailsAccueilInformationsPratique'
 import LieuInclusionDetailsInformationsGenerales from './LieuInclusionDetailsInformationsGenerales'
-import { renderComponent } from '../testHelper'
+import { renderComponent, serverActionEnPanne } from '../testHelper'
 import { EntrepriseViewModel } from '@/components/shared/Membre/EntrepriseType'
 import * as notification from '@/components/shared/Notification/Notification'
 import { LieuInclusionSimilaireViewModel } from '@/presenters/lieuxInclusionSimilairesPresenter'
 import {
   createDefaultInformationsGeneralesData,
+  createDefaultLieuAccueilPublicData,
   createDefaultLieuInclusionDetailsData,
 } from '@/stories/Components/LieuInclusionDetails/LieuInclusionDetailsTestData'
 
@@ -276,6 +278,51 @@ describe('modification des informations générales d’un lieu', () => {
     await waitFor(() => {
       expect(rechercherUneEntrepriseAction).toHaveBeenCalledWith({ siret: '21690271800016' })
     })
+  })
+
+  it('affiche un message générique et rend la main si l’enregistrement des informations générales lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    renderComponent(
+      <LieuInclusionDetailsInformationsGenerales
+        data={{ ...createDefaultInformationsGeneralesData(), typologies: ['ASSO'] }}
+        peutModifier={true}
+      />,
+      {
+        modifierLieuInclusionInformationsGeneralesAction: serverActionEnPanne(),
+        rechercherLieuxInclusionSimilairesAction: vi
+          .fn<() => Promise<ReadonlyArray<LieuInclusionSimilaireViewModel>>>()
+          .mockResolvedValue([]),
+      }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier' }))
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
+  })
+
+  it('affiche un message générique et rend la main si l’enregistrement des informations pratiques lève une erreur technique (#2390)', async () => {
+    // GIVEN
+    renderComponent(
+      <LieuInclusionDetailsAccueilInformationsPratique
+        data={{ ...createDefaultLieuAccueilPublicData(), horaires: 'Mo-Fr 09:00-17:00' }}
+        peutModifier={true}
+      />,
+      { modifierLieuInclusionInformationsPratiquesAction: serverActionEnPanne() }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Modifier' }))
+
+    // WHEN
+    await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : un problème technique est survenu, veuillez réessayer plus tard.')
+    expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeEnabled()
   })
 })
 

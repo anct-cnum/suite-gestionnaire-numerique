@@ -2,6 +2,7 @@ import * as nextCache from 'next/cache'
 import { describe, expect, it } from 'vitest'
 
 import { modifierLieuInclusionInformationsGeneralesAction } from './modifierLieuInclusionInformationsGeneralesAction'
+import * as droitsLieu from './shared/verifierDroitsLieu'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaRecupererLieuDetailsLoader } from '@/gateways/PrismaRecupererLieuDetailsLoader'
@@ -80,6 +81,17 @@ describe('modifier les informations générales d’un lieu d’inclusion action
     // THEN
     expect(messages).toStrictEqual(['OK'])
     expect(ModifierLieuInclusionInformationsGenerales.prototype.handle).toHaveBeenCalledTimes(1)
+  })
+
+  it('laisse remonter une erreur technique, pour qu’elle soit signalée à Sentry (#2390)', async () => {
+    // GIVEN
+    vi.spyOn(droitsLieu, 'verifierDroitsLieu').mockRejectedValueOnce(new Error('connexion à la base perdue'))
+
+    // WHEN
+    const messages = modifierLieuInclusionInformationsGeneralesAction(modification)
+
+    // THEN
+    await expect(messages).rejects.toThrow('connexion à la base perdue')
   })
 
   it('modifie un lieu géré dans la Coop : le registre fait foi (#2105)', async () => {

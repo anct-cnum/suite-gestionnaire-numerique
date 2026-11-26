@@ -114,6 +114,17 @@ describe('transfert de membre (repository Prisma)', () => {
     await expect(dernierAudit()).resolves.toBeUndefined()
   })
 
+  it('laisse remonter une erreur technique au lieu de la transformer en échec métier', async () => {
+    // GIVEN
+    vi.spyOn(prisma, '$transaction').mockRejectedValueOnce(new Error('connexion à la base perdue'))
+
+    // WHEN
+    const transfert = transferer()
+
+    // THEN
+    await expect(transfert).rejects.toThrow('connexion à la base perdue')
+  })
+
   it('retourne structureIntrouvable quand la cible n’existe pas', async () => {
     // GIVEN
     await seedBaseEtStructures()

@@ -131,7 +131,7 @@ describe('canonisation de structure (repository Prisma)', () => {
     await expect(repository.existeCanoniquePourSiret('00000000000000', ANTENNE)).resolves.toBe(false)
   })
 
-  it('remonte canonisationEchouee et journalise l’échec quand l’update viole une contrainte', async () => {
+  it('laisse remonter une erreur technique et journalise l’échec quand l’update viole une contrainte', async () => {
     // GIVEN une catégorie juridique INSEE absente de la référence → violation de clé étrangère.
     await creerUneStructure({
       denomination_antenne: 'Antenne',
@@ -141,12 +141,12 @@ describe('canonisation de structure (repository Prisma)', () => {
     })
 
     // WHEN
-    const result = await new PrismaStructureCanonisationRepository().canoniser(
+    const canonisationEnCours = new PrismaStructureCanonisationRepository().canoniser(
       canonisation({ entreprise: { ...entrepriseInsee, categorieJuridiqueCode: '0000' } })
     )
 
     // THEN
-    expect(result).toBe('canonisationEchouee')
+    await expect(canonisationEnCours).rejects.toThrow('violates foreign key constraint')
     await expect(dernierAuditEchoue()).resolves.toBe(true)
     expect((await lire(ANTENNE))?.denomination_antenne).toBe('Antenne') // rollback : rien n'a changé
   })

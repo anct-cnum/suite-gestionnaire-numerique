@@ -16,8 +16,10 @@ export class PrismaStructureFusionRepository implements StructureFusionRepositor
     try {
       return await prisma.$transaction(async (tx) => this.#fusionnerDansTransaction(tx, fusion))
     } catch (erreur) {
+      // Une panne technique n'est pas un échec métier : on la trace dans le journal de fusion puis on
+      // la relance, pour qu'elle remonte jusqu'à Sentry (onRequestError) au lieu d'être avalée (#2390).
       await this.#journaliserEchec(fusion, erreur)
-      return 'fusionEchouee'
+      throw erreur
     }
   }
 

@@ -15,7 +15,6 @@ const MESSAGES_ECHEC: Readonly<Record<FusionFailure, string>> = {
   collisionIdentifiantSource:
     'Conflit d’identifiant de source (Idposte ou Aidants Connect) avec la survivante : tranchez-le avant de fusionner',
   collisionMembreGouvernance: 'La survivante est déjà membre d’une gouvernance de la structure absorbée',
-  fusionEchouee: 'La fusion a échoué, aucune modification effectuée',
   fusionImpossibleCanoniqueDansAntenne:
     'Une structure canonique (INSEE) ne peut être absorbée que par une autre canonique, pas par une antenne',
   fusionImpossibleMemeStructure: 'Impossible de fusionner une structure avec elle-même',
